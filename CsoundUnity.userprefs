@@ -1,0 +1,14 @@
+﻿<Properties StartupItem="CsoundUnity.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="CsoundUnityBridge.cs">
+    <Files>
+      <File FileName="csoundcsharp.cs" Line="49" Column="10" />
+      <File FileName="CsoundUnityBridge.cs" Line="37" Column="69" />
+      <File FileName="AssemblyInfo.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
