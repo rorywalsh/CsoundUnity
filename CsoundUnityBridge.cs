@@ -58,7 +58,7 @@ public class CsoundUnityBridge
 		//manualReset.Set();  
 	}
 	
-	public void stopCsound()
+	public void stopCsound()   
 	{
 
 #if WINDOWS
