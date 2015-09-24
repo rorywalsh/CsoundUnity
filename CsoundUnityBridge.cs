@@ -50,7 +50,7 @@ public class CsoundUnityBridge
         performanceThread = new Thread(new ThreadStart(performCsound));
         if (ret == 0)
             performanceThread.Start();
-	}
+	}  
 
 	//starts a performance of Csound
 	public void startPerformance()
