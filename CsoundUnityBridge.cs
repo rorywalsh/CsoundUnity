@@ -34,7 +34,7 @@ public class CsoundUnityBridge
             //System.Environment.SetEnvironmentVariable("Path", path + "/" + csoundDir);
             Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
 		#elif OSX
-		Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir+"/CsoundLib64.framework/Versions/6.0/Resources/Opcodes64"); 
+			Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir+"/CsoundLib64.framework/Resources/Opcodes64"); 
 		#elif Android
 		    Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodeDir+"/libcsoundandroid.so");
 		#endif
