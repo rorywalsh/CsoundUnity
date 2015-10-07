@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
@@ -117,7 +117,7 @@ public class CsoundUnity : MonoBehaviour {
         /*
          * the CsoundUnity constructor takes a path to the project's Data folder, and path to the file name.
          * It then calls createCsound() to create an instance of Csound and compile the 'csdFile'. 
-         * After this we start the performance of Csound. After this, we send the streaming assests path to
+         * After this we start the performance of Csound. After this, we send the streaming assets path to
          * Csound on a string channel. This means we can then load samples contained within that folder.
          */
         csound = new CsoundUnityBridge(dataPath, csoundFilePath);
@@ -258,7 +258,7 @@ public class CsoundUnity : MonoBehaviour {
     }
 
     /**
-     * Controls playback speed of an audio file associated with ID. 1 is the nromal playback speed. See audioLoad()
+     * Controls playback speed of an audio file associated with ID. 1 is the normal playback speed. See audioLoad()
      */
     public void audioSpeed(string ID, float speed)
     {
@@ -302,7 +302,7 @@ public class CsoundUnity : MonoBehaviour {
     /**
      * Start a fade in of the audio file associated with ID. See audioLoad()
      */
-    public void audioFadeIn(string ID, float fadeInTime, float endVolume=-1, bool restart=false)
+    public void audioFadeIn(string ID, float fadeInTime, float endVolume=1, bool restart=false)
     {
         if(!IDs.Contains(ID))
         {
@@ -313,16 +313,15 @@ public class CsoundUnity : MonoBehaviour {
         if (restart == true)
             audioPlay(ID);
 
-        if(endVolume!=-1)
-            audioVolume(ID, endVolume);
-
-        csound.setStringChannel(ID, "FadeIn:" + fadeInTime.ToString());
+        //csound.setStringChannel(ID, "FadeIn:" + fadeInTime.ToString());
+        //using _-_-_ is really hacky but...
+        csound.setStringChannel(ID, "FadeIn:" + fadeInTime.ToString() + "_-_-_" + endVolume + "|-|-|" + (restart==true ? "1" : "0"));
     }
 
     /**
      * Start a fade out of the audio file associated with ID. See audioLoad()
      */
-    public void audioFadeOut(string ID, float fadeOutTime, float volume=-1)
+    public void audioFadeOut(string ID, float fadeOutTime, float volume=0)
     {
         if(!IDs.Contains(ID))
         {
@@ -330,24 +329,24 @@ public class CsoundUnity : MonoBehaviour {
             return;
         }
 
-        if (volume != -1)
-            audioVolume(ID, volume);
-
-        csound.setStringChannel(ID, "FadeOut:" + fadeOutTime.ToString());
+        csound.setStringChannel(ID, "FadeOut:" + fadeOutTime.ToString() + "_-_-_" + volume.ToString());
     }
 
     /**
-    * Send audio to a named channel for futher processing. Sends can act as post, or pre. The target channel name will be 
+    * Send audio to a named channel for further processing. Sends can act as post, or pre. The target channel name will be 
      * structured as ID_PreSendL/R, or ID_POstSendL/R. For example, if the ID is 'layer1', the audio can be accessed in another
      * Csound instrument by using 
      * \code
      * instr 1
+     * 
      * aLeft chnget "layer1_PostSendL"
      * aRight chnget "layer1_PostSendR"
      * 
      * aLeft reverb aLeft, 1
      * aRight reverb aRight, 1
+     * 
      * outs aLeft, aRight
+     * 
      * endin
      * \endcode
     */
@@ -367,21 +366,27 @@ public class CsoundUnity : MonoBehaviour {
     }
 
     /**
-     * Ends playback of the track associated with ID_1, and cross-fades into the start of track associated with ID_2. The 
-     * same effects can also be created using a combination of audioFadeIn() and audioFadeOut() 
+     * Ends playback of the track associated with ID_1, and cross-fades into the start of track associated with ID_2.
+     * Unique fade in and out times can be passed, along with a target volume for the track fading in. 
+     * When using audioXFade, the track being faded in always starts from the beginning.
+     * The same effects can also be created using a combination of audioFadeIn() and audioFadeOut() 
      * See audioLoad()
      */
-    public void audioXFade(string ID_1, string ID_2, float time)
+    public void audioXFade(string ID_1, string ID_2, float ID_2_vol, float fadeOutTime, float fadeInTime)
     {
         if (!IDs.Contains(ID_1))
         {
             Debug.Log("The ID:" + ID_1 + " does not exist");
             return;
         }
+        else if (!IDs.Contains(ID_2))
+        {
+            Debug.Log("The ID:" + ID_2 + " does not exist");
+            return;
+        }
 
-        audioFadeOut(ID_1, time);
-        audioPlay(ID_2);
-        audioFadeIn(ID_2, time);
+        audioFadeOut(ID_1, fadeOutTime, 0);
+        audioFadeIn(ID_2, fadeInTime, ID_2_vol, true);
     }
 
     /**
