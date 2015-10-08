@@ -189,7 +189,7 @@ kFadeLevel linseg i(kFadeStartVolume), i(kFadeTime), i(kFadeEndVolume), 1, i(kFa
 
 ;mixer section
 aMixL = ((aLeft*(kPan*2))*kVolume)*kFadeLevel
-aMixR = ((aRight*(2-(kPan*2))*kVolume)*kFadeLevel
+aMixR = ((aRight*(2-(kPan*2)))*kVolume)*kFadeLevel
 
 if kPostSend>0 then
 	SChanL sprintf "%s_PostSendL", SChannel
