@@ -53,20 +53,35 @@ endin
 ;chn_S "loop3", 1
 ;chn_S "loop4", 1
 ;chn_S "loop5", 1
+
 instr AudioFilePlayer
 aLeft, aRight init 0
 SFile = p4
-SId = p5
+SId strcpy p5
+;prints p4
+;prints p5
+SId = p6
+;print p7
 kFadeTrigger init 1
 kCount init 0
+kSpeed init 1
+kStartBranch init 0
+
+SStringChannel1 sprintf "branch%s", SId
+chn_S SStringChannel1, 3
+SNewBranchFile chnget SStringChannel1
+
+SStringChannel2 sprintf "newBranchId%s", SId
+chn_S SStringChannel2, 3
+SNewBranchID chnget SStringChannel2
 
 SChannel sprintf "volume%s", SId
-chnset p6, SChannel
+chnset p8, SChannel
 kVolume chnget SChannel
 
 SChannel sprintf "play%s", SId
 chnset p7, SChannel
-kPlay chnget SChannel
+kPlay chnget SChannel 
 
 SChannel sprintf "speed%s", SId
 chnset 1, SChannel
@@ -109,9 +124,10 @@ kPostSend chnget SChannel
 SChannel sprintf "preSend%s", SId
 kPreSend chnget SChannel
 
-SMessage chnget SChannel
-kPan init 1
 
+kPan init 1
+SInfo sprintf "Initialising audio file: %s\nChannel ID is: %s, Should play: %d, Volume is: %d\n", SFile, SId, p7, kVolume
+prints SInfo
 if changed:k(kStop)==1 then				;stop playback
  		kPlay=0 
  		aRight = 0
@@ -146,16 +162,13 @@ if changed:k(kFadeOut)==1 then 	;start fade out
 		endif
 		reinit RE_FADE 
 endif
- 
-if strindexk(SMessage, "Branch:")!=-1 then
-		SNewFile strsubk SMessage, 6, -1
-		kPos strindexk SNewFile, "_-_-_"
-		SNewChannel strsubk SNewFile, kPos+5, -1
-		SNewFile strsubk SNewFile, 1, kPos
- 		printf "CurrentID:%s\nNextTrackIs:%s", 1, SChannel, SNewFile 
+
+;kBranchUpdate changed SBranch
+
+if changed:k(SNewBranchFile)==1 then
 		kStartBranch = 1
 endif 
-   
+
 RE_START:
 if kPlay==1 then
 	;if branching, kill this instrument and schedule a new instance
@@ -163,13 +176,11 @@ if kPlay==1 then
 	kCount = (kCount>iLen*sr ? 0 : kCount+ksmps)
 	if kCount == 0 && kStartBranch==1 then
 		printks "Restarting loop", 0
-		String  sprintfk {{i"AudioFilePlayer" 0 360000 "%s" "%s" 1 1}}, SNewFile, SNewChannel  
+		String  sprintfk {{i"AudioFilePlayer" 0 360000 "%s" "empty" "%s" 1 1}}, SNewBranchFile, SNewBranchID  
 		scoreline String, 1
 		gkStartBranch=0
-
 		turnoff 
 	endif
-
 
 	iChannels filenchnls p4
 	if iChannels==1 then
@@ -179,8 +190,10 @@ if kPlay==1 then
 	else
 		aLeft, aRight diskin2 p4, kSpeed, 0, 1
 	endif
+else
+	aLeft = 0 
+	aRight = 0
 endif
-
 ;kFadeLevel FadeIO kFadeTrigger, kFadeTime, kFadeType, kVolume
 
 RE_FADE:
@@ -188,23 +201,23 @@ RE_FADE:
 kFadeLevel linseg i(kFadeStartVolume), i(kFadeTime), i(kFadeEndVolume), 1, i(kFadeEndVolume)  
 
 ;mixer section
-aMixL = ((aLeft*(kPan*2))*kVolume)*kFadeLevel
-aMixR = ((aRight*(2-(kPan*2)))*kVolume)*kFadeLevel
+aMixL = ((aLeft)*kVolume)*kFadeLevel
+aMixR = ((aRight)*kVolume)*kFadeLevel
 
-if kPostSend>0 then
-	SChanL sprintf "%s_PostSendL", SChannel
-	SChanR sprintf "%s_PostSendR", SChannel
+if kPostSend>0 then  
+	SChanL sprintf "%s_PostSendL", SId
+	SChanR sprintf "%s_PostSendR", SId
 	chnset aMixL*kPostSend, SChanL
 	chnset aMixR*kPostSend, SChanR
 endif 
 
 if kPreSend>0 then	
-	SChanL sprintf "%s_PreSendL", SChannel
-	SChanR sprintf "%s_PreSendR", SChannel
+	SChanL sprintf "%s_PreSendL", SId
+	SChanR sprintf "%s_PreSendR", SId
 	chnset aLeft*kPreSend, SChanL
 	chnset aRight*kPreSend, SChanR
 endif 
 
-outs ((aLeft*kPan))*kFadeLevel, ((aRight*(1-kPan)))*kFadeLevel
+outs aLeft*kFadeLevel, aRight*kFadeLevel
 
 endin
