@@ -238,10 +238,10 @@ public class CsoundUnity : MonoBehaviour
     public void audioLoad(string filename, string ID, bool startPlaying = false, float volume = 1)
     {
         string audioFile = Application.dataPath + "/Audio/" + filename;
-        int shouldPlay = startPlaying == true ? 1 : 0;
+        int shouldPlay = startPlaying==true ? 1 : 0;
         Debug.Log(shouldPlay);
         //need to double check file exists, if not prompt an error...
-
+        
         //I'm sending a dummy p5 here? Why? Because p5 seems to be ignored. Most likely a bug with 
         //the 64bit build of Csound I use on Windows...
         if (File.Exists(audioFile))
@@ -296,7 +296,7 @@ public class CsoundUnity : MonoBehaviour
             return;
         }
 
-        csound.setChannel("stop" + ID, Random.Range(0, 100));
+        csound.setChannel("play" + ID, 0);
     }
 
     /**
@@ -421,8 +421,8 @@ public class CsoundUnity : MonoBehaviour
         }
 
         csound.setStringChannel("newBranchID" + ID_2, ID_2);
-        Debug.Log("Hello, my filename is:" + getFilenameFromID(ID_2));
-        csound.setStringChannel("branch" + ID_1, getFilenameFromID(ID_2));
+        Debug.Log("Hello, my filename is:"+getFilenameFromID(ID_2));
+        csound.setStringChannel("branch"+ID_1, getFilenameFromID(ID_2));
     }
     /**
      * Returns a list of audio IDs that have been assigned using the audioLoad() method. 

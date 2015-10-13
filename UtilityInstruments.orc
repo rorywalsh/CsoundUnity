@@ -82,7 +82,7 @@ kVolume chnget SChannel
 SChannel sprintf "play%s", SId
 chnset p7, SChannel
 kPlay chnget SChannel 
-
+ 
 SChannel sprintf "speed%s", SId
 chnset 1, SChannel
 kSpeed chnget SChannel
@@ -128,16 +128,8 @@ kPreSend chnget SChannel
 kPan init 1
 SInfo sprintf "Initialising audio file: %s\nChannel ID is: %s, Should play: %d, Volume is: %d\n", SFile, SId, p7, kVolume
 prints SInfo
-if changed:k(kStop)==1 then				;stop playback
- 		kPlay=0 
- 		aRight = 0
- 		aLeft = 0
-endif
-  
-if changed:k(kPlay)==1 then
-		kPlay = 1
-endif
-  
+
+ 
 if changed:k(kFadeIn)==1 then 	;start fade in
 		if kFadeEndVolume==-1 then
 			kFadeEndVolume = kVolume
