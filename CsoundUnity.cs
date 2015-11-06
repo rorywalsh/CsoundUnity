@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.IO;
 
 /*! \mainpage
  * 
@@ -53,7 +54,8 @@ public class MyScript : MonoBehaviour
 /*
  * CsoundUnity class
  */
-public class CsoundUnity : MonoBehaviour {
+public class CsoundUnity : MonoBehaviour
+{
 
     // Use this for initialization
     private CsoundUnityBridge csound;/**< 
@@ -69,19 +71,19 @@ public class CsoundUnity : MonoBehaviour {
                                                   * definition for UtilityInstruments.orc that is needed for some of the CsoundUnity
                                                   * class methods. Therefore it is best to simply modify this file.
                                                   */
-    public bool logCsoundOutput=false;/**<
+    public bool logCsoundOutput = false;/**<
                                        * **logCsoundOutput** is a boolean variable. As a boolean it can be either true or false. 
                                        * When it is set to true, all Csound output messages will be sent to the 
                                        * Unity output console. Note that this can slow down performance if there is a 
                                        * lot of information being printed.
-                                       */ 
+                                       */
     List<string> IDs;/**<
                       * List of IDs that have been assocated with file loaded using the audioLoad() method
                       */
 
     List<string> fileNames;
 
-    
+
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
@@ -102,18 +104,18 @@ public class CsoundUnity : MonoBehaviour {
          }
          * \endcode
      */
-    void Awake() 
+    void Awake()
     {
-         
-         /* I M P O R T A N T
-         * 
-         * Please ensure that all csd files reside in your Assets/Scripts directory
-         *
-         */     
-        string csoundFilePath = Application.streamingAssetsPath+"/"+csoundFile+"_";
-        string dataPath = Application.streamingAssetsPath;  
+
+        /* I M P O R T A N T
+        * 
+        * Please ensure that all csd files reside in your Assets/Scripts directory
+        *
+        */
+        string csoundFilePath = Application.streamingAssetsPath + "/" + csoundFile + "_";
+        string dataPath = Application.streamingAssetsPath;
         System.Environment.SetEnvironmentVariable("Path", Application.streamingAssetsPath);
-        Debug.Log(Application.streamingAssetsPath);     
+        Debug.Log(Application.streamingAssetsPath);
         /*
          * the CsoundUnity constructor takes a path to the project's Data folder, and path to the file name.
          * It then calls createCsound() to create an instance of Csound and compile the 'csdFile'. 
@@ -121,15 +123,15 @@ public class CsoundUnity : MonoBehaviour {
          * Csound on a string channel. This means we can then load samples contained within that folder.
          */
         csound = new CsoundUnityBridge(dataPath, csoundFilePath);
-        
+
         csound.startPerformance();
-        csound.setStringChannel("AudioPath", Application.dataPath+"/Assets/Audio/");
+        csound.setStringChannel("AudioPath", Application.dataPath + "/Assets/Audio/");
 
         /*
          * This method prints the Csound output to the Unity console
          */
-        if(logCsoundOutput)
-            InvokeRepeating("logCsoundMessages", 0, .5f);   
+        if (logCsoundOutput)
+            InvokeRepeating("logCsoundMessages", 0, .5f);
 
         IDs = new List<string>();
         fileNames = new List<string>();
@@ -137,31 +139,31 @@ public class CsoundUnity : MonoBehaviour {
 
     /**
      * Called automatically when the game stops. Needed so that Csound stops when your game does
-     */ 
+     */
     void OnApplicationQuit()
-    {       
+    {
         csound.stopCsound();
-        
+
         //csound.reset();
     }
 
     /**
      * Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
-     */ 
+     */
     public void setChannel(string channel, float val)
     {
         csound.setChannel(channel, val);
     }
     /**
      * Sets a string channel in Csound. Used in connection with a chnget opcode in your Csound instrument.
-     */ 
+     */
     public void setStringChannel(string channel, string val)
     {
         csound.setStringChannel(channel, val);
     }
     /**
      * Gets a Csound channel. Used in connection with a chnset opcode in your Csound instrument.
-     */ 
+     */
     public double getChannel(string channel)
     {
         return csound.getChannel(channel);
@@ -188,10 +190,10 @@ public class CsoundUnity : MonoBehaviour {
     void logCsoundMessages()
     {
         //print Csound message to Unity console....
-        for(int i=0;i<csound.getCsoundMessageCount();i++)
-            Debug.Log(csound.getCsoundMessage()+"\n");
+        for (int i = 0; i < csound.getCsoundMessageCount(); i++)
+            Debug.Log(csound.getCsoundMessage() + "\n");
     }
-    
+
     /* 
      * These functions work with the instruments defined in UtilityInstruments.csd
      * file. The first two functions behave like static functions. Once they have been 
@@ -200,21 +202,21 @@ public class CsoundUnity : MonoBehaviour {
 
     /**
      * Triggers a one-shot sample. filename should be a valid audio sample located in the Assets/Audio folder. pos is the position of the sound within a simple left.right stereo field, where .5 is centre. playbackSpeed can be used to re-pitch the sample.
-     */ 
-    public void playOneShot(string filename, float volume=1f, float pos=.5f, float pitch=1)
+     */
+    public void playOneShot(string filename, float volume = 1f, float pos = .5f, float pitch = 1)
     {
-        string audioFile = Application.dataPath+"/Audio/"+filename;
+        string audioFile = Application.dataPath + "/Audio/" + filename;
         //Debug.Log("i\"PlayOneShot\" 0 1 \""+audioFile+"\" "+volume.ToString()+" "+pos.ToString()+" "+pitch.ToString());
-        csound.sendScoreEvent("i\"PlayOneShot\" 0 1 \""+audioFile+"\" "+volume.ToString()+" "+pos.ToString()+" "+pitch.ToString());
+        csound.sendScoreEvent("i\"PlayOneShot\" 0 1 \"" + audioFile + "\" " + volume.ToString() + " " + pos.ToString() + " " + pitch.ToString());
     }
 
     /**
      * Plays a sound file by looping it continuously over the duration of the game.
-     */ 
-    public void playLooped(string filename, float volume=1f, float pos=.5f, float pitch=1)
+     */
+    public void playLooped(string filename, float volume = 1f, float pos = .5f, float pitch = 1)
     {
-        string audioFile = Application.dataPath+"/Audio/"+filename;
-        csound.sendScoreEvent("i\"PlayLooped\" 0 -1 \""+audioFile+"\" "+volume.ToString()+" "+pos.ToString()+" "+pitch.ToString());
+        string audioFile = Application.dataPath + "/Audio/" + filename;
+        csound.sendScoreEvent("i\"PlayLooped\" 0 -1 \"" + audioFile + "\" " + volume.ToString() + " " + pos.ToString() + " " + pitch.ToString());
     }
 
 
@@ -233,28 +235,40 @@ public class CsoundUnity : MonoBehaviour {
         }
      * \endcode
      */
-    public void audioLoad(string filename, string ID, bool startPlaying=false, float volume=1)
+    public void audioLoad(string filename, string ID, bool startPlaying = false, float volume = 1)
     {
-        string audioFile = Application.dataPath+"/Audio/"+filename;
-        int shouldPlay = startPlaying ? 1 : 0;
-        //Debug.Log("Should play is:"+shouldPlay.ToString());
-        csound.sendScoreEvent("i\"AudioFilePlayer\" 0 360000 \""+audioFile+"\" \""+ID+"\" "+volume.ToString()+" "+ shouldPlay.ToString());
-        IDs.Add(ID);
-        fileNames.Add(audioFile);
+        string audioFile = Application.dataPath + "/Audio/" + filename;
+        int shouldPlay = startPlaying==true ? 1 : 0;
+        Debug.Log(shouldPlay);
+        //need to double check file exists, if not prompt an error...
+        
+        //I'm sending a dummy p5 here? Why? Because p5 seems to be ignored. Most likely a bug with 
+        //the 64bit build of Csound I use on Windows...
+        if (File.Exists(audioFile))
+        {
+            csound.sendScoreEvent("i\"AudioFilePlayer\" 2 360000 \"" + audioFile + "\" \"" + ID.ToString() + "\"\"" + ID.ToString() + "\" " + shouldPlay.ToString() + " " + volume.ToString());
+            IDs.Add(ID);
+            fileNames.Add(audioFile);
+        }
+        else
+        {
+            Debug.Log(audioFile + " is not a valid file name");
+        }
     }
 
     /**
      * Starts playback of the audio file associated with ID. See audioLoad()
-     */ 
-    public void audioPlay(string ID, float volume=1)
+     */
+    public void audioPlay(string ID, float volume = 1)
     {
-        if(!IDs.Contains(ID))
+        if (!IDs.Contains(ID))
         {
-            Debug.Log("The ID:"+ID+" does not exist");
+            Debug.Log("The ID:" + ID + " does not exist");
             return;
         }
 
-        csound.setStringChannel(ID, "Play"+volume.ToString());
+        csound.setChannel("volume" + ID, volume);
+        csound.setChannel("play" + ID, 1);
     }
 
     /**
@@ -268,7 +282,7 @@ public class CsoundUnity : MonoBehaviour {
             return;
         }
 
-        csound.setStringChannel(ID, "Speed" + speed.ToString());
+        csound.setChannel("speed" + ID, speed);
     }
 
     /**
@@ -276,13 +290,13 @@ public class CsoundUnity : MonoBehaviour {
      */
     public void audioStop(string ID)
     {
-        if(!IDs.Contains(ID))
+        if (!IDs.Contains(ID))
         {
-            Debug.Log("The ID:"+ID+" does not exist");
+            Debug.Log("The ID:" + ID + " does not exist");
             return;
         }
-        
-        csound.setStringChannel(ID, "Stop");
+
+        csound.setChannel("play" + ID, 0);
     }
 
     /**
@@ -290,46 +304,51 @@ public class CsoundUnity : MonoBehaviour {
      */
     public void audioVolume(string ID, float volume)
     {
-        if(!IDs.Contains(ID))
+        if (!IDs.Contains(ID))
         {
-            Debug.Log("The ID:"+ID+" does not exist");
+            Debug.Log("The ID:" + ID + " does not exist");
             return;
         }
-        
-        csound.setStringChannel(ID, "Volume:"+volume.ToString());
+
+
+        csound.setChannel("volume" + ID, volume);
     }
 
     /**
      * Start a fade in of the audio file associated with ID. See audioLoad()
      */
-    public void audioFadeIn(string ID, float fadeInTime, float endVolume=1, bool restart=false)
+    public void audioFadeIn(string ID, float fadeInTime, float endVolume = -1, bool restart = false)
     {
-        if(!IDs.Contains(ID))
+        if (!IDs.Contains(ID))
         {
-            Debug.Log("The ID:"+ID+" does not exist");
+            Debug.Log("The ID:" + ID + " does not exist");
             return;
         }
 
         if (restart == true)
             audioPlay(ID);
 
-        //csound.setStringChannel(ID, "FadeIn:" + fadeInTime.ToString());
-        //using _-_-_ is really hacky but...
-        csound.setStringChannel(ID, "FadeIn:" + fadeInTime.ToString() + "_-_-_" + endVolume + "|-|-|" + (restart==true ? "1" : "0"));
+        csound.setChannel("restart" + ID, restart == true ? 1 : 0);
+        csound.setChannel("fadeTime" + ID, fadeInTime);
+        csound.setChannel("fadeEndVolume" + ID, endVolume);
+        csound.setChannel("fadeIn" + ID, Random.Range(0, 100));
+
     }
 
     /**
      * Start a fade out of the audio file associated with ID. See audioLoad()
      */
-    public void audioFadeOut(string ID, float fadeOutTime, float volume=0)
+    public void audioFadeOut(string ID, float fadeOutTime, float endVolume = 0)
     {
-        if(!IDs.Contains(ID))
+        if (!IDs.Contains(ID))
         {
-            Debug.Log("The ID:"+ID+" does not exist");
+            Debug.Log("The ID:" + ID + " does not exist");
             return;
         }
 
-        csound.setStringChannel(ID, "FadeOut:" + fadeOutTime.ToString() + "_-_-_" + volume.ToString());
+        csound.setChannel("fadeTime" + ID, fadeOutTime);
+        csound.setChannel("fadeEndVolume" + ID, endVolume);
+        csound.setChannel("fadeOut" + ID, Random.Range(0, 100));
     }
 
     /**
@@ -350,7 +369,7 @@ public class CsoundUnity : MonoBehaviour {
      * endin
      * \endcode
     */
-    public void audioSend(string ID, float sendLevel, bool post=true)
+    public void audioSend(string ID, float sendLevel, bool post = true)
     {
         if (!IDs.Contains(ID))
         {
@@ -358,10 +377,10 @@ public class CsoundUnity : MonoBehaviour {
             return;
         }
 
-        if (post==false)
-            csound.setStringChannel(ID, "PreSend:" + sendLevel.ToString());
+        if (post == false)
+            csound.setStringChannel(ID, "preSend:" + sendLevel.ToString());
         else
-            csound.setStringChannel(ID, "PostSend:" + sendLevel.ToString());
+            csound.setStringChannel(ID, "postSend:" + sendLevel.ToString());
 
     }
 
@@ -401,8 +420,9 @@ public class CsoundUnity : MonoBehaviour {
             return;
         }
 
-        //breaking up the filename and the ID using _-_-_ is really hacky but...
-        csound.setStringChannel(ID_1, "Branch:" + getFilenameFromID(ID_2) + "_-_-_" + ID_2);
+        csound.setStringChannel("newBranchID" + ID_2, ID_2);
+        Debug.Log("Hello, my filename is:"+getFilenameFromID(ID_2));
+        csound.setStringChannel("branch"+ID_1, getFilenameFromID(ID_2));
     }
     /**
      * Returns a list of audio IDs that have been assigned using the audioLoad() method. 
@@ -429,7 +449,7 @@ public class CsoundUnity : MonoBehaviour {
             }
         }
      * \endcode
-     */ 
+     */
     public List<string> getIDs()
     {
         return IDs;
@@ -437,19 +457,19 @@ public class CsoundUnity : MonoBehaviour {
 
     /**
      * Returns a filename from a given ID string
-     */ 
+     */
     public string getFilenameFromID(string ID)
     {
         int index = 0;
-            foreach (string id in getIDs())
+        foreach (string id in getIDs())
+        {
+            if (ID == id)
             {
-                if (ID == id)
-                {
-                    return fileNames[index];
-                } 
-                index++;
+                return fileNames[index];
             }
-           
+            index++;
+        }
+
         return "";
     }
 
