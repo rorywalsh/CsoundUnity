@@ -1,11 +1,9 @@
 \hypertarget{class_csound_unity}{}\section{Csound\+Unity Class Reference}
 \label{class_csound_unity}\index{Csound\+Unity@{Csound\+Unity}}
-Inheritance diagram for Csound\+Unity\+:\begin{figure}[H]
-\begin{center}
-\leavevmode
-\includegraphics[height=2.000000cm]{class_csound_unity}
-\end{center}
-\end{figure}
+
+
+Inherits Mono\+Behaviour.
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -33,11 +31,13 @@ void \hyperlink{class_csound_unity_aee52d0bf0fd0fe5bb82ed0d5023a336c}{audio\+Sto
 \item 
 void \hyperlink{class_csound_unity_a2ab26a0009e493cb72c940f4e637b442}{audio\+Volume} (string I\+D, float volume)
 \item 
-void \hyperlink{class_csound_unity_a06dc602c5c56cc4a2c70f32c836b21cb}{audio\+Fade\+In} (string I\+D, float fade\+In\+Time, bool restart=false)
+void \hyperlink{class_csound_unity_a952d68f3432922a7a8d25724be0a4765}{audio\+Fade\+In} (string I\+D, float fade\+In\+Time, float end\+Volume=1, bool restart=false)
 \item 
-void \hyperlink{class_csound_unity_ae42e6f64776348f3eee0c6458f053972}{audio\+Fade\+Out} (string I\+D, float fade\+Out\+Time)
+void \hyperlink{class_csound_unity_a175be60ec991b2d0f7cd021ebfe21aa2}{audio\+Fade\+Out} (string I\+D, float fade\+Out\+Time, float end\+Volume=0)
 \item 
-void \hyperlink{class_csound_unity_aeaa6ea32c9a7903471a1f65238fc40ee}{audio\+X\+Fade} (string I\+D\+\_\+1, string I\+D\+\_\+2, float time)
+void \hyperlink{class_csound_unity_ac486217ea6c6d3676e0bb82d5330d924}{audio\+Send} (string I\+D, float send\+Level, bool post=true)
+\item 
+void \hyperlink{class_csound_unity_ad6922e2307a99215969ede166af0551b}{audio\+X\+Fade} (string I\+D\+\_\+1, string I\+D\+\_\+2, float I\+D\+\_\+2\+\_\+vol, float fade\+Out\+Time, float fade\+In\+Time)
 \item 
 void \hyperlink{class_csound_unity_a91ce642f08df0b6612beed99120cf526}{audio\+Branch} (string I\+D\+\_\+1, string I\+D\+\_\+2)
 \item 
@@ -50,7 +50,7 @@ string \hyperlink{class_csound_unity_a3e02f546264a98d51fd1f8cdb3fd462d}{get\+Fil
 \item 
 string \hyperlink{class_csound_unity_af1554e17f6554a2b17d0b25c1e477b4f}{csound\+File} = \char`\"{}Csound\+Unity.\+csd\char`\"{}
 \item 
-bool \hyperlink{class_csound_unity_a82c718d7b9393a4afb5d231e0bbef663}{log\+Csound\+Output} =false
+bool \hyperlink{class_csound_unity_a82c718d7b9393a4afb5d231e0bbef663}{log\+Csound\+Output} = false
 \end{DoxyCompactItemize}
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
@@ -82,24 +82,26 @@ List$<$ string $>$ \hyperlink{class_csound_unity_a7b8bf3df0f6b36a6509c45d71b1f20
 \item[{string}]{I\+D\+\_\+2}
 \end{DoxyParamCaption}
 )}\label{class_csound_unity_a91ce642f08df0b6612beed99120cf526}
-Jumps to track associated with I\+D\+\_\+2, but waits until I\+D\+\_\+1 has finished playing. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_a06dc602c5c56cc4a2c70f32c836b21cb}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Fade\+In@{audio\+Fade\+In}}
+Jumps to track associated with I\+D\+\_\+2, but waits until I\+D\+\_\+1 has finished playing. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_a952d68f3432922a7a8d25724be0a4765}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Fade\+In@{audio\+Fade\+In}}
 \index{audio\+Fade\+In@{audio\+Fade\+In}!Csound\+Unity@{Csound\+Unity}}
-\subsubsection[{audio\+Fade\+In(string I\+D, float fade\+In\+Time, bool restart=false)}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+audio\+Fade\+In (
+\subsubsection[{audio\+Fade\+In(string I\+D, float fade\+In\+Time, float end\+Volume=1, bool restart=false)}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+audio\+Fade\+In (
 \begin{DoxyParamCaption}
 \item[{string}]{I\+D, }
 \item[{float}]{fade\+In\+Time, }
+\item[{float}]{end\+Volume = {\ttfamily 1}, }
 \item[{bool}]{restart = {\ttfamily false}}
 \end{DoxyParamCaption}
-)}\label{class_csound_unity_a06dc602c5c56cc4a2c70f32c836b21cb}
-Start a fade in of the audio file associated with I\+D. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_ae42e6f64776348f3eee0c6458f053972}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Fade\+Out@{audio\+Fade\+Out}}
+)}\label{class_csound_unity_a952d68f3432922a7a8d25724be0a4765}
+Start a fade in of the audio file associated with I\+D. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_a175be60ec991b2d0f7cd021ebfe21aa2}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Fade\+Out@{audio\+Fade\+Out}}
 \index{audio\+Fade\+Out@{audio\+Fade\+Out}!Csound\+Unity@{Csound\+Unity}}
-\subsubsection[{audio\+Fade\+Out(string I\+D, float fade\+Out\+Time)}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+audio\+Fade\+Out (
+\subsubsection[{audio\+Fade\+Out(string I\+D, float fade\+Out\+Time, float end\+Volume=0)}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+audio\+Fade\+Out (
 \begin{DoxyParamCaption}
 \item[{string}]{I\+D, }
-\item[{float}]{fade\+Out\+Time}
+\item[{float}]{fade\+Out\+Time, }
+\item[{float}]{end\+Volume = {\ttfamily 0}}
 \end{DoxyParamCaption}
-)}\label{class_csound_unity_ae42e6f64776348f3eee0c6458f053972}
-Start a fade out of the audio file associated with I\+D. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Load@{audio\+Load}}
+)}\label{class_csound_unity_a175be60ec991b2d0f7cd021ebfe21aa2}
+Start a fade out of the audio file associated with I\+D. Fades to 0 by default. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Load@{audio\+Load}}
 \index{audio\+Load@{audio\+Load}!Csound\+Unity@{Csound\+Unity}}
 \subsubsection[{audio\+Load(string filename, string I\+D, bool start\+Playing=false, float volume=1)}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+audio\+Load (
 \begin{DoxyParamCaption}
@@ -109,7 +111,7 @@ Start a fade out of the audio file associated with I\+D. See \hyperlink{class_cs
 \item[{float}]{volume = {\ttfamily 1}}
 \end{DoxyParamCaption}
 )}\label{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}
-Gets an audio file ready for playback. This can be used to instantiate an audio file for playback at a later stage, or can be set up to start playback immeadiately if start\+Playing is true. The string passed as I\+D can be used to control the audio file in the audio-\/methods.
+Gets an audio file ready for playback. This can be used to instantiate an audio file for playback at a later stage, or can be set up to start playback immediately if start\+Playing is true. The string passed as I\+D can be used to control the audio file in the audio-\/methods.
 
 This method should be called in the scripts Start() method, after the \hyperlink{class_csound_unity}{Csound\+Unity} object has been accessed in the script\textquotesingle{}s \hyperlink{class_csound_unity_af053c33dc16979fcf4cbaf4ebf435da4}{Awake()} function. See above.
 
@@ -128,7 +130,30 @@ This method should be called in the scripts Start() method, after the \hyperlink
 \item[{float}]{volume = {\ttfamily 1}}
 \end{DoxyParamCaption}
 )}\label{class_csound_unity_a64d2ae9a76b8a1561434c190f40ae59e}
-Starts playback of the audio file associated with I\+D. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_a8ec213294d8f20ef60a30f7394ab87a3}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Speed@{audio\+Speed}}
+Starts playback of the audio file associated with I\+D. Default volume is 1. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_ac486217ea6c6d3676e0bb82d5330d924}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Send@{audio\+Send}}
+\index{audio\+Send@{audio\+Send}!Csound\+Unity@{Csound\+Unity}}
+\subsubsection[{audio\+Send(string I\+D, float send\+Level, bool post=true)}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+audio\+Send (
+\begin{DoxyParamCaption}
+\item[{string}]{I\+D, }
+\item[{float}]{send\+Level, }
+\item[{bool}]{post = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}\label{class_csound_unity_ac486217ea6c6d3676e0bb82d5330d924}
+Send audio to a named channel for further processing. Sends can act as post, or pre. The target channel name will be structured as I\+D\+\_\+\+Pre\+Send\+L/\+R, or I\+D\+\_\+\+P\+Ost\+Send\+L/\+R. For example, if the I\+D is \textquotesingle{}layer1\textquotesingle{}, the audio can be accessed in another Csound instrument by using 
+\begin{DoxyCode}
+instr 1
+
+aLeft chnget \textcolor{stringliteral}{"layer1\_PostSendL"}
+aRight chnget \textcolor{stringliteral}{"layer1\_PostSendR"}
+
+aLeft reverb aLeft, 1
+aRight reverb aRight, 1
+
+outs aLeft, aRight
+
+endin
+\end{DoxyCode}
+ \hypertarget{class_csound_unity_a8ec213294d8f20ef60a30f7394ab87a3}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Speed@{audio\+Speed}}
 \index{audio\+Speed@{audio\+Speed}!Csound\+Unity@{Csound\+Unity}}
 \subsubsection[{audio\+Speed(string I\+D, float speed)}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+audio\+Speed (
 \begin{DoxyParamCaption}
@@ -136,7 +161,7 @@ Starts playback of the audio file associated with I\+D. See \hyperlink{class_cso
 \item[{float}]{speed}
 \end{DoxyParamCaption}
 )}\label{class_csound_unity_a8ec213294d8f20ef60a30f7394ab87a3}
-Controls playback speed of an audio file associated with I\+D. 1 is the nromal playback speed. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_aee52d0bf0fd0fe5bb82ed0d5023a336c}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Stop@{audio\+Stop}}
+Controls playback speed of an audio file associated with I\+D. 1 is the normal playback speed. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_aee52d0bf0fd0fe5bb82ed0d5023a336c}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+Stop@{audio\+Stop}}
 \index{audio\+Stop@{audio\+Stop}!Csound\+Unity@{Csound\+Unity}}
 \subsubsection[{audio\+Stop(string I\+D)}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+audio\+Stop (
 \begin{DoxyParamCaption}
@@ -151,16 +176,18 @@ Starts playback of the audio file associated with I\+D. See \hyperlink{class_cso
 \item[{float}]{volume}
 \end{DoxyParamCaption}
 )}\label{class_csound_unity_a2ab26a0009e493cb72c940f4e637b442}
-Control the volume of the audio file associated with I\+D. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_aeaa6ea32c9a7903471a1f65238fc40ee}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+X\+Fade@{audio\+X\+Fade}}
+Control the volume of the audio file associated with I\+D. See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_ad6922e2307a99215969ede166af0551b}{}\index{Csound\+Unity@{Csound\+Unity}!audio\+X\+Fade@{audio\+X\+Fade}}
 \index{audio\+X\+Fade@{audio\+X\+Fade}!Csound\+Unity@{Csound\+Unity}}
-\subsubsection[{audio\+X\+Fade(string I\+D\+\_\+1, string I\+D\+\_\+2, float time)}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+audio\+X\+Fade (
+\subsubsection[{audio\+X\+Fade(string I\+D\+\_\+1, string I\+D\+\_\+2, float I\+D\+\_\+2\+\_\+vol, float fade\+Out\+Time, float fade\+In\+Time)}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+audio\+X\+Fade (
 \begin{DoxyParamCaption}
 \item[{string}]{I\+D\+\_\+1, }
 \item[{string}]{I\+D\+\_\+2, }
-\item[{float}]{time}
+\item[{float}]{I\+D\+\_\+2\+\_\+vol, }
+\item[{float}]{fade\+Out\+Time, }
+\item[{float}]{fade\+In\+Time}
 \end{DoxyParamCaption}
-)}\label{class_csound_unity_aeaa6ea32c9a7903471a1f65238fc40ee}
-Ends playback of the track associated with I\+D\+\_\+1, and cross-\/fades into the start of track associated with I\+D\+\_\+2. The same effects can also be created using a combination of \hyperlink{class_csound_unity_a06dc602c5c56cc4a2c70f32c836b21cb}{audio\+Fade\+In()} and \hyperlink{class_csound_unity_ae42e6f64776348f3eee0c6458f053972}{audio\+Fade\+Out()} See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_af053c33dc16979fcf4cbaf4ebf435da4}{}\index{Csound\+Unity@{Csound\+Unity}!Awake@{Awake}}
+)}\label{class_csound_unity_ad6922e2307a99215969ede166af0551b}
+Ends playback of the track associated with I\+D\+\_\+1, and cross-\/fades into the start of track associated with I\+D\+\_\+2. Unique fade in and out times can be passed, along with a target volume for the track fading in. When using audio\+X\+Fade, the track being faded in always starts from the beginning. The same effects can also be created using a combination of \hyperlink{class_csound_unity_a952d68f3432922a7a8d25724be0a4765}{audio\+Fade\+In()} and \hyperlink{class_csound_unity_a175be60ec991b2d0f7cd021ebfe21aa2}{audio\+Fade\+Out()} See \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} \hypertarget{class_csound_unity_af053c33dc16979fcf4cbaf4ebf435da4}{}\index{Csound\+Unity@{Csound\+Unity}!Awake@{Awake}}
 \index{Awake@{Awake}!Csound\+Unity@{Csound\+Unity}}
 \subsubsection[{Awake()}]{\setlength{\rightskip}{0pt plus 5cm}void Csound\+Unity.\+Awake (
 \begin{DoxyParamCaption}
@@ -306,5 +333,5 @@ By default, \hyperlink{class_csound_unity}{Csound\+Unity} will try to load a fil
 \subsubsection[{I\+Ds}]{\setlength{\rightskip}{0pt plus 5cm}List$<$string$>$ Csound\+Unity.\+I\+Ds\hspace{0.3cm}{\ttfamily [private]}}\label{class_csound_unity_a7b8bf3df0f6b36a6509c45d71b1f202d}
 List of I\+Ds that have been assocated with file loaded using the \hyperlink{class_csound_unity_a5c571bca9cfc3628f977a16c2d56a48f}{audio\+Load()} method \hypertarget{class_csound_unity_a82c718d7b9393a4afb5d231e0bbef663}{}\index{Csound\+Unity@{Csound\+Unity}!log\+Csound\+Output@{log\+Csound\+Output}}
 \index{log\+Csound\+Output@{log\+Csound\+Output}!Csound\+Unity@{Csound\+Unity}}
-\subsubsection[{log\+Csound\+Output}]{\setlength{\rightskip}{0pt plus 5cm}bool Csound\+Unity.\+log\+Csound\+Output =false}\label{class_csound_unity_a82c718d7b9393a4afb5d231e0bbef663}
+\subsubsection[{log\+Csound\+Output}]{\setlength{\rightskip}{0pt plus 5cm}bool Csound\+Unity.\+log\+Csound\+Output = false}\label{class_csound_unity_a82c718d7b9393a4afb5d231e0bbef663}
 {\bfseries log\+Csound\+Output} is a boolean variable. As a boolean it can be either true or false. When it is set to true, all Csound output messages will be sent to the Unity output console. Note that this can slow down performance if there is a lot of information being printed. 

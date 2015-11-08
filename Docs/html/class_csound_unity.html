@@ -91,14 +91,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">CsoundUnity Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="dynheader">
-Inheritance diagram for CsoundUnity:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="class_csound_unity.png" usemap="#CsoundUnity_map" alt=""/>
-  <map id="CsoundUnity_map" name="CsoundUnity_map">
-</map>
- </div></div>
+
+<p>Inherits MonoBehaviour.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -126,12 +120,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aee52d0bf0fd0fe5bb82ed0d5023a336c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ab26a0009e493cb72c940f4e637b442"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a2ab26a0009e493cb72c940f4e637b442">audioVolume</a> (string ID, float volume)</td></tr>
 <tr class="separator:a2ab26a0009e493cb72c940f4e637b442"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06dc602c5c56cc4a2c70f32c836b21cb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a06dc602c5c56cc4a2c70f32c836b21cb">audioFadeIn</a> (string ID, float fadeInTime, bool restart=false)</td></tr>
-<tr class="separator:a06dc602c5c56cc4a2c70f32c836b21cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae42e6f64776348f3eee0c6458f053972"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ae42e6f64776348f3eee0c6458f053972">audioFadeOut</a> (string ID, float fadeOutTime)</td></tr>
-<tr class="separator:ae42e6f64776348f3eee0c6458f053972"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeaa6ea32c9a7903471a1f65238fc40ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aeaa6ea32c9a7903471a1f65238fc40ee">audioXFade</a> (string ID_1, string ID_2, float time)</td></tr>
-<tr class="separator:aeaa6ea32c9a7903471a1f65238fc40ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a952d68f3432922a7a8d25724be0a4765"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a952d68f3432922a7a8d25724be0a4765">audioFadeIn</a> (string ID, float fadeInTime, float endVolume=1, bool restart=false)</td></tr>
+<tr class="separator:a952d68f3432922a7a8d25724be0a4765"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a175be60ec991b2d0f7cd021ebfe21aa2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a175be60ec991b2d0f7cd021ebfe21aa2">audioFadeOut</a> (string ID, float fadeOutTime, float endVolume=0)</td></tr>
+<tr class="separator:a175be60ec991b2d0f7cd021ebfe21aa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac486217ea6c6d3676e0bb82d5330d924"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ac486217ea6c6d3676e0bb82d5330d924">audioSend</a> (string ID, float sendLevel, bool post=true)</td></tr>
+<tr class="separator:ac486217ea6c6d3676e0bb82d5330d924"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6922e2307a99215969ede166af0551b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ad6922e2307a99215969ede166af0551b">audioXFade</a> (string ID_1, string ID_2, float ID_2_vol, float fadeOutTime, float fadeInTime)</td></tr>
+<tr class="separator:ad6922e2307a99215969ede166af0551b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91ce642f08df0b6612beed99120cf526"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a91ce642f08df0b6612beed99120cf526">audioBranch</a> (string ID_1, string ID_2)</td></tr>
 <tr class="separator:a91ce642f08df0b6612beed99120cf526"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3c884b51737a45ef70ea841d0d05843"><td class="memItemLeft" align="right" valign="top">List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#af3c884b51737a45ef70ea841d0d05843">getIDs</a> ()</td></tr>
@@ -143,7 +139,7 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:af1554e17f6554a2b17d0b25c1e477b4f"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#af1554e17f6554a2b17d0b25c1e477b4f">csoundFile</a> = &quot;CsoundUnity.csd&quot;</td></tr>
 <tr class="separator:af1554e17f6554a2b17d0b25c1e477b4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82c718d7b9393a4afb5d231e0bbef663"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a82c718d7b9393a4afb5d231e0bbef663">logCsoundOutput</a> =false</td></tr>
+<tr class="memitem:a82c718d7b9393a4afb5d231e0bbef663"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a82c718d7b9393a4afb5d231e0bbef663">logCsoundOutput</a> = false</td></tr>
 <tr class="separator:a82c718d7b9393a4afb5d231e0bbef663"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
@@ -193,7 +189,7 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
 
 </div>
 </div>
-<a class="anchor" id="a06dc602c5c56cc4a2c70f32c836b21cb"></a>
+<a class="anchor" id="a952d68f3432922a7a8d25724be0a4765"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -212,6 +208,12 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>endVolume</em> = <code>1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>restart</em> = <code>false</code>&#160;</td>
         </tr>
@@ -226,7 +228,7 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
 
 </div>
 </div>
-<a class="anchor" id="ae42e6f64776348f3eee0c6458f053972"></a>
+<a class="anchor" id="a175be60ec991b2d0f7cd021ebfe21aa2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -240,7 +242,13 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>fadeOutTime</em>&#160;</td>
+          <td class="paramname"><em>fadeOutTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>endVolume</em> = <code>0</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -249,7 +257,7 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Start a fade out of the audio file associated with ID. See <a class="el" href="class_csound_unity.html#a5c571bca9cfc3628f977a16c2d56a48f">audioLoad()</a> </p>
+<p>Start a fade out of the audio file associated with ID. Fades to 0 by default. See <a class="el" href="class_csound_unity.html#a5c571bca9cfc3628f977a16c2d56a48f">audioLoad()</a> </p>
 
 </div>
 </div>
@@ -288,7 +296,7 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Gets an audio file ready for playback. This can be used to instantiate an audio file for playback at a later stage, or can be set up to start playback immeadiately if startPlaying is true. The string passed as ID can be used to control the audio file in the audio-methods.</p>
+<p>Gets an audio file ready for playback. This can be used to instantiate an audio file for playback at a later stage, or can be set up to start playback immediately if startPlaying is true. The string passed as ID can be used to control the audio file in the audio-methods.</p>
 <p>This method should be called in the scripts Start() method, after the <a class="el" href="class_csound_unity.html">CsoundUnity</a> object has been accessed in the script's <a class="el" href="class_csound_unity.html#af053c33dc16979fcf4cbaf4ebf435da4">Awake()</a> function. See above.</p>
 <div class="fragment"><div class="line"><span class="keywordtype">void</span> Start()</div>
 <div class="line">{</div>
@@ -320,8 +328,51 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Starts playback of the audio file associated with ID. See <a class="el" href="class_csound_unity.html#a5c571bca9cfc3628f977a16c2d56a48f">audioLoad()</a> </p>
+<p>Starts playback of the audio file associated with ID. Default volume is 1. See <a class="el" href="class_csound_unity.html#a5c571bca9cfc3628f977a16c2d56a48f">audioLoad()</a> </p>
 
+</div>
+</div>
+<a class="anchor" id="ac486217ea6c6d3676e0bb82d5330d924"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.audioSend </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>ID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>sendLevel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>post</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Send audio to a named channel for further processing. Sends can act as post, or pre. The target channel name will be structured as ID_PreSendL/R, or ID_POstSendL/R. For example, if the ID is 'layer1', the audio can be accessed in another Csound instrument by using </p><div class="fragment"><div class="line">instr 1</div>
+<div class="line"></div>
+<div class="line">aLeft chnget <span class="stringliteral">&quot;layer1_PostSendL&quot;</span></div>
+<div class="line">aRight chnget <span class="stringliteral">&quot;layer1_PostSendR&quot;</span></div>
+<div class="line"></div>
+<div class="line">aLeft reverb aLeft, 1</div>
+<div class="line">aRight reverb aRight, 1</div>
+<div class="line"></div>
+<div class="line">outs aLeft, aRight</div>
+<div class="line"></div>
+<div class="line">endin</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a class="anchor" id="a8ec213294d8f20ef60a30f7394ab87a3"></a>
@@ -347,7 +398,7 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Controls playback speed of an audio file associated with ID. 1 is the nromal playback speed. See <a class="el" href="class_csound_unity.html#a5c571bca9cfc3628f977a16c2d56a48f">audioLoad()</a> </p>
+<p>Controls playback speed of an audio file associated with ID. 1 is the normal playback speed. See <a class="el" href="class_csound_unity.html#a5c571bca9cfc3628f977a16c2d56a48f">audioLoad()</a> </p>
 
 </div>
 </div>
@@ -395,7 +446,7 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
 
 </div>
 </div>
-<a class="anchor" id="aeaa6ea32c9a7903471a1f65238fc40ee"></a>
+<a class="anchor" id="ad6922e2307a99215969ede166af0551b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -415,7 +466,19 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>time</em>&#160;</td>
+          <td class="paramname"><em>ID_2_vol</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>fadeOutTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>fadeInTime</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -424,7 +487,7 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Ends playback of the track associated with ID_1, and cross-fades into the start of track associated with ID_2. The same effects can also be created using a combination of <a class="el" href="class_csound_unity.html#a06dc602c5c56cc4a2c70f32c836b21cb">audioFadeIn()</a> and <a class="el" href="class_csound_unity.html#ae42e6f64776348f3eee0c6458f053972">audioFadeOut()</a> See <a class="el" href="class_csound_unity.html#a5c571bca9cfc3628f977a16c2d56a48f">audioLoad()</a> </p>
+<p>Ends playback of the track associated with ID_1, and cross-fades into the start of track associated with ID_2. Unique fade in and out times can be passed, along with a target volume for the track fading in. When using audioXFade, the track being faded in always starts from the beginning. The same effects can also be created using a combination of <a class="el" href="class_csound_unity.html#a952d68f3432922a7a8d25724be0a4765">audioFadeIn()</a> and <a class="el" href="class_csound_unity.html#a175be60ec991b2d0f7cd021ebfe21aa2">audioFadeOut()</a> See <a class="el" href="class_csound_unity.html#a5c571bca9cfc3628f977a16c2d56a48f">audioLoad()</a> </p>
 
 </div>
 </div>
@@ -816,7 +879,7 @@ List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fileN
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool CsoundUnity.logCsoundOutput =false</td>
+          <td class="memname">bool CsoundUnity.logCsoundOutput = false</td>
         </tr>
       </table>
 </div><div class="memdoc">
