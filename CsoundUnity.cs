@@ -206,8 +206,13 @@ public class CsoundUnity : MonoBehaviour
     public void playOneShot(string filename, float volume = 1f, float pos = .5f, float pitch = 1)
     {
         string audioFile = Application.dataPath + "/Audio/" + filename;
-        //Debug.Log("i\"PlayOneShot\" 0 1 \""+audioFile+"\" "+volume.ToString()+" "+pos.ToString()+" "+pitch.ToString());
-        csound.sendScoreEvent("i\"PlayOneShot\" 0 1 \"" + audioFile + "\" " + volume.ToString() + " " + pos.ToString() + " " + pitch.ToString());
+        if (File.Exists(audioFile))
+        {
+            //Debug.Log("i\"PlayOneShot\" 0 1 \""+audioFile+"\" "+volume.ToString()+" "+pos.ToString()+" "+pitch.ToString());
+            csound.sendScoreEvent("i\"PlayOneShot\" 0 1 \"" + audioFile + "\" " + volume.ToString() + " " + pos.ToString() + " " + pitch.ToString());
+        }
+        else
+            Debug.Log(audioFile + " does not exist. Please check the file name.");
     }
 
     /**

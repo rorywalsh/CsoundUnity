@@ -99,9 +99,9 @@ SChannel sprintf "fadeOut%s", SId
 chnset 0, SChannel
 kFadeOut chnget SChannel
 
-kFadeTime init 1
+kFadeTime init 0
 SChannel sprintf "fadeTime%s", SId
-chnset 1, SChannel
+chnset 0, SChannel
 kFadeTime chnget SChannel
 
 SChannel sprintf "restart%s", SId
@@ -113,9 +113,9 @@ SChannel sprintf "fadeStartVolume%s", SId
 chnset 1, SChannel
 kFadeStartVolume chnget SChannel
 
-kFadeEndVolume init 1
+kFadeEndVolume init p8
 SChannel sprintf "fadeEndVolume%s", SId
-chnset 1, SChannel
+chnset p8, SChannel
 kFadeEndVolume chnget SChannel
 
 SChannel sprintf "postSend%s", SId
@@ -126,11 +126,9 @@ kPreSend chnget SChannel
 
 
 kPan init 1
-SInfo sprintf "Initialising audio file: %s\nChannel ID is: %s, Should play: %d, Volume is: %d\n", SFile, SId, p7, kVolume
-prints SInfo
 
- 
 if changed:k(kFadeIn)==1 then 	;start fade in
+
 		if kFadeEndVolume==-1 then
 			kFadeEndVolume = kVolume
 		endif 
@@ -162,6 +160,9 @@ if changed:k(SNewBranchFile)==1 then
 endif 
 
 RE_START:
+
+
+
 if kPlay==1 then
 	;if branching, kill this instrument and schedule a new instance
 	iLen filelen SFile
@@ -189,8 +190,13 @@ endif
 ;kFadeLevel FadeIO kFadeTrigger, kFadeTime, kFadeType, kVolume
 
 RE_FADE:
+SInfo sprintf "Initialising audio file: %s\nChannel ID is: %s, Should play: %d, Volume is: %d\n", SFile, SId, p7,  i(kFadeEndVolume) 
+prints SInfo
+kFadeLevel linseg i(kFadeStartVolume), 0.0000001, i(kFadeEndVolume), 1, i(kFadeEndVolume)  
 
-kFadeLevel linseg i(kFadeStartVolume), i(kFadeTime), i(kFadeEndVolume), 1, i(kFadeEndVolume)  
+outs aLeft*kFadeLevel, aRight*kFadeLevel
+
+
 
 ;mixer section
 aMixL = ((aLeft)*kVolume)*kFadeLevel
@@ -209,7 +215,5 @@ if kPreSend>0 then
 	chnset aLeft*kPreSend, SChanL
 	chnset aRight*kPreSend, SChanR
 endif 
-
-outs aLeft*kFadeLevel, aRight*kFadeLevel
 
 endin
