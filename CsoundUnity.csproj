@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;OSX</DefineConstants>
+    <DefineConstants>DEBUG;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
@@ -35,10 +35,10 @@
     <Compile Include="csoundcsharp.cs" />
     <Compile Include="CsoundUnityBridge.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files\Unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

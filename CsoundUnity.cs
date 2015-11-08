@@ -262,7 +262,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /**
-     * Starts playback of the audio file associated with ID. See audioLoad()
+     * Starts playback of the audio file associated with ID. Default volume is 1. See audioLoad()
      */
     public void audioPlay(string ID, float volume = 1)
     {
@@ -322,7 +322,7 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Start a fade in of the audio file associated with ID. See audioLoad()
      */
-    public void audioFadeIn(string ID, float fadeInTime, float endVolume = -1, bool restart = false)
+    public void audioFadeIn(string ID, float fadeInTime, float endVolume = 1, bool restart = false)
     {
         if (!IDs.Contains(ID))
         {
@@ -341,7 +341,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /**
-     * Start a fade out of the audio file associated with ID. See audioLoad()
+     * Start a fade out of the audio file associated with ID. Fades to 0 by default. See audioLoad()
      */
     public void audioFadeOut(string ID, float fadeOutTime, float endVolume = 0)
     {
