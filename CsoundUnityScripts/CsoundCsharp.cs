@@ -9,30 +9,19 @@ using System.Runtime.InteropServices;
  * C S O U N D for C#
  * Simple wrapper building C# hosts for Csound 6 via the Csound API
  * and is licensed under the same terms and disclaimers as Csound described below.
- * Copyright (C) 2013 Richard Henninger
+ * Copyright (C) 2013 Richard Henninger, Rory Walsh
  *
- * C S O U N D
  *
- * An auto-extensible system for making music on computers
- * by means of software alone.
- *
- * Copyright (C) 2001-2013 Michael Gogins, Matt Ingalls, John D. Ramsdell,
- *                         John P. ffitch, Istvan Varga, Victor Lazzarini,
- *                         Andres Cabrera and Steven Yi
- *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+ * to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
+ * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
+ * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
 
@@ -43,18 +32,21 @@ namespace csoundcsharp
 	// http://csound6net.codeplex.com
 
 	// This lightweight wrapper was created to provide an interface to the Unity3d game engine
-	public partial class Csound6 
-	{
+	public partial class Csound6
+    {
 
-		#if OSX
+#if OSX
 		internal const string _dllVersion = "/Assets/StreamingAssets/CsoundLib64.framework/CsoundLib64";
-		#elif ANDROID
+#elif ANDROID
 		internal const string _dllVersion = "/Assets/StreamingAssets/libcsoundandroid.so";
-		#elif WINDOWS
-        internal const string _dllVersion = "csound64.dll";
-		#endif
+#elif WINDOWS
+        
+#endif
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN 
+        internal const string _dllVersion = "csound64.dll";
+#endif
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void MessageCallbackProxy(IntPtr csound, Int32 attr, string format, IntPtr valist);
 		
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -109,9 +101,15 @@ namespace csoundcsharp
 			internal static extern IntPtr csoundInputMessage([In] IntPtr csound, [In] String str);
 			
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-			internal static extern IntPtr csoundSetControlChannel([In] IntPtr csound, [In] String str, [In] double value);            
+			internal static extern IntPtr csoundSetControlChannel([In] IntPtr csound, [In] String str, [In] double value);
 
-			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern IntPtr csoundAddSpinSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel, [In] double sample);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern double csoundGetSpoutSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
 			internal static extern IntPtr csoundSetStringChannel([In] IntPtr csound, [In] String str, [In] String value);
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
