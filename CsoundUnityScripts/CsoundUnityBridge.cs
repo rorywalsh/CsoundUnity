@@ -19,8 +19,7 @@ using System.Net;
 using System.Text;
 using System.Runtime.InteropServices;
 using csoundcsharp;
-using UnityEditor;
-using UnityEngine;
+
 
 
 /*
@@ -42,8 +41,13 @@ public class CsoundUnityBridge
 	{
         //manualReset = new ManualResetEvent(false);
 
+		//
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN 
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+		if(Directory.Exists(csoundDir+"/CsoundLib64.framework/Resources/Opcodes64"))
+			Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir+"/CsoundLib64.framework/Resources/Opcodes64");
+#endif
         csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero);
 		Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
 		string[] runargs = new string[] { "csound", csdFile };

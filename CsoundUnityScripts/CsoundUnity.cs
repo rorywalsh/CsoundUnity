@@ -1,55 +1,27 @@
-using UnityEngine;
+/*
+Copyright (C) 2015 Rory Walsh. 
 
-
-/*! \mainpage
- * 
- * Copyright (C) 2015 Rory Walsh. This interface would not have been possible without Richard Henninger's .NET interface to the Csound API.  
- * 
- * \subsection section_using Using
- * Once the CsoundUnity package has been imported, add the CsoundUnity script to the main Camera. Then, in any scripts you wish 
- * to access Csound, make sure the script's Awake() method calls GetComponent() to get a reference to the CsoundUnity script.
- * 
- * \code
-using UnityEngine;
-using System.Collections;
-
-public class MyScript : MonoBehaviour
-{
-    private CsoundUnity csoundUnity;
+This interface would not have been possible without Richard Henninger's .NET interface to the Csound API. 
  
-    void Awake()
-    {
-        csoundUnity = Camera.main.GetComponent<CsoundUnity>();        
-    }
- }
- * \endcode
- * 
- * This will provide access to all of the methods from the CsoundUnity class. You cannot call the core Csound object contained with
- * the CsoundUnityBridge class directly from the CsoundUnity class. If you need to access more core Csound API functions,
- * you will need to rebuild the CsoundUnity dll, and update the CsoundUnityBridge C# class. You can then add
- * methods to the CsoundUnity class definition in the same way it is done for CsoundUnity::setChannel(), 
- * CsoundUnity::setChannel() etc. 
- * 
- * \section section_licenses License
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
- * to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
- * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
- * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-
+using UnityEngine;
+using UnityEditor;
 
 /*
  * CsoundUnity class
  */
-[AddComponentMenu("Audio/Csound instrument")]
+[AddComponentMenu("Audio/CsoundUnity")]
 [System.Serializable]
 [RequireComponent(typeof(AudioSource))]
 public class CsoundUnity : MonoBehaviour
@@ -82,26 +54,13 @@ public class CsoundUnity : MonoBehaviour
     private double zerdbfs = 1;
     private bool compiledOk = false;
     public bool mute = false;
+    public bool processClipAudio = false;
 
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
      * CsoundUnity object make sure to create them in the scripts Awake() function.
      * 
-     * \code
-        using UnityEngine;
-        using System.Collections;
-
-        public class MyScript : MonoBehaviour
-        {
-            private CsoundUnity csoundUnity;
- 
-            void Awake()
-            {
-                csoundUnity = Camera.main.GetComponent<CsoundUnity>();        
-            }
-         }
-         * \endcode
      */
     void Awake()
     {
@@ -154,18 +113,20 @@ public class CsoundUnity : MonoBehaviour
     }
 
 
-    //this gets called for every block of samples
-    void OnAudioFilterRead(float[] data, int channels)
-    {
-        if (csound != null)
-        {
-            processBlock(data, channels);
-        }
-    }
-
     /**
-    * Processes a block of samples
-    */
+     * this gets called for every block of samples
+     */
+     void OnAudioFilterRead(float[] data, int channels)
+     {
+         if (csound != null)
+         {
+             processBlock(data, channels);
+         }
+     }
+
+     /**
+     * Processes a block of samples
+     */
     public void processBlock(float[] samples, int numChannels)
     {
         if (compiledOk)
@@ -176,10 +137,12 @@ public class CsoundUnity : MonoBehaviour
                     samples[i] = 0f;
                 else {
                     //pass audio from AudioSource clip to Csound
-                    //setSample(i, 0, samples[i]);
-                    //if (numChannels == 2)
-                    //    setSample(i + 1, 1, samples[i + 1]);
-
+                    if (processClipAudio)
+                    {
+                        setSample(i, 0, samples[i]);
+                        if (numChannels == 2)
+                            setSample(i, 1, samples[i + 1]);
+                    }
                     //Csound's buffer sizes can be different to that of Unity, therefore we need
                     //to call performKsmps() only when ksmps samples have been processed
                     if ((ksmpsIndex >= ksmps) && (ksmps > 0))
@@ -238,6 +201,23 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /**
+    * process a ksmps-sized block of samples
+    */
+    public string getFilePath(Object obj)
+    {
+        return Application.dataPath.Replace("Assets", "") + AssetDatabase.GetAssetPath(obj);
+    }
+    /**
+     * map float within one range to another 
+     */
+
+    public static float Remap(float value, float from1, float to1, float from2, float to2)
+    {
+        float retValue =  (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+        return Mathf.Clamp(retValue, from2, to2);
+    }
+
+    /**
      * Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
      */
     public void setChannel(string channel, float val)
@@ -262,7 +242,7 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Retrieves a single sample from a Csound function table. 
      */
-    public double getTable(int tableNumber, int index)
+    public double getTableSample(int tableNumber, int index)
     {
         return csound.getTable(tableNumber, index);
     }
@@ -271,6 +251,7 @@ public class CsoundUnity : MonoBehaviour
      */
     public void sendScoreEvent(string scoreEvent)
     {
+        //print(scoreEvent);
         csound.sendScoreEvent(scoreEvent);
     }
 
@@ -281,7 +262,7 @@ public class CsoundUnity : MonoBehaviour
     {
         //print Csound message to Unity console....
         for (int i = 0; i < csound.getCsoundMessageCount(); i++)
-            Debug.Log(csound.getCsoundMessage() + "\n");
+            print(csound.getCsoundMessage());
     }
 }
 

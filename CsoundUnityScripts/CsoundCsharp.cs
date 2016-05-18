@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
-//using System.ComponentModel;
-
 
 /*
  * C S O U N D for C#
@@ -35,16 +31,10 @@ namespace csoundcsharp
 	public partial class Csound6
     {
 
-#if OSX
-		internal const string _dllVersion = "/Assets/StreamingAssets/CsoundLib64.framework/CsoundLib64";
-#elif ANDROID
-		internal const string _dllVersion = "/Assets/StreamingAssets/libcsoundandroid.so";
-#elif WINDOWS
-        
-#endif
-
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN 
         internal const string _dllVersion = "csound64.dll";
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+		internal const string _dllVersion = "/Assets/StreamingAssets/CsoundLib64.framework/CsoundLib64";
 #endif
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void MessageCallbackProxy(IntPtr csound, Int32 attr, string format, IntPtr valist);
