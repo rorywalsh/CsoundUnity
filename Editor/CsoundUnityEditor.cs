@@ -25,9 +25,6 @@ using System.Collections.Generic;
 public class CsoundUnityEditor : Editor
 {
     CsoundUnity csoundUnity;
-    float value = 0;
-    float newValue = 0;
-    private string csdFilename = "";
     string infoText;
     List<float> controllerValues;
     List<CsoundChannelController> channelControllers;
@@ -40,15 +37,18 @@ public class CsoundUnityEditor : Editor
         csoundUnity = (CsoundUnity)target;
         channelControllers = new List<CsoundChannelController>();
         controllerValues = new List<float>();
+
+        //parse Csound files for CsoundUnity descriptor
         if (csoundUnity.csoundFile.Length > 4)
         {
-            if (Directory.Exists(Application.dataPath.Replace("Assets", "") + "/CsoundFiles"))
-            {
-                parseCsdFile("/Assets/Scripts/CsoundFiles" + csoundUnity.csoundFile);
-            }
+            //deals with Csound files found the CsoundFiles folder
+            string dir = Application.dataPath + "/Scripts/CsoundFiles";
+            if (Directory.Exists(dir))
+                parseCsdFile(dir+"/"+csoundUnity.csoundFile);
             else
-                parseCsdFile("/Assets/Scripts/" + csoundUnity.csoundFile);
+                parseCsdFile(Application.dataPath + "Scripts/" + csoundUnity.csoundFile);
         }
+
     } 
 
     public override void OnInspectorGUI()
@@ -58,12 +58,14 @@ public class CsoundUnityEditor : Editor
         EditorGUILayout.HelpBox(infoText, MessageType.None);
         GUI.SetNextControlName("CsoundfileTextField");
         csoundUnity.csoundFile = EditorGUILayout.TextField("Csound file", csoundUnity.csoundFile);
+        csoundUnity.processClipAudio = EditorGUILayout.Toggle("Process Clip Audio", csoundUnity.processClipAudio);
         csoundUnity.mute = EditorGUILayout.Toggle("Mute Csound", csoundUnity.mute);
         csoundUnity.logCsoundOutput = EditorGUILayout.Toggle("Log Csound Output", csoundUnity.logCsoundOutput);
 
-
+        //create drag and drop area for Csound files
         DropAreaGUI();
 
+        //create controls for each Csound channel found in the file descriptor
         for(int i=0;i<channelControllers.Count;i++)
         {
             controllerValues.Add(channelControllers[i].value);
@@ -136,7 +138,7 @@ public class CsoundUnityEditor : Editor
 
     void parseCsdFile(string filename)
     {
-        string[] fullCsdText = System.IO.File.ReadAllLines(Application.dataPath.Replace("Assets", "") + filename);
+        string[] fullCsdText = System.IO.File.ReadAllLines(filename);
         channelControllers.Clear();
 
         foreach (string line in fullCsdText)
@@ -210,34 +212,3 @@ public class CsoundChannelController
     }
 
 }
-
-//for( int i=0;i<controls;i++)
-//value = EditorGUILayout.Slider("Frequency", value, 0.0F, 10000.0F);
-
-//if(value!=newValue)
-//{
-//    if(Application.isPlaying)
-//        csoundUnity.setChannel("freq", value);
-//    newValue = value; 
-//}
-
-
-//if (GUI.changed)
-//{
-//    if (GUI.GetNameOfFocusedControl() == "CsoundfileTextField")
-//    {
-//    }
-//}
-
-//char[] delimiterChars = { ')' };
-//string[] words = newLine.Split(delimiterChars);
-
-//foreach (string s in words)
-//{
-//    char[] delimiterChars2 = { ')', '(', ',' };
-//    string[] words2 = s.Split(delimiterChars2);
-//    foreach (string toke in words)
-//    {
-//        Debug.Log(toke);
-//    }
-//}

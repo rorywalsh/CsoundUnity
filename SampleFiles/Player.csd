@@ -13,8 +13,9 @@ ksmps 	= 	32
 nchnls 	= 	2
 0dbfs	=	1 
 
-;this instrument can be used to trigger once off events
-;such as jump or collision
+;this instrument is always on and is used to trigger a once off
+;jump event. Any time the channel jumpButton changes, JUMP will
+;be triggered
 instr TriggerInstrument
 	kJumpButton chnget "jumpButton"
 	if changed(kJumpButton)==1 then
@@ -22,22 +23,42 @@ instr TriggerInstrument
 	endif
 endin
 
+;simple jump sound
+instr JUMP
+	aEnv expon .5, p3, 0.001
+	a1 oscil aEnv, 200
+	outs a1, a1
+endin
+
+
+;this instrument is always running. The speed of the player
+;determines how many notes are produced each second
 instr PLAYER_MOVE
-	aNoise buzz .4, 100*chnget:k("speedSlider"), 3, -1
+	kSpeed chnget "speedSlider"
+	
+	if metro(kSpeed*10)==1 then
+		kNote randh 30, 1000
+		event "i", "PLAY_NOTE", 0, 3, .2, int(abs(kNote))+36
+	endif
+endin
+
+;this instrument is triggered by the one above and plays a simple enveloped
+;sine wave sound. The pitch is choosen at random each time the instrument is
+;triggered
+instr PLAY_NOTE
+	kEnv oscil1 0, p4, p3, 99
+	aNoise oscili kEnv, cpsmidinn(p5)
 	outs aNoise*chnget:k("speedSlider"), aNoise*chnget:k("speedSlider")
 endin
 
-instr JUMP
-prints "Jumpy"
-aEnv expon .5, p3, 0.001
-a1 oscil aEnv, 200
-outs a1, a1
-endin
+
 
 </CsInstruments>
 <CsScore>
-f100 0 8 -2 64 60 67 0 65 0 67 48
-f0 [60*60*24*7]
+;envelope for walking sound
+f99 0 1024 5 0.1 20 1 100 0.001
+
+;turn on the two triggering instruments
 i"TriggerInstrument" 0 [3600*12]
 i"PLAYER_MOVE" 0 [3600*12]
 </CsScore>
