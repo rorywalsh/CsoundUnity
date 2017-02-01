@@ -163,31 +163,24 @@ public class CsoundUnity : MonoBehaviour
     {
         if (compiledOk)
         {
-            for (int i = 0; i < samples.Length; i = i + numChannels, ksmpsIndex = ksmpsIndex + numChannels)
+            for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex += numChannels)
             {
-                if (mute == true)
-                    samples[i] = 0f;
-                else {
-                    //pass audio from AudioSource clip to Csound
-                    if (processClipAudio)
+                for (int channel = 0; channel < numChannels; channel++)
+                {
+                    if (mute == true)
+                        samples[i + channel] = 0.0f;
+                    else
                     {
-                        setSample(i, 0, samples[i]);
-                        if (numChannels == 2)
-                            setSample(i, 1, samples[i + 1]);
-                    }
-                    //Csound's buffer sizes can be different to that of Unity, therefore we need
-                    //to call performKsmps() only when ksmps samples have been processed
-                    if ((ksmpsIndex >= ksmps) && (ksmps > 0))
-                    {
-                        performKsmps();
-                        ksmpsIndex = 0;
-                    }
+                        if (processClipAudio)
+                            setSample(i + channel, channel, samples[i + channel]);
 
-                    //write output from Csound to AudioSource
-                    samples[i] = (float)(getSample(ksmpsIndex, 0) / zerdbfs);
-                    if (numChannels == 2)
-                    {
-                        samples[i+1] = (float)(getSample(ksmpsIndex + 1, 1) / zerdbfs);
+                        if ((ksmpsIndex >= ksmps) && (ksmps > 0))
+                        {
+                            performKsmps();
+                            ksmpsIndex = 0;
+                        }
+
+                        samples[i + channel] = (float)(getSample(ksmpsIndex, channel) / zerdbfs);
                     }
                 }
             }
