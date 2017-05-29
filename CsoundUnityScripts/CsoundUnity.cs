@@ -122,7 +122,7 @@ public class CsoundUnity : MonoBehaviour
         compiledOk = csound.compiledWithoutError();
 
         if(compiledOk)
-            csound.setStringChannel("AudioPath", Application.dataPath + "/Audio");
+            csound.setStringChannel("AudioPath", Application.dataPath + "/Audio/");
 
     }
 
@@ -163,7 +163,7 @@ public class CsoundUnity : MonoBehaviour
     {
         if (compiledOk)
         {
-            for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex += numChannels)
+            for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex ++)
             {
                 for (int channel = 0; channel < numChannels; channel++)
                 {
