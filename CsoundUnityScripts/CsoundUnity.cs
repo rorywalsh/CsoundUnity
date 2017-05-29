@@ -122,7 +122,7 @@ public class CsoundUnity : MonoBehaviour
         compiledOk = csound.compiledWithoutError();
 
         if(compiledOk)
-            csound.setStringChannel("AudioPath", Application.dataPath + "/Assets/Audio/");
+            csound.setStringChannel("AudioPath", Application.dataPath + "/Audio");
 
     }
 
