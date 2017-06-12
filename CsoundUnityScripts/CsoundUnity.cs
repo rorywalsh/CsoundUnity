@@ -119,6 +119,12 @@ public class CsoundUnity : MonoBehaviour
         if (logCsoundOutput)
             InvokeRepeating("logCsoundMessages", 0, .5f);
 
+        /*
+         * If user wishes to process a clip, then we need to bypass effects...
+         */
+        if (processClipAudio)
+            GetComponent<AudioSource>().bypassEffects = true;
+
         compiledOk = csound.compiledWithoutError();
 
         if(compiledOk)
@@ -161,6 +167,7 @@ public class CsoundUnity : MonoBehaviour
      */
     public void processBlock(float[] samples, int numChannels)
     {
+
         if (compiledOk)
         {
             for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex ++)
@@ -171,8 +178,9 @@ public class CsoundUnity : MonoBehaviour
                         samples[i + channel] = 0.0f;
                     else
                     {
+
                         if (processClipAudio)
-                            setSample(i + channel, channel, samples[i + channel]);
+                            setSample(ksmpsIndex, channel, samples[i + channel]);
 
                         if ((ksmpsIndex >= ksmps) && (ksmps > 0))
                         {
@@ -180,7 +188,9 @@ public class CsoundUnity : MonoBehaviour
                             ksmpsIndex = 0;
                         }
 
+                            
                         samples[i + channel] = (float)(getSample(ksmpsIndex, channel) / zerdbfs);
+
                     }
                 }
             }
