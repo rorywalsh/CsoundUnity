@@ -89,19 +89,19 @@ public class CsoundUnityBridge
        return Csound6.NativeMethods.csoundPerformKsmps(csound);
     }
 	
-    public double getSpoutSample(int frame, int channel)
-    {
-        return Csound6.NativeMethods.csoundGetSpoutSample(csound, frame, channel);
-    }
-
     public double get0dbfs()
     {
         return Csound6.NativeMethods.csoundGet0dBFS(csound);
     }
 
-    public void setSpinSample(int frame, int channel, double sample)
+    public void setInputSample(int pos, double sample)
     {
-        Csound6.NativeMethods.csoundAddSpinSample(csound, frame, channel, sample);
+        Csound6.NativeMethods.setCsoundInputSample(csound, pos, sample);
+    }
+
+    public double getOutputSample(int pos)
+    {
+        return Csound6.NativeMethods.getCsoundOutputSample(csound, pos);
     }
 
     public void sendScoreEvent(string scoreEvent)
@@ -134,6 +134,11 @@ public class CsoundUnityBridge
     public uint getKsmps()
     {
         return Csound6.NativeMethods.csoundGetKsmps(csound);
+    }
+
+    public double getSpoutSample(int frame, int channel)
+    {
+        return Csound6.NativeMethods.csoundGetSpoutSample(csound, frame, channel);
     }
 
     public double getChannel(string channel)
