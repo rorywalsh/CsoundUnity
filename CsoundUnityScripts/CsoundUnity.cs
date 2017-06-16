@@ -119,10 +119,16 @@ public class CsoundUnity : MonoBehaviour
         if (logCsoundOutput)
             InvokeRepeating("logCsoundMessages", 0, .5f);
 
+        /*
+         * If user wishes to process a clip, then we need to bypass effects...
+         */
+        if (processClipAudio)
+            GetComponent<AudioSource>().bypassEffects = true;
+
         compiledOk = csound.compiledWithoutError();
 
         if(compiledOk)
-            csound.setStringChannel("AudioPath", Application.dataPath + "/Assets/Audio/");
+            csound.setStringChannel("AudioPath", Application.dataPath + "/Audio/");
 
     }
 
@@ -161,33 +167,30 @@ public class CsoundUnity : MonoBehaviour
      */
     public void processBlock(float[] samples, int numChannels)
     {
+
         if (compiledOk)
         {
-            for (int i = 0; i < samples.Length; i = i + numChannels, ksmpsIndex = ksmpsIndex + numChannels)
+            for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex ++)
             {
-                if (mute == true)
-                    samples[i] = 0f;
-                else {
-                    //pass audio from AudioSource clip to Csound
-                    if (processClipAudio)
+                for (int channel = 0; channel < numChannels; channel++)
+                {
+                    if (mute == true)
+                        samples[i + channel] = 0.0f;
+                    else
                     {
-                        setSample(i, 0, samples[i]);
-                        if (numChannels == 2)
-                            setSample(i, 1, samples[i + 1]);
-                    }
-                    //Csound's buffer sizes can be different to that of Unity, therefore we need
-                    //to call performKsmps() only when ksmps samples have been processed
-                    if ((ksmpsIndex >= ksmps) && (ksmps > 0))
-                    {
-                        performKsmps();
-                        ksmpsIndex = 0;
-                    }
 
-                    //write output from Csound to AudioSource
-                    samples[i] = (float)(getSample(ksmpsIndex, 0) / zerdbfs);
-                    if (numChannels == 2)
-                    {
-                        samples[i+1] = (float)(getSample(ksmpsIndex + 1, 1) / zerdbfs);
+                        if (processClipAudio)
+                            setSample(ksmpsIndex, channel, samples[i + channel]);
+
+                        if ((ksmpsIndex >= ksmps) && (ksmps > 0))
+                        {
+                            performKsmps();
+                            ksmpsIndex = 0;
+                        }
+
+                            
+                        samples[i + channel] = (float)(getSample(ksmpsIndex, channel) / zerdbfs);
+
                     }
                 }
             }
