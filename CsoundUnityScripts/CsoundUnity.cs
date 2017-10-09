@@ -77,7 +77,9 @@ public class CsoundUnity : MonoBehaviour
     public bool processClipAudio = false;
     //structure to hold channel data
     List<CsoundChannelController> channels;
-
+    private AudioSource audioSource;
+    private AudioClip dummyClip;
+    
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
@@ -94,6 +96,7 @@ public class CsoundUnity : MonoBehaviour
             string csoundFilePath = Application.streamingAssetsPath + "/" + csoundFile + "_";
             string dataPath = Application.streamingAssetsPath;
             System.Environment.SetEnvironmentVariable("Path", Application.streamingAssetsPath);
+            audioSource = GetComponent<AudioSource>();
             channels = new List<CsoundChannelController>();
             /*
              * the CsoundUnity constructor takes a path to the project's Data folder, and path to the file name.
@@ -121,9 +124,12 @@ public class CsoundUnity : MonoBehaviour
             compiledOk = csound.compiledWithoutError();
 
             if (compiledOk)
+            {
                 csound.setStringChannel("AudioPath", Application.dataPath + "/Audio/");
-
+                csound.setStringChannel("StreamingData", Application.streamingAssetsPath);
+            }
     }
+
 
     /**
      * Called automatically when the game stops. Needed so that Csound stops when your game does
@@ -160,11 +166,11 @@ public class CsoundUnity : MonoBehaviour
     */
     public void processBlock(float[] samples, int numChannels)
     {
-
         if (compiledOk)
         {
             for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)
             {
+                
                 for (int channel = 0; channel < numChannels; channel++)
                 {
                     if (mute == true)
@@ -182,11 +188,10 @@ public class CsoundUnity : MonoBehaviour
                             setInputSample(ksmpsIndex * numChannels + channel, samples[i + channel]);
                             samples[i + channel] = (float)getOutputSample(ksmpsIndex * numChannels + channel);
                         }
-                        else
+                        else{
                             samples[i + channel] = (float)(getOutputSample(ksmpsIndex, channel) / zerdbfs);
 
-
-
+                        }
                     }
                 }
             }
