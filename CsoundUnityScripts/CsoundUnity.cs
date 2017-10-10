@@ -127,6 +127,7 @@ public class CsoundUnity : MonoBehaviour
             {
                 csound.setStringChannel("AudioPath", Application.dataPath + "/Audio/");
                 csound.setStringChannel("StreamingData", Application.streamingAssetsPath);
+                csound.setStringChannel("CsoundFiles", Application.streamingAssetsPath+ "/CsoundFiles/");
             }
     }
 
