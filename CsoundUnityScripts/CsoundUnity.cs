@@ -126,7 +126,10 @@ public class CsoundUnity : MonoBehaviour
             if (compiledOk)
             {
                 csound.setStringChannel("AudioPath", Application.dataPath + "/Audio/");
-                csound.setStringChannel("CsoundFiles", Application.streamingAssetsPath+ "/CsoundFiles/");
+                if (Application.isEditor)
+                    csound.setStringChannel("CsoundFiles", Application.dataPath+ "/CsoundFiles/");
+                else
+                    csound.setStringChannel("CsoundFiles", Application.streamingAssetsPath+ "/CsoundFiles/");
                 csound.setStringChannel("StreamingAssets", Application.streamingAssetsPath);
 
             }
