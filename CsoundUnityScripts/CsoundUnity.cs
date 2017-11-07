@@ -158,6 +158,7 @@ public class CsoundUnity : MonoBehaviour
     /**
     * Processes a block of samples
     */
+#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
     public void processBlock(float[] samples, int numChannels)
     {
 
@@ -176,7 +177,7 @@ public class CsoundUnity : MonoBehaviour
                             performKsmps();
                             ksmpsIndex = 0;
                         }
-
+                          
                         if (processClipAudio)
                         {
                             setInputSample(ksmpsIndex * numChannels + channel, samples[i + channel]);
@@ -193,6 +194,55 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
+#else
+
+    /**
+     * Unity process block
+     */
+    public void processBlock(float[] samples, int numChannels)
+    {
+        if (compiledOk)
+        {
+            for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex += numChannels)
+            {
+                for (int channel = 0; channel < numChannels; channel++)
+                {
+                    if (mute == true)
+                        samples[i + channel] = 0.0f;
+                    else
+                    {
+                        if (processClipAudio)
+                            setSample(i + channel, channel, samples[i + channel]);
+
+                        if ((ksmpsIndex >= ksmps) && (ksmps > 0))
+                        {
+                            performKsmps();
+                            ksmpsIndex = 0;
+                        }
+
+                        samples[i + channel] = (float)(getSample(ksmpsIndex, channel) / zerdbfs);
+                    }
+                }
+            }
+        }
+    }
+ 
+    /**
+     * Get a sample from Csound's audio output buffer
+     */
+    public double getSample(int frame, int channel)
+    {
+        return csound.getSpoutSample(frame, channel);
+    }
+
+    /**
+     * Set a sample in Csound's input buffer
+     */
+    public void setSample(int frame, int channel, double sample)
+    {
+        csound.setSpinSample(frame, channel, sample);
+    }
+#endif
     /**
      * process a ksmps-sized block of samples
      */

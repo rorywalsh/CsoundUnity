@@ -36,6 +36,8 @@ namespace csoundcsharp
         internal const string _dllVersionCsUnity = "/Assets/StreamingAssets/CsoundUnityNativePlugin.dll";
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
 		internal const string _dllVersion = "/Assets/StreamingAssets/CsoundLib64.framework/CsoundLib64";
+#else
+        internal const string _dllVersion = "csound64.dll";
 #endif
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void MessageCallbackProxy(IntPtr csound, Int32 attr, string format, IntPtr valist);
@@ -94,11 +96,20 @@ namespace csoundcsharp
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
 			internal static extern IntPtr csoundSetControlChannel([In] IntPtr csound, [In] String str, [In] double value);
 
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern IntPtr csoundAddSpinSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel, [In] double sample);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern double csoundGetSpoutSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel);
+
+#if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+
             [DllImport(_dllVersionCsUnity, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern void setCsoundInputSample([In] IntPtr csound, [In] Int32 pos, [In] double sample);
 
             [DllImport(_dllVersionCsUnity, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern double getCsoundOutputSample([In] IntPtr csound, [In] Int32 pose);
+#endif
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
 			internal static extern IntPtr csoundSetStringChannel([In] IntPtr csound, [In] String str, [In] String value);
@@ -132,9 +143,6 @@ namespace csoundcsharp
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
 			internal static extern Double csoundGetSr([In] IntPtr csound);
-
-            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern double csoundGetSpoutSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
 			internal static extern Double csoundGetKr([In] IntPtr csound);
