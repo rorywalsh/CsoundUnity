@@ -95,7 +95,10 @@ public class CsoundUnity : MonoBehaviour
             */
             string csoundFilePath = Application.streamingAssetsPath + "/" + csoundFile + "_";
             string dataPath = Application.streamingAssetsPath;
-            System.Environment.SetEnvironmentVariable("Path", Application.streamingAssetsPath);
+            string path = System.Environment.GetEnvironmentVariable("Path");
+            string updatedPath = data+";"+Application.streamingAssetsPath;
+            System.Environment.SetEnvironmentVariable("Path", updatedPath);
+            print("Updated path:"+updatepath);
             audioSource = GetComponent<AudioSource>();
             channels = new List<CsoundChannelController>();
             /*
