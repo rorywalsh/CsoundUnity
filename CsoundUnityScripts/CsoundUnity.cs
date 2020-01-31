@@ -293,6 +293,7 @@ public class CsoundUnity : MonoBehaviour
 
     /**
      * Retrieves a single sample from a Csound function table. 
+     * NOTE: Only works with tables created using ftgen
      */
     public double getTableSample(int tableNumber, int index)
     {
