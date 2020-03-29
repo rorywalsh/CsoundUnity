@@ -104,12 +104,42 @@ namespace csoundcsharp
 			internal static extern IntPtr csoundSetStringChannel([In] IntPtr csound, [In] String str, [In] String value);
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-			internal static extern Double csoundGetControlChannel([In] IntPtr csound, [In] String str, [In] IntPtr err);           
+			internal static extern Double csoundGetControlChannel([In] IntPtr csound, [In] String str, [In] IntPtr err);
 
-			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-			internal static extern Double csoundTableGet([In] IntPtr csound, [In] Int32 table, [In] Int32 index);
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern Int32 csoundTableLength([In] IntPtr csound, [In] Int32 table);
 
-			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern MYFLT csoundTableGet([In] IntPtr csound, [In] Int32 table, [In] Int32 index);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundTableSet([In] IntPtr csound, [In] Int32 table, [In] Int32 index, [In] MYFLT value);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern void csoundTableCopyOut([In] IntPtr csound, Int32 table, IntPtr dest);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundTableCopyOutAsync([In] IntPtr csound, Int32 table, IntPtr dest);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundTableCopyIn([In] IntPtr csound, [In] Int32 table, IntPtr source);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundTableCopyInAsync([In] IntPtr csound, [In] Int32 table, IntPtr source);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern Int32 csoundGetTable([In] IntPtr csound, out IntPtr tablePtr, [In] Int32 index);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern Int32 csoundGetTableArgs([In] IntPtr csound, out IntPtr argsPtr, [In] Int32 index);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern Int32 csoundIsNamedGEN([In] IntPtr csound, [In] Int32 num);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundGetNamedGEN([In] IntPtr csound, [In] Int32 num, out string name, Int32 len);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
 			internal static extern Int32 csoundCompile([In] IntPtr csound, [In] Int32 argc, [In] string[] argv);
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]

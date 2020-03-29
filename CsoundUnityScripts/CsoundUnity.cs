@@ -292,13 +292,100 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /**
+     *  Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
+    */
+    public int getTableLength(int table)
+    {
+        return csound.tableLength(table);
+    }
+
+    /**
      * Retrieves a single sample from a Csound function table. 
-     * NOTE: Only works with tables created using ftgen
      */
     public double getTableSample(int tableNumber, int index)
     {
         return csound.getTable(tableNumber, index);
     }
+
+    /**
+    * Stores values to function table 'tableNum' in tableValues, and returns the table length (not including the guard point). 
+    * If the table does not exist, tableValues is set to NULL and -1 is returned.
+    */
+    public int getTable(out MYFLT[] tableValues, int numTable)
+    {
+        return csound.getTable(out tableValues, numTable);
+    }
+
+    /**
+     * Stores the arguments used to generate function table 'tableNum' in args, and returns the number of arguments used. 
+     * If the table does not exist, args is set to NULL and -1 is returned. 
+     * NB: the argument list starts with the GEN number and is followed by its parameters. eg. f 1 0 1024 10 1 0.5 yields the list {10.0,1.0,0.5}
+    */
+    public int getTableArgs(out MYFLT[] args, int index)
+    {
+        return csound.getTableArgs(out args, index);
+    }
+
+    /**
+     * Sets the value of a slot in a function table. The table number and index are assumed to be valid.
+    */
+    public void setTable(int table, int index, MYFLT value)
+    {
+        csound.setTable(table, index, value);
+    }
+
+    /**
+    * Copy the contents of a function table into a supplied array dest 
+    * The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
+    */
+    public void copyTableOut(int table, out MYFLT[] dest)
+    {
+        csound.tableCopyOut(table, out dest);
+    }
+
+    /**
+     * Asynchronous version of copyTableOut
+     */
+    public void copyTableOutAsync(int table, out MYFLT[] dest)
+    {
+        csound.tableCopyOutAsync(table, out dest);
+    }
+
+    /**
+    * Copy the contents of a function table into a supplied array dest 
+    * The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
+    */
+    public void copyTableIn(int table, MYFLT[] source)
+    {
+        csound.tableCopyIn(table, source);
+    }
+
+    /**
+     * Asynchronous version of copyTableOut
+     */
+    public void copyTableInAsync(int table, MYFLT[] source)
+    {
+        csound.tableCopyInAsync(table, source);
+    }
+
+    /**
+    * Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char) 
+    * Otherwise it returns 0.
+    */
+    public int isNamedGEN(int num)
+    {
+        return csound.isNamedGEN(num);
+    }
+
+    /***
+     * Gets the GEN name from a number num, if this is a named GEN 
+     * The final parameter is the max len of the string (excluding termination)
+    */
+    public void getNamedGEN(int num, out string name, int len)
+    {
+        csound.getNamedGEN(num, out name, len);
+    }
+
     /**
      * Send a score event to Csound in the form of "i1 0 10 ...."
      */
