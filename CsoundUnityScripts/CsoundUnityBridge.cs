@@ -121,10 +121,127 @@ public class CsoundUnityBridge
 		Csound6.NativeMethods.csoundSetStringChannel(csound, channel, value);
 	}
 
-	public double getTable(int table, int index)
+    /// <summary>
+    /// Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
+    /// </summary>
+    public int tableLength(int table)
+    {
+        return Csound6.NativeMethods.csoundTableLength(csound, table);
+    }
+
+    public double getTable(int table, int index)
 	{
 		return Csound6.NativeMethods.csoundTableGet(csound, table, index);
 	}
+
+    /// <summary>
+    /// Sets the value of a slot in a function table. The table number and index are assumed to be valid.
+    /// </summary>
+    public void setTable(int table, int index, MYFLT value)
+    {
+        Csound6.NativeMethods.csoundTableSet(csound, table, index, value);
+    }
+
+    /// <summary>
+    /// Copy the contents of a function table into a supplied array dest 
+    /// The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
+    public void tableCopyOut(int table, out MYFLT[] dest)
+    {
+        int len = Csound6.NativeMethods.csoundTableLength(csound, table);
+        dest = new MYFLT[len];
+        IntPtr des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
+        Csound6.NativeMethods.csoundTableCopyOut(csound, table, des);
+        Marshal.Copy(des, dest, 0, len);
+        Marshal.FreeHGlobal(des);
+    }
+
+    /// <summary>
+    /// Asynchronous version of tableCopyOut()
+    /// </summary>
+    public void tableCopyOutAsync(int table, out MYFLT[] dest)
+    {
+        int len = Csound6.NativeMethods.csoundTableLength(csound, table);
+        dest = new MYFLT[len];
+        IntPtr des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
+        Csound6.NativeMethods.csoundTableCopyOutAsync(csound, table, des);
+        Marshal.Copy(des, dest, 0, len);
+        Marshal.FreeHGlobal(des);
+    }
+
+    /// <summary>
+    /// Copy the contents of an array source into a given function table 
+    /// The table number is assumed to be valid, and the table needs to have sufficient space to receive all the array contents.
+    /// </summary>
+    public void tableCopyIn(int table, MYFLT[] source)
+    {
+        IntPtr src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
+        Marshal.Copy(source, 0, src, source.Length);
+        Csound6.NativeMethods.csoundTableCopyIn(csound, table, src);
+        Marshal.FreeHGlobal(src);
+    }
+
+    /// <summary>
+    /// Asynchronous version of csoundTableCopyIn()
+    /// </summary>
+    public void tableCopyInAsync(int table, MYFLT[] source)
+    {
+        IntPtr src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
+        Marshal.Copy(source, 0, src, source.Length);
+        Csound6.NativeMethods.csoundTableCopyInAsync(csound, table, src);
+        Marshal.FreeHGlobal(src);
+    }
+
+    /// <summary>
+    /// Stores values to function table 'tableNum' in tableValues, and returns the table length (not including the guard point). 
+    /// If the table does not exist, tableValues is set to NULL and -1 is returned.
+    /// </summary>
+    public int getTable(out MYFLT[] tableValues, int numTable)
+    {
+        int len = Csound6.NativeMethods.csoundTableLength(csound, numTable);
+        IntPtr tablePtr = new IntPtr();
+        tableValues = new MYFLT[len];
+        int res = Csound6.NativeMethods.csoundGetTable(csound, out tablePtr, numTable);
+        if (res != -1)
+            Marshal.Copy(tablePtr, tableValues, 0, len);
+        else tableValues = null;
+        Marshal.FreeHGlobal(tablePtr);
+        return res;
+    }
+
+    /// <summary>
+    /// Stores the arguments used to generate function table 'tableNum' in args, and returns the number of arguments used. 
+    /// If the table does not exist, args is set to NULL and -1 is returned. 
+    /// NB: the argument list starts with the GEN number and is followed by its parameters. eg. f 1 0 1024 10 1 0.5 yields the list {10.0,1.0,0.5}
+    /// </summary>
+    public int getTableArgs(out MYFLT[] args, int index)
+    {
+        IntPtr addr = new IntPtr();
+        int len = Csound6.NativeMethods.csoundGetTableArgs(csound, out addr, index);
+        args = new MYFLT[len];
+        if (len != -1)
+            Marshal.Copy(addr, args, 0, len);
+        else args = null;
+        Marshal.FreeHGlobal(addr);
+        return len;
+    }
+
+    /// <summary>
+    /// Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char) 
+    /// Otherwise it returns 0.
+    /// </summary>
+    public int isNamedGEN(int num)
+    {
+        return Csound6.NativeMethods.csoundIsNamedGEN(csound, num);
+    }
+
+    /// <summary>
+    /// Gets the GEN name from a number num, if this is a named GEN 
+    /// The final parameter is the max len of the string (excluding termination)
+    /// </summary>
+    public void getNamedGEN(int num, out string name, int len)
+    {
+        Csound6.NativeMethods.csoundGetNamedGEN(csound, num, out name, len);
+    }
 
     public double getKr()
     {
