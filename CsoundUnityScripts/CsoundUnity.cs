@@ -311,7 +311,7 @@ public class CsoundUnity : MonoBehaviour
     * Stores values to function table 'tableNum' in tableValues, and returns the table length (not including the guard point). 
     * If the table does not exist, tableValues is set to NULL and -1 is returned.
     */
-    public int getTable(out MYFLT[] tableValues, int numTable)
+    public int getTable(out double[] tableValues, int numTable)
     {
         return csound.getTable(out tableValues, numTable);
     }
@@ -321,7 +321,7 @@ public class CsoundUnity : MonoBehaviour
      * If the table does not exist, args is set to NULL and -1 is returned. 
      * NB: the argument list starts with the GEN number and is followed by its parameters. eg. f 1 0 1024 10 1 0.5 yields the list {10.0,1.0,0.5}
     */
-    public int getTableArgs(out MYFLT[] args, int index)
+    public int getTableArgs(out double[] args, int index)
     {
         return csound.getTableArgs(out args, index);
     }
@@ -329,7 +329,7 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Sets the value of a slot in a function table. The table number and index are assumed to be valid.
     */
-    public void setTable(int table, int index, MYFLT value)
+    public void setTable(int table, int index, double value)
     {
         csound.setTable(table, index, value);
     }
@@ -338,7 +338,7 @@ public class CsoundUnity : MonoBehaviour
     * Copy the contents of a function table into a supplied array dest 
     * The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
     */
-    public void copyTableOut(int table, out MYFLT[] dest)
+    public void copyTableOut(int table, out double[] dest)
     {
         csound.tableCopyOut(table, out dest);
     }
@@ -346,7 +346,7 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Asynchronous version of copyTableOut
      */
-    public void copyTableOutAsync(int table, out MYFLT[] dest)
+    public void copyTableOutAsync(int table, out double[] dest)
     {
         csound.tableCopyOutAsync(table, out dest);
     }
@@ -355,7 +355,7 @@ public class CsoundUnity : MonoBehaviour
     * Copy the contents of a function table into a supplied array dest 
     * The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
     */
-    public void copyTableIn(int table, MYFLT[] source)
+    public void copyTableIn(int table, double[] source)
     {
         csound.tableCopyIn(table, source);
     }
@@ -363,7 +363,7 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Asynchronous version of copyTableOut
      */
-    public void copyTableInAsync(int table, MYFLT[] source)
+    public void copyTableInAsync(int table, double[] source)
     {
         csound.tableCopyInAsync(table, source);
     }
