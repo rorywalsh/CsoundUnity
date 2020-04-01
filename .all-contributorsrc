@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "Code",
+      "name": "codegent",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/7318?v=4",
+      "profile": "http://www.codegent.com",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "CsoundUnity",
+  "projectOwner": "rorywalsh",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
