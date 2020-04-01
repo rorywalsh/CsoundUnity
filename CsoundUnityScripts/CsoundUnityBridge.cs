@@ -20,7 +20,11 @@ using System.Text;
 using System.Runtime.InteropServices;
 using csoundcsharp;
 
-
+#if UNITY_EDITOR || UNITY_STANDALONE
+using MYFLT = System.Double;
+#elif UNITY_ANDROID
+using MYFLT = System.Single;
+#endif
 
 /*
  * CsoundUnityBridge class
@@ -48,6 +52,8 @@ public class CsoundUnityBridge
 		if(Directory.Exists(csoundDir+"/CsoundLib64.framework/Resources/Opcodes64"))
 			Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir+"/CsoundLib64.framework/Resources/Opcodes64");
 #endif
+
+
         csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero);
 		Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
 		string[] runargs = new string[] { "csound", csdFile };
@@ -89,17 +95,17 @@ public class CsoundUnityBridge
        return Csound6.NativeMethods.csoundPerformKsmps(csound);
     }
 	
-    public double get0dbfs()
+    public MYFLT get0dbfs()
     {
         return Csound6.NativeMethods.csoundGet0dBFS(csound);
     }
 
-    public void setInputSample(int pos, double sample)
+    public void setInputSample(int pos, MYFLT sample)
     {
         Csound6.NativeMethods.setCsoundInputSample(csound, pos, sample);
     }
 
-    public double getOutputSample(int pos)
+    public MYFLT getOutputSample(int pos)
     {
         return Csound6.NativeMethods.getCsoundOutputSample(csound, pos);
     }
@@ -129,7 +135,7 @@ public class CsoundUnityBridge
         return Csound6.NativeMethods.csoundTableLength(csound, table);
     }
 
-    public double getTable(int table, int index)
+    public MYFLT getTable(int table, int index)
 	{
 		return Csound6.NativeMethods.csoundTableGet(csound, table, index);
 	}
@@ -137,7 +143,7 @@ public class CsoundUnityBridge
     /// <summary>
     /// Sets the value of a slot in a function table. The table number and index are assumed to be valid.
     /// </summary>
-    public void setTable(int table, int index, double value)
+    public void setTable(int table, int index, MYFLT value)
     {
         Csound6.NativeMethods.csoundTableSet(csound, table, index, value);
     }
@@ -145,11 +151,11 @@ public class CsoundUnityBridge
     /// <summary>
     /// Copy the contents of a function table into a supplied array dest 
     /// The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
-    public void tableCopyOut(int table, out double[] dest)
+    public void tableCopyOut(int table, out MYFLT[] dest)
     {
         int len = Csound6.NativeMethods.csoundTableLength(csound, table);
-        dest = new double[len];
-        IntPtr des = Marshal.AllocHGlobal(sizeof(double) * dest.Length);
+        dest = new MYFLT[len];
+        IntPtr des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
         Csound6.NativeMethods.csoundTableCopyOut(csound, table, des);
         Marshal.Copy(des, dest, 0, len);
         Marshal.FreeHGlobal(des);
@@ -158,11 +164,11 @@ public class CsoundUnityBridge
     /// <summary>
     /// Asynchronous version of tableCopyOut()
     /// </summary>
-    public void tableCopyOutAsync(int table, out double[] dest)
+    public void tableCopyOutAsync(int table, out MYFLT[] dest)
     {
         int len = Csound6.NativeMethods.csoundTableLength(csound, table);
-        dest = new double[len];
-        IntPtr des = Marshal.AllocHGlobal(sizeof(double) * dest.Length);
+        dest = new MYFLT[len];
+        IntPtr des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
         Csound6.NativeMethods.csoundTableCopyOutAsync(csound, table, des);
         Marshal.Copy(des, dest, 0, len);
         Marshal.FreeHGlobal(des);
@@ -172,9 +178,9 @@ public class CsoundUnityBridge
     /// Copy the contents of an array source into a given function table 
     /// The table number is assumed to be valid, and the table needs to have sufficient space to receive all the array contents.
     /// </summary>
-    public void tableCopyIn(int table, double[] source)
+    public void tableCopyIn(int table, MYFLT[] source)
     {
-        IntPtr src = Marshal.AllocHGlobal(sizeof(double) * source.Length);
+        IntPtr src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
         Marshal.Copy(source, 0, src, source.Length);
         Csound6.NativeMethods.csoundTableCopyIn(csound, table, src);
         Marshal.FreeHGlobal(src);
@@ -183,9 +189,9 @@ public class CsoundUnityBridge
     /// <summary>
     /// Asynchronous version of csoundTableCopyIn()
     /// </summary>
-    public void tableCopyInAsync(int table, double[] source)
+    public void tableCopyInAsync(int table, MYFLT[] source)
     {
-        IntPtr src = Marshal.AllocHGlobal(sizeof(double) * source.Length);
+        IntPtr src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
         Marshal.Copy(source, 0, src, source.Length);
         Csound6.NativeMethods.csoundTableCopyInAsync(csound, table, src);
         Marshal.FreeHGlobal(src);
@@ -195,11 +201,11 @@ public class CsoundUnityBridge
     /// Stores values to function table 'tableNum' in tableValues, and returns the table length (not including the guard point). 
     /// If the table does not exist, tableValues is set to NULL and -1 is returned.
     /// </summary>
-    public int getTable(out double[] tableValues, int numTable)
+    public int getTable(out MYFLT[] tableValues, int numTable)
     {
         int len = Csound6.NativeMethods.csoundTableLength(csound, numTable);
         IntPtr tablePtr = new IntPtr();
-        tableValues = new double[len];
+        tableValues = new MYFLT[len];
         int res = Csound6.NativeMethods.csoundGetTable(csound, out tablePtr, numTable);
         if (res != -1)
             Marshal.Copy(tablePtr, tableValues, 0, len);
@@ -213,11 +219,11 @@ public class CsoundUnityBridge
     /// If the table does not exist, args is set to NULL and -1 is returned. 
     /// NB: the argument list starts with the GEN number and is followed by its parameters. eg. f 1 0 1024 10 1 0.5 yields the list {10.0,1.0,0.5}
     /// </summary>
-    public int getTableArgs(out double[] args, int index)
+    public int getTableArgs(out MYFLT[] args, int index)
     {
         IntPtr addr = new IntPtr();
         int len = Csound6.NativeMethods.csoundGetTableArgs(csound, out addr, index);
-        args = new double[len];
+        args = new MYFLT[len];
         if (len != -1)
             Marshal.Copy(addr, args, 0, len);
         else args = null;
@@ -243,7 +249,7 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundGetNamedGEN(csound, num, out name, len);
     }
 
-    public double getKr()
+    public MYFLT getKr()
     {
         return Csound6.NativeMethods.csoundGetKr(csound);
     }
@@ -253,12 +259,12 @@ public class CsoundUnityBridge
         return Csound6.NativeMethods.csoundGetKsmps(csound);
     }
 
-    public double getSpoutSample(int frame, int channel)
+    public MYFLT getSpoutSample(int frame, int channel)
     {
         return Csound6.NativeMethods.csoundGetSpoutSample(csound, frame, channel);
     }
 
-    public double getChannel(string channel)
+    public MYFLT getChannel(string channel)
 	{
 		return Csound6.NativeMethods.csoundGetControlChannel(csound, channel, IntPtr.Zero);
 	}

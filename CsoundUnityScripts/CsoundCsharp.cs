@@ -1,6 +1,12 @@
 using System;
 using System.Runtime.InteropServices;
 
+
+#if UNITY_EDITOR || UNITY_STANDALONE
+using MYFLT = System.Double;
+#elif UNITY_ANDROID
+using MYFLT = System.Single;
+#endif
 /*
  * C S O U N D for C#
  * Simple wrapper building C# hosts for Csound 6 via the Csound API
@@ -80,7 +86,7 @@ namespace csoundcsharp
 			internal static extern Int32 csoundCompileOrc([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String orchStr);
 			
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-			internal static extern double csoundEvalCode([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String orchStr);
+			internal static extern MYFLT csoundEvalCode([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String orchStr);
 			
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
 			internal static extern Int32 csoundCompileArgs([In] IntPtr csound, [In] Int32 argc, [In] string[] argv);
@@ -92,28 +98,28 @@ namespace csoundcsharp
 			internal static extern IntPtr csoundInputMessage([In] IntPtr csound, [In] String str);
 			
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-			internal static extern IntPtr csoundSetControlChannel([In] IntPtr csound, [In] String str, [In] double value);
+			internal static extern IntPtr csoundSetControlChannel([In] IntPtr csound, [In] String str, [In] MYFLT value);
 
             [DllImport(_dllVersionCsUnity, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern void setCsoundInputSample([In] IntPtr csound, [In] Int32 pos, [In] double sample);
+            internal static extern void setCsoundInputSample([In] IntPtr csound, [In] Int32 pos, [In] MYFLT sample);
 
             [DllImport(_dllVersionCsUnity, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern double getCsoundOutputSample([In] IntPtr csound, [In] Int32 pose);
+            internal static extern MYFLT getCsoundOutputSample([In] IntPtr csound, [In] Int32 pose);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
 			internal static extern IntPtr csoundSetStringChannel([In] IntPtr csound, [In] String str, [In] String value);
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-			internal static extern Double csoundGetControlChannel([In] IntPtr csound, [In] String str, [In] IntPtr err);
+			internal static extern MYFLT csoundGetControlChannel([In] IntPtr csound, [In] String str, [In] IntPtr err);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
             internal static extern Int32 csoundTableLength([In] IntPtr csound, [In] Int32 table);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-            internal static extern double csoundTableGet([In] IntPtr csound, [In] Int32 table, [In] Int32 index);
+            internal static extern MYFLT csoundTableGet([In] IntPtr csound, [In] Int32 table, [In] Int32 index);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-            internal static extern void csoundTableSet([In] IntPtr csound, [In] Int32 table, [In] Int32 index, [In] double value);
+            internal static extern void csoundTableSet([In] IntPtr csound, [In] Int32 table, [In] Int32 index, [In] MYFLT value);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern void csoundTableCopyOut([In] IntPtr csound, Int32 table, IntPtr dest);
@@ -161,13 +167,13 @@ namespace csoundcsharp
 			internal static extern void csoundReset([In] IntPtr csound);
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
-			internal static extern Double csoundGetSr([In] IntPtr csound);
+			internal static extern MYFLT csoundGetSr([In] IntPtr csound);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern double csoundGetSpoutSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel);
+            internal static extern MYFLT csoundGetSpoutSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
-			internal static extern Double csoundGetKr([In] IntPtr csound);
+			internal static extern MYFLT csoundGetKr([In] IntPtr csound);
 			
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
 			internal static extern UInt32 csoundGetKsmps([In] IntPtr csound);
@@ -179,13 +185,13 @@ namespace csoundcsharp
 			internal static extern UInt32 csoundGetNchnlsInput([In] IntPtr csound);
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
-			internal static extern Double csoundGet0dBFS([In] IntPtr csound);
+			internal static extern MYFLT csoundGet0dBFS([In] IntPtr csound);
 			
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
 			internal static extern Int64 csoundGetCurrentTimeSamples([In] IntPtr csound);
 			
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
-			internal static extern Int32 csoundGetSizeOfdouble();
+			internal static extern Int32 csoundGetSizeOfMYFLT();
 			
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
 			internal static extern IntPtr csoundGetHostData([In] IntPtr csound);
@@ -242,7 +248,7 @@ namespace csoundcsharp
 			internal static extern Int32 csoundReadScore([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] string score);
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
-			internal static extern Double csoundGetScoreTime([In] IntPtr csound);
+			internal static extern MYFLT csoundGetScoreTime([In] IntPtr csound);
 			
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
 			internal static extern int csoundIsScorePending([In] IntPtr csound);
@@ -251,10 +257,10 @@ namespace csoundcsharp
 			internal static extern void csoundSetScorePending([In] IntPtr csound, [In] Int32 pending);
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
-			internal static extern Double csoundGetScoreOffsetSeconds([In] IntPtr csound);
+			internal static extern MYFLT csoundGetScoreOffsetSeconds([In] IntPtr csound);
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
-			internal static extern void csoundSetScoreOffsetSeconds([In] IntPtr csound, [In] Double time);
+			internal static extern void csoundSetScoreOffsetSeconds([In] IntPtr csound, [In] MYFLT time);
 
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
 			internal static extern void csoundRewindScore([In] IntPtr csound);
