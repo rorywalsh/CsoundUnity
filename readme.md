@@ -6,4 +6,4 @@ This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If 
 use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
 http://csound6net.codeplex.com
 
-_all-contributors: https://github.com/all-contributors/all-contributors
+
