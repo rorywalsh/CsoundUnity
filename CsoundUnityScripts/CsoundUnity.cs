@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 2015 Rory Walsh. 
 
 This interface would not have been possible without Richard Henninger's .NET interface to the Csound API. 
@@ -77,9 +77,13 @@ public class CsoundUnity : MonoBehaviour
     public bool processClipAudio = false;
     //structure to hold channel data
     List<CsoundChannelController> channels;
+<<<<<<< HEAD
     private AudioSource audioSource;
     private AudioClip dummyClip;
     
+=======
+
+>>>>>>> 9e55fe5af7a7a37aa913a071c4c5964e950a24cc
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
@@ -122,11 +126,18 @@ public class CsoundUnity : MonoBehaviour
             }
 
 
+
             /*
              * This method prints the Csound output to the Unity console
              */
             if (logCsoundOutput)
                 InvokeRepeating("logCsoundMessages", 0, .5f);
+
+            compiledOk = csound.compiledWithoutError();
+
+            if (compiledOk)
+                csound.setStringChannel("AudioPath", Application.dataPath + "/Audio/");
+
 
             compiledOk = csound.compiledWithoutError();
 
@@ -410,8 +421,8 @@ public class CsoundUnity : MonoBehaviour
     public List<CsoundChannelController> parseCsdFile(string filename)
     {
         string[] fullCsdText = File.ReadAllLines(filename);
-        List<CsoundChannelController> locaChannelControllers;
-        locaChannelControllers = new List<CsoundChannelController>();
+        List<CsoundChannelController> localChannelControllers;
+        localChannelControllers = new List<CsoundChannelController>();
 
         foreach (string line in fullCsdText)
         {
@@ -466,10 +477,10 @@ public class CsoundUnity : MonoBehaviour
                     controller.value = value.Length > 0 ? float.Parse(value) : 0;
                 }
 
-                locaChannelControllers.Add(controller);
+                localChannelControllers.Add(controller);
             }
         }
-        return locaChannelControllers;
+        return localChannelControllers;
     }
 
 }
