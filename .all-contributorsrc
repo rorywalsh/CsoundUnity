@@ -1,0 +1,33 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "giovannibedetti",
+      "name": "Giovanni Bedetti",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1912983?v=4",
+      "profile": "http://www.giovannibedetti.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "berntisak",
+      "name": "Bernt Isak Wærstad",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/9213871?v=4",
+      "profile": "https://github.com/berntisak",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "CsoundUnity",
+  "projectOwner": "rorywalsh",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

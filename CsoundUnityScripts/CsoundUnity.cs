@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 2015 Rory Walsh. 
 
 This interface would not have been possible without Richard Henninger's .NET interface to the Csound API. 
@@ -77,9 +77,13 @@ public class CsoundUnity : MonoBehaviour
     public bool processClipAudio = false;
     //structure to hold channel data
     List<CsoundChannelController> channels;
+<<<<<<< HEAD
     private AudioSource audioSource;
     private AudioClip dummyClip;
     
+=======
+
+>>>>>>> 9e55fe5af7a7a37aa913a071c4c5964e950a24cc
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
@@ -97,7 +101,11 @@ public class CsoundUnity : MonoBehaviour
             string dataPath = Application.streamingAssetsPath;
             string path = System.Environment.GetEnvironmentVariable("Path");
             string updatedPath = path+";"+Application.streamingAssetsPath;
-            System.Environment.SetEnvironmentVariable("Path", updatedPath);
+
+            //only add path if it is not already there...
+            if(!path.Contains(Application.streamingAssetsPath))
+                System.Environment.SetEnvironmentVariable("Path", updatedPath);
+        
             print("Updated path:"+updatedPath);
             audioSource = GetComponent<AudioSource>();
             channels = new List<CsoundChannelController>();
@@ -118,11 +126,18 @@ public class CsoundUnity : MonoBehaviour
             }
 
 
+
             /*
              * This method prints the Csound output to the Unity console
              */
             if (logCsoundOutput)
                 InvokeRepeating("logCsoundMessages", 0, .5f);
+
+            compiledOk = csound.compiledWithoutError();
+
+            if (compiledOk)
+                csound.setStringChannel("AudioPath", Application.dataPath + "/Audio/");
+
 
             compiledOk = csound.compiledWithoutError();
 
@@ -193,10 +208,11 @@ public class CsoundUnity : MonoBehaviour
 
                         if (processClipAudio)
                         {
-                            setInputSample(ksmpsIndex * numChannels + channel, samples[i + channel]);
-                            samples[i + channel] = (float)getOutputSample(ksmpsIndex * numChannels + channel);
+                            setInputSample(ksmpsIndex * numChannels + channel, channel, samples[i + channel]);
+                            samples[i + channel] = (float)getOutputSample(ksmpsIndex * numChannels + channel, channel);
                         }
-                        else{
+                        else
+                        {
                             samples[i + channel] = (float)(getOutputSample(ksmpsIndex, channel) / zerdbfs);
 
                         }
@@ -225,9 +241,9 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Set a sample in Csound's input buffer
     */
-    public void setInputSample(int pos, double sample)
+    public void setInputSample(int pos, int channel, double sample)
     {
-        csound.setInputSample(pos, sample);
+        csound.setSpinSample(pos, channel, sample);
     }
 
     /**
@@ -238,10 +254,6 @@ public class CsoundUnity : MonoBehaviour
         return csound.getSpoutSample(frame, channel);
     }
 
-    public double getOutputSample(int pos)
-    {
-        return csound.getOutputSample(pos);
-    }
     /**
      * Get 0 dbfs
      */
@@ -292,12 +304,100 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /**
+     *  Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
+    */
+    public int getTableLength(int table)
+    {
+        return csound.tableLength(table);
+    }
+
+    /**
      * Retrieves a single sample from a Csound function table. 
      */
     public double getTableSample(int tableNumber, int index)
     {
         return csound.getTable(tableNumber, index);
     }
+
+    /**
+    * Stores values to function table 'tableNum' in tableValues, and returns the table length (not including the guard point). 
+    * If the table does not exist, tableValues is set to NULL and -1 is returned.
+    */
+    public int getTable(out double[] tableValues, int numTable)
+    {
+        return csound.getTable(out tableValues, numTable);
+    }
+
+    /**
+     * Stores the arguments used to generate function table 'tableNum' in args, and returns the number of arguments used. 
+     * If the table does not exist, args is set to NULL and -1 is returned. 
+     * NB: the argument list starts with the GEN number and is followed by its parameters. eg. f 1 0 1024 10 1 0.5 yields the list {10.0,1.0,0.5}
+    */
+    public int getTableArgs(out double[] args, int index)
+    {
+        return csound.getTableArgs(out args, index);
+    }
+
+    /**
+     * Sets the value of a slot in a function table. The table number and index are assumed to be valid.
+    */
+    public void setTable(int table, int index, double value)
+    {
+        csound.setTable(table, index, value);
+    }
+
+    /**
+    * Copy the contents of a function table into a supplied array dest 
+    * The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
+    */
+    public void copyTableOut(int table, out double[] dest)
+    {
+        csound.tableCopyOut(table, out dest);
+    }
+
+    /**
+     * Asynchronous version of copyTableOut
+     */
+    public void copyTableOutAsync(int table, out double[] dest)
+    {
+        csound.tableCopyOutAsync(table, out dest);
+    }
+
+    /**
+    * Copy the contents of a function table into a supplied array dest 
+    * The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
+    */
+    public void copyTableIn(int table, double[] source)
+    {
+        csound.tableCopyIn(table, source);
+    }
+
+    /**
+     * Asynchronous version of copyTableOut
+     */
+    public void copyTableInAsync(int table, double[] source)
+    {
+        csound.tableCopyInAsync(table, source);
+    }
+
+    /**
+    * Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char) 
+    * Otherwise it returns 0.
+    */
+    public int isNamedGEN(int num)
+    {
+        return csound.isNamedGEN(num);
+    }
+
+    /***
+     * Gets the GEN name from a number num, if this is a named GEN 
+     * The final parameter is the max len of the string (excluding termination)
+    */
+    public void getNamedGEN(int num, out string name, int len)
+    {
+        csound.getNamedGEN(num, out name, len);
+    }
+
     /**
      * Send a score event to Csound in the form of "i1 0 10 ...."
      */
@@ -321,8 +421,8 @@ public class CsoundUnity : MonoBehaviour
     public List<CsoundChannelController> parseCsdFile(string filename)
     {
         string[] fullCsdText = File.ReadAllLines(filename);
-        List<CsoundChannelController> locaChannelControllers;
-        locaChannelControllers = new List<CsoundChannelController>();
+        List<CsoundChannelController> localChannelControllers;
+        localChannelControllers = new List<CsoundChannelController>();
 
         foreach (string line in fullCsdText)
         {
@@ -377,10 +477,10 @@ public class CsoundUnity : MonoBehaviour
                     controller.value = value.Length > 0 ? float.Parse(value) : 0;
                 }
 
-                locaChannelControllers.Add(controller);
+                localChannelControllers.Add(controller);
             }
         }
-        return locaChannelControllers;
+        return localChannelControllers;
     }
 
 }

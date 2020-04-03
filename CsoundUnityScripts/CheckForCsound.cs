@@ -46,8 +46,8 @@ public class CheckForCsound {
     [UnityEditor.Callbacks.DidReloadScripts]
     private static void OnScriptsReloaded()
     {
-        performCheck();
-;   }
+        //performCheck();
+   }
 }
 
 #endif
