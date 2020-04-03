@@ -100,12 +100,6 @@ namespace csoundcsharp
 			[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
 			internal static extern IntPtr csoundSetControlChannel([In] IntPtr csound, [In] String str, [In] MYFLT value);
 
-            [DllImport(_dllVersionCsUnity, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern void setCsoundInputSample([In] IntPtr csound, [In] Int32 pos, [In] MYFLT sample);
-
-            [DllImport(_dllVersionCsUnity, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern MYFLT getCsoundOutputSample([In] IntPtr csound, [In] Int32 pose);
-
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
 			internal static extern IntPtr csoundSetStringChannel([In] IntPtr csound, [In] String str, [In] String value);
 
@@ -170,7 +164,10 @@ namespace csoundcsharp
 			internal static extern MYFLT csoundGetSr([In] IntPtr csound);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern MYFLT csoundGetSpoutSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel);
+            internal static extern double csoundGetSpoutSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern double csoundSetSpinSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel, [In] double value);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
 			internal static extern MYFLT csoundGetKr([In] IntPtr csound);

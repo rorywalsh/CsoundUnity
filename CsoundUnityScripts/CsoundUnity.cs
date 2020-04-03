@@ -97,7 +97,11 @@ public class CsoundUnity : MonoBehaviour
             string dataPath = Application.streamingAssetsPath;
             string path = System.Environment.GetEnvironmentVariable("Path");
             string updatedPath = path+";"+Application.streamingAssetsPath;
-            System.Environment.SetEnvironmentVariable("Path", updatedPath);
+
+            //only add path if it is not already there...
+            if(!path.Contains(Application.streamingAssetsPath))
+                System.Environment.SetEnvironmentVariable("Path", updatedPath);
+        
             print("Updated path:"+updatedPath);
             audioSource = GetComponent<AudioSource>();
             channels = new List<CsoundChannelController>();
@@ -193,10 +197,11 @@ public class CsoundUnity : MonoBehaviour
 
                         if (processClipAudio)
                         {
-                            setInputSample(ksmpsIndex * numChannels + channel, samples[i + channel]);
-                            samples[i + channel] = (float)getOutputSample(ksmpsIndex * numChannels + channel);
+                            setInputSample(ksmpsIndex * numChannels + channel, channel, samples[i + channel]);
+                            samples[i + channel] = (float)getOutputSample(ksmpsIndex * numChannels + channel, channel);
                         }
-                        else{
+                        else
+                        {
                             samples[i + channel] = (float)(getOutputSample(ksmpsIndex, channel) / zerdbfs);
 
                         }
@@ -225,9 +230,9 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Set a sample in Csound's input buffer
     */
-    public void setInputSample(int pos, double sample)
+    public void setInputSample(int pos, int channel, double sample)
     {
-        csound.setInputSample(pos, sample);
+        csound.setSpinSample(pos, channel, sample);
     }
 
     /**
@@ -238,10 +243,6 @@ public class CsoundUnity : MonoBehaviour
         return csound.getSpoutSample(frame, channel);
     }
 
-    public double getOutputSample(int pos)
-    {
-        return csound.getOutputSample(pos);
-    }
     /**
      * Get 0 dbfs
      */
