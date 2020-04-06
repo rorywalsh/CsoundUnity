@@ -39,9 +39,9 @@ namespace csoundcsharp
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN 
         internal const string _dllVersion = "csound64.dll";
-        internal const string _dllVersionCsUnity = "/Assets/StreamingAssets/CsoundUnityNativePlugin.dll";
+        internal const string _dllVersionCsUnity = "Assets/StreamingAssets/CsoundUnityNativePlugin.dll";
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-		internal const string _dllVersion = "/Assets/StreamingAssets/CsoundLib64.framework/CsoundLib64";
+		internal const string _dllVersion = "Assets/StreamingAssets/CsoundLib64.framework/CsoundLib64";
 #endif
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate void MessageCallbackProxy(IntPtr csound, Int32 attr, string format, IntPtr valist);
