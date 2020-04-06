@@ -22,6 +22,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ceberman",
+      "name": "Charles Berman",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/33271566?v=4",
+      "profile": "http://bermondo.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
