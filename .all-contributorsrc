@@ -31,6 +31,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "hectorC",
+      "name": "Hector Centeno",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/4064498?v=4",
+      "profile": "http://www.hcenteno.net",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
