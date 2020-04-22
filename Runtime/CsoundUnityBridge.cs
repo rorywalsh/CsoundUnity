@@ -70,7 +70,7 @@ public class CsoundUnityBridge
         Debug.Log("System buffer size: " + systemBufferSize + ", buffer count: " + systemNumBuffers + " , samplerate: " + AudioSettings.outputSampleRate);
         Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, systemBufferSize);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
-        string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "ksmps_override=32"};
+        string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "--ksmps=32"};
         Debug.Log("CsoundUnity is overriding the orchestra sample rate to match that of Unity.");
         Debug.Log("CsoundUnity is overriding the orchestra ksmps value to best match Unity's audio settings, i.e, 32 ksmps");
         int ret = Csound6.NativeMethods.csoundCompile(csound, 4, runargs);

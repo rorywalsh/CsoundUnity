@@ -113,7 +113,7 @@ public class CsoundUnity : MonoBehaviour
         string csoundFilePath = "";
         string dataPath = "";
 
-        Debug.Log("Sampleing rate" + AudioSettings.outputSampleRate);
+        Debug.Log("AudioSettings.outputSampleRate: " + AudioSettings.outputSampleRate);
         if (string.IsNullOrWhiteSpace(csoundFile)) return;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -330,12 +330,12 @@ public class CsoundUnity : MonoBehaviour
 
                         if (processClipAudio)
                         {
-                            setInputSample(ksmpsIndex * numChannels + channel, channel, samples[i + channel]);
-                            samples[i + channel] = (float)getOutputSample(ksmpsIndex * numChannels + channel, channel);
+                            SetInputSample(ksmpsIndex * numChannels + channel, channel, samples[i + channel]);
+                            samples[i + channel] = (float)GetOutputSample(ksmpsIndex * numChannels + channel, channel);
                         }
                         else
                         {
-                            samples[i + channel] = (float)(getOutputSample(ksmpsIndex, channel) / zerdbfs);
+                            samples[i + channel] = (float)(GetOutputSample(ksmpsIndex, channel) / zerdbfs);
 
                         }
                     }
@@ -383,7 +383,7 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Set a sample in Csound's input buffer
     */
-    public void setInputSample(int pos, int channel, double sample)
+    public void SetInputSample(int pos, int channel, double sample)
     {
         csound.SetSpinSample(pos, channel, sample);
     }
@@ -391,7 +391,7 @@ public class CsoundUnity : MonoBehaviour
     /**
         * Get a sample from Csound's audio output buffer
     */
-    public double getOutputSample(int frame, int channel)
+    public double GetOutputSample(int frame, int channel)
     {
         return csound.GetSpoutSample(frame, channel);
     }
