@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN41</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN40.html" title="GEN40" />
+    <link rel="next" href="GEN42.html" title="GEN42" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN41</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN40.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN42.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN41"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN41" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN41</span>
+        </h2>
+        <p>GEN41 — 
+      Generates a random list of numerical pairs.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987965936"></a>
+        <h2>Description</h2>
+        <p>
+      Generates a discrete random distribution function by giving a list of numerical pairs.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987964656"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size -41 value1 prob1 value2 prob2 value3 prob3 ... valueN probN </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987962672"></a>
+        <h2>Performance</h2>
+        <p>
+      The first number of each pair is a value, and the second is the probability of that value to be chosen by a random algorithm. Even if any number can be assigned to the probability element of each pair, it is suggested to give it a percent value, in order to make it clearer for the user.
+    </p>
+        <p>
+      This subroutine is designed to be used together with duserrnd and <a class="link" href="urd.html" title="urd"><em class="citetitle">urd</em></a> opcodes (see <a class="link" href="duserrnd.html" title="duserrnd">duserrnd</a> for more information).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987959120"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the GEN41 generator. It uses the file <a class="ulink" href="examples/gen41.csd" target="_top"><em class="citetitle">gen41.csd</em></a>.
+            </p>
+        <div class="example">
+          <a id="idm275987957328"></a>
+          <p class="title">
+            <strong>Example 1229. Example of the GEN41 generator.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276396192032"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o GEN41.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">1</span>   <span class="nb">duserrnd</span> <span class="mi">1</span>
+     <span class="nb">printk</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">1</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">220</span><span class="o">*</span>k<span class="n">1</span><span class="p">,</span> <span class="mi">2</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">20</span> <span class="o">-</span><span class="mi">41</span>  <span class="mi">2</span> <span class="mf">.1</span> <span class="mi">8</span> <span class="mf">.9</span>	<span class="c1">;choose 2 at 10% probability, 8 at 90%</span>
+
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />     
+      Its output should include lines like these:
+      </p>
+        <pre class="screen">
+i   1 time     0.00067:     8.00000
+i   1 time     0.00133:     8.00000
+i   1 time     0.00200:     8.00000
+i   1 time     0.00267:     8.00000
+i   1 time     0.00333:     2.00000
+i   1 time     0.00400:     8.00000
+i   1 time     0.00533:     8.00000
+i   1 time     0.00600:     8.00000
+..........
+      </pre>
+        <p>
+
+        <span class="phrase">This is the diagram of the waveform of the GEN41 routine, as used in the example:</span>
+    </p>
+        <p>
+    </p>
+        <p>
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen41.png" alt="f 1 0 -20 -41 2 .1 8 .9" />
+          <div class="caption">
+            <p>f 1 0 -20 -41  2 .1 8 .9</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987947984"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN40.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN42.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN40 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN42</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

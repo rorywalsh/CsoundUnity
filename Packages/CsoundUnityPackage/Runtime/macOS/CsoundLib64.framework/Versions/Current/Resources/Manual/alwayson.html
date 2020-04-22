@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>alwayson</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="alpass.html" title="alpass" />
+    <link rel="next" href="ampdb.html" title="ampdb" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">alwayson</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="alpass.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ampdb.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="alwayson"></a>
+      <div class="titlepage"></div>
+      <a id="Indexalwayson" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">alwayson</span>
+        </h2>
+        <p>alwayson — 
+      Activates the indicated instrument in the orchestra header,
+      without need for an i statement.     
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276151148384"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in signalflowgraph</p>
+        <p>
+      Activates the indicated instrument in the orchestra header,
+      without need for an i statement. Instruments must be 
+      activated in the same order as they are defined.
+    </p>
+        <p>
+      The alwayson opcode is designed to simplify 
+      the definition of re-usable orchestras with 
+      signal processing or effects chains and networks.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276151146000"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"> <span class="command"><strong>alwayson</strong></span> Tinstrument [p4, ..., pn]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276151143920"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Tinstrument</em></span> -- String name of the instrument definition to be turned on.
+    </p>
+        <p>
+      <span class="emphasis"><em>[p4, ..., pn]</em></span> -- Optional pfields to be passed to the instrument, in the same
+      order and type as if this were an i statement.
+    </p>
+        <p>
+      When the instrument is activated, p1 is the insno, p2 is 0, and p3 is -1.
+      Pfields from p4 on may optionally be sent to the instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276151140784"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the alwayson opcode. It uses the file <a class="ulink" href="examples/alwayson.csd" target="_top"><em class="citetitle">alwayson.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276151138992"></a>
+          <p class="title">
+            <strong>Example 51. Example of the alwayson opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276496649120"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span> 
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">;-Wfo alwayson.wav </span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span> 
+
+<span class="c1">; Initialize the global variables. </span>
+
+<span class="vg">sr</span>     <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> 	<span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">nchnls</span> 	<span class="o">=</span> <span class="mi">2</span> 
+
+<span class="c1">; Connect up instruments and effects to create the signal flow graph. </span>
+
+<span class="nb">connect</span> <span class="s">"SimpleSine"</span><span class="p">,</span>   	<span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"leftin"</span> 
+<span class="nb">connect</span> <span class="s">"SimpleSine"</span><span class="p">,</span>   	<span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"rightin"</span> 
+
+<span class="nb">connect</span> <span class="s">"Moogy"</span><span class="p">,</span>        	<span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"leftin"</span> 
+<span class="nb">connect</span> <span class="s">"Moogy"</span><span class="p">,</span>        	<span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"rightin"</span> 
+
+<span class="nb">connect</span> <span class="s">"Reverberator"</span><span class="p">,</span> 	<span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Compressor"</span><span class="p">,</span>       	<span class="s">"leftin"</span> 
+<span class="nb">connect</span> <span class="s">"Reverberator"</span><span class="p">,</span> 	<span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Compressor"</span><span class="p">,</span>       	<span class="s">"rightin"</span> 
+
+<span class="nb">connect</span> <span class="s">"Compressor"</span><span class="p">,</span>   	<span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Soundfile"</span><span class="p">,</span>       	<span class="s">"leftin"</span> 
+<span class="nb">connect</span> <span class="s">"Compressor"</span><span class="p">,</span>   	<span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Soundfile"</span><span class="p">,</span>       	<span class="s">"rightin"</span> 
+
+<span class="c1">; Turn on the "effect" units in the signal flow graph. </span>
+
+<span class="nb">alwayson</span> <span class="s">"Reverberator"</span><span class="p">,</span> <span class="mf">0.91</span><span class="p">,</span> <span class="mi">12000</span> 
+<span class="nb">alwayson</span> <span class="s">"Compressor"</span> 
+<span class="nb">alwayson</span> <span class="s">"Soundfile"</span> 
+
+<span class="c1">; Define instruments and effects in order of signal flow.</span>
+
+			    <span class="kd">instr</span> <span class="nf">SimpleSine</span> 
+                <span class="c1">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+			    <span class="c1">; Default values:   p1  p2  p3  p4  p5  p6  p7  p8  p9  p10</span>
+			    <span class="nb">pset</span>			    <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mf">0.5</span>
+i<span class="n">attack</span>			<span class="o">=</span>			        <span class="mf">0.015</span>
+i<span class="n">decay</span>			<span class="o">=</span>			        <span class="mf">0.07</span>
+i<span class="n">sustain</span>		<span class="o">=</span>			        <span class="nb">p3</span>
+i<span class="n">release</span>		<span class="o">=</span>			        <span class="mf">0.3</span>
+<span class="nb">p3</span>			    <span class="o">=</span>			        i<span class="n">attack</span> <span class="o">+</span> i<span class="n">decay</span> <span class="o">+</span> i<span class="n">sustain</span> <span class="o">+</span> i<span class="n">release</span>
+a<span class="n">damping</span>		<span class="nb">linsegr</span>			    <span class="mf">0.0</span><span class="p">,</span> i<span class="n">attack</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> i<span class="n">decay</span> <span class="o">+</span> i<span class="n">sustain</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> i<span class="n">release</span><span class="p">,</span> <span class="mf">0.0</span>
+i<span class="n">Hz</span> 			<span class="o">=</span> 			        <span class="nb">cpsmidinn</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span> 
+                <span class="c1">; Rescale MIDI velocity range to a musically usable range of dB. </span>
+i<span class="n">amplitude</span> 		<span class="o">=</span> 			        <span class="nb">ampdb</span><span class="p">(</span><span class="nb">p5</span> <span class="o">/</span> <span class="mi">127</span> <span class="o">*</span> <span class="mf">15.0</span> <span class="o">+</span> <span class="mf">60.0</span><span class="p">)</span> 
+			    <span class="c1">; Use ftgenonce instead of ftgen, ftgentmp, or f statement. </span>
+i<span class="n">cosine</span>			<span class="nb">ftgenonce</span> 		    <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">65537</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">1</span> 
+a<span class="n">oscili</span>			<span class="nb">oscili</span> 			    i<span class="n">amplitude</span><span class="p">,</span> i<span class="n">Hz</span><span class="p">,</span> i<span class="n">cosine</span> 
+a<span class="n">adsr</span> 			<span class="nb">madsr</span> 			    i<span class="n">attack</span><span class="p">,</span> i<span class="n">decay</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> i<span class="n">release</span> 
+a<span class="n">signal</span> 		<span class="o">=</span> 			        a<span class="n">oscili</span> <span class="o">*</span> a<span class="n">adsr</span> 
+a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span>	<span class="nb">pan2</span>			    a<span class="n">signal</span><span class="p">,</span> <span class="nb">p7</span>
+			    <span class="c1">; Stereo audio output to be routed in the orchestra header. </span>
+			    <span class="nb">outleta</span> 		    <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">left</span>
+			    <span class="nb">outleta</span> 		    <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">right</span>
+			    <span class="kd">endin</span> 
+
+			    <span class="kd">instr</span> <span class="nf">Moogy</span> 
+                <span class="c1">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+			    <span class="c1">; Default values:   p1  p2  p3  p4  p5  p6  p7  p8  p9  p10</span>
+			    <span class="nb">pset</span>			    <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mf">0.5</span>
+i<span class="n">attack</span>			<span class="o">=</span>			        <span class="mf">0.003</span>
+i<span class="n">sustain</span>		<span class="o">=</span>			        <span class="nb">p3</span>
+i<span class="n">release</span>		<span class="o">=</span>			        <span class="mf">0.05</span>
+<span class="nb">p3</span>			    <span class="o">=</span>			        i<span class="n">attack</span> <span class="o">+</span> i<span class="n">sustain</span> <span class="o">+</span> i<span class="n">release</span>
+a<span class="n">damping</span>		<span class="nb">linsegr</span>			    <span class="mf">0.0</span><span class="p">,</span> i<span class="n">attack</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> i<span class="n">sustain</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> i<span class="n">release</span><span class="p">,</span> <span class="mf">0.0</span>
+i<span class="n">Hz</span> 			<span class="o">=</span> 			        <span class="nb">cpsmidinn</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+                <span class="c1">; Rescale MIDI velocity range to a musically usable range of dB. </span>
+i<span class="n">amplitude</span> 		<span class="o">=</span> 			        <span class="nb">ampdb</span><span class="p">(</span><span class="nb">p5</span> <span class="o">/</span> <span class="mi">127</span> <span class="o">*</span> <span class="mf">20.0</span> <span class="o">+</span> <span class="mf">60.0</span><span class="p">)</span> 
+			    <span class="nb">print</span> 			    i<span class="n">Hz</span><span class="p">,</span> i<span class="n">amplitude</span> 
+			    <span class="c1">; Use ftgenonce instead of ftgen, ftgentmp, or f statement. </span>
+i<span class="n">sine</span> 			<span class="nb">ftgenonce</span> 		    <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">65537</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span> 
+a<span class="n">signal</span> 		<span class="nb">vco</span> 			    i<span class="n">amplitude</span><span class="p">,</span> i<span class="n">Hz</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> i<span class="n">sine</span> 
+k<span class="n">fco</span> 			<span class="nb">line</span> 			    <span class="mi">2000</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">200</span>
+k<span class="n">rez</span> 			<span class="o">=</span> 			        <span class="mf">0.8</span> 
+a<span class="n">signal</span> 		<span class="nb">moogvcf</span> 		    a<span class="n">signal</span><span class="p">,</span> k<span class="n">fco</span><span class="p">,</span> k<span class="n">rez</span><span class="p">,</span> <span class="mi">100000</span> 
+a<span class="n">signal</span>			<span class="o">=</span>			        a<span class="n">signal</span> <span class="o">*</span> a<span class="n">damping</span>
+a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span>	<span class="nb">pan2</span>			    a<span class="n">signal</span><span class="p">,</span> <span class="nb">p7</span>
+			    <span class="c1">; Stereo audio output to be routed in the orchestra header. </span>
+			    <span class="nb">outleta</span> 		    <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">left</span>
+			    <span class="nb">outleta</span> 		    <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">right</span> 
+			    <span class="kd">endin</span> 
+			    <span class="kd">instr</span> <span class="nf">Reverberator</span> 
+                <span class="c1">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+			    <span class="c1">; Stereo input. </span>
+a<span class="n">leftin</span> 		<span class="nb">inleta</span> 			    <span class="s">"leftin"</span> 
+a<span class="n">rightin</span> 		<span class="nb">inleta</span> 			    <span class="s">"rightin"</span> 
+i<span class="n">delay</span> 			<span class="o">=</span> 			        <span class="nb">p4</span> 
+i<span class="n">cutoff</span> 		<span class="o">=</span> 			        <span class="nb">p5</span> 
+a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span> 	<span class="nb">reverbsc</span> 	        a<span class="n">leftin</span><span class="p">,</span> a<span class="n">rightin</span><span class="p">,</span> i<span class="n">delay</span><span class="p">,</span> i<span class="n">cutoff</span> 
+			    <span class="c1">; Stereo output. </span>
+			    <span class="nb">outleta</span> 	        <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">left</span> 
+			    <span class="nb">outleta</span> 	        <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">right</span> 
+			    <span class="kd">endin</span> 
+
+			    <span class="kd">instr</span> <span class="nf">Compressor</span> 
+                <span class="c1">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+			    <span class="c1">; Stereo input. </span>
+a<span class="n">leftin</span> 		<span class="nb">inleta</span> 		        <span class="s">"leftin"</span> 
+a<span class="n">rightin</span> 		<span class="nb">inleta</span> 		        <span class="s">"rightin"</span> 
+k<span class="n">threshold</span> 		<span class="o">=</span> 		            <span class="mi">25000</span> 
+i<span class="n">comp1</span> 			<span class="o">=</span> 		            <span class="mf">0.5</span> 
+i<span class="n">comp2</span> 			<span class="o">=</span> 		            <span class="mf">0.763</span> 
+i<span class="n">rtime</span> 			<span class="o">=</span> 		            <span class="mf">0.1</span> 
+i<span class="n">ftime</span> 			<span class="o">=</span> 		            <span class="mf">0.1</span> 
+a<span class="n">leftout</span> 		<span class="nb">dam</span> 		        a<span class="n">leftin</span><span class="p">,</span> k<span class="n">threshold</span><span class="p">,</span> i<span class="n">comp1</span><span class="p">,</span> i<span class="n">comp2</span><span class="p">,</span> i<span class="n">rtime</span><span class="p">,</span> i<span class="n">ftime</span> 
+a<span class="n">rightout</span> 		<span class="nb">dam</span> 		        a<span class="n">rightin</span><span class="p">,</span> k<span class="n">threshold</span><span class="p">,</span> i<span class="n">comp1</span><span class="p">,</span> i<span class="n">comp2</span><span class="p">,</span> i<span class="n">rtime</span><span class="p">,</span> i<span class="n">ftime</span> 
+			    <span class="c1">; Stereo output. </span>
+			    <span class="nb">outleta</span> 	        <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">leftout</span> 
+			    <span class="nb">outleta</span> 	        <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">rightout</span> 
+			    <span class="kd">endin</span> 
+
+			    <span class="kd">instr</span> <span class="nf">Soundfile</span> 
+                <span class="c1">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+			    <span class="c1">; Stereo input. </span>
+a<span class="n">leftin</span> 		<span class="nb">inleta</span> 		        <span class="s">"leftin"</span> 
+a<span class="n">rightin</span> 		<span class="nb">inleta</span> 		        <span class="s">"rightin"</span> 
+			    <span class="nb">outs</span> 		        a<span class="n">leftin</span><span class="p">,</span> a<span class="n">rightin</span> 
+			    <span class="kd">endin</span> 
+
+<span class="nt">&lt;/CsInstruments&gt;</span> 
+<span class="nt">&lt;CsScore&gt;</span> 
+
+<span class="c1">; It is not necessary to activate "effects" or create f-tables in the score! </span>
+<span class="c1">; Overlapping notes create new instances of instruments with proper connections. </span>
+
+<span class="nb">i</span> <span class="s">"SimpleSine"</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mi">60</span> <span class="mi">85</span> 
+<span class="nb">i</span> <span class="s">"SimpleSine"</span> <span class="mi">2</span> <span class="mi">5</span> <span class="mi">64</span> <span class="mi">80</span> 
+<span class="nb">i</span> <span class="s">"Moogy"</span> <span class="mi">3</span> <span class="mi">5</span> <span class="mi">67</span> <span class="mi">75</span> 
+<span class="nb">i</span> <span class="s">"Moogy"</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">71</span> <span class="mi">70</span> 
+<span class="c1">; 1 extra second after the performance</span>
+<span class="nb">e</span> <span class="mi">1</span> 
+
+<span class="nt">&lt;/CsScore&gt;</span> 
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276151137216"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2009</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="alpass.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ampdb.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">alpass </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ampdb</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

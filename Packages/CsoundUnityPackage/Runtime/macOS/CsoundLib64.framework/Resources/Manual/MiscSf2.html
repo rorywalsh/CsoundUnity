@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Appendix G. SoundFont2 File Format</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="prev" href="MiscWindows.html" title="Appendix F. Window Functions" />
+    <link rel="next" href="MiscGlossary.html" title="Glossary" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Appendix G. SoundFont2 File Format</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="MiscWindows.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="MiscGlossary.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="appendix">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h1 class="title"><a id="MiscSf2"></a>Appendix G. SoundFont2 File Format</h1>
+          </div>
+        </div>
+      </div>
+      <p>
+    Beginning with Csound Version 4.07, <a class="link" href="sfload.html" title="sfload"><em class="citetitle">Csound supports the SoundFont2 sample file format</em></a>. SoundFont2 (or SF2) is a widespread standard which allows encoding banks of wavetable-based sounds into a binary file. In order to understand the usage of these opcodes, the user must have some knowledge of the SF2 format, so a brief description of this format follows.
+  </p>
+      <p>
+    The SF2 format is made by generator and modulator objects. All current Csound opcodes regarding SF2 support the generator function only.
+  </p>
+      <p>
+    There are several levels of generators having a hierarchical structure. The most basic kind of generator object is a sample. Samples may or may not be be looped, and are associated with a MIDI note number, called the base-key. When a sample is associated with a range of MIDI note numbers, a range of velocities, a transposition (coarse and fine tuning), a scale tuning, and a level scaling factor, the sample and its associations make up a <span class="quote">“<span class="quote">split.</span>”</span> A set of splits, together with a name, make up an <span class="quote">“<span class="quote">instrument.</span>”</span> When an instrument is associated with a key range, a velocity range, a level scaling factor, and a transposition, the instrument and its associations make up a <span class="quote">“<span class="quote">layer.</span>”</span> A set of layers, together with a name, makes up a <span class="quote">“<span class="quote">preset.</span>”</span> Presets are normally the final sound-generating structures ready for the user. They generate sound according to the settings of their lower-level components.
+  </p>
+      <p>
+    Both sample data and structure data is embedded in the same SF2 binary file. A single SF2 file can contain up to a maximum of 128 banks of 128 preset programs, for a total of 16384 presets in one SF2 file. The maximum number of layers, instruments, splits, and samples is not defined, and probably is only limited by the computer's memory.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="MiscWindows.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="MiscGlossary.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Appendix F. Window Functions </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Glossary</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ATScross</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ATSbufread.html" title="ATSbufread" />
+    <link rel="next" href="ATSinfo.html" title="ATSinfo" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ATScross</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ATSbufread.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ATSinfo.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ATScross"></a>
+      <div class="titlepage"></div>
+      <a id="IndexATScross" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ATScross</span>
+        </h2>
+        <p>ATScross —  perform cross synthesis from ATS analysis files.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124881344"></a>
+        <h2>Description</h2>
+        <p>
+            <span class="emphasis"><em>ATScross</em></span> uses data from an ATS analysis file and data from an <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a> to perform cross synthesis.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124878800"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar <span class="command"><strong>ATScross</strong></span> ktimepnt, kfmod, iatsfile, ifn, kmylev, kbuflev, ipartials \
+          [, ipartialoffset, ipartialincr]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124876640"></a>
+        <h2>Initialization</h2>
+        <p>
+            <span class="emphasis"><em>iatsfile</em></span> – integer or character-string denoting a control-file derived from ATS analysis of an audio signal. An integer denotes the suffix of a file ATS.m; a character-string (in double quotes) gives a filename, optionally a full pathname. If not full-path, the file is sought first in the current directory, then in the one given by the environment variable SADIR (if defined).
+        </p>
+        <p><span class="emphasis"><em>ifn</em></span> – table number of a stored function containing a sine wave.</p>
+        <p><span class="emphasis"><em>ipartials</em></span> – number of partials that will be used in the resynthesis
+        </p>
+        <p><span class="emphasis"><em>ipartialoffset</em></span> (optional) – is the first partial used (defaults to 0).
+        </p>
+        <p><span class="emphasis"><em>ipartialincr</em></span> (optional) – sets an increment by which these synthesis opcodes counts up from <span class="emphasis"><em>ipartialoffset</em></span> for ibins components in the re-synthesis (defaults to 1).
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124870784"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>ktimepnt</em></span> – The time pointer in seconds used to index the ATS file. Used for <span class="emphasis"><em>ATScross</em></span> exactly the same as for <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>.</p>
+        <p>
+        <span class="emphasis"><em>kfmod</em></span> – an input for performing pitch transposition or frequency modulation on all of the synthesized partials, if no fm or pitch change is desired then use a 1 for this value.
+        </p>
+        <p><span class="emphasis"><em>kmylev</em></span> - scales the <span class="emphasis"><em>ATScross</em></span> component of the frequency spectrum applied to the partials from the ATS file indicated by the <span class="emphasis"><em>ATScross</em></span> opcode. The frequency spectrum information comes from the <span class="emphasis"><em>ATScross</em></span> ATS file. A value of 1 (and 0 for <span class="emphasis"><em>kbuflev</em></span>) gives the same results as <a class="link" href="ATSadd.html" title="ATSadd"><em class="citetitle">ATSadd</em></a>.
+        </p>
+        <p><span class="emphasis"><em>kbuflev</em></span> - scales the <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a> component of the frequency spectrum applied to the partials from the ATS file indicated by the <span class="emphasis"><em>ATScross</em></span> opcode. The frequency spectrum information comes from the <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a> ATS file. A value of 1 (and 0 for <span class="emphasis"><em>kmylev</em></span>) results in partials that have frequency information from the ATS file given by the <span class="emphasis"><em>ATScross</em></span>, but amplitudes imposed by data from the ATS file given by <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>.
+        </p>
+        <p><span class="emphasis"><em>ATScross</em></span> uses data from an ATS analysis file (indicated by <span class="emphasis"><em>iatsfile</em></span>) and data from an <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a> to perform cross synthesis. <span class="emphasis"><em>ATScross</em></span> uses <span class="emphasis"><em>ktimepnt</em></span>, <span class="emphasis"><em>kfmod</em></span>, <span class="emphasis"><em>ipartials</em></span>, <span class="emphasis"><em>ipartialoffset</em></span> and <span class="emphasis"><em>ipartialincr</em></span> just like  <a class="link" href="ATSadd.html" title="ATSadd"><em class="citetitle">ATSadd</em></a>. <span class="emphasis"><em>ATScross</em></span> synthesizes a sine-wave for each partial selected by the user and uses the frequency of that partial (after scaling in frequency by <span class="emphasis"><em>kfmod</em></span>) to index the table created by <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>. Interpolation is used to get in-between values. <span class="emphasis"><em>ATScross</em></span> uses the sum of the amplitude data from its ATS file (scaled by <span class="emphasis"><em>kmylev</em></span>) and the amplitude data gained from an <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a> (scaled by <span class="emphasis"><em>kbuflev</em></span>) to scale the amplitude of each partial it synthesizes. Setting <span class="emphasis"><em>kmylev</em></span> to one and <span class="emphasis"><em>kbuflev</em></span> to zero will make <span class="emphasis"><em>ATScross</em></span> act exactly like <a class="link" href="ATSadd.html" title="ATSadd"><em class="citetitle">ATSadd</em></a>. Setting <span class="emphasis"><em>kmylev</em></span> to zero and <span class="emphasis"><em>kbuflev</em></span> to one will produce a sound that has all the partials selected by the <span class="emphasis"><em>ATScross</em></span> ugen, but with amplitudes taken from an <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>. The time pointers of the <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a> and <span class="emphasis"><em>ATScross</em></span> do not need to be the same.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124843184"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the ATScross opcode. It uses the file <a class="ulink" href="examples/ATScross.csd" target="_top"><em class="citetitle">ATScross.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276124841392"></a>
+          <p class="title">
+            <strong>Example 67. Example of the ATScross opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276494869264"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc for RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o ATScross.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; "beats.ats" and  "fox.ats" are created by atsa</span>
+
+k<span class="n">time</span>	<span class="nb">line</span>	<span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">4</span>
+k<span class="n">time2</span>	<span class="nb">line</span>	<span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">4</span>
+k<span class="n">line</span>	<span class="nb">expseg</span>	<span class="mf">0.001</span><span class="p">,</span> <span class="mf">.3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">-</span><span class="mf">.3</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">line2</span>	<span class="nb">expseg</span>	<span class="mf">0.001</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">3</span>
+  	<span class="nb">ATSbufread</span> k<span class="n">time2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"fox.ats"</span><span class="p">,</span> <span class="mi">20</span>
+a<span class="n">out</span>	<span class="nb">ATScross</span>   k<span class="n">time</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">"beats.ats"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">line</span><span class="p">,</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="p">(</span><span class="mi">4</span> <span class="o">-</span> k<span class="n">line2</span><span class="p">),</span> <span class="mi">180</span>
+	<span class="nb">outs</span> a<span class="n">out</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> a<span class="n">out</span><span class="o">*</span><span class="mi">2</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span> 
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p> This example performs cross synthesis using two ATS-files,  "fox.ats" and "beats.ats". The result of this will be a sound that starts out with the shape (in frequency) of fox.ats, and ends with the shape of beats.ats. All the sine-wave frequencies come from beats.ats. The <span class="emphasis"><em>kbuflev</em></span> value is scaled because the energy produced by applying fox.ats's frequency spectrum to beats.ats's partials is very large. Notice also that the time pointers of the <span class="emphasis"><em>ATSbufread</em></span> (fox.ats) and <span class="emphasis"><em>ATScross</em></span> (beats.ats) need not have the same value, this way you can read through the two ATS files at different rates.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124837456"></a>
+        <h2>See also</h2>
+        <p><a class="link" href="ATSread.html" title="ATSread"><em class="citetitle">ATSread</em></a>, 
+            <a class="link" href="ATSreadnz.html" title="ATSreadnz"><em class="citetitle">ATSreadnz</em></a>, 
+            <a class="link" href="ATSinfo.html" title="ATSinfo"><em class="citetitle">ATSinfo</em></a>, 
+            <a class="link" href="ATSsinnoi.html" title="ATSsinnoi"><em class="citetitle">ATSsinnoi</em></a>, 
+            <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>, 
+            <a class="link" href="ATSinterpread.html" title="ATSinterpread"><em class="citetitle">ATSinterpread</em></a>, 
+            <a class="link" href="ATSpartialtap.html" title="ATSpartialtap"><em class="citetitle">ATSpartialtap</em></a>, 
+            <a class="link" href="ATSadd.html" title="ATSadd"><em class="citetitle">ATSadd</em></a>, 
+            <a class="link" href="ATSaddnz.html" title="ATSaddnz"><em class="citetitle">ATSaddnz</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124828640"></a>
+        <h2>Credits</h2>
+        <p>
+            </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Alex Norman</td>
+          </tr>
+          <tr>
+            <td>Seattle,Washington</td>
+          </tr>
+          <tr>
+            <td>2004</td>
+          </tr>
+        </table>
+        <p>
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ATSbufread.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ATSinfo.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ATSbufread </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ATSinfo</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

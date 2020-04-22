@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tempest</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tbvcf.html" title="tbvcf" />
+    <link rel="next" href="tempo.html" title="tempo" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tempest</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tbvcf.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tempo.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tempest"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTempest" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tempest</span>
+        </h2>
+        <p>tempest — 
+      Estimate the tempo of beat patterns in a control signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050774816"></a>
+        <h2>Description</h2>
+        <p>
+      Estimate the tempo of beat patterns in a control signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050773568"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ktemp <span class="command"><strong>tempest</strong></span> kin, iprd, imindur, imemdur, ihp, ithresh, ihtim, ixfdbak, \
+      istartempo, ifn [, idisprd] [, itweek]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050771392"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iprd</em></span> -- period between analyses (in seconds). Typically about .02 seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>imindur</em></span> -- minimum duration (in seconds) to serve as a unit of tempo. Typically about .2 seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>imemdur</em></span> -- duration (in seconds) of the <span class="emphasis"><em>kin</em></span> short-term memory buffer which will be scanned for periodic patterns. Typically about 3 seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>ihp</em></span> -- half-power point (in Hz) of a low-pass filter used to smooth input <span class="emphasis"><em>kin</em></span> prior to other processing. This will tend to suppress activity that moves much faster. Typically 2 Hz.
+    </p>
+        <p>
+      <span class="emphasis"><em>ithresh</em></span> -- loudness threshold by which the low-passed <span class="emphasis"><em>kin</em></span> is center-clipped before being placed in the short-term buffer as tempo-relevant data. Typically at the noise floor of the incoming data.
+    </p>
+        <p>
+      <span class="emphasis"><em>ihtim</em></span> -- half-time (in seconds) of an internal forward-masking filter that masks new <span class="emphasis"><em>kin</em></span> data in the presence of recent, louder data. Typically about .005 seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>ixfdbak</em></span> -- proportion of this unit's <span class="emphasis"><em>anticipated value</em></span> to be mixed with the incoming <span class="emphasis"><em>kin</em></span> prior to all processing. Typically about .3.
+    </p>
+        <p>
+      <span class="emphasis"><em>istartempo</em></span> -- initial tempo (in beats per minute). Typically 60.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- table number of a stored function (drawn left-to-right) by which the short-term memory data is attenuated over time.
+    </p>
+        <p>
+      <span class="emphasis"><em>idisprd</em></span> (optional) -- if non-zero, display the short-term past and future buffers every <span class="emphasis"><em>idisprd</em></span> seconds (normally a multiple of <span class="emphasis"><em>iprd</em></span>). The default value is 0 (no display).
+    </p>
+        <p>
+      <span class="emphasis"><em>itweek</em></span> (optional) -- fine-tune adjust this unit so that it is stable when analyzing events controlled by its own output. The default value is 1 (no change).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050757296"></a>
+        <h2>Performance</h2>
+        <p>
+<span class="emphasis"><em>tempest</em></span> examines <span class="emphasis"><em>kin</em></span> for amplitude periodicity, and estimates a current tempo. The input is first low-pass filtered, then center-clipped, and the residue placed in a short-term memory buffer (attenuated over time) where it is analyzed for periodicity using a form of autocorrelation. The period, expressed as a <span class="emphasis"><em>tempo</em></span> in beats per minute, is output as <span class="emphasis"><em>ktemp</em></span>. The period is also used internally to make predictions about future amplitude patterns, and these are placed in a buffer adjacent to that of the input. The two adjacent buffers can be periodically displayed, and the predicted values optionally mixed with the incoming signal to simulate expectation.
+    </p>
+        <p>
+This unit is useful for sensing the metric implications of any k-signal (e.g.- the RMS of an audio signal, or the second derivative of a conducting gesture), before sending to a <a class="link" href="tempo.html" title="tempo"><em class="citetitle">tempo</em></a> statement.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050752384"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tempest opcode. It uses the file <a class="ulink" href="examples/tempest.csd" target="_top"><em class="citetitle">tempest.csd</em></a>, and <a class="ulink" href="examples/beats.wav" target="_top"><em class="citetitle">beats.wav</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276050749792"></a>
+          <p class="title">
+            <strong>Example 1024. Example of the tempest opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276413680144"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tempest.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Use the "beats.wav" sound file.</span>
+  a<span class="n">sig</span> <span class="nb">soundin</span> <span class="s">"beats.wav"</span>
+  <span class="c1">; Extract the pitch and the envelope.</span>
+  k<span class="n">cps</span><span class="p">,</span> k<span class="n">rms</span> <span class="nb">pitchamdf</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">200</span>
+
+  i<span class="n">prd</span> <span class="o">=</span> <span class="mf">0.01</span>
+  i<span class="n">mindur</span> <span class="o">=</span> <span class="mf">0.1</span>
+  i<span class="n">memdur</span> <span class="o">=</span> <span class="mi">3</span>
+  i<span class="n">hp</span> <span class="o">=</span> <span class="mi">1</span>
+  i<span class="n">thresh</span> <span class="o">=</span> <span class="mi">30</span>
+  i<span class="n">htim</span> <span class="o">=</span> <span class="mf">0.005</span>
+  i<span class="n">xfdbak</span> <span class="o">=</span> <span class="mf">0.05</span>
+  i<span class="n">startempo</span> <span class="o">=</span> <span class="mi">110</span>
+  i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+
+  <span class="c1">; Estimate its tempo.</span>
+  k<span class="n">1</span> <span class="nb">tempest</span> k<span class="n">rms</span><span class="p">,</span> i<span class="n">prd</span><span class="p">,</span> i<span class="n">mindur</span><span class="p">,</span> i<span class="n">memdur</span><span class="p">,</span> i<span class="n">hp</span><span class="p">,</span> i<span class="n">thresh</span><span class="p">,</span> i<span class="n">htim</span><span class="p">,</span> i<span class="n">xfdbak</span><span class="p">,</span> i<span class="n">startempo</span><span class="p">,</span> i<span class="n">fn</span>
+  <span class="nb">printk2</span> k<span class="n">1</span>
+
+  <span class="nb">out</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a declining line.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">128</span> <span class="mi">16</span> <span class="mi">1</span> <span class="mi">128</span> <span class="mi">1</span>
+
+<span class="c1">; Play Instrument #1 for two seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      The tempo of the audio file <span class="quote">“<span class="quote">beats.wav</span>”</span> is 120 beats per minute. In this examples, tempest will print out its best guess as the audio file plays. Its output should include lines like this:
+      </p>
+        <pre class="screen">
+. i1   118.24654
+. i1   121.72949</pre>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tbvcf.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tempo.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tbvcf </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tempo</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

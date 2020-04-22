@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mvclpf4</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mvclpf3.html" title="mvclpf3" />
+    <link rel="next" href="mxadsr.html" title="mxadsr" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mvclpf4</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mvclpf3.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="mxadsr.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mvclpf4"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMvclpf4" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mvclpf4</span>
+        </h2>
+        <p>mvclpf4 — 
+      Moog voltage-controlled lowpass filter emulation. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078225072"></a>
+        <h2>Description</h2>
+        <p>
+Mvclpf4 is an digital implementation of the 4th-order (24 dB/oct) Moog ladder filter
+originally written by Fons Andriaensen. It is a version of the
+mvclpf3 opcode with four outputs, for 6dB, 12dB, 18dB, and
+24 dB/octave responses.
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078223664"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig1,asig2,asig3,asig4 <span class="command"><strong>mvclpf4</strong></span> ain, xcf, xres[, istor]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078221552"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>istor</em></span> --initial disposition of internal
+      data space. Since filtering incorporates a feedback loop of
+      previous output, the initial status of the storage space used is
+      significant.  A zero value will clear the space; a non-zero
+      value will allow previous information to remain. The default
+      value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078219648"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig1</em></span> -- 6dB/oct low-pass response output.
+    </p>
+        <p>
+      <span class="emphasis"><em>asig2</em></span> -- 12dB/oct low-pass response output.
+	</p>
+        <p>
+      <span class="emphasis"><em>asig3</em></span> -- 18dB/oct low-pass response output..
+	</p>
+        <p>
+      <span class="emphasis"><em>asig4</em></span> -- 24dB/oct low-pass response output.
+    </p>
+        <p>
+      <span class="emphasis"><em>ain</em></span> -- input signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>xcf</em></span> -- filter
+      cutoff frequency. The useful range is around six octaves below
+      and above middle C (pch 8.00).
+    </p>
+        <p>
+      <span class="emphasis"><em>xres</em></span> --
+      resonance, limited to the interval [0,1].
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078212992"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the mvclpf4 opcode. It uses the file <a class="ulink" href="examples/mvclpf4.csd" target="_top"><em class="citetitle">mvclpf4.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276078211200"></a>
+          <p class="title">
+            <strong>Example 607. Example of the mvclpf4 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276446743744"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac 
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+ a<span class="n">sig</span><span class="p">[]</span> <span class="nb">init</span> <span class="mi">4</span>
+ k<span class="n">env</span> <span class="nb">linen</span> <span class="nb">p4</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="nb">p3</span><span class="p">,</span><span class="mf">0.1</span>
+ a<span class="n">in</span> <span class="nb">rand</span> k<span class="n">env</span> 
+ k<span class="n">fr</span> <span class="nb">expon</span> <span class="mi">220</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1760</span>
+ a<span class="n">sig</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>a<span class="n">sig</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>a<span class="n">sig</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>a<span class="n">sig</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="n">mvclpf4</span> a<span class="n">in</span><span class="p">,</span>k<span class="n">fr</span><span class="p">,</span><span class="mf">0.9</span>
+  <span class="nb">out</span> a<span class="n">sig</span><span class="p">[</span><span class="nb">p5</span><span class="p">]</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span> <span class="mf">0.9</span> <span class="mi">0</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">5</span> <span class="mf">0.9</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">5</span> <span class="mf">0.9</span> <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">5</span> <span class="mf">0.9</span> <span class="mi">3</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078190704"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Fons Andriaensen, </td>
+          </tr>
+          <tr>
+            <td> ported to Csound by Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>January 2016</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.07</p>
+        <p>January 2016.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mvclpf3.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="mxadsr.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mvclpf3 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> mxadsr</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tableiw</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="DeprecatedTop.html" title="Deprecated Orchestra Opcodes and GEN Routines" />
+    <link rel="prev" href="tb.html" title="tb" />
+    <link rel="next" href="DeprecatedGensRef.html" title="Deprecated Gen Routines" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tableiw</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tb.html">Prev</a> </td>
+          <th width="60%" align="center">Deprecated Orchestra Opcodes and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="DeprecatedGensRef.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tableiw"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTableiw" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tableiw</span>
+        </h2>
+        <p>tableiw — 
+      Deprecated.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983057104"></a>
+        <h2>Description</h2>
+        <p>
+      Deprecated as of version 3.49. Use the
+      <a class="link" href="tablew.html" title="tablew"><em class="citetitle">tablew</em></a>
+      opcode instead.
+      
+      
+      
+      
+      
+      
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983052848"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>tableiw</strong></span> isig, indx, ifn [, ixmode] [, ixoff] [, iwgmode]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983050928"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>isig</em></span> -- Input value to write to the table.
+    </p>
+        <p>
+      <span class="emphasis"><em>indx</em></span> -- Index into table, either a positive number range matching the table length (<span class="emphasis"><em>ixmode</em></span> = 0) or a 0 to 1 range (<span class="emphasis"><em>ixmode</em></span> not equal to 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- Table number. Must be &gt;= 1. Floats are rounded down to an integer. If a table number does not point to a valid table, or the table has not yet been loaded (<a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>) then an error will result and the instrument will be de-activated.
+    </p>
+        <p>
+      <span class="emphasis"><em>ixmode</em></span> (optional, default=0) -- index mode.
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+            0 = <span class="emphasis"><em>indx</em></span> and <span class="emphasis"><em>ixoff</em></span> ranges match the length of the table.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            not equal to 0 = <span class="emphasis"><em>indx</em></span> and <span class="emphasis"><em>ixoff</em></span> have a 0 to 1 range. 
+          </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ixoff</em></span> (optional, default=0) -- index offset.
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+             0 = Total index is controlled directly by <span class="emphasis"><em>indx</em></span>, i.e. the indexing starts from the start of the table. 
+           </p>
+            </li>
+            <li class="listitem">
+              <p>
+             Not equal to 0 = Start indexing from somewhere else in the table. Value must be positive and less than the table length (<span class="emphasis"><em>ixmode</em></span> = 0) or less than 1 (<span class="emphasis"><em>ixmode</em></span> not equal to  0).
+           </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>iwgmode</em></span> (optional, default=0) -- Wrap and guard point mode.
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+             0 = Limit mode.
+           </p>
+            </li>
+            <li class="listitem">
+              <p>
+             1 = Wrap mode.
+           </p>
+            </li>
+            <li class="listitem">
+              <p>
+             2 = Guardpoint mode.
+           </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983032960"></a>
+        <h2>Performance</h2>
+        <div class="refsect2">
+          <a id="idm275983032304"></a>
+          <h3>Limit mode (0)</h3>
+          <p>
+        Limit the total index (<span class="emphasis"><em>indx</em></span> + <span class="emphasis"><em>ixoff</em></span>) to between 0 and the guard point. For a table of length 5, this means that locations 0 to 3 and location 4 (the guard point) can be written. A negative total index writes to location 0. 
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm275983030080"></a>
+          <h3>Wrap mode (1)</h3>
+          <p>
+        Wrap total index value into locations 0 to E, where E is either one less than the table length or the factor of 2 number which is one less than the table length. For example, wrap into a 0 to 3 range - so that total index 6 writes to location 2.
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm275983028640"></a>
+          <h3>Guardpoint mode (2)</h3>
+          <p>
+        The guardpoint is written at the same time as location 0 is written - with the same value.
+      </p>
+          <p>
+        This facilitates writing to tables which are intended to be read with interpolation for producing smooth cyclic waveforms. In addition, before it is used, the total index is incremented by half the range between one location and the next, before being rounded down to the integer address of a table location.
+      </p>
+          <p>
+        Normally (<span class="emphasis"><em>iwgmode</em></span> = 0 or 1) for a table of length 5 - which has locations 0 to 3 as the main table and location 4 as the guard point, a total index in the range of 0 to 0.999 will write to location 0. ("0.999" means just less than 1.0.) 1.0 to 1.999 will write to location 1 etc. A similar pattern holds for all total indexes 0 to 4.999 (<span class="emphasis"><em>igwmode</em></span> = 0) or to 3.999 (<span class="emphasis"><em>igwmode</em></span> = 1). <span class="emphasis"><em>igwmode</em></span> = 0 enables locations 0 to 4 to be written - with the guardpoint (4) being written with a potentially different value from location 0.
+      </p>
+          <p>
+        With a table of length 5 and the <span class="emphasis"><em>iwgmode</em></span> = 2, then when the total index is in the range 0 to 0.499, it will write to locations 0 and 4. Range 0.5 to 1.499 will write to location 1 etc. 3.5 to 4.0 will also write to locations 0 and 4.
+      </p>
+          <p>
+        This way, the writing operation most closely approximates the results of interpolated reading. Guard point mode should only be used with tables that have a guardpoint.
+      </p>
+          <p>
+        Guardpoint mode is accomplished by adding 0.5 to the total index, rounding to the next lowest integer, wrapping it modulo the factor of two which is one less than the table length, writing the table (locations 0 to 3 in our example) and then writing to the guard point if index = 0.
+      </p>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983021600"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tableiw opcode. It uses the file <a class="ulink" href="examples/tableiw.csd" target="_top"><em class="citetitle">tableiw.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275983019808"></a>
+          <p class="title">
+            <strong>Example 1253. Example of the tableiw opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276390427168"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tableiw.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">seed</span> <span class="mi">0</span>	<span class="c1">;generate new values every time the instr is played</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">fn</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">size</span> <span class="o">=</span> <span class="nb">p5</span>
+i<span class="n">thresh</span> <span class="o">=</span> <span class="mf">0.5</span>
+    
+i<span class="n">temp</span> <span class="nb">ftgen</span> i<span class="n">fn</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">size</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">2</span>
+
+i<span class="n">write_value</span> <span class="o">=</span> <span class="mi">0</span>
+i<span class="n">_index</span> <span class="o">=</span> <span class="mi">0</span>
+    
+<span class="nl">loop_start</span><span class="p">:</span>
+    i<span class="n">read_value</span> <span class="nb">tablei</span> i<span class="n">_index</span><span class="p">,</span> i<span class="n">fn</span>
+    
+    <span class="k">if</span> i<span class="n">read_value</span> <span class="o">&gt;</span> i<span class="n">thresh</span> <span class="k">then</span>
+         i<span class="n">write_value</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span>
+         i<span class="n">write_value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">endif</span>
+<span class="nb">tableiw</span> i<span class="n">write_value</span><span class="p">,</span> i<span class="n">_index</span><span class="p">,</span> i<span class="n">fn</span>
+<span class="k">loop_lt</span> i<span class="n">_index</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">size</span><span class="p">,</span> <span class="nl">loop_start</span>        
+    <span class="nb">turnoff</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+i<span class="n">fn</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">size</span> <span class="o">=</span> <span class="nb">ftlen</span><span class="p">(</span>i<span class="n">fn</span><span class="p">)</span>    
+<span class="nb">prints</span> <span class="s">"Index</span><span class="se">\t</span><span class="s">Value</span><span class="se">\n</span><span class="s">"</span>
+    
+i<span class="n">_index</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nl">loop_start</span><span class="p">:</span>
+    i<span class="n">value</span> <span class="nb">tablei</span> i<span class="n">_index</span><span class="p">,</span> i<span class="n">fn</span>
+    <span class="nb">prints</span> <span class="s">"</span><span class="si">%d</span><span class="s">:</span><span class="se">\t</span><span class="s">%f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> i<span class="n">_index</span><span class="p">,</span> i<span class="n">value</span>
+
+  <span class="k">loop_lt</span> i<span class="n">_index</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">size</span><span class="p">,</span> <span class="nl">loop_start</span>		<span class="c1">;read table 1 with our index</span>
+
+a<span class="n">out</span> <span class="nb">oscili</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> i<span class="n">fn</span>			<span class="c1">;use table to play the polypulse</span>
+     <span class="nb">outs</span>   a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">100</span> <span class="mi">16</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">100</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983015824"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="tablew.html" title="tablew"><em class="citetitle">tablew</em></a>, 
+      <a class="link" href="tablewkt.html" title="tablewkt"><em class="citetitle">tablewkt</em></a>
+    </p>
+        <p> More information on this opcode: <a class="ulink" href="http://www.csoundjournal.com/issue12/genInstruments.html" target="_top"><em class="citetitle">http://www.csoundjournal.com/issue12/genInstruments.html</em></a>  , written by Jacob Joaquin </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983011584"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Robin Whittle</td>
+          </tr>
+          <tr>
+            <td>Australia</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 3.47</p>
+        <p>Updated August 2002, thanks go to Abram Hindle for pointing out the correct syntax.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tb.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="DeprecatedTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="DeprecatedGensRef.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tb </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Deprecated Gen Routines</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

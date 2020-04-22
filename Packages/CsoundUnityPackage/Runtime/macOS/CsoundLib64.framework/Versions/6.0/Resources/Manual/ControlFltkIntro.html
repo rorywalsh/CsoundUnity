@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLTK Widgets and GUI controllers</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ControlTop.html" title="Instrument Control" />
+    <link rel="prev" href="ControlDurctl.html" title="Duration Control Statements" />
+    <link rel="next" href="ControlFltkValuators.html" title="FLTK Valuators" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLTK Widgets and GUI controllers</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ControlDurctl.html">Prev</a> </td>
+          <th width="60%" align="center">Instrument Control</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ControlFltkValuators.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="ControlFltkIntro"></a>FLTK Widgets and GUI controllers</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Widgets allow the design of a custom Graphical User Interface (GUI) to control an orchestra in real-time.
+    They are derived from the open-source library FLTK (Fast Light Tool Kit). This library is one of the
+    fastest graphic libraries available, supports OpenGL and should be source compatible with different
+    platforms (Windows, Linux, Unix and Mac OS). The subset of FLTK implemented in Csound provides the
+    following types of objects:
+    </p>
+      <div class="variablelist">
+        <dl class="variablelist">
+          <dt>
+            <span class="term">Containers</span>
+          </dt>
+          <dd>
+            <p>
+            <a class="link" href="ControlFltkIntro.html#ControlFltkContainers" title="FLTK Containers"><em class="citetitle">FLTK Containers</em></a>  are widgets
+            that contain other widgets such as panels, windows, etc. Csound provides the following container
+            objects:
+            </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" style="list-style-type: disc; ">
+                <li class="listitem">Panels</li>
+                <li class="listitem">Scroll areas</li>
+                <li class="listitem">Pack</li>
+                <li class="listitem">Tabs</li>
+                <li class="listitem">Groups</li>
+              </ul>
+            </div>
+            <p>
+          </p>
+          </dd>
+          <dt>
+            <span class="term">Valuators</span>
+          </dt>
+          <dd>
+            <p>
+            The most useful objects are named
+            <a class="link" href="ControlFltkValuators.html" title="FLTK Valuators"><em class="citetitle">FLTK Valuators</em></a>. These objects
+            allow the user to vary synthesis parameter values in real-time. Csound provides the following
+            valuator objects:
+            </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" style="list-style-type: disc; ">
+                <li class="listitem">Sliders</li>
+                <li class="listitem">Knobs</li>
+                <li class="listitem">Rollers</li>
+                <li class="listitem">Text fields</li>
+                <li class="listitem">Joysticks</li>
+                <li class="listitem">Counters</li>
+              </ul>
+            </div>
+            <p>
+          </p>
+          </dd>
+          <dt>
+            <span class="term">Other widgets</span>
+          </dt>
+          <dd>
+            <p>
+            There are <a class="link" href="ControlFltkOther.html" title="Other FLTK Widgets"><em class="citetitle">other FTLK widgets</em></a>
+            that are not valuators nor containers:
+            </p>
+            <div class="itemizedlist">
+              <ul class="itemizedlist" style="list-style-type: disc; ">
+                <li class="listitem">Buttons</li>
+                <li class="listitem">Button banks</li>
+                <li class="listitem">Labels</li>
+                <li class="listitem">Keyboard and Mouse sensing</li>
+              </ul>
+            </div>
+            <p>
+          </p>
+          </dd>
+        </dl>
+      </div>
+      <p>
+  </p>
+      <p>
+    Also there are some other opcodes useful to modify the
+    <a class="link" href="ControlFltkAppearance.html" title="Modifying FLTK Widget Appearance"><em class="citetitle">widget appearance</em></a>:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">Updating widget value.</li>
+          <li class="listitem">Setting primary and selection colors of a widget.</li>
+          <li class="listitem">Setting font type, size and color of widgets.</li>
+          <li class="listitem">Resizing a widget.</li>
+          <li class="listitem">Hiding and showing a widget.</li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    There are also these <a class="link" href="ControlFltkGeneral.html" title="General FLTK Widget-related Opcodes"><em class="citetitle">general opcodes</em></a> that allow the following actions:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">Running the widget thread:
+        <a class="link" href="FLrun.html" title="FLrun"><em class="citetitle">FLrun</em></a></li>
+          <li class="listitem">Loading snapshots containing the status of all valuators of an orchestra:
+      <a class="link" href="FLgetsnap.html" title="FLgetsnap"><em class="citetitle">FLgetsnap</em></a> and 
+      <a class="link" href="FLloadsnap.html" title="FLloadsnap"><em class="citetitle">FLloadsnap</em></a>.</li>
+          <li class="listitem">Saving snapshots containing the status of all valuators of an orchestra:
+      <a class="link" href="FLsavesnap.html" title="FLsavesnap"><em class="citetitle">FLsavesnap</em></a> and 
+      <a class="link" href="FLsetsnap.html" title="FLsetsnap"><em class="citetitle">FLsetsnap</em></a></li>
+          <li class="listitem">Setting the snapshot group of a declared valuator:
+      <a class="link" href="FLsetSnapGroup.html" title="FLsetSnapGroup"><em class="citetitle">FLsetSnapGroup</em></a></li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    Below is a simple example of Csound code to create a window. Notice that all opcodes are init-rate and
+    must be called only once per session. The best way to use them is to place them in the header section of
+    an orchestra, before any instrument. Even though placing them inside an instrument is not prohibited,
+    unpredictable results can occur if that instrument is called more than once.
+  </p>
+      <p>
+    Each container is made up of a couple of opcodes: the first indicating the start of the container block and the last indicating the end of that container block. Some container blocks can be nested but they must not be crossed. After defining all containers, a widget thread must be run by using the special FLrun opcode that takes no arguments.
+  </p>
+      <p>
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; Select audio/midi flags here according to platform</span>
+<span class="comment">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="comment">;;;RT audio I/O</span>
+<span class="comment">; For Non-realtime ouput leave only the line below:</span>
+<span class="comment">; -o linseg.wav -W ;;; for file output any platform</span>
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+<span class="comment">;*******************************</span>
+<span class="ohdr">sr</span><span class="op">=</span>48000
+<span class="ohdr">kr</span><span class="op">=</span>480
+<span class="ohdr">ksmps</span><span class="op">=</span>100
+<span class="ohdr">nchnls</span><span class="op">=</span>1
+
+<span class="comment">;*** It is recommended to put almost all GUI code in the</span>
+<span class="comment">;*** header section of an orchestra</span>
+
+        <span class="opc">FLpanel</span>         "Panel1",450,550 <span class="comment">;***** start of container</span>
+<span class="comment">; some widgets should contained here</span>
+        <span class="opc">FLpanelEnd</span>      <span class="comment">;***** end of container</span>
+
+        <span class="opc">FLrun</span>           <span class="comment">;***** runs the widget thread, it is always required!</span>
+<span class="oblock">instr</span> 1
+<span class="comment">;put some synthesis code here</span>
+<span class="oblock">endin</span>
+<span class="comment">;*******************************</span>
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+<span class="stamnt">f</span> 0 3600 <span class="comment">;dummy table for realtime input</span>
+<span class="stamnt">e</span>
+
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span></pre>
+      </div>
+      <p>
+
+    The previous code simply creates a panel (an empty window because no widgets are defined inside the container).
+
+  </p>
+      <p>
+    The following example creates two panels and inserts a slider inside each of them:
+
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>
+<span class="csdtag">&lt;CsOptions&gt;</span>
+<span class="comment">; Select audio/midi flags here according to platform</span>
+<span class="comment">; Audio out   Audio in    No messages</span>
+-odac           -iadc    <span class="comment">; -d     ;;;RT audio I/O</span>
+<span class="comment">; For Non-realtime ouput leave only the line below:</span>
+<span class="comment">; -o linseg.wav -W ;;; for file output any platform</span>
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+<span class="comment">;*******************************</span>
+<span class="ohdr">sr</span><span class="op">=</span>48000
+<span class="ohdr">kr</span><span class="op">=</span>480
+<span class="ohdr">ksmps</span><span class="op">=</span>100
+<span class="ohdr">nchnls</span><span class="op">=</span>1
+
+        <span class="opc">FLpanel</span>         "Panel1",450,550,100,100 <span class="comment">;***** start of container</span>
+gk1,iha <span class="opc">FLslider</span>        "FLslider 1", 500, 1000, 0 ,1, -1, 300,15, 20,50
+        <span class="opc">FLpanelEnd</span>      <span class="comment">;***** end of container</span>
+
+        <span class="opc">FLpanel</span>         "Panel2",450,550,100,100 <span class="comment">;***** start of container</span>
+gk2,ihb <span class="opc">FLslider</span>        "FLslider 2", 100, 200, 0 ,1, -1, 300,15, 20,50
+        <span class="opc">FLpanelEnd</span>      <span class="comment">;***** end of container</span>
+
+        <span class="opc">FLrun</span>           <span class="comment">;***** runs the widget thread, it is always required!</span>
+
+<span class="oblock">instr 1</span>
+<span class="comment">; gk1 and gk2 variables that contain the output of valuator</span>
+<span class="comment">; widgets previously defined, can be used inside any instrument</span>
+<span class="opc">printk2</span> gk1
+<span class="opc">printk2</span> gk2   <span class="comment">;print the values of the valuators whenever they change</span>
+<span class="oblock">endin</span>
+<span class="comment">;*******************************</span>
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+<span class="csdtag">&lt;CsScore&gt;</span>
+<span class="stamnt">f</span> 0 3600 <span class="comment">;dummy table for realtime input</span>
+<span class="stamnt">e</span>
+
+<span class="csdtag">&lt;/CsScore&gt;</span>
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span></pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    All widget opcodes are init-rate opcodes, even if valuators output k-rate variables. This happens because an independent thread is run based on a callback mechanism. It consumes very few processing resources since there is no need of polling. (This differs from other MIDI based controller opcodes.) So you can use any number of windows and valuators without degrading the real-time performance.
+  </p>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="ControlFltkContainers"></a>FLTK Containers</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+    The opcodes for FLTK containers are:
+    </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+                <a class="link" href="FLgroup.html" title="FLgroup">
+                  <em class="citetitle">FLgroup</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="FLgroupEnd.html" title="FLgroupEnd">
+                  <em class="citetitle">FLgroupEnd</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="FLpack.html" title="FLpack">
+                  <em class="citetitle">FLpack</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="FLpackEnd.html" title="FLpackEnd">
+                  <em class="citetitle">FLpackEnd</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="FLpanel.html" title="FLpanel">
+                  <em class="citetitle">FLpanel</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="FLpanelEnd.html" title="FLpanelEnd">
+                  <em class="citetitle">FLpanelEnd</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="FLscroll.html" title="FLscroll">
+                  <em class="citetitle">FLscroll</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="FLscrollEnd.html" title="FLscrollEnd">
+                  <em class="citetitle">FLscrollEnd</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="FLtabs.html" title="FLtabs">
+                  <em class="citetitle">FLtabs</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="FLtabsEnd.html" title="FLtabsEnd">
+                  <em class="citetitle">FLtabsEnd</em>
+                </a>
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+  </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ControlDurctl.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ControlTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ControlFltkValuators.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Duration Control Statements </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLTK Valuators</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

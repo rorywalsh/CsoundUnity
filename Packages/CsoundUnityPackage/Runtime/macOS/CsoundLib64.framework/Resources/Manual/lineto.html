@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lineto</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="linenr.html" title="linenr" />
+    <link rel="next" href="linlin.html" title="linlin" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lineto</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="linenr.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="linlin.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lineto"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLineto" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lineto</span>
+        </h2>
+        <p>lineto — 
+      Generate glissandos starting from a control signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086944544"></a>
+        <h2>Description</h2>
+        <p>
+      Generate glissandos starting from a control signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086943312"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>lineto</strong></span> ksig, ktime</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086941232"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kres</em></span> -- Output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>ksig</em></span> -- Input signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>ktime</em></span> -- Time length of glissando in seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>lineto</em></span> adds glissando (i.e. straight lines) to a stepped input signal (for example, produced by <a class="link" href="randh.html" title="randh"><em class="citetitle">randh</em></a> or <a class="link" href="lpshold.html" title="lpshold"><em class="citetitle">lpshold</em></a>).  It generates a straight line starting from previous step value, reaching the new step value in <span class="emphasis"><em>ktime</em></span> seconds. When the new step value is reached, such value is held until a new step occurs. Be sure that <span class="emphasis"><em>ktime</em></span> argument value is smaller than the time elapsed between two consecutive steps of the original signal, otherwise discontinuities will occur in output signal.
+    </p>
+        <p>
+      When used together with the output of <a class="link" href="lpshold.html" title="lpshold"><em class="citetitle">lpshold</em></a> it emulates the glissando effect of old analog sequencers.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>No new value for <span class="emphasis"><em>ksig</em></span> or <span class="emphasis"><em>ktime</em></span> will have effect until the previous <span class="emphasis"><em>ktime</em></span> has elapsed.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086930960"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the lineto opcode. It uses the file <a class="ulink" href="examples/lineto.csd" target="_top"><em class="citetitle">lineto.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276086929168"></a>
+          <p class="title">
+            <strong>Example 475. Example of the lineto opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276457383200"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o lineto.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">Sine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">^</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">freq</span>     <span class="nb">randh</span>     <span class="mi">1000</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2000</span> <span class="c1">;generates ten random number between 100 and 300 per second</span>
+k<span class="n">pan</span>      <span class="nb">randh</span>     <span class="mf">.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.5</span>   <span class="c1">;panning between 0 and 1</span>
+k<span class="n">p</span>        <span class="nb">lineto</span>    k<span class="n">pan</span><span class="p">,</span> <span class="mf">.5</span>          <span class="c1">;smoothing pan transition</span>
+a<span class="n">out</span>      <span class="nb">poscil</span>    <span class="mf">.4</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> gi<span class="n">Sine</span>
+a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>    <span class="nb">pan2</span>      a<span class="n">out</span><span class="p">,</span> k<span class="n">p</span>
+          <span class="nb">outs</span>      a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086925184"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="tlineto.html" title="tlineto"><em class="citetitle">tlineto</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086923152"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in Version 4.13</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="linenr.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="linlin.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">linenr </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> linlin</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

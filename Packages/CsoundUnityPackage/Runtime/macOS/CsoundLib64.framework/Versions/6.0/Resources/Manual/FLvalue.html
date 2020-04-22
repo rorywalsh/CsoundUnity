@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLvalue</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fluidSetInterpMethod.html" title="fluidSetInterpMethod" />
+    <link rel="next" href="FLvkeybd.html" title="FLvkeybd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLvalue</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fluidSetInterpMethod.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLvkeybd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLvalue"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLvalue" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLvalue</span>
+        </h2>
+        <p>FLvalue — 
+      Shows the current value of a FLTK valuator.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104587136"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLvalue</em></span> shows current the value of a valuator in a text field.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104585424"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ihandle <span class="command"><strong>FLvalue</strong></span> "label", iwidth, iheight, ix, iy</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104583248"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> -- handle value (an integer number) that unequivocally references the corresponding valuator. It can be used for the <span class="emphasis"><em>idisp</em></span> argument of a valuator.
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">label</span>”</span></em></span> -- a double-quoted string containing some user-provided text, placed near the corresponding widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of upper left corner of the valuator, relative to the upper
+left corner of corresponding window (expressed in pixels).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104576032"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>FLvalue</em></span> shows the current values of a valuator in a text field. It outputs <span class="emphasis"><em>ihandle</em></span> that can then be used for the <span class="emphasis"><em>idisp</em></span> argument of a valuator (see the <a class="link" href="ControlFltkValuators.html" title="FLTK Valuators"><em class="citetitle">FLTK Valuators section</em></a>). In this way, the values of that valuator will be dynamically be shown in a text field.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>Note that <span class="emphasis"><em>FLvalue</em></span> is not a valuator and its value cannot be modified.The value for an <span class="emphasis"><em>FLvalue</em></span> widget should be set only by other widgets, and NOT from <a class="link" href="FLsetVal.html" title="FLsetVal"><em class="citetitle">FLsetVal</em></a> or <a class="link" href="FLsetVal_i.html" title="FLsetVal_i"><em class="citetitle">FLsetVal_i</em></a> since this can cause Csound to crash.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104568848"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLvalue opcode. It uses the file <a class="ulink" href="examples/FLvalue.csd" target="_top"><em class="citetitle">FLvalue.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276104567040"></a>
+          <p class="title">
+            <strong>Example 326. Example of the FLvalue opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276472332784"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o FLvalue.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Using the opcode flvalue to display the output of a slider </span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">441</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">FLpanel</span> <span class="s">"Value Display Box"</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span>
+    <span class="c1">; Width of the value display box in pixels</span>
+    i<span class="n">width</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="c1">; Height of the value display box in pixels</span>
+    i<span class="n">height</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="c1">; Distance of the left edge of the value display</span>
+    <span class="c1">; box from the left edge of the panel</span>
+    i<span class="n">x</span> <span class="o">=</span> <span class="mi">65</span>
+    <span class="c1">; Distance of the top edge of the value display</span>
+    <span class="c1">; box from the top edge of the panel</span>
+    i<span class="n">y</span> <span class="o">=</span> <span class="mi">55</span>
+
+    i<span class="n">disp</span> <span class="nb">FLvalue</span> <span class="s">"Hertz"</span><span class="p">,</span> i<span class="n">width</span><span class="p">,</span> i<span class="n">height</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span>
+    gk<span class="n">freq</span><span class="p">,</span> i<span class="n">handle</span> <span class="nb">FLslider</span> <span class="s">"Frequency"</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> i<span class="n">disp</span><span class="p">,</span> <span class="mi">750</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">125</span><span class="p">,</span> <span class="mi">50</span>
+    <span class="nb">FLsetVal_i</span> <span class="mi">500</span><span class="p">,</span> i<span class="n">handle</span>
+<span class="c1">; End of panel contents</span>
+<span class="nb">FLpanelEnd</span>
+<span class="c1">; Run the widget thread!</span>
+<span class="nb">FLrun</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    i<span class="n">amp</span> <span class="o">=</span> <span class="mi">15000</span>
+    i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+    a<span class="n">sig</span> <span class="nb">oscili</span> i<span class="n">amp</span><span class="p">,</span> gk<span class="n">freq</span><span class="p">,</span> i<span class="n">fn</span>
+    <span class="nb">out</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Function table that defines a single cycle</span>
+<span class="c1">; of a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument 1 will play a note for 1 hour.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3600</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104563024"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLbox.html" title="FLbox"><em class="citetitle">FLbox</em></a>,
+      <a class="link" href="FLbutBank.html" title="FLbutBank"><em class="citetitle">FLbutBank</em></a>,
+      <a class="link" href="FLbutton.html" title="FLbutton"><em class="citetitle">FLbutton</em></a>,
+      <a class="link" href="FLprintk.html" title="FLprintk"><em class="citetitle">FLprintk</em></a>,
+      <a class="link" href="FLprintk2.html" title="FLprintk2"><em class="citetitle">FLprintk2</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104557392"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+        <p>Example written by Iain McCurdy, edited by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fluidSetInterpMethod.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLvkeybd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fluidSetInterpMethod </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLvkeybd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

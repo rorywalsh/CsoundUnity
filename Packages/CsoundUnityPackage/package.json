@@ -1,0 +1,7 @@
+{
+  "name": "com.csound.csoundunity",
+  "displayName": "Csound Unity",
+  "version": "1.0.0",
+  "unity": "2018.1",
+  "description": "Csound Unity Package"
+}

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pluck</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="plltrack.html" title="plltrack" />
+    <link rel="next" href="poisson.html" title="poisson" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pluck</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="plltrack.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="poisson.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pluck"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPluck" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pluck</span>
+        </h2>
+        <p>pluck — 
+      Produces a naturally decaying plucked string or drum sound.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069904848"></a>
+        <h2>Description</h2>
+        <p>
+      Audio output is a naturally decaying plucked string or drum sound based on the Karplus-Strong algorithms.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069903552"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>pluck</strong></span> kamp, kcps, icps, ifn, imeth [, iparm1] [, iparm2]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069901424"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>icps</em></span> -- intended pitch value in Hz, used to set up a buffer of 1 cycle of audio samples which will be smoothed over time by a chosen decay method. <span class="emphasis"><em>icps</em></span> normally anticipates the value of <span class="emphasis"><em>kcps</em></span>, but may be set artificially high or low to influence the size of the sample buffer.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- table number of a stored function used to initialize the cyclic decay buffer. If <span class="emphasis"><em>ifn</em></span> = 0, a random sequence will be used instead.
+    </p>
+        <p>
+      <span class="emphasis"><em>imeth</em></span> -- method of natural decay. There are six, some of which use parameters values that follow.
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>
+             simple averaging. A simple smoothing process, uninfluenced by parameter values.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+	    stretched averaging. As above, with smoothing time stretched by a factor of <span class="emphasis"><em>iparm1</em></span> (&gt;=1).
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+             simple drum. The range from pitch to noise is controlled by a 'roughness factor' in <span class="emphasis"><em>iparm1</em></span> (0 to 1). Zero gives the plucked string effect, while 1 reverses the polarity of every sample (octave down, odd harmonics). The setting .5 gives an optimum snare drum.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+	    stretched drum. Combines both roughness and stretch factors. <span class="emphasis"><em>iparm1</em></span> is roughness (0 to 1), and <span class="emphasis"><em>iparm2</em></span> the stretch factor (&gt;=1).
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            weighted averaging. As method 1, with <span class="emphasis"><em>iparm1</em></span> weighting the current sample (the status quo) and <span class="emphasis"><em>iparm2</em></span> weighting the previous adjacent one. <span class="emphasis"><em>iparm1 + iparm2</em></span> must be &lt;= 1.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            1st order recursive filter, with coefs .5. Unaffected by parameter values.
+          </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>iparm1, iparm2</em></span> (optional) -- parameter values for use by the smoothing algorithms (above). The default values are both 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069886304"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- the output amplitude.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> -- the resampling frequency in cycles-per-second.
+    </p>
+        <p>
+      An internal audio buffer, filled at i-time according to <span class="emphasis"><em>ifn</em></span>, is continually resampled with periodicity <span class="emphasis"><em>kcps</em></span> and the resulting output is multiplied by <span class="emphasis"><em>kamp</em></span>. Parallel with the sampling, the buffer is smoothed to simulate the effect of natural decay.
+    </p>
+        <p>
+      Plucked strings (1, 2, 5, 6) are best realized by starting with a random noise source, which is rich in initial harmonics. Drum sounds (methods 3, 4) work best with a flat source (wide pulse), which produces a deep noise attack and sharp decay.
+    </p>
+        <p>
+      The original Karplus-Strong algorithm used a fixed number of samples per cycle, which caused serious quantization of the pitches available and their intonation. This implementation resamples a buffer at the exact pitch given by <span class="emphasis"><em>kcps</em></span>, which can be varied for vibrato and glissando effects. For low values of the orch sampling rate (e.g. <span class="emphasis"><em>sr</em></span> = 10000), high frequencies will store only very few samples (<span class="emphasis"><em>sr / icps</em></span>). Since this may cause noticeable noise in the resampling process, the internal buffer has a minimum size of 64 samples. This can be further enlarged by setting <span class="emphasis"><em>icps</em></span> to some artificially lower pitch.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069878752"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pluck opcode. It uses the file <a class="ulink" href="examples/pluck.csd" target="_top"><em class="citetitle">pluck.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276069876960"></a>
+          <p class="title">
+            <strong>Example 718. Example of the pluck opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276438050224"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pluck.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">cps</span> <span class="o">=</span> <span class="mi">220</span>
+i<span class="n">cps</span> <span class="o">=</span> <span class="mi">220</span>
+i<span class="n">fn</span>  <span class="o">=</span> <span class="mi">0</span>
+i<span class="n">meth</span> <span class="o">=</span> <span class="nb">p4</span>
+
+a<span class="n">sig</span> <span class="nb">pluck</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">meth</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mi">10</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">5</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">5</span>  <span class="mi">5</span> <span class="mi">4</span>	<span class="c1">;needs 2 extra parameters (iparm1, iparm2)</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">10</span> <span class="mi">5</span> <span class="mi">6</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="plltrack.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="poisson.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">plltrack </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> poisson</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

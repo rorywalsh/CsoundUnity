@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>transegr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="transegb.html" title="transegb" />
+    <link rel="next" href="trcross.html" title="trcross" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">transegr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="transegb.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="trcross.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="transegr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTransegr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">transegr</span>
+        </h2>
+        <p>transegr — 
+      Constructs a user-definable envelope with extended release segment.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045377280"></a>
+        <h2>Description</h2>
+        <p>
+      Constructs a user-definable envelope. It is the same
+      as <a class="link" href="transeg.html" title="transeg"><em class="citetitle">transeg</em></a>,
+      with an extended release segment.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045375120"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>transegr</strong></span> ia, idur, itype, ib [, idur2] [, itype] [, ic] ...</pre>
+        <pre class="synopsis">kres <span class="command"><strong>transegr</strong></span> ia, idur, itype, ib [, idur2] [, itype] [, ic] ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045371648"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ia</em></span> -- starting value.
+    </p>
+        <p>
+      <span class="emphasis"><em>ib, ic,</em></span> etc. -- value after <span class="emphasis"><em>idur</em></span> seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur</em></span> -- duration in seconds of first segment. A zero or negative value will cause all initialization to be skipped.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur2,... idurx</em></span> etc. -- duration in seconds of segment
+    </p>
+        <p>
+      <span class="emphasis"><em>itype, itype2,</em></span> etc. -- if 0, a straight line is produced. If non-zero, then <span class="emphasis"><em>transegr</em></span> creates the following curve, for <span class="emphasis"><em>n</em></span> steps:
+
+      </p>
+        <div class="literallayout">
+          <p><br />
+ibeg + (ivalue - ibeg) * (1 - exp( i*itype/(n-1) )) / (1 - exp(itype))<br />
+      </p>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045364448"></a>
+        <h2>Performance</h2>
+        <p>
+      If <span class="emphasis"><em>itype</em></span> &gt; 0, there is a slowly rising (concave) or slowly decaying
+      (convex) curve, while if <span class="emphasis"><em>itype</em></span> &lt; 0, the curve is fast rising (convex) or
+      fast decaying (concave). See also <a class="link" href="GEN16.html" title="GEN16"><em class="citetitle">GEN16</em></a>.
+    </p>
+        <p>
+      This opcode is the same as 
+      of <a class="link" href="transeg.html" title="transeg"><em class="citetitle">transeg</em></a>
+      with an additional release segment triggered by a MIDI noteoff
+      event, a negative p1 <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">note event</em></a> in the score or
+      a <a class="link" href="turnoff2.html" title="turnoff2"><em class="citetitle">turnoff2</em></a>
+      opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045358032"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the transegr opcode. It uses the file <a class="ulink" href="examples/transegr.csd" target="_top"><em class="citetitle">transegr.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276045356240"></a>
+          <p class="title">
+            <strong>Example 1044. Example of the transegr opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276412952992"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  -+rtmidi=virtual -M0  <span class="c1">;;;realtime audio out and realtime midi in</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o transegr.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+ 	 
+i<span class="n">cps</span> <span class="nb">cpsmidi</span>	 	 
+i<span class="n">amp</span> <span class="nb">ampmidi</span> <span class="mf">.2</span>	 
+<span class="c1">;             st,dur1,typ1,val,dur2,typ2,end	 	 	 </span>
+k<span class="n">env</span> <span class="nb">transegr</span> <span class="mi">0</span><span class="p">,</span>  <span class="mf">.2</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mf">.5</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span>   <span class="mi">0</span>
+a<span class="n">sig</span> <span class="nb">pluck</span> k<span class="n">env</span><span class="o">*</span>i<span class="n">amp</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>	 
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+	 
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine</span>
+
+<span class="nb">f</span><span class="mi">0</span> <span class="mi">30</span>	<span class="c1">;runs 30 seconds</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045352256"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="expsega.html" title="expsega"><em class="citetitle">expsega</em></a>,
+      <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>,
+      <a class="link" href="linseg.html" title="linseg"><em class="citetitle">linseg</em></a>,
+      <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>,
+      <a class="link" href="transeg.html" title="transeg"><em class="citetitle">transeg</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045346704"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>january 2010</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="transegb.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="trcross.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">transegb </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> trcross</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

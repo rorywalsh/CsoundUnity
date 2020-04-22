@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>insglobal</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="insremot.html" title="insremot" />
+    <link rel="next" href="instr.html" title="instr" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">insglobal</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="insremot.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="instr.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="insglobal"></a>
+      <div class="titlepage"></div>
+      <a id="Indexinsglobal" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">insglobal</span>
+        </h2>
+        <p>insglobal — 
+      An opcode which can be used to implement a remote
+      orchestra. This opcode will send note events from a source
+      machine to many destinations.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097098048"></a>
+        <h2>Description</h2>
+        <p>
+      With the <a class="link" href="insremot.html" title="insremot"><em class="citetitle">insremot</em></a> and
+      <span class="emphasis"><em>insglobal</em></span> opcodes you are able to perform
+      instruments on remote machines and control them from a master
+      machine. The remote opcodes are implemented using the
+      master/client model. All the machines involved contain the same
+      orchestra but only the master machine contains the information
+      of the score. During the performance the master machine sends
+      the note events to the clients. The
+      <span class="emphasis"><em>insglobal</em></span> opcode sends the events to all
+      the machines involved in the remote concert. These machines are
+      determined by the <a class="link" href="insremot.html" title="insremot"><em class="citetitle">insremot</em></a>
+      definitions made above the <span class="emphasis"><em>insglobal</em></span>
+      command. To send events to only one machine use <a class="link" href="insremot.html" title="insremot"><em class="citetitle">insremot</em></a>. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097092352"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>insglobal</strong></span> isource, instrnum [,instrnum...] </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097090384"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>isource</em></span>
+      -- a string that is the intended server computer (e.g. 192.168.0.100). This is the source host which generates the events of the given instrument(s) and sends it to all the machines involved in the remote concert.
+    </p>
+        <p>
+      <span class="emphasis"><em>instrnum</em></span>
+      -- a list of instrument numbers which will be played on the destination machines
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097087696"></a>
+        <h2>Performance</h2>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+      If is essential the computers using this opcode have the same
+      byte-order, data size (double or float) and pointer size.  One
+      cannot use it with mixed 32 and 64 computers for instance.
+    </td>
+            </tr>
+          </table>
+        </div>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+      Internally this opcode makes use of the gethostname and
+      gethostbyname functions to determine the client's and server's
+      IP address for checking which messages are for which machine.
+      If a computer has more than one IP address there is no way to
+      control which IP address is found.
+    </td>
+            </tr>
+          </table>
+        </div>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+      The remote operation does not allow the sending of strings at
+      all.
+    </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097085136"></a>
+        <h2>Examples</h2>
+        <p>
+      See the entry for <a class="link" href="insremot.html" title="insremot"><em class="citetitle">insremot</em></a> for an example of usage.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088677920"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="insremot.html" title="insremot"><em class="citetitle">insremot</em></a>, <a class="link" href="midglobal.html" title="midglobal"><em class="citetitle">midglobal</em></a>, <a class="link" href="midremot.html" title="midremot"><em class="citetitle">midremot</em></a>, <a class="link" href="remoteport.html" title="remoteport"><em class="citetitle">remoteport</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088673296"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Simon Schampijer</td>
+          </tr>
+          <tr>
+            <td>2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>
+      New in version 5.03
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="insremot.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="instr.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">insremot </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> instr</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

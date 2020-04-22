@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>link_beat_request</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="link_beat_get.html" title="link_beat_get" />
+    <link rel="next" href="link_create.html" title="link_create" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">link_beat_request</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="link_beat_get.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="link_create.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="link_beat_request"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLinkBeatRequest" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">link_beat_request</span>
+        </h2>
+        <p>link_beat_request — 
+       Requests the global network Ableton Link session to adopt a specific beat number and time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086664560"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in ableton_link_opcodes.</p>
+        <p>
+       Requests the global network Ableton Link session to adopt a specific beat number and time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086662848"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>link_beat_request</strong></span>  i_peer, k_beat [, k_at_time_seconds  [, k_quantum ]] </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086660224"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>i_peer</em></span> -- The Ableton Link peer object.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086658496"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>k_beat</em></span> -- The number requested for the beat.
+    </p>
+        <p>
+      <span class="emphasis"><em>k_at_time_seconds</em></span> -- The time requested for the beat; the default value is the current time.
+    </p>
+        <p>
+      <span class="emphasis"><em>k_quantum</em></span> -- The local quantum of the beat; the default value is 1.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086654800"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="OSCNetwork.html#AbletonLink" title="Ableton Link Opcodes"><em class="citetitle">Ableton Link Opcodes</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086652368"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2017</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="link_beat_get.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="link_create.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">link_beat_get </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> link_create</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

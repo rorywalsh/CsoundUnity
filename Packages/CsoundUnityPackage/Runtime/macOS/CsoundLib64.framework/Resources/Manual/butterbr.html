@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>butterbr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="butterbp.html" title="butterbp" />
+    <link rel="next" href="butterhp.html" title="butterhp" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">butterbr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="butterbp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="butterhp.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="butterbr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexButterbr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">butterbr</span>
+        </h2>
+        <p>butterbr — 
+      A band-reject Butterworth filter.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122692848"></a>
+        <h2>Description</h2>
+        <p>
+      Implementation of a second-order band-reject Butterworth filter. This opcode can also be written as <a class="link" href="butbr.html" title="butbr"><em class="citetitle">butbr</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122690672"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>butterbr</strong></span> asig, xfreq, xband [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122688560"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- Skip initialization if present and non-zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122686816"></a>
+        <h2>Performance</h2>
+        <p>
+      These filters are Butterworth second-order IIR filters. They are slightly slower than the original filters in Csound, but they offer an almost flat passband and very good precision and stopband attenuation.
+    </p>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- Input signal to be filtered.
+    </p>
+        <p>
+      <span class="emphasis"><em>xfreq</em></span> -- Cutoff or center frequency for each of the filters.
+    </p>
+        <p>
+      <span class="emphasis"><em>xband</em></span> -- Bandwidth of the bandpass and bandreject filters.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122682448"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the butterbr opcode. It uses the file <a class="ulink" href="examples/butterbr.csd" target="_top"><em class="citetitle">butterbr.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276122680640"></a>
+          <p class="title">
+            <strong>Example 104. Example of the butterbr opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276490453312"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o butterbr.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; White noise</span>
+
+a<span class="n">sig</span> <span class="nb">rand</span> <span class="mf">0.5</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">; filtered noise</span>
+
+a<span class="n">sig</span> <span class="nb">rand</span> <span class="mf">0.7</span>
+a<span class="n">br</span>  <span class="nb">butterbr</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">2000</span>	<span class="c1">;center frequency = 3000, bandwidth =  +/- (2000)/2, so 2000-4000 </span>
+     <span class="nb">outs</span> a<span class="n">br</span><span class="p">,</span> a<span class="n">br</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mf">2.5</span> <span class="mi">2</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122676608"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="butterbp.html" title="butterbp"><em class="citetitle">butterbp</em></a>,
+      <a class="link" href="butterhp.html" title="butterhp"><em class="citetitle">butterhp</em></a>,
+      <a class="link" href="butterlp.html" title="butterlp"><em class="citetitle">butterlp</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122672768"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge</td>
+          </tr>
+          <tr>
+            <td>1995</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Existed in 3.30</p>
+        <p>Audio rate parameters introduced in version 6.02</p>
+        <p>October 2013.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="butterbp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="butterhp.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">butterbp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> butterhp</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

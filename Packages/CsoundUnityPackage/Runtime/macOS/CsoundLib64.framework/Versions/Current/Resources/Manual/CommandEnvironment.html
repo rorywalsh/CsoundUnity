@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Csound Environment Variables</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="CommandTop.html" title="The Csound Command" />
+    <link rel="prev" href="CommandFlagsCategory.html" title="Command-line Flags (by Category)" />
+    <link rel="next" href="CommandUnifile.html" title="Unified File Format for Orchestras and Scores" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Csound Environment Variables</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CommandFlagsCategory.html">Prev</a> </td>
+          <th width="60%" align="center">The Csound Command</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CommandUnifile.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="CommandEnvironment"></a>Csound Environment Variables</h2>
+          </div>
+        </div>
+      </div>
+      <p> The following environment variables can be used by Csound:
+  </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">SFDIR: Default directory for sound files. Used if no full path is given for sound files.</li>
+          <li class="listitem">SSDIR: Default directory for input (source) audio and MIDI files. Used if no full path is given for sound files. May be used in conjunction with SFDIR to set separate input and output directories. Please note that MIDI files as well as audio files are also sought inside SSDIR.</li>
+          <li class="listitem">SADIR: Default directory for analysis files. Used if no full path is given for analysis files. </li>
+          <li class="listitem">SFOUTYP: Sets the default output file type. Currently only 'WAV', 'AIFF' and 'IRCAM' are valid. This flag is checked by the csound executable and the utilities and is used if no file output type is specified.</li>
+          <li class="listitem">INCDIR: Include directory. Specifies the location of files used by <a class="link" href="include.html" title="#include"><em class="citetitle">#include</em></a> statements.</li>
+          <li class="listitem">OPCODE6DIR: Defines the location of csound opcode plugins for the single precision float (32-bit) version.</li>
+          <li class="listitem">OPCODE6DIR64: Defines the location of csound opcode plugins for the double precision float (64-bit) version.</li>
+          <li class="listitem">SNAPDIR: Is used by the FLTK widget opcodes when loading and saving snapshots. </li>
+          <li class="listitem">CSOUND6RC: Defines the csound resource (or configuration) file. A full path and filename containing csound flags must be specified. This variable defaults to .csound6rc if not present.</li>
+          <li class="listitem">CSSTRNGS: In Csound 5.00 and later versions, the localisation of messages is controlled by two environment variables CSSTRNGS and CS_LANG, both of which are optional. CSSTRNGS points to a directory containing .xmg files.</li>
+          <li class="listitem">CS_LANG: Selects a language for csound messages.</li>
+          <li class="listitem">RAWWAVE_PATH: Is used by the STK opcodes to find the raw wave files. Only relevant if you are using STK wrapper opcodes like STKBowed or STKBrass.</li>
+          <li class="listitem">CSNOSTOP: If this environment variable is set to
+  "yes", then any graph displays are closed automatically at the end
+  of performance (meaning that you possibly will not see much of them
+  in the case of a short non-realtime render). Otherwise, you need to
+  click "Quit" in the FLTK display window to exit, allowing for
+  viewing the graphs even after the end of score is
+  reached.</li>
+          <li class="listitem">MFDIR: Default directory for MIDI files. Used if
+  no full path is given for MIDI files.  Please note that MIDI files
+  are sought in SSDIR and SFDIR as well.</li>
+          <li class="listitem">CS_OMIT_LIBS: Allows defining a list of plugin libraries that should be skipped. Libraries can be separated with commas, and don't require the "lib" prefix.</li>
+        </ul>
+      </div>
+      <p>
+  For more information about SFDIR, SSDIR, SADIR, MFDIR and INCDIR see <a class="link" href="OrchDirFiles.html" title="Directories and Files"><em class="citetitle">Directories and files</em></a>.
+  </p>
+      <p>
+	  The only mandatory environment variables are OPCODE6DIR and OPCODE6DIR64. It is very important to set them correctly, otherwise most of the opcodes will not be available. Make sure you set the path correctly depending on the precision of your binary. if you run csound on a command line without any arguments you should see some text like : Csound version 6.03.1 (double samples) May 10 2014. This text refers to the double precision version.
+  </p>
+      <p>
+  CSSTRNGS and CS_LANG currently have very limited use since Csound has not yet been completely translated into other languages.</p>
+      <p>
+  Other environment variables which are not exclusive to Csound but which might be of importance are:
+  </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem"><span class="emphasis"><em>PATH</em></span>: The directory containing csound executables should be listed in this variable.</li>
+          <li class="listitem"><span class="emphasis"><em>LADSPA_PATH and DSSI_PATH</em></span>: These environment variables are required if you are using the <span class="emphasis"><em>dssi4cs</em></span> (LADSPA and DSSI host) plug-in opcodes.</li>
+          <li class="listitem"><span class="emphasis"><em>CSDOCDIR</em></span>: Specifies the directory where the html help files are located. Though not used by Csound directly, this environment variable can help front-ends and editors (which implement it) to find the csound manual.</li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276142638448"></a>Setting environment variables</h3>
+            </div>
+          </div>
+        </div>
+        <h4><a id="idm276142637776"></a>On the command line</h4>
+        <p>You can set environment variables on the command line or the configuration file .csound6rc by using the command line flag --env:NAME=VALUE or --env:NAME+=VALUE, where NAME is the environment variable name, and VALUE is its value. See <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command-line Flags</em></a>
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>Please note that this method of setting environment variables will not work for variables which are parsed before the command line arguments. SADIR, SSDIR, SFDIR, INCDIR, SNAPDIR, RAWWAVE_PATH, CSNOSTOP, SFOUTYP should work, but the following environment variables must be set on the system prior to running csound: OPCODE6DIR, OPCODE6DIR64, CSSTRINGS, and CS_LANG. CSOUNDRC can currently (v. 5.02) be set using --env, but this behavior is not guaranteed for future versions.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <h4><a id="idm276142634592"></a>Windows</h4>
+        <p>To set a csound environment on Windows XP and 2000 go to Control Panel-&gt;System-&gt;Advanced and click on the button 'Environment Variables'. On other versions of Windows earlier than Windows XP and Windows 2000 you set environment variables in the autoexec.bat file. Go to 'My Computer', select C: drive, right click on autoexec.bat, and select 'Edit'. The statement format is: SET NAME=VALUE .
+    </p>
+        <h4><a id="idm276142633424"></a>Linux</h4>
+        <p>You can set environment variables on Linux in many ways. You can set them using the <span class="emphasis"><em>export</em></span> shell command, by setting them on .bashrc or similar files or by adding them to the /etc/profile file.</p>
+        <h4><a id="idm276142632032"></a>Mac</h4>
+        <pre class="screen">~$ export OPCODE6DIR64=/Users/you/your/Csound6/build</pre>
+        <p>in addition if the bash shell is the default, then it is usually easier to edit your .bashrc or /etc/profile.</p>
+        <p>	  Note that if users choose one of the above methods, ie editing the .bashrc file then the environment variables are executed when a new shell is created. This can be problematic if your application implements a Quartz or Aqua interface and does not use the commandline.</p>
+        <p>	  If this is the case, then the standard solution (up to OS 10.3.9 and unless the application uses the csoundAPI and sets the environ variables directly) is to create an XML property list file (called a .plist file by the OS). This file should nominally be located at ~/.MacOSX/Environment.plist. This has been a solution specifically for the [csoundapi~] object for Pd on OS X. Since Pd uses an OS X native .app style packaging, and runs off of the Aqua interface, the standard means of supplying environment variables to Csound do not work. The solution is to set Csound's environment variables for the Aqua environment.</p>
+        <p>	  Likely, most users will not have the hidden folder .MacOSX located in their $HOME directory (aka ~/) This folder must first be created and the Environment.plist added to this folder. The contents of the Environment.plist file should be something like:</p>
+        <pre class="programlisting">
+&lt;?xml version="1.0" encoding='UTF-8"?&gt;
+&lt;!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
+&lt;plist version="1.0"&gt;
+&lt;dict&gt;
+&lt;key&gt;OPCODEDIR&lt;/key&gt;
+&lt;string&gt;/Library/Frameworks/CsoundLib.framework/Versions/5.1/Resources/Opcodes&lt;/string&gt;
+&lt;key&gt;OPCODEDIR64&lt;/key&gt;
+&lt;string&gt;/Volumes/ExternalHD/devel/csound5/lib64&lt;/string&gt;
+&lt;key&gt;INCDIR&lt;/key&gt;
+&lt;string&gt;/Volumes/ExternalHD/CSOUND/include&lt;/string&gt;
+&lt;key&gt;SFDIR&lt;/key&gt;
+&lt;string&gt;/Volumes/ExternalHD/iTunes/csoundaudio&lt;/string&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;</pre>
+        <p>and so on, using the XML &lt;key&gt; tag for each environment variable required by the API and the &lt;string&gt; tag for it's corresponding path on the system.</p>
+        <p>Please note that you must login out and login in for these changes to take effect.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CommandFlagsCategory.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="CommandTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CommandUnifile.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Command-line Flags (by Category) </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Unified File Format for Orchestras and Scores</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

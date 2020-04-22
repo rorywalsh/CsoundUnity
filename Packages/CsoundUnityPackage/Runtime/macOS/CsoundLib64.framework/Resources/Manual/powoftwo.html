@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>powoftwo</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="powershape.html" title="powershape" />
+    <link rel="next" href="prealloc.html" title="prealloc" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">powoftwo</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="powershape.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="prealloc.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="powoftwo"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPowoftwo" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">powoftwo</span>
+        </h2>
+        <p>powoftwo — 
+      Performs a  power-of-two calculation.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069537840"></a>
+        <h2>Description</h2>
+        <p>
+      Performs a  power-of-two calculation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069536544"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>powoftwo</strong></span>(x)  (init-rate or control-rate args only)</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069534560"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>powoftwo</em></span>() function returns 2<sup><span class="emphasis"><em>x</em></span></sup> and allows positive and negatives numbers as argument. The range of values admitted in <span class="emphasis"><em>powoftwo</em></span>() is -5 to +5 allowing a precision more fine than one cent in a range of ten octaves. If a greater range of values is required, use the slower opcode <a class="link" href="pow.html" title="pow"><em class="citetitle">pow</em></a>.
+    </p>
+        <p>
+      These functions are fast, because they read values stored in tables. Also they are very useful when working with tuning ratios. They work at i- and k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069530192"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the powoftwo opcode. It uses the file <a class="ulink" href="examples/powoftwo.csd" target="_top"><em class="citetitle">powoftwo.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276069528384"></a>
+          <p class="title">
+            <strong>Example 730. Example of the powoftwo opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276435546896"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o poweroftwo.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; bit reduction for Lo-Fi sound</span>
+
+i<span class="n">Bits</span>	  <span class="o">=</span> <span class="nb">p5</span>						<span class="c1">;bit depth</span>
+i<span class="n">Quantize</span> <span class="o">=</span> <span class="nb">powoftwo</span><span class="p">(</span>i<span class="n">Bits</span><span class="p">)</span>				<span class="c1">;find number of discrete steps for this bit depth</span>
+i<span class="n">Quantize</span> <span class="o">=</span> i<span class="n">Quantize</span><span class="o">*</span><span class="mf">0.5</span>				<span class="c1">;half the number of steps for each side of a bipolar signal</span>
+<span class="nb">print</span>	  i<span class="n">Quantize</span>
+a<span class="n">sig</span>	  <span class="nb">soundin</span> <span class="s">"fox.wav"</span>
+a<span class="n">sig</span>	  <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>a<span class="n">sig</span> <span class="o">*</span> i<span class="n">Quantize</span><span class="p">)</span> <span class="o">/</span> i<span class="n">Quantize</span>		<span class="c1">;quantize audio signal (bit reduce)</span>
+	  <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>         
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;        bits</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span>   <span class="mi">3</span>  <span class="mi">16</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">^+</span><span class="mi">3</span> <span class="o">.</span>  <span class="mi">12</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">^+</span><span class="mi">3</span> <span class="o">.</span>   <span class="mi">8</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">^+</span><span class="mi">3</span> <span class="o">.</span>   <span class="mi">4</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">^+</span><span class="mi">3</span> <span class="o">.</span>   <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">^+</span><span class="mi">3</span> <span class="o">.</span>   <span class="mi">1</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include a line like this:
+      </p>
+        <pre class="screen">
+instr 1:  iQuantize = 32768.000
+instr 1:  iQuantize = 2048.000
+instr 1:  iQuantize = 128.000
+instr 1:  iQuantize = 8.000
+instr 1:  iQuantize = 2.000
+instr 1:  iQuantize = 1.000
+</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069523376"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="logbtwo.html" title="logbtwo"><em class="citetitle">logbtwo</em></a>, 
+      <a class="link" href="pow.html" title="pow"><em class="citetitle">pow</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069520464"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>June 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist, Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>July 1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.57</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="powershape.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="prealloc.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">powershape </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> prealloc</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

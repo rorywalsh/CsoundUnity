@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Front Ends</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartOverview.html" title="Part I. Overview" />
+    <link rel="prev" href="ScoreStrings.html" title="Strings in p-fields" />
+    <link rel="next" href="BuildingCsound.html" title="Building Csound" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Front Ends</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ScoreStrings.html">Prev</a> </td>
+          <th width="60%" align="center">Part I. Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="BuildingCsound.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="OviewFrontEnds"></a>Front Ends</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Front ends are programs that provide some form of user interface for Csound. Within these programs, Csound is used to generate sound, and familiarity with Csound code is required in order to use them. Front ends typically add helpful features, such as syntax coloring, graphic widgets, or tools for algorithmic score generation, that are not part of Csound itself. Most of these programs were created by a single person, so some of them are not being maintained. Below is a list (certainly not complete, and perhaps not up to date) of front ends available for Csound.
+  </p>
+      <p>
+  Most often, you'll want to download and install Csound itself before downloading and installing a front end. Some front ends require particular versions of Csound, so if you plan to use a front end, it's recommended that you verify its compatibility before installing Csound.
+  </p>
+      <h2><a id="idm276135788688"></a>CsoundQt</h2>
+      <p>
+    CsoundQt is a versatile, cross-platform GUI (graphical user interface) which is bundled with the standard Csound distribution. Created and maintained by Andres Cabrera, QuteCsound provides a multi-tabbed editor, graphic widgets for real-time sound control, and an opcode help system that links to this manual. At this writing (2013) CsoundQt is in active development, so the version installed in your system when you install Csound may not be the most current. The most recent version can be found at <a class="ulink" href="http://qutecsound.sourceforge.net/" target="_top">http://qutecsound.sourceforge.net/</a>.
+  </p>
+      <h2><a id="idm276135786736"></a>Blue</h2>
+      <p>
+    A cross-platform composition-oriented front end written by Steven Yi in Java. The user interface provides a timeline structured somewhat like a digital multitrack, but differs in that timelines can be embedded within timelines (polyObjects). This allows for a compositional organization in time that many users will find intuitive, informative, and flexible. Each instrument and score section in a blue project has its own editing window, which makes organizing large projects easier. Blue can be downloaded at <a class="ulink" href="http://csounds.com/stevenyi/blue/" target="_top">Blue Home Page</a>.
+  </p>
+      <h2><a id="idm276135784736"></a>Cabbage</h2>
+      <p>
+   Cabbage is a Csound frontend that provides users with the means to develop audio plugins and standalone software across the three major operating systems. While Cabbage makes use of underlying plugin technologies such as Steinberg's VST SDK, ASIO, etc, Csound is used to process all incoming and outgoing audio. Cabbage also provides a growing collection of GUI widgets ranging from simple sliders to automatable XY-pads. All GUI widgets in a Cabbage plugin can be controlled via host automation in a plugin host, thereby providing a quick and effective means of automating Csound instrument parameters in both commercial and non-commercial DAWs. Cabbage can be downloaded at <a class="ulink" href="https://github.com/cabbageaudio/cabbage/releases" target="_top">Cabbage Home Page</a>.
+  </p>
+      <h2><a id="idm276135782544"></a>WinXound</h2>
+      <p>
+    WinXound is a free and open-source Front-End GUI Editor with syntax highlighting for CSound 6, CSoundAV,
+CSoundAC, with Python and Lua support, developed by Stefano Bonetti.
+It runs on Microsoft Windows, Apple Mac OsX and Linux. You can get it at the <a class="ulink" href="http://winxound.codeplex.com/" target="_top">WinXsound Front Page</a>.
+  </p>
+      <h2><a id="idm276135780800"></a>Winsound</h2>
+      <p>
+    Winsound was formerly part of the main Csound tree. It is now
+    available only as source code. Winsound is a cross-platform FLTK
+    port of an early Windows front-end for csound. Some partially
+    sighted or unsighted users report success using Winsound with
+    text-to-speech software.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ScoreStrings.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartOverview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="BuildingCsound.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Strings in p-fields </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Building Csound</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

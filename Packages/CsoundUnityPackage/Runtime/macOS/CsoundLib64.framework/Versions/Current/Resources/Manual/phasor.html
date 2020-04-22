@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>phasor</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="phaser2.html" title="phaser2" />
+    <link rel="next" href="phasorbnk.html" title="phasorbnk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">phasor</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="phaser2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="phasorbnk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="phasor"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPhasor" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">phasor</span>
+        </h2>
+        <p>phasor — 
+      Produce a normalized moving phase value.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070552560"></a>
+        <h2>Description</h2>
+        <p>
+      Produce a normalized moving phase value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070551328"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>phasor</strong></span> xcps [, iphs]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>phasor</strong></span> kcps [, iphs]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070547952"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iphs</em></span> (optional) -- initial phase, expressed as a fraction of a cycle (0 to 1). A negative value will cause phase initialization to be skipped. The default value is zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070546208"></a>
+        <h2>Performance</h2>
+        <p>
+      An internal phase is successively accumulated in accordance with the <span class="emphasis"><em>kcps</em></span> or <span class="emphasis"><em>xcps</em></span> frequency to produce a moving phase value, normalized to lie in the range 0 &lt;= phs &lt; 1.
+    </p>
+        <p>
+      When used as the index to a <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a> unit, this phase (multiplied by the desired function table length) will cause it to behave like an oscillator.
+    </p>
+        <p>
+      Note that <span class="emphasis"><em>phasor</em></span> is a special kind of integrator, accumulating phase increments that represent frequency settings.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070541632"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the phasor opcode. It uses the file <a class="ulink" href="examples/phasor.csd" target="_top"><em class="citetitle">phasor.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276070539840"></a>
+          <p class="title">
+            <strong>Example 706. Example of the phasor opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276438970560"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o phasor.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>			<span class="c1">;read table 1 with our index</span>
+i<span class="n">xmode</span> <span class="o">=</span> <span class="mi">1</span>
+k<span class="n">ndx</span> <span class="nb">phasor</span> <span class="nb">p4</span>
+k<span class="n">frq</span> <span class="nb">table</span> k<span class="n">ndx</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">xmode</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> <span class="mf">.6</span><span class="p">,</span> k<span class="n">frq</span><span class="p">,</span> <span class="mi">2</span>	<span class="c1">;re-synthesize with sine</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1025</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">200</span> <span class="mi">1024</span> <span class="mi">2000</span> <span class="c1">;a line from 200 to 2,000	</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span><span class="c1">;sine wave</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span>	<span class="c1">;once per second</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mf">.5</span>	<span class="c1">;once per 2 seconds</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mi">1</span> <span class="mi">2</span>	<span class="c1">;twice per second</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070535856"></a>
+        <h2>See also</h2>
+        <p>
+      The <a class="link" href="SiggenTableacc.html" title="Table Access"><em class="citetitle">Table Access</em></a> opcodes like: <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a>, <a class="link" href="tablei.html" title="tablei"><em class="citetitle">tablei</em></a>, <a class="link" href="table3.html" title="table3"><em class="citetitle">table3</em></a>  and <a class="link" href="tab.html" title="tab"><em class="citetitle">tab</em></a>.
+    </p>
+        <p>
+      Also: <a class="link" href="phasorbnk.html" title="phasorbnk"><em class="citetitle">phasorbnk</em></a>.
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="phaser2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="phasorbnk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">phaser2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> phasorbnk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

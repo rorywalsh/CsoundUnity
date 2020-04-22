@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>event_i</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="event.html" title="event" />
+    <link rel="next" href="exciter.html" title="exciter" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">event_i</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="event.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="exciter.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="event_i"></a>
+      <div class="titlepage"></div>
+      <a id="IndexEventi" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">event_i</span>
+        </h2>
+        <p>event_i — 
+      Generates a score event from an instrument.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113546688"></a>
+        <h2>Description</h2>
+        <p>
+      Generates a score event from an instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113545456"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>event_i</strong></span> "scorechar", iinsnum, idelay, idur, [, ip4] [, ip5] [, ...]</pre>
+        <pre class="synopsis"><span class="command"><strong>event_i</strong></span> "scorechar", "insname", idelay, idur, [, ip4] [, ip5] [, ...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113542096"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">scorechar</span>”</span></em></span> -- A string (in double-quotes) representing the first p-field in a score statement. This is usually <a class="link" href="e.html" title="e Statement"><em class="citetitle"><span class="quote">“<span class="quote">e</span>”</span></em></a>, <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle"><span class="quote">“<span class="quote">f</span>”</span></em></a>, or <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle"><span class="quote">“<span class="quote">i</span>”</span></em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">insname</span>”</span></em></span> -- A string (in double-quotes) representing a named instrument.
+    </p>
+        <p>
+      <span class="emphasis"><em>iinsnum</em></span> -- The instrument to use for the event. This corresponds to the first p-field, p1, in a score statement.
+    </p>
+        <p>
+      <span class="emphasis"><em>idelay</em></span> -- When (in seconds) the event will occur from the current performance time. This corresponds to the second p-field, p2, in a score statement.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur</em></span> -- How long (in seconds) the event will happen. This corresponds to the third p-field, p3, in a score statement.
+    </p>
+        <p>
+      <span class="emphasis"><em>ip4, ip5, ...</em></span> (optional) -- Parameters representing additional p-field in a score statement. It starts with the fourth p-field, p4.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113532720"></a>
+        <h2>Performance</h2>
+        <p> The event is added to the queue at initialisation time.</p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p> Note that the <span class="emphasis"><em>event_i</em></span> opcode cannot accept string p-fields. If you need to pass strings when instantiating an instrument, use the <a class="link" href="scoreline.html" title="scoreline"><em class="citetitle">scoreline</em></a> or <a class="link" href="scoreline_i.html" title="scoreline_i"><em class="citetitle">scoreline_i</em></a> opcode.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113528432"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the event_i opcode. It uses the file <a class="ulink" href="examples/event_i.csd" target="_top"><em class="citetitle">event_i.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276113526640"></a>
+          <p class="title">
+            <strong>Example 255. Example of the event_i opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276480056560"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o event_i.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">seed</span> <span class="mi">0</span>
+gi<span class="n">sine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">^</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">;master instrument</span>
+
+i<span class="n">ninstr</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1">;number of called instances</span>
+i<span class="n">ndx</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="nl">loop</span><span class="p">:</span>
+i<span class="n">pan</span>  <span class="nb">random</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+i<span class="n">freq</span> <span class="nb">random</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span>
+i<span class="n">amp</span>  <span class="o">=</span> <span class="mi">1</span><span class="o">/</span>i<span class="n">ninstr</span>
+<span class="nb">event_i</span> <span class="s">"i"</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">freq</span><span class="p">,</span> i<span class="n">pan</span>
+<span class="k">loop_lt</span> i<span class="n">ndx</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">ninstr</span><span class="p">,</span> <span class="nl">loop</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">10</span>
+
+      <span class="nb">print</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span><span class="p">,</span> <span class="nb">p6</span>
+i<span class="n">peak</span> <span class="nb">random</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="c1">;where is the envelope peak</span>
+a<span class="n">sig</span>  <span class="nb">poscil3</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span><span class="p">,</span> gi<span class="n">sine</span>
+a<span class="n">env</span>  <span class="nb">transeg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span>i<span class="n">peak</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">-</span><span class="nb">p3</span><span class="o">*</span>i<span class="n">peak</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span>
+a<span class="n">L</span><span class="p">,</span>a<span class="n">R</span> <span class="nb">pan2</span> a<span class="n">sig</span><span class="o">*</span>a<span class="n">env</span><span class="p">,</span> <span class="nb">p6</span>
+      <span class="nb">outs</span> a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">8</span> <span class="mi">10</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">16</span> <span class="mi">15</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113522656"></a>
+        <h2>See also</h2>
+        <p><a class="link" href="event.html" title="event"><em class="citetitle">event</em></a>,
+    <a class="link" href="schedule.html" title="schedule"><em class="citetitle">schedule</em></a>,
+    <a class="link" href="schedwhen.html" title="schedwhen"><em class="citetitle">schedwhen</em></a>,
+    <a class="link" href="schedkwhen.html" title="schedkwhen"><em class="citetitle">schedkwhen</em></a>,
+    <a class="link" href="schedkwhennamed.html" title="schedkwhennamed"><em class="citetitle">schedkwhennamed</em></a>,
+    <a class="link" href="scoreline.html" title="scoreline"><em class="citetitle">scoreline</em></a>,
+    <a class="link" href="scoreline_i.html" title="scoreline_i"><em class="citetitle">scoreline_i</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113515600"></a>
+        <h2>Credits</h2>
+        <p>Written by Istvan Varga.</p>
+        <p>New in Csound5</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="event.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="exciter.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">event </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> exciter</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

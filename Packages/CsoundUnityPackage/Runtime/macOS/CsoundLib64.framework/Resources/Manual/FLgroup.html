@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLgroup</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLgetsnap.html" title="FLgetsnap" />
+    <link rel="next" href="FLgroupEnd.html" title="FLgroupEnd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLgroup</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLgetsnap.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLgroupEnd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLgroup"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLgroup" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLgroup</span>
+        </h2>
+        <p>FLgroup — 
+      A FLTK container opcode that groups child widgets.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110028880"></a>
+        <h2>Description</h2>
+        <p>
+      A FLTK container opcode that groups child widgets.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110027648"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLgroup</strong></span> "label", iwidth, iheight, ix, iy [, iborder] [, image]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110025584"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">label</span>”</span></em></span> -- a double-quoted string containing some user-provided text, placed near the corresponding widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iborder</em></span> (optional, default=0) -- border type of the container. It is expressed by means of an integer number chosen from the following:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 - no border</p>
+            </li>
+            <li class="listitem">
+              <p>1 - down box border</p>
+            </li>
+            <li class="listitem">
+              <p>2 - up box border</p>
+            </li>
+            <li class="listitem">
+              <p>3 - engraved border</p>
+            </li>
+            <li class="listitem">
+              <p>4 - embossed border</p>
+            </li>
+            <li class="listitem">
+              <p>5 - black line border</p>
+            </li>
+            <li class="listitem">
+              <p>6 - thin down border</p>
+            </li>
+            <li class="listitem">
+              <p>7 - thin up border</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+      If the integer number doesn't match any of the previous values, no border is provided as the default.
+    </p>
+        <p>
+      <span class="emphasis"><em>image</em></span> (optional) -- a handle referring to an eventual image opened with the <span class="emphasis"><em>bmopen</em></span> opcode. If it is set, it allows a skin for that widget.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note about the bmopen opcode">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note about the bmopen opcode</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Although the documentation mentions the <span class="emphasis"><em>bmopen</em></span> opcode, it has not been implemented in Csound 4.22.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110011472"></a>
+        <h2>Performance</h2>
+        <p>
+      Containers are useful to format the graphic appearance of the widgets. The most important container is <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a>, that actually creates a window. It can be filled with other containers and/or valuators or other kinds of widgets.
+    </p>
+        <p>
+      There are no k-rate arguments in containers.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110008752"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLgroupEnd.html" title="FLgroupEnd"><em class="citetitle">FLgroupEnd</em></a>, 
+      <a class="link" href="FLpack.html" title="FLpack"><em class="citetitle">FLpack</em></a>, 
+      <a class="link" href="FLpackEnd.html" title="FLpackEnd"><em class="citetitle">FLpackEnd</em></a>, 
+      <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a>, 
+      <a class="link" href="FLpanelEnd.html" title="FLpanelEnd"><em class="citetitle">FLpanelEnd</em></a>, 
+      <a class="link" href="FLscroll.html" title="FLscroll"><em class="citetitle">FLscroll</em></a>, 
+      <a class="link" href="FLscrollEnd.html" title="FLscrollEnd"><em class="citetitle">FLscrollEnd</em></a>, 
+      <a class="link" href="FLtabs.html" title="FLtabs"><em class="citetitle">FLtabs</em></a>, 
+      <a class="link" href="FLtabsEnd.html" title="FLtabsEnd"><em class="citetitle">FLtabsEnd</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109999680"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLgetsnap.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLgroupEnd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLgetsnap </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLgroupEnd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

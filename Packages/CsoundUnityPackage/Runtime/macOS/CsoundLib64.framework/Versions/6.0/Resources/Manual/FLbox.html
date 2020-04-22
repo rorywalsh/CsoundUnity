@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLbox</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="flashtxt.html" title="flashtxt" />
+    <link rel="next" href="FLbutBank.html" title="FLbutBank" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLbox</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="flashtxt.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLbutBank.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLbox"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLbox" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLbox</span>
+        </h2>
+        <p>FLbox — 
+      A FLTK widget that displays text inside of a box.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110783728"></a>
+        <h2>Description</h2>
+        <p>
+      A FLTK widget that displays text inside of a box.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110782416"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ihandle <span class="command"><strong>FLbox</strong></span> "label", itype, ifont, isize, iwidth, iheight, ix, iy [, image]</pre>
+        <pre class="synopsis">ihandle <span class="command"><strong>FLbox</strong></span> istr, itype, ifont, isize, iwidth, iheight, ix, iy [, image]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110778832"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> -- a handle value (an integer number) that unequivocally references a corresponding widget. This is used by other opcodes that modify a widget's properties (see <a class="link" href="ControlFltkAppearance.html" title="Modifying FLTK Widget Appearance"><em class="citetitle">Modifying FLTK Widget Appearance</em></a>). It is automatically output by <span class="emphasis"><em>FLbox</em></span> and must not be set by the user label. (The user label is a double-quoted string containing some user-provided text placed near the widget.)
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">label</span>”</span></em></span> -- a double-quoted string containing some user-provided text, placed near corresponding widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>istr</em></span> -- an i-value that is used to get a string via strset, placed near corresponding widget.
+    </p>
+        <p>
+      Notice that with <span class="emphasis"><em>FLbox</em></span>, it is not necessary to call the <a class="link" href="FLsetTextType.html" title="FLsetTextType"><em class="citetitle">FLsetTextType</em></a> opcode at all in order to use a symbol. In this case, it is sufficient to set a label starting with <span class="quote">“<span class="quote">@</span>”</span> followed by the proper formatting string.
+    </p>
+        <p>
+      The following symbols are supported:
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/symbols.png" alt="FLTK label supported symbols." />
+          <div class="caption">
+            <p>FLTK label supported symbols.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+        <p>
+      The @ sign may be followed by the following optional <span class="quote">“<span class="quote">formatting</span>”</span> characters, in this order:
+
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p><span class="quote">“<span class="quote">#</span>”</span> forces square scaling rather than distortion to the widget's shape.</p>
+            </li>
+            <li class="listitem">
+              <p>+[1-9] or -[1-9] tweaks the scaling a little bigger or smaller.</p>
+            </li>
+            <li class="listitem">
+              <p>[1-9] rotates by a multiple of 45 degrees. <span class="quote">“<span class="quote">6</span>”</span> does nothing, the others point in the direction of that key on a numeric keypad.</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>itype</em></span> -- an integer number denoting the appearance of the widget.
+    </p>
+        <p>
+      The following values are legal for <span class="emphasis"><em>itype</em></span>:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 - flat box</p>
+            </li>
+            <li class="listitem">
+              <p>2 - up box</p>
+            </li>
+            <li class="listitem">
+              <p>3 - down box</p>
+            </li>
+            <li class="listitem">
+              <p>4 - thin up box</p>
+            </li>
+            <li class="listitem">
+              <p>5 - thin down box</p>
+            </li>
+            <li class="listitem">
+              <p>6 - engraved box</p>
+            </li>
+            <li class="listitem">
+              <p>7 - embossed box</p>
+            </li>
+            <li class="listitem">
+              <p>8 - border box</p>
+            </li>
+            <li class="listitem">
+              <p>9 - shadow box</p>
+            </li>
+            <li class="listitem">
+              <p>10 - rounded box</p>
+            </li>
+            <li class="listitem">
+              <p>11 - rounded box with shadow</p>
+            </li>
+            <li class="listitem">
+              <p>12 - rounded flat box</p>
+            </li>
+            <li class="listitem">
+              <p>13 - rounded up box</p>
+            </li>
+            <li class="listitem">
+              <p>14 - rounded down box</p>
+            </li>
+            <li class="listitem">
+              <p>15 - diamond up box</p>
+            </li>
+            <li class="listitem">
+              <p>16 - diamond down box</p>
+            </li>
+            <li class="listitem">
+              <p>17 - oval box</p>
+            </li>
+            <li class="listitem">
+              <p>18 - oval shadow box</p>
+            </li>
+            <li class="listitem">
+              <p>19 - oval flat box</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ifont</em></span> -- an integer number denoting the font of <span class="emphasis"><em>FLbox</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifont</em></span> argument to set the font type. The following values are legal for <span class="emphasis"><em>ifont</em></span>:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 - helvetica (same as "Arial" under Windows)</p>
+            </li>
+            <li class="listitem">
+              <p>2 - helvetica bold</p>
+            </li>
+            <li class="listitem">
+              <p>3 - helvetica italic</p>
+            </li>
+            <li class="listitem">
+              <p>4 - helvetica bold italic</p>
+            </li>
+            <li class="listitem">
+              <p>5 - courier</p>
+            </li>
+            <li class="listitem">
+              <p>6 - courier bold</p>
+            </li>
+            <li class="listitem">
+              <p>7 - courier italic</p>
+            </li>
+            <li class="listitem">
+              <p>8 - courier bold italic</p>
+            </li>
+            <li class="listitem">
+              <p>9 - times</p>
+            </li>
+            <li class="listitem">
+              <p>10 - times bold</p>
+            </li>
+            <li class="listitem">
+              <p>11 - times italic</p>
+            </li>
+            <li class="listitem">
+              <p>12 - times bold italic</p>
+            </li>
+            <li class="listitem">
+              <p>13 - symbol</p>
+            </li>
+            <li class="listitem">
+              <p>14 - screen</p>
+            </li>
+            <li class="listitem">
+              <p>15 - screen bold</p>
+            </li>
+            <li class="listitem">
+              <p>16 - dingbats</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>isize</em></span> -- size of the font.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of the upper left corner of the valuator, relative to the upper left corner of corresponding window. (Expressed in pixels.)
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of the upper left corner of the valuator, relative to the upper left corner of corresponding window. (Expressed in pixels.)
+    </p>
+        <p>
+      <span class="emphasis"><em>image</em></span> -- a handle referring to an eventual image opened with <span class="emphasis"><em>bmopen</em></span> opcode. If it is set, it allows a skin for that widget.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note about the bmopen opcode">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note about the bmopen opcode</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Although the documentation mentions the <span class="emphasis"><em>bmopen</em></span> opcode, it has not been implemented in Csound 4.22.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110731040"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>FLbox</em></span> is useful to show some text in a window. The text is bounded by a box, whose aspect depends on <span class="emphasis"><em>itype</em></span> argument.
+    </p>
+        <p>
+      Note that <span class="emphasis"><em>FLbox</em></span> is not a valuator and its value is fixed. Its value cannot be modified.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110727920"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLbox opcode. It uses the file <a class="ulink" href="examples/FLbox.csd" target="_top"><em class="citetitle">FLbox.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276110726112"></a>
+          <p class="title">
+            <strong>Example 292. Example of the FLbox opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276478925680"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o FLbox.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">441</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">FLpanel</span> <span class="s">"Text Box"</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span>
+    <span class="c1">; Box border type (7=embossed box)</span>
+    i<span class="n">type</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="c1">; Font type (10='Times Bold')</span>
+    i<span class="n">font</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="c1">; Font size</span>
+    i<span class="n">size</span> <span class="o">=</span> <span class="mi">20</span> 
+    <span class="c1">; Width of the flbox</span>
+    i<span class="n">width</span> <span class="o">=</span> <span class="mi">400</span>
+    <span class="c1">; Height of the flbox</span>
+    i<span class="n">height</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="c1">; Distance of the left edge of the flbox</span>
+    <span class="c1">; from the left edge of the panel</span>
+    i<span class="n">x</span> <span class="o">=</span> <span class="mi">150</span>
+    <span class="c1">; Distance of the upper edge of the flbox</span>
+    <span class="c1">; from the upper edge of the panel</span>
+    i<span class="n">y</span> <span class="o">=</span> <span class="mi">100</span>
+
+    i<span class="n">h3</span> <span class="nb">FLbox</span> <span class="s">"Use Text Boxes For Labelling"</span><span class="p">,</span> i<span class="n">type</span><span class="p">,</span> i<span class="n">font</span><span class="p">,</span> i<span class="n">size</span><span class="p">,</span> i<span class="n">width</span><span class="p">,</span> i<span class="n">height</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span>
+<span class="c1">; End of panel contents</span>
+<span class="nb">FLpanelEnd</span>
+<span class="c1">; Run the widget thread!</span>
+<span class="nb">FLrun</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Real-time performance for 1 hour.</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">3600</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110722096"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLbutBank.html" title="FLbutBank"><em class="citetitle">FLbutBank</em></a>,
+      <a class="link" href="FLbutton.html" title="FLbutton"><em class="citetitle">FLbutton</em></a>,
+      <a class="link" href="FLprintk.html" title="FLprintk"><em class="citetitle">FLprintk</em></a>,
+      <a class="link" href="FLprintk2.html" title="FLprintk2"><em class="citetitle">FLprintk2</em></a>,
+      <a class="link" href="FLvalue.html" title="FLvalue"><em class="citetitle">FLvalue</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110699856"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+        <p>Example written by Iain McCurdy, edited by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="flashtxt.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLbutBank.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">flashtxt </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLbutBank</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

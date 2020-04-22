@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pset</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="productarray.html" title="product" />
+    <link rel="next" href="ptable.html" title="ptable" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pset</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="productarray.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ptable.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pset"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPset" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pset</span>
+        </h2>
+        <p>pset — 
+      Defines and initializes numeric arrays at orchestra load time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069047104"></a>
+        <h2>Description</h2>
+        <p>
+      Defines and initializes numeric arrays at orchestra load time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069045856"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>pset</strong></span> icon1 [, icon2] [...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069043904"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>icon1, icon2, ...</em></span> -- preset values for a MIDI instrument
+    </p>
+        <p>
+      <span class="emphasis"><em>pset</em></span> (optional) defines and initializes numeric arrays at orchestra load time. It may be used as an orchestra header statement (i.e. instrument 0) or within an instrument. When defined within an instrument, it is not part of its i-time or performance operation, and only one statement is allowed per instrument. These values are available as i-time defaults. When an instrument is triggered from MIDI it only gets p1 and p2 from the event, and p3, p4, etc. will receive the actual preset values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069040976"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pset opcode. It uses the file <a class="ulink" href="examples/pset.csd" target="_top"><em class="citetitle">pset.csd</em></a>
+      </p>
+        <div class="example">
+          <a id="idm276069039216"></a>
+          <p class="title">
+            <strong>Example 743. Example of the pset opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276436103776"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span> 
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pset.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span> 
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+
+<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">;this shows an example with non-midi use</span>
+
+<span class="nb">pset</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mf">0.5</span> 
+a<span class="n">sig</span> <span class="nb">poscil</span> <span class="nb">p5</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">1</span> 
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+ 
+<span class="kd">endin</span> 
+<span class="nt">&lt;/CsInstruments&gt;</span> 
+<span class="nt">&lt;CsScore&gt;</span> 
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine wave</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> 
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">440</span> 
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">440</span> <span class="mf">0.1</span> 
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span> 
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+     </p>
+        <p> Here is another example of the pset opcode, using pset with midi. It uses the file <a class="ulink" href="examples/pset-midi.csd" target="_top"><em class="citetitle">pset-midi.csd</em></a></p>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276069034352"></a>
+          <p class="title">
+            <strong>Example 744. Second example of the pset opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276434901072"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span> 
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac -+rtmidi=virtual -M0 --midi-key-oct=4 --midi-velocity=5   <span class="c1">;;;realtime audio out and virtual midi keyboard</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pset-midi.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span> 
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+            <span class="nb">pset</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3600</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+i<span class="n">instrument</span> <span class="o">=</span> <span class="nb">p1</span>
+i<span class="n">starttime</span>  <span class="o">=</span> <span class="nb">p2</span>
+i<span class="n">attack</span>     <span class="o">=</span> <span class="mf">0.005</span>
+i<span class="n">sustain</span>    <span class="o">=</span> <span class="nb">p3</span>
+i<span class="n">release</span>    <span class="o">=</span> <span class="mf">0.06</span>
+<span class="nb">p3</span>          <span class="o">=</span> i<span class="n">sustain</span> <span class="o">+</span> i<span class="n">attack</span> <span class="o">+</span> i<span class="n">release</span>
+k<span class="n">damping</span>    <span class="nb">linsegr</span> <span class="mf">0.0</span><span class="p">,</span> i<span class="n">attack</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> i<span class="n">sustain</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> i<span class="n">release</span><span class="p">,</span> <span class="mf">0.0</span>
+
+i<span class="n">octave</span>     <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">frequency</span>  <span class="o">=</span> <span class="nb">cpsoct</span><span class="p">(</span>i<span class="n">octave</span><span class="p">)</span>
+i<span class="n">amplitude</span>  <span class="o">=</span> <span class="nb">p5</span><span class="o">*</span><span class="mf">.15</span>			<span class="c1">;lower volume</span>
+
+<span class="nb">print</span> <span class="nb">p1</span><span class="p">,</span> <span class="nb">p2</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span>
+a<span class="n">sig</span> S<span class="n">TKBandedWG</span> i<span class="n">frequency</span><span class="p">,</span> i<span class="n">amplitude</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">60</span>	<span class="c1">; runs 69 seconds</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069032672"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="strset.html" title="strset"><em class="citetitle">strset</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="productarray.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ptable.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">product </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ptable</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

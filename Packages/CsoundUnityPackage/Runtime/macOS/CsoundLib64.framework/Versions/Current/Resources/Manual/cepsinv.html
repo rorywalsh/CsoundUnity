@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>cepsinv</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ceps.html" title="ceps" />
+    <link rel="next" href="cggoto.html" title="cggoto" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">cepsinv</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ceps.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cggoto.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="cepsinv"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCepsinv" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">cepsinv</span>
+        </h2>
+        <p>cepsinv — 
+      Calculate the inverse cepstrum of an array.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121981728"></a>
+        <h2>Description</h2>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121980560"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kenv <span class="command"><strong>cepsinv</strong></span> keps[]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121978480"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>keps[]</em></span> -- the cepstrum input, an array of
+      size N+1, where N is power-of-two, containing the cepstral coefficients.
+    </p>
+        <p>
+      <span class="emphasis"><em>kenv</em></span> -- the inverse cepstrum (spectral
+      envelope), an array of N+1 magnitudes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121975904"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the use of the <span class="emphasis"><em>cepsinv</em></span> opcode. It uses the file <a class="ulink" href="examples/cepsinv.csd" target="_top"><em class="citetitle">cepsinv.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276121973712"></a>
+          <p class="title">
+            <strong>Example 118. Example of the <span class="emphasis"><em>cepsinv</em></span> opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276489731504"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">1</span> <span class="nb">diskin</span> <span class="s">"fox.wav"</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span>
+k<span class="n">1</span> <span class="nb">randh</span>  <span class="mi">80</span><span class="p">,</span> <span class="mf">2.5</span>
+a<span class="n">2</span> <span class="nb">vco2</span>  <span class="mi">8</span><span class="p">,</span> <span class="mi">220</span><span class="o">+</span>k<span class="n">1</span>
+<span class="n">fsig</span> <span class="nb">pvsanal</span> a<span class="n">1</span><span class="p">,</span><span class="mi">1024</span><span class="p">,</span><span class="mi">256</span><span class="p">,</span><span class="mi">1024</span><span class="p">,</span><span class="mi">1</span>
+<span class="n">fsig2</span> <span class="nb">pvsanal</span> a<span class="n">2</span><span class="p">,</span><span class="mi">1024</span><span class="p">,</span><span class="mi">256</span><span class="p">,</span><span class="mi">1024</span><span class="p">,</span><span class="mi">1</span>
+k<span class="n">eps</span><span class="p">[]</span> <span class="nb">pvsceps</span> <span class="n">fsig</span><span class="p">,</span><span class="mi">30</span>
+k<span class="n">env</span><span class="p">[]</span> <span class="n">cepsinv</span> k<span class="n">eps</span>
+<span class="n">fenv</span> <span class="nb">tab2pvs</span> <span class="nb">r2c</span><span class="p">(</span>k<span class="n">env</span><span class="p">)</span>
+<span class="n">fvoc</span> <span class="nb">pvsfilter</span> <span class="n">fsig2</span><span class="p">,</span> <span class="n">fenv</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">sig</span> <span class="nb">pvsynth</span> <span class="n">fvoc</span>
+
+    <span class="nb">out</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">60</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121969328"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>2014</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ceps.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cggoto.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ceps </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> cggoto</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

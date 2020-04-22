@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Csbeats</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartReference.html" title="Part III. Reference" />
+    <link rel="prev" href="CscoreAdvancd.html" title="More Advanced Examples" />
+    <link rel="next" href="pt04.html" title="Part IV. Opcode Quick Reference" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Csbeats</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CscoreAdvancd.html">Prev</a> </td>
+          <th width="60%" align="center">Part III. Reference</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pt04.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="CsBeats"></a>Csbeats</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    <a id="IndexBeats" class="indexterm"></a>
+    <span class="emphasis"><em>Csbeats</em></span> is an alternative score language that is aimed at 
+     specifying simple scores in standard western tunings and
+     rhythms.  <span class="emphasis"><em>Csbeats</em></span> can be invoked via the
+     CsScore component of a standard .csd score with
+     <span class="emphasis"><em>bin="csbeats"</em></span> or as stand-alone
+     program which generates a standard numeric score.
+  </p>
+      <p>
+    As a stand-alone the program reads standard input and writes to
+    standard output.
+  </p>
+      <div class="refsect1">
+        <a id="idm275977454528"></a>
+        <p>
+    The <span class="emphasis"><em>csbeats</em></span> language is very simple, having
+    only 5  kinds of statement, and only one of them has any
+    complexity.  In general the introductory word for each statement
+    type is case insensitive, so "QUIT", "quit", "QuIt"... are all
+    the same.  Comments can be introduced in either ANSI C89 format
+    or C++ (that is either /* ... */ or // to the end of line) or
+      Csound's semicolon.
+  </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <span class="emphasis">
+                <em>QUIT</em>
+              </span>
+              <p>
+      Causes csbeats to exit.  For
+      flexibility the command <span class="emphasis"><em>END</em></span> is also
+      accepted for the identical action.
+    </p>
+            </li>
+            <li class="listitem"><span class="emphasis"><em>BEATS</em></span>=integer
+    <p>
+      Sets the number of beats
+      per minute for the following score until the end or until it is
+      reset.  The default value is 60bpm.  The token
+      <span class="emphasis"><em>BPS</em></span> is also acceptable instead of BEATS.  
+    </p></li>
+            <li class="listitem"><span class="emphasis"><em>PERMEASURE</em></span>=integer
+    <p>
+      Sets the number of
+        beats in a bar.  The default value is 4.
+    </p></li>
+            <li class="listitem">
+              <span class="emphasis">
+                <em>BAR</em>
+              </span>
+              <p>
+      Start a new bar.
+    </p>
+            </li>
+            <li class="listitem"><span class="emphasis"><em>BAR</em></span> integer
+    <p>
+      Start the bar whose number is
+      given.
+    </p></li>
+            <li class="listitem"><span class="emphasis"><em>i</em></span> integer attributes
+      <p>
+        Specified a note event for the numbered instrument.  The
+        attributes may be any of a pitch, duration or dynamic, or a
+        positioning of the note to a beat or measure, and can be in
+        any order.
+      </p><p>
+        Pitches are specified with a conventional note name (English
+        form) in upper case optionally followed by a #, x (for
+        double sharp), b (for flat) or bb (for double flat). 
+        A note of Z is a rest (think zzzz).  All notes except rests
+        must be followed by an octave number, with A4 being
+        international A (440Hz).  Pitches are passed to Csound in
+        Hertz in the parameter p4, and are twelve tone equal temprament.
+      </p><p>
+        Durations are coded in lower case with the initial letter of
+        the name for <span class="emphasis"><em>w</em></span>hole,
+        <span class="emphasis"><em>h</em></span>alf, <span class="emphasis"><em>q</em></span>uarter,
+        <span class="emphasis"><em>e</em></span>igth and <span class="emphasis"><em>s</em></span>ixteeth
+        notes, or <span class="emphasis"><em>th</em></span> for thirtysecondth notes.
+        Except for <span class="emphasis"><em>w</em></span> these can be moderated by
+        appending as suffix:
+        </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><span class="emphasis"><em>d</em></span> or <span class="emphasis"><em>.</em></span> Dotted
+            note (half as long again) 
+          </li><li class="listitem"><span class="emphasis"><em>dd</em></span> or <span class="emphasis"><em>..</em></span> Dotted
+            note (three quarters as long again) 
+          </li><li class="listitem"><span class="emphasis"><em>t</em></span> Triplet note (third notes in
+            two)
+          </li><li class="listitem"><span class="emphasis"><em>t.</em></span> Dotted triplet note
+          </li><li class="listitem"><span class="emphasis"><em>q</em></span> Quintuplet (Five notes in four)
+          </li><li class="listitem"><span class="emphasis"><em>s</em></span> Septuplet (Seven notes in eight)
+          </li></ul></div><p>
+        Durations can be added together by giving more that one
+        duration.  To make this more intuitive a + sign can be used
+        instead of white space.
+      </p><p>
+        The dynamics are written in conventional notation, that is fff,
+        ff, f, mf, mp, p, pp, ppp, pppp.  These are passed to the instrument
+        as p5 as 0 for fff, and one less dB for each step below.  The
+        default dynamic is fortissimo.
+      </p><p>
+        Additional parameters (p-fields) can be specified in an
+        instrument statement by giving statements like
+        <span class="emphasis"><em>p6=42</em></span> which would set the p6 field to 42
+        until it is changed.  The number must be 6 or greater as the
+        first 5 fields are taken with fixed information.  Each
+        instrument number has its own additional parameters.
+      </p><p>
+        If any of these attributes is missing it carried forward from the
+        previous note, with beat position being incremented to the end
+        of the previous note.
+      </p><p>
+        In addition an event can be directed to a particular measure with
+        an m attribute or a particular beat with a b.
+        </p></li>
+          </ul>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275977406528"></a>
+        <p>
+      The opening of Bach's Goldberg variation number 3 can be coded
+      as:
+      </p>
+        <pre class="programlisting">
+; Bach - Goldberg Variations - Variato 3
+; by Brian Baughn 3-14-05
+; bbaughn@berklee.net
+beats = 120
+permeasure = 6
+
+i101    m1 b1 B4 mp qd+s
+i101          C5    s
+i101          D5
+i101          C5
+i101          D5
+i101          E5
+i101          A4    qd+s
+i101          B4    s
+i101          C5
+i101          B4
+i101          C5
+i101          D5
+
+i101    m2 b1 G4    qd
+i101          G5    qd+e
+i101          A5    s
+i101          G5
+i101          F#5
+i101          G5
+i101          A5    e
+
+i101  m3 b1.5 D5    s
+i101          C5
+i101          B4
+i101          A4
+i101          B4    e
+i101          C5    s
+i101          B4
+i101          A4
+i101          B4
+i101          G4    e
+i101          E5
+i101          D5
+i101          C5
+i101          F#5
+i101          A5
+
+i101  m4 b1   B4    q
+i101          G5    e
+i101          G5    q
+i101          F#5   e
+i101          Z     e   // Z is a rest (zzzzz..)
+i101                e
+i101          B5    e
+i101          A5    q
+i101          D5    e
+
+quit
+
+      </pre>
+        <p>
+      This produces output
+      </p>
+        <pre class="programlisting">
+<span class="comment">;;;setting bpm=120.000000</span>
+<span class="comment">;;;setting permeasure=6</span>
+<span class="stamnt">i</span>101 0.000000 0.875000 493.883621 -4
+<span class="stamnt">i</span>101 0.875000 0.125000 523.251131 -4
+<span class="stamnt">i</span>101 1.000000 0.125000 587.329536 -4
+<span class="stamnt">i</span>101 1.125000 0.125000 523.251131 -4
+<span class="stamnt">i</span>101 1.250000 0.125000 587.329536 -4
+<span class="stamnt">i</span>101 1.375000 0.125000 659.255114 -4
+<span class="stamnt">i</span>101 1.500000 0.875000 440.000000 -4
+<span class="stamnt">i</span>101 2.375000 0.125000 493.883621 -4
+<span class="stamnt">i</span>101 2.500000 0.125000 523.251131 -4
+<span class="stamnt">i</span>101 2.625000 0.125000 493.883621 -4
+<span class="stamnt">i</span>101 2.750000 0.125000 523.251131 -4
+<span class="stamnt">i</span>101 2.875000 0.125000 587.329536 -4
+<span class="stamnt">i</span>101 3.000000 0.750000 391.995436 -4
+<span class="stamnt">i</span>101 3.750000 1.000000 783.990872 -4
+<span class="stamnt">i</span>101 4.750000 0.125000 880.000000 -4
+<span class="stamnt">i</span>101 4.875000 0.125000 783.990872 -4
+<span class="stamnt">i</span>101 5.000000 0.125000 739.988845 -4
+<span class="stamnt">i</span>101 5.125000 0.125000 783.990872 -4
+<span class="stamnt">i</span>101 5.250000 0.250000 880.000000 -4
+<span class="stamnt">i</span>101 6.250000 0.125000 587.329536 -4
+<span class="stamnt">i</span>101 6.375000 0.125000 523.251131 -4
+<span class="stamnt">i</span>101 6.500000 0.125000 493.883621 -4
+<span class="stamnt">i</span>101 6.625000 0.125000 440.000000 -4
+<span class="stamnt">i</span>101 6.750000 0.250000 493.883621 -4
+<span class="stamnt">i</span>101 7.000000 0.125000 523.251131 -4
+<span class="stamnt">i</span>101 7.125000 0.125000 493.883621 -4
+<span class="stamnt">i</span>101 7.250000 0.125000 440.000000 -4
+<span class="stamnt">i</span>101 7.375000 0.125000 493.883621 -4
+<span class="stamnt">i</span>101 7.500000 0.250000 391.995436 -4
+<span class="stamnt">i</span>101 7.750000 0.250000 659.255114 -4
+<span class="stamnt">i</span>101 8.000000 0.250000 587.329536 -4
+<span class="stamnt">i</span>101 8.250000 0.250000 523.251131 -4
+<span class="stamnt">i</span>101 8.500000 0.250000 739.988845 -4
+<span class="stamnt">i</span>101 8.750000 0.250000 880.000000 -4
+<span class="stamnt">i</span>101 9.000000 0.500000 493.883621 -4
+<span class="stamnt">i</span>101 9.500000 0.250000 783.990872 -4
+<span class="stamnt">i</span>101 9.750000 0.500000 783.990872 -4
+<span class="stamnt">i</span>101 10.250000 0.250000 739.988845 -4
+<span class="comment">;;rest at 10.500000 for 0.250000</span>
+<span class="comment">;;rest at 10.750000 for 0.250000</span>
+<span class="stamnt">i</span>101 11.000000 0.250000 987.767243 -4
+<span class="stamnt">i</span>101 11.250000 0.500000 880.000000 -4
+<span class="stamnt">i</span>101 11.750000 0.250000 587.329536 -4
+<span class="stamnt">e</span>
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275977373232"></a>
+        <h2>A Complete Example</h2>
+        <p>
+      Here is a simple example of the <span class="emphasis"><em>csbeats</em></span>
+      score generator. It uses the file <a class="ulink" href="examples/csbeats.csd" target="_top"><em class="citetitle">csbeats.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275977371008"></a>
+          <p class="title">
+            <strong>Example 1254. A simple example of csbeats.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276390426576"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span>      <span class="o">=</span>           <span class="mi">44100</span>
+<span class="vg">nchnls</span> 	<span class="o">=</span> 		<span class="mi">2</span>
+
+gi<span class="n">1</span> <span class="nb">ftgen</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+gi<span class="n">2</span> <span class="nb">ftgen</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">1</span>    <span class="c1">; sawtooth</span>
+gi<span class="n">3</span> <span class="nb">ftgen</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">0</span>  <span class="c1">;triangle</span>
+
+<span class="kd">instr</span> <span class="nf">101</span><span class="p">,</span><span class="nf">102</span><span class="p">,</span><span class="nf">103</span>
+  i<span class="n">amp</span> <span class="o">=</span>      <span class="nb">ampdbfs</span><span class="p">(</span><span class="nb">p5</span><span class="p">)</span>
+  a<span class="n">1</span>   <span class="nb">oscil</span>  i<span class="n">amp</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p1</span><span class="o">-</span><span class="mi">100</span>
+  k<span class="n">env</span> <span class="nb">expseg</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.01</span>
+  a<span class="n">1</span>   <span class="o">=</span>      a<span class="n">1</span> <span class="o">*</span> k<span class="n">env</span>
+       <span class="nb">outs</span>   a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+ 
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore</span> <span class="na">bin=</span><span class="s">"csbeats"</span><span class="nt">&gt;</span>
+<span class="c1">; by Brian Baughn 3-14-05</span>
+<span class="c1">; bbaughn@berklee.net</span>
+
+<span class="nb">b</span><span class="cp">eats</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="err">p</span><span class="nb">e</span><span class="cp">rmeasure</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="nb">i</span><span class="mi">101</span>    <span class="cp">m1</span> <span class="cp">b1</span>   <span class="cp">q</span>    <span class="cp">mp</span>   <span class="cp">D3</span>
+<span class="nb">i</span><span class="mi">101</span>                      <span class="cp">F3</span>
+<span class="nb">i</span><span class="mi">101</span>                      <span class="cp">D3</span>
+
+<span class="nb">i</span><span class="mi">101</span>    <span class="cp">m2</span> <span class="cp">b1</span>             <span class="cp">D3</span>
+<span class="nb">i</span><span class="mi">101</span>       <span class="cp">b3</span>             <span class="cp">D3</span>
+
+<span class="nb">i</span><span class="mi">101</span>    <span class="cp">m3</span> <span class="cp">b1</span>             <span class="cp">D3</span>
+<span class="nb">i</span><span class="mi">101</span>                      <span class="cp">F3</span>
+<span class="nb">i</span><span class="mi">101</span>                      <span class="cp">D3</span>
+
+<span class="nb">i</span><span class="mi">101</span>    <span class="cp">m4</span> <span class="cp">b1</span>             <span class="cp">D3</span>
+<span class="nb">i</span><span class="mi">101</span>       <span class="cp">b3</span>             <span class="cp">D3</span>
+
+<span class="nb">i</span><span class="mi">101</span>    <span class="cp">m5</span> <span class="cp">b1</span>              <span class="cp">D3</span>
+<span class="nb">i</span><span class="mi">101</span>       <span class="cp">b4</span>              <span class="cp">G5</span>
+
+<span class="nb">i</span><span class="mi">101</span>    <span class="cp">m6</span> <span class="cp">b1</span>              <span class="cp">E5</span>
+<span class="nb">i</span><span class="mi">101</span>       <span class="cp">b2</span>              <span class="cp">F5</span>
+<span class="nb">i</span><span class="mi">101</span>       <span class="cp">b3</span>     <span class="cp">e</span>      <span class="cp">Eb5</span>
+<span class="nb">i</span><span class="mi">101</span>       <span class="cp">b3</span><span class="mf">.5</span>   <span class="cp">e</span>          
+<span class="nb">i</span><span class="mi">101</span>       <span class="cp">b4</span>     <span class="cp">q</span>          
+
+<span class="nb">i</span><span class="mi">101</span>    <span class="cp">m7</span> <span class="cp">b1</span>     <span class="cp">e</span>       <span class="cp">D5</span>
+<span class="nb">i</span><span class="mi">101</span>                            
+<span class="nb">i</span><span class="mi">101</span>                <span class="cp">q</span>          
+<span class="nb">i</span><span class="mi">101</span>                <span class="cp">e</span>      <span class="cp">Db5</span>
+<span class="nb">i</span><span class="mi">101</span>                            
+<span class="nb">i</span><span class="mi">101</span>                <span class="cp">q</span>          
+
+<span class="nb">i</span><span class="mi">101</span>    <span class="cp">m8</span> <span class="cp">b1</span>     <span class="cp">q</span>       <span class="cp">D5</span>
+<span class="nb">i</span><span class="mi">101</span>                         <span class="cp">E5</span>
+<span class="nb">i</span><span class="mi">101</span>                         <span class="cp">D5</span>
+
+<span class="nb">i</span><span class="mi">102</span>    <span class="cp">m1</span> <span class="cp">b2</span>      <span class="cp">q</span>      <span class="cp">D4</span>
+<span class="nb">i</span><span class="mi">102</span>       <span class="cp">b4</span>              <span class="cp">E4</span>
+<span class="nb">i</span><span class="mi">102</span>       <span class="cp">b4</span>             <span class="cp">Bb3</span>
+
+<span class="nb">i</span><span class="mi">102</span>    <span class="cp">m2</span> <span class="cp">b2</span>              <span class="cp">F4</span>
+<span class="nb">i</span><span class="mi">102</span>       <span class="cp">b2</span>              <span class="cp">B3</span>
+<span class="nb">i</span><span class="mi">102</span>       <span class="cp">b4</span>             <span class="cp">C</span><span class="o">#</span><span class="mi">4</span>
+<span class="nb">i</span><span class="mi">102</span>       <span class="cp">b4</span>             <span class="cp">Bb3</span>
+
+<span class="nb">i</span><span class="mi">102</span>    <span class="cp">m3</span> <span class="cp">b2</span>      <span class="cp">q</span>      <span class="cp">D4</span>
+<span class="nb">i</span><span class="mi">102</span>       <span class="cp">b4</span>              <span class="cp">E4</span>
+<span class="nb">i</span><span class="mi">102</span>       <span class="cp">b4</span>             <span class="cp">Bb3</span>
+
+<span class="nb">i</span><span class="mi">102</span>    <span class="cp">m4</span> <span class="cp">b2</span>              <span class="cp">F4</span>
+<span class="nb">i</span><span class="mi">102</span>       <span class="cp">b2</span>              <span class="cp">B3</span>
+<span class="nb">i</span><span class="mi">102</span>       <span class="cp">b4</span>             <span class="cp">C</span><span class="o">#</span><span class="mi">4</span>
+<span class="nb">i</span><span class="mi">102</span>       <span class="cp">b4</span>             <span class="cp">Bb3</span>
+
+<span class="nb">i</span><span class="mi">103</span>    <span class="cp">m5</span> <span class="cp">b2</span>      <span class="cp">e</span>     <span class="cp">F6</span>
+<span class="nb">i</span><span class="mi">103</span>       <span class="cp">b2</span>      <span class="cp">e</span>     <span class="cp">A5</span>
+<span class="nb">i</span><span class="mi">103</span>       <span class="cp">b2</span><span class="mf">.5</span>    <span class="cp">e</span>     <span class="cp">D6</span>
+<span class="nb">i</span><span class="mi">103</span>       <span class="cp">b3</span>      <span class="cp">e</span>     <span class="cp">F6</span>
+<span class="nb">i</span><span class="mi">103</span>       <span class="cp">b3</span>      <span class="cp">e</span>     <span class="cp">A5</span>
+<span class="nb">i</span><span class="mi">103</span>       <span class="cp">b4</span>      <span class="cp">e</span>     <span class="cp">E6</span>
+
+<span class="nb">i</span><span class="mi">103</span>    <span class="cp">m6</span> <span class="cp">b1</span>      <span class="cp">q</span>     <span class="cp">C</span><span class="o">#</span><span class="mi">6</span>
+<span class="nb">i</span><span class="mi">103</span>               <span class="cp">q</span>     <span class="cp">D6</span>
+<span class="nb">i</span><span class="mi">103</span>               <span class="cp">e</span>     <span class="cp">C6</span>
+<span class="nb">i</span><span class="mi">103</span>                           
+<span class="nb">i</span><span class="mi">103</span>               <span class="cp">q</span>        
+
+<span class="nb">i</span><span class="mi">103</span>    <span class="cp">m7</span> <span class="cp">b1</span>      <span class="cp">e</span>     <span class="cp">B5</span>
+<span class="nb">i</span><span class="mi">103</span>                            
+<span class="nb">i</span><span class="mi">103</span>                 <span class="cp">q</span>         
+<span class="nb">i</span><span class="mi">103</span>                 <span class="cp">e</span>    <span class="cp">Bb5</span>
+<span class="nb">i</span><span class="mi">103</span>                            
+<span class="nb">i</span><span class="mi">103</span>                 <span class="cp">q</span>         
+
+<span class="nb">i</span><span class="mi">103</span>     <span class="cp">m8</span> <span class="cp">b1</span>     <span class="cp">e</span>     <span class="cp">F5</span>
+<span class="nb">i</span><span class="mi">103</span>        <span class="cp">b1</span>     <span class="cp">e</span>     <span class="cp">A5</span>
+<span class="nb">i</span><span class="mi">103</span>        <span class="cp">b1</span><span class="mf">.5</span>   <span class="cp">e</span>     <span class="cp">D6</span>
+<span class="nb">i</span><span class="mi">103</span>        <span class="cp">b2</span>     <span class="cp">e</span>    <span class="cp">Bb5</span>
+<span class="nb">i</span><span class="mi">103</span>        <span class="cp">b2</span><span class="mf">.5</span>   <span class="cp">e</span>     <span class="cp">D6</span>
+<span class="nb">i</span><span class="mi">103</span>        <span class="cp">b3</span>     <span class="cp">q</span>     <span class="cp">F5</span>
+<span class="nb">i</span><span class="mi">103</span>        <span class="cp">b3</span>           <span class="cp">A5</span>
+<span class="nb">e</span><span class="cp">nd</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CscoreAdvancd.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartReference.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pt04.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">More Advanced Examples </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Part IV. Opcode Quick Reference</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

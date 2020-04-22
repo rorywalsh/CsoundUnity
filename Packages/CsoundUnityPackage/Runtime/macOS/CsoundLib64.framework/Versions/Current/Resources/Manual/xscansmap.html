@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>xscansmap</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="xscanmap.html" title="xscanmap" />
+    <link rel="next" href="xscans.html" title="xscans" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">xscansmap</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="xscanmap.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="xscans.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="xscansmap"></a>
+      <div class="titlepage"></div>
+      <a id="IndexXscansmap" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">xscansmap</span>
+        </h2>
+        <p>xscansmap — 
+      Allows the position and velocity of a node in a scanned process to be read.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035446368"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in scansyn.</p>
+        <p>
+      Allows the position and velocity of a node in a scanned process to be read.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035444688"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>xscansmap</strong></span> kpos, kvel, iscan, kamp, kvamp [, iwhich]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035442720"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iscan</em></span> -- which scan process to read
+    </p>
+        <p>
+      <span class="emphasis"><em>iwhich</em></span> (optional) -- which node to sense. The default is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035440256"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kpos</em></span> -- the node's position.
+    </p>
+        <p>
+      <span class="emphasis"><em>kvel</em></span> -- the node's velocity.
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amount to amplify the <span class="emphasis"><em>kpos</em></span> value.
+    </p>
+        <p>
+      <span class="emphasis"><em>kvamp</em></span> -- amount to amplify the <span class="emphasis"><em>kvel</em></span> value.
+    </p>
+        <p>
+      The internal state of a node is read. This includes its position and velocity. They are amplified by the <span class="emphasis"><em>kamp</em></span> and <span class="emphasis"><em>kvamp</em></span> values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035434032"></a>
+        <h2>See Also</h2>
+        <p>
+More information on Scanned Synthesis (as well as several other matrices) is available on the <a class="ulink" href="http://www.csounds.com/scanned/" target="_top"><em class="citetitle">Scanned Synthesis page</em></a> at cSounds.com.
+    </p>
+        <p> Also an article on these opcodes: <a class="ulink" href="http://www.csounds.com/stevenyi/scanned/yi_scannedSynthesis.html" target="_top"><em class="citetitle">http://www.csounds.com/stevenyi/scanned/yi_scannedSynthesis.html</em></a>  , written by Steven Yi </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035430576"></a>
+        <h2>Credits</h2>
+        <p>New in version 4.21</p>
+        <p>November 2002. Thanks to Rasmus Ekman for pointing this opcode out.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="xscanmap.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="xscans.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">xscanmap </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> xscans</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

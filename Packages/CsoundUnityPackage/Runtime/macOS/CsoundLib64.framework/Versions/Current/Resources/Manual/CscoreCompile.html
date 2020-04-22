@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Compiling a Cscore Program</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="CscoreTop.html" title="Cscore" />
+    <link rel="prev" href="CscoreMain.html" title="Writing a Cscore Control Program" />
+    <link rel="next" href="CscoreAdvancd.html" title="More Advanced Examples" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Compiling a Cscore Program</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CscoreMain.html">Prev</a> </td>
+          <th width="60%" align="center">Cscore</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CscoreAdvancd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="CscoreCompile"></a>Compiling a Cscore Program</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    A <span class="emphasis"><em>Cscore</em></span> program can be invoked either as a <span class="emphasis"><em>standalone program</em></span> or as part of Csound in between sorting the score and performing the score with the orchestra:
+  </p>
+      <p>
+    </p>
+      <div class="cmdsynopsis">
+        <p><code class="command">cscore</code>  [<em class="replaceable"><code>scorefilein</code></em>] [<em class="replaceable"><code>&gt; scorefileout</code></em>]</p>
+      </div>
+      <p>
+  </p>
+      <p>
+    or
+  </p>
+      <p>
+    </p>
+      <div class="cmdsynopsis">
+        <p><code class="command">csound</code>  [-C] [<code class="option">otherflags</code>] [<em class="replaceable"><code>orchname</code></em>] [<em class="replaceable"><code>scorename</code></em>]</p>
+      </div>
+      <p>
+  </p>
+      <p>
+    Before trying to compile your own <span class="emphasis"><em>Cscore</em></span> program, you will most likely want to obtain a copy of the Csound source code.  Either download the latest source distribution for your platform or check out a copy of the csound5 module from Sourceforge CVS.  There are several files in the sources that will help you.  Within the <code class="filename">examples/cscore/</code> directory are a number of examples of <span class="emphasis"><em>Cscore</em></span> control programs, including all of the examples contained in this manual.  And in the <code class="filename">frontends/cscore/</code> directory are the two files <span class="emphasis"><em>cscoremain.c</em></span> and <span class="emphasis"><em>cscore.c</em></span>.  <span class="emphasis"><em>cscoremain.c</em></span> contains a simple <span class="emphasis"><em>main</em></span> function that performs all of the initialization that a standalone <span class="emphasis"><em>Cscore</em></span> program needs to do before it calls your control function.  This main <span class="quote">“<span class="quote">stub</span>”</span> initializes Csound, reads the commandline arguments, opens the input and output score files, and then calls a function <span class="emphasis"><em>cscore()</em></span>.  As described above, it is expected that you will write the <span class="emphasis"><em>cscore()</em></span> function and provide it in another file.  The file <span class="emphasis"><em>frontends/cscore/cscore.c</em></span> shows the simplest example of a <span class="emphasis"><em>cscore()</em></span> function that reads in a score of any length and writes it to the output unchanged.
+  </p>
+      <p>
+So, to create a standalone program, write a control program as shown in the previous section.  Let's assume that you saved this program in a file named <span class="quote">“<span class="quote"><span class="emphasis"><em>mycscore.c</em></span></span>”</span>.  Next, you need to compile and link this program with the Csound library and <span class="emphasis"><em>cscoremain.c</em></span> in order to create an exectuable by following the set of directions below that apply to your operating system. It will be helpful to already have some familiarity with the C compiler on your computer since the information below cannot be complete for all possible systems.
+  </p>
+      <h3><a id="idm275977845408"></a>Linux and Unix</h3>
+      <p>
+The following commands assume that you have copied your file <span class="emphasis"><em>mycscore.c</em></span> into the same directory as <span class="emphasis"><em>cscoremain.c</em></span>, that you have opened a terminal to that same directory, and that you have previously installed a binary distribution of Csound that placed a library <span class="emphasis"><em>libcsound.a</em></span> or <span class="emphasis"><em>libcsound.so</em></span> into <span class="emphasis"><em>/usr/local/lib</em></span> and the header files for the Csound API into <span class="emphasis"><em>/usr/local/include/csound</em></span>.
+  </p>
+      <p>
+To compile and link:
+  </p>
+      <div class="informalexample">
+        <pre class="screen">
+gcc mycscore.c cscoremain.c -o cscore -lcsound -L/usr/local/lib -I/usr/local/include/csound</pre>
+      </div>
+      <p>
+To run (sending the results to standard output):
+  </p>
+      <div class="informalexample">
+        <pre class="screen">./cscore test.sco</pre>
+      </div>
+      <p>
+It is possible that on some Unix systems, the C compiler will be named <span class="emphasis"><em>cc</em></span> or something else other than <span class="emphasis"><em>gcc</em></span>.
+  </p>
+      <h3><a id="idm275977837504"></a>Windows</h3>
+      <p>
+Csound is usually compiled on Windows using the MinGW environment that makes GCC -- the same compiler used on Linux -- available using a Unix-like command shell (MSYS).  Since pre-compiled libraries for Csound on Windows are built in this way, you may need to use MinGW as well to link to them.  If you have built Csound using another compiler, then you should be able to build <span class="emphasis"><em>Cscore</em></span> with that compiler as well.
+  </p>
+      <p>
+Compiling standalone <span class="emphasis"><em>Cscore</em></span> programs using MinGW should be similar to the procedure for Linux above with library and header paths changed appropriately for where Csound is installed on the Windows system.  <span class="emphasis"><em>(Please feel free to contribute more detailed instructions here as the editor has been unable to test Cscore on a Windows machine).</em></span>
+  </p>
+      <h3><a id="idm275977834368"></a>OS X</h3>
+      <p>
+The following commands assume that you have copied your file <span class="emphasis"><em>mycscore.c</em></span> into the same directory as <span class="emphasis"><em>cscoremain.c</em></span> and that you have opened a terminal to that same directory.  In addition, the Apple-supplied developer tools (including the GCC compiler) should be installed on your system and you should have previously installed a binary distribution of Csound that placed the CsoundLib framework into <span class="emphasis"><em>/Library/Frameworks</em></span>.
+  </p>
+      <p>
+Use this command compile and link. (You may get a warning about "multiple definitions of symbol _cscore").
+  </p>
+      <div class="informalexample">
+        <pre class="screen">
+gcc cscore.c cscoremain.c -o cscore -framework CsoundLib -I/Library/Frameworks/CsoundLib.framework/Headers</pre>
+      </div>
+      <p>
+To run (sending the results to standard output):
+  </p>
+      <div class="informalexample">
+        <pre class="screen">./cscore test.sco</pre>
+      </div>
+      <h3><a id="idm275977828848"></a>MacOS 9</h3>
+      <p>
+    You will need CodeWarrior or some other development environment installed on your computer (MPW may work).  Download the source code distribution for OS 9 (it will have a name like <span class="emphasis"><em>Csound5.05_OS9_src.smi.bin</em></span>).
+  </p>
+      <p>
+      If using CodeWarrior, find and open the project file "Cscore5.cw8.mcp" in the folder "Csound5.04-OS9-source:macintosh:Csound5Library:".  This project file is configured to use the source files <span class="emphasis"><em>cscore.c</em></span> and <span class="emphasis"><em>cscoremain_MacOS9.c</em></span> from the csound5 source tree and the Csound5Lib shared library produced by compiling Csound with the "Csound5.cw8.mcp" project file.  You should substitute your own <span class="emphasis"><em>Cscore</em></span> program file for <span class="emphasis"><em>cscore.c</em></span> and either compile Csound5Lib first or substitute a copy of the library in the project from the binary distribution of Csound for OS 9.  The file <span class="emphasis"><em>cscoremain_MacOS9.c</em></span> contains specialized code for configuring CodeWarrior's SIOUX console library and allows commandline arguments to be entered before the program is run.
+  </p>
+      <p>
+Once you have the proper files included in the project window, click the "Make" button and CodeWarrior should produce an application named <span class="quote">“<span class="quote"><span class="emphasis"><em>Cscore</em></span></span>”</span>.  When you run this application, it first displays a window allowing you to type in the arguments to the main function.  You only need to type in the filename or pathname to the input score -- do not type in "cscore".  The input file should be in the same folder as the application or else you will need to type a full or relative pathname to the file.  Output will be displayed in the console window.  You can use the <span class="emphasis"><em>Save</em></span> command from the <span class="emphasis"><em>File</em></span> menu before quitting if you wish.  Alternatively, in the commandline dialog, you can choose to redirect the output to a file by clicking on the <span class="emphasis"><em>File</em></span> button on the right side of the dialog.  (Note that the console window can only display about 32,000 characters, so writing to a file is necessary for long scores).
+  </p>
+      <h3><a id="idm275977821216"></a>Making Cscore usable from within Csound</h3>
+      <p>
+    To operate from Csound, first follow the instructions for compiling Csound (see <a class="link" href="BuildingCsound.html" title="Building Csound"><em class="citetitle">Building Csound</em></a>) according to the operating system that you are using.  Once you have successfully built an unmodified Csound system, then substitute your own <span class="emphasis"><em>cscore()</em></span> function for the one in the file <span class="emphasis"><em>Top/cscore_internal.c</em></span>, and rebuild Csound.
+  </p>
+      <p>
+   The resulting executable is your own special Csound, usable as above. The <a class="link" href="CommandFlags.html#FlagsMinusUpperC"><em class="citetitle">-C flag</em></a> will invoke your <span class="emphasis"><em>Cscore</em></span> program after the input score is sorted into <span class="quote">“<span class="quote"><span class="emphasis"><em>score.srt</em></span></span>”</span>. The details of what happens when you run Csound with the -C flag are given in the next section.
+  </p>
+      <p>
+   Csound 5 also provides an additional way to run your own <span class="emphasis"><em>Cscore</em></span> program from within Csound.  Using the API, a host application can set a <span class="emphasis"><em>Cscore</em></span> <span class="emphasis"><em>callback function</em></span>, which is a function that Csound will call instead of using the built-in <span class="emphasis"><em>cscore()</em></span> function.  One advantage of this approach is that it is not necessary to recompile the entirety of Csound.  Another benefit is that the host application can select at runtime from more than one <span class="emphasis"><em>Cscore</em></span> function to designate as the callback.  The disadvantage is that you need to write a host application.
+  </p>
+      <p>
+   A simple approach to using a <span class="emphasis"><em>Cscore</em></span> callback via the API would be to modify the standard Csound main program -- which is a simple Csound host -- contained in the file <span class="emphasis"><em>frontends/csound/csound_main.c</em></span>.  Adding a call to <span class="emphasis"><em>csoundSetCscoreCallback()</em></span> after the call to <span class="emphasis"><em>csoundCreate()</em></span> but before the call to <span class="emphasis"><em>csoundCompile()</em></span> should do the job.  Recompiling this file and linking to an existing Csound library will make a commandline version of Csound that works similarly to the one described above.  Don't forget to use the -C flag.
+  </p>
+      <h3><a id="idm275977810032"></a>Notes about score formats and run-time behavior</h3>
+      <p>
+    As stated previously, the input files to <span class="emphasis"><em>Cscore</em></span> may be in original or time-warped and pre-sorted form; this modality will be preserved (section by section) in reading, processing, and writing scores. Standalone processing will most often use unwarped sources and create unwarped new files. When running from within Csound, the input score will arrive already warped and sorted, and can thus be sent directly (normally section by section) to the orchestra. One advantage of this method of using <span class="emphasis"><em>Cscore</em></span> is that all of the syntactical conveniences of the full Csound score language may be used -- macros, arithmetic expressions, carry, ramp, etc. -- since the score will go through the "Carry, Tempo, Sort" phases of score processing before being passed to the user-supplied <span class="emphasis"><em>Cscore</em></span> program.
+  </p>
+      <p>
+    When running within Csound, a list of events can be conveyed to a Csound orchestra using <span class="emphasis"><em>cscoreListPlay()</em></span>. There may be any number of <span class="emphasis"><em>cscoreListPlay()</em></span> calls in a <span class="emphasis"><em>Cscore</em></span> program. Each list so conveyed can be either time-warped or not, but each list must be in strict <span class="emphasis"><em>p2</em></span>-chronological order (either from presorting or using <span class="emphasis"><em>cscoreListSort()</em></span>). If there is no <span class="emphasis"><em>cscoreListPlay()</em></span> in a <span class="emphasis"><em>Cscore</em></span> module run from within Csound, all events written out (via <span class="emphasis"><em>cscorePutEvent()</em></span>, <span class="emphasis"><em>cscorePutString()</em></span>, or <span class="emphasis"><em>cscoreListPut()</em></span>) are written to a new score in the current directory with the name <span class="quote">“<span class="quote"><span class="emphasis"><em>cscore.out</em></span></span>”</span>.  Csound then invokes the score sorter again before sending this new score to the orchestra for performance. The final, sorted, output score is written to a file named <span class="quote">“<span class="quote"><span class="emphasis"><em>cscore.srt</em></span></span>”</span>.
+  </p>
+      <p>
+    A standalone <span class="emphasis"><em>Cscore</em></span> program will normally use the <span class="quote">“<span class="quote">put</span>”</span> commands to write into its output file. If a standalone <span class="emphasis"><em>Cscore</em></span> program calls <span class="emphasis"><em>cscoreListPlay()</em></span>, the events thus intended for performance will be sent to the output in the same way as if <span class="emphasis"><em>cscoreListPut()</em></span> had been called instead.
+  </p>
+      <p>
+    A note list sent by <span class="emphasis"><em>cscoreListPlay()</em></span> for performance should be temporally distinct from subsequent note lists. No note-end should extend past the next list's start time, since <span class="emphasis"><em>cscoreListPlay()</em></span> will complete each list before starting the next (i.e. like a Section marker that doesn't reset local time to zero). This is important when using <span class="emphasis"><em>cscoreListGetNext()</em></span> or <span class="emphasis"><em>cscoreListGetUntil()</em></span> to fetch and process score segments prior to performance, because these functions may only read part of an unsorted section.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CscoreMain.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="CscoreTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CscoreAdvancd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Writing a Cscore Control Program </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> More Advanced Examples</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

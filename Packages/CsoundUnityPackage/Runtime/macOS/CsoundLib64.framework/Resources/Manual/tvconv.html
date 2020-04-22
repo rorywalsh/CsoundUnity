@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tvconv</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="turnon.html" title="turnon" />
+    <link rel="next" href="unirand.html" title="unirand" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tvconv</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="turnon.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="unirand.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tvconv"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTvconv" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tvconv</span>
+        </h2>
+        <p>tvconv — 
+      A time-varying convolution (FIR filter) opcode. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044614464"></a>
+        <h2>Description</h2>
+        <p>
+      An opcode that takes two incoming signals and
+      interprets one of them as the coefficients of linear
+      time-variable finite impulse response filter. This is
+      implemented via direct convolution (for partition sizes of
+      1 sample) or DFT-based partitioned convolution.
+      The signals can be 'frozen' (i.e. the filter coefficients are
+      kept the same) at any point in time, at a-rate or k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044612864"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>tvconv</strong></span> asig1, asig2, xfreez1,
+    xfreez2, iparts, ifils</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044610736"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iparts</em></span> -- partition size, for sizes &gt; 1, a
+      DFT-based partitioned convolution process is used. Otherwise a
+      time-domain delay line FIR is implemented. Partition sizes &gt; 1
+      are rounded to the nearest power-of-two.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifils</em></span> -- filter size. For partition sizes &gt;
+      1, filter sizes are rounded to the nearest power-of-two. With
+      partition size = 1, since direct convolution is used, filters
+      can be of any size.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044607936"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ares</em></span> -- audio output.
+    </p>
+        <p>
+      <span class="emphasis"><em>asig1, asig2</em></span> -- audio inputs.
+	</p>
+        <p>
+      <span class="emphasis"><em>xfreez1</em></span> -- freeze switch for
+      asig1. Coefficients are only updated (ie. the signal is passing
+      into the convolution) if xfreez1 &gt; 0. This input can take an
+      audio or a k-rate signal, or a constant.
+     </p>
+        <p>
+      <span class="emphasis"><em>xfreez2</em></span> -- freeze switch for
+      asig2, similar to xfreez1 in operation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044603648"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tvconv opcode. It uses the file <a class="ulink" href="examples/tvconv.csd" target="_top"><em class="citetitle">tvconv.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276044601856"></a>
+          <p class="title">
+            <strong>Example 1059. Example of the tvconv opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276410934320"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac 
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+ a<span class="n">sig</span> <span class="nb">diskin</span> <span class="s">"fox.wav"</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span>
+ a<span class="n">ir</span> <span class="nb">diskin</span> <span class="s">"beats.wav"</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span>
+ a<span class="n">ir</span> <span class="nb">buthp</span> a<span class="n">ir</span><span class="o">/</span><span class="vg">0dbfs</span><span class="p">,</span><span class="mi">1000</span>
+ k<span class="n">1</span> <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span><span class="nb">p3</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="nb">p3</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span>
+ a<span class="n">1</span> <span class="nb">oscili</span> k<span class="n">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span>
+ a<span class="n">2</span> <span class="nb">oscili</span> k<span class="n">1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">1</span>
+ a<span class="n">sig</span> <span class="n">tvconv</span> a<span class="n">sig</span><span class="p">,</span>a<span class="n">ir</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span>a<span class="n">2</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span>a<span class="n">1</span><span class="p">,</span><span class="mi">256</span><span class="p">,</span><span class="mi">1024</span>
+ a<span class="n">sig</span> <span class="nb">clip</span> a<span class="n">sig</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="vg">0dbfs</span>
+   <span class="nb">out</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">7</span> <span class="mi">0</span> <span class="mi">512</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">511</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">30</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044597872"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="pconvolve.html" title="pconvolve"><em class="citetitle">pconvolve</em></a>,
+      <a class="link" href="convolve.html" title="convolve"><em class="citetitle">convolve</em></a>,
+      <a class="link" href="ftconv.html" title="ftconv"><em class="citetitle">ftconv</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044594080"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini </td>
+          </tr>
+          <tr>
+            <td>2017</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.09</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="turnon.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="unirand.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">turnon </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> unirand</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

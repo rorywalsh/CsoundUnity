@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLslidBnk</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLshow.html" title="FLshow" />
+    <link rel="next" href="FLslidBnk2.html" title="FLslidBnk2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLslidBnk</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLshow.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLslidBnk2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLslidBnk"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLslidBnk" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLslidBnk</span>
+        </h2>
+        <p>FLslidBnk — 
+      A FLTK widget containing a bank of horizontal sliders.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108101600"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLslidBnk</em></span> is a widget containing a bank of horizontal sliders.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108099968"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLslidBnk</strong></span> "names", inumsliders [, ioutable] [, iwidth] [, iheight] [, ix] \
+      [, iy] [, itypetable] [, iexptable] [, istart_index] [, iminmaxtable]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108097728"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">names</span>”</span></em></span> -- a double-quoted string containing the names of each slider.  Each slider can have a different name. Separate each name with <span class="quote">“<span class="quote">@</span>”</span> character, for example: <span class="quote">“<span class="quote">frequency@amplitude@cutoff</span>”</span>. It is possible to not provide any name by giving a single space <span class="quote">“<span class="quote"> </span>”</span>. In this case, the opcode will automatically assign a progressive number as a label for each slider.
+    </p>
+        <p>
+      <span class="emphasis"><em>inumsliders</em></span> -- the number of sliders.
+    </p>
+        <p>
+      <span class="emphasis"><em>ioutable</em></span> (optional, default=0) -- number of a previously-allocated table in which to store output values of each slider. The user must be sure that table size is large enough to contain all output cells, otherwise a segfault will crash Csound. By assigning zero to this argument, the output will be directed to the zak space in the k-rate zone. In this case, the zak space must be previously allocated with the <a class="link" href="zakinit.html" title="zakinit"><em class="citetitle">zakinit</em></a> opcode and the user must be sure that the allocation size is big enough to cover all sliders. The default value is zero (i.e. store output in zak space).
+    </p>
+        <p>
+      <span class="emphasis"><em>istart_index</em></span> (optional, default=0) -- an integer number referring to a starting offset of output cell locations. It can be positive to allow multiple banks of sliders to output in the same table or in the zak space. The default value is zero (no offset).
+    </p>
+        <p>
+      <span class="emphasis"><em>iminmaxtable</em></span> (optional, default=0) -- number of a previously-defined table containing a list of min-max pairs, referred to each slider. A zero value defaults to the 0 to 1 range for all sliders without necessity to provide a table. The default value is zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>iexptable</em></span> (optional, default=0) -- number of a previously-defined table containing a list of identifiers (i.e. integer numbers) provided to modify the behaviour of each slider independently. Identifiers can assume the following values:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>-1 -- exponential curve response</p>
+            </li>
+            <li class="listitem">
+              <p>0 -- linear response</p>
+            </li>
+            <li class="listitem">
+              <p>number &gt; than 0 -- follow the curve of a previously-defined table to shape the response of the corresponding slider. In this case, the number corresponds to table number.</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+      You can assume that all sliders of the bank have the same response curve (exponential or linear). In this case, you can assign -1 or 0 to <span class="emphasis"><em>iexptable</em></span> without worrying about previously defining any table. The default value is zero (all sliders have a linear response, without having to provide a table).
+    </p>
+        <p>
+      <span class="emphasis"><em>itypetable</em></span> (optional, default=0) -- number of a previously-defined table containing a list of identifiers (i.e. integer numbers) provided to modify the aspect of each individual slider independently. Identifiers can assume the following values:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 = Nice slider</p>
+            </li>
+            <li class="listitem">
+              <p>1 = Fill slider</p>
+            </li>
+            <li class="listitem">
+              <p>3 = Normal slider</p>
+            </li>
+            <li class="listitem">
+              <p>5 = Nice slider</p>
+            </li>
+            <li class="listitem">
+              <p>7 = Nice slider with down-box</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+      You can assume that all sliders of the bank have the same aspect. In this case, you can assign a negative number to <span class="emphasis"><em>itypetable</em></span> without worrying about previously defining any table. Negative numbers have the same meaning of the corresponding positive identifiers with the difference that the same aspect is assigned to all sliders. You can also assign a random aspect to each slider by setting <span class="emphasis"><em>itypetable</em></span> to a negative number lower than -7. The default value is zero (all sliders have the aspect of nice sliders, without having to provide a table).
+    </p>
+        <p>
+      You can add 20 to a value inside the table to make the slider "plastic", or subtract 20 if you want to set the value for all widgets without defining a table (e.g. -21 to set all sliders types to Plastic Fill slider).
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> (optional) -- width of the rectangular area containing all sliders of the bank, excluding text labels, that are placed to the left of that area.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> (optional) -- height of the rectangular area containing all sliders of the bank, excluding text labels, that are placed to the left of that area.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> (optional) -- horizontal position of the upper left corner of the rectangular area containing all sliders belonging to the bank. You have to leave enough space, at the left of that rectangle, in order to make sure labels of sliders to be visible. This is because the labels themselves are external to the rectangular area.
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> (optional) -- vertical position of the upper left corner of the rectangular area containing all sliders belonging to the bank. You have to leave enough space, at the left of that rectangle, in order to make sure labels of sliders to be visible. This is because the labels themselves are external to the rectangular area.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108075072"></a>
+        <h2>Performance</h2>
+        <p>
+      There are no k-rate arguments, even if cells of the output table (or the zak space) are updated at k-rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLslidBnk</em></span> is a widget containing a bank of horizontal sliders. Any number of sliders can be placed into the bank (<span class="emphasis"><em>inumsliders</em></span> argument). The output of all sliders is stored into a previously allocated table or into the zak space (<span class="emphasis"><em>ioutable</em></span> argument). It is possible to determine the first location of the table (or of the zak space) in which to store the output of the first slider by means of <span class="emphasis"><em>istart_index</em></span> argument.
+    </p>
+        <p>
+      Each slider can have an individual label that is placed to the left of it. Labels are defined by the <span class="emphasis"><em><span class="quote">“<span class="quote">names</span>”</span></em></span> argument. The output range of each slider can be individually set by means of an external table (<span class="emphasis"><em>iminmaxtable</em></span> argument). The curve response of each slider can be set individually, by means of a list of identifiers placed in a table (<span class="emphasis"><em>iexptable</em></span> argument). It is possible to define the aspect of each slider independently or to make all sliders have the same aspect (<span class="emphasis"><em>itypetable</em></span> argument).
+    </p>
+        <p>
+      The <span class="emphasis"><em>iwidth</em></span>, <span class="emphasis"><em>iheight</em></span>, <span class="emphasis"><em>ix</em></span>, and <span class="emphasis"><em>iy</em></span> arguments determine width, height, horizontal and vertical position of the rectangular area containing sliders. Notice that the label of each slider is placed to the left of them and is not included in the rectangular area containing sliders. So the user should leave enough space to the left of the bank by assigning a proper <span class="emphasis"><em>ix</em></span> value in order to leave labels visible.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: IMPORTANT!">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">IMPORTANT!</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Notice that the tables used by <span class="emphasis"><em>FLslidBnk</em></span> must be created with the <a class="link" href="ftgen.html" title="ftgen"><em class="citetitle">ftgen</em></a> opcode and placed in the orchestra before the corresponding valuator. They can not placed in the score. This is because tables placed in the score are created later than the initialization of the opcodes placed in the header section of the orchestra.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108063232"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLslidBnk opcode. It uses the file <a class="ulink" href="examples/FLslidBnk.csd" target="_top"><em class="citetitle">FLslidBnk.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276108061440"></a>
+          <p class="title">
+            <strong>Example 314. Example of the FLslidBnk opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276029482560"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o FLslidBnk.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">441</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">typetable</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span> 
+gi<span class="n">outtable</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="nb">FLpanel</span> <span class="s">"Slider Bank"</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">380</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span>
+    <span class="c1">;Number of sliders</span>
+    i<span class="n">num</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="c1">; Table to store output</span>
+    i<span class="n">outtable</span> <span class="o">=</span> gi<span class="n">outtable</span>
+    <span class="c1">; Width of the slider bank in pixels</span>
+    i<span class="n">width</span> <span class="o">=</span> <span class="mi">350</span>
+    <span class="c1">; Height of the slider in pixels</span>
+    i<span class="n">height</span> <span class="o">=</span> <span class="mi">160</span>
+    <span class="c1">; Distance of the left edge of the slider</span>
+    <span class="c1">; from the left edge of the panel</span>
+    i<span class="n">x</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="c1">; Distance of the top edge of the slider </span>
+    <span class="c1">; from the top edge of the panel</span>
+    i<span class="n">y</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="c1">; Table containing fader types</span>
+    i<span class="n">typetable</span>  <span class="o">=</span> gi<span class="n">typetable</span>
+    <span class="nb">FLslidBnk</span> <span class="s">"1@2@3@4@5@6@7@8"</span><span class="p">,</span> i<span class="n">num</span> <span class="p">,</span> i<span class="n">outtable</span> <span class="p">,</span> i<span class="n">width</span> <span class="p">,</span> i<span class="n">height</span> <span class="p">,</span> i<span class="n">x</span> \
+      <span class="p">,</span> i<span class="n">y</span> <span class="p">,</span> i<span class="n">typetable</span>
+    <span class="nb">FLslidBnk</span> <span class="s">"1@2@3@4@5@6@7@8"</span><span class="p">,</span> i<span class="n">num</span> <span class="p">,</span> i<span class="n">outtable</span> <span class="p">,</span> i<span class="n">width</span> <span class="p">,</span> i<span class="n">height</span> <span class="p">,</span> i<span class="n">x</span> \
+      <span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">200</span> <span class="p">,</span> <span class="o">-</span><span class="mi">23</span>
+<span class="c1">; End of panel contents</span>
+<span class="nb">FLpanelEnd</span>
+<span class="c1">; Run the widget thread!</span>
+<span class="nb">FLrun</span>
+
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">;Dummy instrument</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Instrument 1 will play a note for 1 hour.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3600</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108057440"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLslider.html" title="FLslider"><em class="citetitle">FLslider</em></a>,
+      <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a>,
+      <a class="link" href="FLvslidBnk.html" title="FLvslidBnk"><em class="citetitle">FLvslidBnk</em></a>,
+      <a class="link" href="FLvslidBnk2.html" title="FLvslidBnk2"><em class="citetitle">FLvslidBnk2</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108052768"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLshow.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLslidBnk2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLshow </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLslidBnk2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

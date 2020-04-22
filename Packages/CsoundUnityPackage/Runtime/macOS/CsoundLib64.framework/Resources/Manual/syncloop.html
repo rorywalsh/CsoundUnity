@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>syncloop</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="syncgrain.html" title="syncgrain" />
+    <link rel="next" href="syncphasor.html" title="syncphasor" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">syncloop</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="syncgrain.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="syncphasor.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="syncloop"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSyncloop" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">syncloop</span>
+        </h2>
+        <p>syncloop — 
+Synchronous granular synthesis.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049451472"></a>
+        <h2>Description</h2>
+        <p>
+<span class="emphasis"><em>syncloop</em></span> is a variation on <span class="emphasis"><em>syncgrain</em></span>,
+which implements synchronous granular synthesis. 
+<span class="emphasis"><em>syncloop</em></span> adds loop start and end points and an optional start position. Loop start
+and end control grain start positions, so the actual grains can go beyond the loop
+points (if the loop points are not at the extremes of the table), enabling
+seamless crossfading. For more information on the granular synthesis process,
+check the <a class="link" href="syncgrain.html" title="syncgrain"><em class="citetitle">syncgrain</em></a> manual page.
+ 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049447776"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>syncloop</strong></span> kamp, kfreq, kpitch, kgrsize, kprate, klstart, \
+      klend, ifun1, ifun2, iolaps[,istart, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049445600"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifun1</em></span> -- source signal function table. Deferred-allocation tables (see
+      <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>) 
+are accepted, but the opcode expects a mono source.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifun2</em></span> -- grain envelope function table.
+    </p>
+        <p>
+      <span class="emphasis"><em>iolaps</em></span> -- maximum number of overlaps,
+      max(<span class="emphasis"><em>kfreq</em></span>)*max(<span class="emphasis"><em>kgrsize</em></span>). Estimating
+	  a large value should not affect performance, but execeeding this value will probably have disastrous
+	  consequences.
+    </p>
+        <p>
+      <span class="emphasis"><em>istart</em></span> -- starting point of synthesis in secs (defaults to 0).
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip </em></span> -- if 1, the opcode initialisation is skipped, for tied notes, performance
+continues from the position in the loop where the previous note stopped. The default, 0, does not skip
+initialisation
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049438560"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude scaling
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- frequency of grain generation, or density, in grains/sec.
+    </p>
+        <p>
+      <span class="emphasis"><em>kpitch</em></span> -- grain pitch scaling (1=normal pitch, &lt; 1 lower, &gt; 1 higher; negative, backwards)
+    </p>
+        <p>
+      <span class="emphasis"><em>kgrsize</em></span> -- grain size in secs.
+    </p>
+        <p>
+      <span class="emphasis"><em>kprate</em></span> -- readout pointer rate, in grains. The value of 1 will advance 
+the reading pointer 1 grain ahead in the source table. Larger values 
+will time-compress and smaller values will time-expand the source signal. 
+Negative values will cause the pointer to run backwards and zero will 
+freeze it.
+    </p>
+        <p>
+      <span class="emphasis"><em>klstart</em></span> -- loop start in secs.
+    </p>
+        <p>
+      <span class="emphasis"><em>klend</em></span> -- loop end in secs.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049431504"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the syncloop opcode. It uses the file <a class="ulink" href="examples/syncloop.csd" target="_top"><em class="citetitle">syncloop.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276049429712"></a>
+          <p class="title">
+            <strong>Example 989. Example of the syncloop opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276417352496"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o syncloop.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+		
+i<span class="n">olaps</span>  <span class="o">=</span> <span class="mi">2</span>
+i<span class="n">grsize</span> <span class="o">=</span> <span class="mf">0.01</span>
+i<span class="n">freq</span>   <span class="o">=</span> i<span class="n">olaps</span><span class="o">/</span>i<span class="n">grsize</span>
+i<span class="n">ps</span>     <span class="o">=</span> <span class="mi">1</span><span class="o">/</span>i<span class="n">olaps</span>
+
+i<span class="n">str</span>    <span class="o">=</span> <span class="nb">p4</span>  <span class="cm">/* timescale  */</span>
+i<span class="n">pitch</span>  <span class="o">=</span> <span class="mi">1</span>   <span class="cm">/* pitchscale */</span>
+
+a<span class="n">sig</span>	<span class="nb">syncloop</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">freq</span><span class="p">,</span> i<span class="n">pitch</span><span class="p">,</span> i<span class="n">grsize</span><span class="p">,</span> i<span class="n">ps</span><span class="o">*</span>i<span class="n">str</span><span class="p">,</span> <span class="mf">.3</span><span class="p">,</span> <span class="mf">.75</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> i<span class="n">olaps</span>
+	<span class="nb">outs</span>	 a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="s">"beats.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="nb">f</span><span class="mi">2</span>   <span class="mi">0</span>   <span class="mi">8192</span>   <span class="mi">20</span>   <span class="mi">2</span>   <span class="mi">1</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mf">.5</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">7</span> <span class="mi">6</span> <span class="mf">.15</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049425728"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>January 2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>January 2005.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="syncgrain.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="syncphasor.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">syncgrain </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> syncphasor</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>reson</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="reshapearray.html" title="reshapearray" />
+    <link rel="next" href="resonk.html" title="resonk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">reson</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="reshapearray.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="resonk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="reson"></a>
+      <div class="titlepage"></div>
+      <a id="IndexReson" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">reson</span>
+        </h2>
+        <p>reson — 
+      A second-order resonant filter.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062027648"></a>
+        <h2>Description</h2>
+        <p>
+      A second-order resonant filter.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062026368"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>reson</strong></span> asig, xcf, xbw [, iscl] [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062024240"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iscl</em></span> (optional, default=0) -- coded scaling factor for resonators. A value of 1 signifies a peak response factor of 1, i.e. all frequencies other than kcf are attenuated in accordance with the (normalized) response curve. A value of 2 raises the response factor so that its overall RMS value equals 1. (This intended equalization of input and output power assumes all frequencies are physically present; hence it is most applicable to white noise.) A zero value signifies no scaling of the signal, leaving that to some later adjustment (see <a class="link" href="balance.html" title="balance"><em class="citetitle">balance</em></a>). The default value is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of internal data space. Since filtering incorporates a feedback loop of previous output, the initial status of the storage space used is significant. A zero value will clear the space; a non-zero value will allow previous information to remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062019744"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ares</em></span> -- the output signal at audio rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- the input signal at audio rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>xcf</em></span> -- the center frequency of the filter, or frequency position of the peak response.
+    </p>
+        <p>
+      <span class="emphasis"><em>xbw</em></span> -- bandwidth of the filter (the Hz difference between the upper and lower half-power points).
+    </p>
+        <p>
+      <span class="emphasis"><em>reson</em></span> is a second-order filter in which <span class="emphasis"><em>kcf</em></span> controls the center frequency, or frequency position of the peak response, and <span class="emphasis"><em>kbw</em></span> controls its bandwidth (the frequency difference between the upper and lower half-power points).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062013248"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the reson opcode. It uses the file <a class="ulink" href="examples/reson.csd" target="_top"><em class="citetitle">reson.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276062011440"></a>
+          <p class="title">
+            <strong>Example 841. Example of the reson opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276468349520"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o reson.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">saw</span> <span class="nb">vco2</span> <span class="mf">.2</span><span class="p">,</span> <span class="mi">220</span>	<span class="c1">;sawtooth</span>
+k<span class="n">cf</span>  <span class="nb">line</span> <span class="mi">220</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1760</span>	<span class="c1">;vary cut-off frequency from 220 to 1280 Hz</span>
+k<span class="n">bw</span>  <span class="o">=</span> <span class="nb">p4</span>		<span class="c1">;vary bandwidth of filter too		</span>
+a<span class="n">res</span> <span class="nb">reson</span> a<span class="n">saw</span><span class="p">,</span> k<span class="n">cf</span><span class="p">,</span> k<span class="n">bw</span>
+a<span class="n">sig</span> <span class="nb">balance</span> a<span class="n">res</span><span class="p">,</span> a<span class="n">saw</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span> <span class="mi">10</span>	<span class="c1">;bandwidth of filter = 10 Hz</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">4</span> <span class="mi">50</span>	<span class="c1">;50 Hz and</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">4</span> <span class="mi">200</span>	<span class="c1">;200 Hz</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062007408"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="areson.html" title="areson"><em class="citetitle">areson</em></a>,
+      <a class="link" href="aresonk.html" title="aresonk"><em class="citetitle">aresonk</em></a>,
+      <a class="link" href="atone.html" title="atone"><em class="citetitle">atone</em></a>,
+      <a class="link" href="atonek.html" title="atonek"><em class="citetitle">atonek</em></a>,
+      <a class="link" href="port.html" title="port"><em class="citetitle">port</em></a>,
+      <a class="link" href="portk.html" title="portk"><em class="citetitle">portk</em></a>,
+      <a class="link" href="resonk.html" title="resonk"><em class="citetitle">resonk</em></a>,
+      <a class="link" href="tone.html" title="tone"><em class="citetitle">tone</em></a>,
+      <a class="link" href="tonek.html" title="tonek"><em class="citetitle">tonek</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061998192"></a>
+        <h2>Credits</h2>
+        <p>Audio rate parameters introduced in version 6.02</p>
+        <p>November 2013.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="reshapearray.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="resonk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">reshapearray </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> resonk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

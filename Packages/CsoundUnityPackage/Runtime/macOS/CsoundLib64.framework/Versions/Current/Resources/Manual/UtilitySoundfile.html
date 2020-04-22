@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Soundfile Formats.</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilityTop.html" title="The Utility Programs" />
+    <link rel="prev" href="UtilityTop.html" title="The Utility Programs" />
+    <link rel="next" href="UtilityAtsa.html" title="atsa" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Soundfile Formats.</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="UtilityTop.html">Prev</a> </td>
+          <th width="60%" align="center">The Utility Programs</th>
+          <td width="20%" align="right"> <a accesskey="n" href="UtilityAtsa.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="UtilitySoundfile"></a>Soundfile Formats.</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+      Csound can read and write audio files in a variety of formats. Write formats are described by Csound command flags. On reading, the format is determined from the soundfile header, and the data automatically converted to floating-point during internal processing. When Csound is installed on a host with local soundfile conventions (SUN, NeXT, Macintosh) it may conditionally include local packaging code which creates soundfiles not portable to other hosts. However, Csound on any host can always generate and read AIFF files, which is thus a portable format. Sampled sound libraries are typically AIFF, and the variable <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SSDIR</em></a> usually points to a directory of such sounds. If defined, the <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SSDIR</em></a> directory is in the search path during soundfile access. Note that some AIFF sampled sounds have an audio looping feature for sustained performance; the analysis programs will traverse any loop segment once only.
+    </p>
+      <p>
+      For soundfiles without headers, an SR value may be supplied by the <a class="link" href="CommandFlags.html#FlagsMinusLowerR"><em class="citetitle">-r flag</em></a> (or its default). If both the <a class="link" href="sr.html" title="sr"><em class="citetitle">SR header</em></a> and the command-line flag are present, the flag value will override the header.
+    </p>
+      <p>
+      When sound is accessed by the audio Analysis programs, only a single channel is read. For stereo or quad files, the default is channel one; alternate channels may be obtained on request.
+    </p>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="UtilityAnalysis"></a>Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL)</h3>
+            </div>
+          </div>
+        </div>
+        <p>The following utilities exist for Soundfile analysis:
+    </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+          <a class="link" href="UtilityAtsa.html" title="atsa"><em class="citetitle">ATSA</em></a>: ATS analysis for use with the Csound <a class="link" href="SpectralATS.html" title="ATS Spectral Processing"><em class="citetitle">ATS Resynthesis</em></a> opcodes.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="cvanal.html" title="cvanal"><em class="citetitle">CVANAL</em></a>: Impulse Response Fourier Analysis for <a class="link" href="convolve.html" title="convolve"><em class="citetitle">convolve</em></a> operator.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="hetro.html" title="hetro"><em class="citetitle">HETRO</em></a>: Heterodyne analysis for the Csound <a class="link" href="adsyn.html" title="adsyn"><em class="citetitle">adsyn</em></a> generator.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="lpanal.html" title="lpanal"><em class="citetitle">LPANAL</em></a>: Linear predicitive coding analysis for the Csound <a class="link" href="SpectralLpcresyn.html" title="Linear Predictive Coding (LPC) Resynthesis"><em class="citetitle">Linear Predictive Coding (LPC) Resynthesis</em></a> opcodes.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="pvanal.html" title="pvanal"><em class="citetitle">PVANAL</em></a>: Phase vocoder analysis for the Csound <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a> generator.
+        </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+  
+  </p>
+      </div>
+      <h3><a id="idm275978934960"></a>Credits</h3>
+      <p>Dan Ellis</p>
+      <p>MIT Media Lab</p>
+      <p>Cambridge, Massachussetts</p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="UtilityTop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilityTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="UtilityAtsa.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">The Utility Programs </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> atsa</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

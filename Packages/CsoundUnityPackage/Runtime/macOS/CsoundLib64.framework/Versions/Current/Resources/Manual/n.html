@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>n Statement</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="m.html" title="m Statement (Mark Statement)" />
+    <link rel="next" href="q.html" title="q Statement" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">n Statement</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="m.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="q.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="n"></a>
+      <div class="titlepage"></div>
+      <a id="IndexNStatement" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">n Statement</span>
+        </h2>
+        <p>n — 
+      Repeats a section.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013499024"></a>
+        <h2>Description</h2>
+        <p>
+      Repeats a section from the referenced <a class="link" href="m.html" title="m Statement (Mark Statement)"><em class="citetitle">m statement</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013496944"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>n</strong></span> p1</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013495040"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>p1</em></span> -- Name of mark to repeat.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013493440"></a>
+        <h2>Performance</h2>
+        <p>
+      This can be helpful in setting a up verse and chorus structure in the score. Names may contain letters and numerals.
+    </p>
+        <p>
+      For example, the following score:
+    </p>
+        <pre class="programlisting">
+<span class="stamnt">m</span> foo
+<span class="stamnt">i</span>1 0 1
+<span class="stamnt">i</span>1 1 1.5
+<span class="stamnt">i</span>1 2.5 2
+<span class="stamnt">s</span>
+<span class="stamnt">i</span>1 0 10
+<span class="stamnt">s</span>
+<span class="stamnt">n</span> foo
+<span class="stamnt">e</span>
+</pre>
+        <p>
+      Will be passed from the preprocessor to Csound as:
+    </p>
+        <pre class="programlisting">
+<span class="stamnt">i</span>1 0 1
+<span class="stamnt">i</span>1 1 1.5
+<span class="stamnt">i</span>1 2.5 2
+<span class="stamnt">s</span>
+<span class="stamnt">i</span>1 0 10
+<span class="stamnt">s</span>
+<span class="comment">;; this is named section repeated</span>
+<span class="stamnt">i</span>1 0 1
+<span class="stamnt">i</span>1 1 1.5
+<span class="stamnt">i</span>1 2.5 2
+<span class="stamnt">s</span>
+<span class="comment">;; end of named section</span>
+<span class="stamnt">e</span>
+</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013475984"></a>
+        <h2>Examples</h2>
+        <p>
+      See the example for the <a class="link" href="m.html" title="m Statement (Mark Statement)"><em class="citetitle">m statement</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013473920"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>April 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.48</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="m.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="q.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">m Statement (Mark Statement) </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> q Statement</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

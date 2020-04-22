@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pol2rect</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="poisson.html" title="poisson" />
+    <link rel="next" href="polyaft.html" title="polyaft" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pol2rect</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="poisson.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="polyaft.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pol2rect"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPol2rect" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pol2rect</span>
+        </h2>
+        <p>pol2rect — 
+    Polar to rectangular format conversion.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073213872"></a>
+        <h2>Description</h2>
+        <p>
+      Converts an input array in magnitude-phase format to real-imaginary format.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073212608"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout[] <span class="command"><strong>pol2rect</strong></span> kin[]</pre>
+        <pre class="synopsis">kout[] <span class="command"><strong>pol2rect</strong></span> kmags[], kphs[]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073209216"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kout[]</em></span> -- output array containing the complex-valued real-imaginary output. It will be created if it does not exist.
+         </p>
+        <p>
+      <span class="emphasis"><em>kin[]</em></span> -- input array containing the complex-valued magnitude-phase input.
+    </p>
+        <p>
+      <span class="emphasis"><em>kmags[]</em></span> -- input array containing the real-valued magnitude input.
+    </p>
+        <p>
+      <span class="emphasis"><em>kphs[]</em></span> -- input array containing the real-valued phase input.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073204944"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pol2rect opcode. It uses the file <a class="ulink" href="examples/pol2rect.csd" target="_top"><em class="citetitle">pol2rect.csd</em></a>.</p>
+        <div class="example">
+          <a id="idm276073203040"></a>
+          <p class="title">
+            <strong>Example 720. Example of the pol2rect opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276438450480"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-d -o dac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="cm">/* ksmps needs to be an integer div of
+   hopsize */</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+ i<span class="n">hopsize</span> <span class="o">=</span> <span class="mi">256</span>   <span class="c1">; hopsize</span>
+ i<span class="n">fftsize</span> <span class="o">=</span> <span class="mi">1024</span>  <span class="c1">; FFT size </span>
+ i<span class="n">olaps</span> <span class="o">=</span> i<span class="n">fftsize</span><span class="o">/</span>i<span class="n">hopsize</span> <span class="c1">; overlaps</span>
+ i<span class="n">bw</span> <span class="o">=</span> <span class="vg">sr</span><span class="o">/</span>i<span class="n">fftsize</span> <span class="c1">; bin bandwidth</span>
+ k<span class="n">cnt</span> <span class="nb">init</span> <span class="mi">0</span>    <span class="c1">; counting vars</span>
+ k<span class="n">row</span> <span class="nb">init</span> <span class="mi">0</span>
+
+ k<span class="n">Ola</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">fftsize</span> <span class="c1">; overlap-add buffer</span>
+ k<span class="n">In</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">fftsize</span>  <span class="c1">; input buffer</span>
+ k<span class="n">Out</span><span class="p">[][]</span> <span class="nb">init</span> i<span class="n">olaps</span><span class="p">,</span> i<span class="n">fftsize</span> <span class="c1">; output buffers</span>
+
+ a<span class="n">1</span> <span class="nb">diskin2</span> <span class="s">"fox.wav"</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span> <span class="c1">; audio input</span>
+
+ <span class="cm">/* every hopsize samples */</span>
+ <span class="k">if</span> k<span class="n">cnt</span> <span class="o">==</span> i<span class="n">hopsize</span> <span class="k">then</span>  
+   <span class="cm">/* window and take FFT */</span>
+   k<span class="n">Win</span><span class="p">[]</span> <span class="nb">window</span> k<span class="n">In</span><span class="p">,</span>k<span class="n">row</span><span class="o">*</span>i<span class="n">hopsize</span>
+   k<span class="n">Spec</span><span class="p">[]</span> <span class="nb">rfft</span> k<span class="n">Win</span>
+   
+   k<span class="n">Spec</span> <span class="nb">rect2pol</span> k<span class="n">Spec</span> 
+   
+   <span class="cm">/* reduce mags between high and low freqs */</span>
+   i<span class="n">low</span> <span class="o">=</span> <span class="mi">0</span>
+   i<span class="n">high</span> <span class="o">=</span> <span class="mi">1000</span>
+   k<span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>i<span class="n">low</span><span class="o">/</span>i<span class="n">bw</span><span class="p">)</span>
+   <span class="k">until</span> k<span class="n">i</span> <span class="o">&gt;=</span> <span class="nb">int</span><span class="p">(</span>i<span class="n">high</span><span class="o">/</span>i<span class="n">bw</span><span class="p">)</span> <span class="k">do</span>
+     k<span class="n">Spec</span><span class="p">[</span>k<span class="n">i</span><span class="p">]</span> <span class="o">=</span> k<span class="n">Spec</span><span class="p">[</span>k<span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mf">0.1</span>
+     k<span class="n">i</span> <span class="o">+=</span> <span class="mi">2</span>
+   <span class="k">od</span>
+   
+   k<span class="n">Spec</span> <span class="nb">pol2rect</span> k<span class="n">Spec</span>
+   
+   <span class="cm">/* IFFT + window */</span>
+   k<span class="n">Row</span><span class="p">[]</span> <span class="nb">rifft</span> k<span class="n">Spec</span>
+   k<span class="n">Win</span> <span class="nb">window</span> k<span class="n">Row</span><span class="p">,</span> k<span class="n">row</span><span class="o">*</span>i<span class="n">hopsize</span>
+   <span class="cm">/* place it on out buffer */</span>
+   k<span class="n">Out</span> <span class="nb">setrow</span> k<span class="n">Win</span><span class="p">,</span> k<span class="n">row</span>
+
+   <span class="cm">/* zero the ola buffer */</span>
+   k<span class="n">Ola</span> <span class="o">=</span> <span class="mi">0</span>
+   <span class="cm">/* overlap-add */</span>
+   k<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+   <span class="k">until</span> k<span class="n">i</span> <span class="o">==</span> i<span class="n">olaps</span> <span class="k">do</span>
+     k<span class="n">Row</span> <span class="nb">getrow</span> k<span class="n">Out</span><span class="p">,</span> k<span class="n">i</span>
+     k<span class="n">Ola</span> <span class="o">=</span> k<span class="n">Ola</span> <span class="o">+</span> k<span class="n">Row</span>
+     k<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+   <span class="k">od</span>
+  
+  <span class="cm">/* update counters */</span> 
+  k<span class="n">row</span> <span class="o">=</span> <span class="p">(</span>k<span class="n">row</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span>i<span class="n">olaps</span>
+  k<span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+ <span class="k">endif</span>
+
+ <span class="cm">/* shift audio in/out of buffers */</span>
+ k<span class="n">In</span> <span class="nb">shiftin</span> a<span class="n">1</span>
+ a<span class="n">2</span> <span class="nb">shiftout</span> k<span class="n">Ola</span>
+    <span class="nb">out</span> a<span class="n">2</span><span class="o">/</span>i<span class="n">olaps</span>
+
+ <span class="cm">/* increment counter */</span>
+ k<span class="n">cnt</span> <span class="o">+=</span> <span class="vg">ksmps</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <br class="example-break" />
+      </div>
+      <div class="refsect1">
+        <a id="idm276073199184"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vectorial.html" title="Vectorial Opcodes"><em class="citetitle"></em>Vectorial opcodes</a>,
+      <a class="link" href="arrayOpcodes.html" title="Array Opcodes"><em class="citetitle"></em>array opcodes</a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073196256"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>NUI Maynooth</td>
+          </tr>
+          <tr>
+            <td>2014</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.04</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="poisson.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="polyaft.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">poisson </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> polyaft</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

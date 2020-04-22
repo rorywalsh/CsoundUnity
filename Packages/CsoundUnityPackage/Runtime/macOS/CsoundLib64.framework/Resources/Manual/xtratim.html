@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>xtratim</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="xscanu.html" title="xscanu" />
+    <link rel="next" href="xyin.html" title="xyin" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">xtratim</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="xscanu.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="xyin.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="xtratim"></a>
+      <div class="titlepage"></div>
+      <a id="IndexXtratim" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">xtratim</span>
+        </h2>
+        <p>xtratim — 
+      Extend the duration of real-time generated events.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035239200"></a>
+        <h2>Description</h2>
+        <p>
+      Extend the duration of real-time generated events and handle their extra life (Usually for usage along with <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a> instead of <a class="link" href="linenr.html" title="linenr"><em class="citetitle">linenr</em></a>, <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>, etc).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035235248"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>xtratim</strong></span> iextradur</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035233296"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iextradur</em></span> -- additional duration of current instrument instance
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035231584"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xtratim</em></span> extends current MIDI-activated note duration by <span class="emphasis"><em>iextradur</em></span> seconds after the corresponding noteoff message has deactivated the current note itself. It is usually used in conjunction with <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a>. This opcode has no output arguments.
+    </p>
+        <p>
+       This opcode is useful for implementing complex release-oriented envelopes, whose duration is not known when the envelope starts (e.g. for real-time MIDI generated events).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035227664"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a simple example of the xtratim opcode. It uses the file <a class="ulink" href="examples/xtratim.csd" target="_top"><em class="citetitle">xtratim.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276035225856"></a>
+          <p class="title">
+            <strong>Example 1156. Example of the xtratim opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <p>This example shows how to generate a release segment for an ADSR envelope after a MIDI noteoff is received, extending the duration with <span class="emphasis"><em>xtratim</em></span> and using <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a> to check whether the note is on the release phase.</p>
+            <div class="refsect1">
+              <a id="idm276402543488"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    Silent  MIDI in</span>
+-odac           -iadc     -d       -M0  <span class="c1">;;;realtime I/O</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;Simple usage of the xtratim opcode</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; sine wave for oscillators</span>
+gi<span class="n">sin</span>	    <span class="nb">ftgen</span>     <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+  i<span class="n">num</span> <span class="nb">notnum</span>
+  i<span class="n">cps</span> <span class="nb">cpsmidi</span>
+  i<span class="n">amp</span> <span class="nb">ampmidi</span> <span class="mi">4000</span>
+ <span class="c1">;</span>
+ <span class="c1">;------- complex envelope block ------</span>
+  <span class="nb">xtratim</span> <span class="mi">1</span> <span class="c1">;extra-time, i.e. release dur</span>
+  k<span class="n">rel</span> <span class="nb">init</span> <span class="mi">0</span>
+  k<span class="n">rel</span> <span class="nb">release</span> <span class="c1">;outputs release-stage flag (0 or 1 values)</span>
+  <span class="k">if</span> <span class="p">(</span>k<span class="n">rel</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">kgoto</span> <span class="nl">rel</span> <span class="c1">;if in release-stage goto release section</span>
+ <span class="c1">;</span>
+ <span class="c1">;************ attack and sustain section ***********</span>
+  k<span class="n">mp1</span> <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.03</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.07</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.08</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">1</span>
+  k<span class="n">mp</span> <span class="o">=</span> k<span class="n">mp1</span><span class="o">*</span>i<span class="n">amp</span>
+   <span class="k">kgoto</span> <span class="nl">done</span>
+ <span class="c1">;</span>
+ <span class="c1">;--------- release section --------</span>
+   <span class="nl">rel</span><span class="p">:</span>
+  k<span class="n">mp2</span> <span class="nb">linseg</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.3</span><span class="p">,</span> <span class="mf">.2</span><span class="p">,</span> <span class="mf">.7</span><span class="p">,</span> <span class="mi">0</span>
+  k<span class="n">mp</span> <span class="o">=</span> k<span class="n">mp1</span><span class="o">*</span>k<span class="n">mp2</span><span class="o">*</span>i<span class="n">amp</span>
+  <span class="nl">done</span><span class="p">:</span>
+ <span class="c1">;------</span>
+  a<span class="n">1</span> <span class="nb">oscili</span> k<span class="n">mp</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> gi<span class="n">sin</span>
+  <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+ <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">3600</span> <span class="c1">;dummy table to wait for realtime MIDI events</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is a more elaborate example of the xtratim opcode. It uses the file <a class="ulink" href="examples/xtratim-2.csd" target="_top"><em class="citetitle">xtratim-2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276035202384"></a>
+          <p class="title">
+            <strong>Example 1157. More complex example of the xtratim opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>This example shows how to generate a release segment for an ADSR envelope after a MIDI noteoff is received, extending the duration with <span class="emphasis"><em>xtratim</em></span> and using <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a> to check whether the note is on the release phase. Two envelopes are generated simultaneously for the left and right channels.</p>
+            <div class="refsect1">
+              <a id="idm276402557072"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    Silent  MIDI in</span>
+-odac           -iadc     -d       -M0  <span class="c1">;;;realtime I/O</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;xtratim example by Jonathan Murphy Dec. 2006</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+	    <span class="c1">; sine wave for oscillators</span>
+gi<span class="n">sin</span>	    <span class="nb">ftgen</span>     <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+	    <span class="c1">; set volume initially to midpoint</span>
+	    <span class="nb">ctrlinit</span>  <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span><span class="mi">64</span>
+
+<span class="c1">;;; simple two oscil, two envelope synth</span>
+    <span class="kd">instr</span> <span class="nf">1</span>
+
+	    <span class="c1">; frequency</span>
+  k<span class="n">cps</span>	    <span class="nb">cpsmidib</span>
+	    <span class="c1">; initial velocity (noteon)</span>
+  i<span class="n">vel</span>	    <span class="nb">veloc</span>
+
+	    <span class="c1">; master volume</span>
+  k<span class="n">amp</span>	    <span class="nb">ctrl7</span>     <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">127</span>
+  k<span class="n">amp</span>	    <span class="o">=</span>  k<span class="n">amp</span> <span class="o">*</span> i<span class="n">vel</span>
+
+	    <span class="c1">; parameters for aenv1</span>
+  i<span class="n">att1</span>	    <span class="o">=</span>  <span class="mf">0.03</span>	
+  i<span class="n">dec1</span>	    <span class="o">=</span>  <span class="mi">1</span>
+  i<span class="n">sus1</span>	    <span class="o">=</span>  <span class="mf">0.25</span>	
+  i<span class="n">rel1</span>	    <span class="o">=</span>  <span class="mi">1</span>
+	    <span class="c1">; parameters for aenv2</span>
+  i<span class="n">att2</span>	    <span class="o">=</span>  <span class="mf">0.06</span>	
+  i<span class="n">dec2</span>	    <span class="o">=</span>  <span class="mi">2</span>	
+  i<span class="n">sus2</span>	    <span class="o">=</span>  <span class="mf">0.5</span>
+  i<span class="n">rel2</span>	    <span class="o">=</span>  <span class="mi">2</span>
+
+	    <span class="c1">; extra (release) time allocated</span>
+	    <span class="nb">xtratim</span>   <span class="p">(</span>i<span class="n">rel1</span><span class="o">&gt;</span>i<span class="n">rel2</span> <span class="p">?</span> i<span class="n">rel1</span> <span class="p">:</span> i<span class="n">rel2</span><span class="p">)</span>
+            <span class="c1">; krel is used to trigger envelope release</span>
+  k<span class="n">rel</span>	    <span class="nb">init</span>      <span class="mi">0</span>
+  k<span class="n">rel</span>	    <span class="nb">release</span>
+	    <span class="c1">; if noteoff received, krel == 1, otherwise krel == 0</span>
+<span class="k">if</span> <span class="p">(</span>k<span class="n">rel</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">kgoto</span> <span class="nl">rel</span>
+
+	    <span class="c1">; attack, decay, sustain segments</span>
+  a<span class="n">tmp1</span>	    <span class="nb">linseg</span>    <span class="mi">0</span><span class="p">,</span> i<span class="n">att1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">dec1</span><span class="p">,</span> i<span class="n">sus1</span>	<span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">sus1</span>
+  a<span class="n">tmp2</span>	    <span class="nb">linseg</span>    <span class="mi">0</span><span class="p">,</span> i<span class="n">att2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">dec2</span><span class="p">,</span> i<span class="n">sus2</span>	<span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">sus2</span>
+  a<span class="n">env1</span>	    <span class="o">=</span>  a<span class="n">tmp1</span>
+  a<span class="n">env2</span>	    <span class="o">=</span>  a<span class="n">tmp2</span>
+	    <span class="k">kgoto</span>     <span class="nl">done</span>
+
+	    <span class="c1">; release segment</span>
+<span class="nl">rel</span><span class="p">:</span>
+  a<span class="n">tmp3</span>	    <span class="nb">linseg</span>    <span class="mi">1</span><span class="p">,</span> i<span class="n">rel1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+  a<span class="n">tmp4</span>	    <span class="nb">linseg</span>    <span class="mi">1</span><span class="p">,</span> i<span class="n">rel2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+  a<span class="n">env1</span>	    <span class="o">=</span>  a<span class="n">tmp1</span> <span class="o">*</span> a<span class="n">tmp3</span>  <span class="c1">;to go from the current value (in case</span>
+  a<span class="n">env2</span>	    <span class="o">=</span>  a<span class="n">tmp2</span> <span class="o">*</span> a<span class="n">tmp4</span>  <span class="c1">;the attack hasn't finished) to the release.</span>
+
+	    <span class="c1">; control oscillator amplitude using envelopes</span>
+<span class="nl">done</span><span class="p">:</span>
+  a<span class="n">osc1</span>	    <span class="nb">oscil</span>     a<span class="n">env1</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> gi<span class="n">sin</span>
+  a<span class="n">osc2</span>	    <span class="nb">oscil</span>     a<span class="n">env2</span><span class="p">,</span> k<span class="n">cps</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">,</span> gi<span class="n">sin</span>
+  a<span class="n">osc1</span>	    <span class="o">=</span>  a<span class="n">osc1</span> <span class="o">*</span> k<span class="n">amp</span>
+  a<span class="n">osc2</span>	    <span class="o">=</span>  a<span class="n">osc2</span> <span class="o">*</span> k<span class="n">amp</span>
+
+	    <span class="c1">; send aosc1 to left channel, aosc2 to right,</span>
+	    <span class="c1">; release times are noticably different</span>
+ 
+	    <span class="nb">outs</span>      a<span class="n">osc1</span><span class="p">,</span> a<span class="n">osc2</span>
+
+    <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">3600</span> <span class="c1">;dummy table to wait for realtime MIDI events</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035198816"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="linenr.html" title="linenr"><em class="citetitle">linenr</em></a>, 
+      <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035195872"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>Italy</p>
+        <p>Examples by Gabriel Maldonado and Jonathan Murphy</p>
+        <p>New in Csound version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="xscanu.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="xyin.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">xscanu </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> xyin</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

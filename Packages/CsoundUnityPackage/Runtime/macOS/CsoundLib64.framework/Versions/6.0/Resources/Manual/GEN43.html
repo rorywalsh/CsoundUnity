@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN43</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN42.html" title="GEN42" />
+    <link rel="next" href="GEN49.html" title="GEN49" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN43</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN42.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN49.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN43"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN43" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN43</span>
+        </h2>
+        <p>GEN43 — 
+      Loads a PVOCEX file containing a PV analysis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987872896"></a>
+        <h2>Description</h2>
+        <p>
+This subroutine loads a PVOCEX file containing the PV analysis (amp-freq)
+of a soundfile and calculates the average magnitudes of all analysis frames
+of one or all audio channels. It then creates a table with these magnitudes
+for each PV bin.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987871472"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 43 filecod channel</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987869536"></a>
+        <h2>Initialisation</h2>
+        <p>
+    <span class="emphasis"><em>size</em></span> -- number of points in the table,
+    power-of-two or power-of-two plus 1.  
+      GEN 43 does not make any distinction between these two sizes, but it
+      requires the table to be at least the fftsize/2. PV bins cover the
+      positive spectrum from 0Hz (table index 0) to the Nyquist (table index
+      fftsize/2+1) in equal-size frequency increments (of size sr/fftsize).
+    </p>
+        <p>
+      <span class="emphasis"><em>filcod</em></span> -- a pvocex file (which can be generated
+       by pvanal).
+    </p>
+        <p>
+      <span class="emphasis"><em>channel</em></span> -- audio channel number from which
+      the magnitudes will be extracted; a 0 will average the
+      magnitudes from all channels. 
+    </p>
+        <p>
+     Reading stops at the end of the file.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>if p4 is positive, the table will be post-normalised.  A
+      negative p4 will cause post-normalisation to be skipped. 
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987864048"></a>
+        <h2>Examples</h2>
+        <p>
+       </p>
+        <pre class="programlisting"><span class="stamnt">f</span>1 0 512   43  "viola.pvx" 1
+<span class="stamnt">f</span>1 0 -1024 -43 "noiseprint.pvx" 0</pre>
+        <p>
+</p>
+        <p>
+This table can be used as a masking table for pvstencil and pvsmaska. The
+first example uses a 1024-point FFT phase vocoder analysis file from which
+the first channel is used. The second uses all channels of a 2048-point
+file, without post-normalisation. For noise reduction applications with
+pvstencil, it is easiest to skip table normalisation (negative GEN code).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987860288"></a>
+        <h2>Credits</h2>
+        <p>Author: Victor Lazzarini</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN42.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN49.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN42 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN49</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

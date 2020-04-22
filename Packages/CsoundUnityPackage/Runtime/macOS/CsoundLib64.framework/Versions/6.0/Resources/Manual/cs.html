@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>cs</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilityOther.html" title="Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR, MAKECSD, MIXER, SCALE, MKDB)" />
+    <link rel="prev" href="UtilityOther.html" title="Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR, MAKECSD, MIXER, SCALE, MKDB)" />
+    <link rel="next" href="csb64enc.html" title="csb64enc" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">cs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="UtilityOther.html">Prev</a> </td>
+          <th width="60%" align="center">Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR,
+  MAKECSD, MIXER, SCALE, MKDB)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="csb64enc.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="cs"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">cs</span>
+        </h2>
+        <p>cs — 
+      Starts Csound with a set of options that can be controlled
+      by environment variables, and input and output files
+      determined by the specified filename stem.
+      <a id="IndexCs" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979556704"></a>
+        <h2>Description</h2>
+        <p>
+      Starts Csound with a set of options that can be controlled
+      by environment variables, and input and output files
+      determined by the specified filename stem.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979555344"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>cs</strong></span> [-OPTIONS] &lt;name&gt; [CSOUND OPTIONS ... ]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979553328"></a>
+        <h2>Initialization</h2>
+        <p>
+      Flags:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+            -
+            <span class="emphasis"><em>OPTIONS</em></span>
+            = OPTIONS is a sequence of alphabetic characters
+            that can be used for selecting the Csound
+            executable to be run, as well as the command
+            line flags (see below). There is a default for
+            the option 'r' (selects real-time output), but
+            it can be overridden.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            <span class="emphasis"><em>&lt;name&gt;</em></span>
+            = this is the filename stem for selecting input
+            files; it may contain a path. Files that have
+            .csd, .orc, or .sco extension are searched, and
+            either a CSD or an orc/sco pair that matches
+            &lt;name&gt; the best are selected. MIDI files
+            with a .mid extension are also searched, and if
+            one that matches &lt;name&gt; at least as close
+            as the CSD or orc/sco pair, it is used with the
+            -F flag.
+            
+            </p>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <table border="0" summary="Note: NOTE">
+                  <tr>
+                    <td rowspan="2" align="center" valign="top" width="25">
+                      <img alt="[Note]" src="images/note.png" />
+                    </td>
+                    <th align="left">NOTE</th>
+                  </tr>
+                  <tr>
+                    <td align="left" valign="top">
+                      <p>
+                The MIDI file is not used if any -M or
+                -F flag is specified by the user - new
+                in version 4.24.0) Unless there is any
+                option (-n or -o) related to audio
+                output, an output file name with the
+                appropriate extension is automatically
+                generated (based on the name of selected
+                input files and format options). The
+                output file is always written to the
+                current directory.
+
+              </p>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <p>
+
+            </p>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <table border="0" summary="Note: NOTE">
+                  <tr>
+                    <td rowspan="2" align="center" valign="top" width="25">
+                      <img alt="[Note]" src="images/note.png" />
+                    </td>
+                    <th align="left">NOTE</th>
+                  </tr>
+                  <tr>
+                    <td align="left" valign="top">
+                      <p>
+                file name extensions are not case
+                sensitive.
+
+              </p>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <p>
+
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            <span class="emphasis"><em>[CSOUND OPTIONS ... ]</em></span>
+            = any number of additional options for Csound
+            that are simply copied to the final command line
+            to be executed.
+          </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      The command line that is executed is generated from four
+      parts:
+
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>
+            Csound executable (possibly with options). This
+            is exactly one of the following (the last one
+            has the highest precedence):
+
+            </p>
+              <div class="itemizedlist">
+                <ul class="itemizedlist" style="list-style-type: disc; ">
+                  <li class="listitem">
+                    <p>
+                  a built-in default
+                </p>
+                  </li>
+                  <li class="listitem">
+                    <p>
+                  the value of the CSOUND environment
+                  variable
+                </p>
+                  </li>
+                  <li class="listitem">
+                    <p>
+                  environment variables with a name in
+                  the format of CSOUND_x where x is an
+                  uppercase letter selected by
+                  characters of the -OPTIONS string.
+                  Thus, if the -dcba option is used,
+                  and the environment variables
+                  CSOUND_B and CSOUND_C are defined,
+                  the value of CSOUND_B will take
+                  effect.
+                </p>
+                  </li>
+                </ul>
+              </div>
+              <p>
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Any number of option lists, added in the
+            following order:
+            </p>
+              <div class="itemizedlist">
+                <ul class="itemizedlist" style="list-style-type: disc; ">
+                  <li class="listitem">
+                    <p>
+                  either some built-in defaults, or
+                  the value of the CSFLAGS environment
+                  variable if it is defined.
+                </p>
+                  </li>
+                  <li class="listitem">
+                    <p>
+                  environment variables with a name in
+                  the format of CSFLAGS_x where x is
+                  an uppercase letter selected by
+                  characters of the -OPTIONS string.
+                  Thus, if the -dcba option is used,
+                  and the environment variables
+                  CSFLAGS_A and CSFLAGS_C are defined
+                  as '-M 1 -o dac' and '-m231 -H0',
+                  respectively, the string '-m231 -H0
+                  -M 1 -o dac' will be added.
+                </p>
+                  </li>
+                </ul>
+              </div>
+              <p>
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            The explicit options of [CSOUND OPTIONS ... ].
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Any options and file names generated from
+            &lt;name&gt;.
+          </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+      </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: NOTE">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">NOTE</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+          Quoted options that contain spaces are allowed.
+        </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979532592"></a>
+        <h2>Examples</h2>
+        <p>
+      Assuming the following environment variables:
+      
+      </p>
+        <pre class="screen">
+CSOUND    = csoundfltk.exe -W
+CSOUND_D  = csound64.exe -J
+CSOUND_R  = csoundfltk.exe -h
+
+CSFLAGS   = -d -m135 -H1 -s
+CSFLAGS_D = -f
+CSFLAGS_R = -m0 -H0 -o dac1 -M "MIDI Yoke NT:  1" -b 200 -B 6000</pre>
+        <p>
+      
+      And a directory that contains:
+      
+      </p>
+        <pre class="screen">
+foo.orc                 piano.csd
+foo.sco                 piano.mid
+im.csd                  piano2.mid
+ImproSculpt2_share.csd  foobar.csd</pre>
+        <p>
+      
+      The following commands will execute as shown:
+      
+      </p>
+        <pre class="screen">
+cs foo           =&gt; csoundfltk.exe -W -d -m135 -H1 -s -o foo.wav  \
+foo.orc foo.sco
+
+cs foob          =&gt; csoundfltk.exe -W -d -m135 -H1 -s             \
+-o foobar.wav foobar.csd
+
+cs -r imp -i adc =&gt; csoundfltk.exe -h -d -m135 -H1 -s -m0 -H0     \
+-o dac1 -M "MIDI Yoke NT:  1"  \
+-b 200 -B 6000 -i adc          \
+ImproSculpt2_share.csd
+
+cs -d im         =&gt; csound64.exe -J -d -m135 -H1 -s -f -o im.sf   \
+im.csd
+
+cs piano         =&gt; csoundfltk.exe -W -d -m135 -H1 -s             \
+-F piano.mid -o piano.wav      \
+piano.csd
+
+cs piano2        =&gt; csoundfltk.exe -W -d -m135 -H1 -s             \
+-F piano2.mid -o piano2.wav    \
+piano.csd</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979528336"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+        <p>Jan 2003</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="UtilityOther.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilityOther.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="csb64enc.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR,
+  MAKECSD, MIXER, SCALE, MKDB) </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> csb64enc</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

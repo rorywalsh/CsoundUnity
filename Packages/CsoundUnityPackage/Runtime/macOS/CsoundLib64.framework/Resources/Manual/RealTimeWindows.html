@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Windows</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="Using.html" title="Using Csound" />
+    <link rel="prev" href="RealTimeMac.html" title="Mac OSX" />
+    <link rel="next" href="RealTimeJack.html" title="Realtime I/O with JACK Connection Kit" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Windows</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="RealTimeMac.html">Prev</a> </td>
+          <th width="60%" align="center">Using Csound</th>
+          <td width="20%" align="right"> <a accesskey="n" href="RealTimeJack.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="RealTimeWindows"></a>Windows</h2>
+          </div>
+        </div>
+      </div>
+      <h3><a id="idm276137641168"></a>Real-time Audio</h3>
+      <p>
+    Windows users can use either the default <span class="emphasis"><em>PortAudio</em></span> Realtime module, or the <span class="emphasis"><em>winmm</em></span> Realtime Audio Module. The winmm module is a native windows module which provides great stability, but latency will usually be too high for realtime interaction. To activate a realtime module, you can use the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusPlusRtaudio"><em class="citetitle">-+rtaudio</em></a> flag with value of <span class="emphasis"><em>portaudio</em></span> or <span class="emphasis"><em>winmme</em></span>. The default value is <span class="emphasis"><em>portaudio</em></span>, which is activated by default without specifying it.
+  </p>
+      <p>
+    You also need to specify the sound device you want to use, and specify that you want to generate real-time audio ouput instead of soundfile to disk output. To do this, you must use the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerOdac"><em class="citetitle">-odac</em></a> or <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerOdac"><em class="citetitle">-o dac</em></a> flag, which tells csound to output to the Digital-to-Analog converters instead of a file. By adding a number after the flag (e.g. -odac2), you can choose the device number you want. To find out available devices in your system, you can use a large out of range number (e.g. -odac99), and csound will report an error, and list available devices.
+  </p>
+      <p>
+    When choosing the device number under Portaudio, you are also choosing the driver interface, since Portaudio supports WinMME, DirectX and ASIO. If you have an ASIO capable interface or an ASIO driver emulator like <a class="ulink" href="http://www.asio4all.com" target="_top">ASIO4ALL</a>, the device will show multiple times, once for each driver interface. ASIO will give you the best latency on your system, so if available it should be your choice for realtime audio output.
+  </p>
+      <p>
+    Enabling realtime audio input is done using <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerIadc"><em class="citetitle">-iadc</em></a>, which makes csound listen to the realtime audio outputs. You can again select the device by its number, and check for available devices using an out of range number. Note that for input you use 'adc' instead of 'dac'. Make sure you have the appropriate input selected in your soundcard's control panel.
+  </p>
+      <h3><a id="idm276137631200"></a>Real-time MIDI</h3>
+      <p>
+    To enable Real-time MIDI on Windows, you can use the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperM"><em class="citetitle">-M</em></a> flag for MIDI input and the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperM"><em class="citetitle">-Q</em></a> flag for MIDI output. You might need to specify the device number after the flag (e.g. -M2), and again, you can find the available devices by giving an out of range number.
+  </p>
+      <p>
+    Csound will use PortMidi as the default MIDI module, but there's also a native winmme module, which can be activated with the flag:
+  </p>
+      <div class="literallayout">
+        <p><br />
+    -+rtmidi=winmme<br />
+  </p>
+      </div>
+      <p>
+    A typical set of flags to enable Real-time Audio and MIDI I/O can look like:
+  </p>
+      <div class="literallayout">
+        <p><br />
+    -+rtmidi=winmme -M1 -Q1 -+rtaudio=portaudio -odac3 -iadc3<br />
+  </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="RealTimeMac.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="Using.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="RealTimeJack.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Mac OSX </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Realtime I/O with JACK Connection Kit</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

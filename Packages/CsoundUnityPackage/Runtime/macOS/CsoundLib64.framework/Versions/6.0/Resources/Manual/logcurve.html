@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>logcurve</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="logbtwo.html" title="logbtwo" />
+    <link rel="next" href="loop_ge.html" title="loop_ge" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">logcurve</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="logbtwo.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="loop_ge.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="logcurve"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLogcurve" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">logcurve</span>
+        </h2>
+        <p>logcurve — 
+      This opcode implements a formula for generating a normalised logarithmic curve in range 0 - 1. It is based on the Max / MSP work of Eric Singer (c) 1994.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105530384"></a>
+        <h2>Description</h2>
+        <p>
+      Generates a logarithmic curve in range 0 to 1 of arbitrary steepness.
+      Steepness index equal to or lower than 1.0 will result in Not-a-Number
+      errors and cause unstable behavior.
+    </p>
+        <p>
+      The formula used to calculate the curve is:
+</p>
+        <pre class="programlisting">log(x * (y-1)+1) / (log(y)</pre>
+        <p>
+      where x is equal to <span class="emphasis"><em>kindex</em></span> and y is equal to <span class="emphasis"><em>ksteepness</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105526816"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout <span class="command"><strong>logcurve</strong></span> kindex, ksteepness</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105524704"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kindex</em></span> -- Index value. Expected range 0 to 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>ksteepness</em></span> -- Steepness of the generated curve. Values
+      closer to 1.0 result in a straighter line while larger values steepen the
+      curve.
+    </p>
+        <p>
+      <span class="emphasis"><em>kout</em></span> -- Scaled output.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105521152"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the logcurve opcode. It uses the file <a class="ulink" href="examples/logcurve.csd" target="_top"><em class="citetitle">logcurve.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276105519344"></a>
+          <p class="title">
+            <strong>Example 496. Example of the logcurve opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276455599040"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    Silent</span>
+-odac           -iadc     -d    <span class="c1">;;;realtime output</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>	<span class="o">=</span>	<span class="mi">48000</span>
+<span class="vg">ksmps</span>	<span class="o">=</span>	<span class="mi">100</span>
+<span class="vg">nchnls</span>	<span class="o">=</span>	<span class="mi">2</span>
+
+		<span class="kd">instr</span>	<span class="nf">1</span>	<span class="c1">; logcurve test</span>
+
+k<span class="n">mod</span>	<span class="nb">phasor</span>	<span class="mi">1</span><span class="o">/</span><span class="nb">p3</span>
+
+k<span class="n">out</span>	<span class="nb">logcurve</span> k<span class="n">mod</span><span class="p">,</span> <span class="nb">p4</span>
+
+	<span class="nb">printks</span> <span class="s">"kmod = %f  kout = %f</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> k<span class="n">mod</span><span class="p">,</span> k<span class="n">out</span>
+
+		<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">0</span>	<span class="mi">10</span> <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">10</span>	<span class="mi">10</span> <span class="mi">30</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">20</span>	<span class="mi">10</span> <span class="mf">0.5</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105515328"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="scale.html" title="scale"><em class="citetitle">scale</em></a>,
+      <a class="link" href="gainslider.html" title="gainslider"><em class="citetitle">gainslider</em></a>,
+      <a class="link" href="expcurve.html" title="expcurve"><em class="citetitle">expcurve</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105511488"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: David Akbari</td>
+          </tr>
+          <tr>
+            <td>October</td>
+          </tr>
+          <tr>
+            <td>2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="logbtwo.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="loop_ge.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">logbtwo </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> loop_ge</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

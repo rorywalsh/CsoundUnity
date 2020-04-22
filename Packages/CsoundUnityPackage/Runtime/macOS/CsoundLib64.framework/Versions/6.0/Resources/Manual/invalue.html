@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>invalue</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="interp.html" title="interp" />
+    <link rel="next" href="inx.html" title="inx" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">invalue</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="interp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="inx.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="invalue"></a>
+      <div class="titlepage"></div>
+      <a id="IndexInvalue" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">invalue</span>
+        </h2>
+        <p>invalue — 
+      Reads a k-rate signal from a user-defined channel.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105872080"></a>
+        <h2>Description</h2>
+        <p>
+      Reads a k-rate or i-rate signal or string from a user-defined channel.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105870816"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ivalue <span class="command"><strong>invalue</strong></span> "channel name"</pre>
+        <pre class="synopsis">kvalue <span class="command"><strong>invalue</strong></span> "channel name"</pre>
+        <pre class="synopsis">Sname <span class="command"><strong>invalue</strong></span> "channel name"</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105866048"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ivalue, kvalue</em></span> -- The value that is read from the channel.
+    </p>
+        <p>
+      <span class="emphasis"><em> Sname </em></span> -- The string variable that is read from the channel.
+    </p>
+        <p>
+      <span class="emphasis"><em>"channel name"</em></span> -- An integer, string (in double-quotes), or string variable identifying the channel.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105862672"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the invalue opcode. It uses the file <a class="ulink" href="examples/invalue.csd" target="_top"><em class="citetitle">invalue.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276105860880"></a>
+          <p class="title">
+            <strong>Example 458. Example of the invalue opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276460583808"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;run this example in CsoundQt, a Csound editor that provides widgets</span>
+<span class="c1">;make the Widgets-panel visible, by clicking the Widgets symbol in the menu or pressing (Alt+1).</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">; written by Andres Cabrera</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">freq</span> <span class="nb">invalue</span> <span class="s">"freq"</span> <span class="c1">; Quotes are needed here</span>
+a<span class="n">sig</span>  <span class="nb">oscil</span> <span class="mf">0.1</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> <span class="mi">1</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span> <span class="c1">;sine</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">300</span> 	<span class="c1">;play for 300 seconds</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105856896"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="outvalue.html" title="outvalue"><em class="citetitle">outvalue</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105854864"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Matt Ingalls</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p> i-rate version new in Csound 6.04
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="interp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="inx.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">interp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> inx</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

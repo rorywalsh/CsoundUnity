@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Preface</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="prev" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="next" href="PrefaceHistory.html" title="History of the Canonical Csound Reference Manual" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Preface</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="index.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="PrefaceHistory.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="preface">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h1 class="title"><a id="PrefaceTop"></a>Preface</h1>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <strong>Table of Contents</strong>
+        </p>
+        <dl class="toc">
+          <dt>
+            <span class="section">
+              <a href="PrefaceTop.html#PrefacePreface">Preface to the Csound Manual</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="section">
+              <a href="PrefaceHistory.html">History of the Canonical Csound Reference Manual</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="section">
+              <a href="PrefaceCopy.html">Copyright Notice</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="section">
+              <a href="PrefaceGettingStarted.html">Getting Started with Csound</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="section">
+              <a href="PrefaceWhatsNew.html">What's new in Csound 6.14.0</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="PrefacePreface"></a>Preface to the Csound Manual</h2>
+            </div>
+            <div>
+              <div class="author">
+                <h3 class="author"><span class="firstname">Barry</span> <span class="surname">Vercoe</span></h3>
+                <div class="affiliation">
+                  <span class="orgname">MIT Media Lab<br /></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p>
+    Realizing music by digital computer involves synthesizing audio signals with discrete points or samples representative of continuous waveforms. There are many ways to do this, each affording a different manner of control. Direct synthesis generates waveforms by sampling a stored function representing a single cycle; additive synthesis generates the many partials of a complex tone, each with its own loudness envelope; subtractive synthesis begins with a complex tone and filters it. Non-linear synthesis uses frequency modulation and waveshaping to give simple signals complex characteristics, while sampling and storage of a natural sound allows it to be used at will.
+  </p>
+        <p>
+    Since comprehensive moment-by-moment specification of sound can be tedious, control is gained in two ways: 1) from the instruments in an orchestra, and 2) from the events within a score. An orchestra is really a computer program that can produce sound, while a score is a body of data which that program can react to. Whether a rise-time characteristic is a fixed constant in an instrument, or a variable of each note in the score, depends on how the user wants to control it.
+  </p>
+        <p>
+    The instruments in a Csound orchestra (see <a class="link" href="OrchTop.html" title="Syntax of the Orchestra"><em class="citetitle">Syntax of the Orchestra</em></a>)  are defined in a simple syntax that invokes complex audio processing routines. A score (see <a class="link" href="ScoreTop.html" title="The Standard Numeric Score"><em class="citetitle">The Standard Numeric Score</em></a>) passed to this orchestra contains numerically coded pitch and control information, in standard numeric score format. Although many users are content with this format, higher level score processing languages are often convenient.
+  </p>
+        <p>
+    The programs making up the Csound system have a long history of development, beginning with the Music 4 program written at Bell Telephone Laboratories in the early 1960's by Max Mathews. That initiated the stored table concept and much of the terminology that has since enabled computer music researchers to communicate. Valuable additions were made at Princeton by the late Godfrey Winham in Music 4B; my own Music 360 (1968) was very indebted to his work. With Music 11 (1973) I took a different tack: the two distinct networks of control and audio signal processing stemmed from my intensive involvement in the preceding years in hardware synthesizer concepts and design. This division has been retained in Csound.
+  </p>
+        <p>
+    Because it is written entirely in C, Csound is easily installed on any machine running Unix or C. At MIT it runs on VAX/DECstations under Ultrix 4.2, on SUNs under OS 4.1, SGI's under 5.0, on IBM PC's under DOS 6.2 and Windows 3.1, and on the Apple Macintosh under ThinkC 5.0. With this single language for defining the audio signal processing, and portable audio formats like AIFF and WAV, users can move easily from machine to machine.
+  </p>
+        <p>
+    The 1991 version added phase vocoder, FOF, and spectral data types. 1992 saw MIDI converter and control units, enabling Csound to be run from MIDI score-files and external keyboards. In 1994 the sound analysis programs (lpc, pvoc) were integrated into the main load module, enabling all Csound processing to be run from a single executable, and Cscore could pass scores directly to the orchestra for iterative performance. The 1995 release introduced an expanded MIDI set with MIDI-based linseg, butterworth filters, granular synthesis, and an improved spectral-based pitch tracker. Of special importance was the addition of run-time event generating tools (Cscore and MIDI) allowing run-time sensing and response setups that enable interactive composition and experiment. It appeared that real-time software synthesis was now showing some real promise.
+  </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="index.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="PrefaceHistory.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">The Canonical Csound Reference Manual </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> History of the Canonical Csound Reference Manual</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

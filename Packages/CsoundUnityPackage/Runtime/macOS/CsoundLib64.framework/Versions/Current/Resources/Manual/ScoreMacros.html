@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Score Macros</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoreTop.html" title="The Standard Numeric Score" />
+    <link rel="prev" href="ScoreRamping.html" title="Ramping" />
+    <link rel="next" href="ScoreMult.html" title="Multiple File Score" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Score Macros</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ScoreRamping.html">Prev</a> </td>
+          <th width="60%" align="center">The Standard Numeric Score</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ScoreMult.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="ScoreMacros"></a>Score Macros</h2>
+          </div>
+        </div>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276136257216"></a>Description</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      Macros are textual replacements which are made in the score as it is being presented to the system.  The macro system in Csound is a very simple one, and uses the characters # and $ to define and call macros. This can can allow for simpler score writing, and provide an elementary alternative to full score generation systems.The score macro system is similar to, but independent of, the macro system in the orchestra language.
+
+      <a id="IndexScoreMacros" class="indexterm"></a>
+      <a id="IndexMacrosScore" class="indexterm"></a>
+    </p>
+        <p>
+      <span class="emphasis"><em>#define</em></span> NAME -- defines a simple macro. The name of the macro must begin with a letter and can consist of any combination of letters and numbers. Case is significant. This form is limiting, in that the variable names are fixed.  More flexibility can be obtained by using a macro with arguments, described below.
+
+    <a id="IndexDefineScore" class="indexterm"></a>
+    <a id="IndexNameScore" class="indexterm"></a>
+    <a id="IndexUndefScore" class="indexterm"></a>
+    </p>
+        <p>
+      <span class="emphasis"><em>#define</em></span> NAME(<span class="emphasis"><em>a' b' c'</em></span>) -- defines a macro with arguments. This can be used in more complex situations. The name of the macro must begin with a letter and can consist of any combination of letters and numbers. Within the replacement text, the arguments can be substituted by the form: $A.  In fact, the implementation defines the arguments as simple macros.  There may be up to 5 arguments, and the names may be any choice of letters.  Remember that case is significant in macro names.
+    </p>
+        <p>
+      <span class="emphasis"><em>$NAME.</em></span> -- calls a defined macro.  To
+      use a macro, the name is used following a $ character.
+      The name is terminated by the first character which is neither a
+      letter nor a number.  If it is necessary for the name to be
+      immediately followed by a leter or digit, a period, which will
+      be ignored, can be used to terminate the name.  The string,
+      <span class="emphasis"><em>$NAME</em></span>., is replaced by the
+      replacement text from the definition.  The replacement text can
+      also include macro calls.
+    </p>
+        <p>
+      <span class="emphasis"><em>#undef</em></span> NAME -- undefines a macro name. If a macro is no longer required, it can be undefined with <span class="emphasis"><em>#undef</em></span> NAME.
+    </p>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276136242592"></a>Syntax</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="synopsis"><span class="command"><strong>#define</strong></span> NAME # replacement text #</pre>
+        <pre class="synopsis"><span class="command"><strong>#define</strong></span> NAME(a' b' c') # replacement text #</pre>
+        <pre class="synopsis">
+          <span class="command">
+            <strong>$NAME.</strong>
+          </span>
+        </pre>
+        <pre class="synopsis"><span class="command"><strong>#undef</strong></span>  NAME</pre>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276136237296"></a>Initialization</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      <span class="emphasis"><em># replacement text #</em></span> --  The replacement text is any character string (not containing a #) and can extend over mutliple lines. The replacement text is enclosed within the # characters, which ensure that additional characters are not inadvertently captured.
+    </p>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276136235360"></a>Performance</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      Some care is needed with textual replacement macros, as they can sometimes do strange things.  They take no notice of any meaning, so spaces are significant. This is why, unlike the C programming language, the definition has the replacement text surrounded by # characters. Used carefully, this simple macro system is a powerful concept, but it can be abused.
+    </p>
+        <p><strong>Another Use For Macros. </strong>
+        When writing a complex score it is sometimes all too easy to forget to what the various instrument numbers refer.  One can use macros to give names to the numbers.  For example
+        </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="emphasis"><em>#define</em></span> Flute  #i1#
+<span class="emphasis"><em>#define</em></span> Whoop  #i2#
+
+<span class="emphasis"><em>$Flute.</em></span>  0  10  4000  440
+<span class="emphasis"><em>$Whoop.</em></span>  5  1</pre>
+        </div>
+        <p>
+      </p>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276136229824"></a>Examples</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276136228912"></a>
+          <p class="title">
+            <strong>Example 1. Simple Macro</strong>
+          </p>
+          <div class="example-contents">
+            <p>
+          A note-event has a set of p-fields which are repeated:
+          </p>
+            <pre class="programlisting">
+<span class="emphasis"><em>#define</em></span> ARGS # 1.01 2.33 138#
+<span class="stamnt">i</span>1 0 1 8.00  1000 $ARGS
+<span class="stamnt">i</span>1 0 1 8.01  1500 $ARGS
+<span class="stamnt">i</span>1 0 1 8.02  1200 $ARGS
+<span class="stamnt">i</span>1 0 1 8.03  1000 $ARGS</pre>
+            <p>
+
+          This will get expanded before sorting into:
+          </p>
+            <pre class="programlisting">
+<span class="stamnt">i</span>1 0 1 8.00  1000 1.01 2.33 138
+<span class="stamnt">i</span>1 0 1 8.01  1500 1.01 2.33 138
+<span class="stamnt">i</span>1 0 1 8.02  1200 1.01 2.33 138
+<span class="stamnt">i</span>1 0 1 8.03  1000 1.01 2.33 138</pre>
+            <p>
+        </p>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      This can save typing, and is makes revisions easier. If there were two sets of p-fields one could have a second macro (there is no real limit on the number of macros one can define).
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="emphasis"><em>#define</em></span> ARGS1 # 1.01 2.33 138#
+<span class="emphasis"><em>#define</em></span> ARGS2 # 1.41 10.33 1.00#
+<span class="stamnt">i</span>1 0 1 8.00  1000 $ARGS1
+<span class="stamnt">i</span>1 0 1 8.01  1500 $ARGS2
+<span class="stamnt">i</span>1 0 1 8.02  1200 $ARGS1
+<span class="stamnt">i</span>1 0 1 8.03  1000 $ARGS2</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276136215184"></a>
+          <p class="title">
+            <strong>Example 2. Macros with arguments</strong>
+          </p>
+          <div class="example-contents">
+            <p>
+          </p>
+            <div class="informalexample">
+              <pre class="programlisting">
+<span class="emphasis"><em>#define</em></span> ARG(A) # 2.345   1.03   $A   234.9#
+<span class="stamnt">i</span>1 0 1 8.00 1000 $ARG(2.0)
+<span class="stamnt">i</span>1 + 1 8.01 1200 $ARG(3.0)</pre>
+            </div>
+            <p>
+
+          which expands to
+
+          </p>
+            <div class="informalexample">
+              <pre class="programlisting">
+<span class="stamnt">i</span>1 0 1 8.00 1000 2.345   1.03   2.0   234.9
+<span class="stamnt">i</span>1 + 1 8.01 1200 2.345   1.03   3.0   234.9</pre>
+            </div>
+            <p>
+        </p>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276136208576"></a>Credits</h3>
+            </div>
+          </div>
+        </div>
+        <p>Author: John ffitch</p>
+        <p>University of Bath/Codemist Ltd.</p>
+        <p>Bath, UK</p>
+        <p>April, 1998 (New in Csound version 3.48)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ScoreRamping.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoreTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ScoreMult.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Ramping </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Multiple File Score</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

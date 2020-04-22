@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GENpadsynth</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GENwave.html" title="GENwave" />
+    <link rel="next" href="ExperimentalTop.html" title="Experimental Orchestra Opcodes and GEN Routines" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GENpadsynth</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GENwave.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ExperimentalTop.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GENpadsynth"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGENpadsynth" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GENpadsynth</span>
+        </h2>
+        <p>"padsynth" — 
+      Generate a sample table using the padsynth algorithm.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024284304"></a>
+        <h2>Description</h2>
+        <p>Plugin gen in padsynth.</p>
+        <p>
+Paul Octavian Nasca's "padsynth algorithm" adds bandwidth to each partial of a
+periodic weaveform. This bandwidth is heard as color, movement, and additional
+richness of sound.
+   </p>
+        <p>
+First, the waveform is defined by the user as a series of harmonic partials.
+Then, bandwidth is added by independently spreading each partial of the
+original waveform from a single frequency across neighboring frequencies,
+according to a "profile" function: a Gaussian curve, a square, or a rising
+and then falling expontential.
+   </p>
+        <p>
+The partials of the original waveform may be considered to be samples in a
+discrete Fourier transform of the waveform. Normally there is not an exact
+one-to-one correspondence between the frequencies of the samples (frequency
+bins) of the discrete Fourier transform with the frequencies of the partials
+of the original waveform, because any frequency in the inverse of the discrete
+Fourier transform might be synthesized by interference between any number of
+bins. However, the padsynth algorithm uses a simple trick to create this
+correspondence. The discrete Fourier transform is simply made so large that
+the frequency of any partial of the original waveform will be very close to
+the frequency of the corresponding bin in the Fourier transform. Once this
+correspondence has been created, the bandwidth profile can be applied by
+centering it over the frequency bin of the original partial, scaling the
+profile by the bandwidth, and simply multiplying the original partial by each
+sample of the profile and adding the product to the corresponding bin of the
+Fourier transform.
+   </p>
+        <p>
+As the frequencies of the partials increase, their bandwidth may optionally
+become wider or (less often) narrower.
+   </p>
+        <p>
+Once each partial has been spread out in this way, the discrete Fourier
+transform may be given random phases, and is then simply inverted to
+synthesize the desired waveform, which may be used as the wavetable for
+a digital oscillator.
+   </p>
+        <p>
+N.B.: The size of the function table does NOT necessarily reflect one periodic
+cycle of the waveform that it contains. The fundamental frequency must be used
+to generate the desired pitch from an oscillator using the function table, e.g.
+   </p>
+        <code class="code">
+    oscillator_hz = desired_hz * (sr / padsynth_size / fundamental_hz)
+    </code>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024279216"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # score_time table_size "padsynth" fundamental_frequency
+    partial_bandwidth partial_scale harmonic_stretch profile_shape profile_shape_parameter
+    partial1_amplitude [partial2_amplitude ...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024277104"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>table_size</em></span> -- Function table size. Should be large,
+            e.g. 2^18 == 262144. Must be a power of 2 or power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>fundamental_frequency</em></span> -- Fundamental frequency for
+      the generated table.
+    </p>
+        <p>
+      <span class="emphasis"><em>partial_bandwidth</em></span> -- Bandwidth of each partial in cents.
+    </p>
+        <p>
+      <span class="emphasis"><em>partial_scale</em></span> -- Scaling factor for bandwidth of each partial (log of increase/decrease
+            with partial frequency, 0 is no stretch or shrink).
+    </p>
+        <p>
+      <span class="emphasis"><em>harmonic_stretch</em></span> -- Harmonic stretch/shrink for all partials (1 is harmonic).
+    </p>
+        <p>
+      <span class="emphasis"><em>profile_shape</em></span> -- Number specifying the shape of the bandwidth profile:
+      1 = Gaussian, 2 = square, and 3 = exponential
+    </p>
+        <p>
+      <span class="emphasis"><em>profile_shape_parameter</em></span> -- Parameter passed to the function generating the profile shape, e.g. exponent.
+    </p>
+        <p>
+      <span class="emphasis"><em>partial1_amplitude, partial2_amplitude, ...</em></span> -- Amplitudes for each partial (may be zero).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024268336"></a>
+        <h2>Examples</h2>
+        <p>
+	    Here is an example of the GENpadsynth routine. It uses the files <a class="ulink" href="examples/padsynth_gen.csd" target="_top"><em class="citetitle">padsynth_gen.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276024266528"></a>
+          <p class="title">
+            <strong>Example 1242. An example of the GENpadsynth routine.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276392673088"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">1</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+<span class="vg">0dbfs</span><span class="o">=</span><span class="mi">2000</span>
+
+	gi<span class="n">spec_len</span> <span class="nb">init</span> <span class="mi">2</span><span class="o">^</span><span class="mi">18</span>
+
+	<span class="kd">instr</span> <span class="nf">1</span>
+    <span class="nb">prints</span> <span class="s">"Plain sine for frequency/amplitude/distortion comparison.</span><span class="se">\n</span><span class="s">"</span>
+	gi<span class="n">_padsynth_1</span> <span class="nb">ftgenonce</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">spec_len</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+    i<span class="n">attack</span> <span class="o">=</span> <span class="mf">0.08</span>
+    i<span class="n">decay</span> <span class="o">=</span> <span class="mf">0.1</span>
+    i<span class="n">sustain</span> <span class="o">=</span> <span class="mf">0.25</span>
+    i<span class="n">release</span> <span class="o">=</span> <span class="mf">0.2</span>
+    a<span class="n">env</span> <span class="nb">madsr</span> i<span class="n">attack</span><span class="p">,</span> i<span class="n">decay</span><span class="p">,</span> i<span class="n">sustain</span><span class="p">,</span> i<span class="n">release</span>
+    i<span class="n">freq</span> <span class="nb">cpsmidinn</span> <span class="nb">p4</span>
+    i<span class="n">amp</span> <span class="nb">ampdb</span> <span class="nb">p5</span>
+    i<span class="n">basefreq</span> <span class="o">=</span> <span class="mi">440</span> <span class="c1">; can be lower or higher frequency; close to played frequency is said to be best</span>
+    i<span class="n">bw_cents</span> <span class="o">=</span> <span class="mf">56.96943</span> <span class="c1">; width of the peaks, 100 is semitone</span>
+	a<span class="n">sig</span> <span class="nb">poscil</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">freq</span><span class="p">,</span> gi<span class="n">_padsynth_1</span>
+    a<span class="n">sig</span> <span class="o">=</span> a<span class="n">env</span> <span class="o">*</span> a<span class="n">sig</span>
+	a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span> <span class="nb">pan2</span> a<span class="n">sig</span><span class="p">,</span> <span class="mf">0.5</span>
+	<span class="nb">outs</span> a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span>
+	<span class="kd">endin</span>
+
+	<span class="kd">instr</span> <span class="nf">2</span>
+    <span class="nb">prints</span> <span class="s">"PadSynth with sine tone.</span><span class="se">\n</span><span class="s">"</span>
+    i<span class="n">basehz</span> <span class="o">=</span> <span class="mf">261.625565</span>
+    <span class="c1">;                       p1 p2 p3          p4           p5       p6  p7    p8 p9  p10  p11</span>
+	gi<span class="n">_padsynth_1</span> <span class="nb">ftgenonce</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">spec_len</span><span class="p">,</span> <span class="s">"padsynth"</span><span class="p">,</span> i<span class="n">basehz</span><span class="p">,</span> <span class="nb">p6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>  <span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span>
+    i<span class="n">attack</span> <span class="o">=</span> <span class="mf">0.08</span>
+    i<span class="n">decay</span> <span class="o">=</span> <span class="mf">0.1</span>
+    i<span class="n">sustain</span> <span class="o">=</span> <span class="mf">0.25</span>
+    i<span class="n">release</span> <span class="o">=</span> <span class="mf">0.2</span>
+    a<span class="n">env</span> <span class="nb">madsr</span> i<span class="n">attack</span><span class="p">,</span> i<span class="n">decay</span><span class="p">,</span> i<span class="n">sustain</span><span class="p">,</span> i<span class="n">release</span>
+    i<span class="n">freq</span> <span class="nb">cpsmidinn</span> <span class="nb">p4</span>
+    i<span class="n">amp</span> <span class="nb">ampdb</span> <span class="nb">p5</span>
+	a<span class="n">sig</span> <span class="nb">poscil</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">freq</span><span class="o">*</span><span class="p">(</span><span class="vg">sr</span><span class="o">/</span>gi<span class="n">spec_len</span><span class="o">/</span>i<span class="n">basehz</span><span class="p">),</span> gi<span class="n">_padsynth_1</span>
+    a<span class="n">sig</span> <span class="o">=</span> a<span class="n">env</span> <span class="o">*</span> a<span class="n">sig</span>
+	a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span> <span class="nb">pan2</span> a<span class="n">sig</span><span class="p">,</span> <span class="mf">0.5</span>
+	<span class="nb">outs</span> a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span>
+	<span class="kd">endin</span>
+
+	<span class="kd">instr</span> <span class="nf">3</span>
+    <span class="nb">prints</span> <span class="s">"PadSynth with harmonics.</span><span class="se">\n</span><span class="s">"</span>
+    i<span class="n">basehz</span> <span class="o">=</span> <span class="mf">261.625565</span>
+    <span class="c1">;                       p1 p2 p3          p4           p5       p6  p7 p8 p9  p10  p11</span>
+	gi<span class="n">_padsynth_1</span> <span class="nb">ftgenonce</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">spec_len</span><span class="p">,</span> <span class="s">"padsynth"</span><span class="p">,</span> i<span class="n">basehz</span><span class="p">,</span> <span class="nb">p6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="mf">0.7600046992</span><span class="p">,</span> <span class="mf">0.6199994683</span><span class="p">,</span> <span class="mf">0.9399998784</span><span class="p">,</span> <span class="mf">0.4400023818</span><span class="p">,</span> <span class="mf">0.0600003302</span><span class="p">,</span> <span class="mf">0.8499968648</span><span class="p">,</span> <span class="mf">0.0899999291</span><span class="p">,</span> <span class="mf">0.8199964762</span><span class="p">,</span> <span class="mf">0.3199984133</span><span class="p">,</span> <span class="mf">0.9400014281</span><span class="p">,</span> <span class="mf">0.3000001907</span><span class="p">,</span> <span class="mf">0.120003365</span><span class="p">,</span> <span class="mf">0.1799997687</span><span class="p">,</span> <span class="mf">0.5200006366</span><span class="p">,</span> <span class="mf">0.9300042987</span>
+    i<span class="n">attack</span> <span class="o">=</span> <span class="mf">0.08</span>
+    i<span class="n">decay</span> <span class="o">=</span> <span class="mf">0.1</span>
+    i<span class="n">sustain</span> <span class="o">=</span> <span class="mf">0.25</span>
+    i<span class="n">release</span> <span class="o">=</span> <span class="mf">0.2</span>
+    a<span class="n">env</span> <span class="nb">madsr</span> i<span class="n">attack</span><span class="p">,</span> i<span class="n">decay</span><span class="p">,</span> i<span class="n">sustain</span><span class="p">,</span> i<span class="n">release</span>
+    i<span class="n">freq</span> <span class="nb">cpsmidinn</span> <span class="nb">p4</span>
+    i<span class="n">amp</span> <span class="nb">ampdb</span> <span class="nb">p5</span>
+	a<span class="n">sig</span> <span class="nb">poscil</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">freq</span><span class="o">*</span><span class="p">(</span><span class="vg">sr</span><span class="o">/</span>gi<span class="n">spec_len</span><span class="o">/</span>i<span class="n">basehz</span><span class="p">),</span> gi<span class="n">_padsynth_1</span>
+    a<span class="n">sig</span> <span class="o">=</span> a<span class="n">env</span> <span class="o">*</span> a<span class="n">sig</span>
+	a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span> <span class="nb">pan2</span> a<span class="n">sig</span><span class="p">,</span> <span class="mf">0.5</span>
+	<span class="nb">outs</span> a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span>
+	<span class="kd">endin</span>
+
+	<span class="kd">instr</span> <span class="nf">4</span>
+    <span class="nb">prints</span> <span class="s">"PadSynth with inharmonic partials.</span><span class="se">\n</span><span class="s">"</span>
+    i<span class="n">basehz</span> <span class="o">=</span> <span class="mf">261.625565</span>
+    <span class="c1">;                       p1 p2 p3          p4           p5       p6  p7 p8 p9  p10  p11</span>
+	gi<span class="n">_padsynth_1</span> <span class="nb">ftgenonce</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">spec_len</span><span class="p">,</span> <span class="s">"padsynth"</span><span class="p">,</span> i<span class="n">basehz</span><span class="p">,</span> <span class="nb">p6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span> <span class="mf">0.7600046992</span><span class="p">,</span> <span class="mf">0.6199994683</span><span class="p">,</span> <span class="mf">0.9399998784</span><span class="p">,</span> <span class="mf">0.4400023818</span><span class="p">,</span> <span class="mf">0.0600003302</span><span class="p">,</span> <span class="mf">0.8499968648</span><span class="p">,</span> <span class="mf">0.0899999291</span><span class="p">,</span> <span class="mf">0.8199964762</span><span class="p">,</span> <span class="mf">0.3199984133</span><span class="p">,</span> <span class="mf">0.9400014281</span><span class="p">,</span> <span class="mf">0.3000001907</span><span class="p">,</span> <span class="mf">0.120003365</span><span class="p">,</span> <span class="mf">0.1799997687</span><span class="p">,</span> <span class="mf">0.5200006366</span><span class="p">,</span> <span class="mf">0.9300042987</span>
+    i<span class="n">attack</span> <span class="o">=</span> <span class="mf">0.08</span>
+    i<span class="n">decay</span> <span class="o">=</span> <span class="mf">0.1</span>
+    i<span class="n">sustain</span> <span class="o">=</span> <span class="mf">0.25</span>
+    i<span class="n">release</span> <span class="o">=</span> <span class="mf">0.2</span>
+    a<span class="n">env</span> <span class="nb">madsr</span> i<span class="n">attack</span><span class="p">,</span> i<span class="n">decay</span><span class="p">,</span> i<span class="n">sustain</span><span class="p">,</span> i<span class="n">release</span>
+    i<span class="n">freq</span> <span class="nb">cpsmidinn</span> <span class="nb">p4</span>
+    i<span class="n">amp</span> <span class="nb">ampdb</span> <span class="nb">p5</span>
+	a<span class="n">sig</span> <span class="nb">poscil</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">freq</span><span class="o">*</span><span class="p">(</span><span class="vg">sr</span><span class="o">/</span>gi<span class="n">spec_len</span><span class="o">/</span>i<span class="n">basehz</span><span class="p">),</span> gi<span class="n">_padsynth_1</span>
+    a<span class="n">sig</span> <span class="o">=</span> a<span class="n">env</span> <span class="o">*</span> a<span class="n">sig</span>
+	a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span> <span class="nb">pan2</span> a<span class="n">sig</span><span class="p">,</span> <span class="mf">0.5</span>
+	<span class="nb">outs</span> a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span>
+	<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+
+
+
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">2</span> <span class="mf">60.00</span> <span class="mi">60</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">72.00</span> <span class="mi">60</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">84.00</span> <span class="mi">60</span>
+
+<span class="nb">i</span><span class="mi">2</span>  <span class="mi">7</span> <span class="mi">2</span> <span class="mf">60.00</span> <span class="mi">60</span> <span class="mf">0.3</span>
+<span class="nb">i</span><span class="mi">2</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">72.00</span> <span class="mi">60</span> <span class="mf">0.3</span>
+<span class="nb">i</span><span class="mi">2</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">84.00</span> <span class="mi">60</span> <span class="mf">0.3</span>
+<span class="nb">i</span><span class="mi">2</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">60.00</span> <span class="mi">60</span> <span class="mi">25</span>
+<span class="nb">i</span><span class="mi">2</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">72.00</span> <span class="mi">60</span> <span class="mi">25</span>
+<span class="nb">i</span><span class="mi">2</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">84.00</span> <span class="mi">60</span> <span class="mi">25</span>
+<span class="nb">i</span><span class="mi">2</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">60.00</span> <span class="mi">60</span> <span class="mi">55</span>
+<span class="nb">i</span><span class="mi">2</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">72.00</span> <span class="mi">60</span> <span class="mi">55</span>
+<span class="nb">i</span><span class="mi">2</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">84.00</span> <span class="mi">60</span> <span class="mi">55</span>
+
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">26</span> <span class="mi">2</span> <span class="mf">60.00</span> <span class="mi">60</span> <span class="mf">0.3</span>
+<span class="nb">i</span><span class="mi">3</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">72.00</span> <span class="mi">60</span> <span class="mf">0.3</span>
+<span class="nb">i</span><span class="mi">3</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">84.00</span> <span class="mi">60</span> <span class="mf">0.3</span>
+<span class="nb">i</span><span class="mi">3</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">60.00</span> <span class="mi">60</span> <span class="mi">25</span>
+<span class="nb">i</span><span class="mi">3</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">72.00</span> <span class="mi">60</span> <span class="mi">25</span>
+<span class="nb">i</span><span class="mi">3</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">84.00</span> <span class="mi">60</span> <span class="mi">25</span>
+<span class="nb">i</span><span class="mi">3</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">60.00</span> <span class="mi">60</span> <span class="mi">55</span>
+<span class="nb">i</span><span class="mi">3</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">72.00</span> <span class="mi">60</span> <span class="mi">55</span>
+<span class="nb">i</span><span class="mi">3</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">84.00</span> <span class="mi">60</span> <span class="mi">55</span>
+
+<span class="nb">i</span><span class="mi">4</span> <span class="mi">45</span> <span class="mi">2</span> <span class="mf">60.00</span> <span class="mi">60</span> <span class="mf">0.3</span>
+<span class="nb">i</span><span class="mi">4</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">72.00</span> <span class="mi">60</span> <span class="mf">0.3</span>
+<span class="nb">i</span><span class="mi">4</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">84.00</span> <span class="mi">60</span> <span class="mf">0.3</span>
+<span class="nb">i</span><span class="mi">4</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">60.00</span> <span class="mi">60</span> <span class="mi">25</span>
+<span class="nb">i</span><span class="mi">4</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">72.00</span> <span class="mi">60</span> <span class="mi">25</span>
+<span class="nb">i</span><span class="mi">4</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">84.00</span> <span class="mi">60</span> <span class="mi">25</span>
+<span class="nb">i</span><span class="mi">4</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">60.00</span> <span class="mi">60</span> <span class="mi">55</span>
+<span class="nb">i</span><span class="mi">4</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">72.00</span> <span class="mi">60</span> <span class="mi">55</span>
+<span class="nb">i</span><span class="mi">4</span>  <span class="o">+</span> <span class="mi">2</span> <span class="mf">84.00</span> <span class="mi">60</span> <span class="mi">55</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024264752"></a>
+        <h2>See Also</h2>
+        <p> More information on Padsynth: <a class="ulink" href="www.paulnasca.com/algorithms-created-by-me" target="_top"><em class="citetitle">www.paulnasca.com/algorithms-created-by-me</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024262848"></a>
+        <h2>Credits</h2>
+        <p>Written by Michael Gogins</p>
+        <p>New in version 6.05</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GENwave.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ExperimentalTop.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GENwave </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Experimental Orchestra Opcodes and GEN Routines</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

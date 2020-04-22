@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pan2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="p.html" title="p" />
+    <link rel="next" href="pan.html" title="pan" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pan2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="p.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pan.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pan2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPan2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pan2</span>
+        </h2>
+        <p>pan2 — 
+      Distribute an audio signal across two channels.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073796320"></a>
+        <h2>Description</h2>
+        <p>
+      Distribute an audio signal across two channels with a choice of methods.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073795056"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>pan2</strong></span> asig, xp [, imode]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073792960"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imode</em></span> (optional) -- mode of the stereo
+      positioning algorithm. 0 signifies equal power (harmonic)
+      panning, 1 means the square root method, 2 means simple linear
+      and 3 means an alternative equal-power pan (based on an UDO). The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073791120"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>pan2</em></span> takes an input
+      signal <span class="emphasis"><em>asig</em></span> and distributes it across two
+      outputs (essentially stereo speakers) according to the
+      control <span class="emphasis"><em>xp</em></span> which can be k- or a-rate.  A
+      zero value for <span class="emphasis"><em>xp</em></span> indicates hard left, and
+      a 1 is hard right.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073788080"></a>
+        <h2>Example</h2>
+        <p>
+      Here is an example of the pan2 opcodes. It uses the file <a class="ulink" href="examples/pan2.csd" target="_top"><em class="citetitle">pan2.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276073786288"></a>
+          <p class="title">
+            <strong>Example 676. Example of the pan2 opcodes.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276441792416"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pan2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">Sine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">^</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">line</span>	<span class="nb">line</span>	<span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span>     <span class="c1">; straight line</span>
+a<span class="n">in</span>	<span class="nb">oscili</span>	<span class="mf">.6</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> gi<span class="n">Sine</span> <span class="c1">; audio signal..</span>
+a<span class="n">L</span><span class="p">,</span>a<span class="n">R</span>	<span class="nb">pan2</span>	a<span class="n">in</span><span class="p">,</span> k<span class="n">line</span>   <span class="c1">; sent across image</span>
+	<span class="nb">outs</span>	a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073782304"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>September 2007</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.07</p>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="p.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pan.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">p </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pan</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

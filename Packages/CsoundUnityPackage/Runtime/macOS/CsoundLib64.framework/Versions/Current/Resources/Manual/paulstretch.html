@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>paulstretch</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="passign.html" title="passign" />
+    <link rel="next" href="pcauchy.html" title="pcauchy" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">paulstretch</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="passign.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pcauchy.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="paulstretch"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPaulStretch" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">paulstretch</span>
+        </h2>
+        <p>paulstretch — 
+      Extreme time-stretching algorithm by Nasca Octavian Paul.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111914624"></a>
+        <h2>Description</h2>
+        <p>
+      The <span class="emphasis"><em>paulstretch</em></span> opcode is a lightweight
+      implementation of the PaulStretch time-stretching algorithm by
+      Nasca Octavian Paul. It is ideal for timestretching a signal by
+      very large amounts.
+    </p>
+        <p>
+        The Paulstretch algorithm works very similarly to other
+        STFT-based timestretching methods, using overlap-add with a
+        hanning window. Unique to paulstretch are the use of scrambled
+        phase and very large window sizes (specified in seconds).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111911536"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>paulstretch</strong></span> istretch, iwindowsize, ift
+    </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111909376"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>istretch</em></span> -- Stretch factor.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwindowsize</em></span> -- Window size, in seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>ift</em></span> -- source signal function
+      table. Deferred-allocation tables (see
+      <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>) are
+      accepted, but the opcode expects a mono source.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111904944"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the paulstretch opcode. It uses the file
+      <a class="ulink" href="examples/paulstretch.csd" target="_top"><em class="citetitle">paulstretch.csd</em></a>
+      </p>
+        <div class="example">
+          <a id="idm276111903088"></a>
+          <p class="title">
+            <strong>Example 687. Example of the paulstretch opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276439573056"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-o paulstretch.wav -W
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+gi<span class="n">wav</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"fox.wav"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+a<span class="n">out</span> <span class="n">paulstretch</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> gi<span class="n">wav</span>
+<span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">30</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111901296"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paul Batchelor</td>
+          </tr>
+          <tr>
+            <td>May 2016</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="passign.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pcauchy.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">passign </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pcauchy</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

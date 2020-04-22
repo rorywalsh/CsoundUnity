@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLlabel</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLknob.html" title="FLknob" />
+    <link rel="next" href="FLloadsnap.html" title="FLloadsnap" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLlabel</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLknob.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLloadsnap.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLlabel"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLlabel" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLlabel</span>
+        </h2>
+        <p>FLlabel — 
+      A FLTK opcode that modifies the appearance of a text label.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109562208"></a>
+        <h2>Description</h2>
+        <p>
+      Modifies a set of parameters related to the text label appearence of a widget (i.e. size, font, alignment and color of corresponding text).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109560880"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLlabel</strong></span> isize, ifont, ialign, ired, igreen, iblue</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109558912"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>isize</em></span> -- size of the font of the target widget. Normal values are in the order of 15. Greater numbers enlarge font size, while smaller numbers reduce it.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifont</em></span> -- sets the the font type of the label of a widget.
+    </p>
+        <p>
+      Legal values for ifont argument are:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 - Helvetica (same as Arial under Windows)</p>
+            </li>
+            <li class="listitem">
+              <p>2 - Helvetica Bold</p>
+            </li>
+            <li class="listitem">
+              <p>3 - Helvetica Italic</p>
+            </li>
+            <li class="listitem">
+              <p>4 - Helvetica Bold Italic</p>
+            </li>
+            <li class="listitem">
+              <p>5 - Courier</p>
+            </li>
+            <li class="listitem">
+              <p>6 - Courier Bold</p>
+            </li>
+            <li class="listitem">
+              <p>7 - Courier Italic</p>
+            </li>
+            <li class="listitem">
+              <p>8 - Courier Bold Italic</p>
+            </li>
+            <li class="listitem">
+              <p>9 - Times</p>
+            </li>
+            <li class="listitem">
+              <p>10 - Times Bold</p>
+            </li>
+            <li class="listitem">
+              <p>11 - Times Italic</p>
+            </li>
+            <li class="listitem">
+              <p>12 - Times Bold Italic</p>
+            </li>
+            <li class="listitem">
+              <p>13 - Symbol</p>
+            </li>
+            <li class="listitem">
+              <p>14 - Screen</p>
+            </li>
+            <li class="listitem">
+              <p>15 - Screen Bold</p>
+            </li>
+            <li class="listitem">
+              <p>16 - Dingbats</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ialign</em></span> -- sets the alignment of the label text of the widget.
+    </p>
+        <p>
+      Legal values for ialign argument are:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 - align center</p>
+            </li>
+            <li class="listitem">
+              <p>2 - align top</p>
+            </li>
+            <li class="listitem">
+              <p>3 - align bottom</p>
+            </li>
+            <li class="listitem">
+              <p>4 - align left</p>
+            </li>
+            <li class="listitem">
+              <p>5 - align right</p>
+            </li>
+            <li class="listitem">
+              <p>6 - align top-left</p>
+            </li>
+            <li class="listitem">
+              <p>7 - align top-right</p>
+            </li>
+            <li class="listitem">
+              <p>8 - align bottom-left</p>
+            </li>
+            <li class="listitem">
+              <p>9 - align bottom-right</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ired</em></span> -- The red color of the target widget. The range for each RGB component is 0-255
+    </p>
+        <p>
+      <span class="emphasis"><em>igreen</em></span> -- The green color of the target widget. The range for each RGB component is 0-255
+    </p>
+        <p>
+      <span class="emphasis"><em>iblue</em></span> -- The blue color of the target widget. The range for each RGB component is 0-255
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109537712"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>FLlabel</em></span> modifies a set of parameters related to the text label appearance of a widget, i.e.  size, font, alignment and color of corresponding text. This opcode affects (almost) all widgets defined next its location. A user can put several instances of <span class="emphasis"><em>FLlabel</em></span> in front of each widget he intends to modify. However, to modify a particular widget, it is better to use the opcode belonging to the second type (i.e. those containing the <span class="emphasis"><em>ihandle</em></span> argument).
+    </p>
+        <p>
+      The influence of <span class="emphasis"><em>FLlabel</em></span> on the next widget can be turned off by using -1 as its only argument. <span class="emphasis"><em>FLlabel</em></span> is designed to modify text attributes of a group of related widgets.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109533504"></a>
+        <h2>See Also</h2>
+        <p>
+        <a class="link" href="FLcolor2.html" title="FLcolor2"><em class="citetitle">FLcolor2</em></a>, 
+        <a class="link" href="FLhide.html" title="FLhide"><em class="citetitle">FLhide</em></a>, 
+        <a class="link" href="FLlabel.html" title="FLlabel"><em class="citetitle">FLlabel</em></a>, 
+        <a class="link" href="FLsetAlign.html" title="FLsetAlign"><em class="citetitle">FLsetAlign</em></a>, 
+        <a class="link" href="FLsetBox.html" title="FLsetBox"><em class="citetitle">FLsetBox</em></a>, 
+        <a class="link" href="FLsetColor.html" title="FLsetColor"><em class="citetitle">FLsetColor</em></a>, 
+        <a class="link" href="FLsetColor2.html" title="FLsetColor2"><em class="citetitle">FLsetColor2</em></a>, 
+        <a class="link" href="FLsetFont.html" title="FLsetFont"><em class="citetitle">FLsetFont</em></a>, 
+        <a class="link" href="FLsetPosition.html" title="FLsetPosition"><em class="citetitle">FLsetPosition</em></a>, 
+        <a class="link" href="FLsetSize.html" title="FLsetSize"><em class="citetitle">FLsetSize</em></a>, 
+        <a class="link" href="FLsetText.html" title="FLsetText"><em class="citetitle">FLsetText</em></a>, 
+        <a class="link" href="FLsetTextColor.html" title="FLsetTextColor"><em class="citetitle">FLsetTextColor</em></a>, 
+        <a class="link" href="FLsetTextSize.html" title="FLsetTextSize"><em class="citetitle">FLsetTextSize</em></a>, 
+        <a class="link" href="FLsetTextType.html" title="FLsetTextType"><em class="citetitle">FLsetTextType</em></a>, 
+        <a class="link" href="FLsetVal_i.html" title="FLsetVal_i"><em class="citetitle">FLsetVal_i</em></a>, 
+        <a class="link" href="FLsetVal.html" title="FLsetVal"><em class="citetitle">FLsetVal</em></a>, 
+        <a class="link" href="FLshow.html" title="FLshow"><em class="citetitle">FLshow</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109517392"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLknob.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLloadsnap.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLknob </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLloadsnap</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

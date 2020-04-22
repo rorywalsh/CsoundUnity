@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lorisread</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="lorenz.html" title="lorenz" />
+    <link rel="next" href="lorismorph.html" title="lorismorph" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lorisread</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lorenz.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lorismorph.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lorisread"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLorisRead" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lorisread</span>
+        </h2>
+        <p>lorisread — Imports a set of bandwidth-enhanced partials from a SDIF-format
+    data file, applying control-rate frequency, amplitude, and
+    bandwidth scaling envelopes, and stores the modified partials in
+    memory.
+           </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085106544"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>lorisread</strong></span> ktimpnt, ifilcod, istoreidx, kfreqenv, kampenv, kbwenv[, ifadetime]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085104544"></a>
+        <h2>Description</h2>
+        <p>lorisread imports a set of bandwidth-enhanced partials from a SDIF-format data file, applying control-rate frequency, amplitude, and bandwidth scaling envelopes, and stores the modified partials in memory.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085103152"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>ifilcod </em></span> - integer or character-string
+denoting a control-file derived from reassigned bandwidth-enhanced
+analysis of an audio signal. An integer denotes the suffix of a file
+loris.sdif (e.g. loris.sdif.1); a character-string (in double quotes)
+gives a filename, optionally a full pathname. If not a full pathname, the
+file is sought first in the current directory, then in the one given
+by the environment variable SADIR (if defined). The reassigned
+bandwidth-enhanced data file contains breakpoint frequency, amplitude,
+noisiness, and phase envelope values organized for bandwidth-enhanced
+additive resynthesis. The control data must conform to one of the SDIF
+formats that can be</p>
+        <p>Loris stores partials in SDIF RBEP frames. Each RBEP frame
+contains one RBEP matrix, and each row in a RBEP matrix describes one
+breakpoint in a Loris partial. A RBEL frame containing one RBEL matrix
+describing the labeling of the partials may precede the first RBEP
+frame in the SDIF file. The RBEP and RBEL frame and matrix definitions
+are included in the SDIF file's header. In addition to RBEP frames,
+Loris can also read and write SDIF 1TRC frames. Since 1TRC frames do
+not represent bandwidth-enhancement or the exact timing of Loris
+breakpoints, their use is not recommended. 1TRC capabilities are
+provided to allow interchange with programs that are unable to handle
+RBEP frames.</p>
+        <p><span class="emphasis"><em>istoreidx, ireadidx, isrcidx, itgtidx</em></span> are
+labels that identify a stored set of bandwidth-enhanced
+partials. lorisread imports partials from a SDIF file and stores them
+with the integer label istoreidx. lorismorph morphs sets of partials
+labeled isrcidx and itgtidx, and stores the resulting partials with
+the integer label istoreidx. lorisplay renders the partials stored
+with the label ireadidx. The labels are used only at initialization
+time, and may be reused without any cost or benefit in efficiency, and
+without introducing any interaction between instruments or
+instances.</p>
+        <p><span class="emphasis"><em>ifadetime (optional)</em></span> - In general,
+partials exported from Loris begin and end at non-zero amplitude. In
+order to prevent artifacts, it is very often necessary to fade the
+partials in and out, instead of turning them abruptly on and
+off. Specification of a non-zero ifadetime causes partials to fade in
+at their onsets and to fade out at their terminations. This is
+achieved by adding two more breakpoints to each partial: one ifadetime
+seconds before the start time and another ifadetime seconds after the
+end time. (However, no breakpoint will be introduced at a time less
+than zero. If necessary, the onset fade time will be shortened.) The
+additional breakpoints at the partial onset and termination will have
+the same frequency and bandwidth as the first and last breakpoints in
+the partial, respectively, but their amplitudes will be zero. The
+phase of the new breakpoints will be extrapolated to preserve phase
+correctness. If no value is specified, ifadetime defaults to
+zero. Note that the fadetime may not be exact, since the partial
+parameter envelopes are sampled at the control rate (krate) and
+indexed by ktimpnt (see below), and not by real time.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085098048"></a>
+        <h2>Performance</h2>
+        <p>lorisread reads pre-computed Reassigned Bandwidth-Enhanced
+analysis data from a file stored in SDIF format, as described
+above. The passage of time through this file is specified by ktimpnt,
+which represents the time in seconds. ktimpnt must always be positive,
+but can move forwards or backwards in time, be stationary or
+discontinuous, as a pointer into the analysis file. kfreqenv is a
+control-rate transposition factor: a value of 1 incurs no
+transposition, 1.5 transposes up a perfect fifth, and .5 down an
+octave. kampenv is a control-rate scale factor that is applied to all
+partial amplitude envelopes. kbwenv is a control-rate scale factor
+that is applied to all partial bandwidth or noisiness envelopes. The
+bandwidth-enhanced partial data is stored in memory with a specified
+label for future access by another generator.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085095968"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the lorisread opcode. It uses the file <a class="ulink" href="examples/lorisread.csd" target="_top"><em class="citetitle">lorisread.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276085094240"></a>
+          <p class="title">
+            <strong>Example 504. Example of the lorisread opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276454805328"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o lorisread.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Play the partials in clarinet.sdif from 0 to 3 sec with 1 ms fadetime</span>
+<span class="c1">; and no frequency , amplitude, or bandwidth modification.</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">time</span> <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">3</span>			<span class="c1">; linear time function from 0 to 3 seconds</span>
+      <span class="n">lorisread</span>	k<span class="n">time</span><span class="p">,</span> <span class="s">"clarinet.sdif"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.001</span>
+a<span class="n">sig</span>  <span class="n">lorisplay</span>	<span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+
+<span class="c1">; Play the partials in clarinet.sdif from 0 to 3 sec with 1 ms fadetime</span>
+<span class="c1">; adding tuning and vibrato, increasing the "breathiness" (noisiness) and overall</span>
+<span class="c1">; amplitude, and adding a highpass filter.</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+k<span class="n">time</span> <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">3</span>			<span class="c1">; linear time function from 0 to 3 seconds</span>
+					<span class="c1">; compute frequency scale for tuning  </span>
+i<span class="n">fscale</span>	<span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span><span class="o">/</span><span class="nb">cpspch</span><span class="p">(</span><span class="mf">8.08</span><span class="p">)</span>	<span class="c1">; (original pitch was G#4)</span>
+					<span class="c1">; make a vibrato envelope</span>
+k<span class="n">venv</span>  <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="mf">.02</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mf">.02</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span>
+k<span class="n">vib</span>   <span class="nb">oscil</span>  k<span class="n">venv</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; table 1, sinusoid</span>
+k<span class="n">bwenv</span> <span class="nb">linseg</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="nb">p3</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span>	<span class="c1">;lots of noise</span>
+       <span class="n">lorisread</span> k<span class="n">time</span><span class="p">,</span> <span class="s">"clarinet.sdif"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.001</span>
+a<span class="n">1</span>     <span class="n">lorisplay</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">fscale</span><span class="o">+</span>k<span class="n">vib</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> k<span class="n">bwenv</span>
+a<span class="n">sig</span>   <span class="nb">atone</span> a<span class="n">1</span><span class="p">,</span> <span class="mi">1000</span>			<span class="c1">; highpass filter, cutoff 1000 Hz</span>
+       <span class="nb">outs</span>  a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; a sinus</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span>    <span class="mi">0</span>      <span class="mi">3</span>
+<span class="nb">i</span> <span class="mi">1</span>    <span class="o">+</span>      <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span>    <span class="o">+</span>      <span class="mi">6</span>
+<span class="nb">s</span>
+
+<span class="c1">;                  pitch</span>
+<span class="nb">i</span> <span class="mi">2</span>      <span class="mi">1</span>    <span class="mi">3</span>    <span class="mf">8.08</span>
+<span class="nb">i</span> <span class="mi">2</span>      <span class="mf">3.5</span>  <span class="mi">1</span>    <span class="mf">8.04</span>
+<span class="nb">i</span> <span class="mi">2</span>      <span class="mi">4</span>    <span class="mi">6</span>    <span class="mf">8.00</span>
+<span class="nb">i</span> <span class="mi">2</span>      <span class="mi">4</span>    <span class="mi">6</span>    <span class="mf">8.07</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085090240"></a>
+        <h2>Credits</h2>
+        <p>This implementation of the Loris unit generators was written by Kelly
+Fitz (<a class="ulink" href="mailto:loris@cerlsoundgroup.org" target="_top">loris@cerlsoundgroup.org</a>). It is patterned after a prototype implementation of the
+<span class="emphasis"><em>lorisplay</em></span> unit generator written by Corbin Champion, and based on the
+method of Bandwidth-Enhanced Additive Synthesis and on the sound
+morphing algorithms implemented in the Loris library for sound
+modeling and manipulation. The opcodes were further adapted as a
+plugin for Csound 5 by Michael Gogins.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lorenz.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lorismorph.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lorenz </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> lorismorph</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

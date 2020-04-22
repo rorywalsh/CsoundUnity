@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>d Statement (De Note Statement)</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="C.html" title="C Statement" />
+    <link rel="next" href="e.html" title="e Statement" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">d Statement (De Note Statement)</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="C.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="e.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="d"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDStatement" class="indexterm"></a>
+      <a id="IndexDenoteStatement" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">d Statement (De Note Statement)</span>
+        </h2>
+        <p>d — 
+      removes an active instrument at a specific time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013793312"></a>
+        <h2>Description</h2>
+        <p>
+      This statement calls for an instrument that has been held
+      to be removed at a specific time. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013792032"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>i</strong></span>  p1  p2  p3  p4</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013790096"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>p1</em></span> -- Instrument number. An optional
+      fractional part can provide an additional tag for specifying
+      ties between particular notes of consecutive clusters.
+    </p>
+        <p>
+      <span class="emphasis"><em>p2</em></span> -- Starting time in arbitrary units called beats.
+    </p>
+        <p>
+      <span class="emphasis"><em>p3</em></span> -- ignored but required.  Usually zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013786688"></a>
+        <h2>Performance</h2>
+        <p>
+      Beats are evaluated as seconds, unless there is a <a class="link" href="t.html" title="t Statement (Tempo Statement)"><em class="citetitle">t statement</em></a> in this score section or a <a class="link" href="CommandFlags.html#FlagsMinusLowerT"><em class="citetitle">-t flag</em></a> in the command-line.
+    </p>
+        <p>
+       Action times are relative to the beginning of a section ( see <a class="link" href="s.html" title="s Statement"><em class="citetitle">s statement</em></a>), which is assigned time 0.
+    </p>
+        <p>
+      Note statements within a section may be placed in any order. Before being sent to an orchestra, unordered score statements must first be processed by Sorter, which will reorder them by ascending p2 value. Notes with the same p2 value will be ordered by ascending p1; if the same p1, then by ascending p3.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013781584"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the d statement. It uses the file <a class="ulink" href="examples/d_statement.csd" target="_top"><em class="citetitle">d_statement.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276013779808"></a>
+          <p class="title">
+            <strong>Example 1183. Example of the d statement.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276400065392"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  a<span class="n">1</span>  <span class="nb">oscil</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">440</span>
+      <span class="nb">out</span>   a<span class="n">1</span>
+<span class="kd">endin</span>
+<span class="kd">instr</span> <span class="nf">sound</span>
+  a<span class="n">1</span>  <span class="nb">oscil</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">440</span>
+      <span class="nb">out</span>   a<span class="n">1</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">1</span>
+<span class="err">d</span> <span class="err">1</span> <span class="err">1</span> <span class="err">0</span>
+
+<span class="nb">i</span> <span class="s">"sound"</span> <span class="mi">3</span> <span class="o">-</span><span class="mi">1</span>
+<span class="nb">i</span> <span class="s">"-sound"</span> <span class="mi">4</span> <span class="mi">0</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013778048"></a>
+        <h2>Credits</h2>
+        <p>
+      Author: John ffitch, new in version 6.09.
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="C.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="e.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">C Statement </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> e Statement</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

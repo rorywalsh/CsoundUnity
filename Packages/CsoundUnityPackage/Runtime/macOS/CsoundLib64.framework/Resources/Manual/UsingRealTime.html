@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Real-Time Audio</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="Using.html" title="Using Csound" />
+    <link rel="prev" href="UsingDesign.html" title="How Csound works" />
+    <link rel="next" href="RealTimeLinux.html" title="Realtime I/O on Linux" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Real-Time Audio</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="UsingDesign.html">Prev</a> </td>
+          <th width="60%" align="center">Using Csound</th>
+          <td width="20%" align="right"> <a accesskey="n" href="RealTimeLinux.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="UsingRealTime"></a>Real-Time Audio</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+      The following information applies mostly to csound being run directly from the command line. Front-ends implement these features in different ways, but knowledge of them is necessary in some of them.
+    </p>
+      <p>
+      The <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerI"><em class="citetitle">-i</em></a> and <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerO"><em class="citetitle">-o</em></a> flags can are used to specify realtime output instead of the ordinary non-realtime file output. You should use <code class="literal">-o dac</code> for realtime output and <code class="literal">-i adc</code> for realtime input. Naturally, you can use either one or both if your hardware supports it. You can also specify the hardware you want to use by appending a device number or name to the flag (See <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerI"><em class="citetitle">-i</em></a> and <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerO"><em class="citetitle">-o</em></a>).
+    </p>
+      <p>
+      You might also need to use the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusPlusRtaudio"><em class="citetitle">-+rtaudio</em></a> flag to specify the driver interface to be used. Csound defaults to using Portaudio, which is cross-plaform and reliable, but for better performance, you might need to use ALSA or JACK on linux, and CoreAudio on Mac. You can use ASIO on Windows if your version of Portaudio has been compiled with ASIO support.
+    </p>
+      <p>
+      You can see a list of available devices by giving a device number which is out of range, for instance <code class="literal">-o dac99</code>. This will also reveal if you have ASIO available if you are using PortAudio.
+    </p>
+      <h3><a id="idm276137820944"></a>
+      Period &amp; Buffer Sizes</h3>
+      <p>Period and buffer sizes will vary greatly from one machine to
+      another. Lower buffer sizes will result in lower latency, but might 
+      cause breakups or clicks in the audio. The Csound
+      flags which control period and buffer sizes are <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> and <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a>,
+      respectively. Buffer size is hardware dependant, and some
+      experimentation may be necessary to find the optimal balance between
+      low latency performance and uninterrupted audio output. The values
+      given to <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> and <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a> should be powers of two, and the value of <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a>
+      should be at least one power of two higher than that of <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a>.
+    </p>
+      <p>Currently, with <code class="literal"><a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a></code> set to 512, audio output latency
+      is about 12 milliseconds, fast enough for reasonably responsive
+      keyboad playing. Even shorter latencies, are feasible on some systems.</p>
+      <h3><a id="idm276137812352"></a>Control Rate</h3>
+      <p>
+      Low values for ksmps will in general give a higher quality of
+      synthesis, but will consume more system resources. There is no hard
+      and fast rule for setting ksmps - different orchestras will require
+      different control rates. A waveguide instrument will need a ksmps of
+      1 (and may not be suitable for realtime use), whereas a simple FM
+      synth may be run with a higher ksmps without noticeable degradation of
+      sound. If the FM synth were to be used to play a monophonic bassline,
+      a very low ksmps may be used, however more complex note clusters will
+      require a higher ksmps. A well-tuned Linux system should be capable of
+      running even complex polyphonic synths with ksmps values as low as 4
+      or 8. If full duplex audio is required, <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> must be an integer
+      multiple of ksmps. Bearing this in mind, a rule of thumb might be to
+      only use powers of two for ksmps.
+    </p>
+      <p>
+      Some settings differ according to platform. See further below for information for each platform.
+    </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="UsingDesign.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="Using.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="RealTimeLinux.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">How Csound works </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Realtime I/O on Linux</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

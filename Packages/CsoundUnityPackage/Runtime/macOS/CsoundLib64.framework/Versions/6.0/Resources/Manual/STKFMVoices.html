@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>STKFMVoices</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="STKFlute.html" title="STKFlute" />
+    <link rel="next" href="STKHevyMetl.html" title="STKHevyMetl" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">STKFMVoices</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="STKFlute.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="STKHevyMetl.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="STKFMVoices"></a>
+      <div class="titlepage"></div>
+      <a id="IndexStkfmvoices" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">STKFMVoices</span>
+        </h2>
+        <p>STKFMVoices — 
+      STKFMVoices is a singing FM synthesis instrument. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276052447216"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in stkopd.</p>
+        <p>
+      STKFMVoices is a singing FM synthesis instrument. It has 3 carriers and a common modulator, also referred to as algorithm 6 of the TX81Z.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276052445472"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asignal <span class="command"><strong>STKFMVoices</strong></span> ifrequency, iamplitude, [kvowel, kv1[, kspec, kv2[, klfo, kv3[, klfodepth, kv4[, kadsr, kv5]]]]]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276052443296"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifrequency</em></span> -- Frequency of note played, in Hertz.
+    </p>
+        <p>
+      <span class="emphasis"><em>iamplitude</em></span> -- Amplitude of note played (range 0-1).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276052440848"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>kvowel</em></span> -- controller 2, vowel. Value range of kv1 is 0-127.</p>
+        <p><span class="emphasis"><em>kspec</em></span> -- controller 4, spectral tilt. Value range of kv2 is 0-127.</p>
+        <p><span class="emphasis"><em>klfo</em></span> -- controller 11, speed of low-frequency oscillator. Value range of kv3 is 0-127.</p>
+        <p><span class="emphasis"><em>klfodepth</em></span> -- controller 1, depth of low-frequency oscillator. Value range of kv4 is 0-127.</p>
+        <p><span class="emphasis"><em>kadsr</em></span> -- controller 128, ADSR 2 and 4 Target. Value range of kv5 is 0-127.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276052436384"></a>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+          The code for this opcode is taken directly from the FMVoices class in the Synthesis Toolkit in C++ by Perry R. Cook and Gary P. Scavone. More on the STK classes can be found here:  
+<a class="ulink" href="https://ccrma.stanford.edu/software/stk/classes.html" target="_top"><em class="citetitle">https://ccrma.stanford.edu/software/stk/classes.html</em></a>
+      </p>
+                <p>
+        <span class="emphasis"><em>kc1, kv1, kc2, kv2, kc3, kv3, kc4, kv4, kc5, kv5, kc6, kv6, kc7, kv7, kc8, kv8</em></span> -- Up to 8 optional k-rate controller pairs for the STK opcodes.
+      Each controller pair consists of a controller number (kc) followed by a controller value (kv). Both the controller numbers and the controller values are krate variables. However, during a performance, normally the controller numbers stay fixed while the corresponding controller values may change at any time.
+The order of the controller pair is arbitrary, as long as they are after <span class="emphasis"><em>iamplitude</em></span>. Also, it is not needed that all controller pairs are used.
+</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276052431984"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the STKFMVoices opcode. It uses the file <a class="ulink" href="examples/STKFMVoices.csd" target="_top"><em class="citetitle">STKFMVoices.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276052430192"></a>
+          <p class="title">
+            <strong>Example 951. Example of the STKFMVoices opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276419877824"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o STKFMVoices.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">frq</span>	<span class="o">=</span>	<span class="nb">p4</span>
+k<span class="n">v1</span>	<span class="nb">line</span>	<span class="nb">p5</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p6</span>					<span class="c1">;vowel</span>
+k<span class="n">v2</span>	<span class="nb">line</span>	<span class="nb">p7</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p8</span>					<span class="c1">;specral tilt</span>
+
+a<span class="n">sig</span>	S<span class="n">TKFMVoices</span> <span class="nb">cpspch</span><span class="p">(</span>i<span class="n">frq</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> k<span class="n">v1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> k<span class="n">v2</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">50</span>
+a<span class="n">sig</span>	<span class="o">=</span>	a<span class="n">sig</span> <span class="o">*</span> <span class="mi">4</span>					<span class="c1">;amplify</span>
+	<span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span> <span class="mf">5.00</span> <span class="mi">10</span> <span class="mi">120</span> <span class="mi">0</span> <span class="mi">0</span> 
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mf">8.00</span> <span class="mi">80</span> <span class="mi">82</span> <span class="mi">127</span> <span class="mi">0</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276052428416"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="STKBeeThree.html" title="STKBeeThree"><em class="citetitle">STKBeeThree</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276052426368"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Michael Gogins (after Perry Cook)</td>
+          </tr>
+          <tr>
+            <td>Irreducible Productions</td>
+          </tr>
+          <tr>
+            <td>New York, NY</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.11</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="STKFlute.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="STKHevyMetl.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">STKFlute </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> STKHevyMetl</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

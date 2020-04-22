@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vphaseseg</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vosim.html" title="vosim" />
+    <link rel="next" href="vport.html" title="vport" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vphaseseg</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vosim.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vport.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vphaseseg"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVphaseseg" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vphaseseg</span>
+        </h2>
+        <p>vphaseseg — 
+      Allows one-dimensional HVS (Hyper-Vectorial Synthesis).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276038300816"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>vphaseseg</em></span> allows one-dimensional HVS (Hyper-Vectorial Synthesis).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276038299184"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vphaseseg</strong></span> kphase, ioutab, ielems, itab1,idist1,itab2 \
+      [,idist2,itab3, ... ,idistN-1,itabN]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276038297168"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ioutab</em></span> - number of output table.
+    </p>
+        <p>
+      <span class="emphasis"><em>ielem</em></span> - number of elements to process
+    </p>
+        <p>
+      <span class="emphasis"><em>itab1,...,itabN</em></span> - breakpoint table numbers
+    </p>
+        <p>
+      <span class="emphasis"><em>idist1,...,idistN-1</em></span> -  distances between breakpoints in percentage values
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276038293040"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kphase</em></span> - phase pointer
+    </p>
+        <p>
+      <span class="emphasis"><em>vphaseseg</em></span> returns the coordinates of section points of an N-dimensional space path. The coordinates of section points are stored into an output table. The number of dimensions of the N-dimensional space is determined by the <span class="emphasis"><em>ielem</em></span> argument that is equal to N and can be set to any number. To define the path, user have to provide a set of points of the N-dimensional space, called break-points. Coordinates of each break-point must be contained by a different table. The number of coordinates to insert in each break-point table must obviously equal to <span class="emphasis"><em>ielem</em></span> argument. There can be any number of break-point tables filled by the user.
+    </p>
+        <p>
+      Hyper-Vectorial Synthesis actually deals with two kinds of spaces. The first space is the N-dimensional space in which the path is defined, this space is called time-variant parameter space (or SPACE A). The path belonging to this space is covered by moving a point into the second space that normally has a number of dimensions smaller than the first. Actually, the point in motion is the projection of corresponding point of the N-dimensional space (could also be considered a section of the path). The second space is called user-pointer-motion space (or SPACE B) and, in the case of <span class="emphasis"><em>vphaseseg</em></span> opcode, has only ONE DIMENSION. Space B is covered by means of <span class="emphasis"><em>kphase</em></span> argument (that is a sort of path pointer), and its range is 0 to 1. The output corresponding to current pointer value is stored in <span class="emphasis"><em>ioutab</em></span> table, whose data can be afterwards used to control any syntesis parameters.
+    </p>
+        <p>
+      In <span class="emphasis"><em>vphaseseg</em></span>, each break-point is separated from the other by a distance expressed in percentage, where all the path length is equal to the sum of all distances. So distances between breakpoints can be different, differently from kinds of HVS in which space B has more than one dimension, in these cases distance between break-points MUST be THE SAME for all intervals.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276038285248"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="hvs1.html" title="hvs1"><em class="citetitle">hvs1</em></a>,
+      <a class="link" href="hvs2.html" title="hvs2"><em class="citetitle">hvs2</em></a>,
+      <a class="link" href="hvs3.html" title="hvs3"><em class="citetitle">hvs3</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276038280784"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vosim.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vport.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vosim </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vport</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

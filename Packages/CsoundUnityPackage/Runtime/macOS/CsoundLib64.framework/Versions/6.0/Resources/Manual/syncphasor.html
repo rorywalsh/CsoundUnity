@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>syncphasor</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="syncloop.html" title="syncloop" />
+    <link rel="next" href="system.html" title="system" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">syncphasor</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="syncloop.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="system.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="syncphasor"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSyncPhasor" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">syncphasor</span>
+        </h2>
+        <p>syncphasor — 
+      Produces a normalized moving phase value with sync input and output.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049383968"></a>
+        <h2>Description</h2>
+        <p>
+      Produces a moving phase value between zero and one and an extra impulse output ("sync out") whenever its phase value crosses or is reset to zero. The phase can be reset at any time by an impulse on the "sync in" parameter.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049382560"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aphase, asyncout <span class="command"><strong>syncphasor</strong></span> xcps, asyncin, [, iphs]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049380448"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iphs</em></span> (optional) -- initial phase, expressed as a fraction of a cycle (0 to 1). A negative value will cause phase initialization to be skipped. The default value is zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049378704"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>aphase</em></span> -- the output phase value; always between 0 and 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>asyncout</em></span> -- the sync output has a value of 1.0 for one sample whenever the phase value crosses zero or whenever the sync input is non-zero.  It is zero at all other times.
+    </p>
+        <p>
+      <span class="emphasis"><em>asyncin</em></span> -- the sync input causes the phase to reset  to zero whenever <span class="emphasis"><em>asyncin</em></span> is non-zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>xcps</em></span> -- frequency of the phasor in cycles-per-second.  If <span class="emphasis"><em>xcps</em></span> is negative, the phase value will decrease from 1 to 0 instead of increasing.
+    </p>
+        <p>
+      An internal phase is successively accumulated in accordance with the <span class="emphasis"><em>xcps</em></span> frequency to produce a moving phase value, normalized to lie in the range 0 &lt;= phs &lt; 1.  When used as the index to a <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a> unit, this phase (multiplied by the desired function table length) will cause it to behave like an oscillator.
+    </p>
+        <p>
+      The phase of <span class="emphasis"><em>syncphasor</em></span> though can be synced to another phasor (or other signal) using the <span class="emphasis"><em>asyncin</em></span> parameter.  Any time that <span class="emphasis"><em>asyncin</em></span> is a non-zero value, the value of <span class="emphasis"><em>aphase</em></span> will be reset to zero.  <span class="emphasis"><em>syncphasor</em></span> also outputs its own "sync" signal that consists of a one-sample impulse whenever its phase crosses zero or is reset.  This makes it easy to chain together multiple <span class="emphasis"><em>syncphasor</em></span> opcodes to create an oscillator "hard sync" effect.    
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049368224"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the syncphasor opcode. It uses the file <a class="ulink" href="examples/syncphasor.csd" target="_top"><em class="citetitle">syncphasor.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276049366432"></a>
+          <p class="title">
+            <strong>Example 990. Example of the syncphasor opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276417351104"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o abs.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    <span class="c1">; Use two syncphasors - one is the "master",</span>
+    <span class="c1">; the other the "slave"</span>
+    
+    <span class="c1">; master's frequency determines pitch</span>
+    i<span class="n">mastercps</span>  <span class="o">=</span>           <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+    i<span class="n">maxamp</span>     <span class="o">=</span>           <span class="mi">10000</span>
+
+    <span class="c1">; the slave's frequency affects the timbre </span>
+    k<span class="n">slavecps</span>   <span class="nb">line</span>        i<span class="n">mastercps</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">mastercps</span> <span class="o">*</span> <span class="mi">3</span>
+    
+    <span class="c1">; the master "oscillator"</span>
+    <span class="c1">; the master has no sync input </span>
+    a<span class="n">nosync</span>     <span class="nb">init</span>        <span class="mf">0.0</span>
+    a<span class="n">m</span><span class="p">,</span> a<span class="n">sync</span>   <span class="nb">syncphasor</span>  i<span class="n">mastercps</span><span class="p">,</span> a<span class="n">nosync</span>
+    
+    <span class="c1">; the slave "oscillator"</span>
+    a<span class="n">out</span><span class="p">,</span> a<span class="n">s</span>    <span class="nb">syncphasor</span>  k<span class="n">slavecps</span><span class="p">,</span> a<span class="n">sync</span>
+    
+    a<span class="n">declick</span>    <span class="nb">linseg</span>      <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span>
+    
+    <span class="c1">; Output the slave's phase value which is a rising</span>
+    <span class="c1">; sawtooth wave.  This produces aliasing, but hey, this</span>
+    <span class="c1">; this is just an example ;)</span>
+    
+              <span class="nb">out</span>         a<span class="n">out</span> <span class="o">*</span> a<span class="n">declick</span> <span class="o">*</span> i<span class="n">maxamp</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>    <span class="mf">7.00</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.5</span>  <span class="mf">7.02</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.05</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.07</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.09</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span>    <span class="mf">7.06</span>
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is another example of the syncphasor opcode. It uses the file <a class="ulink" href="examples/syncphasor-CZresonance.csd" target="_top"><em class="citetitle">syncphasor-CZresonance.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276049361392"></a>
+          <p class="title">
+            <strong>Example 991. Another example of the syncphasor opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276422352352"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o syncphasor-CZresonance.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">; by Anthony Kozar. February 2008</span>
+<span class="c1">; http://www.anthonykozar.net/</span>
+
+<span class="c1">; Imitation of the Casio CZ-series synthesizer's "Resonance" waveforms</span>
+<span class="c1">; using a synced phasor to read a sinusoid table.  The jumps at the sync </span>
+<span class="c1">; points are smoothed by multiplying with a windowing function controlled</span>
+<span class="c1">; by the master phasor.</span>
+
+<span class="c1">; Based on information from the Wikipedia article on phase distortion:</span>
+<span class="c1">; http://en.wikipedia.org/wiki/Phase_distortion_synthesis</span>
+
+<span class="c1">; Sawtooth Resonance waveform. Smoothing function is just the inverted</span>
+<span class="c1">; master phasor.</span>
+
+<span class="c1">; The Wikipedia article shows an inverted cosine as the stored waveform,</span>
+<span class="c1">; which implies that it must be unipolar for the smoothing to work.</span>
+<span class="c1">; I have substituted a sine wave in the first phrase to keep the output</span>
+<span class="c1">; bipolar.  The second phrase demonstrates the much "rezzier" sound of the</span>
+<span class="c1">; bipolar cosine due to discontinuities.</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  i<span class="n">freq</span>      <span class="o">=</span>           <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+  i<span class="n">nitReson</span>  <span class="o">=</span>           <span class="nb">p5</span>
+  i<span class="n">table</span>     <span class="o">=</span>           <span class="nb">p6</span>
+  i<span class="n">maxamp</span>    <span class="o">=</span>           <span class="mi">10000</span>
+  a<span class="n">nosync</span>    <span class="nb">init</span>        <span class="mf">0.0</span>
+
+  k<span class="n">slavecps</span>       <span class="nb">line</span>        i<span class="n">freq</span> <span class="o">*</span> i<span class="n">nitReson</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">freq</span>
+  a<span class="n">master</span><span class="p">,</span> a<span class="n">sync</span>  <span class="nb">syncphasor</span>  i<span class="n">freq</span><span class="p">,</span> a<span class="n">nosync</span>		<span class="c1">; pair of phasors</span>
+  a<span class="n">slave</span><span class="p">,</span> a<span class="n">sync2</span>  <span class="nb">syncphasor</span>  k<span class="n">slavecps</span><span class="p">,</span> a<span class="n">sync</span>		<span class="c1">; slave synced to master</span>
+  a<span class="n">osc</span>            <span class="nb">tablei</span>      a<span class="n">slave</span><span class="p">,</span> i<span class="n">table</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; use slave phasor to read a (co)sine table</span>
+  a<span class="n">out</span>            <span class="o">=</span>           a<span class="n">osc</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> a<span class="n">master</span><span class="p">)</span>	<span class="c1">; inverted master smoothes jumps </span>
+  a<span class="n">declick</span>        <span class="nb">linseg</span>      <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span>
+
+                    <span class="nb">out</span>         a<span class="n">out</span> <span class="o">*</span> a<span class="n">declick</span> <span class="o">*</span> i<span class="n">maxamp</span>
+<span class="kd">endin</span>
+
+<span class="c1">; Triangle or Trapezoidal Resonance waveform. Uses a second table to change</span>
+<span class="c1">; the shape of the smoothing function.  (This is my best guess so far as to</span>
+<span class="c1">; how these worked). The cosine table works fine with the triangular smoothing</span>
+<span class="c1">; but we once again need to use a sine table with the trapezoidal smoothing.</span>
+
+<span class="c1">; (It might be interesting to be able to vary the "width" of the trapezoid.</span>
+<span class="c1">; This could be done with the pdhalf opcode).</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+  i<span class="n">freq</span>      <span class="o">=</span>           <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+  i<span class="n">nitReson</span>  <span class="o">=</span>           <span class="nb">p5</span>
+  i<span class="n">table</span>     <span class="o">=</span>           <span class="nb">p6</span>
+  i<span class="n">smoothtbl</span> <span class="o">=</span>           <span class="nb">p7</span>
+  i<span class="n">maxamp</span>    <span class="o">=</span>           <span class="mi">10000</span>
+  a<span class="n">nosync</span>    <span class="nb">init</span>        <span class="mf">0.0</span>
+
+  k<span class="n">slavecps</span>       <span class="nb">line</span>        i<span class="n">freq</span> <span class="o">*</span> i<span class="n">nitReson</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">freq</span>
+  a<span class="n">master</span><span class="p">,</span> a<span class="n">sync</span>  <span class="nb">syncphasor</span>  i<span class="n">freq</span><span class="p">,</span> a<span class="n">nosync</span>		<span class="c1">; pair of phasors</span>
+  a<span class="n">slave</span><span class="p">,</span> a<span class="n">sync2</span>  <span class="nb">syncphasor</span>  k<span class="n">slavecps</span><span class="p">,</span> a<span class="n">sync</span>		<span class="c1">; slave synced to master</span>
+  a<span class="n">osc</span>            <span class="nb">tablei</span>      a<span class="n">slave</span><span class="p">,</span> i<span class="n">table</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; use slave phasor to read a (co)sine table</span>
+  a<span class="n">smooth</span>         <span class="nb">tablei</span>      a<span class="n">master</span><span class="p">,</span> i<span class="n">smoothtbl</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; use master phasor to read smoothing table</span>
+  a<span class="n">out</span>            <span class="o">=</span>           a<span class="n">osc</span> <span class="o">*</span> a<span class="n">smooth</span>
+  a<span class="n">declick</span>        <span class="nb">linseg</span>      <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span>
+
+  <span class="nb">out</span>         a<span class="n">out</span> <span class="o">*</span> a<span class="n">declick</span> <span class="o">*</span> i<span class="n">maxamp</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16385</span> <span class="mi">10</span>  <span class="mi">1</span>
+<span class="nb">f</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">16385</span>  <span class="mi">9</span>  <span class="mi">1</span> <span class="mi">1</span> <span class="mi">270</span>			<span class="c1">; inverted cosine</span>
+<span class="nb">f</span><span class="mi">5</span> <span class="mi">0</span> <span class="mi">4097</span>   <span class="mi">7</span>  <span class="mf">0.0</span> <span class="mi">2048</span> <span class="mf">1.0</span> <span class="mi">2049</span> <span class="mf">0.0</span>	<span class="c1">; unipolar triangle</span>
+<span class="nb">f</span><span class="mi">6</span> <span class="mi">0</span> <span class="mi">4097</span>   <span class="mi">7</span>  <span class="mf">1.0</span> <span class="mi">2048</span> <span class="mf">1.0</span> <span class="mi">2049</span> <span class="mf">0.0</span>    <span class="c1">; "trapezoid"</span>
+
+<span class="c1">; Sawtooth resonance with a sine table</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>    <span class="mf">7.00</span>  <span class="mf">5.0</span>  <span class="mi">1</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mf">0.5</span>  <span class="mf">7.02</span>  <span class="mf">4.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.05</span>  <span class="mf">3.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.07</span>  <span class="mf">2.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.09</span>  <span class="mf">1.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mi">2</span>    <span class="mf">7.06</span>  <span class="mf">12.0</span>
+<span class="nb">f</span><span class="mi">0</span> <span class="mi">6</span>
+<span class="nb">s</span>
+
+<span class="c1">; Sawtooth resonance with a cosine table</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>    <span class="mf">7.00</span>  <span class="mf">5.0</span>  <span class="mi">3</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mf">0.5</span>  <span class="mf">7.02</span>  <span class="mf">4.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.05</span>  <span class="mf">3.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.07</span>  <span class="mf">2.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.09</span>  <span class="mf">1.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mi">2</span>    <span class="mf">7.06</span>  <span class="mf">12.0</span>
+<span class="nb">f</span><span class="mi">0</span> <span class="mi">6</span>
+<span class="nb">s</span>
+
+<span class="c1">; Triangle resonance with a cosine table</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span>    <span class="mf">7.00</span>  <span class="mf">5.0</span>  <span class="mi">3</span>  <span class="mi">5</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mf">0.5</span>  <span class="mf">7.02</span>  <span class="mf">4.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.05</span>  <span class="mf">3.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.07</span>  <span class="mf">2.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.09</span>  <span class="mf">1.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mi">2</span>    <span class="mf">7.06</span>  <span class="mf">12.0</span>
+<span class="nb">f</span><span class="mi">0</span> <span class="mi">6</span>
+<span class="nb">s</span>
+
+<span class="c1">; Trapezoidal resonance with a sine table</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span>    <span class="mf">7.00</span>  <span class="mf">5.0</span>  <span class="mi">1</span>  <span class="mi">6</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mf">0.5</span>  <span class="mf">7.02</span>  <span class="mf">4.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.05</span>  <span class="mf">3.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.07</span>  <span class="mf">2.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.09</span>  <span class="mf">1.0</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mi">2</span>    <span class="mf">7.06</span>  <span class="mf">12.0</span>
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049359696"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="phasor.html" title="phasor"><em class="citetitle">phasor</em></a>.
+    </p>
+        <p>
+      And the <a class="link" href="SiggenTableacc.html" title="Table Access"><em class="citetitle">Table Access</em></a> opcodes like: <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a>, <a class="link" href="tablei.html" title="tablei"><em class="citetitle">tablei</em></a>, <a class="link" href="table3.html" title="table3"><em class="citetitle">table3</em></a>  and <a class="link" href="tab.html" title="tab"><em class="citetitle">tab</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049352912"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Adapted from the <span class="emphasis"><em>phasor</em></span> opcode by Anthony Kozar</td>
+          </tr>
+          <tr>
+            <td>January 2008</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="syncloop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="system.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">syncloop </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> system</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

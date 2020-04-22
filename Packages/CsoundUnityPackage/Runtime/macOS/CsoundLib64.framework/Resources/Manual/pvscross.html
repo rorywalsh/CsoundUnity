@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvscross</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsceps.html" title="pvsceps" />
+    <link rel="next" href="pvsdemix.html" title="pvsdemix" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvscross</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsceps.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsdemix.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvscross"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvscross" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvscross</span>
+        </h2>
+        <p>pvscross — 
+      Performs cross-synthesis between two source fsigs.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065302512"></a>
+        <h2>Description</h2>
+        <p>
+      Performs cross-synthesis between two source fsigs.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065301280"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvscross</strong></span> fsrc, fdest, kamp1, kamp2</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065299184"></a>
+        <h2>Performance</h2>
+        <p>
+      The operation of this opcode is identical to that of <a class="link" href="pvcross.html" title="pvcross"><em class="citetitle">pvcross</em></a> (q.v.), except in using <span class="emphasis"><em>fsig</em></span>s rather than analysis files, and the absence of spectral envelope preservation. The amplitudes from <span class="emphasis"><em>fsrc</em></span> and <span class="emphasis"><em>fdest</em></span> (using scale factors <span class="emphasis"><em>kamp1</em></span> for <span class="emphasis"><em>fsrc</em></span> and <span class="emphasis"><em>kamp2</em></span> for <span class="emphasis"><em>fdest</em></span>) are applied to the frequencies of <span class="emphasis"><em>fsrc</em></span>. <span class="emphasis"><em>kamp1</em></span> and <span class="emphasis"><em>kamp2</em></span> must not exceed the range 0 to 1.
+    </p>
+        <p>
+      With this opcode, cross-synthesis can be performed on real-time audio input, by using <a class="link" href="pvsanal.html" title="pvsanal"><em class="citetitle">pvsanal</em></a> to generate <span class="emphasis"><em>fsrc</em></span> and <span class="emphasis"><em>fdest</em></span>. These must have the same format.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        It is unsafe to use the same f-variable for both input and output of pvs opcodes. Using the same one might lead to undefined behavior on some opcodes. Use a different one on the left and right sides of the opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065289504"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the use of the <span class="emphasis"><em>pvscross</em></span> opcode. It uses the file <a class="ulink" href="examples/pvscross.csd" target="_top"><em class="citetitle">pvscross.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276065287312"></a>
+          <p class="title">
+            <strong>Example 770. Example of the <span class="emphasis"><em>pvscross</em></span> opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276432585248"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">;; example written by joachim heintz 2009</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  i<span class="n">permut</span> <span class="o">=</span> <span class="nb">p4</span> <span class="c1">; 1 = change order of soundfiles</span>
+  i<span class="n">fftsize</span> <span class="o">=</span> <span class="mi">1024</span>
+  i<span class="n">overlap</span> <span class="o">=</span> i<span class="n">fftsize</span> <span class="o">/</span> <span class="mi">4</span>
+  i<span class="n">winsize</span> <span class="o">=</span> i<span class="n">fftsize</span>
+  i<span class="n">winshape</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">; von-Hann window</span>
+  S<span class="n">file1</span> <span class="o">=</span> <span class="s">"fox.wav"</span>
+  S<span class="n">file2</span> <span class="o">=</span> <span class="s">"wave.wav"</span>
+  a<span class="n">in1</span> <span class="o">=</span> <span class="nb">soundin</span><span class="p">:</span><span class="nb">a</span><span class="p">(</span>S<span class="n">file1</span><span class="p">)</span>
+  a<span class="n">in2</span> <span class="o">=</span> <span class="nb">soundin</span><span class="p">:</span><span class="nb">a</span><span class="p">(</span>S<span class="n">file2</span><span class="p">)</span>
+  <span class="n">fftin1</span> <span class="o">=</span> <span class="nb">pvsanal</span><span class="p">(</span>a<span class="n">in1</span><span class="p">,</span> i<span class="n">fftsize</span><span class="p">,</span> i<span class="n">overlap</span><span class="p">,</span> i<span class="n">winsize</span><span class="p">,</span> i<span class="n">winshape</span><span class="p">)</span> <span class="c1">; fft-analysis of file 1</span>
+  <span class="n">fftin2</span> <span class="o">=</span> <span class="nb">pvsanal</span><span class="p">(</span>a<span class="n">in2</span><span class="p">,</span> i<span class="n">fftsize</span><span class="p">,</span> i<span class="n">overlap</span><span class="p">,</span> i<span class="n">winsize</span><span class="p">,</span> i<span class="n">winshape</span><span class="p">)</span> <span class="c1">; fft-analysis of file 2</span>
+  k<span class="n">trans</span> <span class="o">=</span> <span class="nb">linseg</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">; linear transition</span>
+  <span class="k">if</span> i<span class="n">permut</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">then</span>
+    <span class="n">fcross</span> <span class="o">=</span> <span class="nb">pvscross</span><span class="p">(</span><span class="n">fftin2</span><span class="p">,</span> <span class="n">fftin1</span><span class="p">,</span> k<span class="n">trans</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> k<span class="n">trans</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="n">fcross</span> <span class="o">=</span> <span class="nb">pvscross</span><span class="p">(</span><span class="n">fftin1</span><span class="p">,</span> <span class="n">fftin2</span><span class="p">,</span> k<span class="n">trans</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> k<span class="n">trans</span><span class="p">)</span>
+  <span class="k">endif</span>
+  a<span class="n">out</span> <span class="o">=</span> <span class="nb">pvsynth</span><span class="p">(</span><span class="n">fcross</span><span class="p">)</span>
+  <span class="nb">out</span><span class="p">(</span>a<span class="n">out</span><span class="p">)</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.757</span> <span class="mi">0</span> <span class="c1">; frequencies from fox.wav, amplitudes moving from wave to fox</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mf">2.757</span> <span class="mi">1</span> <span class="c1">; frequencies from wav.wav, amplitudes moving from fox to wave</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065282928"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvsanal.html" title="pvsanal"><em class="citetitle">pvsanal</em></a>,
+      <a class="link" href="pvsynth.html" title="pvsynth"><em class="citetitle">pvsynth</em></a>,
+      <a class="link" href="pvsadsyn.html" title="pvsadsyn"><em class="citetitle">pvsadsyn</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065279136"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Dobson</td>
+          </tr>
+          <tr>
+            <td>August 2001 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>November 2003. Thanks to Kanata Motohashi, fixed the link to the <span class="emphasis"><em>pvcross</em></span> opcode.</p>
+        <p>New in version 4.13</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsceps.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsdemix.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsceps </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsdemix</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

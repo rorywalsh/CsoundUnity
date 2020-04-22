@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN53</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN52.html" title="GEN52" />
+    <link rel="next" href="GENtanh.html" title="GENtanh" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN53</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN52.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GENtanh.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN53"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN53" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN53</span>
+        </h2>
+        <p>GEN53 — 
+      Creates a linear-phase or minimum-phase impulse response table
+      from a source table containing a frequency response or an
+      impulse response.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990364992"></a>
+        <h2>Description</h2>
+        <p>
+      GEN53 creates an impulse response function table with either a
+      linear-phase or a minimum-phase characteristic. The source for
+      this can either be a frequency response or an impulse response,
+      stored in an existing table. Optionally, another function table can be used to
+      window the input and/or the output of the process.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990363456"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 53 fsrc
+    [mode fwin]</pre>
+        <p>
+    fsrc - source function table. If this is an impulse response, the
+    size must match the created function table size. If a frequency
+    response is used, then the created function size needs to be twice
+    the size of this source. Power-of-two is required.
+    </p>
+        <p>
+	mode - optional, the operation mode, a sum of
+	(a) input, frequency response (0) or impulse respone (1); (b)
+	output, linear phase (0) or minimum-phase (2); (c) windowing,
+	none (0), input (4) and/or output (8). The default mode (0) is
+	frequency response input, linear-phase output, no windowing.
+      </p>
+        <p>
+      fwin - window function table, power-of-two size is required, but
+      does not need to match the created function table size.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990359616"></a>
+        <h2>Example</h2>
+        <p>
+      Here is a complete example of the GEN53 generator. It uses the file <a class="ulink" href="examples/gen53.csd" target="_top"><em class="citetitle">gen53.csd</em></a>.
+           </p>
+        <div class="example">
+          <a id="idm275990357824"></a>
+          <p class="title">
+            <strong>Example 1234. Example of the GEN53 generator.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276394920448"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-o dac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">1</span> <span class="nb">diskin</span> <span class="s">"fox.wav"</span>
+a<span class="n">2</span> <span class="nb">ftconv</span> a<span class="n">1</span><span class="p">,</span> <span class="nb">p5</span><span class="p">,</span> <span class="mi">256</span>
+   <span class="nb">out</span> a<span class="n">2</span><span class="o">*</span><span class="nb">p4</span>
+   
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; impulse response</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">131072</span> <span class="mi">1</span> <span class="s">"ir.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="c1">; minimum-phase version</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">131072</span> <span class="mi">53</span> <span class="mi">1</span> <span class="mi">3</span>
+
+<span class="c1">; Hann window</span>
+<span class="nb">f</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">1024</span>  <span class="mi">20</span>  <span class="mi">1</span> <span class="mi">1</span>
+<span class="c1">; low-pass frequency response</span>
+<span class="nb">f</span><span class="mi">4</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">7</span> <span class="mi">0</span> <span class="mi">100</span> <span class="mi">0</span> <span class="mi">24</span> <span class="mi">1</span> <span class="mi">900</span> <span class="mi">1</span>
+<span class="c1">; low-pass linear-phase IR</span>
+<span class="nb">f</span><span class="mi">5</span> <span class="mi">0</span> <span class="mi">2048</span> <span class="mi">53</span> <span class="mi">4</span> <span class="mi">4</span> <span class="mi">3</span> 
+
+<span class="c1">;        scale  IR</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">3</span> <span class="mf">0.25</span>   <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="o">+</span>  <span class="mi">3</span> <span class="mi">1</span>      <span class="mi">5</span> 
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />    
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990353840"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN52.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GENtanh.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN52 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GENtanh</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

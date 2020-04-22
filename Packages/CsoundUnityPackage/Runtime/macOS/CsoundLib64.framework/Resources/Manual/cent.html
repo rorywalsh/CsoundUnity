@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>cent</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="cell.html" title="cell" />
+    <link rel="next" href="centroid.html" title="centroid" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">cent</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cell.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="centroid.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="cent"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCent" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">cent</span>
+        </h2>
+        <p>cent — 
+      Calculates a factor to raise/lower a frequency by a given amount of cents.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122079504"></a>
+        <h2>Description</h2>
+        <p>
+      Calculates a factor to raise/lower a frequency by a given amount of cents.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122078144"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>cent</strong></span>(x) </pre>
+        <p>
+      This function works at a-rate, i-rate, and k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122075664"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>x</em></span> -- a value expressed in cents.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122074016"></a>
+        <h2>Performance</h2>
+        <p>
+      The value returned by the <span class="emphasis"><em>cent</em></span> function is a factor. You can multiply a frequency by this factor to raise/lower it by the given amount of cents.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122072144"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the cent opcode. It uses the file <a class="ulink" href="examples/cent.csd" target="_top"><em class="citetitle">cent.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276122070352"></a>
+          <p class="title">
+            <strong>Example 115. Example of the cent opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276489714224"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o cent.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; original pitch</span>
+  
+i<span class="n">root</span> <span class="o">=</span> <span class="mi">440</span>	<span class="c1">; root note = A (440 Hz)</span>
+
+<span class="nb">print</span> i<span class="n">root</span>	<span class="c1">;print out</span>
+
+a<span class="n">sig</span> <span class="nb">oscili</span> <span class="mf">0.6</span><span class="p">,</span> i<span class="n">root</span><span class="p">,</span> <span class="mi">1</span> 
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+  
+i<span class="n">root</span>   <span class="o">=</span> <span class="mi">440</span>	<span class="c1">; root note = A (440 Hz)</span>
+i<span class="n">cents</span>  <span class="o">=</span> <span class="nb">p4</span>	<span class="c1">; change root note by 300 and 1200 cents</span>
+
+i<span class="n">factor</span> <span class="o">=</span> <span class="nb">cent</span><span class="p">(</span>i<span class="n">cents</span><span class="p">)</span> <span class="c1">; calculate new note</span>
+i<span class="n">new</span>    <span class="o">=</span> i<span class="n">root</span> <span class="o">*</span> i<span class="n">factor</span>
+
+<span class="nb">print</span> i<span class="n">root</span>	<span class="c1">; Print all</span>
+<span class="nb">print</span> i<span class="n">factor</span>
+<span class="nb">print</span> i<span class="n">new</span>
+
+a<span class="n">sig</span> <span class="nb">oscili</span> <span class="mf">0.6</span><span class="p">,</span> i<span class="n">new</span><span class="p">,</span> <span class="mi">1</span> 
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine wave</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">32768</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">2</span>  	<span class="c1">;no change</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mf">2.5</span> <span class="mi">2</span> <span class="mi">300</span>	<span class="c1">;note = C above A</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">5</span>  <span class="mi">2</span> <span class="mi">1200</span>	<span class="c1">;1 octave higher </span>
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like:
+      </p>
+        <pre class="screen">
+instr 1:  iroot = 440.000
+
+instr 2:  iroot = 440.000
+instr 2:  ifactor = 1.189
+instr 2:  inew = 523.251
+
+instr 2:  iroot = 440.000
+instr 2:  ifactor = 2.000
+instr 2:  inew = 880.000</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122065264"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="db.html" title="db"><em class="citetitle">db</em></a>,
+      <a class="link" href="octave.html" title="octave"><em class="citetitle">octave</em></a>,
+      <a class="link" href="semitone.html" title="semitone"><em class="citetitle">semitone</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122061456"></a>
+        <p>New in version 4.16</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cell.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="centroid.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cell </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> centroid</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

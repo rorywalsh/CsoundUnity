@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>poisson</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pluck.html" title="pluck" />
+    <link rel="next" href="pol2rect.html" title="pol2rect" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">poisson</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pluck.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pol2rect.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="poisson"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPoissonXClass" class="indexterm"></a>
+      <a id="IndexPoisson" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">poisson</span>
+        </h2>
+        <p>poisson — 
+      Poisson distribution random number generator (positive values only).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073325808"></a>
+        <h2>Description</h2>
+        <p>
+      Poisson distribution random number generator (positive values only). This is an x-class noise generator.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073324512"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>poisson</strong></span> klambda</pre>
+        <pre class="synopsis">ires <span class="command"><strong>poisson</strong></span> klambda</pre>
+        <pre class="synopsis">kres <span class="command"><strong>poisson</strong></span> klambda</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073319840"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ares, kres, ires</em></span> - number of events occuring (always an integer).
+    </p>
+        <p>
+      <span class="emphasis"><em>klambda</em></span> - the expected number of occurrences that occur during the rate interval.
+    </p>
+        <h4><a id="idm276073317456"></a>Adapted from Wikipedia:</h4>
+        <p>
+      In probability theory and statistics, the Poisson distribution is a discrete probability distribution. It expresses the probability of a number of events occurring in a fixed period of time if these events occur with a known average rate, and are independent of the time since the last event.
+    </p>
+        <p>
+      The Poisson distribution describing the probability that there are exactly <span class="emphasis"><em>k</em></span> occurrences (<span class="emphasis"><em>k</em></span> being a non-negative integer, k = 0, 1, 2, ...) is:
+      </p>
+        <div class="mediaobject">
+          <img src="images/poisson_equation.png" alt="[The Poisson distribution equation.]" />
+        </div>
+        <p>
+      where:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">λ is a positive real number, equal to the expected number of occurrences that occur during the given interval. For instance, if the events occur on average every 4 minutes, and you are interested in the number of events occurring in a 10 minute interval, you would use as model a Poisson distribution with λ = 10/4 = 2.5. This parameter is called <span class="emphasis"><em>klambda</em></span> on the <span class="emphasis"><em>poisson</em></span> opcodes.</li>
+            <li class="listitem"><span class="emphasis"><em>k</em></span> refers to the number of i- , k- or a- periods elapsed.</li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      The Poisson distribution arises in connection with Poisson processes. It applies to various phenomena of discrete nature (that is, those that may happen 0, 1, 2, 3, ... times during a given period of time or in a given area) whenever the probability of the phenomenon happening is constant in time or space. Examples of events that can be modelled as Poisson distributions include:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">The number of cars that pass through a certain point on a road (sufficiently distant from traffic lights) during a given period of time.</li>
+            <li class="listitem">The number of spelling mistakes one makes while typing a single page.</li>
+            <li class="listitem">The number of phone calls at a call center per minute.</li>
+            <li class="listitem">The number of times a web server is accessed per minute.</li>
+            <li class="listitem">The number of roadkill (animals killed) found per unit length of road.</li>
+            <li class="listitem">The number of mutations in a given stretch of DNA after a certain amount of radiation.</li>
+            <li class="listitem">The number of unstable nuclei that decayed within a given period of time in a piece of radioactive substance. The radioactivity of the substance will weaken with time, so the total time interval used in the model should be significantly less than the mean lifetime of the substance.</li>
+            <li class="listitem">The number of pine trees per unit area of mixed forest.</li>
+            <li class="listitem">The number of stars in a given volume of space.</li>
+            <li class="listitem">The distribution of visual receptor cells in the retina of the human eye.</li>
+            <li class="listitem">The number of viruses that can infect a cell in cell culture.</li>
+          </ul>
+        </div>
+        <p>
+      </p>
+        <div class="mediaobject">
+          <img src="images/Poisson_distribution_PMF.png" alt="[A diagram showing the Poisson distribution.]" />
+          <div class="caption">
+            <p>A diagram showing the Poisson distribution.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+        <p>
+      For more detailed explanation of these distributions, see:
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>C. Dodge - T.A. Jerse 1985. Computer music. Schirmer books. pp.265 - 286</p>
+            </li>
+            <li class="listitem">
+              <p>D. Lorrain. A panoply of stochastic cannons. In C. Roads, ed. 1989. Music machine . Cambridge, Massachusetts: MIT press, pp. 351 - 379.</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073295360"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the poisson opcode. It uses the file <a class="ulink" href="examples/poisson.csd" target="_top"><em class="citetitle">poisson.csd</em></a>. It is written for *NIX systems, and will generate errors on Windows.
+
+      </p>
+        <div class="example">
+          <a id="idm276073293504"></a>
+          <p class="title">
+            <strong>Example 719. Example of the poisson opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276436761280"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o poisson.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">441</span>  <span class="c1">;ksmps set deliberately high to have few k-periods per second</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Generates a random number in a poisson distribution.</span>
+  <span class="c1">; klambda = 1</span>
+
+  i<span class="n">1</span> <span class="nb">poisson</span> <span class="mi">1</span>
+
+  <span class="nb">print</span> i<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+k<span class="n">res</span> <span class="nb">poisson</span> <span class="nb">p4</span>
+<span class="nb">printk</span> <span class="p">(</span><span class="vg">ksmps</span><span class="o">/</span><span class="vg">sr</span><span class="p">),</span>k<span class="n">res</span> <span class="c1">;prints every k-period</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for one second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mf">0.2</span> <span class="mf">0.5</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mf">0.2</span> <span class="mi">4</span>   <span class="c1">;average 4 events per k-period</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mf">0.2</span> <span class="mi">20</span>  <span class="c1">;average 20 events per k-period</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073289520"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="seed.html" title="seed"><em class="citetitle">seed</em></a>,
+      <a class="link" href="betarand.html" title="betarand"><em class="citetitle">betarand</em></a>,
+      <a class="link" href="bexprnd.html" title="bexprnd"><em class="citetitle">bexprnd</em></a>,
+      <a class="link" href="cauchy.html" title="cauchy"><em class="citetitle">cauchy</em></a>,
+      <a class="link" href="exprand.html" title="exprand"><em class="citetitle">exprand</em></a>,
+      <a class="link" href="gauss.html" title="gauss"><em class="citetitle">gauss</em></a>,
+      <a class="link" href="linrand.html" title="linrand"><em class="citetitle">linrand</em></a>,
+      <a class="link" href="pcauchy.html" title="pcauchy"><em class="citetitle">pcauchy</em></a>,
+      <a class="link" href="trirand.html" title="trirand"><em class="citetitle">trirand</em></a>,
+      <a class="link" href="unirand.html" title="unirand"><em class="citetitle">unirand</em></a>,
+      <a class="link" href="weibull.html" title="weibull"><em class="citetitle">weibull</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073278688"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge</td>
+          </tr>
+          <tr>
+            <td>1995</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pluck.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pol2rect.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pluck </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pol2rect</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

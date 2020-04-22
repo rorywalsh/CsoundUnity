@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lorenz</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="loopxseg.html" title="loopxseg" />
+    <link rel="next" href="lorisread.html" title="lorisread" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lorenz</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="loopxseg.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lorisread.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lorenz"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLorenz" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lorenz</span>
+        </h2>
+        <p>lorenz — 
+      Implements the Lorenz system of equations.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085171408"></a>
+        <h2>Description</h2>
+        <p>
+       Implements the Lorenz system of equations.  The Lorenz system is a chaotic-dynamic system which was originally used to simulate the motion of a particle in convection currents and simplified weather systems. Small differences in initial conditions rapidly lead to diverging values. This is sometimes expressed as the butterfly effect. If a butterfly flaps its wings in Australia, it will have an effect on the weather in Alaska. This system is one of the milestones in the development of chaos theory. It is useful as a chaotic audio source or as a low frequency modulation source.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085169632"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ax, ay, az <span class="command"><strong>lorenz</strong></span> ksv, krv, kbv, kh, ix, iy, iz, iskip [, iskipinit]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085167504"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ix</em></span>, <span class="emphasis"><em>iy</em></span>, <span class="emphasis"><em>iz</em></span> -- the initial coordinates of the particle.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> -- used to skip generated values. If <span class="emphasis"><em>iskip</em></span> is set to 5, only every fifth value generated is output. This is useful in generating higher pitched tones.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskipinit</em></span> (optional, default=0) -- if non zero
+    skip the initialisation of the filter. (New in Csound version
+    4.23f13 and 5.0)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085162832"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ksv</em></span> -- the Prandtl number or sigma
+    </p>
+        <p>
+      <span class="emphasis"><em>krv</em></span> -- the Rayleigh number
+    </p>
+        <p>
+      <span class="emphasis"><em>kbv</em></span> -- the ratio of the length and width of the box in which the convection currents are generated
+    </p>
+        <p>
+      <span class="emphasis"><em>kh</em></span> -- the step size used in approximating the differential equation. This can be used to control the pitch of the systems. Values of .1-.001 are typical.
+    </p>
+        <p>
+      The equations are approximated as follows:
+      </p>
+        <div class="literallayout">
+          <p><br />
+x = x + h*(s*(y - x))<br />
+y = y + h*(-x*z + r*x - y)<br />
+z = z + h*(x*y - b*z)<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      The historical values of these parameters are:
+      </p>
+        <div class="literallayout">
+          <p><br />
+ks = 10<br />
+kr = 28<br />
+kb = 8/3<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>This algorithm uses internal non linear feedback loops which causes audio result to depend on the orchestra
+      sampling rate. For example, if you develop a project with <span class="emphasis"><em>sr</em></span>=48000Hz and if you want to produce
+      an audio CD from it, you should record a file with <span class="emphasis"><em>sr</em></span>=48000Hz and then downsample the file to 44100Hz
+      using the <a class="link" href="src_conv.html" title="src_conv"><em class="citetitle">src_conv</em></a> utility.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085152976"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the lorenz opcode. It uses the file <a class="ulink" href="examples/lorenz.csd" target="_top"><em class="citetitle">lorenz.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276085151184"></a>
+          <p class="title">
+            <strong>Example 503. Example of the lorenz opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276454906864"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o lorenz.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; Instrument #1 - a lorenz system in 3D space.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Create a basic tone.</span>
+  k<span class="n">amp</span> <span class="nb">init</span> <span class="mi">25000</span>
+  k<span class="n">cps</span> <span class="nb">init</span> <span class="mi">1000</span>
+  i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+  a<span class="n">snd</span> <span class="nb">oscil</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> i<span class="n">fn</span>
+
+  <span class="c1">; Figure out its X, Y, Z coordinates.</span>
+  k<span class="n">sv</span> <span class="nb">init</span> <span class="mi">10</span>
+  k<span class="n">rv</span> <span class="nb">init</span> <span class="mi">28</span>
+  k<span class="n">bv</span> <span class="nb">init</span> <span class="mf">2.667</span>
+  k<span class="n">h</span> <span class="nb">init</span> <span class="mf">0.0003</span>
+  i<span class="n">x</span> <span class="o">=</span> <span class="mf">0.6</span>
+  i<span class="n">y</span> <span class="o">=</span> <span class="mf">0.6</span>
+  i<span class="n">z</span> <span class="o">=</span> <span class="mf">0.6</span>
+  i<span class="n">skip</span> <span class="o">=</span> <span class="mi">1</span>
+  a<span class="n">x1</span><span class="p">,</span> a<span class="n">y1</span><span class="p">,</span> a<span class="n">z1</span> <span class="nb">lorenz</span> k<span class="n">sv</span><span class="p">,</span> k<span class="n">rv</span><span class="p">,</span> k<span class="n">bv</span><span class="p">,</span> k<span class="n">h</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span><span class="p">,</span> i<span class="n">z</span><span class="p">,</span> i<span class="n">skip</span>
+
+  <span class="c1">; Place the basic tone within 3D space.</span>
+  k<span class="n">x</span> <span class="nb">downsamp</span> a<span class="n">x1</span>
+  k<span class="n">y</span> <span class="nb">downsamp</span> a<span class="n">y1</span>
+  k<span class="n">z</span> <span class="nb">downsamp</span> a<span class="n">z1</span>
+  i<span class="n">dist</span> <span class="o">=</span> <span class="mi">1</span>
+  i<span class="n">ft</span> <span class="o">=</span> <span class="mi">0</span>
+  i<span class="n">mode</span> <span class="o">=</span> <span class="mi">1</span>
+  i<span class="n">mdel</span> <span class="o">=</span> <span class="mf">1.018853416</span>
+  i<span class="n">ovr</span> <span class="o">=</span> <span class="mi">2</span>
+  a<span class="n">w2</span><span class="p">,</span> a<span class="n">x2</span><span class="p">,</span> a<span class="n">y2</span><span class="p">,</span> a<span class="n">z2</span> <span class="nb">spat3d</span> a<span class="n">snd</span><span class="p">,</span> k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span><span class="p">,</span> k<span class="n">z</span><span class="p">,</span> i<span class="n">dist</span><span class="p">,</span> \
+                            i<span class="n">ft</span><span class="p">,</span> i<span class="n">mode</span><span class="p">,</span> i<span class="n">mdel</span><span class="p">,</span> i<span class="n">ovr</span>
+
+  <span class="c1">; Convert the 3D sound to stereo.</span>
+  a<span class="n">left</span> <span class="o">=</span> a<span class="n">w2</span> <span class="o">+</span> a<span class="n">y2</span>
+  a<span class="n">right</span> <span class="o">=</span> a<span class="n">w2</span> <span class="o">-</span> a<span class="n">y2</span>
+
+  <span class="nb">outs</span> a<span class="n">left</span><span class="p">,</span> a<span class="n">right</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1 a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Play Instrument #1 for 5 seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085147200"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Hans Mikelson</td>
+          </tr>
+          <tr>
+            <td>February 1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.53</p>
+        <p>Note added by François Pinot, August 2009</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="loopxseg.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lorisread.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">loopxseg </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> lorisread</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

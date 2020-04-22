@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>How Csound works</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="Using.html" title="Using Csound" />
+    <link rel="prev" href="Using.html" title="Using Csound" />
+    <link rel="next" href="UsingRealTime.html" title="Real-Time Audio" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">How Csound works</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="Using.html">Prev</a> </td>
+          <th width="60%" align="center">Using Csound</th>
+          <td width="20%" align="right"> <a accesskey="n" href="UsingRealTime.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="UsingDesign"></a>How Csound works</h2></div></div></div>
+   Csound processes and generates output using "unit generators" (ugens) called <span class="emphasis"><em>opcodes</em></span>. These opcodes are used to define <a class="link" href="OrchIblock.html" title="Instrument and Opcode Block Statements"><em class="citetitle">instruments</em></a> in the <a class="link" href="OrchTop.html" title="Syntax of the Orchestra"><em class="citetitle">orchestra</em></a>. When you run Csound, the engine loads the base Opcodes, and the opcodes contained in separate loadable "opcode libraries" . It then interprets the orchestra (through the orchestra reader). The engine sets up an instrument processing chain, which then receives events from the score or in real-time. The processing chain uses the input/output modules to generate output. There are modules that can write to file, or generate <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">real-time audio output</em></a>.
+      <div class="mediaobject"><img src="images/engine.png" alt="[The Csound5 Modular structure.]" /><div class="caption"><p>The Csound Modular structure.</p></div></div><h3><a id="idm276137931600"></a>Csound's processing buffers</h3><p>
+    Csound processes audio in sample blocks called buffers. There are three separate buffer layers:
+    </p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p><span class="emphasis"><em>spout</em></span> = Csound's innermost software buffer, contains <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a> sample frames. Csound processes real-time control events once every <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a> sample frames.</p></li><li class="listitem"><p><span class="emphasis"><em>-b</em></span> = Csound's intermediate software buffer (the "software" buffer), in sample frames. Should be (but does not need to be) an integral multiple of <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a> (can equal ksmps too). Once per ksmps sample frames, Csound copies <span class="emphasis"><em>spout</em></span> to the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> buffer. Once per <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> sample frames, Csound copies the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> buffer to the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a> "hardware" buffer.</p></li><li class="listitem"><p><span class="emphasis"><em>-B</em></span> = The sound card's internal buffer (the "hardware" buffer), in sample frames. Should be (and may need to be) an integral multiple of  <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a>. If Csound misses delivering a <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> one time, the extra <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> sample frames in <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-b</em></a> are still there for the sound card to keep playing while Csound catches up. But they can be the same size if you're willing to bet Csound can always keep up with the sound card.</p></li></ol></div><p>
+  </p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="AmplitudeCsound"></a>Amplitude values in Csound</h3></div></div></div><p>
+      Amplitude values in Csound are always relative to a "<a class="link" href="Zerodbfs.html" title="0dbfs"><em class="citetitle">0dbfs</em></a>" value representing the peak available amplitude before clipping, in either an AD/DA codec, or in a soundfile with a defined range (which both WAVE and AIFF are). In the original Csound, this value was always 32767, corresponding to the bipolar range of a 16bit soundfile or 16bit AD/DA codec, Csound's only possible output back then. This remains the <span class="emphasis"><em>default</em></span> peak amplitude for Csound, for backward compatibility and you will find some of this manual's examples still use this value (hence you find large amplitude values like 10000).
+    </p><p>
+      The <a class="link" href="Zerodbfs.html" title="0dbfs"><em class="citetitle">0dbfs</em></a> value enables Csound to produce appropriately scaled values to whatever output format is being used, whether 24bit integer, 32bit floats, or even 32bit integers. Put another way, the literal amplitude values you write in a Csound instrument only match those written <span class="emphasis"><em>literally</em></span> to the file if the <a class="link" href="Zerodbfs.html" title="0dbfs"><em class="citetitle">0dbfs</em></a> value in Csound corresponds exactly to that of the output sample format. The consequence of this approach is that you can write a piece with a certain amplitude and have it render correctly and identically (setting aside of course the better dynamic range of the high-res formats) whether written to an integer or floats file, or rendered in real-time.
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png" /></td><th align="left">Note</th></tr><tr><td align="left" valign="top"><p>The one exception to this is if you choose to write to a "raw" (headerless) file format. In such cases the internal <a class="link" href="Zerodbfs.html" title="0dbfs"><em class="citetitle">0dbfs</em></a> value is meaningless, and whatever values you use are written unmodified. This does enable arbitrary data to be generated or processed by Csound. It is a relatively exotic thing to do, but some users need it.</p></td></tr></table></div><p>
+      You can choose to redefine the <a class="link" href="Zerodbfs.html" title="0dbfs"><em class="citetitle">0dbfs</em></a> value in the orchestra header, purely for your own convenience or preference. Many people will choose 1.0 (the standard for SAOL, other software like Pure Data, and for many plugin standards such as VST,  LADSPA, CoreAudio AudioUnits, etc), but any value is possible.
+    </p><p>
+      The common factor in defining amplitudes is the decibel (dB) scale, with 0dB<sub>FS</sub> always understood as digital peak; hence "0dbfs" means "0dB Full-Scale value". This measure is different to actual amplitude values, since amplitude values are a linear scale which show the actual oscillation around 0, so they can be positive or negative. Decibel values are an absolute logarithmic scale, but can be useful for most opcodes as well. You can convert amplitude to and from decibels using the <a class="link" href="ampdb.html" title="ampdb"><em class="citetitle">ampdb</em></a>,<a class="link" href="ampdbfs.html" title="ampdbfs"><em class="citetitle">ampdbfs</em></a>, <a class="link" href="dbamp.html" title="dbamp"><em class="citetitle">dbamp</em></a> and <a class="link" href="dbfsamp.html" title="dbfsamp"><em class="citetitle">dbfsamp</em></a> functions. This way, Csound enables the programmer to express all amplitudes in dB - lower amplitudes will then be represented by negative dB values. This reflects industry practice (e.g. in level meters in mixers, etc).</p><p>
+      For example the same dB level of -6dB (half the amplitude) or -20dB are actually a different linear amplitude according to 0dbfs like this:
+    </p><div class="table"><a id="idm276137899392"></a><p class="title"><strong>Table 2. dB<sub>FS</sub> in relation to amplitude</strong></p><div class="table-contents"><table class="table" summary="dBFS in relation to amplitude" border="1"><colgroup><col /><col /><col /><col /></colgroup><thead><tr><th>dB<sub>FS</sub></th><th>0dbfs = 32767 (default)</th><th>0dbfs = 1</th><th>0dbfs = 1000 (unusual)</th></tr></thead><tbody><tr><td>0 dB</td><td>32767</td><td>1</td><td>1000</td></tr><tr><td>-6 dB</td><td>16384</td><td>0.5</td><td>500</td></tr><tr><td>-20 dB</td><td>3276.7</td><td>0.1</td><td>100</td></tr></tbody></table></div></div><p><br class="table-break" />
+  </p><p>
+      Some Csound users might therefore be minded to express all levels in dB<sub>FS</sub>, and obviate any confusion or ambiguity of level that may otherwise arise when using explicit amplitude values. The decibel scale reflects the response of the ear pretty closely, and that when you want to express a really quiet level, it might be easier and more expressive to write "-46dB" than "0.005" or "163.8".
+    </p><p>
+      The reason for using 0dbfs is very simple: digital peak equates to maximum level regardless of sample resolution. If you then define a signal at -110dB  you will lose it if rendering to a 16bit file, but retain it (audibly or not) if rendering to 24bit or better.  In other words, there is a fixed ceiling, but a moveable floor - you can define sounds as quietly as you like (e.g. envelope tails), in a predictable way,and  preserve them or not (without changing the orch code at all), depending on the resolution (file or audio i/o) you render to.
+    </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note: A note on digital amplitude, decibels and dynamic range"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png" /></td><th align="left">A note on digital amplitude, decibels and dynamic range</th></tr><tr><td align="left" valign="top"><p>
+        A convenient aproximation of dynamic range for a certain digital precision is to calculate the decibel interval between the minimum value and the maximum value for a sample. As a rule of thumb, 1 bit (doubling of level) is 6dB, so 16bits = 96dB.
+      </p><p>
+        This is not entirely accurate since audio sample values are represented on a bipolar scale with positive and negative values, and 1 bit is used for the sign. Therefore, for 16bit integer samples actually use 1 bit for the sign and 15 bits for the values, so the actual dynamic range is 90dB.
+      </p></td></tr></table></div></div></div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="Using.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="Using.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="UsingRealTime.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using Csound </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Real-Time Audio</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

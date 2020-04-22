@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ATSreadnz</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ATSread.html" title="ATSread" />
+    <link rel="next" href="ATSpartialtap.html" title="ATSpartialtap" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ATSreadnz</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ATSread.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ATSpartialtap.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ATSreadnz"></a>
+      <div class="titlepage"></div>
+      <a id="IndexATSreadnz" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ATSreadnz</span>
+        </h2>
+        <p>ATSreadnz —  reads data from an ATS file.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124518624"></a>
+        <h2>Description</h2>
+        <p>
+            <span class="emphasis"><em>ATSreadnz</em></span> returns the energy (<span class="emphasis"><em>kenergy</em></span>) of a user specified noise band (1-25 bands) at the time indicated by the time pointer <span class="emphasis"><em>ktimepnt</em></span>.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124516112"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kenergy <span class="command"><strong>ATSreadnz</strong></span> ktimepnt, iatsfile, iband</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124514016"></a>
+        <h2>Initialization</h2>
+        <p>
+            <span class="emphasis"><em>iatsfile</em></span> – the ATS number (n in ats.n) or the name in quotes of the analysis file made using <a class="ulink" href="http://www-ccrma.stanford.edu/~juan/ATS.html" target="_top"><em class="citetitle">ATS</em></a>.
+        </p>
+        <p>
+            <span class="emphasis"><em>iband</em></span> – the number of the noise band to return the energy data.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124510544"></a>
+        <h2>Performance</h2>
+        <p>
+            <span class="emphasis"><em>kenergy</em></span> outputs the linearly interpolated energy of the noise band indicated in <span class="emphasis"><em>iband</em></span>. The output is dependent on the data in the analysis file and the <span class="emphasis"><em>ktimepnt</em></span>.
+        </p>
+        <p><span class="emphasis"><em>ktimepnt</em></span> – The time pointer in seconds used to index the ATS file. Used for <span class="emphasis"><em>ATSreadnz</em></span> exactly the same as for <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a> and <a class="link" href="ATSadd.html" title="ATSadd"><em class="citetitle">ATSadd</em></a>.</p>
+        <p><span class="emphasis"><em>ATSaddnz</em></span> reads from an ATS file and resynthesizes the noise from noise energy data contained in the ATS file. It uses a modified randi function to create band limited noise and modulates that with a user supplied wave table (one period of a cosine wave), to synthesize a user specified selection of frequency bands. Modulating the noise is required to put the band limited noise in the correct place in the frequency spectrum.
+        </p>
+        <p>An ATS analysis differs from a pvanal in that ATS tracks the partials and computes the noise energy of the sound being analyzed. For more info about ATS analysis read Juan Pampin's description on the the <a class="ulink" href="http://www-ccrma.stanford.edu/~juan/ATS.html" target="_top"><em class="citetitle">ATS</em></a> web-page.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124502528"></a>
+        <h2>Examples</h2>
+        <pre class="programlisting">
+  ktime   <span class="opc">line</span>      2.5, p3, 0
+  kenergy	<span class="opc">ATSreadnz</span> ktime, "clarinet.ats", 5</pre>
+        <p>Here we are extracting the noise energy from band 5 in the 'clarinet.ats' ATS analysis file. We're actually reading backwards from 2.5 seconds to the beginning of the analysis file. We could use this to synthesize noise like this:
+    </p>
+        <pre class="programlisting">
+  anoise  <span class="opc">randi</span>     <span class="opc">sqrt</span>(kenergy), 55
+  aout    <span class="opc">oscili</span>    4000000000000000000000000, 455, 2
+  aout    <span class="op">=</span>         aout <span class="op">*</span> anoise</pre>
+        <p>Function table 2 used in the oscillator is a cosine, which is needed to shift the band limited noise into the correct place in the frequency spectrum. The <span class="emphasis"><em>randi</em></span> function creates a band of noise centered about 0 Hz that has a bandwidth of about 110 Hz; multiplying it by a cosine will shift it to be centered at 455 Hz, which is the center frequency of the 5th critical noise band. This is only an example, for synthesizing the noise you'd be better off just using <a class="link" href="ATSaddnz.html" title="ATSaddnz"><em class="citetitle">ATSaddnz</em></a> unless you want to use your own noise synthesis algorithm. Maybe you could use the noise energy for something else like applying a small amount of jitter to specific partials or for controlling something totally unrelated to the source sound?
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124492592"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is another example of the ATSreadnz opcode. It uses the file <a class="ulink" href="examples/ATSreadnz.csd" target="_top"><em class="citetitle">ATSreadnz.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276124490800"></a>
+          <p class="title">
+            <strong>Example 73. Another example of the ATSreadnz opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276494890288"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o ATSreadnz.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; "beats.ats" is created by atsa</span>
+
+k<span class="n">time</span>	<span class="nb">line</span>	<span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">2</span>
+k<span class="n">energy</span>	<span class="nb">ATSreadnz</span> k<span class="n">time</span><span class="p">,</span> <span class="s">"beats.ats"</span><span class="p">,</span> <span class="mi">2</span>
+a<span class="n">noise</span>	<span class="nb">randi</span>	k<span class="n">energy</span><span class="p">,</span> <span class="mi">500</span>
+a<span class="n">out</span>	<span class="nb">oscili</span>	<span class="mf">0.005</span><span class="p">,</span> <span class="mi">455</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">out</span>	<span class="o">=</span>	a<span class="n">out</span> <span class="o">*</span> a<span class="n">noise</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span> 
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; cosine wave</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">11</span> <span class="mi">1</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> 
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124489040"></a>
+        <h2>See also</h2>
+        <p><a class="link" href="ATSread.html" title="ATSread"><em class="citetitle">ATSread</em></a>, 
+            <a class="link" href="ATSinfo.html" title="ATSinfo"><em class="citetitle">ATSinfo</em></a>, 
+            <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>, 
+            <a class="link" href="ATScross.html" title="ATScross"><em class="citetitle">ATScross</em></a>, 
+            <a class="link" href="ATSinterpread.html" title="ATSinterpread"><em class="citetitle">ATSinterpread</em></a>, 
+            <a class="link" href="ATSpartialtap.html" title="ATSpartialtap"><em class="citetitle">ATSpartialtap</em></a>, 
+            <a class="link" href="ATSadd.html" title="ATSadd"><em class="citetitle">ATSadd</em></a>, 
+            <a class="link" href="ATSaddnz.html" title="ATSaddnz"><em class="citetitle">ATSaddnz</em></a>, 
+            <a class="link" href="ATSsinnoi.html" title="ATSsinnoi"><em class="citetitle">ATSsinnoi</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124480224"></a>
+        <h2>Credits</h2>
+        <p>
+            </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Alex Norman</td>
+          </tr>
+          <tr>
+            <td>Seattle,Washington</td>
+          </tr>
+          <tr>
+            <td>2004</td>
+          </tr>
+        </table>
+        <p>
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ATSread.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ATSpartialtap.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ATSread </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ATSpartialtap</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

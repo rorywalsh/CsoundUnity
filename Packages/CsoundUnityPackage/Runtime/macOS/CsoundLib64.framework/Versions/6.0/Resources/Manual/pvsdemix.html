@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsdemix</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvscross.html" title="pvscross" />
+    <link rel="next" href="pvsdiskin.html" title="pvsdiskin" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsdemix</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvscross.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsdiskin.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvsdemix"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvsdemix" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsdemix</span>
+        </h2>
+        <p>pvsdemix — 
+      Spectral azimuth-based de-mixing of stereo sources.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065239120"></a>
+        <h2>Description</h2>
+        <p>
+      Spectral azimuth-based de-mixing of stereo sources, with a reverse-panning result. This
+      opcode implements the Azimuth Discrimination and Resynthesis (ADRess) algorithm, developed by
+      Dan Barry (Barry et Al. "Sound Source Separation Azimuth Discrimination and Resynthesis". DAFx'04, 
+      Univ. of Napoli). The source separation, or de-mixing, is controlled by two parameters: an azimuth
+      position (<span class="emphasis"><em>kpos</em></span>) and a subspace width (<span class="emphasis"><em>kwidth</em></span>). The first one is used to locate the spectral peaks of 
+      individual sources on a stereo mix, whereas the second widens the 'search space', including/exclufing 
+      the peaks around <span class="emphasis"><em>kpos</em></span>. These two parameters can be used interactively to extract source sounds from
+      a stereo mix. The algorithm is particularly successful with studio recordings where individual instruments
+      occupy individual panning positions; it is, in fact, a reverse-panning algorithm. 
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        It is unsafe to use the same f-variable for both input and output of pvs opcodes. Using the same one might lead to undefined behavior on some opcodes. Use a different one on the left and right sides of the opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065234800"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsdemix</strong></span> fleft, fright, kpos, kwidth, ipoints</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065232688"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>fleft</em></span> -- left channel input pv stream.
+    </p>
+        <p>
+      <span class="emphasis"><em>fright</em></span> -- right channel pv stream.
+    </p>
+        <p>
+      <span class="emphasis"><em>kpos</em></span> -- the azimuth target centre position, which will be de-mixed, from
+      left to right (-1 &lt;= <span class="emphasis"><em>kpos</em></span> &lt;= 1). This is the reverse pan-pot control.
+    </p>
+        <p>
+      <span class="emphasis"><em>kwidth</em></span> -- the azimuth subspace width, which will determine the number
+      of points around <span class="emphasis"><em>kpos</em></span> which will be used in the de-mixing process.
+      (1 &lt;= <span class="emphasis"><em>kwidth</em></span> &lt;= <span class="emphasis"><em>ipoints</em></span>)
+    </p>
+        <p>
+      <span class="emphasis"><em>ipoints</em></span> -- total number of discrete points, which will divide
+      each pan side of the stereo image. This ultimately affects 
+      the resolution of the process.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065224736"></a>
+        <h2>Examples</h2>
+        <p>
+      The example below takes a stereo input and passes through a de-mixing
+      process revealing a source located at ipos +/- iwidth points. These parameters
+      can be controlled in realtime (e.g. using FLTK widgets or MIDI) for an interactive
+      search of sound sources.
+      </p>
+        <div class="example">
+          <a id="idm276065223520"></a>
+          <p class="title">
+            <strong>Example 771. Example</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+ifftsize <span class="op">=</span> 1024  
+iwtype   <span class="op">=</span> 1     <span class="comment">/* cleaner with hanning window      */</span>
+ipos     <span class="op">=</span> -0.8  <span class="comment">/* to the left of the stereo image  */</span>
+iwidth   <span class="op">=</span> 20    <span class="comment">/* use peaks of 20 points around it */</span>
+
+al,ar  <span class="opc">soundin</span>   "sinput.wav"
+
+flc    <span class="opc">pvsanal</span>   al, ifftsize, ifftsize/4, ifftsize, iwtype
+frc    <span class="opc">pvsanal</span>   ar, ifftsize, ifftsize/4, ifftsize, iwtype
+fdm    <span class="opc">pvsdemix</span>  flc, frc, kpos, kwidth, 100
+adm    <span class="opc">pvsynth</span>   fdm
+   
+       <span class="opc">outs</span>      adm, adm</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065213264"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>January 2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>January 2005.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvscross.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsdiskin.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvscross </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsdiskin</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

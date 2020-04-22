@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Array Opcodes</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="MathTop.html" title="Mathematical Operations" />
+    <link rel="prev" href="linearalgebraopcodes.html" title="Linear Algebra Opcodes" />
+    <link rel="next" href="PitchTop.html" title="Pitch Converters" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Array Opcodes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="linearalgebraopcodes.html">Prev</a> </td>
+          <th width="60%" align="center">Mathematical Operations</th>
+          <td width="20%" align="right"> <a accesskey="n" href="PitchTop.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="arrayOpcodes"></a>
+      <div class="titlepage"></div>
+      <a id="Indexarray" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">Array Opcodes</span>
+        </h2>
+        <p>Array Opcodes</p>
+      </div>
+      <p>
+    List of Array Opcodes (6.12): 
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p><a class="link" href="init.html" title="init"><em class="citetitle">init</em></a> initiatlise array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="fillarray.html" title="fillarray"><em class="citetitle">fillarray</em></a> fill array with values
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="genarray.html" title="genarray"><em class="citetitle">genarray</em></a> create array with artithmetic sequence
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="assign.html" title="="><em class="citetitle">=</em></a> create or reset array as copy of another array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="slicearray.html" title="slicearray"><em class="citetitle">slicearray</em></a> take slice of an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="maparray.html" title="maparray"><em class="citetitle">maparray</em></a> apply a function to an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="scalearray.html" title="scalearray"><em class="citetitle">scalearray</em></a> scale values in an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="sorta.html" title="sorta"><em class="citetitle">sorta</em></a> sort an array in ascending order
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="sortd.html" title="sortd"><em class="citetitle">sortd</em></a> sort an array in descending order
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="limit.html" title="limit"><em class="citetitle">limit</em></a> and <a class="link" href="limit1.html" title="limit1"><em class="citetitle">limit1</em></a> limit array values
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="reshapearray.html" title="reshapearray"><em class="citetitle">reshapearray</em></a> change dimensions of an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="trim.html" title="trim"><em class="citetitle">trim</em></a> adjust size of a one-dimensional array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="copya2ftab.html" title="copya2ftab"><em class="citetitle">copya2ftab</em></a> copy array to a function table
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="copyf2array.html" title="copyf2array"><em class="citetitle">copyf2array</em></a> copy function table to an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="tab2array.html" title="tab2array"><em class="citetitle">tab2array</em></a> copy a slice from a table to an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="dot.html" title="dot"><em class="citetitle">dot</em></a> calculate dot product from two arrays
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="interleave.html" title="interleave"><em class="citetitle">interleave</em></a> interleave two arrays to a single one
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="deinterleave.html" title="deinterleave"><em class="citetitle">deinterleave</em></a> deinterleave an array to two ones
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="getrow.html" title="getrow"><em class="citetitle">getrow</em></a> get a row from a two-dimensional array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="getcol.html" title="getcol"><em class="citetitle">getcol</em></a> get a column from a two-dimensional array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="setrow.html" title="setrow"><em class="citetitle">setrow</em></a> set a row of a two-dimensional array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="setcol.html" title="setcol"><em class="citetitle">setcol</em></a> set a column of a two-dimensional array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="getrowlin.html" title="getrowlin"><em class="citetitle">getrowlin</em></a> Copy a row from a 2D array and interpolate between rows 
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="lenarray.html" title="lenarray"><em class="citetitle">lenarray</em></a> returns length of an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="minarray.html" title="minarray"><em class="citetitle">minarray</em></a> returns minimum value in an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="maxarray.html" title="maxarray"><em class="citetitle">maxarray</em></a> returns maximum value in an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="sumarray.html" title="sumarray"><em class="citetitle">sumarray</em></a> returns sum of values in an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="cmp.html" title="cmp"><em class="citetitle">cmp</em></a> compare two arrays
+      </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="printarray.html" title="printarray"><em class="citetitle">printarray</em></a> print an array
+      </p>
+          </li>
+          <li class="listitem">
+            <p>the unary functions
+	 <a class="link" href="ceil.html" title="ceil"><em class="citetitle">ceil</em></a> 
+	 <a class="link" href="floor.html" title="floor"><em class="citetitle">floor</em></a> 
+	 <a class="link" href="round.html" title="round"><em class="citetitle">round</em></a> 
+	 <a class="link" href="int.html" title="int"><em class="citetitle">int</em></a> 
+	 <a class="link" href="frac.html" title="frac"><em class="citetitle">frac</em></a> 
+	 <a class="link" href="powoftwo.html" title="powoftwo"><em class="citetitle">powoftwo</em></a> 
+	 <a class="link" href="abs.html" title="abs"><em class="citetitle">abs</em></a> 
+	 <a class="link" href="log2.html" title="log2"><em class="citetitle">log2</em></a> 
+	 <a class="link" href="log10.html" title="log10"><em class="citetitle">log10</em></a> 
+	 <a class="link" href="log.html" title="log"><em class="citetitle">log</em></a> 
+	 <a class="link" href="exp.html" title="exp"><em class="citetitle">exp</em></a> 
+	 <a class="link" href="sqrt.html" title="sqrt"><em class="citetitle">sqrt</em></a> 
+	 <a class="link" href="cos.html" title="cos"><em class="citetitle">cos</em></a> 
+	 <a class="link" href="sin.html" title="sin"><em class="citetitle">sin</em></a> 
+	 <a class="link" href="tan.html" title="tan"><em class="citetitle">tan</em></a> 
+	 <a class="link" href="cosinv.html" title="cosinv"><em class="citetitle">cosinv</em></a> 
+	 <a class="link" href="sininv.html" title="sininv"><em class="citetitle">sininv</em></a> 
+	 <a class="link" href="taninv.html" title="taninv"><em class="citetitle">taninv</em></a> 
+	 <a class="link" href="sinh.html" title="sinh"><em class="citetitle">sinh</em></a> 
+	 <a class="link" href="cosh.html" title="cosh"><em class="citetitle">cosh</em></a> 
+	 <a class="link" href="tanh.html" title="tanh"><em class="citetitle">tanh</em></a> 
+	 <a class="link" href="cbrt.html" title="cbrt"><em class="citetitle">cbrt</em></a> 
+	 <a class="link" href="limit1.html" title="limit1"><em class="citetitle">limit1</em></a> 
+	and the binary functions
+	 <a class="link" href="taninv2.html" title="taninv2"><em class="citetitle">taninv2</em></a> 
+	 <a class="link" href="pow.html" title="pow"><em class="citetitle">pow</em></a> 
+	 <a class="link" href="hypot.html" title="hypot"><em class="citetitle">hypot</em></a> 
+	 <a class="link" href="fmod.html" title="fmod"><em class="citetitle">fmod</em></a> 
+	 <a class="link" href="fmax.html" title="fmax"><em class="citetitle">fmax</em></a> 
+	 <a class="link" href="fmin.html" title="fmin"><em class="citetitle">fmin</em></a> 
+	accept arrays as input.
+      </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    Some instructions to work with arrays in Csound (see also the <a class="ulink" href="http://write.flossmanuals.net/csound/e-arrays/" target="_top"><em class="citetitle">array chapter in the Csound FLOSS Manual:</em></a>)
+  </p>
+      <div class="refsect1">
+        <a id="idm276130926944"></a>
+        <h2>Variable Name</h2>
+        <p>
+      An array must be created (via <a class="link" href="init.html" title="init"><em class="citetitle">init</em></a>
+      or <a class="link" href="fillarray.html" title="fillarray"><em class="citetitle">fillarray</em></a>) as
+      kMyName <span class="strong"><strong>plus</strong></span> ending brackets. The
+      brackets determine
+      the dimensions of the array. So,
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+kArr[] <span class="opc">init</span> 10</pre>
+        </div>
+        <p>
+      creates a one-dimensional array of length 10, whereas
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+kArr[][] <span class="opc">init</span> 10, 10</pre>
+        </div>
+        <p>
+      creates a two-dimensional array with 10 rows and 10 columns.
+    </p>
+        <p>
+      After the initalization of the array, referring to the array as a whole is
+      done <span class="strong"><strong>without</strong></span> any brackets. Brackets are
+      only used if an element is indexed:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+kArr[]   <span class="opc">init</span> 10             <span class="comment">;with brackets because of initialization</span>
+kLen     <span class="op">=</span> lenarray(kArr)    <span class="comment">;without brackets</span>
+kFirstEl <span class="op">=</span> kArr[0]           <span class="comment">;indexing with brackets</span></pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      The same syntax is used for a simple copy via the '=' operator:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+kArr1[] <span class="opc">fillarray</span> 1, 2, 3, 4, 5
+kArr2[] <span class="op">=</span> kArr1              <span class="comment">;creates kArr2 as copy of kArr1</span></pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276130910352"></a>
+        <h2>k-rate</h2>
+        <p>
+      Note that most array operations are currently k-rate only. So like any
+      other k-rate opcode, an operation on arrays will be automatically repeated
+      every k-cycle. For instance, this code will repeat re-writing the array
+      with different random values every k-cycle, as long as the instrument runs:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+kArr[] <span class="opc">init</span> 10
+kIndx  <span class="op">=</span> 0
+<span class="octrl">until</span> kIndx <span class="op">==</span> <span class="opc">lenarray</span>(kArr) <span class="octrl">do</span>
+  kArr[kIndx] <span class="opc">rnd31</span> 10, 0
+  kIndx <span class="op">+=</span> 1
+<span class="octrl">od</span></pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      If you want to avoid this, you must organize it in one of the usual ways,
+      for instance by using a trigger:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+kArr[] <span class="opc">init</span> 10
+kTrig <span class="opc">metro</span> 1
+<span class="octrl">if</span> kTrig <span class="op">==</span> 1 <span class="octrl">then</span> <span class="comment">;do the following once a second</span>
+  kIndx  <span class="op">=</span> 0
+  <span class="octrl">until</span> kIndx <span class="op">==</span> <span class="opc">lenarray</span>(kArr) <span class="octrl">do</span>
+    kArr[kIndx] <span class="opc">rnd31</span> 10, 0
+    kIndx <span class="op">+=</span> 1
+  <span class="octrl">od</span>
+<span class="octrl">endif</span></pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276130891200"></a>
+        <h2>Creation/Initialization</h2>
+        <p>
+      The usual way to create an array is with init:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+kArr[]   <span class="opc">init</span> 10     <span class="comment">;creates one-dimensional array with length 10</span>
+kArr[][] <span class="opc">init</span> 10, 10 <span class="comment">;creates two-dimensional array</span></pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      A one-dimensional array can also be created and filled with distinct values
+      by the opcode <span class="emphasis"><em>fillarray</em></span>. This line creates a vector
+      with length 4 and puts in the numbers [1, 2, 3, 4]:
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+kArr[] <span class="opc">fillarray</span> 1, 2, 3, 4</pre>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276130883776"></a>
+        <h2>Length</h2>
+        <p>
+      The function <span class="emphasis"><em>lenarray(kArr)</em></span> reports the length of an
+      array. See example for function
+      <a class="link" href="lenarray.html" title="lenarray"><em class="citetitle">lenarray</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276130881216"></a>
+        <h2>Copy Arrays to/from Tables</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="opc">copyf2array</span> kArr, kfn</pre>
+        </div>
+        <p>
+      copies data from an ftable to a vector.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="opc">copya2ftab</span> kArr, kfn</pre>
+        </div>
+        <p>
+      copies data from a vector to an function table.
+    </p>
+        <p>
+      See examples for opcodes
+      <a class="link" href="copyf2array.html" title="copyf2array"><em class="citetitle">copyf2array</em></a> and
+      <a class="link" href="copya2ftab.html" title="copya2ftab"><em class="citetitle">copya2ftab</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276130874032"></a>
+        <h2>Array Operations: Math</h2>
+        <div class="refsect2">
+          <a id="idm276130873360"></a>
+          <h3>+, -, *, / on a Number</h3>
+          <p>
+        If the four basic math operators are used between an array and a scalar 
+        (number), the operation is applied to each element. The safest way to do
+        this is to store the result in a new array:
+        </p>
+          <div class="informalexample">
+            <pre class="programlisting">
+kArr1[] <span class="opc">fillarray</span> 1, 2, 3
+kArr2[] <span class="op">=</span> kArr1 <span class="op">+</span> 10    <span class="comment">;(kArr2 is now [11, 12, 13])</span></pre>
+          </div>
+          <p>
+        Here is an example of array/scalar operations. It uses the file
+        <a class="ulink" href="examples/array_scalar_math.csd" target="_top"><em class="citetitle">array_scalar_math.csd</em></a>.
+        </p>
+          <div class="example">
+            <a id="idm276130867840"></a>
+            <p class="title">
+              <strong>Example 3. Example of array operations</strong>
+            </p>
+            <div class="example-contents">
+              <div class="refsect1">
+                <a id="idm276507809376"></a>
+                <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-n -m128
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+
+  <span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="c1">;create array and fill with numbers 1..10</span>
+k<span class="n">Arr1</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span>
+
+<span class="c1">;print content</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">Initial content:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr1</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr1</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span>    <span class="o">+=</span>      <span class="mi">1</span>
+  <span class="k">od</span>
+
+<span class="c1">;add 10</span>
+k<span class="n">Arr2</span><span class="p">[]</span> <span class="o">=</span>       k<span class="n">Arr1</span> <span class="o">+</span> <span class="mi">10</span>
+
+<span class="c1">;print content</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">After adding 10:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr2</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr2</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span>    <span class="o">+=</span>      <span class="mi">1</span>
+  <span class="k">od</span>
+
+<span class="c1">;subtract 5</span>
+k<span class="n">Arr3</span><span class="p">[]</span> <span class="o">=</span>       k<span class="n">Arr2</span> <span class="o">-</span> <span class="mi">5</span>
+
+<span class="c1">;print content</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">After subtracting 5:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr3</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr3</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span>    <span class="o">+=</span>      <span class="mi">1</span>
+  <span class="k">od</span>
+
+<span class="c1">;multiply by -1.5</span>
+k<span class="n">Arr4</span><span class="p">[]</span> <span class="o">=</span>       k<span class="n">Arr3</span> <span class="o">*</span> <span class="o">-</span><span class="mf">1.5</span>
+
+<span class="c1">;print content</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">After multiplying by -1.5:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr4</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr4</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span>    <span class="o">+=</span>      <span class="mi">1</span>
+  <span class="k">od</span>
+
+<span class="c1">;divide by -3/2</span>
+k<span class="n">Arr5</span><span class="p">[]</span> <span class="o">=</span>       k<span class="n">Arr4</span> <span class="o">/</span> <span class="o">-</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1">;print content</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">After dividing by -3/2:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr5</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr5</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span>    <span class="o">+=</span>      <span class="mi">1</span>
+  <span class="k">od</span>
+
+<span class="c1">;turnoff</span>
+        <span class="nb">turnoff</span>
+  <span class="kd">endin</span>
+  
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">.1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+              </div>
+            </div>
+          </div>
+          <p><br class="example-break" />
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm276130866080"></a>
+          <h3>+, -, *, / on a Second Array</h3>
+          <p>
+        If the four basic math operators are used between two arrays, the
+        operation is applied element by element. The result can be
+        straightforward stored in a new array:
+        </p>
+          <div class="informalexample">
+            <pre class="programlisting">
+kArr1[] <span class="opc">fillarray</span> 1, 2, 3
+kArr2[] <span class="opc">fillarray</span> 10, 20, 30
+kArr3[] <span class="op">=</span> kArr1 <span class="op">+</span> kArr2    <span class="comment">;(kArr3 is now [11, 22, 33])</span></pre>
+          </div>
+          <p>
+        Here is an example of array operations. It uses the file
+        <a class="ulink" href="examples/array_array_math.csd" target="_top"><em class="citetitle">array_array_math.csd</em></a>.
+        </p>
+          <div class="example">
+            <a id="idm276130859936"></a>
+            <p class="title">
+              <strong>Example 4. Example of array operations</strong>
+            </p>
+            <div class="example-contents">
+              <div class="refsect1">
+                <a id="idm276507807376"></a>
+                <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-n -m128
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+  <span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="c1">;create array and fill with numbers 1..10 resp .1..1</span>
+k<span class="n">Arr1</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span>
+k<span class="n">Arr2</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">89</span>
+
+<span class="c1">;print contents</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">kArr1:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr1</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr1[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr1</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span>    <span class="o">+=</span>      <span class="mi">1</span>
+  <span class="k">od</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">kArr2:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr2</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr2[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr2</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span>    <span class="o">+=</span>      <span class="mi">1</span>
+  <span class="k">od</span>
+
+<span class="c1">;add arrays</span>
+k<span class="n">Arr3</span><span class="p">[]</span> <span class="o">=</span>       k<span class="n">Arr1</span> <span class="o">+</span> k<span class="n">Arr2</span>
+
+<span class="c1">;print content</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">kArr1 + kArr2:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr3</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr3[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr3</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span>    <span class="o">+=</span>      <span class="mi">1</span>
+  <span class="k">od</span>
+
+<span class="c1">;subtract arrays</span>
+k<span class="n">Arr4</span><span class="p">[]</span> <span class="o">=</span>       k<span class="n">Arr1</span> <span class="o">-</span> k<span class="n">Arr2</span>
+
+<span class="c1">;print content</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">kArr1 - kArr2:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr4</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr4[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr4</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span>    <span class="o">+=</span>      <span class="mi">1</span>
+  <span class="k">od</span>
+
+<span class="c1">;multiply arrays</span>
+k<span class="n">Arr5</span><span class="p">[]</span> <span class="o">=</span>       k<span class="n">Arr1</span> <span class="o">*</span> k<span class="n">Arr2</span>
+
+<span class="c1">;print content</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">kArr1 * kArr2:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr5</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr5[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr5</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">od</span>
+
+<span class="c1">;divide arrays</span>
+k<span class="n">Arr6</span><span class="p">[]</span> <span class="o">=</span>       k<span class="n">Arr1</span> <span class="o">/</span> k<span class="n">Arr2</span>
+
+<span class="c1">;print content</span>
+        <span class="nb">printf</span>  <span class="s">"%s"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="se">\n</span><span class="s">kArr1 / kArr2:</span><span class="se">\n</span><span class="s">"</span>
+k<span class="n">ndx</span>    <span class="o">=</span>       <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">ndx</span> <span class="o">==</span> <span class="nb">lenarray</span><span class="p">(</span>k<span class="n">Arr6</span><span class="p">)</span> <span class="k">do</span>
+        <span class="nb">printf</span>  <span class="s">"kArr5[</span><span class="si">%d</span><span class="s">] = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> k<span class="n">Arr6</span><span class="p">[</span>k<span class="n">ndx</span><span class="p">]</span>
+k<span class="n">ndx</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">od</span>
+
+<span class="c1">;turnoff</span>
+        <span class="nb">turnoff</span>
+        
+  <span class="kd">endin</span>
+  
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">.1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+              </div>
+            </div>
+          </div>
+          <p><br class="example-break" />
+      </p>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276130858128"></a>
+        <h2>Map a Function to an Array</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+kArrRes <span class="opc">maparray</span> kArrSrc, "fun"</pre>
+        </div>
+        <p>
+      maps the k-rate 1-arg function in the string to every element of the vector.
+    </p>
+        <p>
+      Possible functions are for instance <span class="emphasis"><em>abs, ceil, exp, floor, frac,
+      int, log, log10, round, sqrt</em></span>. This is a simple example:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+kArrSrc[] <span class="opc">fillarray</span> 1, 2, 3, 4, 5
+kArrRes[] <span class="opc">init</span>      5
+kArrRes   <span class="opc">maparray</span>  kArrSrc, "sqrt"</pre>
+        </div>
+        <p>
+      See example for opcode
+      <a class="link" href="maparray.html" title="maparray"><em class="citetitle">maparray</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276130850336"></a>
+        <h2>Array Operations: min, max, sum, scale, slice</h2>
+        <div class="refsect2">
+          <a id="idm276130849648"></a>
+          <h3>Minimum and Maximum</h3>
+          <p>
+        </p>
+          <div class="informalexample">
+            <pre class="programlisting">
+  kMin [,kMinIndx] <span class="opc">minarray</span> kArr</pre>
+          </div>
+          <p>
+        returns the smallest value in an array, and optionally its index.
+      </p>
+          <p>
+        </p>
+          <div class="informalexample">
+            <pre class="programlisting">
+  kMax [,kMaxIndx] <span class="opc">maxarray</span> kArr</pre>
+          </div>
+          <p>
+        returns the largest value in an array, and optionally its index.
+        See examples for opcodes
+        <a class="link" href="minarray.html" title="minarray"><em class="citetitle">minarray</em></a> and
+        <a class="link" href="maxarray.html" title="maxarray"><em class="citetitle">maxarray</em></a>.
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm276130842736"></a>
+          <h3>Sum</h3>
+          <p>
+        </p>
+          <div class="informalexample">
+            <pre class="programlisting">
+  kSum <span class="opc">sumarray</span> kArr</pre>
+          </div>
+          <p>
+        returns the sum of all values in kArr.
+        See example for opcode
+        <a class="link" href="sumarray.html" title="sumarray"><em class="citetitle">sumarray</em></a>.
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm276130838912"></a>
+          <h3>Scale</h3>
+          <p>
+        </p>
+          <div class="informalexample">
+            <pre class="programlisting">
+  <span class="opc">scalearray</span> kArr, kMin, kMax</pre>
+          </div>
+          <p>
+        scales all values in kArr between kMin and kMax.
+      </p>
+          <p>
+        </p>
+          <div class="informalexample">
+            <pre class="programlisting">
+  kArr[] <span class="opc">fillarray</span>  1, 3, 9, 5, 6
+         <span class="opc">scalearray</span> kArr, 1, 3</pre>
+          </div>
+          <p>
+        changes <span class="emphasis"><em>kArr</em></span> to [1, 1.5, 3, 2, 2.25].
+        See example for opcode
+        <a class="link" href="scalearray.html" title="scalearray"><em class="citetitle">scalearray</em></a>.
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm276130831904"></a>
+          <h3>Slice</h3>
+          <p>
+        </p>
+          <div class="informalexample">
+            <pre class="programlisting">
+  <span class="opc">slicearray</span> kArr, iStart, iEnd</pre>
+          </div>
+          <p>
+        returns a slice of <span class="emphasis"><em>kArr</em></span> from index
+        <span class="emphasis"><em>iStart</em></span> to index <span class="emphasis"><em>iEnd</em></span> (included).
+      </p>
+          <p>
+        The array for receiving the slice must have been created in advance:
+        </p>
+          <div class="informalexample">
+            <pre class="programlisting">
+  kArr[]  <span class="opc">fillarray</span>  1, 2, 3, 4, 5, 6, 7, 8, 9
+  kArr1[] <span class="opc">init</span>       5
+  kArr2[] <span class="opc">init</span>       4
+  kArr1   <span class="opc">slicearray</span> kArr, 0, 4        <span class="comment">;[1, 2, 3, 4, 5]</span>
+  kArr2   <span class="opc">slicearray</span> kArr, 5, 8        <span class="comment">;[6, 7, 8, 9]</span></pre>
+          </div>
+          <p>
+        See example for opcode
+        <a class="link" href="slicearray.html" title="slicearray"><em class="citetitle">slicearray</em></a>.
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm276130820848"></a>
+          <h3>Reshape</h3>
+          <p>
+        Use reshapearray to change the shape of an array without changing its
+        capacity (change a 1D to a 2D array and viceversa).
+        See example for opcode <a class="link" href="reshapearray.html" title="reshapearray"><em class="citetitle">reshapearray</em></a>.
+      </p>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276130818464"></a>
+        <h2>Arrays in UDOs</h2>
+        <p>
+      The dimension of an input array must be declared in two places:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+          as k[] or k[][] in the type input list
+        </li>
+            <li class="listitem">
+          as kName[], kName[][] etc in the xin list.
+        </li>
+          </ul>
+        </div>
+        <p>
+      For instance :
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="oblock">opcode</span> FirstEl, k, k[]
+<span class="comment">;returns the first element of vector kArr</span>
+kArr[] <span class="opc">xin</span>
+       <span class="opc">xout</span>   kArr[0]
+<span class="oblock">endop</span></pre>
+        </div>
+        <p>
+      Here is an example of an array in an UDO. It uses the file
+      <a class="ulink" href="examples/array_udo.csd" target="_top"><em class="citetitle">array_udo.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276130811152"></a>
+          <p class="title">
+            <strong>Example 5. Example of an array in an UDO</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276507476336"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-nm128
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+  <span class="kd">opcode</span> <span class="nf">FirstEl</span><span class="p">,</span> <span class="kt">k</span><span class="p">,</span> <span class="kt">k[]</span>
+  <span class="c1">;returns the first element of vector kArr</span>
+k<span class="n">Arr</span><span class="p">[]</span> <span class="nb">xin</span>
+<span class="nb">xout</span> k<span class="n">Arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="kd">endop</span>
+
+  <span class="kd">instr</span> <span class="nf">1</span> 
+k<span class="n">Arr</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">First</span> <span class="nf">FirstEl</span> k<span class="n">Arr</span>
+<span class="nb">printf</span> <span class="s">"kFirst = </span><span class="si">%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">First</span>
+<span class="nb">turnoff</span>
+  <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">.1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276130809488"></a>
+        <p>
+    Note that if an opcode (for example inrg), alters arguments on its right
+    hand argument list, an array index should not be used there. Unlike a
+    normal variable, the array won't changed by the opcode.
+  </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276130808496"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>This manual page has been written by Joachim Heintz.</td>
+          </tr>
+          <tr>
+            <td>July 2013</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound 6.00</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="linearalgebraopcodes.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="MathTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="PitchTop.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Linear Algebra Opcodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Pitch Converters</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

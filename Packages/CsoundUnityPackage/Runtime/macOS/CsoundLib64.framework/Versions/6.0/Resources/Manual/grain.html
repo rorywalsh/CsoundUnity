@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>grain</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="goto.html" title="goto" />
+    <link rel="next" href="grain2.html" title="grain2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">grain</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="goto.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="grain2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="grain"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGrain" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">grain</span>
+        </h2>
+        <p>grain — 
+      Generates granular synthesis textures.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106002880"></a>
+        <h2>Description</h2>
+        <p>
+      Generates granular synthesis textures.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106001584"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>grain</strong></span> xamp, xpitch, xdens, kampoff, kpitchoff, kgdur, igfn, \
+      iwfn, imgdur [, igrnd]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105999328"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>igfn</em></span> -- The ftable number of the grain waveform. This can be just a sine wave or a sampled sound.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwfn</em></span> -- Ftable number of the amplitude envelope used for the grains (see also <a class="link" href="GEN20.html" title="GEN20"><em class="citetitle">GEN20</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>imgdur</em></span> -- Maximum grain duration in seconds. This is the biggest value to be assigned to <span class="emphasis"><em>kgdur</em></span>.
+    </p>
+        <p>
+     <span class="emphasis"><em>igrnd</em></span> (optional) -- if non-zero, turns off grain offset randomness. This means that all grains will begin reading from the beginning of the <span class="emphasis"><em>igfn</em></span> table. If zero (the default), grains will start reading from random <span class="emphasis"><em>igfn</em></span> table positions.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105992592"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xamp</em></span> -- Amplitude of each grain.
+    </p>
+        <p>
+      <span class="emphasis"><em>xpitch</em></span> -- Grain pitch. To use the original frequency of the input sound, use the formula:
+      </p>
+        <div class="literallayout">
+          <p>   sndsr / ftlen(<span class="emphasis"><em>igfn</em></span>)</p>
+        </div>
+        <p>
+    </p>
+        <p>
+      where sndsr is the original sample rate of the <span class="emphasis"><em>igfn</em></span> sound.
+    </p>
+        <p>
+      <span class="emphasis"><em>xdens</em></span> -- Density of grains measured in grains per second. If this is constant then the output is synchronous granular synthesis, very similar to <a class="link" href="fof.html" title="fof"><em class="citetitle">fof</em></a>. If <span class="emphasis"><em>xdens</em></span> has a random element (like added noise), then the result is more like asynchronous granular synthesis.
+    </p>
+        <p>
+      <span class="emphasis"><em>kampoff</em></span> -- Maximum amplitude deviation from <span class="emphasis"><em>xamp</em></span>. This means that the maximum amplitude a grain can have is <span class="emphasis"><em>xamp</em></span> + <span class="emphasis"><em>kampoff</em></span> and the minimum is <span class="emphasis"><em>xamp</em></span>. If <span class="emphasis"><em>kampoff</em></span> is set to zero then there is no random amplitude for each grain.
+    </p>
+        <p>
+      <span class="emphasis"><em>kpitchoff</em></span> -- Maximum pitch deviation from <span class="emphasis"><em>xpitch</em></span> in Hz. Similar to <span class="emphasis"><em>kampoff</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>kgdur</em></span> -- Grain duration in seconds. The maximum value for this should be declared in <span class="emphasis"><em>imgdur</em></span>. If <span class="emphasis"><em>kgdur</em></span> at any point becomes greater than <span class="emphasis"><em>imgdur</em></span>, it will be truncated to <span class="emphasis"><em>imgdur</em></span>.
+    </p>
+        <p>
+      The grain generator is based primarily on work and writings of Barry Truax and Curtis Roads.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105977264"></a>
+        <h2>Examples</h2>
+        <p>
+      This example generates a texture with gradually shorter grains and wider amp and pitch spread. It uses the file <a class="ulink" href="examples/grain.csd" target="_top"><em class="citetitle">grain.csd</em></a>, and <a class="ulink" href="examples/beats.wav" target="_top"><em class="citetitle">beats.wav</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276105974608"></a>
+          <p class="title">
+            <strong>Example 403. Example of the grain opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276465346800"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span> 
+<span class="c1">; Select audio/midi flags here according to platform </span>
+-odac     <span class="c1">;;;realtime audio out </span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too </span>
+<span class="c1">; For Non-realtime ouput leave only the line below: </span>
+<span class="c1">; -o grain.wav -W ;;; for file output any platform </span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span> 
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+
+<span class="kd">instr</span> <span class="nf">1</span> 
+
+i<span class="n">nsnd</span>   <span class="o">=</span> <span class="mi">10</span> 
+i<span class="n">basfrq</span> <span class="o">=</span> <span class="mi">44100</span> <span class="o">/</span> <span class="nb">ftlen</span><span class="p">(</span>i<span class="n">nsnd</span><span class="p">)</span> <span class="c1">; Use original sample rate of insnd file </span>
+
+k<span class="n">amp</span>   <span class="nb">expseg</span> <span class="mf">.001</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">.01</span> <span class="c1">;a swell in amplitude</span>
+k<span class="n">pitch</span> <span class="nb">line</span> i<span class="n">basfrq</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">basfrq</span> <span class="o">*</span> <span class="mf">.8</span> 
+k<span class="n">dens</span>  <span class="nb">line</span> <span class="mi">600</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">100</span> 
+k<span class="n">aoff</span>  <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.1</span>
+k<span class="n">poff</span>  <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">basfrq</span> <span class="o">*</span> <span class="mf">.5</span> 
+k<span class="n">gdur</span>  <span class="nb">line</span> <span class="mf">.4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.01</span>
+i<span class="n">maxgdur</span> <span class="o">=</span>  <span class="mf">.5</span> 
+
+a<span class="n">sigL</span>  <span class="nb">grain</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">pitch</span><span class="p">,</span> k<span class="n">dens</span><span class="p">,</span> k<span class="n">aoff</span><span class="p">,</span> k<span class="n">poff</span><span class="p">,</span> k<span class="n">gdur</span><span class="p">,</span> i<span class="n">nsnd</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> i<span class="n">maxgdur</span><span class="p">,</span> <span class="mf">0.0</span> 
+a<span class="n">sigR</span>  <span class="nb">grain</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">pitch</span><span class="p">,</span> k<span class="n">dens</span><span class="p">,</span> k<span class="n">aoff</span><span class="p">,</span> k<span class="n">poff</span><span class="p">,</span> k<span class="n">gdur</span><span class="p">,</span> i<span class="n">nsnd</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> i<span class="n">maxgdur</span><span class="p">,</span> <span class="mf">0.0</span> 
+       <span class="nb">outs</span> a<span class="n">sigL</span><span class="p">,</span> a<span class="n">sigR</span>
+
+<span class="kd">endin</span> 
+<span class="nt">&lt;/CsInstruments&gt;</span> 
+<span class="nt">&lt;CsScore&gt;</span> 
+<span class="nb">f</span><span class="mi">5</span>  <span class="mi">0</span> <span class="mi">512</span>  <span class="mi">20</span> <span class="mi">2</span> <span class="c1">; Hanning window </span>
+<span class="nb">f</span><span class="mi">10</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">1</span>  <span class="s">"beats.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> 
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">15</span> 
+<span class="nb">e</span> 
+<span class="nt">&lt;/CsScore&gt;</span> 
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105970576"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="goto.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="grain2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">goto </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> grain2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

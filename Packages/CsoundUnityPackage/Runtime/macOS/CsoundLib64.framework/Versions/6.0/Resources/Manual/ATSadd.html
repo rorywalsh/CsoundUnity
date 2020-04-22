@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ATSadd</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="atonex.html" title="atonex" />
+    <link rel="next" href="ATSaddnz.html" title="ATSaddnz" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ATSadd</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="atonex.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ATSaddnz.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ATSadd"></a>
+      <div class="titlepage"></div>
+      <a id="IndexATSadd" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ATSadd</span>
+        </h2>
+        <p>ATSadd —  uses the data from an ATS analysis file to perform additive synthesis.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125168256"></a>
+        <h2>Description</h2>
+        <p>
+            <span class="emphasis"><em>ATSadd</em></span> reads from an ATS analysis file and uses the data to perform additive synthesis using an internal array of interpolating oscillators.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125166544"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar <span class="command"><strong>ATSadd</strong></span> ktimepnt, kfmod, iatsfile, ifn, ipartials[, ipartialoffset, \
+        ipartialincr, igatefn]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125164400"></a>
+        <h2>Initialization</h2>
+        <p>
+            <span class="emphasis"><em>iatsfile</em></span> – the ATS number (n in ats.n) or the name in quotes of the analysis file made using <a class="ulink" href="http://www-ccrma.stanford.edu/~juan/ATS.html" target="_top"><em class="citetitle">ATS</em></a>.
+        </p>
+        <p>
+            <span class="emphasis"><em>ifn</em></span> – table number of a stored function containing a sine wave for <span class="emphasis"><em>ATSadd</em></span> and a cosine for <a class="link" href="ATSaddnz.html" title="ATSaddnz"><em class="citetitle">ATSaddnz</em></a> (see examples below for more info)
+        </p>
+        <p><span class="emphasis"><em>ipartials</em></span> – number of partials that will be used in the resynthesis (the noise has a maximum of 25 bands)
+        </p>
+        <p><span class="emphasis"><em>ipartialoffset</em></span> (optional) – is the first partial used (defaults to 0).
+        </p>
+        <p><span class="emphasis"><em>ipartialincr</em></span> (optional) – sets an increment by which these synthesis opcodes counts up from <span class="emphasis"><em>ipartialoffset</em></span> for ibins components in the re-synthesis (defaults to 1).
+        </p>
+        <p><span class="emphasis"><em>igatefn</em></span> (optional) – is the number of a stored function which will be applied to the amplitudes of the analysis bins before resynthesis takes place. If <span class="emphasis"><em>igatefn</em></span> is greater than 0 the amplitudes of each bin will be scaled by <span class="emphasis"><em>igatefn</em></span> through a simple mapping process. First, the amplitudes of all of the bins in all of the frames in the entire analysis file are compared to determine the maximum amplitude value. This value is then used to create normalized amplitudes as indices into the stored function <span class="emphasis"><em>igatefn</em></span>. The maximum amplitude will map to the last point in the function. An amplitude of 0 will map to the first point in the function. Values between 0 and 1 will map accordingly to points along the function table. See the examples below.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125153792"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>ktimepnt</em></span> – The time pointer in seconds used to index the ATS file. Used for <span class="emphasis"><em>ATSadd</em></span> exactly the same as for <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>.</p>
+        <p><span class="emphasis"><em>ATSadd</em></span> and <a class="link" href="ATSaddnz.html" title="ATSaddnz"><em class="citetitle">ATSaddnz</em></a> are based on <a class="link" href="pvadd.html" title="pvadd"><em class="citetitle">pvadd</em></a> by Richard Karpen and use files created by Juan Pampin's ATS (<a class="ulink" href="http://www-ccrma.stanford.edu/~juan/ATS.html" target="_top"><em class="citetitle">Analysis - Transformation - Synthesis</em></a>).
+        </p>
+        <p><span class="emphasis"><em>kfmod</em></span> – A control-rate transposition factor: a value of 1 incurs no transposition, 1.5 transposes up a perfect fifth, and .5 down an octave. Used for <span class="emphasis"><em>ATSadd</em></span> exactly the same as for <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>.
+        </p>
+        <p><span class="emphasis"><em>ATSadd</em></span> reads from an ATS analysis file and uses the data to perform additive synthesis using an internal array of interpolating oscillators. The user supplies the wave table (usually one period of a sine wave), and can choose which analysis partials will be used in the re-synthesis.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125144368"></a>
+        <h2>Examples</h2>
+        <pre class="programlisting">  ktime <span class="opc">line</span>   0, p3, 2.5
+  asig  <span class="opc">ATSadd</span> ktime, 1, "clarinet.ats", 1, 20, 2
+        </pre>
+        <p>In the example above, <span class="emphasis"><em>ipartials</em></span> is 20 and <span class="emphasis"><em>ipartialoffset</em></span> is 2. This will synthesize the 3rd thru 22nd partials in the "clarinet.ats" analysis file. <span class="emphasis"><em>kfmod</em></span> is 1 so there will be no pitch transformation. Since the <span class="emphasis"><em>ktimepnt</em></span> envelope moves from 0 to 2.5 over the duration of the note, the analysis file will be read from 0 to 2.5 seconds of the original duration of the analysis over the duration of the csound note, this way we can change the duration independent of the pitch.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125139120"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a complete example of the ATSadd opcode. It uses the file <a class="ulink" href="examples/ATSadd.csd" target="_top"><em class="citetitle">ATSadd.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276125137328"></a>
+          <p class="title">
+            <strong>Example 62. Example of the ATSadd opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276495627008"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc for RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o ATSadd.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; "beats.ats" is created by atsa</span>
+
+k<span class="n">time</span>	<span class="nb">line</span>	<span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">2</span>
+a<span class="n">sig</span>	<span class="nb">ATSadd</span>	k<span class="n">time</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>  <span class="s">"beats.ats"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span>
+	<span class="nb">outs</span>	a<span class="n">sig</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span> a<span class="n">sig</span><span class="o">*</span><span class="mi">3</span>	<span class="c1">;amplify</span>
+
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> 
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>In the above example we synthesize 20 partials as in example 1 except this time we're using a <span class="emphasis"><em>ipartialoffset</em></span> of 0 and <span class="emphasis"><em>ipartialincr</em></span> of 2, which means that we'll start from the first partial and synthesize 20 partials total, skipping every other one (ie. partial 1, 3, 5,..).
+        </p>
+        <p>
+      Here is another example of the ATSadd opcode. It uses the file <a class="ulink" href="examples/ATSadd-2.csd" target="_top"><em class="citetitle">ATSadd-2.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276125133120"></a>
+          <p class="title">
+            <strong>Example 63. Example 2 of the ATSadd opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276495059792"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac -d -m1
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;example by joachim heintz</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">Sine</span>    <span class="nb">ftgen</span>     <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+  <span class="kd">instr</span> <span class="nf">AllTheTones</span>
+S<span class="n">file</span>     <span class="o">=</span>         <span class="s">"fox.ats"</span>
+          <span class="nb">prints</span>    <span class="s">"Resynthesizing with all the tones.</span><span class="se">\n</span><span class="s">"</span>
+i<span class="n">Dur</span>      <span class="nb">ATSinfo</span>   S<span class="n">file</span><span class="p">,</span> <span class="mi">7</span>
+<span class="nb">p3</span>        <span class="o">=</span>         i<span class="n">Dur</span>
+i<span class="n">NumParts</span> <span class="nb">ATSinfo</span>   S<span class="n">file</span><span class="p">,</span> <span class="mi">3</span>
+          <span class="nb">prints</span>    <span class="s">"Overall number of partials = </span><span class="si">%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> i<span class="n">NumParts</span>
+k<span class="n">time</span>     <span class="nb">line</span>      <span class="mi">0</span><span class="p">,</span> i<span class="n">Dur</span><span class="p">,</span> i<span class="n">Dur</span>
+a<span class="n">sig</span>      <span class="nb">ATSadd</span>    k<span class="n">time</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> S<span class="n">file</span><span class="p">,</span> gi<span class="n">Sine</span><span class="p">,</span> i<span class="n">NumParts</span>
+          <span class="nb">outs</span>      a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="c1">;start next instr</span>
+          <span class="nb">event_i</span>   <span class="s">"i"</span><span class="p">,</span> <span class="s">"TonesInBandsOfTen"</span><span class="p">,</span> i<span class="n">Dur</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> i<span class="n">Dur</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">NumParts</span>
+  <span class="kd">endin</span>
+
+  <span class="kd">instr</span> <span class="nf">TonesInBandsOfTen</span>
+S<span class="n">file</span>     <span class="o">=</span>         <span class="s">"fox.ats"</span>
+i<span class="n">Offset</span>   <span class="o">=</span>         <span class="nb">p4</span> <span class="c1">;start at this partial</span>
+i<span class="n">NumParts</span> <span class="o">=</span>         <span class="nb">p5</span> <span class="c1">;overall number of partials</span>
+          <span class="nb">prints</span>    <span class="s">"Resynthesizing with partials </span><span class="si">%d</span><span class="s"> - </span><span class="si">%d</span><span class="s">.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> i<span class="n">Offset</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> i<span class="n">Offset</span><span class="o">+</span><span class="mi">10</span>
+k<span class="n">time</span>     <span class="nb">line</span>      <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p3</span>
+a<span class="n">sig</span>      <span class="nb">ATSadd</span>    k<span class="n">time</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> S<span class="n">file</span><span class="p">,</span> gi<span class="n">Sine</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> i<span class="n">Offset</span>
+          <span class="nb">outs</span>      a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="c1">;start next instance until there are enough partials left</span>
+ <span class="k">if</span> i<span class="n">Offset</span><span class="o">+</span><span class="mi">20</span> <span class="o">&lt;</span> i<span class="n">NumParts</span> <span class="k">then</span>
+          <span class="nb">event_i</span>   <span class="s">"i"</span><span class="p">,</span> <span class="s">"TonesInBandsOfTen"</span><span class="p">,</span> <span class="nb">p3</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">Offset</span><span class="o">+</span><span class="mi">10</span><span class="p">,</span> i<span class="n">NumParts</span>
+          <span class="k">else</span>
+          <span class="nb">event_i</span>   <span class="s">"i"</span><span class="p">,</span> <span class="s">"End"</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span>
+ <span class="k">endif</span>
+  <span class="kd">endin</span>
+
+  <span class="kd">instr</span> <span class="nf">End</span>
+          <span class="nb">exitnow</span>
+  <span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="s">"AllTheTones"</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">e</span> <span class="mi">999</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125131456"></a>
+        <h2>See also</h2>
+        <p><a class="link" href="ATSread.html" title="ATSread"><em class="citetitle">ATSread</em></a>, 
+            <a class="link" href="ATSreadnz.html" title="ATSreadnz"><em class="citetitle">ATSreadnz</em></a>, 
+            <a class="link" href="ATSinfo.html" title="ATSinfo"><em class="citetitle">ATSinfo</em></a>, 
+            <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>, 
+            <a class="link" href="ATScross.html" title="ATScross"><em class="citetitle">ATScross</em></a>, 
+            <a class="link" href="ATSinterpread.html" title="ATSinterpread"><em class="citetitle">ATSinterpread</em></a>, 
+            <a class="link" href="ATSpartialtap.html" title="ATSpartialtap"><em class="citetitle">ATSpartialtap</em></a>, 
+            <a class="link" href="ATSaddnz.html" title="ATSaddnz"><em class="citetitle">ATSaddnz</em></a>, 
+            <a class="link" href="ATSsinnoi.html" title="ATSsinnoi"><em class="citetitle">ATSsinnoi</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125122640"></a>
+        <h2>Credits</h2>
+        <p>
+            </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Alex Norman</td>
+          </tr>
+          <tr>
+            <td>Seattle,Washington</td>
+          </tr>
+          <tr>
+            <td>2004</td>
+          </tr>
+        </table>
+        <p>
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="atonex.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ATSaddnz.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">atonex </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ATSaddnz</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

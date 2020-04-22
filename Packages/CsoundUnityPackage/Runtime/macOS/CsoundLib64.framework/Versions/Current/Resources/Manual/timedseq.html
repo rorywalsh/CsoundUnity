@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>timedseq</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tigoto.html" title="tigoto" />
+    <link rel="next" href="timeinstk.html" title="timeinstk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">timedseq</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tigoto.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="timeinstk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="timedseq"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTimedSeq" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">timedseq</span>
+        </h2>
+        <p>timedseq — 
+      Time Variant Sequencer
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050657456"></a>
+        <h2>Description</h2>
+        <p>
+    An event-sequencer in which time can be controlled by a
+    time-pointer. Sequence data are stored into a table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050656160"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ktrig  <span class="command"><strong>timedseq</strong></span>  ktimpnt, ifn, kp1 [,kp2, kp3, ...,kpN]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050654048"></a>
+        <h2>Initialization</h2>
+        <p>
+    <span class="emphasis"><em>ifn</em></span> -- number of table containing sequence
+    data.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050652432"></a>
+        <h2>Performance</h2>
+        <p>
+    <span class="emphasis"><em>ktri</em></span> -- output trigger signal
+    </p>
+        <p>
+    <span class="emphasis"><em>ktimpnt</em></span> -- time pointer into sequence file, in seconds.
+    </p>
+        <p>
+    <span class="emphasis"><em>kp1,...,kpN</em></span> -- output p-fields of notes. kp2
+    meaning is relative action time and kp3 is the duration of notes
+    in seconds.
+    </p>
+        <p>
+    <span class="emphasis"><em>timedseq</em></span> is a sequencer that allows to schedule
+    notes starting from a user sequence, and depending from an external
+    timing given by a time-pointer value (ktimpnt argument). User should
+    fill table ifn with a list of notes, that can be provided in an
+    external text file by using GEN23, or by typing it directly in the
+    orchestra (or score) file with GEN02. The format of the text file
+    containing the sequence is made up simply by rows containing several
+    numbers separated by space (similarly to normal Csound score).  The
+    first value of each row must be a positive or null value, except for a
+    special case that will be explained below. This first value is
+    normally used to define the instrument number corresponding to that
+    particular note (like normal score). The second value of each row must
+    contain the action time of corresponding note and the third value its
+    duration. This is an example:
+  </p>
+        <pre class="programlisting">
+0 0    0.25 1  93
+0 0.25 0.25 2  63
+0 0.5  0.25 3  91
+0 0.75 0.25 4  70
+0 1    0.25 5  83
+0 1.25 0.25 6  75
+0 1.5  0.25 7  78
+0 1.75 0.25 8  78
+0 2    0.25 9  83
+0 2.25 0.25 10 70
+0 2.5  0.25 11 54
+0 2.75 0.25 12 80
+-1 3   -1   -1 -1  ;; last row of the sequence
+</pre>
+        <p>
+    In this example, the first value of each row is always zero (it is a
+    dummy value, but this p-field can be used, for example, to express a
+    MIDI channel or an instrument number), except the last row, that
+    begins with -1. This value (-1) is a special value, that indicates the
+    end of sequence. It has itself an action time, because sequences can be
+    looped. So the previous sequence has a default duration of 3 seconds,
+    being value 3 the last action time of the sequence.
+  </p>
+        <p>
+    It is important that ALL lines contains the same number of values (in
+    the example all rows contains exactly 5 values). The number of values
+    contained by each row, MUST be the number of kpXX output arguments
+    (notice that, even if kp1, kp2 etc. are placed at the right of the
+    opcode, they are output arguments, not input arguments).
+  </p>
+        <p>
+    ktimpnt argument provide the real temporization of the
+    sequence. Actually the passage of time through sequence is specified
+    by ktimpnt itself, which represents the time in seconds. ktimpnt must
+    always be positive, but can move forwards or backwards in time, be
+    stationary or discontinuous, as a pointer into the sequence file, in
+    the same way of pvoc or lpread. When ktimpnt crosses the action time
+    of a note, a trigger signal is sent to ktrig output argument, and kp1,
+    kp2,...kpN arguments are updated with the values of that note. This
+    information can then be used with schedkwhen to actually
+    activate note events. Notice that kp1,...kpn data can be further
+    processed (for example delayed with delayk, transposed, etc.) before
+    feeding schedkwhen.
+  </p>
+        <p>
+    <span class="emphasis"><em>ktimpnt</em></span> can be controlled by a linear signal, for example:
+  </p>
+        <pre class="programlisting">
+ktimpnt <span class="opc">line</span>     0, p3, 3  <span class="comment">; original sequence duration was 3 secs</span>
+ktrig   <span class="opc">timedseq</span> ktimpnt, 1, kp1, kp2, kp3, kp4, kp5
+        <span class="opc">schedkwhen</span>   ktrig, 105, 2, 0, kp3, kp4, kp5</pre>
+        <p>
+    in this case the complete sequence (with original duration of 3
+    seconds) will be played in <span class="emphasis"><em>p3</em></span> seconds.
+  </p>
+        <p>
+    You can loop a sequence by controlling it with a phasor:
+</p>
+        <pre class="programlisting">
+kphs    <span class="opc">phasor</span>   1<span class="op">/</span>3
+ktimpnt <span class="op">=</span>        kphs <span class="op">*</span> 3
+ktrig   <span class="opc">timedseq</span> ktimpnt ,1 ,kp1, kp2, kp3, kp4, kp5
+        <span class="opc">schedkwhen</span>   ktrig, 105, 2, 0, kp3, kp4, kp5</pre>
+        <p>
+  </p>
+        <p>
+  Obviously you can play only a fragment of the sequence,  read it
+  backward, and non-linearly access sequence data in the same way of
+  pvoc and lpread opcodes.
+  </p>
+        <p>
+  With timedseq opcode you can do almost all things of a normal score,
+  except you have the following limitations:
+    </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>You can't have two notes exactly starting with the same action
+        time; actually at least a k-cycle should separate timing of two
+        notes (otherwise the schedkwhen mechanism eats one of them).</p>
+            </li>
+            <li class="listitem">
+              <p>All notes of the sequence must have the same number of p-fields
+        (even if they activate different instruments).</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    You can remedy this limitation by filling with dummy values notes that belongs to
+    instruments with less p-fields than other ones.
+  </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050630464"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a complete example of the timedseq opcode. It uses the file <a class="ulink" href="examples/timedseq.csd" target="_top"><em class="citetitle">timedseq.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276050628672"></a>
+          <p class="title">
+            <strong>Example 1029. Example of the timedseq opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276413339120"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o timedseq.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">seq</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span>   <span class="mf">0.5</span><span class="p">,</span> <span class="mf">8.00</span><span class="p">,</span><span class="err">\</span>		<span class="c1">;first note</span>
+                        <span class="mi">2</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>   <span class="mf">0.5</span><span class="p">,</span> <span class="mf">8.02</span><span class="p">,</span><span class="err">\</span>		<span class="c1">;second note</span>
+                        <span class="mi">2</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>   <span class="mf">0.5</span><span class="p">,</span> <span class="mf">8.04</span><span class="p">,</span><span class="err">\</span>		<span class="c1">;third</span>
+                        <span class="mi">2</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>   <span class="mf">0.5</span><span class="p">,</span> <span class="mf">8.05</span><span class="p">,</span><span class="err">\</span>		<span class="c1">;fourth</span>
+                        <span class="mi">2</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>   <span class="mf">0.5</span><span class="p">,</span> <span class="mf">8.07</span><span class="p">,</span><span class="err">\</span>		<span class="c1">;fifth</span>
+                        <span class="mi">2</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>   <span class="mf">0.5</span><span class="p">,</span> <span class="mf">8.09</span><span class="p">,</span><span class="err">\</span>		<span class="c1">;sixth</span>
+                        <span class="mi">2</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>   <span class="mf">0.5</span><span class="p">,</span> <span class="mf">8.11</span><span class="p">,</span><span class="err">\</span>		<span class="c1">;seventh</span>
+                        <span class="mi">2</span><span class="p">,</span>  <span class="mi">7</span><span class="p">,</span>   <span class="mf">0.5</span><span class="p">,</span> <span class="mf">9.00</span><span class="p">,</span><span class="err">\</span>		<span class="c1">;eight note</span>
+                        <span class="mi">2</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>   <span class="mf">0.5</span><span class="p">,</span> <span class="mf">8.00</span><span class="p">,</span><span class="err">\</span>		<span class="c1">;due to a quirk in the opcode, it needs an extra note - a copy of the first note</span>
+                        <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span>   <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="o">-</span><span class="mi">1</span>		<span class="c1">;last line is a dummy event that indicates to timedseq when to loop back to the beginning</span>
+
+<span class="kd">instr</span>	<span class="nf">1</span>
+
+i<span class="n">beats</span>	<span class="o">=</span> <span class="mi">8</span>						<span class="c1">;lengths of sequence in beats</span>
+i<span class="n">tempo</span>	<span class="o">=</span> <span class="nb">p4</span>						<span class="c1">;tempo</span>
+i<span class="n">BPS</span>	<span class="o">=</span> i<span class="n">tempo</span><span class="o">/</span><span class="mi">60</span>					<span class="c1">;beats per second	</span>
+k<span class="n">phase</span>	<span class="nb">phasor</span>	i<span class="n">BPS</span><span class="o">/</span>i<span class="n">beats</span>				<span class="c1">;phasor to move through table</span>
+k<span class="n">pointer</span> <span class="o">=</span> k<span class="n">phase</span><span class="o">*</span>i<span class="n">beats</span>				<span class="c1">;multiply phase (range 0 - 1) by the number of beats contained within the sequence</span>
+k<span class="n">p1</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">p2</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">p3</span> <span class="nb">init</span> <span class="mi">0</span> 
+k<span class="n">p4</span> <span class="nb">init</span> <span class="mi">0</span>       		
+k<span class="n">trigger</span>   <span class="nb">timedseq</span> k<span class="n">pointer</span><span class="p">,</span> gi<span class="n">seq</span><span class="p">,</span> k<span class="n">p1</span><span class="p">,</span> k<span class="n">p2</span><span class="p">,</span>k<span class="n">p3</span><span class="p">,</span> k<span class="n">p4</span>
+<span class="nb">schedkwhen</span> k<span class="n">trigger</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">p3</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span>i<span class="n">BPS</span><span class="p">),</span> k<span class="n">p4</span>	<span class="c1">;p3 values have been scaled according to tempo so that they maesure beats rather than seconds</span>
+<span class="kd">endin</span>							<span class="c1">;abs(iBPS)(absolute value) is used because the tempo provided by the fourth note of the score is negative.</span>
+							<span class="c1">;Durations here should be positive, because negative values for duration would indicate a held note.</span>
+<span class="kd">instr</span>	<span class="nf">2</span>
+
+a<span class="n">env</span>	<span class="nb">linseg</span>	<span class="mi">0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">p3</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span><span class="mi">0</span>			<span class="c1">;amplitude envelope</span>
+a<span class="n">sig</span>	<span class="nb">vco2</span>	<span class="mf">0.4</span><span class="p">,</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">),</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.5</span>
+	<span class="nb">outs</span>	a<span class="n">sig</span><span class="o">*</span>a<span class="n">env</span><span class="p">,</span> a<span class="n">sig</span><span class="o">*</span>a<span class="n">env</span>			
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span> <span class="mi">120</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="mi">240</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="mi">480</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="o">-</span><span class="mi">480</span>	<span class="c1">;when negative it plays backwards </span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050624688"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="GEN02.html" title="GEN02"><em class="citetitle">GEN02</em></a>,
+      <a class="link" href="GEN23.html" title="GEN23"><em class="citetitle">GEN23</em></a>,
+      <a class="link" href="seqtime.html" title="seqtime"><em class="citetitle">seqtime</em></a>,
+      <a class="link" href="seqtime.html" title="seqtime"><em class="citetitle">seqtime2</em></a>,
+      <a class="link" href="trigseq.html" title="trigseq"><em class="citetitle">trigseq</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050619136"></a>
+        <h2>Credits</h2>
+        <p>
+      Author: Gabriel Maldonado
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tigoto.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="timeinstk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tigoto </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> timeinstk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

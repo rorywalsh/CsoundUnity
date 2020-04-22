@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN40</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN34.html" title="GEN34" />
+    <link rel="next" href="GEN41.html" title="GEN41" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN40</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN34.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN41.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN40"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN40" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN40</span>
+        </h2>
+        <p>GEN40 — 
+      Generates a random distribution using a distribution histogram.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988014448"></a>
+        <h2>Description</h2>
+        <p>
+      Generates a continuous random distribution function starting from the shape of a user-defined distribution histogram.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988013136"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 40 shapetab</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988011200"></a>
+        <h2>Performance</h2>
+        <p>
+      The shape of histogram must be stored in a previously defined table, in fact shapetab argument must be filled with the number of such table.
+    </p>
+        <p>
+      Histogram shape can be generated with any other GEN routines. Since no interpolation is used when <a class="link" href="GEN40.html" title="GEN40">GEN40</a> processes the translation, it is suggested that the size of the table containing the histogram shape to be reasonably big, in order to obtain more precision (however after the processing the shaping-table can be destroyed in order to re-gain memory).
+    </p>
+        <p>
+      This subroutine is designed to be used together with cuserrnd opcode (see <a class="link" href="cuserrnd.html" title="cuserrnd">cuserrnd</a> for more information).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988007120"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the GEN40 generator. It uses the file <a class="ulink" href="examples/gen40.csd" target="_top"><em class="citetitle">gen40.csd</em></a>.
+            </p>
+        <div class="example">
+          <a id="idm275988005328"></a>
+          <p class="title">
+            <strong>Example 1228. Example of the GEN40 generator.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276398797104"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o GEN40.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; every run time same values</span>
+
+k<span class="n">user</span> <span class="nb">cuserrnd</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span>
+      <span class="nb">printk</span> <span class="mf">.2</span><span class="p">,</span> k<span class="n">user</span>
+a<span class="n">sig</span>  <span class="nb">poscil</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">220</span><span class="o">+</span>k<span class="n">user</span><span class="p">,</span> <span class="mi">3</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">; every run time different values</span>
+
+      <span class="nb">seed</span> <span class="mi">0</span>
+k<span class="n">user</span> <span class="nb">cuserrnd</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span>
+      <span class="nb">printk</span> <span class="mf">.2</span><span class="p">,</span> k<span class="n">user</span>
+a<span class="n">sig</span>  <span class="nb">poscil</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">220</span><span class="o">+</span>k<span class="n">user</span><span class="p">,</span> <span class="mi">3</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">0</span> <span class="mi">8</span> <span class="mi">0</span> <span class="mi">4</span> <span class="mi">1</span>	<span class="c1">;distrubution using GEN07</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">40</span> <span class="mi">1</span>		<span class="c1">;GEN40 is to be used with cuserrnd</span>
+<span class="nb">f</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>			<span class="c1">;sine</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />     
+      Its output should include lines like these:
+      </p>
+        <pre class="screen">
+ i   1 time     0.00067:    53.14918
+ i   1 time     0.20067:     0.00000
+ i   1 time     0.40067:     0.00000
+ i   1 time     0.60067:    96.80406
+ i   1 time     0.80067:    94.20729
+ i   1 time     1.00000:     0.00000
+ i   1 time     1.20067:    86.13032
+ i   1 time     1.40067:    31.37096
+ i   1 time     1.60067:    70.35889
+ i   1 time     1.80000:     0.00000
+ i   1 time     2.00000:    49.18914
+
+WARNING: Seeding from current time 2006647442
+
+ i   2 time     3.00067:    21.45002
+ i   2 time     3.20067:    44.32333
+ i   2 time     3.40067:    46.05420
+ i   2 time     3.60000:     0.00000
+ i   2 time     3.80067:    41.32175
+ i   2 time     4.00000:     0.00000
+ i   2 time     4.20000:    63.72019
+ i   2 time     4.40067:     0.00000
+ i   2 time     4.60067:     0.00000
+ i   2 time     4.80067:     0.00000
+ i   2 time     5.00000:    74.49330
+      </pre>
+        <p>
+
+        <span class="phrase">This is the diagram of the waveform of the GEN40 routine, as used in the example:</span>
+    </p>
+        <p>
+    </p>
+        <p>
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen40.png" alt="f 2 0 16384 40 1" />
+          <div class="caption">
+            <p>f 2 0 16384 40 1</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987995424"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN34.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN41.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN34 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN41</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

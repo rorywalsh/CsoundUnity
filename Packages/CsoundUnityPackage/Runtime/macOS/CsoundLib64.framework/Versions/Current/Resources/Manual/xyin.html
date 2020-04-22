@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>xyin</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="xtratim.html" title="xtratim" />
+    <link rel="next" href="xyscale.html" title="xyscale" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">xyin</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="xtratim.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="xyscale.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="xyin"></a>
+      <div class="titlepage"></div>
+      <a id="IndexXyin" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">xyin</span>
+        </h2>
+        <p>xyin — 
+      Sense the cursor position in an output window
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035155840"></a>
+        <h2>Description</h2>
+        <p>
+      Sense the cursor position in an output window. When <span class="emphasis"><em>xyin</em></span> is called the position of the mouse within the output window is used to reply to the request.  This simple mechanism does mean that only one <span class="emphasis"><em>xyin</em></span> can be used accurately at once.  The position of the mouse is reported in the output window.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035153440"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kx, ky <span class="command"><strong>xyin</strong></span> iprd, ixmin, ixmax, iymin, iymax [, ixinit] [, iyinit]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035151296"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iprd</em></span> -- period of cursor sensing (in seconds). Typically .1 seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>xmin, xmax, ymin, ymax</em></span> -- edge values for the x-y coordinates of a cursor in the input window.
+    </p>
+        <p>
+      <span class="emphasis"><em>ixinit, iyinit</em></span> (optional) -- initial x-y coordinates reported; the default values are 0,0. If these values are not within the given min-max range, they will be coerced into that range.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035147440"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xyin</em></span> samples the cursor x-y position in an input window every <span class="emphasis"><em>iprd</em></span> seconds. Output values are repeated (not interpolated) at the k-rate, and remain fixed until a new change is registered in the window. There may be any number of input windows. This unit is useful for real-time control, but continuous motion should be avoided if <span class="emphasis"><em>iprd</em></span> is unusually small.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Depending on your platform and distribution, you might need to enable displays using the <span class="emphasis"><em>--displays</em></span> command line flag.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035143312"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the xyin opcode. It uses the file <a class="ulink" href="examples/xyin.csd" target="_top"><em class="citetitle">xyin.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276035141520"></a>
+          <p class="title">
+            <strong>Example 1158. Example of the xyin opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276402544336"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     --displays <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o xyin.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Print and capture values every 0.1 seconds.</span>
+  i<span class="n">prd</span> <span class="o">=</span> <span class="mf">0.1</span>
+  <span class="c1">; The x values are from 1 to 30.</span>
+  i<span class="n">xmin</span> <span class="o">=</span> <span class="mi">1</span>
+  i<span class="n">xmax</span> <span class="o">=</span> <span class="mi">30</span>
+  <span class="c1">; The y values are from 1 to 30.</span>
+  i<span class="n">ymin</span> <span class="o">=</span> <span class="mi">1</span>
+  i<span class="n">ymax</span> <span class="o">=</span> <span class="mi">30</span>
+  <span class="c1">; The initial values for X and Y are both 15.</span>
+  i<span class="n">xinit</span> <span class="o">=</span> <span class="mi">15</span>
+  i<span class="n">yinit</span> <span class="o">=</span> <span class="mi">15</span>
+
+  <span class="c1">; Get the values kx and ky using the xyin opcode.</span>
+  k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span> <span class="nb">xyin</span> i<span class="n">prd</span><span class="p">,</span> i<span class="n">xmin</span><span class="p">,</span> i<span class="n">xmax</span><span class="p">,</span> i<span class="n">ymin</span><span class="p">,</span> i<span class="n">ymax</span><span class="p">,</span> i<span class="n">xinit</span><span class="p">,</span> i<span class="n">yinit</span>
+
+  <span class="c1">; Print out the values of kx and ky.</span>
+  <span class="nb">printks</span> <span class="s">"kx=%f, ky=%f</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span> i<span class="n">prd</span><span class="p">,</span> k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span>
+
+  <span class="c1">; Play an oscillator, use the x values for amplitude and</span>
+  <span class="c1">; the y values for frequency.</span>
+  k<span class="n">amp</span> <span class="o">=</span> k<span class="n">x</span> <span class="o">*</span> <span class="mi">1000</span>
+  k<span class="n">cps</span> <span class="o">=</span> k<span class="n">y</span> <span class="o">*</span> <span class="mi">220</span>
+  a<span class="n">1</span> <span class="nb">poscil</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span>
+
+  <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Play Instrument #1 for 30 seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">30</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      As the values of kx and ky change, they will be printed out like this:
+      </p>
+        <pre class="screen">
+kx=8.612036, ky=22.677933
+kx=10.765685, ky=15.644135
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035136656"></a>
+        <h2>Credits</h2>
+        <p>Example written by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="xtratim.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="xyscale.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">xtratim </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> xyscale</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

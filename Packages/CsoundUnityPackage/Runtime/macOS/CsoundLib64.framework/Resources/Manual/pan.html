@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pan</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pan2.html" title="pan2" />
+    <link rel="next" href="pareq.html" title="pareq" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pan</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pan2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pareq.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pan"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPan" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pan</span>
+        </h2>
+        <p>pan — 
+      Distribute an audio signal amongst four channels.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072475104"></a>
+        <h2>Description</h2>
+        <p>
+      Distribute an audio signal amongst four channels with localization control.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072473840"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1, a2, a3, a4 <span class="command"><strong>pan</strong></span> asig, kx, ky, ifn [, imode] [, ioffset]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072471744"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- function table number of a stored pattern describing the amplitude growth in a speaker channel as sound moves towards it from an adjacent speaker. Requires extended guard-point.
+    </p>
+        <p>
+      <span class="emphasis"><em>imode</em></span> (optional) -- mode of the <span class="emphasis"><em>kx, ky</em></span> position values. 0 signifies raw index mode, 1 means the inputs are normalized (0 - 1). The default value is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>ioffset</em></span> (optional) -- offset indicator for <span class="emphasis"><em>kx, ky</em></span>. 0 infers the origin to be at channel 3 (left rear); 1 requests an axis shift to the quadraphonic center. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072467280"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>pan</em></span> takes an input signal <span class="emphasis"><em>asig</em></span> and distributes it amongst four outputs (essentially quad speakers) according to the controls <span class="emphasis"><em>kx</em></span> and <span class="emphasis"><em>ky</em></span>. For normalized input (mode=1) and no offset, the four output locations are in order: left-front at (0,1), right-front at (1,1), left-rear at the origin (0,0), and right-rear at (1,0). In the notation (<span class="emphasis"><em>kx</em></span>, <span class="emphasis"><em>ky)</em></span>, the coordinates <span class="emphasis"><em>kx</em></span> and <span class="emphasis"><em>ky</em></span>, each ranging 0 - 1, thus control the 'rightness' and 'forwardness' of a sound location.
+    </p>
+        <p>
+      Movement between speakers is by amplitude variation, controlled by the stored function table <span class="emphasis"><em>ifn</em></span>. As <span class="emphasis"><em>kx</em></span> goes from 0 to 1, the strength of the right-hand signals will grow from the left-most table value to the right-most, while that of the left-hand signals will progress from the right-most table value to the left-most. For a simple linear pan, the table might contain the linear function 0 - 1. A more correct pan that maintains constant power would be obtained by storing the first quadrant of a sinusoid. Since <span class="emphasis"><em>pan</em></span> will scale and truncate <span class="emphasis"><em>kx</em></span> and <span class="emphasis"><em>ky</em></span> in simple table lookup, a medium-large table (say 8193) should be used.
+    </p>
+        <p>
+      <span class="emphasis"><em>kx, ky</em></span> values are not restricted to 0 - 1. A circular motion passing through all four speakers (inscribed) would have a diameter of root 2, and might be defined by a circle of radius R = root 1/2 with center at (.5,.5). <span class="emphasis"><em>kx, ky</em></span> would then come from Rcos(angle), Rsin(angle), with an implicit origin at (.5,.5) (i.e. <span class="emphasis"><em>ioffset</em></span> = 1). Unscaled raw values operate similarly. Sounds can thus be located anywhere in the polar or Cartesian plane; points lying outside the speaker square are projected correctly onto the square's perimeter as for a listener at the center.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072457392"></a>
+        <h2>Example</h2>
+        <p>
+      Here is an example of the pan opcodes. It uses the file <a class="ulink" href="examples/pan.csd" target="_top"><em class="citetitle">pan.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276072455616"></a>
+          <p class="title">
+            <strong>Example 677. Example of the pan opcodes.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276441846304"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pan.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">cps</span> <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">1</span>   <span class="nb">phasor</span> k<span class="n">cps</span>		<span class="c1">; "fraction" of circle - controls speed of rotation - can be negative</span>
+k<span class="n">2</span>   <span class="nb">tablei</span> k<span class="n">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> 		<span class="c1">; sin of angle (sinusoid in f1)</span>
+k<span class="n">3</span>   <span class="nb">tablei</span> k<span class="n">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; cos of angle (sin offset 1/4 circle)</span>
+a<span class="n">rnd</span> <span class="nb">randomi</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">50</span>	<span class="c1">; produce random values </span>
+a<span class="n">sig</span> <span class="nb">poscil</span> <span class="mf">.7</span><span class="p">,</span> a<span class="n">rnd</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; audio signal.. </span>
+
+a<span class="n">1</span><span class="p">,</span>a<span class="n">2</span><span class="p">,</span>a<span class="n">3</span><span class="p">,</span>a<span class="n">4</span> <span class="nb">pan</span>	a<span class="n">sig</span><span class="p">,</span> k<span class="n">2</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> k<span class="n">3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; sent in a circle (f2=1st quad sin)</span>
+	<span class="nb">outq</span>	a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">8193</span> <span class="mi">9</span> <span class="mf">.25</span> <span class="mi">1</span> <span class="mi">0</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span> <span class="mf">.2</span>	<span class="c1">;move to the tight</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">11</span> <span class="mi">10</span> <span class="o">-</span><span class="mf">.2</span>	<span class="c1">;move to the left</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pan2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pareq.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pan2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pareq</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

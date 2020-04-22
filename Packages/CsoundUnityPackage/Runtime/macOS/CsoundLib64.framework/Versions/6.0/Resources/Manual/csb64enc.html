@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>csb64enc</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilityOther.html" title="Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR, MAKECSD, MIXER, SCALE, MKDB)" />
+    <link rel="prev" href="cs.html" title="cs" />
+    <link rel="next" href="envext.html" title="envext" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">csb64enc</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cs.html">Prev</a> </td>
+          <th width="60%" align="center">Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR,
+  MAKECSD, MIXER, SCALE, MKDB)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="envext.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="csb64enc"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">csb64enc</span>
+        </h2>
+        <p>csb64enc — 
+      Converts a binary file to a Base64 encoded text file.
+      <a id="IndexCsb64enc" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979485568"></a>
+        <h2>Description</h2>
+        <p>
+      The <span class="emphasis"><em>csb64enc</em></span> utility generates a Base64 encoded text file from a binary file, such as a standard MIDI file (.mid) or any type of audio file. It is useful to convert a file in the format accepted by the <a class="link" href="CommandUnifile.html" title="Unified File Format for Orchestras and Scores"><em class="citetitle">&lt;CsFileB&gt;</em></a> section of a csd file, to include the file within it.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979482832"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>csb64enc</strong></span> [OPTIONS ... ] infile1 [ infile2 [ ... ]]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979480880"></a>
+        <h2>Initialization</h2>
+        <p>
+      Flags:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+            - <span class="emphasis"><em>w n</em></span>
+            = set line width of the output file to n (default: 72)
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            - <span class="emphasis"><em>o fname</em></span>
+            = output file name (default: stdout)
+          </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979476768"></a>
+        <h2>Examples</h2>
+        <p>
+
+</p>
+        <pre class="programlisting">
+    <span class="emphasis"><em>csb64enc</em></span> -w 78 -o file.txt file.mid</pre>
+        <p>
+
+      This command produces a Base64 encoded text file from the standard MIDI file <span class="emphasis"><em>file.mid</em></span>. This file can now be pasted within a csd file's <a class="link" href="CommandUnifile.html" title="Unified File Format for Orchestras and Scores"><em class="citetitle">&lt;CsFileB&gt;</em></a> section.
+  </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979473088"></a>
+        <h2>See also</h2>
+        <p>
+          <a class="link" href="makecsd.html" title="makecsd">
+            <em class="citetitle">makecsd</em>
+          </a>
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979471312"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+        <p>Jan 2003</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cs.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilityOther.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="envext.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cs </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> envext</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

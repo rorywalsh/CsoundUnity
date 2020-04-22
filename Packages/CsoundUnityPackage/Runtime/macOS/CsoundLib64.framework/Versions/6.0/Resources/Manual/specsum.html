@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>specsum</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="specscal.html" title="specscal" />
+    <link rel="next" href="spectrum.html" title="spectrum" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">specsum</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="specscal.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="spectrum.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="specsum"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpecsum" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">specsum</span>
+        </h2>
+        <p>specsum — 
+      Sums the magnitudes across all channels of the spectrum.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053540624"></a>
+        <h2>Description</h2>
+        <p>
+      Sums the magnitudes across all channels of the spectrum.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053539376"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ksum <span class="command"><strong>specsum</strong></span> wsig [, interp]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053537280"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>interp</em></span> (optional, default-0) -- if non-zero, interpolate the output signal (<span class="emphasis"><em>koct </em></span>or <span class="emphasis"><em>ksum</em></span>). The default value is 0 (repeat the signal value between changes).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053534720"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ksum</em></span> -- the output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>wsig</em></span> -- the input spectrum.
+    </p>
+        <p>
+      Sums the magnitudes across all channels of the spectrum. At each new frame of <span class="emphasis"><em>wsig</em></span>, the magnitudes are summed and released as a scalar <span class="emphasis"><em>ksum</em></span> signal. Between frames, the output is either repeated or interpolated at the k-rate. This unit produces a k-signal summation of the magnitudes present in the spectral data, and is thereby a running measure of its moment-to-moment overall strength.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053530704"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  ksum     <span class="opc">specsum</span>   wsig, 1              <span class="comment">; sum the spec bins, and ksmooth</span>
+           <span class="octrl">if</span> ksum <span class="op">&lt;</span> 2000 <span class="octrl">kgoto</span> <span class="olabel">zero</span>      <span class="comment">; if sufficient amplitude</span>
+  koct     <span class="opc">specptrk</span>  wsig                 <span class="comment">;    pitch-track the signal</span>
+           <span class="octrl">kgoto</span>     <span class="olabel">contin</span>
+<span class="olabel">zero:</span> 
+  koct     <span class="op">=</span>         0                    <span class="comment">; else output zero</span>
+<span class="olabel">contin:</span></pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053518896"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="specdisp.html" title="specdisp"><em class="citetitle">specdisp</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="specscal.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="spectrum.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">specscal </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> spectrum</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

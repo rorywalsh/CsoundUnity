@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>gbuzz</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="gausstrig.html" title="gausstrig" />
+    <link rel="next" href="genarray.html" title="genarray" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">gbuzz</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="gausstrig.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="genarray.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="gbuzz"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGbuzz" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">gbuzz</span>
+        </h2>
+        <p>gbuzz — 
+      Output is a set of harmonically related cosine partials.                      
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101097200"></a>
+        <h2>Description</h2>
+        <p>
+      Output is a set of harmonically related cosine partials.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101095872"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>gbuzz</strong></span> xamp, xcps, knh, klh, kmul, ifn [, iphs]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101093744"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- table number of a stored function containing a cosine wave. A large table of at least 8192 points is recommended.
+    </p>
+        <p>
+      <span class="emphasis"><em>iphs</em></span> (optional, default=0) -- initial phase of the fundamental frequency, expressed as a fraction of a cycle (0 to 1). A negative value will cause phase initialization to be skipped. The default value is zero
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101090688"></a>
+        <h2>Performance</h2>
+        <p>
+      The buzz units generate an additive set of harmonically related cosine partials of fundamental frequency <span class="emphasis"><em>xcps</em></span>, and whose amplitudes are scaled so their summation peak equals <span class="emphasis"><em>xamp</em></span>. The selection and strength of partials is determined by the following control parameters:
+    </p>
+        <p>
+      <span class="emphasis"><em>knh</em></span> -- total number of harmonics requested. If <span class="emphasis"><em>knh</em></span> is negative, the absolute value is used. If <span class="emphasis"><em>knh</em></span> is zero, a value of 1 is used.
+    </p>
+        <p>
+      <span class="emphasis"><em>klh</em></span> -- lowest harmonic present. Can be positive, zero or negative. In <span class="emphasis"><em>gbuzz</em></span> the set of partials can begin at any partial number and proceeds upwards; if <span class="emphasis"><em>klh</em></span> is negative, all partials below zero will reflect as positive partials without phase change (since cosine is an even function), and will add constructively to any positive partials in the set.
+    </p>
+        <p>
+      <span class="emphasis"><em>kmul</em></span> -- specifies the multiplier in the series of amplitude coefficients. This is a power series: if the <span class="emphasis"><em>klh</em></span>th partial has a strength coefficient of A, the (<span class="emphasis"><em>klh</em></span> + n)th partial will have a coefficient of A * (<span class="emphasis"><em>kmul</em></span> ** n), i.e. strength values trace an exponential curve. <span class="emphasis"><em>kmul</em></span> may be positive, zero or negative, and is not restricted to integers.
+    </p>
+        <p>
+      <a class="link" href="buzz.html" title="buzz"><em class="citetitle">buzz</em></a> and <span class="emphasis"><em>gbuzz </em></span>are useful as complex sound sources in subtractive synthesis. <span class="emphasis"><em>buzz</em></span> is a special case of the more general <span class="emphasis"><em>gbuzz</em></span> in which <span class="emphasis"><em>klh</em></span> = <span class="emphasis"><em>kmul</em></span> = 1; it thus produces a set of <span class="emphasis"><em>knh</em></span> equal-strength harmonic partials, beginning with the fundamental. (This is a band-limited pulse train; if the partials extend to the Nyquist, i.e. <span class="emphasis"><em>knh</em></span> = int (sr / 2 / fundamental freq.), the result is a real pulse train of amplitude <span class="emphasis"><em>xamp</em></span>.) 
+    </p>
+        <p>
+      Although both <span class="emphasis"><em>knh</em></span> and <span class="emphasis"><em>klh</em></span> may be varied during performance, their internal values are necessarily integer and may cause <span class="quote">“<span class="quote">pops</span>”</span> due to discontinuities in the output. <span class="emphasis"><em>kmul,</em></span> however, can be varied during performance to good effect. <span class="emphasis"><em>gbuzz</em></span> can be amplitude- and/or frequency-modulated by either control or audio signals.
+    </p>
+        <p>
+      N.B. This unit has its analog in <a class="link" href="GEN11.html" title="GEN11"><em class="citetitle">GEN11</em></a>, in which the same set of cosines can be stored in a function table for sampling by an oscillator. Although computationally more efficient, the stored pulse train has a fixed spectral content, not a time-varying one as above.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101072128"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the gbuzz opcode. It uses the file <a class="ulink" href="examples/gbuzz.csd" target="_top"><em class="citetitle">gbuzz.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276101070320"></a>
+          <p class="title">
+            <strong>Example 388. Example of the gbuzz opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276491632960"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gbuzz.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>   <span class="o">=</span><span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">cps</span> <span class="o">=</span> <span class="mi">220</span>
+k<span class="n">nh</span>  <span class="o">=</span> <span class="nb">p4</span>		<span class="c1">;total no. of harmonics</span>
+k<span class="n">lh</span>  <span class="o">=</span> <span class="nb">p5</span>		<span class="c1">;lowest harmonic</span>
+k<span class="n">mul</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">;increase amplitude of</span>
+			<span class="c1">;higer partials</span>
+a<span class="n">sig</span> <span class="nb">gbuzz</span> <span class="mf">.6</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> k<span class="n">nh</span><span class="p">,</span> k<span class="n">lh</span><span class="p">,</span> k<span class="n">mul</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; a cosine wave</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">11</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">3</span>  <span class="mi">1</span> <span class="c1">;3 harmonics, lowest harmonic=1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="mi">30</span> <span class="mi">1</span> <span class="c1">;30 harmonics, lowest harmonic=1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="mi">3</span>  <span class="mi">2</span> <span class="c1">;3 harmonics, lowest harmonic=3</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="mi">30</span> <span class="mi">2</span> <span class="c1">;30 harmonics, lowest harmonic=3</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101066320"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="buzz.html" title="buzz"><em class="citetitle">buzz</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101064272"></a>
+        <h2>Credits</h2>
+        <p>September 2003. Thanks to Kanata Motohashi for correcting the mentions of the <span class="emphasis"><em>kmul</em></span> parameter.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="gausstrig.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="genarray.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">gausstrig </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> genarray</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

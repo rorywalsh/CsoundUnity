@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>chnparams</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="chnmix.html" title="chnmix" />
+    <link rel="next" href="chnset.html" title="chnset" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">chnparams</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="chnmix.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="chnset.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="chnparams"></a>
+      <div class="titlepage"></div>
+      <a id="Indexchnparams" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">chnparams</span>
+        </h2>
+        <p>chnparams — 
+      Query parameters of a channel.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121140016"></a>
+        <h2>Description</h2>
+        <p>
+      Query parameters of a channel (if it does not exist, all
+      returned values are zero). 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121138736"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">itype, imode, ictltype, idflt, imin, imax <span class="command"><strong>chnparams</strong></span> Sname</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121136624"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>itype</em></span> -- channel data type (1: control, 2: audio,
+      3: string)
+    </p>
+        <p>
+      <span class="emphasis"><em>imode</em></span> -- sum of 1 for input and 2 for output
+    </p>
+        <p>
+      <span class="emphasis"><em>ictltype</em></span> -- special parameter for control
+      channel only; if not available, set to zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>idflt</em></span> -- special parameter for control
+      channel only; if not available, set to zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>imin</em></span> -- special parameter for control
+      channel only; if not available, set to zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>imax</em></span> -- special parameter for control
+      channel only; if not available, set to zero.      
+    </p>
+        <p>
+      <span class="emphasis"><em>Sname</em></span> -- string identifying the channel.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121129200"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="chnmix.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="chnset.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">chnmix </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> chnset</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

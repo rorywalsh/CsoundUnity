@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>faustctl</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="faustdsp.html" title="faustdsp" />
+    <link rel="next" href="faustgen.html" title="faustgen" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">faustctl</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="faustdsp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="faustgen.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="faustctl"></a>
+      <div class="titlepage"></div>
+      <a id="Indexfaustctl" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">faustctl</span>
+        </h2>
+        <p>faustctl — 
+      Adjusts a given control in a Faust DSP instance.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112824240"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in faustcsound.</p>
+        <p>
+      Faustctl will set a given control in a running faust program
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112822576"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>faustctl</strong></span> idsp,Scontrol,kval </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112820624"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">Scontrol</span>”</span></em></span> --  a string containing the control name
+</p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">idsp</span>”</span></em></span> -- a handle to an existing Faust DSP instance
+</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112817920"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">kval</span>”</span></em></span> -- value to which the control will be set.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112816160"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the faustctl opcode. It uses the file <a class="ulink" href="examples/faustctl.csd" target="_top"><em class="citetitle">faustctl.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276112814368"></a>
+          <p class="title">
+            <strong>Example 271. Example of the faustctl opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276479075264"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+ a<span class="n">in1</span> <span class="nb">oscili</span> <span class="vg">0dbfs</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">440</span>
+ i<span class="n">dsp</span><span class="p">,</span>a<span class="n">1</span> <span class="nb">faustgen</span> <span class="s">{{
+   gain = hslider("vol",1,0,1,0.01);
+   process = (_ * gain); 
+  }}</span><span class="p">,</span> a<span class="n">in1</span>
+ k<span class="n">1</span> <span class="nb">line</span>  <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span>
+ <span class="nb">faustctl</span> i<span class="n">dsp</span><span class="p">,</span> <span class="s">"vol"</span><span class="p">,</span> k<span class="n">1</span>
+   <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111745296"></a>
+        <h2>Credits</h2>
+        <p>Author: Victor Lazzarini, 2013 </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="faustdsp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="faustgen.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">faustdsp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> faustgen</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>spsend</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sprintfk.html" title="sprintfk" />
+    <link rel="next" href="sqrt.html" title="sqrt" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">spsend</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sprintfk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sqrt.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="spsend"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpsend" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">spsend</span>
+        </h2>
+        <p>spsend — 
+      Generates output signals based on a previously defined <span class="emphasis"><em>space</em></span> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053375552"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>spsend</em></span> depends upon the existence of a previously defined <a class="link" href="space.html" title="space"><em class="citetitle">space</em></a>. The output signals from <span class="emphasis"><em>spsend</em></span> are derived from the values given for xy and reverb in the <span class="emphasis"><em>space</em></span> and are ready to be sent to local or global reverb units (see example below).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053372064"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1, a2, a3, a4 <span class="command"><strong>spsend</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053370128"></a>
+        <h2>Performance</h2>
+        <p>
+      The configuration of the xy coordinates in space places the signal in the following way:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>a1 is -1, 1</p>
+            </li>
+            <li class="listitem">
+              <p>a2 is 1, 1</p>
+            </li>
+            <li class="listitem">
+              <p>a3 is -1, -1</p>
+            </li>
+            <li class="listitem">
+              <p>a4 is 1, -1</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      This assumes a loudspeaker set up as a1 is left front, a2 is right front, a3 is left back, a4 is right back. Values greater than 1 will result in sounds being attenuated, as if in the distance. <span class="emphasis"><em>space</em></span> considers the speakers to be at a distance of 1; smaller values of xy can be used, but <span class="emphasis"><em>space</em></span> will not amplify the signal in this case. It will, however balance the signal so that it can sound as if it were within the 4 speaker <span class="emphasis"><em>space</em></span>.  x=0, y=1, will place the signal equally balanced between left and right front channels, x=y=0 will place the signal equally in all 4 channels, and so on. Although there must be 4 output signals from <span class="emphasis"><em>space</em></span>, it can be used in a 2 channel orchestra. If the xy's are kept so that Y&gt;=1, it should work well to do panning and fixed localization in a stereo field.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053362208"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a stereo example of the spsend opcode. It uses the file <a class="ulink" href="examples/spsend.csd" target="_top"><em class="citetitle">spsend.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276053360416"></a>
+          <p class="title">
+            <strong>Example 936. Example of the spsend opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276427466384"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o spsend.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>	<span class="c1">;stereo output</span>
+  
+ga<span class="n">1</span> <span class="nb">init</span> <span class="mi">0</span>
+ga<span class="n">2</span> <span class="nb">init</span> <span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;sends different amounts to reverb</span>
+
+i<span class="n">rev</span> <span class="o">=</span> <span class="nb">p6</span>
+a<span class="n">sig</span> <span class="nb">diskin2</span> <span class="s">"fox.wav"</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span> <span class="nb">space</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">rev</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span>	<span class="c1">;take position values from p4, p5</span>
+a<span class="n">r1</span><span class="p">,</span> a<span class="n">r2</span><span class="p">,</span> a<span class="n">r3</span><span class="p">,</span> a<span class="n">r4</span> <span class="nb">spsend</span>			<span class="c1">;send to reverb</span>
+
+ga<span class="n">1</span> <span class="o">=</span> ga<span class="n">1</span><span class="o">+</span>a<span class="n">r1</span>
+ga<span class="n">2</span> <span class="o">=</span> ga<span class="n">2</span><span class="o">+</span>a<span class="n">r2</span>
+    <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">99</span> <span class="c1">; reverb instrument</span>
+
+a<span class="n">1</span> <span class="nb">reverb2</span> ga<span class="n">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+a<span class="n">2</span> <span class="nb">reverb2</span> ga<span class="n">2</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+   <span class="nb">outs</span>	a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>
+
+ga<span class="n">1</span><span class="o">=</span><span class="mi">0</span>
+ga<span class="n">2</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;WITH REVERB</span>
+<span class="c1">;place the sound in the left speaker and near</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="mf">.1</span>
+<span class="c1">;place the sound in the right speaker and far</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">45</span> <span class="mi">45</span> <span class="mf">.1</span>
+<span class="c1">;place the sound equally between left and right and in the middle ground distance</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">12</span> <span class="mf">.1</span>
+
+<span class="c1">;NO REVERB</span>
+<span class="c1">;place the sound in the left speaker and near</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">6</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span>
+<span class="c1">;place the sound in the right speaker and far</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">7</span> <span class="mi">1</span> <span class="mi">45</span> <span class="mi">45</span> <span class="mi">0</span>
+<span class="c1">;place the sound equally between left and right and in the middle ground distance</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">8</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">12</span> <span class="mi">0</span>
+
+<span class="nb">i</span> <span class="mi">99</span> <span class="mi">0</span> <span class="mi">12</span>	<span class="c1">;keep reverb active all the time</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053356432"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="space.html" title="space"><em class="citetitle">space</em></a>,
+      <a class="link" href="spdist.html" title="spdist"><em class="citetitle">spdist</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053353520"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, WA USA</td>
+          </tr>
+          <tr>
+            <td>1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.48</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sprintfk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sqrt.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sprintfk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> sqrt</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

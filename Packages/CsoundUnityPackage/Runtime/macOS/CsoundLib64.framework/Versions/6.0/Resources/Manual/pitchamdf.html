@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pitchamdf</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pitch.html" title="pitch" />
+    <link rel="next" href="planet.html" title="planet" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pitchamdf</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pitch.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="planet.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pitchamdf"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPitchamdf" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pitchamdf</span>
+        </h2>
+        <p>pitchamdf — 
+      Follows the pitch of a signal based on the AMDF method.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070148368"></a>
+        <h2>Description</h2>
+        <p>
+      Follows the pitch of a signal based on the AMDF method (Average Magnitude Difference Function). Outputs pitch and amplitude tracking signals. The method is quite fast and should run in realtime. This technique usually works best for monophonic signals.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070146640"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kcps, krms <span class="command"><strong>pitchamdf</strong></span> asig, imincps, imaxcps [, icps] [, imedi] \
+      [, idowns] [, iexcps] [, irmsmedi]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070144384"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imincps</em></span> -- estimated minimum frequency (expressed in Hz) present in the signal
+    </p>
+        <p>
+      <span class="emphasis"><em>imaxcps</em></span> -- estimated maximum frequency present in the signal
+    </p>
+        <p>
+      <span class="emphasis"><em>icps</em></span> (optional, default=0) -- estimated initial frequency of the signal. If 0, icps = (<span class="emphasis"><em>imincps</em></span>+<span class="emphasis"><em>imaxcps</em></span>) / 2. The default is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>imedi</em></span> (optional, default=1) -- size of median filter applied to the output <span class="emphasis"><em>kcps</em></span>. The size of the filter will be <span class="emphasis"><em>imedi</em></span>*2+1. If 0, no median filtering will be applied. The default is 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>idowns</em></span> (optional, default=1) -- downsampling factor for <span class="emphasis"><em>asig</em></span>. Must be an integer. A factor of <span class="emphasis"><em>idowns</em></span> &gt; 1 results in faster performance, but may result in worse pitch detection. Useful range is 1 - 4. The default is 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>iexcps</em></span> (optional, default=0) -- how frequently pitch analysis is executed, expressed in Hz.  If 0, <span class="emphasis"><em>iexcps</em></span> is set to <span class="emphasis"><em>imincps</em></span>. This is usually reasonable, but experimentation with other values may lead to better results. Default is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>irmsmedi</em></span> (optional, default=0) -- size of median filter applied to the output <span class="emphasis"><em>krms</em></span>. The size of the filter will be <span class="emphasis"><em>irmsmedi</em></span>*2+1. If 0, no median filtering will be applied. The default is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070132288"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> -- pitch tracking output
+    </p>
+        <p>
+      <span class="emphasis"><em>krms</em></span> -- amplitude tracking output
+    </p>
+        <p>
+      <span class="emphasis"><em>pitchamdf</em></span> usually works best for monophonic signals, and is quite reliable if appropriate initial values are chosen. Setting <span class="emphasis"><em>imincps</em></span> and <span class="emphasis"><em>imaxcps</em></span> as narrow as possible to the range of the signal's pitch, results in better detection and performance.
+    </p>
+        <p>
+      Because this process can only detect pitch after an initial delay, setting <span class="emphasis"><em>icps</em></span> close to the signal's real initial pitch prevents spurious data at the beginning.
+    </p>
+        <p>
+      The median filter prevents <span class="emphasis"><em>kcps</em></span> from jumping. Experiment to determine the optimum value for <span class="emphasis"><em>imedi</em></span> for a given signal.
+    </p>
+        <p>
+      Other initial values can usually be left at the default settings. Lowpass filtering of <span class="emphasis"><em>asig</em></span> before passing it to <span class="emphasis"><em>pitchamdf</em></span>, can improve performance, especially with complex waveforms.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070123872"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pitchamdf opcode. It uses the file <a class="ulink" href="examples/pitchamdf.csd" target="_top"><em class="citetitle">pitchamdf.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276070122064"></a>
+          <p class="title">
+            <strong>Example 714. Example of the pitchamdf opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276437514880"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pitchamdf.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;clean audio</span>
+
+a<span class="n">sig</span> <span class="nb">soundin</span> <span class="nb">p4</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">;use pitch</span>
+
+a<span class="n">sig</span> <span class="nb">soundin</span> <span class="nb">p4</span>
+a<span class="n">sig</span> <span class="nb">tone</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">1000</span>		<span class="c1">;lowpass-filter</span>
+k<span class="n">cps</span><span class="p">,</span> k<span class="n">rms</span> <span class="nb">pitchamdf</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">200</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> k<span class="n">rms</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">;re-synthesize with sawtooth</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">0.5</span> <span class="mf">0.3</span> <span class="mf">0.25</span> <span class="mf">0.2</span> <span class="mf">0.167</span> <span class="mf">0.14</span> <span class="mf">0.125</span> <span class="mf">.111</span>   <span class="c1">;sawtooth</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">3</span> <span class="s">"fox.wav"</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span>  <span class="mi">3</span> <span class="s">"fox.wav"</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span>  <span class="mi">3</span> <span class="s">"mary.wav"</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">9</span>  <span class="mi">3</span> <span class="s">"mary.wav"</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">12</span> <span class="mi">3</span> <span class="s">"beats.wav"</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">15</span> <span class="mi">3</span> <span class="s">"beats.wav"</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070118016"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Peter Neubäcker</td>
+          </tr>
+          <tr>
+            <td>Munich, Germany</td>
+          </tr>
+          <tr>
+            <td>August 1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.59</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pitch.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="planet.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pitch </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> planet</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

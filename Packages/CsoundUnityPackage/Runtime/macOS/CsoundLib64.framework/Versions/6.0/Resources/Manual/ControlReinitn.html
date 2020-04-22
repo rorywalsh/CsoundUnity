@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Initialization and Reinitialization</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ControlTop.html" title="Instrument Control" />
+    <link rel="prev" href="ControlRealtime.html" title="Real-time Performance Control" />
+    <link rel="next" href="ControlSensing.html" title="Sensing and Control" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Initialization and Reinitialization</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ControlRealtime.html">Prev</a> </td>
+          <th width="60%" align="center">Instrument Control</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ControlSensing.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="ControlReinitn"></a>Initialization and Reinitialization</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Opcodes used for the initialization of variables:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="init.html" title="init">
+                <em class="citetitle">init</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="tival.html" title="tival">
+                <em class="citetitle">tival</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="assign.html" title="=">
+                <em class="citetitle">=</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="passign.html" title="passign">
+                <em class="citetitle">passign</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="pset.html" title="pset">
+                <em class="citetitle">pset</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    The opcodes that can generate another initialization pass are:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="reinit.html" title="reinit">
+                <em class="citetitle">reinit</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="rigoto.html" title="rigoto">
+                <em class="citetitle">rigoto</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="rireturn.html" title="rireturn">
+                <em class="citetitle">rireturn</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>The opcode <a class="link" href="p.html" title="p"><em class="citetitle">p</em></a> can be used to find score p-fields at i- or k-rate.</p>
+      <p><a class="link" href="nstrnum.html" title="nstrnum"><em class="citetitle">nstrnum</em></a> returns the instrument number for a named instrument.</p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">Note that a instrument may modify the p3 (duration) parameter
+  at initialisation time.  For example statements like
+<pre class="screen">
+iattack = 0.02
+irelease = 0.04
+isustain = p3
+p3 = iattack + isustain + irelease
+</pre>
+are valid.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ControlRealtime.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ControlTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ControlSensing.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Real-time Performance Control </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Sensing and Control</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

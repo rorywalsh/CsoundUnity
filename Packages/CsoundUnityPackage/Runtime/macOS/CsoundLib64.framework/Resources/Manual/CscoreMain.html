@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Writing a Cscore Control Program</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="CscoreTop.html" title="Cscore" />
+    <link rel="prev" href="CscoreTop.html" title="Cscore" />
+    <link rel="next" href="CscoreCompile.html" title="Compiling a Cscore Program" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Writing a Cscore Control Program</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CscoreTop.html">Prev</a> </td>
+          <th width="60%" align="center">Cscore</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CscoreCompile.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="CscoreMain"></a>Writing a Cscore Control Program</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    The general format for a <span class="emphasis"><em>Cscore</em></span> control program is:
+
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+#include  "cscore.h" 
+void cscore(CSOUND *cs) 
+{ 
+ /*  VARIABLE DECLARATIONS  */ 
+ /*  PROGRAM BODY  */ 
+}</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    The <span class="emphasis"><em>include</em></span> statement will define the event and list structures and all of the <span class="emphasis"><em>Cscore</em></span> API functions for the program.  The name of the user function needs to be <span class="emphasis"><em>cscore</em></span> if it will be linked with the standard main program in <code class="filename">cscormai.c</code> or linked as the internal <span class="emphasis"><em>Cscore</em></span> routine for a personal Csound executable.  This <span class="emphasis"><em>cscore()</em></span> function receives one argument from <code class="filename">cscormai.c</code> or Csound -- <span class="emphasis"><em>CSOUND *cs</em></span> -- which is a pointer to a Csound object.  The pointer <span class="emphasis"><em>cs</em></span> must be passed as the first parameter to every <span class="emphasis"><em>Cscore</em></span> API function that the program calls.
+  </p>
+      <p>
+    The following C program will read from a <span class="emphasis"><em>standard numeric score,</em></span> up to (but not including) the first <span class="emphasis"><em>s</em></span> or <span class="emphasis"><em>e statement</em></span>, then write that data (unaltered) as output.
+  </p>
+      <p>
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+#include  "cscore.h" 
+void cscore(CSOUND *cs) 
+{ 
+     EVLIST *a;                    /* a is allowed to point to an event list */ 
+     a = cscoreListGetSection(cs); /* read events in, return the list pointer */ 
+     cscoreListPut(cs, a);         /* write these events out (unchanged) */ 
+     cscorePutString(cs, "e");     /* write the string e to output */ 
+}</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    After execution of <span class="emphasis"><em>cscoreListGetSection()</em></span>, the variable <span class="emphasis"><em>a</em></span> points to a list of event addresses, each of which points to a stored event. We have used that same pointer to enable another list function -- <span class="emphasis"><em>cscoreListPut()</em></span> -- to access and write out all of the events that were read. If we now define another symbol <span class="emphasis"><em>e</em></span> to be an event pointer, then the statement
+
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">e = a-&gt;e[4];</pre>
+      </div>
+      <p>
+
+    will set it to the contents of the 4th slot in the <span class="emphasis"><em>EVLIST</em></span> structure, <span class="emphasis"><em>a</em></span>. The contents is a pointer to an event, which is itself comprised of an <span class="emphasis"><em>array</em></span> of parameter field values. Thus the term <span class="emphasis"><em>e-&gt;p[5]</em></span> will mean the value of parameter field 5 of the 4th event in the <span class="emphasis"><em>EVLIST</em></span> denoted by <span class="emphasis"><em>a</em></span>. The program below will multiply the value of that <span class="emphasis"><em>pfield</em></span> by 2 before writing it out.
+  </p>
+      <p>
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+#include  "cscore.h" 
+void cscore(CSOUND *cs) 
+{ 
+     EVENT  *e;                    /* a pointer to an event   */ 
+     EVLIST *a; 
+     a = cscoreListGetSection(cs); /* read a score as a list of events */ 
+     e = a-&gt;e[4];                  /* point to event 4 in event list a  */ 
+     e-&gt;p[5] *= 2;                 /* find pfield 5, multiply its value by 2 */ 
+     cscoreListPut(cs, a);         /* write out the list of events  */ 
+     cscorePutString(cs, "e");     /* add a "score end" statement */ 
+}</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    Now consider the following score, in which <span class="emphasis"><em>p[5]</em></span> contains frequency in Hz.
+
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="stamnt">f</span> 1 0 257 10 1 
+<span class="stamnt">f</span> 2 0 257 7 0 300 1 212 .8 
+<span class="stamnt">i</span> 1 1 3 0 440 10000
+<span class="stamnt">i</span> 1 4 3 0 256 10000
+<span class="stamnt">i</span> 1 7 3 0 880 10000
+<span class="stamnt">e</span></pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    If this score were given to the preceding main program, the resulting output would look like this:
+
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="stamnt">f</span> 1 0 257 10 1 
+<span class="stamnt">f</span> 2 0 257 7 0 300 1 212 .8
+<span class="stamnt">i</span> 1 1 3 0 440 10000
+<span class="stamnt">i</span> 1 4 3 0 512 10000        <span class="comment">; p[5] has become 512 instead of 256.</span>
+<span class="stamnt">i</span> 1 7 3 0 880 10000 
+<span class="stamnt">e</span></pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    Note that the 4th event is in fact the second note of the score. So far we have not distinguished between notes and function table setup in a numeric score. Both can be classed as events. Also note that our 4th event has been stored in <span class="emphasis"><em>e[4]</em></span> of the structure. For compatibility with Csound <span class="emphasis"><em>pfield</em></span> notation, we will ignore <span class="emphasis"><em>p[0]</em></span> and <span class="emphasis"><em>e[0]</em></span> of the event and list structures, storing <span class="emphasis"><em>p1</em></span> in <span class="emphasis"><em>p[1]</em></span>, event 1 in <span class="emphasis"><em>e[1]</em></span>, etc. The <span class="emphasis"><em>Cscore</em></span> functions all adopt this convention.
+  </p>
+      <p>
+    As an extension to the above, we could decide to use the same pointers <span class="emphasis"><em>a</em></span> and <span class="emphasis"><em>e</em></span> to examine each of the events in the list. Note that <span class="emphasis"><em>e</em></span> was not set to the numeral 4, but to the location of the 4th slot in the list. To inspect <span class="emphasis"><em>p5</em></span> of the previous event in the list, we need only redefine <span class="emphasis"><em>e</em></span> with the assignment
+
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">e = a-&gt;e[3];</pre>
+      </div>
+      <p>
+    
+and reference the 5th slot of the <span class="emphasis"><em>pfield</em></span> array using the expression
+
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">e-&gt;p[5]</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    More generally, we can use an integer variable as an index to the array <span class="emphasis"><em>e[]</em></span>, and access each event in sequence by using a loop and incrementing the index.  The number of events stored in an <span class="emphasis"><em>EVLIST</em></span> is contained in the <span class="emphasis"><em>nevents</em></span> member of the struct.
+  </p>
+      <p>
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+int index;    /* start with e[1] because e[0] is not used */
+for (index = 1; index &lt;= a-&gt;nevents; index++)
+{
+    e = a-&gt;e[index];
+    /* do something with e */
+}</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    The above example starts with <span class="emphasis"><em>e[1]</em></span> and increases the index each time through the loop (<span class="emphasis"><em>index++</em></span>) until it is greater than <span class="emphasis"><em>a-&gt;nevents</em></span>, the index of the last event in the list.  The statements inside the <span class="emphasis"><em>for</em></span> loop do execute a final time when <span class="emphasis"><em>index</em></span> equals <span class="emphasis"><em>a-&gt;nevents</em></span>.
+  </p>
+      <p>
+    In the following program we will use the same input score. This time we will separate the <span class="emphasis"><em>ftable</em></span> statements from the <span class="emphasis"><em>note</em></span> statements. We will next write the three note-events stored in the list <span class="emphasis"><em>a</em></span> to the output, then create a second score section consisting of the original pitch set and a transposed version of itself. This will bring about an octave doubling.
+  </p>
+      <p>
+    Here, our index to the array is <span class="emphasis"><em>n</em></span> and we increment <span class="emphasis"><em>n</em></span> as part of a <span class="emphasis"><em>for</em></span> block which iterates <span class="emphasis"><em>nevents</em></span> times, allowing one statement to act upon the same <span class="emphasis"><em>pfield</em></span> of each successive event.
+  </p>
+      <p>
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+#include  "cscore.h"
+void cscore(CSOUND *cs)
+{
+      EVENT  *e, *f;
+      EVLIST *a, *b;
+      int n;
+      
+      a = cscoreListGetSection(cs);            /* read score into event list "a" */ 
+      b = cscoreListSeparateF(cs, a);          /* separate f statements */ 
+      cscoreListPut(cs, b);                    /* write f statements out to score */ 
+      cscoreListFreeEvents(cs, b);             /* and release the spaces used */ 
+      e = cscoreDefineEvent(cs, "t 0 120");    /* define event for tempo statement */ 
+      cscorePutEvent(cs, e);                   /* write tempo statement to score */ 
+      cscoreListPut(cs, a);                    /* write the notes */ 
+      cscorePutString(cs, "s");                /* section end */ 
+      cscorePutEvent(cs, e);                   /* write tempo statement again */ 
+      b = cscoreListCopyEvents(cs, a);         /* make a copy of the notes in "a" */ 
+      for (n = 1; n &lt;= b-&gt;nevents; n++)        /* iterate the following lines nevents times: */
+      { 
+          f = b-&gt;e[n]; 
+          f-&gt;p[5] *= 0.5;                      /* transpose pitch down one octave */
+      }
+      a = cscoreListAppendList(cs, a, b);      /* now add these notes to original pitches */ 
+      cscoreListPut(cs, a); 
+      cscorePutString(cs, "e");
+}</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    The output of this program is:
+  </p>
+      <p>
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="stamnt">f</span> 1 0 257 10 1
+<span class="stamnt">f</span> 2 0 257 7 0 300 1 212 .8
+<span class="stamnt">t</span> 0 120
+<span class="stamnt">i</span> 1 1 3 0 440 10000
+<span class="stamnt">i</span> 1 4 3 0 256 10000
+<span class="stamnt">i</span> 1 7 3 0 880 10000
+<span class="stamnt">s</span>
+<span class="stamnt">t</span> 0 120
+<span class="stamnt">i</span> 1 1 3 0 440 10000
+<span class="stamnt">i</span> 1 4 3 0 256 10000
+<span class="stamnt">i</span> 1 7 3 0 880 10000
+<span class="stamnt">i</span> 1 1 3 0 220 10000
+<span class="stamnt">i</span> 1 4 3 0 128 10000
+<span class="stamnt">i</span> 1 7 3 0 440 10000
+<span class="stamnt">e</span></pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    If the output is only being written to a file, then the unsorted order of the events is not a problem.  The output is written to a file (or standard output) whenever the function <span class="emphasis"><em>cscoreListPut()</em></span> is used. However, if this program were to be called during a Csound performance and the function <span class="emphasis"><em>cscoreListPlay()</em></span> replaced <span class="emphasis"><em>cscoreListPut()</em></span>, then the events would be sent to the orchestra instead of to a file and they should then be sorted beforehand by calling the function <span class="emphasis"><em>cscoreListSort()</em></span>. The details of score output and playing when using <span class="emphasis"><em>Cscore</em></span> from within Csound are described in the next section.
+  </p>
+      <p>
+    Next we extend the above program by using the <span class="emphasis"><em>for</em></span> loop to look at <span class="emphasis"><em>p[5]</em></span> and <span class="emphasis"><em>p[6]</em></span>. In the original score <span class="emphasis"><em>p[6]</em></span> denotes amplitude. To create a diminuendo in the added lower octave, which is independent from the original set of notes, a variable called <span class="emphasis"><em>dim</em></span> will be used.
+  </p>
+      <p>
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+#include "cscore.h" 
+void cscore(CSOUND *cs)
+{
+      EVENT  *e, *f;
+      EVLIST *a, *b;
+      int n, dim;                              /* declare two integer variables */ 
+      
+      a = cscoreListGetSection(cs);
+      b = cscoreListSeparateF(cs, a);
+      cscoreListPut(cs, b);
+      cscoreListFreeEvents(cs, b);
+      e = cscoreDefineEvent(cs, "t 0 120");
+      cscorePutEvent(cs, e);
+      cscoreListPut(cs, a);
+      cscorePutString(cs, "s");
+      cscorePutEvent(cs, e);                   /* write out another tempo statement */
+      b = cscoreListCopyEvents(cs, a);
+      dim = 0;                                 /* initialize dim to 0 */ 
+      for (n = 1; n &lt;= b-&gt;nevents; n++)
+      { 
+          f = b-&gt;e[n]; 
+          f-&gt;p[6] -= dim;                      /* subtract current value of dim */ 
+          f-&gt;p[5] *= 0.5;                      /* transpose pitch down one octave */
+          dim += 2000;                         /* increase dim for each note */ 
+      }
+      a = cscoreListAppendList(cs, a, b);      /* now add these notes to original pitches */ 
+      cscoreListPut(cs, a); 
+      cscorePutString(cs, "e");
+}</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    Using the same input score again, the output from this program is:
+
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="stamnt">f</span> 1 0 257 10 1 
+<span class="stamnt">f</span> 2 0 257 7 0 300 1 212 .8
+<span class="stamnt">t</span> 0 120
+<span class="stamnt">i</span> 1 1 3 0 440 10000
+<span class="stamnt">i</span> 1 4 3 0 256 10000
+<span class="stamnt">i</span> 1 7 3 0 880 10000
+<span class="stamnt">s</span>
+<span class="stamnt">t</span> 0 120
+<span class="stamnt">i</span> 1 1 3 0 440 10000     <span class="comment">; Three original notes at</span>
+<span class="stamnt">i</span> 1 4 3 0 256 10000     <span class="comment">; beats 1,4 and 7 with no dim.</span>
+<span class="stamnt">i</span> 1 7 3 0 880 10000
+<span class="stamnt">i</span> 1 1 3 0 220 10000     <span class="comment">; three notes transposed down one octave</span>
+<span class="stamnt">i</span> 1 4 3 0 128 8000      <span class="comment">; also at beats 1,4 and 7 with dim.</span>
+<span class="stamnt">i</span> 1 7 3 0 440 6000
+<span class="stamnt">e</span></pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    In the following program the same three-note sequence will be repeated at various time intervals. The starting time of each group is determined by the values of the array <span class="emphasis"><em>cue</em></span>. This time the <span class="emphasis"><em>dim</em></span> will occur for each group of notes rather than each note. Note the position of the statement which increments the variable <span class="emphasis"><em>dim</em></span> outside the inner <span class="emphasis"><em>for</em></span> loop.
+  </p>
+      <p>
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+#include  "cscore.h" 
+int cue[3] = {0,10,17};                        /* declare an array of 3 integers */ 
+void cscore(CSOUND *cs) 
+{
+      EVENT  *e, *f;
+      EVLIST *a, *b;
+      int n, dim, cuecount;                    /* declare new variable cuecount */
+      
+      a = cscoreListGetSection(cs);
+      b = cscoreListSeparateF(cs, a);
+      cscoreListPut(cs, b);
+      cscoreListFreeEvents(cs, b);
+      e = cscoreDefineEvent(cs, "t 0 120");
+      cscorePutEvent(cs, e);
+      dim = 0; 
+      for (cuecount = 0; cuecount &lt;= 2; cuecount++) /* elements of cue are numbered 0, 1, 2 */
+      {
+          for (n = 1; n &lt;= a-&gt;nevents; n++)
+          { 
+              f = a-&gt;e[n]; 
+              f-&gt;p[6] -= dim; 
+              f-&gt;p[2] += cue[cuecount];        /* add values of cue */ 
+          } 
+          printf("; diagnostic:  cue = %d\n", cue[cuecount]); 
+          dim += 2000; 
+          cscoreListPut(cs, a);
+      } 
+      cscorePutString(cs, "e");
+}</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    Here the inner <span class="emphasis"><em>for</em></span> loop looks at the events of list <span class="emphasis"><em>a</em></span> (the notes) and the outer <span class="emphasis"><em>for</em></span> loop looks at each <span class="emphasis"><em>repetition</em></span> of the events of list <span class="emphasis"><em>a</em></span> (the pitch group "cues"). This program also demonstrates a useful trouble-shooting device with the <span class="emphasis"><em>printf</em></span> function. The <span class="emphasis"><em>semi-colon</em></span> is first in the character string to produce a comment statement in the resulting score file. In this case the value of <span class="emphasis"><em>cue</em></span> is being printed in the output to insure that the program is taking the proper <span class="emphasis"><em>array</em></span> member at the proper time. When output data is wrong or error messages are encountered, the <span class="emphasis"><em>printf</em></span> function can help to pinpoint the problem.
+  </p>
+      <p>
+    Using the same input file, the C program above will generate the following score.  Can you determine why the last set of notes starts at the wrong time and how to correct the problem?
+  </p>
+      <p>
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="stamnt">f</span> 1 0 257 10 1
+<span class="stamnt">f</span> 2 0 257 7 0 300 1 212 .8
+<span class="stamnt">t</span> 0 120
+<span class="comment">; diagnostic:  cue = 0</span>
+<span class="stamnt">i</span> 1 1 3 0 440 10000
+<span class="stamnt">i</span> 1 4 3 0 256 10000
+<span class="stamnt">i</span> 1 7 3 0 880 10000
+<span class="comment">; diagnostic:  cue = 10</span>
+<span class="stamnt">i</span> 1 11 3 0 440 8000
+<span class="stamnt">i</span> 1 14 3 0 256 8000
+<span class="stamnt">i</span> 1 17 3 0 880 8000
+<span class="comment">; diagnostic:  cue = 17</span>
+<span class="stamnt">i</span> 1 28 3 0 440 4000
+<span class="stamnt">i</span> 1 31 3 0 256 4000
+<span class="stamnt">i</span> 1 34 3 0 880 4000
+<span class="stamnt">e</span></pre>
+      </div>
+      <p>
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CscoreTop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="CscoreTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CscoreCompile.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Cscore </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Compiling a Cscore Program</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

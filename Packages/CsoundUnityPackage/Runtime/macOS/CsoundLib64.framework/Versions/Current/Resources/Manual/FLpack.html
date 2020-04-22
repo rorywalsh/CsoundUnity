@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLpack</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="floor.html" title="floor" />
+    <link rel="next" href="FLpackEnd.html" title="FLpackEnd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLpack</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="floor.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLpackEnd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLpack"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLpack" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLpack</span>
+        </h2>
+        <p>FLpack — 
+      Provides the functionality of compressing and aligning FLTK widgets.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150760784"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLpack</em></span> provides the functionality of compressing and aligning widgets.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150759136"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLpack</strong></span> iwidth, iheight, ix, iy, itype, ispace, iborder</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150757152"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>itype</em></span> -- an integer number that modifies the appearance of the target widget.
+    </p>
+        <p>
+      The <span class="emphasis"><em>itype</em></span> argument expresses the type of packing:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 - vertical</p>
+            </li>
+            <li class="listitem">
+              <p>1 - horizontal</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ispace</em></span> -- sets the space between the widgets.
+    </p>
+        <p>
+      <span class="emphasis"><em>iborder</em></span> -- border type of the container. It is expressed by means of an integer number chosen from the following:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 - no border</p>
+            </li>
+            <li class="listitem">
+              <p>1 - down box border</p>
+            </li>
+            <li class="listitem">
+              <p>2 - up box border</p>
+            </li>
+            <li class="listitem">
+              <p>3 - engraved border</p>
+            </li>
+            <li class="listitem">
+              <p>4 - embossed border</p>
+            </li>
+            <li class="listitem">
+              <p>5 - black line border</p>
+            </li>
+            <li class="listitem">
+              <p>6 - thin down border</p>
+            </li>
+            <li class="listitem">
+              <p>7 - thin up border</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150743264"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>FLpack</em></span> provides the functionality of compressing and aligning widgets.
+    </p>
+        <p>
+      Containers are useful to format the graphic appearance of the widgets. The most important container is <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a>, that actually creates a window. It can be filled with other containers and/or valuators or other kinds of widgets.
+    </p>
+        <p>
+      There are no k-rate arguments in containers.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150739680"></a>
+        <h2>Examples</h2>
+        <p>
+      The following example:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+        <span class="opc">FLpanel</span> "Panel1",450,300,100,100
+        <span class="opc">FLpack</span>  400,300, 10,40,0,15,3
+gk1, ihs1        <span class="opc">FLslider</span>        "FLslider 1", 500, 1000, 2 ,1, -1, 300,15, 20,50
+gk2, ihs2        <span class="opc">FLslider</span>        "FLslider 2", 300, 5000, 2 ,3, -1, 300,15, 20,100
+gk3, ihs3        <span class="opc">FLslider</span>        "FLslider 3", 350, 1000, 2 ,5, -1, 300,15, 20,150
+gk4, ihs4        <span class="opc">FLslider</span>        "FLslider 4", 250, 5000, 1 ,11, -1, 300,30, 20,200
+gk5, ihs5        <span class="opc">FLslider</span>        "FLslider 5", 220, 8000, 2 ,1, -1, 300,15, 20,250
+gk6, ihs6        <span class="opc">FLslider</span>        "FLslider 6", 1, 5000, 1 ,13, -1, 300,15, 20,300
+gk7, ihs7        <span class="opc">FLslider</span>        "FLslider 7", 870, 5000, 1 ,15, -1, 300,30, 20,350
+        <span class="opc">FLpackEnd</span>
+        <span class="opc">FLpanelEnd</span></pre>
+        </div>
+        <p>
+
+      ...will produce this result, when resizing the window:
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/flpack.png" alt="FLpack." />
+          <div class="caption">
+            <p>FLpack.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150726912"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLgroup.html" title="FLgroup"><em class="citetitle">FLgroup</em></a>, 
+      <a class="link" href="FLgroupEnd.html" title="FLgroupEnd"><em class="citetitle">FLgroupEnd</em></a>, 
+      <a class="link" href="FLpackEnd.html" title="FLpackEnd"><em class="citetitle">FLpackEnd</em></a>, 
+      <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a>, 
+      <a class="link" href="FLpanelEnd.html" title="FLpanelEnd"><em class="citetitle">FLpanelEnd</em></a>, 
+      <a class="link" href="FLscroll.html" title="FLscroll"><em class="citetitle">FLscroll</em></a>, 
+      <a class="link" href="FLscrollEnd.html" title="FLscrollEnd"><em class="citetitle">FLscrollEnd</em></a>, 
+      <a class="link" href="FLtabs.html" title="FLtabs"><em class="citetitle">FLtabs</em></a>, 
+      <a class="link" href="FLtabsEnd.html" title="FLtabsEnd"><em class="citetitle">FLtabsEnd</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150717840"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="floor.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLpackEnd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">floor </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLpackEnd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>flooper</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLmouse.html" title="FLmouse" />
+    <link rel="next" href="flooper2.html" title="flooper2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">flooper</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLmouse.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="flooper2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="flooper"></a>
+      <div class="titlepage"></div>
+      <a id="Indexflooper" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">flooper</span>
+        </h2>
+        <p>flooper — 
+      Function-table-based crossfading looper.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150878576"></a>
+        <h2>Description</h2>
+        <p>
+   This opcode reads audio from a function table and plays it back in a loop with user-defined
+   start time, duration and crossfade time. It also allows the pitch of the loop to be controlled,
+   including reversed playback. It accepts non-power-of-two tables, such as deferred-allocation
+   GEN01 tables, with one or two channels.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150877056"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig1[, asig2] <span class="command"><strong>flooper</strong></span> kamp, kpitch, istart, idur, ifad, ifn</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150874944"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>istart </em></span> -- loop start pos in seconds
+    </p>
+        <p>
+      <span class="emphasis"><em>idur </em></span> -- loop duration in seconds
+    </p>
+        <p>
+      <span class="emphasis"><em>ifad </em></span> -- crossfade duration in seconds
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn </em></span> -- function table number, generally created using GEN01
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150870816"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig[,asig2]</em></span> -- output sig (mono or stereo)
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude control </p>
+        <p>
+      <span class="emphasis"><em>kpitch</em></span> -- pitch control (transposition ratio); negative values play the loop back in reverse
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150867504"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276150866592"></a>
+          <p class="title">
+            <strong>Example 302. </strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+aout <span class="opc">flooper</span> 16000, 1, 1, 4, 0.05, 1  <span class="comment">; loop starts at 1 sec, for 4 secs, 0.05 crossfade</span>
+     <span class="opc">out</span>     aout</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+The example above shows the basic operation of <span class="emphasis"><em>flooper</em></span>. Pitch can
+be controlled at the k-rate, as well as amplitude. The example assumes
+table 1 to contain at least 5.05 seconds of audio (4 secs loop duration,
+starting 1 sec into the table, using 0.05 secs after the loop end for the
+crossfade).
+    </p>
+        <p>
+      Here is another example of the flooper opcode. It uses the file <a class="ulink" href="examples/flooper.csd" target="_top"><em class="citetitle">flooper.csd</em></a> and <a class="ulink" href="examples/fox.wav" target="_top"><em class="citetitle">fox.wav</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276150860432"></a>
+          <p class="title">
+            <strong>Example 303. </strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276476649088"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o flooper.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">pitch</span>	<span class="nb">line</span>	<span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.9</span> <span class="c1">;lower pitch a bit during the note</span>
+a<span class="n">out</span>	<span class="nb">flooper</span>	<span class="mf">.9</span><span class="p">,</span> k<span class="n">pitch</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.53</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span>  <span class="c1">; loop starts at 1 sec, for .53 secs, 0.05 crossfade</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;table size is deferred,</span>
+<span class="c1">; and format taken from the soundfile header</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="s">"fox.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">8.2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150856832"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>April 2005 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>April 2005.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLmouse.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="flooper2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLmouse </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> flooper2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

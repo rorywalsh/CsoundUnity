@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Cscore</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartReference.html" title="Part III. Reference" />
+    <link rel="prev" href="mkdb.html" title="mkdb" />
+    <link rel="next" href="CscoreMain.html" title="Writing a Cscore Control Program" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Cscore</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mkdb.html">Prev</a> </td>
+          <th width="60%" align="center">Part III. Reference</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CscoreMain.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="CscoreTop"></a>Cscore</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    <a id="IndexCscore" class="indexterm"></a>
+    <span class="emphasis"><em>Cscore</em></span> is an API (application programming interface) for generating and manipulating numeric score files. It is a part of the larger Csound API and includes a number of functions that can be called by a user-designed program written in the C language. <span class="emphasis"><em>Cscore</em></span> can be invoked either as a standalone score preprocessor, or as part of a Csound performance by including the <a class="link" href="CommandFlags.html#FlagsMinusUpperC">-C flag</a> in its arguments:
+  </p>
+      <p>
+    </p>
+      <div class="cmdsynopsis">
+        <p><code class="command">cscore</code>  [<em class="replaceable"><code>scorefilein</code></em>] [<em class="replaceable"><code>&gt; scorefileout</code></em>]</p>
+      </div>
+      <p>
+  </p>
+      <p>(where <span class="emphasis"><em>cscore</em></span> is the name of your user-written program), or</p>
+      <p>
+    </p>
+      <div class="cmdsynopsis">
+        <p><code class="command">csound</code>  [-C] [<code class="option">otherflags</code>] [<em class="replaceable"><code>orchname</code></em>] [<em class="replaceable"><code>scorename</code></em>]</p>
+      </div>
+      <p>
+  </p>
+      <p>
+    The available API functions augment the C language library functions; they can read either standard numeric scores or pre-sorted score files, can massage and expand the data in various ways, then make it available for performance by a Csound orchestra.
+  </p>
+      <p>
+    The user-written control program is written in C, and is compiled and linked to the Csound library (or the csound commandline program) by the user. It is not essential to know the C language well to write this program, since the function calls have a simple syntax, and are powerful enough to do most of the complicated work. Additional power can come from C later as the need arises.
+  </p>
+      <p>
+    The following sections explain all of the steps needed to make use of <span class="emphasis"><em>Cscore</em></span>:
+  </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem"><a class="link" href="CscoreTop.html#CscoreEvents" title="Events, Lists, and Operations"><em class="citetitle">Events, Lists, and Operations </em></a> - Explains the syntax of <span class="emphasis"><em>Cscore</em></span> functions and data structures.</li>
+          <li class="listitem"><a class="link" href="CscoreMain.html" title="Writing a Cscore Control Program"><em class="citetitle">Writing a Cscore Control Program</em></a> - Illustrates by example how to write your own control program.</li>
+          <li class="listitem"><a class="link" href="CscoreCompile.html" title="Compiling a Cscore Program"><em class="citetitle">Compiling a Cscore Program</em></a> - Outlines the steps for compiling and linking with the Csound library.</li>
+          <li class="listitem"><a class="link" href="CscoreAdvancd.html" title="More Advanced Examples"><em class="citetitle">More Advanced Examples</em></a> - Addresses advanced issues such as multiple input scores and the details of running <span class="emphasis"><em>Cscore</em></span> inside of a Csound performance.</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="CscoreEvents"></a>Events, Lists, and Operations</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+    An event in <span class="emphasis"><em>Cscore</em></span> is equivalent to one statement of a <span class="emphasis"><em>standard numeric score</em></span> or a time-warped score (the format in which Csound writes a sorted score -- see any score.srt), and is stored internally in time-warped format. It is important to note that when <span class="emphasis"><em>Cscore</em></span> is used in standalone-mode, it cannot understand any of the non-numeric "conveniences" that Csound allows in the input score format. Therefore, scores making use of features such as carry, ramp, expressions, and others will have to either be sorted first with the <span class="emphasis"><em>scsort</em></span> utility or used with a modified <span class="emphasis"><em>Csound</em></span> executable that contains the user's <span class="emphasis"><em>Cscore</em></span> program. Score opcodes with macro arguments (r, m, n, and {}) are not understood.
+  </p>
+        <p>
+Score events are each read in from an existing score file and stored in a C structure. The structures main components are an opcode and an array of pfield values. <span class="emphasis"><em>Cscore</em></span> handles reading the events and storing them in memory for you. The format of the structure starts as follows:
+  </p>
+        <p>
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+typedef struct {
+     CSHDR h;        /* space-managing header   */
+     char  *strarg;  /* address of optional string argument */
+     char  op;       /* opcode-t, w, f, i, a, s or e */
+     short pcnt;
+     MYFLT p2orig;   /* unwarped p2, p3   */
+     MYFLT p3orig;
+     MYFLT p[1];     /* array of pfields p0, p1, p2 ... */
+} EVENT;</pre>
+        </div>
+        <p>
+  </p>
+        <p>
+MYFLT is either the C type <span class="emphasis"><em>float</em></span> or <span class="emphasis"><em>double</em></span> depending on how your copy of the Csound library was compiled.  You should just declare any floating-point variables as MYFLT in your user program for compatibility.
+  </p>
+        <p>
+    Any <span class="emphasis"><em>Cscore</em></span> function that creates, reads, or copies an event will return a pointer to the storage structure holding the event data. The event pointer can be used to access any component of the structure, in the form of <span class="emphasis"><em>e-&gt;op</em></span> or <span class="emphasis"><em>e-&gt;p[n]</em></span>. Each newly stored event will give rise to a new pointer, and a sequence of new events will generate a sequence of distinct pointers that must themselves be stored. Groups of event pointers are stored in an event list, which has its own structure:
+  </p>
+        <p>
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+typedef struct {
+     CSHDR  h;
+     int nslots;    /* max events in this event list  */
+     int nevents;   /* number of events present  */
+     EVENT *e[1];   /* array of event pointers e0, e1, e2.. */
+} EVLIST;</pre>
+        </div>
+        <p>
+  </p>
+        <p>
+    Any Cscore function that creates or modifies a list will return a pointer to the new list. The list pointer can be used to access any of its component event pointers, in the form of <span class="emphasis"><em>a-&gt;e[n]</em></span>. Event pointers and list pointers are thus primary tools for manipulating the data of a score file. Pointers and lists of pointers can be copied and reordered without modifying the data values they refer to. This means that notes and phrases can be copied and manipulated from a high level of control. Alternatively, the data within an event or group of events can be modified without changing the event or list pointers. The <span class="emphasis"><em>Cscore</em></span> API functions enable scores to be created and manipulated in this way.
+  </p>
+        <p>
+With Csound 5, the names of all of the <span class="emphasis"><em>Cscore</em></span> API functions have changed to be more explicit.  In addition, each function now requires a pointer to a CSOUND object as its first argument.  The structure of the CSOUND object is unimportant (and indeed cannot be modified in a user program).  How to obtain this CSOUND pointer will be shown in the next section.  The <span class="emphasis"><em>Cscore</em></span> functions and data structures are available in the <code class="filename">cscore.h</code> header file, which you must include in your program code before you can you use them.
+  </p>
+        <p>
+The names of the <span class="emphasis"><em>Cscore</em></span> functions specify whether they operate on single events or event lists.  In the following summary of available function calls, some simple naming conventions are used:
+  </p>
+        <p>
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+The symbol cs is a pointer to a CSOUND object (CSOUND *);
+The symbols e, f are pointers to events (notes);
+The symbols a, b are pointers to lists (arrays) of such events;
+The symbol n is an integer parameter of type int;
+"..." indicates a string parameter (either a constant or variable of type char *);
+The symbol fp is a score input stream file pointer (FILE *);
+  
+calling syntax                                  description
+--------------                                  -----------
+/* Functions for working with single events */
+e = cscoreCreateEvent(cs, n);                   create a blank event with n pfields
+e = cscoreDefineEvent(cs, "...");               defines an event as per the character string ...
+e = cscoreCopyEvent(cs, f);                     make a new copy of event f
+e = cscoreGetEvent(cs);                         read the next event in the score input file
+    cscorePutEvent(cs, e);                      write event e to the score output file
+    cscorePutString(cs, "...");       write the string-defined event to score output
+  
+/* Functions for working with event lists */
+a = cscoreListCreate(cs, n);                    create an empty event list with n slots
+a = cscoreListAppendEvent(cs, a, e);            append event e to list a
+a = cscoreListAppendStringEvent(cs, a, "...");  append a string-defined event to list a;
+a = cscoreListCopy(cs, b);                      copy the list b (but not the events)
+a = cscoreListCopyEvents(cs, b);                copy the events of b, making a new list
+a = cscoreListGetSection(cs);                   read all events from score input, up to next s or e
+a = cscoreListGetNext(cs, nbeats);              read next nbeats beats from score input (nbeats is MYFLT)
+a = cscoreListGetUntil(cs, beatno);             read all events from score input up to beat beatno (MYFLT) 
+a = cscoreListSeparateF(cs, b);                 separate the f statements from list b into list a
+a = cscoreListSeparateTWF(cs, b);               separate the t,w &amp; f statements from list b into list a
+a = cscoreListAppendList(cs, a, b);             append the list b onto the list a
+a = cscoreListConcatenate(cs, a, b);            concatenate (append) the list b onto the list a (same as previous)
+    cscoreListSort(cs, a);                      sort the list a into chronological order by p[2]
+n = cscoreListCount(cs, a);                     returns the number of events in list a
+a = cscoreListExtractInstruments(cs, b, "..."); extract notes of instruments ... (no new events)
+a = cscoreListExtractTime(cs, b, from, to);     extract notes of time-span, creating new events (from and to are MYFLT)
+    cscoreListPut(cs, a);                       write the events of list a to the score output file
+    cscoreListPlay(cs, a);                      send events of list a to the Csound orchestra for
+                                                immediate performance (or print events if no orchestra)
+/* Functions for reclaiming memory */
+    cscoreFreeEvent(cs, e);                     release the space of event e
+    cscoreListFree(cs, a);                      release the space of list a (but not the events)
+    cscoreListFreeEvents(cs, a);                release the events of list a, and the list space
+  
+/* Functions for working with multiple input score files */
+fp = cscoreFileGetCurrent(cs);                  get the currently active input scorefile pointer
+                                                (initially finds the command-line input scorefile pointer)
+fp = cscoreFileOpen(cs, "filename");            open another input scorefile (maximum of 5)
+     cscoreFileSetCurrent(cs, fp);              make fp the currently active scorefile pointer
+     cscoreFileClose(cs, fp);                   close the scorefile relating to FILE *fp</pre>
+        </div>
+        <p>
+  </p>
+        <p>
+Under Csound 4, the function names and parameters were as follows:
+  </p>
+        <p>
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+calling syntax                          description
+--------------                          -----------
+e = createv(n);          create a blank event with n pfields
+e = defev("...");  defines an event as per the character string ...
+e = copyev(f);           make a new copy of event f
+e = getev();             read the next event in the score input file
+putev(e);                write event e to the score output file
+putstr("...");           write the string-defined event to score output
+a = lcreat(n);           create an empty event list with n slots
+     int  n;
+a = lappev(a,e);         append event e to list a
+a = lappstrev(a,"...");  append a string-defined event to list a;
+a = lcopy(b);            copy the list b (but not the events)
+a = lcopyev(b);          copy the events of b, making a new list
+a = lget();              read all events from score input, up to next s or e
+a = lgetnext(nbeats);    read next nbeats beats from score input
+     float  nbeats;
+a = lgetuntil(beatno);   read all events from score input up to beat beatno 
+     float  beatno;
+a = lsepf(b);            separate the f statements from list b into list a
+a = lseptwf(b);          separate the t,w &amp; f statements from list b into list a
+a = lcat(a,b);           concatenate (append) the list b onto the list a
+lsort(a);                sort the list a into chronological order by p[2]
+a = lxins(b,"...");      extract notes of instruments ... (no new events)
+a = lxtimev(b,from,to);  extract notes of time-span, creating new events
+     float  from, to;
+lput(a);                 write the events of list a to the score output file
+lplay(a);                send events of list a to the Csound orchestra for
+                         immediate performance (or print events if no orchestra)
+relev(e);                release the space of event e
+lrel(a);                 release the space of list a (but not the events)
+lrelev(a);               release the events of list a, and the list space
+fp = getcurfp();         get the currently active input scorefile pointer
+                         (initially finds the command-line input scorefile pointer)
+fp = filopen("filename"); open another input scorefile (maximum of 5)
+setcurfp(fp);            make fp the currently active scorefile pointer
+filclose(fp);            close the scorefile relating to FILE *fp</pre>
+        </div>
+        <p>
+  </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mkdb.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartReference.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CscoreMain.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mkdb </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Writing a Cscore Control Program</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

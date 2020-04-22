@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>return</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="resyn.html" title="resyn" />
+    <link rel="next" href="reverb.html" title="reverb" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">return</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="resyn.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="reverb.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="return"></a>
+      <div class="titlepage"></div>
+      <a id="Indexreturn" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">return</span>
+        </h2>
+        <p>return — 
+    Returns a value from an instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061615728"></a>
+        <h2>Description</h2>
+        <p>
+      Return will return a value from an instrument at i-time. The value of a global instrument (instrument 0) can be retrieved 
+after compilation by the evalstr opcode. The retrieval of values returned by other instruments is not yet implemented.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061614304"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>return</strong></span> ival </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061612368"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">ival</span>”</span></em></span> --  a value to be returned by instrument.
+</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061610624"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the return opcode in conjunction with evalcode:
+      </p>
+        <div class="example">
+          <a id="idm276061609616"></a>
+          <p class="title">
+            <strong>Example 849. </strong>
+          </p>
+          <div class="example-contents">
+            <p>   
+</p>
+            <pre class="programlisting">
+ival <span class="op">evalstr</span> "return 2 + 2"
+<span class="op">print</span> ival
+ </pre>
+            <p>
+    </p>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061606656"></a>
+        <h2>Credits</h2>
+        <p>Author: Victor Lazzarini, 2013 </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="resyn.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="reverb.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">resyn </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> reverb</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

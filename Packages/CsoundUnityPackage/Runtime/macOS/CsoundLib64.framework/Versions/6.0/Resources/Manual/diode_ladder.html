@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>diode_ladder</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="diff.html" title="diff" />
+    <link rel="next" href="directory.html" title="directory" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">diode_ladder</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="diff.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="directory.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="diode_ladder"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDiode_ladder" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">diode_ladder</span>
+        </h2>
+        <p>diode_ladder — 
+      Zero-delay feedback implementation of 4 pole diode ladder filter. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116386384"></a>
+        <h2>Description</h2>
+        <p>
+      Zero-delay feedback implementation of a 4 pole (24 dB/oct) diode low-pass filter. This filter design was originally used in the EMS VCS3 and was the resonant filter in the Roland TB-303. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116385008"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>diode_ladder</strong></span> ain, xcf, xk [, inlp, isaturation, istor]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116382896"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>istor</em></span> --initial disposition of internal data space.
+      Since filtering incorporates a feedback loop of previous output, the
+      initial status of the storage space used is significant.  A zero value
+      will clear the space; a non-zero value will allow previous information to
+      remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116380992"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- low-pass output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>ain</em></span> -- input signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>xcf</em></span> -- filter cutoff frequency (i-, k-, or a-rate).
+    </p>
+        <p>
+      <span class="emphasis"><em>xk</em></span> -- filter feedback value k (i-, k-, or a-rate) that controls resonance. Range 0.0-17.0. Self-oscillation occurs at 17.0.
+    </p>
+        <p>
+      <span class="emphasis"><em>knlp</em></span> (optional, default=0) -- Non-linear processing method. 0 = no processing, 1 = higher-quality NLP, 2 = lower-quality NLP (faster). Method 1 uses (1.0 / tanh(ksaturation)) * tanh(ksaturation * input). Method 2 uses tanh(ksaturation * input). Enabling NLP may increase the overall output of filter above unity and should be compensated for outside of the filter. 
+    </p>
+        <p>
+      <span class="emphasis"><em>ksaturation</em></span> (optional, default=1) -- saturation amount to use for non-linear processing. Values &gt; 1 increase the steepness of the NLP curve.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116374704"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the diode_ladder opcode. It uses the file <a class="ulink" href="examples/diode_ladder.csd" target="_top"><em class="citetitle">diode_ladder.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276116372896"></a>
+          <p class="title">
+            <strong>Example 216. Example of the diode_ladder opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276482905520"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-o dac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">16</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+<span class="vg">0dbfs</span><span class="o">=</span><span class="mi">1</span>
+
+
+gi<span class="n">_sine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">65537</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+gk<span class="n">cut</span> <span class="nb">init</span> <span class="mi">6000</span>
+
+
+<span class="kd">instr</span> <span class="nf">modulation</span> 
+  gk<span class="n">cut</span> <span class="o">=</span> <span class="nb">lfo</span><span class="p">(</span><span class="mi">4000</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">6000</span> 
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">bass</span>	 
+
+  i<span class="n">amp</span> <span class="o">=</span> <span class="nb">ampdbfs</span><span class="p">(</span><span class="o">-</span><span class="mi">12</span><span class="p">)</span> 
+  i<span class="n">pch</span> <span class="o">=</span> <span class="nb">cps2pch</span><span class="p">(</span><span class="nb">p4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+
+  a<span class="n">sig</span> <span class="o">=</span> <span class="nb">vco2</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> i<span class="n">pch</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+  a<span class="n">cut</span> <span class="o">=</span> <span class="nb">expon</span><span class="p">:</span><span class="nb">a</span><span class="p">(</span><span class="nb">i</span><span class="p">(</span>gk<span class="n">cut</span><span class="p">),</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> 
+  a<span class="n">out</span> <span class="o">=</span> <span class="n">diode_ladder</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> a<span class="n">cut</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+  a<span class="n">out</span> <span class="o">*=</span> <span class="nb">expseg</span><span class="p">:</span><span class="nb">a</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span> 
+
+  a<span class="n">out</span> <span class="o">=</span> <span class="nb">limit</span><span class="p">(</span>a<span class="n">out</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+  <span class="nb">outc</span><span class="p">(</span>a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span><span class="p">)</span>
+
+<span class="kd">endin</span>
+
+
+gi<span class="n">pat</span><span class="p">[]</span> <span class="nb">init</span> <span class="mi">8</span>
+gi<span class="n">pat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">6.00</span>
+gi<span class="n">pat</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">7.00</span>
+gi<span class="n">pat</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">6.00</span>
+gi<span class="n">pat</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mf">7.00</span>
+gi<span class="n">pat</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">5.07</span>
+gi<span class="n">pat</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mf">6.07</span>
+gi<span class="n">pat</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="mf">5.08</span>
+gi<span class="n">pat</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="mf">6.08</span>
+
+
+<span class="kd">instr</span> <span class="nf">player</span>
+  i<span class="n">ndx</span> <span class="o">=</span> <span class="nb">p4</span>
+
+  <span class="c1">;; play instrument</span>
+  <span class="k">if</span><span class="p">(</span>gi<span class="n">pat</span><span class="p">[</span>i<span class="n">ndx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
+    <span class="nb">schedule</span><span class="p">(</span><span class="s">"bass"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> gi<span class="n">pat</span><span class="p">[</span>i<span class="n">ndx</span><span class="p">])</span>
+  <span class="k">endif</span>
+
+  <span class="c1">;; temporal recursion</span>
+  <span class="nb">schedule</span><span class="p">(</span><span class="s">"player"</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="p">(</span>i<span class="n">ndx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">lenarray</span><span class="p">(</span>gi<span class="n">pat</span><span class="p">))</span>
+
+<span class="kd">endin</span>
+
+<span class="nb">schedule</span><span class="p">(</span><span class="s">"modulation"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">schedule</span><span class="p">(</span><span class="s">"player"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nb">event_i</span><span class="p">(</span><span class="s">"e"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="mi">128</span><span class="p">)</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>  
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116371120"></a>
+        <h2>References</h2>
+        <p> This filter is based on the work of Will Pirkle that employs Vadim
+      Zavalishin's work with bilinear tranforms to create topology-preserving
+      transform (TPT) implementations of analog filters.</p>
+        <p>
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>
+            Pirkle, Will. Designing Software Synthesizer Plug-ins in C++: For 
+            RackAFX, VST3, and Audio Units. CRC Press, 2014.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Pirkle, Will. AN-6: Virtual Analog (VA) DiodeLadder Filter. 2013.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+          Zavalishin, Vadim. "The Art of VA filter design." Native Instruments, 2012.
+          </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116365728"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Steven Yi</td>
+          </tr>
+          <tr>
+            <td>April 2017</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound 6.09.0</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="diff.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="directory.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">diff </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> directory</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

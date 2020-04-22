@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>log</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="locsig.html" title="locsig" />
+    <link rel="next" href="log10.html" title="log10" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">log</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="locsig.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="log10.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="log"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLog" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">log</span>
+        </h2>
+        <p>log — 
+      Returns a natural log of a number, or an array (with optional arbitrary base).
+      
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085677040"></a>
+        <h2>Description</h2>
+        <p>
+      Returns the natural log of <span class="emphasis"><em>x</em></span> (<span class="emphasis"><em>x</em></span> positive only). In
+      the case of an array input, the operation can have an optional arbitrary base.
+    </p>
+        <p>
+      The argument value is restricted for <span class="emphasis"><em>log</em></span>,
+      <a class="link" href="log10.html" title="log10"><em class="citetitle">log10</em></a>,
+      and <a class="link" href="sqrt.html" title="sqrt"><em class="citetitle">sqrt</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085672176"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>log</strong></span>(x) (no rate
+    restriction)</pre>
+        <pre class="synopsis"><span class="command"><strong>log</strong></span>(k/i[]) (k- or i-arrays )</pre>
+        <pre class="synopsis">kout[]<span class="command"><strong>log</strong></span> kin[],ibas</pre>
+        <p>
+      where the argument within the parentheses may be an expression. Value converters perform arithmetic translation from units of one kind to units of another. The result can then be a term in a further expression. In the case of an array input, ibas is the optional arbitrary base, which defaults to e (natural log base).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085666704"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the log opcode. It uses the file <a class="ulink" href="examples/log.csd" target="_top"><em class="citetitle">log.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276085664912"></a>
+          <p class="title">
+            <strong>Example 492. Example of the log opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276455770576"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o log.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  i<span class="n">1</span> <span class="o">=</span> <span class="nb">log</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+  <span class="nb">print</span> i<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for one second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include a line like this:
+      </p>
+        <pre class="screen">instr 1:  i1 = 2.079</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085660176"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="abs.html" title="abs"><em class="citetitle">abs</em></a>,
+      <a class="link" href="exp.html" title="exp"><em class="citetitle">exp</em></a>,
+      <a class="link" href="frac.html" title="frac"><em class="citetitle">frac</em></a>,
+      <a class="link" href="int.html" title="int"><em class="citetitle">int</em></a>,
+      <a class="link" href="log10.html" title="log10"><em class="citetitle">log10</em></a>,
+      <a class="link" href="opi.html" title="i"><em class="citetitle">i</em></a>,
+      <a class="link" href="sqrt.html" title="sqrt"><em class="citetitle">sqrt</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085652880"></a>
+        <h2>Credits</h2>
+        <p>Written by John ffitch.</p>
+        <p>New in version 3.47</p>
+        <p>Example written by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="locsig.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="log10.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">locsig </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> log10</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

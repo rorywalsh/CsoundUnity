@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLslidBnkSetk</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLslidBnkSet.html" title="FLslidBnkSet" />
+    <link rel="next" href="FLslidBnk2Set.html" title="FLslidBnk2Set" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLslidBnkSetk</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLslidBnkSet.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLslidBnk2Set.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLslidBnkSetk"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLslidBnkSetk" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLslidBnkSetk</span>
+        </h2>
+        <p>FLslidBnkSetk — 
+      modify the values of a slider bank.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107825136"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLslidBnkSetk</em></span> modifies the values of a slider bank according to an array of values stored in a table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107823472"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLslidBnkSetk</strong></span>  ktrig, ihandle, ifn [, istartIndex, istartSlid, inumSlid]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107821488"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> - handle of the sliderBnk (to be used to set its values).
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> - number of a table containing an array of values to set each slider to.
+    </p>
+        <p>
+      <span class="emphasis"><em>istartIndex</em></span> - (optional) starting index of the table element of to be evaluated firstly. Default value is zero
+    </p>
+        <p>
+      <span class="emphasis"><em>istartSlid</em></span> - (optional) starting slider to be evaluated. Default 0, denoting the first slider.
+    </p>
+        <p>
+      <span class="emphasis"><em>inumSlid</em></span> - (optional) number of sliders to be updated. Default 0, denoting all sliders.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107816352"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> – the output of <span class="emphasis"><em>FLslidBnkSetk</em></span> consists of a trigger that informs if sliders have to be updated or not. A non-zero value forces the slider to be updated.
+    </p>
+        <p>
+     <span class="emphasis"><em>FLslidBnkSetk</em></span> is similar to <a class="link" href="FLslidBnkSet.html" title="FLslidBnkSet"><em class="citetitle">FLslidBnkSet</em></a> but allows k-rate to modify the values of <a class="link" href="FLslidBnk.html" title="FLslidBnk"><em class="citetitle">FLslidBnk</em></a>  (<span class="emphasis"><em>FLslidBnkSetk</em></span> can also be used with <a class="link" href="FLvslidBnk.html" title="FLvslidBnk"><em class="citetitle">FLvslidBnk</em></a>, obtaining identical result). It also allows the slider bank to be joined with MIDI. If you are using MIDI (for instance, when using the <a class="link" href="slider8table.html" title="slider8table"><em class="citetitle">slider8table</em></a> opcode), <span class="emphasis"><em>FLslidBnkSetk</em></span> changes the values of <a class="link" href="FLslidBnk.html" title="FLslidBnk"><em class="citetitle">FLslidBnk</em></a> bank of sliders to a set of values located in a table. This opcode is actually able to serve as a MIDI bridge to the <a class="link" href="FLslidBnk.html" title="FLslidBnk"><em class="citetitle">FLslidBnk</em></a> widget when used together with the <span class="emphasis"><em>sliderXXtable</em></span> set of opcodes (see <a class="link" href="slider8table.html" title="slider8table"><em class="citetitle">slider8table</em></a> entry for more information). Notice, that, when you want to use table indexing as a curve response, it is not possible to do it directly in the <span class="emphasis"><em>iconfigtable</em></span> configuration of <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a>, when you intend to use the <span class="emphasis"><em>FLslidBnkSetk</em></span> opcode. In fact, corresponding <span class="emphasis"><em>inputTable</em></span> element of <span class="emphasis"><em>FLslidBnkSetk</em></span> must be set in linear mode and respect the 0 to 1 range. Even the corresponding elements of <span class="emphasis"><em>sliderXXtable</em></span> must be set in linear mode and in the normalized range. You can do table indexing later, by using the <a class="link" href="tab.html" title="tab"><em class="citetitle">tab</em></a> and <a class="link" href="tb.html" title="tb"><em class="citetitle">tb</em></a> opcodes, and rescaling output according to max and min values. By the other hand, it is possible to use linear and exponential curve response directly, by setting the actual min-max range and flag both in the <span class="emphasis"><em>iconfigtable</em></span> of corresponding <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a> and in <span class="emphasis"><em>sliderXXtable</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLslidBnkSetk</em></span> the k-rate version of <a class="link" href="FLslidBnk2Set.html" title="FLslidBnk2Set"><em class="citetitle">FLslidBnk2Set</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107796736"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLslider.html" title="FLslider"><em class="citetitle">FLslider</em></a>,
+      <a class="link" href="FLslidBnkGetHandle.html" title="FLslidBnkGetHandle"><em class="citetitle">FLslidBnkGetHandle</em></a>,
+      <a class="link" href="FLslidBnk.html" title="FLslidBnk"><em class="citetitle">FLslidBnk</em></a>,
+      <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a>,
+      <a class="link" href="FLvslidBnk.html" title="FLvslidBnk"><em class="citetitle">FLvslidBnk</em></a>,
+      <a class="link" href="FLvslidBnk2.html" title="FLvslidBnk2"><em class="citetitle">FLvslidBnk2</em></a>
+      <a class="link" href="FLslidBnkSet.html" title="FLslidBnkSet"><em class="citetitle">FLslidBnkSet</em></a>,
+      <a class="link" href="FLslidBnk2Set.html" title="FLslidBnk2Set"><em class="citetitle">FLslidBnk2Set</em></a>,
+      <a class="link" href="slider8table.html" title="slider8table"><em class="citetitle">slider8table</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107786928"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLslidBnkSet.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLslidBnk2Set.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLslidBnkSet </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLslidBnk2Set</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

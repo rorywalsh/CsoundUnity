@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>JackoMidiOut</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="JackoMidiOutConnect.html" title="JackoMidiOutConnect" />
+    <link rel="next" href="JackoNoteOut.html" title="JackoNoteOut" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">JackoMidiOut</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="JackoMidiOutConnect.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="JackoNoteOut.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="JackoMidiOut"></a>
+      <div class="titlepage"></div>
+      <a id="IndexJackoMidiOut" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">JackoMidiOut</span>
+        </h2>
+        <p>JackoMidiOut — 
+      Sends a MIDI channel message to a Jack port.     
+    </p>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">plugin: Requires jacko plugin</td>
+          </tr>
+        </table>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088041120"></a>
+        <h2>Description</h2>
+        <p>
+      Sends a MIDI channel message to a Jack MIDI output port
+      inside this instance of Csound, and in turn to its 
+      connected external Jack MIDI input port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088039776"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>JackoMidiOut </strong></span> ScsoundPortName, kstatus, kchannel, kdata1[, kdata2]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088037792"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ScsoundPortName</em></span> -- The short name ("portname") 
+      of the internal Jack MIDI output port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088036128"></a>
+        <h2>Performance</h2>
+        <p> 
+      <span class="emphasis"><em>kstatus</em></span> -- MIDI status byte; must indicate a MIDI channel
+      message.
+    </p>
+        <p> 
+      <span class="emphasis"><em>kchannel</em></span> -- MIDI channel (from 0 through 15).
+    </p>
+        <p> 
+      <span class="emphasis"><em>kdata1</em></span> -- First data byte of a MIDI channel message.
+    </p>
+        <p> 
+      <span class="emphasis"><em>kdata2</em></span> -- Optional second data byte of a MIDI channel message.
+    </p>
+        <p> 
+      This opcode can be called any number of times 
+      in the same kperiod. Messages from multiple instances 
+      of the opcode sending to the same port are collected 
+      before sending. 
+    </p>
+        <p> 
+      Running status, system exclusive messages, and 
+      real-time messages are not supported.
+    </p>
+        <p> 
+      The granularity of timing is Csound's kperiod.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088030416"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="JackoInit.html" title="JackoInit"><em class="citetitle">JackoInfo</em></a>, 
+      <a class="link" href="JackoInfo.html" title="JackoInfo"><em class="citetitle">JackoInfo</em></a>, 
+      <a class="link" href="JackoFreewheel.html" title="JackoFreewheel"><em class="citetitle">JackoFreewheel</em></a>, 
+      <a class="link" href="JackoAudioInConnect.html" title="JackoAudioInConnect"><em class="citetitle">JackoAudioOutConnect</em></a>, 
+      <a class="link" href="JackoMidiInConnect.html" title="JackoMidiInConnect"><em class="citetitle">JackoMidiInConnect</em></a>, 
+      <a class="link" href="JackoMidiOutConnect.html" title="JackoMidiOutConnect"><em class="citetitle">JackoMidiOutConnect</em></a>, 
+      <a class="link" href="JackoOn.html" title="JackoOn"><em class="citetitle">JackoOn</em></a>, 
+      <a class="link" href="JackoAudioIn.html" title="JackoAudioIn"><em class="citetitle">JackoAudioIn</em></a>, 
+      <a class="link" href="JackoNoteOut.html" title="JackoNoteOut"><em class="citetitle">JackoNoteOut</em></a>, 
+      <a class="link" href="JackoTransport.html" title="JackoTransport"><em class="citetitle">JackoTransport</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088020304"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2010</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="JackoMidiOutConnect.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="JackoNoteOut.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">JackoMidiOutConnect </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> JackoNoteOut</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

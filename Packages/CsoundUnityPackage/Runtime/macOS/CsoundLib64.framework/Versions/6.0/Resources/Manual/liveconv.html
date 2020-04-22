@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>liveconv</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="linsegr.html" title="linsegr" />
+    <link rel="next" href="locsend.html" title="locsend" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">liveconv</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="linsegr.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="locsend.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="liveconv"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLiveconv" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">liveconv</span>
+        </h2>
+        <p>liveconv — 
+      Partitioned convolution with dynamically reloadable impulse response
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085971312"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in liveconv.</p>
+        <p>
+	    Computationally efficient, partitioned convolution, using a function table as impulse response (IR) source,
+      similar to the <a class="link" href="ftconv.html" title="ftconv"><em class="citetitle">ftconv</em></a> opcode. 
+      The <span class="emphasis"><em>liveconv</em></span> opcode allows dynamic reload of IR data at any time
+      while the convolution is running, controlled by the <span class="emphasis"><em>kupdate</em></span> parameter.
+      Due to the manner in which the IR is updated, the operation can be done without audio artifacts in the convolution output.
+      </p>
+        <p>
+      The IR table is read partition by partition after signalling an update. 
+      The first <span class="emphasis"><em>ksmps</em></span> samples must be available when the update flag is set. 
+      The rest of the table can be continuously filled in consecutive passes. There may be a new update 
+      for every partition, allowing as many as <span class="emphasis"><em>ftlen/iplen</em></span> simultaneous updates
+      (ftlen is the length of the IR table).
+      </p>
+        <p>
+      The low-latency, dynamic behavior of <span class="emphasis"><em>liveconv</em></span> makes it ideal for
+      convolution with live sampled impulse responses, and/or real-time impulse response transformations and modifications.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085965024"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>liveconv</strong></span> ain, ift, iplen, kupdate, kclear</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085962912"></a>
+        <h2>Initialization</h2>
+        <p>
+  	  <span class="emphasis"><em>ift</em></span>
+	    -- table number for storing the impulse response (IR) for convolution. The table may be filled with new
+      data at any time while the convolution is running.
+     </p>
+        <p>
+	    <span class="emphasis"><em>iplen</em></span>
+	    -- length of impulse response partition in samples; must be an
+      integer power of two. Lower settings allow for shorter output delay, but
+      will increase CPU usage.
+      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085960144"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span>
+      -- input signal.
+      </p>
+        <p>
+      <span class="emphasis"><em>ares</em></span>
+      -- output signal.
+      </p>
+        <p>
+  	  <span class="emphasis"><em>kupdate</em></span>
+	    -- flag indicating whether the IR table should be updated.
+      If kupdate=1 the IR table ift is loaded partition by partition, starting with the next partition.
+      If kupdate=-1 the IR table ift is unloaded (cleared to zero) partition by partition, starting with the next partition.
+      Other values have no effect.
+      </p>
+        <p>
+  	  <span class="emphasis"><em>kclear</em></span>
+	    -- flag for clearing all internal buffers.
+      If kclear has any value != zero, the internal buffers are cleared immediately. This operation is not free of artifacts.
+      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085955616"></a>
+        <h2>Example</h2>
+        <p>
+      Here is an example of the liveconv opcode. It uses the file <a class="ulink" href="examples/liveconv.csd" target="_top"><em class="citetitle">liveconv.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276085953824"></a>
+          <p class="title">
+            <strong>Example 489. Example of the liveconv opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276456250144"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac  <span class="c1">;realtime audio out</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+	<span class="vg">sr</span>	<span class="o">=</span> <span class="mi">44100</span>
+	<span class="vg">nchnls</span>	<span class="o">=</span> <span class="mi">2</span>
+	<span class="vg">0dbfs</span>	<span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; empty IR table</span>
+gi<span class="n">IR_record</span> 	<span class="nb">ftgen</span>	<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">131072</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>
+	
+<span class="c1">; Record impulse response</span>
+<span class="kd">instr</span> <span class="nf">13</span>
+
+<span class="nb">p3</span> 		<span class="o">=</span>	<span class="nb">ftlen</span><span class="p">(</span>gi<span class="n">IR_record</span><span class="p">)</span><span class="o">/</span><span class="vg">sr</span>
+i<span class="n">skip</span> 	<span class="o">=</span>	<span class="nb">p4</span>
+i<span class="n">rlen</span> 	<span class="o">=</span>	<span class="nb">p5</span>
+a<span class="n">1</span> 		<span class="nb">diskin2</span>	<span class="s">"fox.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">skip</span>
+
+<span class="c1">; Fill IR table with segment from audio file</span>
+a<span class="n">mp</span> 	<span class="nb">linseg</span>	<span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">rlen</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+a<span class="n">ndx_IR</span> <span class="nb">line</span>	<span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="nb">ftlen</span><span class="p">(</span>gi<span class="n">IR_record</span><span class="p">)</span><span class="o">/</span><span class="vg">sr</span><span class="p">)</span>
+		<span class="nb">tablew</span>	a<span class="n">1</span><span class="o">*</span>a<span class="n">mp</span><span class="p">,</span> a<span class="n">ndx_IR</span><span class="p">,</span> gi<span class="n">IR_record</span><span class="p">,</span> <span class="mi">1</span>
+		<span class="nb">outch</span>	<span class="mi">1</span><span class="p">,</span> a<span class="n">1</span><span class="o">*</span>a<span class="n">mp</span>	<span class="c1">; output the IR</span>
+k<span class="n">trig</span> 	<span class="nb">init</span>	<span class="mi">1</span>
+<span class="k">if</span> k<span class="n">trig</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="k">then</span>
+	<span class="nb">chnset</span>	k<span class="n">trig</span><span class="p">,</span> <span class="s">"conv_update"</span>
+	k<span class="n">trig</span> <span class="o">-=</span> <span class="mi">1</span>
+<span class="k">endif</span>
+
+<span class="kd">endin</span>
+        
+<span class="c1">; The convolver</span>
+<span class="kd">instr</span> <span class="nf">14</span>
+
+a<span class="n">in</span> 	<span class="nb">diskin2</span>	<span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">update</span> <span class="nb">chnget</span>	<span class="s">"conv_update"</span>
+a<span class="n">conv</span> 	<span class="n">liveconv</span> a<span class="n">in</span><span class="p">,</span> gi<span class="n">IR_record</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> k<span class="n">update</span><span class="p">,</span> <span class="mi">0</span>
+		<span class="nb">outch</span>	<span class="mi">2</span><span class="p">,</span> a<span class="n">conv</span><span class="o">*</span><span class="mf">0.009</span>	<span class="c1">; output the convolution response</span>
+<span class="kd">endin</span>
+        
+        
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; record impulse response</span>
+<span class="c1">;          skip  IR_dur</span>
+<span class="nb">i</span><span class="mi">13</span>	<span class="mi">0</span>	<span class="mi">1</span>	<span class="mf">0.0</span>	<span class="mf">0.5</span>
+<span class="nb">i</span><span class="mi">13</span>	<span class="mi">2</span>	<span class="mi">1</span>	<span class="mf">0.5</span>	<span class="mf">0.5</span>
+<span class="nb">i</span><span class="mi">13</span>	<span class="mi">4</span>	<span class="mi">1</span>	<span class="mf">1.0</span>	<span class="mf">0.5</span>
+<span class="nb">i</span><span class="mi">13</span>	<span class="mi">6</span>	<span class="mi">1</span>	<span class="mf">1.5</span>	<span class="mf">0.5</span>
+<span class="nb">i</span><span class="mi">13</span>	<span class="mi">8</span>	<span class="mi">1</span>	<span class="mf">2.0</span>	<span class="mf">0.75</span>
+<span class="nb">i</span><span class="mi">13</span>	<span class="mi">10</span>	<span class="mi">1</span>	<span class="mf">2.38</span> <span class="mf">0.25</span>
+
+<span class="c1">; convolve</span>
+<span class="nb">i</span><span class="mi">14</span>	<span class="mf">0.0</span>	<span class="mf">11.65</span>	
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085949840"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="ftconv.html" title="ftconv"><em class="citetitle">ftconv</em></a>
+      <a class="link" href="tvconv.html" title="tvconv"><em class="citetitle">tvconv</em></a>
+      <a class="link" href="pconvolve.html" title="pconvolve"><em class="citetitle">pconvolve</em></a>,
+      <a class="link" href="convolve.html" title="convolve"><em class="citetitle">convolve</em></a>,
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085945184"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Sigurd Saue, Oeyvind Brandtsegg</td>
+          </tr>
+          <tr>
+            <td>2017</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="linsegr.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="locsend.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">linsegr </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> locsend</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

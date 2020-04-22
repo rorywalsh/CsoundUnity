@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>cauchy</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="cabasa.html" title="cabasa" />
+    <link rel="next" href="cauchyi.html" title="cauchyi" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">cauchy</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cabasa.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cauchyi.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="cauchy"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCauchyXClass" class="indexterm"></a>
+      <a id="IndexCauchy" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">cauchy</span>
+        </h2>
+        <p>cauchy — 
+      Cauchy distribution random number generator. 
+                </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122289680"></a>
+        <h2>Description</h2>
+        <p>
+      Cauchy distribution random number generator. This is an x-class noise generator.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122288304"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>cauchy</strong></span> kalpha</pre>
+        <pre class="synopsis">ires <span class="command"><strong>cauchy</strong></span> kalpha</pre>
+        <pre class="synopsis">kres <span class="command"><strong>cauchy</strong></span> kalpha</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122283584"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kalpha</em></span> -- controls the spread from zero (big <span class="emphasis"><em>kalpha</em></span> = big spread). Outputs both positive and negative numbers.
+    </p>
+        <p>
+      For more detailed explanation of these distributions, see:
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>C. Dodge - T.A. Jerse 1985. Computer music. Schirmer books. pp.265 - 286</p>
+            </li>
+            <li class="listitem">
+              <p>D. Lorrain. A panoply of stochastic cannons. In C. Roads, ed. 1989. Music machine . Cambridge, Massachusetts: MIT press, pp. 351 - 379.</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122278208"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the cauchy opcode. It uses the file <a class="ulink" href="examples/cauchy.csd" target="_top"><em class="citetitle">cauchy.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276122276400"></a>
+          <p class="title">
+            <strong>Example 111. Example of the cauchy opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276490067136"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o cauchy.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>  	<span class="c1">; every run time same values</span>
+
+k<span class="n">alpha</span>	<span class="nb">cauchy</span>	<span class="mi">100</span>
+	<span class="nb">printk</span>	<span class="mf">.2</span><span class="p">,</span> k<span class="n">alpha</span>		<span class="c1">; look</span>
+a<span class="n">out</span>	<span class="nb">oscili</span>	<span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">alpha</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; &amp; listen</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>		<span class="c1">; every run time different values</span>
+
+	<span class="nb">seed</span> <span class="mi">0</span>
+k<span class="n">alpha</span>	<span class="nb">cauchy</span>	<span class="mi">100</span>
+	<span class="nb">printk</span>	<span class="mf">.2</span><span class="p">,</span> k<span class="n">alpha</span>		<span class="c1">; look </span>
+a<span class="n">out</span>	<span class="nb">oscili</span>	<span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">alpha</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; &amp; listen</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine wave</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like:
+      </p>
+        <pre class="screen">
+ i   1 time     0.00267:    -0.20676
+ i   1 time     0.20267:    -0.28814
+ i   1 time     0.40267:     0.61651
+ i   1 time     0.60267:   -18.18552
+ i   1 time     0.80267:     1.18140
+ i   1 time     1.00000:    -0.75432
+ i   1 time     1.20267:    -0.02002
+ i   1 time     1.40267:     0.01785
+ i   1 time     1.60267:    -0.48834
+ i   1 time     1.80000:     9.69401
+ i   1 time     2.00000:    -0.41257
+Seeding from current time 3112109827
+ i   2 time     3.00267:    -0.46887
+ i   2 time     3.20267:     0.06189
+ i   2 time     3.40267:    -0.40303
+ i   2 time     3.60000:     0.89312
+ i   2 time     3.80267:    -0.40374
+ i   2 time     4.00000:     0.86557
+ i   2 time     4.20000:     0.09192
+ i   2 time     4.40267:    -0.16748
+ i   2 time     4.60267:     0.30133
+ i   2 time     4.80267:     0.31657
+ i   2 time     5.00000:     0.44681
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122271680"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="seed.html" title="seed"><em class="citetitle">seed</em></a>,
+      <a class="link" href="betarand.html" title="betarand"><em class="citetitle">betarand</em></a>,
+      <a class="link" href="bexprnd.html" title="bexprnd"><em class="citetitle">bexprnd</em></a>,
+      <a class="link" href="exprand.html" title="exprand"><em class="citetitle">exprand</em></a>,
+      <a class="link" href="gauss.html" title="gauss"><em class="citetitle">gauss</em></a>,
+      <a class="link" href="linrand.html" title="linrand"><em class="citetitle">linrand</em></a>,
+      <a class="link" href="pcauchy.html" title="pcauchy"><em class="citetitle">pcauchy</em></a>,
+      <a class="link" href="poisson.html" title="poisson"><em class="citetitle">poisson</em></a>,
+      <a class="link" href="trirand.html" title="trirand"><em class="citetitle">trirand</em></a>,
+      <a class="link" href="unirand.html" title="unirand"><em class="citetitle">unirand</em></a>,
+      <a class="link" href="weibull.html" title="weibull"><em class="citetitle">weibull</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122260672"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge</td>
+          </tr>
+          <tr>
+            <td>1995</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Existed in 3.30</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cabasa.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cauchyi.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cabasa </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> cauchyi</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

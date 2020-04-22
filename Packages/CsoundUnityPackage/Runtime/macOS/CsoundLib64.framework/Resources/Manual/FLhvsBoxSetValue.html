@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLhvsBoxSetValue</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLhvsBox.html" title="FLhvsBox" />
+    <link rel="next" href="FLjoy.html" title="FLjoy" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLhvsBoxSetValue</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLhvsBox.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLjoy.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLhvsBoxSetValue"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLhvsBoxSetValue" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLhvsBoxSetValue</span>
+        </h2>
+        <p>FLhvsBoxSetValue — 
+      Sets the cursor position of a previously-declared FLhvsBox widget.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109904800"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLhvsBoxSetValue</em></span> sets the cursor position of a previously-declared <a class="link" href="FLhvsBox.html" title="FLhvsBox"><em class="citetitle">FLhvsBox</em></a> widget.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109902272"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLhvsBox</strong></span> kx, ky, ihandle</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109900320"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> – an integer number used a univocally-defined handle for identifying a specific HVS box (see below).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109898528"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kx, ky</em></span>– the coordinates of the HVS cursor position to be set.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLhvsBoxSetValue</em></span> sets the cursor position of a previously-declared <a class="link" href="FLhvsBox.html" title="FLhvsBox"><em class="citetitle">FLhvsBox</em></a> widget. The <span class="emphasis"><em>kx</em></span> and <span class="emphasis"><em>ky</em></span> arguments, denoting the cursor position, have to be expressed in normalized values (0 to 1 range).
+    </p>
+        <p>
+      See the entry for <a class="link" href="hvs2.html" title="hvs2"><em class="citetitle">hvs2</em></a> for an example of usage of <span class="emphasis"><em>FLhvsBoxSetValue</em></span>.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109892224"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="hvs2.html" title="hvs2"><em class="citetitle">hvs2</em></a>,
+      <a class="link" href="FLhvsBox.html" title="FLhvsBox"><em class="citetitle">FLhvsBox</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109888608"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLhvsBox.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLjoy.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLhvsBox </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLjoy</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

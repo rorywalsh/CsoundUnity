@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>MIDI input</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="MidiTop.html" title="Real-time MIDI Support" />
+    <link rel="prev" href="MidiTop.html" title="Real-time MIDI Support" />
+    <link rel="next" href="MidiOutput.html" title="MIDI Message Output" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">MIDI input</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="MidiTop.html">Prev</a> </td>
+          <th width="60%" align="center">Real-time MIDI Support</th>
+          <td width="20%" align="right"> <a accesskey="n" href="MidiOutput.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="MidiInput"></a>MIDI input</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    The following opcodes can receive MIDI information:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>MIDI information for any instruments: <a class="link" href="aftouch.html" title="aftouch"><em class="citetitle">aftouch</em></a>, <a class="link" href="chanctrl.html" title="chanctrl"><em class="citetitle">chanctrl</em></a> and <a class="link" href="polyaft.html" title="polyaft"><em class="citetitle">polyaft</em></a>, <a class="link" href="pchbend.html" title="pchbend"><em class="citetitle">pchbend</em></a>.</p>
+          </li>
+          <li class="listitem">
+            <p>MIDI information for MIDI-triggered instruments:
+      <a class="link" href="veloc.html" title="veloc"><em class="citetitle">veloc</em></a>, <a class="link" href="midictrl.html" title="midictrl"><em class="citetitle">midictrl</em></a>, <a class="link" href="midichn.html" title="midichn"><em class="citetitle">midichn</em></a> and <a class="link" href="notnum.html" title="notnum"><em class="citetitle">notnum</em></a>. See also <a class="link" href="MidiConvert.html" title="Converters"><em class="citetitle">Converters</em></a>.</p>
+          </li>
+          <li class="listitem">
+            <p>MIDI Controller input for any instrument: <a class="link" href="ctrl7.html" title="ctrl7"><em class="citetitle">ctrl7</em></a>, <a class="link" href="ctrl14.html" title="ctrl14"><em class="citetitle">ctrl14</em></a> and <a class="link" href="ctrl21.html" title="ctrl21"><em class="citetitle">ctrl21</em></a>.</p>
+          </li>
+          <li class="listitem">
+            <p>MIDI Controller input for MIDI-triggered instruments only: <a class="link" href="midic7.html" title="midic7"><em class="citetitle">midic7</em></a>, <a class="link" href="midic14.html" title="midic14"><em class="citetitle">midic14</em></a> and <a class="link" href="midic21.html" title="midic21"><em class="citetitle">midic21</em></a>.</p>
+          </li>
+          <li class="listitem">
+            <p>MIDI controller  value initialization: <a class="link" href="initc7.html" title="initc7"><em class="citetitle">initc7</em></a>, <a class="link" href="initc14.html" title="initc14"><em class="citetitle">initc14</em></a>, <a class="link" href="initc21.html" title="initc21"><em class="citetitle">initc21</em></a> and <a class="link" href="ctrlinit.html" title="ctrlinit"><em class="citetitle">ctrlinit</em></a>.</p>
+          </li>
+          <li class="listitem">
+            <p>Generic MIDI input: <a class="link" href="midiin.html" title="midiin"><em class="citetitle">midiin</em></a>.</p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    <a class="link" href="massign.html" title="massign"><em class="citetitle">massign</em></a> can be used to specify the csound instrument to be triggered by a particular MIDI channel. <a class="link" href="pgmassign.html" title="pgmassign"><em class="citetitle">pgmassign</em></a> can be use to assign a csound instrument to a specific MIDI program.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="MidiTop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="MidiTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="MidiOutput.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Real-time MIDI Support </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> MIDI Message Output</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

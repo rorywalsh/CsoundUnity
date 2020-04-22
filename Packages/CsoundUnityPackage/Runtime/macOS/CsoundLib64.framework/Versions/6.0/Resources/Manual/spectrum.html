@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>spectrum</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="specsum.html" title="specsum" />
+    <link rel="next" href="splitrig.html" title="splitrig" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">spectrum</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="specsum.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="splitrig.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="spectrum"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpectrum" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">spectrum</span>
+        </h2>
+        <p>spectrum — 
+      Generate a constant-Q, exponentially-spaced DFT.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066250864"></a>
+        <h2>Description</h2>
+        <p>
+      Generate a constant-Q, exponentially-spaced DFT across all octaves of a multiply-downsampled control or audio input signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066249552"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">wsig <span class="command"><strong>spectrum</strong></span> xsig, iprd, iocts, ifrqa [, iq] [, ihann] [, idbout] \
+      [, idsprd] [, idsinrs]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066247392"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihann</em></span> (optional) -- apply a Hamming or Hanning window to the input. The default is 0 (Hamming window)
+    </p>
+        <p>
+      <span class="emphasis"><em>idbout</em></span> (optional) -- coded conversion of the DFT output:
+       </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 = magnitude</p>
+            </li>
+            <li class="listitem">
+              <p>1 = dB</p>
+            </li>
+            <li class="listitem">
+              <p>2 = mag squared</p>
+            </li>
+            <li class="listitem">
+              <p>3 = root magnitude</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+      The default value is 0 (magnitude).
+    </p>
+        <p>
+      <span class="emphasis"><em>idisprd</em></span> (optional) -- if non-zero, display the composite downsampling buffer every <span class="emphasis"><em>idisprd</em></span> seconds.  The default value is 0 (no display).
+    </p>
+        <p>
+      <span class="emphasis"><em>idsines</em></span> (optional) -- if non-zero, display the Hamming or Hanning windowed sinusoids used in DFT filtering.  The default value is 0 (no sinusoid display).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066238992"></a>
+        <h2>Performance</h2>
+        <p>
+      This unit first puts signal <span class="emphasis"><em>asig</em></span> or <span class="emphasis"><em>ksig</em></span> through <span class="emphasis"><em>iocts</em></span> of successive octave decimation and downsampling, and preserves a buffer of down-sampled values in each octave (optionally displayed as a composite buffer every <span class="emphasis"><em>idisprd</em></span> seconds).  Then at every <span class="emphasis"><em>iprd</em></span> seconds, the preserved samples are passed through a filter bank (<span class="emphasis"><em>ifrqs</em></span> parallel filters per octave, exponentially spaced, with frequency/bandwidth Q of <span class="emphasis"><em>iq</em></span>), and the output magnitudes optionally converted (<span class="emphasis"><em>idbout </em></span>) to produce a band-limited spectrum that can be read by other units.
+    </p>
+        <p>
+      The stages in this process are computationally intensive, and computation time varies directly with <span class="emphasis"><em>iocts</em></span>, <span class="emphasis"><em>ifrqs</em></span>, <span class="emphasis"><em>iq</em></span>, and inversely with <span class="emphasis"><em>iprd</em></span>. Settings of <span class="emphasis"><em>ifrqs</em></span> = 12, <span class="emphasis"><em>iq</em></span> = 10, <span class="emphasis"><em>idbout</em></span> = 3, and <span class="emphasis"><em>iprd</em></span> = .02 will normally be adequate, but experimentation is encouraged. <span class="emphasis"><em>ifrqs</em></span> currently has a maximum of 120 divisions per octave. For audio input, the frequency bins are tuned to coincide with A440.
+    </p>
+        <p>
+      This unit produces a self-defining spectral datablock <span class="emphasis"><em>wsig</em></span>, whose characteristics used (<span class="emphasis"><em>iprd</em></span>, <span class="emphasis"><em>iocts</em></span>, <span class="emphasis"><em>ifrqs</em></span>, <span class="emphasis"><em>idbout</em></span>) are passed via the data block itself to all derivative <span class="emphasis"><em>wsigs</em></span>. There can be any number of <span class="emphasis"><em>spectrum</em></span> units in an instrument or orchestra, but all <span class="emphasis"><em>wsig</em></span> names must be unique.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066225808"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+asig <span class="opc">in</span>                                        <span class="comment">; get external audio</span>
+wsig <span class="opc">spectrum</span>  asig, 0.02, 6, 12, 33, 0, 1, 1  <span class="comment">; downsample in 6 octs &amp; calc a 72 pt dft</span>
+                                               <span class="comment">; (Q 33, dB out) every 20 msecs</span></pre>
+        </div>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="specsum.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="splitrig.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">specsum </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> splitrig</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

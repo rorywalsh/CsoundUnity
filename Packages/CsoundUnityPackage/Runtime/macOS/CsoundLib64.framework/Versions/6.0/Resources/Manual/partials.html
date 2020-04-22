@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>partials</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pareq.html" title="pareq" />
+    <link rel="next" href="partikkel.html" title="partikkel" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">partials</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pareq.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="partikkel.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="partials"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpartials" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">partials</span>
+        </h2>
+        <p>partials — 
+     Partial track spectral analysis.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073687968"></a>
+        <h2>Description</h2>
+        <p>
+  The partials opcode takes two input PV streaming signals containg AMP_FREQ and AMP_PHASE signals (as generated
+  for instance by pvsifd or in the first case, by pvsanal) and performs partial track analysis,
+  as described in Lazzarini et al, "Time-stretching using the Instantaneous Frequency Distribution and Partial
+  Tracking", Proc.of ICMC05, Barcelona. It generates a TRACKS PV streaming signal, containing amplitude, frequency, 
+  phase and track ID for each output track. This type of signal will contain a variable number of output tracks,
+  up to the total number of analysis bins contained in the inputs (fftsize/2 + 1 bins). The second input (AMP_PHASE) 
+  is optional, as it can take the same signal as the first input. In this case, however, all phase information will 
+  be NULL and resynthesis using phase information cannot be performed.
+	      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073685920"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ftrks <span class="command"><strong>partials</strong></span> ffr, fphs, kthresh, kminpts, kmaxgap, imaxtracks</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073683792"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ftrks</em></span> -- output pv stream in TRACKS format
+    </p>
+        <p>
+      <span class="emphasis"><em>ffr</em></span> -- input pv stream in AMP_FREQ format
+    </p>
+        <p>
+      <span class="emphasis"><em>fphs</em></span> -- input pv stream in AMP_PHASE format
+    </p>
+        <p>
+      <span class="emphasis"><em>kthresh</em></span> -- analysis threshold factor,
+      defined between -1 and 1. If non-negative,
+      the analysis threshold is taken to be relative to the maximum magnitude in each
+      analysis frame (kthresh * max_magnitude). If negative, the absolute threshold value is
+      relative to 0dbfs (kthresh * 0dbfs). Tracks below this threshold will be discarded. 
+    </p>
+        <p>
+      <span class="emphasis"><em>kminpoints</em></span> -- minimum number of time points for a detected peak to make a track (1 
+	  is the minimum). Since this opcode works with streaming signals, larger numbers will increase the delay between
+	  input and output, as we have to wait for the required minimum number of points.
+    </p>
+        <p>
+      <span class="emphasis"><em>kmaxgap</em></span> -- maximum gap between time-points for track continuation (&gt; 0). Tracks that have 
+	  no continuation after kmaxgap will be discarded.
+    </p>
+        <p>
+      <span class="emphasis"><em>imaxtracks</em></span> -- maximum number of analysis tracks (number of bins &gt;= imaxtracks)
+    </p>
+        <p>
+    
+  </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073676096"></a>
+        <h2>Example</h2>
+        <p>
+      Here is an example of the partials opcodes. It uses the file <a class="ulink" href="examples/partials.csd" target="_top"><em class="citetitle">partials.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276073674304"></a>
+          <p class="title">
+            <strong>Example 679. Example of the partials opcodes.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276441844032"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o partials.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">in</span>  <span class="nb">diskin2</span> <span class="s">"fox.wav"</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">fs1</span><span class="p">,</span><span class="n">fsi2</span> <span class="nb">pvsifd</span> a<span class="n">in</span><span class="p">,</span><span class="mi">2048</span><span class="p">,</span><span class="mi">512</span><span class="p">,</span><span class="mi">1</span>		<span class="c1">; ifd analysis</span>
+<span class="n">fst</span>  <span class="nb">partials</span> <span class="n">fs1</span><span class="p">,</span><span class="n">fsi2</span><span class="p">,</span><span class="mf">.003</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">500</span>	<span class="c1">; partial tracking</span>
+a<span class="n">out</span> <span class="nb">resyn</span> <span class="n">fst</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; resynthesis (up a 5th)</span>
+     <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.8</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>The example above shows partial tracking of an ifd-analysis signal and cubic-phase additive resynthesis with pitch shifting.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073669792"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>June 2005 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>November 2004.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pareq.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="partikkel.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pareq </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> partikkel</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

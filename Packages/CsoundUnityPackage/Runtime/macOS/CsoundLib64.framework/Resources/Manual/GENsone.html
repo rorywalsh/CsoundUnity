@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GENsone</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GENexp.html" title="GENexp" />
+    <link rel="next" href="GENquadbezier.html" title="GENquadbezier" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GENsone</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GENexp.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GENquadbezier.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GENsone"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGENsone" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GENsone</span>
+        </h2>
+        <p>"sone" — 
+      Generate a table with values of the sone function.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990203616"></a>
+        <h2>Description</h2>
+        <p>
+      Creates an ftable with values of the sone function for equal power.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990202368"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size "sone" start end equalpoint rescale</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990200400"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size</em></span> -- number of points in the table. Must
+      be a power of 2 or power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>start, end</em></span> -- first and last value to be stored.  The points stored are uniformly spaced between these to the table size.
+    </p>
+        <p>
+      <span class="emphasis"><em>equalpoint</em></span> -- the point on the curve when the input and output values are equal.
+    </p>
+        <p>
+      <span class="emphasis"><em>rescale</em></span> -- if not zero the table is not rescaled
+    </p>
+        <p>
+      The table is filled with the function x*POWER(x/eqlp,
+      FL(33.0)/FL(78.0)) for x between the start and end points.  This
+      is the Sone loudness curve.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990194704"></a>
+        <h2>Examples</h2>
+        <p>
+	    Here is an example of the GENsone routine. It uses the files <a class="ulink" href="examples/gensone.csd" target="_top"><em class="citetitle">gensone.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275990192912"></a>
+          <p class="title">
+            <strong>Example 1237. An example of the GENsone routine.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276394839696"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gensone.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; simple oscillator with loudness correction. </span>
+
+k<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span> 
+k<span class="n">env</span> <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.75</span><span class="p">,</span> <span class="mi">0</span>	<span class="c1">;amplitude envelope</span>
+k<span class="n">amp</span> <span class="nb">tablei</span> <span class="mi">16384</span> <span class="o">*</span>k<span class="n">env</span><span class="p">,</span> <span class="mi">2</span> 
+a<span class="n">sig</span> <span class="nb">oscil</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+  
+<span class="kd">endin</span> 
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">;neutral oscillator to compare with</span>
+
+k<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>  
+k<span class="n">env</span> <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.75</span><span class="p">,</span> <span class="mi">0</span>	<span class="c1">;amplitude envelope</span>
+a<span class="n">sig</span> <span class="nb">oscil</span> k<span class="n">env</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+  
+<span class="kd">endin</span> 
+
+<span class="nt">&lt;/CsInstruments&gt;</span> 
+<span class="nt">&lt;CsScore&gt;</span> 
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> 	<span class="c1">;sine wave</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">16385</span> <span class="s">"sone"</span> <span class="mi">0</span> <span class="mi">32000</span> <span class="mi">32000</span> <span class="mi">0</span> 
+
+<span class="nb">s</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">1</span>	<span class="c1">;1 second of silence before we start...</span>
+<span class="nb">s</span> 
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mf">7.00</span> 
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="mf">7.01</span> 
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="mf">8.02</span> 
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="mf">8.03</span> 
+<span class="nb">s</span> 
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mf">7.00</span> 
+<span class="nb">i</span> <span class="mi">2</span> <span class="o">+</span> <span class="o">.</span> <span class="mf">7.01</span> 
+<span class="nb">i</span> <span class="mi">2</span> <span class="o">+</span> <span class="o">.</span> <span class="mf">8.02</span> 
+<span class="nb">i</span> <span class="mi">2</span> <span class="o">+</span> <span class="o">.</span> <span class="mf">8.03</span> 
+<span class="nb">e</span> 
+<span class="nt">&lt;/CsScore&gt;</span> 
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+        <span class="phrase">This is the diagram of the waveforms of the GENsone routine, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gensone.png" alt="f 2 0 16385 &quot;sone&quot; 0 32000 32000 0" />
+          <div class="caption">
+            <p>f 2 0 16385 "sone" 0 32000 32000 0</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990187152"></a>
+        <h2>See Also</h2>
+        <p> More information on Sone: <a class="ulink" href="http://en.wikipedia.org/wiki/Sone" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Sone</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990185248"></a>
+        <h2>Credits</h2>
+        <p>Written by John ffitch</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GENexp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GENquadbezier.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GENexp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GENquadbezier</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

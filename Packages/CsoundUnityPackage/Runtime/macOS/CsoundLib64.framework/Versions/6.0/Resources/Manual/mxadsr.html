@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mxadsr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mvclpf4.html" title="mvclpf4" />
+    <link rel="next" href="nchnls.html" title="nchnls" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mxadsr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mvclpf4.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="nchnls.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mxadsr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMxadsr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mxadsr</span>
+        </h2>
+        <p>mxadsr — 
+      Calculates the classical ADSR envelope using the <span class="emphasis"><em>expsegr</em></span> mechanism.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078155232"></a>
+        <h2>Description</h2>
+        <p>
+      Calculates the classical ADSR envelope using the <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a> mechanism.
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078153120"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>mxadsr</strong></span> iatt, idec, islev, irel [, idel] [, ireltim]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>mxadsr</strong></span> iatt, idec, islev, irel [, idel] [, ireltim]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078149680"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iatt</em></span> -- duration of attack phase
+    </p>
+        <p>
+      <span class="emphasis"><em>idec</em></span> -- duration of decay
+    </p>
+        <p>
+      <span class="emphasis"><em>islev</em></span> -- level for sustain phase
+    </p>
+        <p>
+      <span class="emphasis"><em>irel</em></span> -- duration of release phase
+    </p>
+        <p>
+      <span class="emphasis"><em>idel</em></span> (optional, default=0) -- period of zero before the envelope starts
+    </p>
+        <p>
+      <span class="emphasis"><em>ireltim</em></span> (optional, default=-1) -- Control release time after receiving a MIDI noteoff event. If less than zero, the longest release time given in the current instrument is used. If zero or more, the given value will be used for release time. Its default value is -1. (New in Csound 3.59 - not yet properly tested)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078143616"></a>
+        <h2>Performance</h2>
+        <p>
+      The envelope is in the range 0 to 1 and may need to be scaled further. The envelope may be described as:
+      </p>
+        <div class="mediaobject">
+          <img src="images/adsr.png" alt="Picture of an ADSR envelope." />
+          <div class="caption">
+            <p>Picture of an ADSR envelope.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+        <p>
+       The length of the sustain is calculated from the length of the note. This means <span class="emphasis"><em>adsr</em></span> is not suitable for use with MIDI events. The opcode <a class="link" href="madsr.html" title="madsr"><em class="citetitle">madsr</em></a> uses the <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a> mechanism, and so can be used in MIDI applications. The opcode <span class="emphasis"><em>mxadsr</em></span> is identical to <a class="link" href="madsr.html" title="madsr"><em class="citetitle">madsr</em></a> except it uses exponential, rather than linear, line segments. 
+    </p>
+        <p>
+      You can use other pre-made envelopes which start a release segment upon receiving a note off message, like <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a> and <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>, or you can construct more complex envelopes using <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> and <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a>. Note that you don't need to use <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> if you are using <span class="emphasis"><em>mxadsr</em></span>, since the time is extended automatically.
+    </p>
+        <p>
+      <span class="emphasis"><em>mxadsr</em></span> is new in Csound version 3.51.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078128784"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the mxadsr opcode. It uses the file <a class="ulink" href="examples/mxadsr.csd" target="_top"><em class="citetitle">mxadsr.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276078126992"></a>
+          <p class="title">
+            <strong>Example 608. Example of the mxadsr opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276446713648"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  -+rtmidi=virtual -M0   <span class="c1">;;;realtime audio out and realtime midi in</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o mxadsr.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+ 	 
+i<span class="n">cps</span>	<span class="nb">cpsmidi</span>	 	 
+i<span class="n">amp</span>	<span class="nb">ampmidi</span>	<span class="mf">.5</span>	 
+ 	 	 	 
+k<span class="n">env</span>	<span class="nb">mxadsr</span>	<span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span>
+a<span class="n">sig</span>	<span class="nb">pluck</span>	k<span class="n">env</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span>	 
+	<span class="nb">outs</span>	a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+	 
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>	
+
+<span class="nb">f</span><span class="mi">0</span> <span class="mi">30</span>	<span class="c1">;runs 30 seconds</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078123008"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">linsegr</em></a>,
+      <a class="link" href="linenr.html" title="linenr"><em class="citetitle">expsegr</em></a>,
+      <a class="link" href="envlpxr.html" title="envlpxr"><em class="citetitle">envlpxr</em></a>,
+      <a class="link" href="xadsr.html" title="xadsr"><em class="citetitle">mxadsr</em></a>,
+      <a class="link" href="madsr.html" title="madsr"><em class="citetitle">madsr</em></a>,
+      <a class="link" href="adsr.html" title="adsr"><em class="citetitle">adsr</em></a>,
+      <a class="link" href="expon.html" title="expon"><em class="citetitle">expon</em></a>,
+      <a class="link" href="expseg.html" title="expseg"><em class="citetitle">expseg</em></a>,
+      <a class="link" href="expsega.html" title="expsega"><em class="citetitle">expsega</em></a>
+      <a class="link" href="line.html" title="line"><em class="citetitle">line</em></a>,
+      <a class="link" href="linseg.html" title="linseg"><em class="citetitle">linseg</em></a>,
+      <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078111312"></a>
+        <h2>Credits</h2>
+        <p>Author: John ffitch</p>
+        <p>November 2002. Thanks to Rasmus Ekman, added documentation for the <span class="emphasis"><em>ireltim</em></span> parameter.</p>
+        <p>November 2003. Thanks to Kanata Motohashi, fixed the link to the <span class="emphasis"><em>linsegr</em></span> opcode.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mvclpf4.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="nchnls.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mvclpf4 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> nchnls</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

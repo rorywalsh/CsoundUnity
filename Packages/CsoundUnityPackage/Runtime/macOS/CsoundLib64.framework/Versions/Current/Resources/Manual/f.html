@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>f Statement (or Function Table Statement)</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="e.html" title="e Statement" />
+    <link rel="next" href="i.html" title="i Statement (Instrument or Note Statement)" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">f Statement (or Function Table Statement)</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="e.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="i.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="f"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFStatement" class="indexterm"></a>
+      <a id="IndexFunctionTableStatement" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">f Statement (or Function Table Statement)</span>
+        </h2>
+        <p>f Statement (or Function Table Statement) — 
+      Causes a GEN subroutine to place values in a stored function table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013713968"></a>
+        <h2>Description</h2>
+        <p>
+      This causes a GEN subroutine to place values in a stored function table for use by instruments.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013712688"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> p1  p2  p3  p4  p5 ... PMAX</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013710752"></a>
+        <h2>Performance</h2>
+        <p>
+       <span class="emphasis"><em>p1</em></span> -- Table number by which the stored function will be known. A negative number requests that the table be destroyed.
+    </p>
+        <p>
+       <span class="emphasis"><em>p2</em></span> -- Action time of function generation (or destruction) in beats. 
+    </p>
+        <p>
+       <span class="emphasis"><em>p3</em></span> -- Size of function table (i.e.  number of points) Must be a power of 2, or a power-of-2 plus 1 if this number is positive. Maximum table size is 16777216 (2<sup>24</sup>) points. 
+    </p>
+        <p>
+      <span class="emphasis"><em>p4</em></span> -- Number of the GEN routine to be called (see <a class="link" href="ScoreGenRef.html" title="GEN Routines"><em class="citetitle">GEN ROUTINES</em></a>). A negative value will cause rescaling to be omitted. 
+    </p>
+        <p>
+       <span class="emphasis"><em>p5 ... PMAX</em></span> -- Parameters whose meaning is determined by the particular GEN routine.
+    </p>
+        <div class="refsect2">
+          <a id="idm276013704368"></a>
+          <h3>Special Considerations</h3>
+          <p>
+        Function tables are arrays of floating-point values. You can create a simple sine wave using the line:
+</p>
+          <div class="literallayout">
+            <p>f 1 0 1024 10 1</p>
+          </div>
+          <p>
+        This table uses <a class="link" href="GEN10.html" title="GEN10"><em class="citetitle">GEN10</em></a> to fill the table.
+      </p>
+          <p>
+        Historically, due to older platform constraints, Csound could only accept tables whose size was a power of two. This limitation has been removed in recent versions, and you can freely create tables of any size. However, to create a table whose size is not a power of two (or power of two plus one), you must specify the size as a negative number.
+      </p>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <table border="0" summary="Note">
+              <tr>
+                <td rowspan="2" align="center" valign="top" width="25">
+                  <img alt="[Note]" src="images/note.png" />
+                </td>
+                <th align="left">Note</th>
+              </tr>
+              <tr>
+                <td align="left" valign="top">
+                  <p>Not all opcodes accept tables whose size is not a power of two, since they may depend on this for internal optimization.</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <p>For arrays whose length is a power of 2, space allocation always provides for 2<sup>n</sup> points plus an additional <span class="emphasis"><em>guard point</em></span>. The guard point value, used during interpolated lookup, can be automatically set to reflect the table's purpose: If <span class="emphasis"><em>size</em></span> is an exact power of 2, the guard point will be a copy of the first point; this is appropriate for <span class="emphasis"><em>interpolated wrap-around lookup</em></span> as in <span class="emphasis"><em>oscili</em></span>, etc., and should even be used for non-interpolating <span class="emphasis"><em>oscil</em></span> for safe consistency. If <span class="emphasis"><em>size</em></span> is set to 2 <sup>n</sup> + 1, the guard point value automatically extends the contour of table values; this is appropriate for single-scan functions such in <span class="emphasis"><em>envplx</em></span>, <span class="emphasis"><em>oscil1</em></span>, <span class="emphasis"><em>oscil1i</em></span>, etc.
+      
+      </p>
+          <p>
+	The size of the table is used as a code to tell Csound how to fill this guard-point. If the size is exactly power-of-two, then the guard point contains a copy of the first point on the table. If the size is power-of-two plus one, Csound will extend the contour of the function stored in the table for one extra point.
+      </p>
+          <p>
+        Table space is allocated in primary memory, along with instrument data space. The maximum table number used to be 200. This has been changed to be limited by memory only. (Currently there is an internal soft limit of 300, this is automatically extended as required.)
+      </p>
+          <p>
+        An existing function table can be removed by an <span class="emphasis"><em>f statement</em></span> containing a negative p1 and an appropriate action time. A function table can also be removed by the generation of another table with the same p1. Functions are not automatically erased at the end of a score section.
+      </p>
+          <p>
+        p2 action time is treated in the same way as in <span class="emphasis"><em>i statement</em></span>s with respect to sorting and modification by <span class="emphasis"><em>t statement</em></span>s. If an <span class="emphasis"><em>f statement</em></span> and an <span class="emphasis"><em>i statement</em></span> have the same p2, the sorter gives the <span class="emphasis"><em>f statement</em></span> precedence so that the function table will be available during note initialization.
+      </p>
+          <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <table border="0" summary="Warning">
+              <tr>
+                <td rowspan="2" align="center" valign="top" width="25">
+                  <img alt="[Warning]" src="images/warning.png" />
+                </td>
+                <th align="left">Warning</th>
+              </tr>
+              <tr>
+                <td align="left" valign="top">
+                  <p>The maximum number of p-fields accepted in the score is determined by PMAX (a compilation time varible). PMAX is currently set to 1000. This may discard values entered when using <a class="link" href="GEN02.html" title="GEN02"><em class="citetitle">GEN02</em></a>. To overcome this, use <a class="link" href="GEN23.html" title="GEN23"><em class="citetitle">GEN23</em></a> or <a class="link" href="GEN28.html" title="GEN28"><em class="citetitle">GEN28</em></a> to read the values from a file.</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <p>
+        An <span class="emphasis"><em>f 0 statement</em></span> (zero p1, positive p2) may be used to create an action time with no associated action. Such time markers are useful for padding out a score section (see <a class="link" href="s.html" title="s Statement"><em class="citetitle">s statement</em></a>) and for letting Csound run from realtime events only (e.g. using only MIDI input without score events). The time given is the number of seconds Csound will run. If you want Csound to run for 10 hours, use:
+        </p>
+          <div class="literallayout">
+            <p>f0 36000</p>
+          </div>
+          <p>
+      </p>
+          <p>
+        The simplest way to fill a table (f1) with 0's is:
+        </p>
+          <div class="literallayout">
+            <p>f1 0 xx 2 0</p>
+          </div>
+          <p>
+        where xx = table size.
+      </p>
+          <p>
+        The simplest way to fill a table (f1) with *any* single value is:
+        </p>
+          <div class="literallayout">
+            <p>f1 0 xx -7 yy xx yy</p>
+          </div>
+          <p>
+        where xx = table size and yy = any single value
+      </p>
+          <p>
+        In both of the above examples, table size (p3) must be a power of 2 or power-of-2 plus 1.
+      </p>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013679040"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="ScoreGenRef.html" title="GEN Routines"><em class="citetitle">GEN ROUTINES</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013677008"></a>
+        <h2>Credits</h2>
+        <p>
+      Updated August 2002 thanks to a note from Rasmus Ekman. There is no longer a hard limit of 200 function tables.
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="e.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="i.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">e Statement </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> i Statement (Instrument or Note Statement)</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

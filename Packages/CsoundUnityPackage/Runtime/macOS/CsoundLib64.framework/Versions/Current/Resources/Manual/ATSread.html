@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ATSread</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ATSinterpread.html" title="ATSinterpread" />
+    <link rel="next" href="ATSreadnz.html" title="ATSreadnz" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ATSread</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ATSinterpread.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ATSreadnz.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ATSread"></a>
+      <div class="titlepage"></div>
+      <a id="IndexATSread" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ATSread</span>
+        </h2>
+        <p>ATSread —  reads data from an ATS file.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124595536"></a>
+        <h2>Description</h2>
+        <p>
+            <span class="emphasis"><em>ATSread</em></span> returns the amplitude (<span class="emphasis"><em>kamp</em></span>) and frequency (<span class="emphasis"><em>kfreq</em></span>) information of a user specified partial contained in the ATS analysis file at the time indicated by the time pointer <span class="emphasis"><em>ktimepnt</em></span>.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124592560"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kfreq, kamp <span class="command"><strong>ATSread</strong></span> ktimepnt, iatsfile, ipartial</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124590464"></a>
+        <h2>Initialization</h2>
+        <p>
+            <span class="emphasis"><em>iatsfile</em></span> – the ATS number (n in ats.n) or the name in quotes of the analysis file made using <a class="ulink" href="http://www-ccrma.stanford.edu/~juan/ATS.html" target="_top"><em class="citetitle">ATS</em></a>.
+        </p>
+        <p>
+            <span class="emphasis"><em>ipartial</em></span> – the number of the analysis partial to return the frequency in Hz and amplitude.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124586944"></a>
+        <h2>Performance</h2>
+        <p>
+            <span class="emphasis"><em>kfreq, kamp</em></span> - outputs of the <span class="emphasis"><em>ATSread</em></span> unit. These values represent the frequency and amplitude of a specific partial selected by the user using <span class="emphasis"><em>ipartial</em></span>. The partials' informations are derived from an ATS analysis. <span class="emphasis"><em>ATSread</em></span> linearly interpolates the frequency and amplitude between frames in the ATS analysis file at k-rate. The output is dependent on the data in the analysis file and the pointer <span class="emphasis"><em>ktimepnt</em></span>.
+        </p>
+        <p><span class="emphasis"><em>ktimepnt</em></span> – The time pointer in seconds used to index the ATS file. Used for <span class="emphasis"><em>ATSread</em></span> exactly the same as for <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a> and <a class="link" href="ATSadd.html" title="ATSadd"><em class="citetitle">ATSadd</em></a>.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124580400"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the ATSread opcode. It uses the file <a class="ulink" href="examples/ATSread.csd" target="_top"><em class="citetitle">ATSread.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276124578608"></a>
+          <p class="title">
+            <strong>Example 71. Example of the ATSread opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276494695648"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o ATSread.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; "beats.ats" is created by atsa</span>
+
+k<span class="n">time</span>	<span class="nb">line</span>    <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">2</span>
+k<span class="n">freq</span><span class="p">,</span> k<span class="n">amp</span>	<span class="nb">ATSread</span>  k<span class="n">time</span><span class="p">,</span> <span class="s">"beats.ats"</span><span class="p">,</span> <span class="mi">100</span>
+a<span class="n">out</span>	<span class="nb">oscili</span>  <span class="mf">0.8</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> <span class="mi">1</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+ 
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> 
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>Here we're using <span class="emphasis"><em>ATSread</em></span> to get the 100th partial's frequency and amplitude data out of the 'beats.ats' ATS analysis file. We're using that data to drive an oscillator, but we could use it for anything else that can take a k-rate input, like the bandwidth and resonance of a filter etc.
+      </p>
+        <p>
+      Here is another example of the ATSread opcode. It uses the file <a class="ulink" href="examples/ATSread-2.csd" target="_top"><em class="citetitle">ATSread-2.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276124574768"></a>
+          <p class="title">
+            <strong>Example 72. Example 2 of the ATSread opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276494459264"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac -d -m128
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;example by joachim heintz</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">Sine</span>    <span class="nb">ftgen</span>     <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+gS<span class="n">file</span>    <span class="o">=</span>         <span class="s">"fox.ats"</span>
+gi<span class="n">NumParts</span> <span class="nb">ATSinfo</span>  gS<span class="n">file</span><span class="p">,</span> <span class="mi">3</span> <span class="c1">;overall number of partials</span>
+gi<span class="n">Dur</span>     <span class="nb">ATSinfo</span>   gS<span class="n">file</span><span class="p">,</span> <span class="mi">7</span> <span class="c1">;duration </span>
+          <span class="nb">seed</span>      <span class="mi">0</span>
+
+
+  <span class="kd">instr</span> <span class="nf">ReadOnePartial</span>
+i<span class="n">Partial</span>  <span class="o">=</span>         <span class="nb">p4</span>
+<span class="nb">p3</span>        <span class="o">=</span>         gi<span class="n">Dur</span>
+k<span class="n">time</span>     <span class="nb">line</span>      <span class="mi">0</span><span class="p">,</span> gi<span class="n">Dur</span><span class="p">,</span> gi<span class="n">Dur</span>
+          <span class="nb">prints</span>    <span class="s">"Resynthesizing partial number </span><span class="si">%d</span><span class="s">.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> i<span class="n">Partial</span>
+k<span class="n">Fq</span><span class="p">,</span>k<span class="n">Amp</span>  <span class="nb">ATSread</span>   k<span class="n">time</span><span class="p">,</span> gS<span class="n">file</span><span class="p">,</span> i<span class="n">Partial</span>
+k<span class="n">Amp</span>      <span class="nb">port</span>      k<span class="n">Amp</span><span class="p">,</span> <span class="mf">.1</span> <span class="c1">;smooth amplitudes - still not satisfactoring</span>
+a<span class="n">Out</span>      <span class="nb">poscil</span>    k<span class="n">Amp</span><span class="p">,</span> k<span class="n">Fq</span><span class="p">,</span> gi<span class="n">Sine</span>
+a<span class="n">Out</span>      <span class="nb">linen</span>     a<span class="n">Out</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.01</span> <span class="c1">;anti-click</span>
+          <span class="nb">outs</span>      a<span class="n">Out</span><span class="o">*</span><span class="mi">10</span><span class="p">,</span> a<span class="n">Out</span><span class="o">*</span><span class="mi">10</span>
+
+<span class="c1">;start next instr: normal speed, three loops, pause between loops one second</span>
+          <span class="nb">event_i</span>   <span class="s">"i"</span><span class="p">,</span> <span class="s">"MasterRand"</span><span class="p">,</span> gi<span class="n">Dur</span><span class="o">+</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span>
+  <span class="kd">endin</span>
+
+  <span class="kd">instr</span> <span class="nf">MasterRand</span>
+  <span class="c1">;random selections of 10 partials per second, overlapping</span>
+i<span class="n">Speed</span>    <span class="o">=</span>         <span class="nb">p4</span> <span class="c1">;speed of reading / playing</span>
+i<span class="n">NumLoops</span> <span class="o">=</span>         <span class="nb">p5</span> <span class="c1">;number of loops</span>
+i<span class="n">Pause</span>    <span class="o">=</span>         <span class="nb">p6</span> <span class="c1">;length of pause between loops</span>
+          <span class="nb">prints</span>    <span class="s">"Resynthesizing random partials.</span><span class="se">\n</span><span class="s">"</span>
+<span class="nb">p3</span>        <span class="o">=</span>         <span class="p">(</span>gi<span class="n">Dur</span><span class="o">/</span>i<span class="n">Speed</span><span class="o">+</span>i<span class="n">Pause</span><span class="p">)</span> <span class="o">*</span> i<span class="n">NumLoops</span>
+<span class="c1">;start next instr: half speed, three loops, three seonds pause between loops</span>
+          <span class="nb">event_i</span>   <span class="s">"i"</span><span class="p">,</span> <span class="s">"MasterArp"</span><span class="p">,</span> <span class="nb">p3</span><span class="o">+</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span>
+<span class="c1">;loop over duration plus pause</span>
+<span class="nl">loop</span><span class="p">:</span>
+          <span class="k">timout</span>    <span class="mi">0</span><span class="p">,</span> gi<span class="n">Dur</span><span class="o">/</span>i<span class="n">Speed</span><span class="o">+</span>i<span class="n">Pause</span><span class="p">,</span> <span class="n">play</span>
+          <span class="nb">reinit</span>    <span class="n">loop</span>
+<span class="nl">play</span><span class="p">:</span>
+gk<span class="n">Time</span>    <span class="nb">line</span>      <span class="mi">0</span><span class="p">,</span> gi<span class="n">Dur</span><span class="o">/</span>i<span class="n">Speed</span><span class="p">,</span> gi<span class="n">Dur</span> <span class="c1">;start time from 0 in each loop</span>
+k<span class="n">Trig</span>     <span class="nb">metro</span>     <span class="mi">10</span> <span class="c1">;10 new partials per second</span>
+ <span class="c1">;call subinstrument if trigger and no pause</span>
+ <span class="k">if</span> k<span class="n">Trig</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> gk<span class="n">Time</span> <span class="o">&lt;</span> gi<span class="n">Dur</span> <span class="k">then</span>
+k<span class="n">Part</span>     <span class="nb">random</span>    <span class="mi">1</span><span class="p">,</span> gi<span class="n">NumParts</span><span class="o">+</span><span class="mf">.999</span>
+          <span class="nb">event</span>     <span class="s">"i"</span><span class="p">,</span> <span class="s">"PlayRand"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span>k<span class="n">Part</span><span class="p">)</span>
+ <span class="k">endif</span>
+
+  <span class="kd">endin</span>
+  
+  <span class="kd">instr</span> <span class="nf">MasterArp</span>
+  <span class="c1">;argeggio-like reading and playing of partials </span>
+i<span class="n">Speed</span>    <span class="o">=</span>         <span class="nb">p4</span> <span class="c1">;speed of reading / playing</span>
+i<span class="n">NumLoops</span> <span class="o">=</span>         <span class="nb">p5</span> <span class="c1">;number of loops</span>
+i<span class="n">Pause</span>    <span class="o">=</span>         <span class="nb">p6</span> <span class="c1">;length of pause between loops</span>
+          <span class="nb">prints</span>    <span class="s">"Arpeggiating partials.</span><span class="se">\n</span><span class="s">"</span>
+<span class="nb">p3</span>        <span class="o">=</span>         <span class="p">(</span>gi<span class="n">Dur</span><span class="o">/</span>i<span class="n">Speed</span><span class="o">+</span>i<span class="n">Pause</span><span class="p">)</span> <span class="o">*</span> i<span class="n">NumLoops</span>
+<span class="nl">loop</span><span class="p">:</span>
+          <span class="k">timout</span>    <span class="mi">0</span><span class="p">,</span> gi<span class="n">Dur</span><span class="o">/</span>i<span class="n">Speed</span><span class="o">+</span>i<span class="n">Pause</span><span class="p">,</span> <span class="n">play</span>
+          <span class="nb">reinit</span>    <span class="n">loop</span>
+<span class="nl">play</span><span class="p">:</span>
+gk<span class="n">Time</span>    <span class="nb">line</span>      <span class="mi">0</span><span class="p">,</span> gi<span class="n">Dur</span><span class="o">/</span>i<span class="n">Speed</span><span class="p">,</span> gi<span class="n">Dur</span>
+k<span class="n">Arp</span>      <span class="nb">linseg</span>    <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>gi<span class="n">Dur</span><span class="o">/</span>i<span class="n">Speed</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> gi<span class="n">NumParts</span><span class="p">,</span> <span class="p">(</span>gi<span class="n">Dur</span><span class="o">/</span>i<span class="n">Speed</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span> <span class="c1">;arp up and down</span>
+k<span class="n">Trig</span>     <span class="nb">metro</span>     <span class="mi">10</span> <span class="c1">;10 new partials per second</span>
+ <span class="k">if</span> k<span class="n">Trig</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> gk<span class="n">Time</span> <span class="o">&lt;</span> gi<span class="n">Dur</span> <span class="k">then</span>
+          <span class="nb">event</span>     <span class="s">"i"</span><span class="p">,</span> <span class="s">"PlayArp"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span>k<span class="n">Arp</span><span class="p">)</span>
+ <span class="k">endif</span>
+
+<span class="c1">;exit csound when finished</span>
+          <span class="nb">event_i</span>   <span class="s">"i"</span><span class="p">,</span> <span class="s">"End"</span><span class="p">,</span> <span class="nb">p3</span><span class="o">+</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="kd">endin</span>
+
+  <span class="kd">instr</span> <span class="nf">PlayRand</span>
+i<span class="n">Partial</span>  <span class="o">=</span>         <span class="nb">p4</span>
+k<span class="n">Fq</span><span class="p">,</span>k<span class="n">Amp</span>  <span class="nb">ATSread</span>   gk<span class="n">Time</span><span class="p">,</span> gS<span class="n">file</span><span class="p">,</span> i<span class="n">Partial</span>
+k<span class="n">amp</span>      <span class="nb">port</span>      k<span class="n">Amp</span><span class="p">,</span> <span class="mf">.15</span> <span class="c1">;smooth amplitudes</span>
+a<span class="n">Out</span>      <span class="nb">poscil</span>    k<span class="n">Amp</span><span class="p">,</span> k<span class="n">Fq</span><span class="p">,</span> gi<span class="n">Sine</span>
+a<span class="n">Out</span>      <span class="nb">linen</span>     a<span class="n">Out</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.01</span>
+          <span class="nb">outs</span>      a<span class="n">Out</span><span class="p">,</span> a<span class="n">Out</span>
+  <span class="kd">endin</span>
+
+  <span class="kd">instr</span> <span class="nf">PlayArp</span>
+k<span class="n">Count</span>    <span class="nb">init</span>      <span class="mi">1</span> <span class="c1">;k-cycle</span>
+i<span class="n">Partial</span>  <span class="o">=</span>         <span class="nb">p4</span>
+k<span class="n">Fq</span><span class="p">,</span>k<span class="n">Amp</span>  <span class="nb">ATSread</span>   gk<span class="n">Time</span><span class="p">,</span> gS<span class="n">file</span><span class="p">,</span> i<span class="n">Partial</span>
+ <span class="k">if</span> k<span class="n">Count</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">then</span> <span class="c1">;get freq from first k-cycle</span>
+k<span class="n">ModFq</span>    <span class="o">=</span>         k<span class="n">Fq</span>
+  <span class="c1">;avoid to go with 0 Hz as this blocks the mode filter</span>
+  <span class="k">if</span> k<span class="n">ModFq</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">then</span>
+          <span class="nb">turnoff</span>
+  <span class="k">endif</span>
+ <span class="k">endif</span>
+i<span class="n">Vol</span>      <span class="nb">random</span>    <span class="o">-</span><span class="mi">42</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span> <span class="c1">;db</span>
+i<span class="n">Offset</span>   <span class="nb">random</span>    <span class="mf">.01</span><span class="p">,</span> <span class="mf">.1</span> <span class="c1">;no too regularily ...</span>
+a<span class="n">Imp</span>      <span class="nb">mpulse</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">Vol</span><span class="p">),</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">Offset</span>
+i<span class="n">Q</span>        <span class="nb">random</span>    <span class="mi">500</span><span class="p">,</span> <span class="mi">5000</span>
+a<span class="n">Out</span>      <span class="nb">mode</span>      a<span class="n">Imp</span><span class="p">,</span> k<span class="n">ModFq</span><span class="p">,</span> i<span class="n">Q</span>
+a<span class="n">Out</span>      <span class="nb">linen</span>     a<span class="n">Out</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">3</span>
+          <span class="nb">outs</span>      a<span class="n">Out</span><span class="p">,</span> a<span class="n">Out</span>
+k<span class="n">Count</span>    <span class="o">=</span>         <span class="mi">2</span>
+  <span class="kd">endin</span>
+
+  <span class="kd">instr</span> <span class="nf">End</span>
+          <span class="nb">exitnow</span>
+  <span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="s">"ReadOnePartial"</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">10</span>
+<span class="nb">e</span> <span class="mi">999</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124573088"></a>
+        <h2>See also</h2>
+        <p><a class="link" href="ATSreadnz.html" title="ATSreadnz"><em class="citetitle">ATSreadnz</em></a>, 
+            <a class="link" href="ATSinfo.html" title="ATSinfo"><em class="citetitle">ATSinfo</em></a>, 
+            <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>, 
+            <a class="link" href="ATScross.html" title="ATScross"><em class="citetitle">ATScross</em></a>, 
+            <a class="link" href="ATSinterpread.html" title="ATSinterpread"><em class="citetitle">ATSinterpread</em></a>, 
+            <a class="link" href="ATSpartialtap.html" title="ATSpartialtap"><em class="citetitle">ATSpartialtap</em></a>, 
+            <a class="link" href="ATSadd.html" title="ATSadd"><em class="citetitle">ATSadd</em></a>, 
+            <a class="link" href="ATSaddnz.html" title="ATSaddnz"><em class="citetitle">ATSaddnz</em></a>, 
+            <a class="link" href="ATSsinnoi.html" title="ATSsinnoi"><em class="citetitle">ATSsinnoi</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124564272"></a>
+        <h2>Credits</h2>
+        <p>
+            </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Alex Norman</td>
+          </tr>
+          <tr>
+            <td>Seattle,Washington</td>
+          </tr>
+          <tr>
+            <td>2004</td>
+          </tr>
+        </table>
+        <p>
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ATSinterpread.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ATSreadnz.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ATSinterpread </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ATSreadnz</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

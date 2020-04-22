@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLsetsnap</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLsetSize.html" title="FLsetSize" />
+    <link rel="next" href="FLsetSnapGroup.html" title="FLsetSnapGroup" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLsetsnap</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLsetSize.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLsetSnapGroup.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLsetsnap"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLsetsnap" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLsetsnap</span>
+        </h2>
+        <p>FLsetsnap — 
+      Stores the current status of all FLTK valuators into a snapshot location.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150600464"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLsetsnap</em></span> stores the current status of all valuators present in the orchestra into a snapshot location (in memory).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150598784"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">inumsnap, inumval <span class="command"><strong>FLsetsnap</strong></span> index [, ifn, igroup]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150596672"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>inumsnap</em></span> -- current number of snapshots.
+    </p>
+        <p>
+      <span class="emphasis"><em>inumval</em></span> -- number of valuators (whose value is stored in a snapshot) present in current orchestra.
+    </p>
+        <p>
+      <span class="emphasis"><em>index</em></span> -- a number referring unequivocally to a snapshot. Several snapshots can be stored in the same bank.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> (optional) -- optional argument referring to an already allocated table, to store values of a snapshot.
+    </p>
+        <p>
+      <span class="emphasis"><em>igroup</em></span> -- (optional) an integer number referring to a snapshot-related group of widget. It allows to get/set, or to load/save the state of a subset of valuators. Default value is zero that refers to the first group. The group number is determined by the opcode <a class="link" href="FLsetSnapGroup.html" title="FLsetSnapGroup"><em class="citetitle">FLsetSnapGroup</em></a>.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The <span class="emphasis"><em>igroup</em></span> parameter has not been yet fully implemented in the current version of csound. Please do not rely on it yet.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150589152"></a>
+        <h2>Performance</h2>
+        <p>
+      The <span class="emphasis"><em>FLsetsnap</em></span> opcode stores current status of all valuators present in the orchestra into a snapshot location (in memory). Any number of snapshots can be stored in the current bank. Banks are structures that only exist in memory, there are no other reference to them other that they can be accessed by <span class="emphasis"><em>FLsetsnap</em></span>, <a class="link" href="FLsavesnap.html" title="FLsavesnap"><em class="citetitle">FLsavesnap</em></a>, <a class="link" href="FLloadsnap.html" title="FLloadsnap"><em class="citetitle">FLloadsnap</em></a> and <a class="link" href="FLgetsnap.html" title="FLgetsnap"><em class="citetitle">FLgetsnap</em></a> opcodes. Only a single bank can be present in memory.
+    </p>
+        <p>
+      If the optional <span class="emphasis"><em>ifn</em></span> argument refers to an already allocated and valid table, the snapshot will be stored in the table instead of in the bank. So that table can be accessed from other Csound opcodes.
+    </p>
+        <p>
+      The <span class="emphasis"><em>index</em></span> argument unequivocally refers to a determinate snapshot. If the value of <span class="emphasis"><em>index</em></span> refers to a previously stored snapshot, all its old values will be replaced with current ones. If <span class="emphasis"><em>index</em></span> refers to a snapshot that doesn't exist, a new snapshot will be created. If the <span class="emphasis"><em>index</em></span> value is not adjacent with that of a previously created snapshot, some empty snapshots will be created. For example, if a location with <span class="emphasis"><em>index</em></span> 0 contains the only and unique snapshot present in a bank and the user stores a new snapshot using <span class="emphasis"><em>index</em></span> 5, all locations between 1 and 4 will automatically contain empty snapshots. Empty snapshots don't contain any data and are neutral.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLsetsnap</em></span> outputs the current number of snapshots (the <span class="emphasis"><em>inumsnap</em></span> argument) and the total number of values stored in each snapshot (<span class="emphasis"><em>inumval</em></span>). <span class="emphasis"><em>inumval</em></span> is equal to the number of valuators present in the orchestra.
+    </p>
+        <p>
+      For purposes of snapshot saving, widgets can be grouped, so that snapshots affect only a defined group of widgets. The opcode <a class="link" href="FLsetSnapGroup.html" title="FLsetSnapGroup"><em class="citetitle">FLsetSnapGroup</em></a> is used to specify the group for all widgets declared after it, until the next <a class="link" href="FLsetSnapGroup.html" title="FLsetSnapGroup"><em class="citetitle">FLsetSnapGroup</em></a> statement.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150575104"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLgetsnap.html" title="FLgetsnap"><em class="citetitle">FLgetsnap</em></a>,
+      <a class="link" href="FLloadsnap.html" title="FLloadsnap"><em class="citetitle">FLloadsnap</em></a>,
+      <a class="link" href="FLsetSnapGroup.html" title="FLsetSnapGroup"><em class="citetitle">FLsetSnapGroup</em></a>,
+      <a class="link" href="FLrun.html" title="FLrun"><em class="citetitle">FLrun</em></a>,
+      <a class="link" href="FLsavesnap.html" title="FLsavesnap"><em class="citetitle">FLsavesnap</em></a>,
+      <a class="link" href="FLupdate.html" title="FLupdate"><em class="citetitle">FLupdate</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150568672"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLsetSize.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLsetSnapGroup.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLsetSize </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLsetSnapGroup</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

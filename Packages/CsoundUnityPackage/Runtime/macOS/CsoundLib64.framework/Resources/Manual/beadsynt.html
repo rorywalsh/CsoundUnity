@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>beadsynt</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="bbcuts.html" title="bbcuts" />
+    <link rel="next" href="beosc.html" title="beosc" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">beadsynt</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="bbcuts.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="beosc.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="beadsynt"></a>
+      <div class="titlepage"></div>
+      <a id="IndexBeadsynt" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">beadsynt</span>
+        </h2>
+        <p>beadsynt — 
+      Band-Enhanced Oscillator-Bank
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123729184"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in beosc.</p>
+        <p>
+      Band-Enhanced oscillator-bank, a port of Loris' oscillator (based on
+      Supercollider's Beadsynt). Can work both with arrays and tables.
+      
+      The band-enhanced family of opcodes (beosc, beadsynt) implement
+      sound modeling and synthesis that preserves the elegance and
+      malleability of a sinusoidal model, while accommodating sounds
+      with noisy (non-sinusoidal) components. Analysis is done offline,
+      with an enhanced McAulay-Quatieri (MQ) style analysis that extracts
+      bandwidth information in addition to the sinusoidal parameters for
+      each partial. To produce noisy components, we synthesize with sine
+      wave oscillators that have been modified to allow the introduction
+      of variable bandwidth.
+    </p>
+        <p>
+      The synthesis can be controlled via a set of flags (see iflags),
+      allowing to switch between unifrom or gaussian noise for the
+      noise components, wavetable interpolation (switch off to save cpu),
+      and freq. interpolation between k-cycles (switch off to save cpu)
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The original implementation (Loris) uses gaussian (normal) noise
+        for the non-sinusoidal components, which if implemented naively,
+        as in loris, is very cpu intensive. The supercollider port uses
+        simple uniform noise. We implement both, with a very efficient
+        implementation of gaussian noise (using a precomputed table),
+        which makes it as efficient as uniform noise.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123724944"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>beadsynt</strong></span> kFreqs[], kAmps[], kBws[] \
+                   [, inumosc, iflags, kfreq, kbw, ifn, iphs ]</pre>
+        <pre class="synopsis">aout <span class="command"><strong>beadsynt</strong></span> ifreqft, iampft, ibwft, inumosc \
+                   [, iflags, kfreq, kbw, ifn, iphs ]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123720880"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>ifreqft</em></span> - A table holding the frequencies for each partial</p>
+        <p><span class="emphasis"><em>iampft</em></span> - A table holding the amplitudes for each partial</p>
+        <p><span class="emphasis"><em>ibwft</em></span> - A table holding the bandwidths for each partial</p>
+        <p><span class="emphasis"><em>inumosc</em></span> - the number of partials to resynthesize. In the array case, it can be left unset.</p>
+        <p><span class="emphasis"><em>iflags</em></span> - 0: uniform noise, 1:gaussian noise, +2: oscil linear interpolation, +4: freq. interpolation (default=1)</p>
+        <p><span class="emphasis"><em>ifn</em></span> - A table holding a sine wave (or -1 to use the builtin table) (default = -1)</p>
+        <p><span class="emphasis"><em>iphs</em></span> - Initial phase. -1: randomized, 0-1: initial phase, &gt;1: table number holding the phases (default = -1)</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123715040"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>aout</em></span> - The generated sound
+    </p>
+        <p>
+      <span class="emphasis"><em>kFreqs[]</em></span> - An array holding the frequencies of each partial
+    </p>
+        <p>
+      <span class="emphasis"><em>kAmps[]</em></span> - An array holding the amplitudes of each partial
+    </p>
+        <p>
+      <span class="emphasis"><em>kBws[]</em></span> - An array holding the bandwidths of each partial
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> - Freq. scaling, all frequencies are multiplied by this (default = 1)
+    </p>
+        <p>
+      <span class="emphasis"><em>kbw</em></span> - Bandwidth scaling, all bandwidths are multiplied by this (default = 1)
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+      <code class="literal">kFreqs[]</code>, <code class="literal">kAmps[]</code> and <code class="literal">kBws[]</code>
+      must all be the same size (this also holds true for <code class="literal">ifreqft</code>,
+      <code class="literal">iampft</code> and <code class="literal">ibwft</code>)
+    </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123704368"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the beadsynt opcode. It uses the file <a class="ulink" href="examples/beadsynt.csd" target="_top"><em class="citetitle">beadsynt.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276123701504"></a>
+          <p class="title">
+            <strong>Example 89. Example of the beadsynt opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276492967376"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/*
+
+This is the example file for beadsynt
+
+beadsynt
+========
+
+Band-enhanced additive synthesis.
+A port of Loris' band-enhanced resynthesis algorithms
+(basen on Supercollider's BEOsc)
+
+The band-enhanced family of opcodes (beosc, beadsynt) implement
+sound modeling and synthesis that preserves the elegance and
+malleability of a sinusoidal model, while accommodating sounds
+with noisy (non-sinusoidal) components. Analysis is done offline,
+with an enhanced McAulay-Quatieri (MQ) style analysis that extracts
+bandwidth information in addition to the sinusoidal parameters for
+each partial. To produce noisy components, we synthesize with sine
+wave oscillators that have been modified to allow the introduction
+of variable bandwidth.
+
+Syntax
+======
+
+beadsynt exists in two forms, one using arrays, the other using f-tables
+
+aout beadsynt kFreqs[], kAmps[], kBws[], inumosc=-1, iflags=1, kfreq=1, kbw=1, ifn=-1, iphs=-1
+aout beadsynt ifreqft, iampft, ibwft, inumosc, iflags=1, kfreq=1, kbw=1, ifn=-1, iphs=-1
+
+kFreqs[]: an array holding the frequencies of each partial
+kAmps[]: an array holding the amplitudes of each partial
+kBws[]: an array holding the bandwidths of each partial
+ifreqft: a table holding the frequencies of each partial
+iampft: a table holding the amplitudes of each partial
+ibwft: a table holding the bandwidths of each partial
+inumosc: the number of partials to resynthesize (-1 to synthesize all)
+iflags: 0: uniform noise
+        1: gaussian noise
+       +2: use linear interpolation for the oscil (similar to oscili)
+       +4: freq interpolation
+kfreq: freq. scaling factor
+kbw: bandwidth scaling factor
+ifn: a table holding a sine wave (or -1 to use builtin sine)
+iphs: initial phase of the oscillators.
+      -1: randomize phase (default)
+     0-1: initial phase
+     &gt;=1: table holding the phase for each oscillator (size&gt;=inumosc)
+
+NB: kFreqs, kAmps and kBws must all be the same size (this also holds true for
+    ifreqft, iampfr and ibwft)
+
+This example uses the analysis file fox.mtx.wav which was produced with
+loristrck_pack, see https://github.com/gesellkammer/loristrck
+
+*/</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+gi<span class="n">spectrum</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">"fox.mtx.wav"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  i<span class="n">fn</span> <span class="o">=</span> gi<span class="n">spectrum</span>
+  i<span class="n">skip</span>      <span class="nb">tab_i</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">fn</span>
+  i<span class="n">dt</span>        <span class="nb">tab_i</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">fn</span>
+  i<span class="n">numcols</span>   <span class="nb">tab_i</span> <span class="mi">2</span><span class="p">,</span> i<span class="n">fn</span>
+  i<span class="n">numrows</span>   <span class="nb">tab_i</span> <span class="mi">3</span><span class="p">,</span> i<span class="n">fn</span>
+  i<span class="n">timestart</span> <span class="nb">tab_i</span> <span class="mi">4</span><span class="p">,</span> i<span class="n">fn</span>
+  i<span class="n">numpartials</span> <span class="o">=</span> i<span class="n">numcols</span> <span class="o">/</span> <span class="mi">3</span> 
+  i<span class="n">maxrow</span> <span class="o">=</span> i<span class="n">numrows</span> <span class="o">-</span> <span class="mi">2</span>
+  i<span class="n">t</span> <span class="o">=</span> <span class="vg">ksmps</span> <span class="o">/</span> <span class="vg">sr</span>
+  i<span class="n">gain</span> <span class="nb">init</span> <span class="mi">1</span>
+  i<span class="n">speed</span> <span class="nb">init</span> <span class="mi">1</span>
+  i<span class="n">dur</span> <span class="o">=</span> i<span class="n">maxrow</span> <span class="o">*</span> i<span class="n">dt</span> <span class="o">/</span> i<span class="n">speed</span>
+  k<span class="n">Gains</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">numpartials</span>
+  k<span class="n">filter</span> <span class="nb">init</span> <span class="mi">0</span>
+  i<span class="n">freqscale</span> <span class="nb">init</span> <span class="mi">1</span>
+  
+  k<span class="n">t</span> <span class="nb">timeinsts</span>
+  k<span class="n">playhead</span> <span class="o">=</span> <span class="nb">phasor</span><span class="p">:</span><span class="nb">k</span><span class="p">(</span>i<span class="n">speed</span><span class="o">/</span>i<span class="n">dur</span><span class="p">)</span><span class="o">*</span>i<span class="n">dur</span>
+  k<span class="n">row</span> <span class="o">=</span> k<span class="n">playhead</span> <span class="o">/</span> i<span class="n">dt</span>
+  k<span class="n">F</span><span class="p">[]</span> <span class="n">getrowlin</span> k<span class="n">row</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">numcols</span><span class="p">,</span> i<span class="n">skip</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span>
+  k<span class="n">A</span><span class="p">[]</span> <span class="n">getrowlin</span> k<span class="n">row</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">numcols</span><span class="p">,</span> i<span class="n">skip</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span>
+  k<span class="n">B</span><span class="p">[]</span> <span class="n">getrowlin</span> k<span class="n">row</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">numcols</span><span class="p">,</span> i<span class="n">skip</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span>
+
+  <span class="k">if</span><span class="p">(</span>k<span class="n">t</span> <span class="o">&gt;</span> i<span class="n">dur</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span> <span class="k">then</span>
+    k<span class="n">filter</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">endif</span>
+
+  <span class="k">if</span> <span class="p">(</span>k<span class="n">filter</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">then</span>
+    k<span class="n">Gains</span> <span class="n">bpf</span> k<span class="n">F</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1100</span><span class="p">,</span> <span class="mf">0.001</span>
+    k<span class="n">A</span> <span class="o">*=</span> k<span class="n">Gains</span>
+  <span class="k">endif</span> 
+   
+  i<span class="n">flags</span> <span class="o">=</span> <span class="mi">0</span>    <span class="c1">; uniform noise, no interpolation</span>
+  a<span class="n">out</span> <span class="n">beadsynt</span> k<span class="n">F</span><span class="p">,</span> k<span class="n">A</span><span class="p">,</span> k<span class="n">B</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> i<span class="n">flags</span><span class="p">,</span> i<span class="n">freqscale</span>
+   
+  <span class="k">if</span><span class="p">(</span>k<span class="n">t</span> <span class="o">&gt;</span> i<span class="n">dur</span><span class="p">)</span> <span class="k">then</span>
+    <span class="nb">event</span> <span class="s">"e"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+  <span class="k">endif</span>
+  a<span class="n">env</span> <span class="nb">cosseg</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> i<span class="n">gain</span><span class="p">,</span> i<span class="n">dur</span><span class="o">-</span><span class="mf">0.02</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> i<span class="n">gain</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span>
+  a<span class="n">out</span> <span class="o">*=</span> a<span class="n">env</span>
+  <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="nb">schedule</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123697584"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="beosc.html" title="beosc"><em class="citetitle">beosc</em></a>,
+      <a class="link" href="adsynt2.html" title="adsynt2"><em class="citetitle">adsynt2</em></a>,
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123694320"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2018</p>
+        <p>New plugin in version 6.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="bbcuts.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="beosc.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">bbcuts </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> beosc</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

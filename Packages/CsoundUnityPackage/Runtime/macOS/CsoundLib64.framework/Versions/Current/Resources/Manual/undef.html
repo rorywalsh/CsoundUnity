@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>#undef</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="include.html" title="#include" />
+    <link rel="next" href="ifdef.html" title="#ifdef" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">#undef</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="include.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ifdef.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="undef"></a>
+      <div class="titlepage"></div>
+      <a id="IndexUndefMacros" class="indexterm"></a>
+      <a id="IndexUndefOrch" class="indexterm"></a>
+      <a id="IndexUndef" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">#undef</span>
+        </h2>
+        <p>#undef — 
+      Un-defines a macro.
+                      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127753008"></a>
+        <h2>Description</h2>
+        <p>
+      Macros are textual replacements which are made in the orchestra as it is being read.  The macro system in Csound is a very simple one, and uses the characters # and $ to define and call macros. This can save typing, and can lead to a coherent structure and consistent style.  This is similar to, but independent of, the <a class="link" href="ScoreMacros.html" title="Score Macros"><em class="citetitle">macro system in the score language</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em>#undef NAME</em></span> -- undefines a macro name. If a macro is no longer required, it can be undefined with <span class="emphasis"><em>#undef NAME</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127749296"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>#undef</strong></span> NAME</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127747360"></a>
+        <h2>Performance</h2>
+        <p>
+      Some care is needed with textual replacement macros, as they can sometimes do strange things.  They take no notice of any meaning, so spaces are significant. This is why, unlike the C programming language, the definition has the replacement text surrounded by # characters. Used carefully, this simple macro system is a powerful concept, but it can be abused.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127746320"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="define.html" title="#define"><em class="citetitle">#define</em></a>,
+      <a class="link" href="dollar.html" title="$NAME"><em class="citetitle">$NAME</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127742896"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>April 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.48</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="include.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ifdef.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">#include </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> #ifdef</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

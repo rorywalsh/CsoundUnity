@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>dcblock</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="dbfsamp.html" title="dbfsamp" />
+    <link rel="next" href="dcblock2.html" title="dcblock2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">dcblock</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="dbfsamp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="dcblock2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="dcblock"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDcblock" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">dcblock</span>
+        </h2>
+        <p>dcblock — 
+      A DC blocking filter.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117616528"></a>
+        <h2>Description</h2>
+        <p>
+      Implements the DC blocking filter
+      </p>
+        <div class="literallayout">
+          <p><br />
+Y[i] = X[i] - X[i-1] + (igain * Y[i-1])<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      Based on work by Perry Cook.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117613760"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>dcblock</strong></span> ain [, igain]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117611696"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>igain</em></span> -- the gain of the filter, which defaults to 0.99
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117610000"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span> -- audio signal input
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>The new <a class="link" href="dcblock2.html" title="dcblock2"><em class="citetitle">dcblock2</em></a> opcode is an improved method of removing DC from an audio signal.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117606640"></a>
+        <h2>Examples</h2>
+        <p>
+     The result can be viewed in a graphical audio editor program like <span class="emphasis"><em>audacity</em></span>. <span class="emphasis"><em>audacity</em></span> is available for Linux, Windows, and the MacOS and may be downloaded from <a class="ulink" href="http://audacity.sourceforge.net/" target="_top"><em class="citetitle">http://audacity.sourceforge.net</em></a>.
+    </p>
+        <p>
+      Here is an example of the dcblock opcode. It uses the file <a class="ulink" href="examples/dcblock.csd" target="_top"><em class="citetitle">dcblock.csd</em></a>, and <a class="ulink" href="examples/beats.wav" target="_top"><em class="citetitle">beats.wav</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276117601856"></a>
+          <p class="title">
+            <strong>Example 191. Example of the dcblock opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276484251520"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">;-o dcblock.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;add DC to "beats.wav"</span>
+
+a<span class="n">sig</span> <span class="nb">soundin</span> <span class="s">"beats.wav"</span>
+a<span class="n">sig</span> <span class="o">=</span> a<span class="n">sig</span><span class="o">+</span><span class="mi">5000</span>	<span class="c1">;adds DC of 5000</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">;dcblock audio</span>
+
+a<span class="n">sig</span> <span class="nb">soundin</span> <span class="s">"beats.wav"</span>
+a<span class="n">sig</span> <span class="o">=</span> a<span class="n">sig</span><span class="o">+</span><span class="mi">5000</span>	<span class="c1">;adds DC</span>
+a<span class="n">dc</span>  <span class="nb">dcblock</span> a<span class="n">sig</span>	<span class="c1">;remove DC again</span>
+     <span class="nb">outs</span> a<span class="n">dc</span><span class="p">,</span> a<span class="n">dc</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+      
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117597824"></a>
+        <h2>See also</h2>
+        <p>
+          <a class="link" href="dcblock2.html" title="dcblock2">
+            <em class="citetitle">dcblock2</em>
+          </a>
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117596032"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.49</p>
+        <p>February 2003: Thanks to a note from Anders Andersson, corrected the formula.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="dbfsamp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="dcblock2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">dbfsamp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> dcblock2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

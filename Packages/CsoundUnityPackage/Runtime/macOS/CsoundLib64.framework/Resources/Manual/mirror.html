@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mirror</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="minarray.html" title="minarray" />
+    <link rel="next" href="MixerSetLevel.html" title="MixerSetLevel" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mirror</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="minarray.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="MixerSetLevel.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mirror"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMirror" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mirror</span>
+        </h2>
+        <p>mirror — 
+      Reflects the signal that exceeds the low and high thresholds.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079913840"></a>
+        <h2>Description</h2>
+        <p>
+      Reflects the signal that exceeds the low and high thresholds.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079912592"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>mirror</strong></span> asig, klow, khigh</pre>
+        <pre class="synopsis">ires <span class="command"><strong>mirror</strong></span> isig, ilow, ihigh</pre>
+        <pre class="synopsis">kres <span class="command"><strong>mirror</strong></span> ksig, klow, khigh</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079907872"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>isig</em></span> -- input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>ilow</em></span> -- low threshold
+    </p>
+        <p>
+      <span class="emphasis"><em>ihigh</em></span> -- high threshold
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079904640"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xsig</em></span> -- input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>klow</em></span> -- low threshold
+    </p>
+        <p>
+      <span class="emphasis"><em>khigh</em></span> -- high threshold
+    </p>
+        <p>
+      <span class="emphasis"><em>mirror</em></span> <span class="quote">“<span class="quote">reflects</span>”</span> the signal that exceeds the low and high thresholds.
+    </p>
+        <p>
+      This opcode is useful in several situations, such as table indexing or for clipping and modeling a-rate, i-rate or k-rate signals.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079899632"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the mirror opcode. It uses the file <a class="ulink" href="examples/mirror.csd" target="_top"><em class="citetitle">mirror.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276079897840"></a>
+          <p class="title">
+            <strong>Example 580. Example of the mirror opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276449549248"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o mirror.wav -W  ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span>    <span class="nf">1</span> <span class="c1">; Limit / Mirror / Wrap</span>
+
+i<span class="n">gain</span>    <span class="o">=</span> <span class="nb">p4</span>				<span class="c1">;gain</span>
+i<span class="n">levl1</span>   <span class="o">=</span> <span class="nb">p5</span>				<span class="c1">; + level</span>
+i<span class="n">levl2</span>   <span class="o">=</span> <span class="nb">p6</span>				<span class="c1">; - level</span>
+i<span class="n">mode</span>    <span class="o">=</span> <span class="nb">p7</span>				<span class="c1">;1 = limit, 2 = mirror, 3 = wrap</span>
+
+a<span class="n">in</span>   <span class="nb">soundin</span>  <span class="s">"fox.wav"</span>
+a<span class="n">in</span>   <span class="o">=</span> a<span class="n">in</span><span class="o">*</span>i<span class="n">gain</span>
+
+<span class="k">if</span>    i<span class="n">mode</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">goto</span> <span class="nl">limit</span>
+<span class="k">if</span>    i<span class="n">mode</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">goto</span> <span class="nl">mirror</span>
+
+a<span class="n">sig</span>  <span class="nb">wrap</span>  a<span class="n">in</span><span class="p">,</span> i<span class="n">levl2</span><span class="p">,</span> i<span class="n">levl1</span>
+<span class="k">goto</span>  <span class="nl">outsignal</span>
+
+<span class="nl">limit</span><span class="p">:</span>
+a<span class="n">sig</span>  <span class="nb">limit</span>  a<span class="n">in</span><span class="p">,</span> i<span class="n">levl2</span><span class="p">,</span> i<span class="n">levl1</span>
+<span class="k">goto</span>  <span class="nl">outsignal</span>
+
+<span class="nl">mirror</span><span class="p">:</span>
+a<span class="n">sig</span>  <span class="nb">mirror</span>  a<span class="n">in</span><span class="p">,</span> i<span class="n">levl2</span><span class="p">,</span> i<span class="n">levl1</span>
+<span class="nl">outsignal</span><span class="p">:</span>
+
+<span class="nb">outs</span>  a<span class="n">sig</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> a<span class="n">sig</span><span class="o">*</span><span class="mf">.5</span>			<span class="c1">;mind your speakers</span>
+  
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">;           Gain  +Levl -Levl Mode</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">3</span>    <span class="mf">4.00</span>  <span class="mf">.25</span>  <span class="o">-</span><span class="mf">1.00</span>   <span class="mi">1</span>	<span class="c1">;limit</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">4</span>  <span class="mi">3</span>    <span class="mf">4.00</span>  <span class="mf">.25</span>  <span class="o">-</span><span class="mf">1.00</span>   <span class="mi">2</span>	<span class="c1">;mirror</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">8</span>  <span class="mi">3</span>    <span class="mf">4.00</span>  <span class="mf">.25</span>  <span class="o">-</span><span class="mf">1.00</span>   <span class="mi">3</span>	<span class="c1">;wrap</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079893856"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="limit.html" title="limit"><em class="citetitle">limit</em></a>,
+      <a class="link" href="wrap.html" title="wrap"><em class="citetitle">wrap</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079890944"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.49</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="minarray.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="MixerSetLevel.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">minarray </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> MixerSetLevel</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vibr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vibes.html" title="vibes" />
+    <link rel="next" href="vibrato.html" title="vibrato" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vibr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vibes.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vibrato.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vibr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVibr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vibr</span>
+        </h2>
+        <p>vibr — 
+      Easier-to-use user-controllable vibrato.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040184368"></a>
+        <h2>Description</h2>
+        <p>
+      Easier-to-use user-controllable vibrato.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040183072"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout <span class="command"><strong>vibr</strong></span> kAverageAmp, kAverageFreq, ifn</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040180960"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- Number of vibrato table. It normally contains a sine or a triangle wave.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040179216"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kAverageAmp</em></span> -- Average amplitude value of vibrato
+    </p>
+        <p>
+      <span class="emphasis"><em>kAverageFreq</em></span> -- Average frequency value of vibrato (in cps)
+    </p>
+        <p>
+      <span class="emphasis"><em>vibr</em></span> is an easier-to-use version of <a class="link" href="vibrato.html" title="vibrato"><em class="citetitle">vibrato</em></a>. It has the same generation-engine of <span class="emphasis"><em>vibrato</em></span>, but the parameters corresponding to missing input arguments are hard-coded to default values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040174256"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vibr opcode. It uses the file <a class="ulink" href="examples/vibr.csd" target="_top"><em class="citetitle">vibr.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276040172464"></a>
+          <p class="title">
+            <strong>Example 1106. Example of the vibr opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276407241088"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o vibr.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">averageamp</span>  <span class="nb">init</span> <span class="mi">500</span>
+k<span class="n">averagefreq</span> <span class="nb">init</span> <span class="mi">4</span>
+k<span class="n">vib</span> <span class="nb">vibr</span> k<span class="n">averageamp</span><span class="p">,</span> k<span class="n">averagefreq</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> <span class="mf">.8</span><span class="p">,</span> <span class="mi">220</span><span class="o">+</span>k<span class="n">vib</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">;add vibrato</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>       <span class="c1">;sine wave</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040168432"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="jitter.html" title="jitter"><em class="citetitle">jitter</em></a>,
+      <a class="link" href="jitter2.html" title="jitter2"><em class="citetitle">jitter2</em></a>,
+      <a class="link" href="vibrato.html" title="vibrato"><em class="citetitle">vibrato</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040164592"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in Version 4.15</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vibes.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vibrato.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vibes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vibrato</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

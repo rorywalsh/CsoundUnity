@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Waveshaping and Phase Distortion</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="SigmodTop.html" title="Signal Modifiers" />
+    <link rel="prev" href="SigmodWavguide.html" title="Waveguides" />
+    <link rel="next" href="ControlTop.html" title="Instrument Control" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Waveshaping and Phase Distortion</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="SigmodWavguide.html">Prev</a> </td>
+          <th width="60%" align="center">Signal Modifiers</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ControlTop.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="SigmodWavshape"></a>Waveshaping and Phase Distortion</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    These opcodes can perform dynamic waveshaping or phaseshaping (a.k.a. phase distortion).  They differ from traditional table-based methods of waveshaping by directly calculating the transfer function with one or more variable parameters for affecting the amount or results of the shaping.  Most of these opcodes could be used on either an audio signal (for waveshaping) or a phasor (for phaseshaping) but tend to work best for one of these applications.  
+  </p>
+      <p>
+    These opcodes are good for waveshaping:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="chebyshevpoly.html" title="chebyshevpoly">
+                <em class="citetitle">chebyshevpoly</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="clip.html" title="clip">
+                <em class="citetitle">clip</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="distort.html" title="distort">
+                <em class="citetitle">distort</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="distort1.html" title="distort1">
+                <em class="citetitle">distort1</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="polynomial.html" title="polynomial">
+                <em class="citetitle">polynomial</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="powershape.html" title="powershape">
+                <em class="citetitle">powershape</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    These opcodes are good for phaseshaping:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="pdclip.html" title="pdclip">
+                <em class="citetitle">pdclip</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="pdhalf.html" title="pdhalf">
+                <em class="citetitle">pdhalf</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="pdhalfy.html" title="pdhalfy">
+                <em class="citetitle">pdhalfy</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="SigmodWavguide.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="SigmodTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ControlTop.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Waveguides </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Instrument Control</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

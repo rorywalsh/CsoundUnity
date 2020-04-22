@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>beosc</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="beadsynt.html" title="beadsynt" />
+    <link rel="next" href="betarand.html" title="betarand" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">beosc</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="beadsynt.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="betarand.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="beosc"></a>
+      <div class="titlepage"></div>
+      <a id="IndexBeosc" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">beosc</span>
+        </h2>
+        <p>beosc — 
+      Band-Enhanced Oscillator
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123642336"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in beosc.</p>
+        <p>
+      Band-Enhanced oscillator, a port of Loris' oscillator (based on
+      Supercollider's BEOsc).
+      The band-enhanced family of opcodes (beosc, beadsynt) implement
+      sound modelling and synthesis that preserves the elegance and
+      malleability of a sinusoidal model, while accommodating sounds
+      with noisy (non-sinusoidal) components. Analysis is done offline,
+      with an enhanced McAulay-Quatieri (MQ) style analysis that extracts
+      bandwidth information in addition to the sinusoidal parameters for
+      each partial. To produce noisy components, we synthesise with sine
+      wave oscillators that have been modified to allow the introduction
+      of variable bandwidth.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123640032"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>beosc</strong></span> xfreq, kbw [, ifn, iphs, inoisetype ]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123637424"></a>
+        <h2>Initialization</h2>
+        <p>
+	  <span class="emphasis"><em>ifn</em></span> - A table holding a sine wave (default = -1)
+	</p>
+        <p>
+	  <span class="emphasis"><em>iphs</em></span> - The phase of the sine (default = 0)
+	</p>
+        <p>
+	  <span class="emphasis"><em>inoisetype</em></span> - 0 = uniform, 1 = Gaussian (default = 1)
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+      The original implementation in loris uses Gaussian noise; the Supercollider
+      port uses uniform noise. We implement both. With the current implementation
+      Gaussian noise is actually almost as efficient as uniform, so normal noise
+      has been set as default, following loris.
+	</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123633344"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>aout</em></span> - The generated sound
+    </p>
+        <p>
+      <span class="emphasis"><em>xfreq</em></span> - The frequency of the oscillator (k- or a-rate)
+    </p>
+        <p>
+      There is no control for amplitude. The user is expected to scale the
+      output <span class="emphasis"><em>aout</em></span> by any factor needed
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123629760"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the beosc opcode. It uses the file <a class="ulink" href="examples/beosc.csd" target="_top"><em class="citetitle">beosc.csd</em></a>.
+      </p>
+        <div class="figure">
+          <a id="idm276123626896"></a>
+          <p class="title">
+            <strong>Figure 1. </strong>
+          </p>
+          <div class="figure-contents">
+            <div class="mediaobject">
+              <img src="images/beosc.jpg" />
+            </div>
+          </div>
+        </div>
+        <p><br class="figure-break" />
+
+      </p>
+        <div class="example">
+          <a id="idm276123625280"></a>
+          <p class="title">
+            <strong>Example 90. Example of the beosc opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276494129056"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/*
+
+This is the example file for beosc
+
+beosc
+=====
+
+Band-Enhanced oscillator, a port of Loris's oscillator
+(based on Supercollider's BEOsc)
+
+The band-enhanced family of opcodes (beosc, beadsynt) implement
+sound modeling and synthesis that preserves the elegance and
+malleability of a sinusoidal model, while accommodating sounds
+with noisy (non-sinusoidal) components. Analysis is done offline,
+with an enhanced McAulay-Quatieri (MQ) style analysis that extracts
+bandwidth information in addition to the sinusoidal parameters for
+each partial. To produce noisy components, we synthesize with sine
+wave oscillators that have been modified to allow the introduction
+of variable bandwidth.
+
+aout beosc xfreq, kbw, ifn=-1, iphs=0, inoisetype=0
+
+aout: the generated sound
+afreq / kfreq: the frequency of the oscillator
+kbw: the bandwidth of the oscillator. 0=pure sinusoidal
+ifn: a table holding a sine wave (use -1 for the builtin wave used for oscili)
+iphs: the phase of the sine (use unirand:i(6.28) to produce a random phase)
+inoisetype: in the original implementation, gaussian (normal) noise is used,
+            in supercollider's port, a simple uniform noise is used.
+            We implement both. 0=uniform, 1=normal
+
+There is no control for amplitude. The user is supossed to just multiply
+the output aout by any factor needed.
+
+NB: watch the output of this example with a freq. scope
+*/</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  i<span class="n">dur1</span> <span class="o">=</span> <span class="mi">8</span>
+  i<span class="n">freq</span> <span class="o">=</span> <span class="mi">440</span>
+  k<span class="n">freq</span> <span class="nb">linseg</span> i<span class="n">freq</span><span class="p">,</span> i<span class="n">dur1</span><span class="p">,</span> i<span class="n">freq</span><span class="p">,</span> i<span class="n">dur1</span><span class="p">,</span> i<span class="n">freq</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> i<span class="n">dur1</span><span class="p">,</span> i<span class="n">freq</span>
+  k<span class="n">bw</span>   <span class="nb">cosseg</span>     <span class="mi">0</span><span class="p">,</span> i<span class="n">dur1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>     i<span class="n">dur1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>       i<span class="n">dur1</span><span class="p">,</span> <span class="mi">0</span>
+  <span class="c1">;          freq   bw   fn  phs              noisetype(0=uniform)</span>
+  a<span class="n">out</span>  <span class="n">beosc</span> k<span class="n">freq</span><span class="p">,</span> k<span class="n">bw</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">unirand</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="mf">6.28</span><span class="p">),</span> <span class="mi">0</span>
+  a<span class="n">env</span>  <span class="nb">linsegr</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span>
+  a<span class="n">out</span> <span class="o">*=</span> <span class="p">(</span>a<span class="n">env</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">)</span>
+  <span class="nb">outch</span> <span class="mi">1</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">32</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123621360"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="beadsynt.html" title="beadsynt"><em class="citetitle">beadsynt</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123618928"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2018</p>
+        <p>New plugin in version 6.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="beadsynt.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="betarand.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">beadsynt </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> betarand</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

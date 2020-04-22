@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>outic</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="outic14.html" title="outic14" />
+    <link rel="next" href="outipat.html" title="outipat" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">outic</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="outic14.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="outipat.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="outic"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOutic" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">outic</span>
+        </h2>
+        <p>outic — 
+      Sends MIDI controller output at i-rate.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074852480"></a>
+        <h2>Description</h2>
+        <p>
+      Sends MIDI controller output at i-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074851248"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>outic</strong></span> ichn, inum, ivalue, imin, imax</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074849296"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ichn</em></span> -- MIDI channel number (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>inum</em></span> -- controller number (0-127 for example 1 = ModWheel; 2 = BreathControl etc.)
+    </p>
+        <p>
+      <span class="emphasis"><em>ivalue</em></span> -- floating point value
+    </p>
+        <p>
+      <span class="emphasis"><em>imin</em></span> -- minimum floating point value (converted in MIDI integer value 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>imax</em></span> -- maximum floating point value (converted in MIDI integer value 127 (7 bit))
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074844240"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>outic</em></span> (i-rate MIDI controller output) sends controller messages to the MIDI OUT device. It works only with MIDI instruments which recognize them. It can drive a different value of a parameter for each note currently active. 
+    </p>
+        <p>
+      It can scale an i-value floating-point argument according to the <span class="emphasis"><em>imin</em></span> and <span class="emphasis"><em>imax</em></span> values. For example, set <span class="emphasis"><em>imin</em></span> = 1.0 and <span class="emphasis"><em>imax</em></span> = 2.0. When the <span class="emphasis"><em>ivalue</em></span> argument receives a 2.0 value, the opcode will send a 127 value to the MIDI OUT device. When the <span class="emphasis"><em>ivalue</em></span> argument receives a 1.0 value, it will send a 0 value. i-rate opcodes send their message once during instrument initialization.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074839216"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the outic opcode. It uses the file <a class="ulink" href="examples/outic.csd" target="_top"><em class="citetitle">outic.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276074837424"></a>
+          <p class="title">
+            <strong>Example 654. Example of the outic opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276443361264"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  -Q1 -M0  <span class="c1">;;;realtime audio out -+rtmidi=virtual</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o outic.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">key</span> <span class="nb">notnum</span> 
+i<span class="n">vel</span> <span class="nb">veloc</span>
+k<span class="n">brt</span> <span class="o">=</span> <span class="mi">40</span>			<span class="c1">;set controller 74 (=brightness)			</span>
+<span class="nb">outic</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">74</span><span class="p">,</span> k<span class="n">brt</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">127</span>	<span class="c1">;so filter closes a bit</span>
+<span class="nb">midion</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">key</span><span class="p">,</span> i<span class="n">vel</span>		<span class="c1">;play external synth</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">0</span> <span class="mi">30</span>	<span class="c1">;runs 30 seconds</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074833440"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="outiat.html" title="outiat"><em class="citetitle">outiat</em></a>,
+      <a class="link" href="outic14.html" title="outic14"><em class="citetitle">outic14</em></a>,
+      <a class="link" href="outipat.html" title="outipat"><em class="citetitle">outipat</em></a>,
+      <a class="link" href="outipb.html" title="outipb"><em class="citetitle">outipb</em></a>,
+      <a class="link" href="outipc.html" title="outipc"><em class="citetitle">outipc</em></a>,
+      <a class="link" href="outkat.html" title="outkat"><em class="citetitle">outkat</em></a>,
+      <a class="link" href="outkc14.html" title="outkc14"><em class="citetitle">outkc14</em></a>,
+      <a class="link" href="outkc.html" title="outkc"><em class="citetitle">outkc</em></a>,
+      <a class="link" href="outkpat.html" title="outkpat"><em class="citetitle">outkpat</em></a>,
+      <a class="link" href="outkpb.html" title="outkpb"><em class="citetitle">outkpb</em></a>,
+      <a class="link" href="outkpc.html" title="outkpc"><em class="citetitle">outkpc</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074822608"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel and controller number ranges.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="outic14.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="outipat.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">outic14 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> outipat</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

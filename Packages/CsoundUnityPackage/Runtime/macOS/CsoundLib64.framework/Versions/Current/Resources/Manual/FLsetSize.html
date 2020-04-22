@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLsetSize</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLsetPosition.html" title="FLsetPosition" />
+    <link rel="next" href="FLsetsnap.html" title="FLsetsnap" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLsetSize</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLsetPosition.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLsetsnap.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLsetSize"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLsetSize" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLsetSize</span>
+        </h2>
+        <p>FLsetSize — 
+      Resizes a FLTK widget.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108317456"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLsetSize</em></span> resizes the target widget (not the size of its text) according to the <span class="emphasis"><em>iwidth</em></span> and <span class="emphasis"><em>iheight</em></span> arguments.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108314960"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLsetSize</strong></span> iwidth, iheight, ihandle</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108313008"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> -- an integer number (used as unique identifier) taken from the output of a previously located widget opcode (which corresponds to the target widget). It is used to unequivocally identify the widget when modifying its appearance with this class of opcodes. The user must not set the <span class="emphasis"><em>ihandle</em></span> value directly, otherwise a Csound crash will occur.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108309056"></a>
+        <h2>See Also</h2>
+        <p>
+        <a class="link" href="FLcolor2.html" title="FLcolor2"><em class="citetitle">FLcolor2</em></a>, 
+        <a class="link" href="FLhide.html" title="FLhide"><em class="citetitle">FLhide</em></a>, 
+        <a class="link" href="FLlabel.html" title="FLlabel"><em class="citetitle">FLlabel</em></a>, 
+        <a class="link" href="FLsetAlign.html" title="FLsetAlign"><em class="citetitle">FLsetAlign</em></a>, 
+        <a class="link" href="FLsetBox.html" title="FLsetBox"><em class="citetitle">FLsetBox</em></a>, 
+        <a class="link" href="FLsetColor.html" title="FLsetColor"><em class="citetitle">FLsetColor</em></a>, 
+        <a class="link" href="FLsetColor2.html" title="FLsetColor2"><em class="citetitle">FLsetColor2</em></a>, 
+        <a class="link" href="FLsetFont.html" title="FLsetFont"><em class="citetitle">FLsetFont</em></a>, 
+        <a class="link" href="FLsetPosition.html" title="FLsetPosition"><em class="citetitle">FLsetPosition</em></a>, 
+        <a class="link" href="FLsetSize.html" title="FLsetSize"><em class="citetitle">FLsetSize</em></a>, 
+        <a class="link" href="FLsetText.html" title="FLsetText"><em class="citetitle">FLsetText</em></a>, 
+        <a class="link" href="FLsetTextColor.html" title="FLsetTextColor"><em class="citetitle">FLsetTextColor</em></a>, 
+        <a class="link" href="FLsetTextSize.html" title="FLsetTextSize"><em class="citetitle">FLsetTextSize</em></a>, 
+        <a class="link" href="FLsetTextType.html" title="FLsetTextType"><em class="citetitle">FLsetTextType</em></a>, 
+        <a class="link" href="FLsetVal_i.html" title="FLsetVal_i"><em class="citetitle">FLsetVal_i</em></a>, 
+        <a class="link" href="FLsetVal.html" title="FLsetVal"><em class="citetitle">FLsetVal</em></a>, 
+        <a class="link" href="FLshow.html" title="FLshow"><em class="citetitle">FLshow</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276108292944"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLsetPosition.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLsetsnap.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLsetPosition </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLsetsnap</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tabmorpha</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tabmorph.html" title="tabmorph" />
+    <link rel="next" href="tabmorphak.html" title="tabmorphak" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tabmorpha</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tabmorph.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tabmorphak.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tabmorpha"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTabmorpha" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tabmorpha</span>
+        </h2>
+        <p>tabmorpha — 
+      Allow morphing between a set of tables at audio rate with interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047307328"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>tabmorpha</em></span> allows morphing between a set of tables of the same size, by means of a weighted average between two currently selected tables.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047305616"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>tabmorpha</strong></span> aindex, aweightpoint, atabnum1, atabnum2, \
+      ifn1, ifn2 [, ifn3, ifn4, ... ifnN]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047303456"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn1, ifn2 , ifn3, ifn4, ... ifnN</em></span> - function table numbers. This is a set of chosen tables the user want to use in the morphing. All tables must have the same length. Be aware that only two of these tables can be chosen for the morphing at one time. Since it is possible to use non-integer numbers for the <span class="emphasis"><em>atabnum1</em></span> and <span class="emphasis"><em>atabnum2</em></span> arguments, the morphing is the result from the interpolation between adjacent consecutive tables of the set.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047300624"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>aout</em></span> - The output value for index <span class="emphasis"><em>aindex</em></span>, resulting from morphing two tables (see below).
+    </p>
+        <p>
+      <span class="emphasis"><em>aindex</em></span> - main index index of the morphed resultant table. The range is 0 to table_length (not included).
+    </p>
+        <p>
+      <span class="emphasis"><em>aweightpoint</em></span> - the weight of the influence of a pair of selected tables in the morphing. The range of this argument is 0 to 1. A zero makes it output the first table unaltered, a 1 makes it output the second table of the pair unaltered. All intermediate values between 0 and 1 determine the gradual morphing between the two tables of the pair.
+    </p>
+        <p>
+      <span class="emphasis"><em>atabnum1</em></span> - the first table chosen for the morphing. This number doesn’t express the table number directly, but the position of the table in the set sequence (starting from 0 to N-1). If this number is an integer, the corresponding table will be chosen unaltered. If it contains fractional values, then an interpolation with the next adjacent table will result.
+    </p>
+        <p>
+      <span class="emphasis"><em>atabnum2</em></span> - the second table chosen for the morphing. This number doesn’t express the table number directly, but the position of the table in the set sequence (starting from 0 to N-1). If this number is an integer, corresponding table will be chosen unaltered. If it contains fractional values, then an interpolation with the next adjacent table will result.
+    </p>
+        <p>
+      The <span class="emphasis"><em>tabmorpha</em></span> family of opcodes is similar to the <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a> family, but allows morphing between two tables chosen into a set of tables. Firstly the user has to provide a set of tables of equal length (ifn2 [, ifn3, ifn4,…ifnN]). Then he can choose a pair of tables in the set in order to perform the morphing: <span class="emphasis"><em>atabnum1</em></span> and <span class="emphasis"><em>atabnum2</em></span> are filled with numbers (zero represents the first table in the set, 1 the second, 2 the third and so on). Then determine the morphing between the two chosen tables with the <span class="emphasis"><em>aweightpoint</em></span> parameter. After that the resulting table can be indexed with the <span class="emphasis"><em>aindex</em></span> parameter like a normal <span class="emphasis"><em>table</em></span> opcode. If the value of this parameter surpasses the length of tables (which must be the same for all tables), then it is wrapped around.
+    </p>
+        <p>
+      <span class="emphasis"><em>tabmorpha</em></span> is the audio-rate version of <a class="link" href="tabmorphi.html" title="tabmorphi"><em class="citetitle">tabmorphi</em></a> (it uses interpolation). All input arguments work at a-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047287088"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tabmorpha opcode. It uses the file <a class="ulink" href="examples/tabmorpha.csd" target="_top"><em class="citetitle">tabmorpha.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276047285296"></a>
+          <p class="title">
+            <strong>Example 1010. Example of the tabmorpha opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276415113712"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tabmorpha.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>   <span class="o">=</span><span class="mi">1</span>
+
+gi<span class="n">Sine</span>	 <span class="nb">ftgen</span>	<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8193</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>						<span class="c1">; sine wave</span>
+gi<span class="n">Square</span> <span class="nb">ftgen</span>	<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8193</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>			<span class="c1">; square wave </span>
+gi<span class="n">Tri</span>	 <span class="nb">ftgen</span>	<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8193</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">0</span>			<span class="c1">; triangle wave </span>
+gi<span class="n">Saw</span>	 <span class="nb">ftgen</span>	<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8193</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>					<span class="c1">; sawtooth wave, downward slope </span>
+
+	
+<span class="kd">instr</span>	<span class="nf">1</span>
+
+i<span class="n">amp</span>	<span class="o">=</span> <span class="mf">.7</span>
+a<span class="n">index</span>	<span class="nb">phasor</span> <span class="mi">110</span>			<span class="c1">; read table value at this index</span>
+a<span class="n">weightpoint</span> <span class="o">=</span> <span class="mi">0</span>			<span class="c1">; set weightpoint</span>
+a<span class="n">tabnum1</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">3</span>			<span class="c1">; morph through all tables</span>
+a<span class="n">tabnum2</span> <span class="o">=</span> <span class="mi">2</span>				<span class="c1">; set to triangle wave</span>
+a<span class="n">sig</span>	 <span class="nb">tabmorpha</span> a<span class="n">index</span><span class="p">,</span> a<span class="n">weightpoint</span><span class="p">,</span> a<span class="n">tabnum1</span><span class="p">,</span>a<span class="n">tabnum2</span><span class="p">,</span> gi<span class="n">Sine</span><span class="p">,</span> gi<span class="n">Square</span><span class="p">,</span> gi<span class="n">Tri</span><span class="p">,</span> gi<span class="n">Saw</span>
+a<span class="n">sig</span>	 <span class="o">=</span> a<span class="n">sig</span><span class="o">*</span>i<span class="n">amp</span>
+	 <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047281296"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a>,
+      <a class="link" href="tabmorph.html" title="tabmorph"><em class="citetitle">tabmorph</em></a>,
+      <a class="link" href="tabmorphi.html" title="tabmorphi"><em class="citetitle">tabmorphi</em></a>,
+      <a class="link" href="tabmorphak.html" title="tabmorphak"><em class="citetitle">tabmorphak</em></a>,
+      <a class="link" href="ftmorf.html" title="ftmorf"><em class="citetitle">ftmorf</em></a>,
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047275728"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tabmorph.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tabmorphak.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tabmorph </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tabmorphak</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

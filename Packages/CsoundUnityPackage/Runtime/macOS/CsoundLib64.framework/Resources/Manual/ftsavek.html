@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ftsavek</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ftsave.html" title="ftsave" />
+    <link rel="next" href="ftslice.html" title="ftslice" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ftsavek</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ftsave.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ftslice.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ftsavek"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFtsavek" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ftsavek</span>
+        </h2>
+        <p>ftsavek — 
+      Save a set of previously-allocated tables to a file.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112667456"></a>
+        <h2>Description</h2>
+        <p>
+      Save a set of previously-allocated tables to a file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112666208"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>ftsavek</strong></span> "filename", ktrig, iflag, ifn1 [, ifn2] [...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112664160"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>"filename"</em></span> -- A quoted string containing the name of the file to save.
+    </p>
+        <p>
+      <span class="emphasis"><em>iflag</em></span> -- Type of the file to save. (0 = binary file, Non-zero = text file)
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn1, ifn2, ...</em></span> -- Numbers of tables to save.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112660800"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> -- The trigger signal. Save the file each time it is non-zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>ftsavek</em></span> saves a list of tables to a file. The file's format can be binary or text. Unlike <a class="link" href="ftsave.html" title="ftsave"><em class="citetitle">ftsave</em></a>, the saving operation can be repeated numerous times within the same note by using a trigger signal.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The file's format is not compatible with a WAV-file and is not endian-safe.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112656032"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="ftloadk.html" title="ftloadk"><em class="citetitle">ftloadk</em></a>,
+      <a class="link" href="ftload.html" title="ftload"><em class="citetitle">ftload</em></a>,
+      <a class="link" href="ftsave.html" title="ftsave"><em class="citetitle">ftsave</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112652240"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.21</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ftsave.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ftslice.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ftsave </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ftslice</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Basic Oscillators</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="SiggenTop.html" title="Signal Generators" />
+    <link rel="prev" href="SiggenTop.html" title="Signal Generators" />
+    <link rel="next" href="SiggenDynamic.html" title="Dynamic Spectrum Oscillators" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Basic Oscillators</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="SiggenTop.html">Prev</a> </td>
+          <th width="60%" align="center">Signal Generators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="SiggenDynamic.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="SiggenBasic"></a>Basic Oscillators</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    The basic oscillator opcodes are: (note that opcodes that end with 'i' implement linear interpolation and those that end with '3' implement cubic interpolation)
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>Oscillator Banks: <a class="link" href="oscbnk.html" title="oscbnk"><em class="citetitle">oscbnk</em></a></p>
+          </li>
+          <li class="listitem">
+            <p>Simple table oscillators: <a class="link" href="oscil.html" title="oscil"><em class="citetitle">oscil</em></a>, <a class="link" href="oscil3.html" title="oscil3"><em class="citetitle">oscil3</em></a> and <a class="link" href="oscili.html" title="oscili"><em class="citetitle">oscili</em></a>.</p>
+          </li>
+          <li class="listitem">
+            <p>Simple, fast sine oscilator: <a class="link" href="oscils.html" title="oscils"><em class="citetitle">oscils</em></a></p>
+          </li>
+          <li class="listitem">
+            <p>Precision oscilators: <a class="link" href="poscil.html" title="poscil"><em class="citetitle">poscil</em></a> and <a class="link" href="poscil3.html" title="poscil3"><em class="citetitle">poscil3</em></a>.</p>
+          </li>
+          <li class="listitem">
+            <p>Band enhanced oscillator: <a class="link" href="beosc.html" title="beosc"><em class="citetitle">beosc</em></a></p>
+          </li>
+          <li class="listitem">
+            <p>More flexible oscillators: <a class="link" href="oscilikt.html" title="oscilikt"><em class="citetitle">oscilikt</em></a>, <a class="link" href="osciliktp.html" title="osciliktp"><em class="citetitle">osciliktp</em></a>, <a class="link" href="oscilikts.html" title="oscilikts"><em class="citetitle">oscilikts</em></a> and <a class="link" href="osciln.html" title="osciln"><em class="citetitle">osciln</em></a> (also called <a class="link" href="oscilx.html" title="oscilx"><em class="citetitle">oscilx</em></a>).</p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>Oscillators can also be constructed from generic table read opcodes. See the <a class="link" href="TableReadwrit.html" title="Read/Write Operations"><em class="citetitle">Table Read/Write operations</em></a> section.</p>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276139185808"></a>LFOs</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+                <a class="link" href="lfo.html" title="lfo">
+                  <em class="citetitle">lfo</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="vibr.html" title="vibr">
+                  <em class="citetitle">vibr</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="vibrato.html" title="vibrato">
+                  <em class="citetitle">vibrato</em>
+                </a>
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+      See the section <a class="link" href="SiggenTableacc.html" title="Table Access"><em class="citetitle">Table access </em></a> for other table reading opcodes that can be used as oscillators. Also see the section <a class="link" href="SiggenDynamic.html" title="Dynamic Spectrum Oscillators"><em class="citetitle">Dynamic spectrum Oscillators</em>.</a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="SiggenTop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="SiggenTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="SiggenDynamic.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Signal Generators </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Dynamic Spectrum Oscillators</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

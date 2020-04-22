@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>hrtfearly</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="hilbert2.html" title="hilbert2" />
+    <link rel="next" href="hrtfmove.html" title="hrtfmove" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">hrtfearly</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="hilbert2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="hrtfmove.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="hrtfearly"></a>
+      <div class="titlepage"></div>
+      <a id="IndexHrtfearly" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">hrtfearly</span>
+        </h2>
+        <p>hrtfearly — 
+      Generates 3D binaural audio with high-fidelity early reflections in a parametric room using a Phase Truncation algorithm.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099699856"></a>
+        <h2>Description</h2>
+        <p>
+      This opcode essentially nests the <a class="link" href="hrtfmove.html" title="hrtfmove"><em class="citetitle">hrtfmove</em></a> opcode in an image model for a user-definable shoebox-shaped room. A default room can be selected, or advanced room parameters can be used. Room surfaces can be controlled with high and low-frequency absorption coefficients and gain factors of a three-band equaliser.
+    </p>
+        <p>
+      Although valid as a stand alone opcode, <span class="emphasis"><em>hrtfearly</em></span> is designed to work with <a class="link" href="hrtfreverb.html" title="hrtfreverb"><em class="citetitle">hrtfreverb</em></a> to provide spatially accurate, dynamic binaural reverberation. A number of sources can be processed dynamically using a number of <span class="emphasis"><em>hrtfearly</em></span> instances. All can then be processed with one instance of <a class="link" href="hrtfreverb.html" title="hrtfreverb"><em class="citetitle">hrtfreverb</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099694272"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aleft, aright, irt60low, irt60high, imfp <span class="command"><strong>hrtfearly</strong></span> asrc, ksrcx, ksrcy, ksrcz, klstnrx, klstnry, klstnrz, \
+      ifilel, ifiler, idefroom [,ifade, isr, iorder, ithreed, kheadrot, iroomx, iroomy, iroomz, iwallhigh, \
+      iwalllow, iwallgain1, iwallgain2, iwallgain3, ifloorhigh, ifloorlow, ifloorgain1, ifloorgain2, \
+      ifloorgain3, iceilinghigh, iceilinglow, iceilinggain1, iceilinggain2, iceilinggain3]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099691808"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilel</em></span> - left HRTF spectral data file.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifiler</em></span> - right HRTF spectral data file.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>Spectral datafiles (based on the MIT HRTF database) are available in 3 different sampling rates: 44.1, 48 and 96 kHz and are labelled accordingly. Input and processing <span class="emphasis"><em>sr</em></span> should match datafile <span class="emphasis"><em>sr</em></span>. Files should be in the current directory or the SADIR (see <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">Environment Variables</em></a>).
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>HRTF Data files for use with 
+      <a class="link" href="hrtfmove.html" title="hrtfmove"><em class="citetitle">hrtfmove</em></a>,
+      <a class="link" href="hrtfmove2.html" title="hrtfmove2"><em class="citetitle">hrtfmove2</em></a>,
+      <a class="link" href="hrtfstat.html" title="hrtfstat"><em class="citetitle">hrtfstat</em></a>,
+      <a class="link" href="hrtfearly.html" title="hrtfearly"><em class="citetitle">hrtfearly</em></a>,
+      <a class="link" href="hrtfreverb.html" title="hrtfreverb"><em class="citetitle">hrtfreverb</em></a>
+       were updated for Csound 5.15 and later (the code was updated and is more efficient). Old datafiles are now deprecated.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      <span class="emphasis"><em>idefroom</em></span> - default room, medium (1: 10*10*3), small (2: 3*4*3) or large (3: 20*25*7). Wall details (high coef, low coef, gain1, gain2, gain3): .3, .1, .75, .95, .9. Floor: .6, .1, .95, .6, .35. Ceiling: .2, .1, 1, 1, 1. If 0 is entered, optional room parameters will be read.   
+    </p>
+        <p>
+      <span class="emphasis"><em>ifade</em></span> - optional, number of processing buffers for phase change crossfade (default 8). Legal range is 1-24. See <a class="link" href="hrtfmove.html" title="hrtfmove"><em class="citetitle">hrtfmove</em></a>.
+    </p>
+        <p>
+<span class="emphasis"><em>isr</em></span> - optional, default 44.1kHz, legal values: 44100, 48000 and 96000.
+ </p>
+        <p>
+      <span class="emphasis"><em>iorder</em></span> - optional, order of images processed: higher order: more reflections. Defaults to 1, legal range: 0-4.
+  </p>
+        <p>
+      <span class="emphasis"><em>ithreed</em></span> - optional, process image sources in three dimensions (1) or two (0: default).
+  </p>
+        <p>
+      <span class="emphasis"><em>iroomx</em></span> - optional, x room size in metres, will be read if no valid default room is entered (all below parameters behave similarly). Minimum room size is 2*2*2.
+  </p>
+        <p>
+      <span class="emphasis"><em>iroomy</em></span> - optional, y room size.
+  </p>
+        <p>
+      <span class="emphasis"><em>iroomz</em></span> - optional, z room size.
+  </p>
+        <p>
+      <span class="emphasis"><em>iwallhigh</em></span> - optional, high frequency wall absorption coefficient (all 4 walls are assumed identical). Absorption coefficients will affect reverb time output. 
+  </p>
+        <p>
+      <span class="emphasis"><em>iwalllow</em></span> - optional, low frequency wall absorption coefficient.
+  </p>
+        <p>
+      <span class="emphasis"><em>iwallgain1</em></span> - optional, gain on filter centred at 250 Hz (all filters have a Q implying 4 octaves).
+  </p>
+        <p>
+      <span class="emphasis"><em>iwallgain2</em></span> - optional, as above, centred on 1000 Hz.
+  </p>
+        <p>
+      <span class="emphasis"><em>iwallgain3</em></span> - optional, as above, centred on 4000 Hz.
+  </p>
+        <p>
+      <span class="emphasis"><em>ifloorhigh, ifloorlow, ifloorgain1, ifloorgain2, ifloorgain3
+</em></span> - as above for floor.
+  </p>
+        <p>
+      <span class="emphasis"><em>
+iceilinghigh, iceilinglow, iceilinggain1, iceilinggain2, iceilinggain3
+</em></span> - as above for ceiling.
+  </p>
+        <p>
+      <span class="emphasis"><em>ksrcx</em></span>  source x location, must be 10 cm inside room. Also, near-field HRTFs are not processed, so source will not change spatially within a 45 cm radius of the listener. These restrictions also apply to location parameters below. 
+    </p>
+        <p>
+      <span class="emphasis"><em>ksrcy</em></span>  source y location.
+    </p>
+        <p>
+      <span class="emphasis"><em>ksrcz</em></span>  source z location.
+    </p>
+        <p>
+      <span class="emphasis"><em>klstnrx, klstnry, klstnrz</em></span>  listener location, as above.
+    </p>
+        <p>
+      <span class="emphasis"><em>kheadrot</em></span> - optional, angular value for head rotation. 
+    </p>
+        <p>
+      <span class="emphasis"><em>asrc</em></span> - Input/source signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>irt60low</em></span> - suggested low frequency reverb time for later binaural reverb.
+    </p>
+        <p>
+      <span class="emphasis"><em>irt60high</em></span> - as above, for high frequency.
+    </p>
+        <p>
+      <span class="emphasis"><em>imfp</em></span> - mean free path of room, to be used with later reverb. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099658576"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the hrtfearly and hrtfreverb opcodes. It uses the file <a class="ulink" href="examples/hrtfearly.csd" target="_top"><em class="citetitle">hrtfearly.csd</em></a>. 
+    </p>
+        <div class="example">
+          <a id="idm276099656640"></a>
+          <p class="title">
+            <strong>Example 416. Example of the htrfearly opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276464947760"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+
+<span class="c1">; Select flags here</span>
+<span class="c1">; realtime audio out</span>
+ -o dac
+<span class="c1">; file ouput </span>
+<span class="c1">; -o hrtf.wav</span>
+  
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+ga<span class="n">src</span> <span class="nb">init</span> <span class="mi">0</span>	<span class="c1">;global</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>		<span class="c1">;a plucked string, distorted and filtered</span>
+
+  i<span class="n">amp</span> <span class="o">=</span> <span class="mi">15000</span>
+  i<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+
+  a<span class="n">1</span> <span class="nb">pluck</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">dist</span> <span class="nb">distort1</span> a<span class="n">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+  a<span class="n">filt</span> <span class="nb">moogvcf2</span> a<span class="n">dist</span><span class="p">,</span> <span class="mi">8000</span><span class="p">,</span> <span class="mf">.5</span> 
+  a<span class="n">out</span> <span class="nb">linen</span> a<span class="n">filt</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.01</span>
+  
+  ga<span class="n">src</span> <span class="o">=</span> ga<span class="n">src</span> <span class="o">+</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">10</span>	<span class="c1">;uses output from instr1 as source</span>
+  
+  <span class="c1">;simple path for source</span>
+  k<span class="n">x</span> <span class="nb">line</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">9</span>
+
+  <span class="c1">;early reflections, room default 1</span>
+  a<span class="n">earlyl</span><span class="p">,</span>a<span class="n">earlyr</span><span class="p">,</span> i<span class="n">rt60low</span><span class="p">,</span> i<span class="n">rt60high</span><span class="p">,</span> i<span class="n">mfp</span> <span class="nb">hrtfearly</span> ga<span class="n">src</span><span class="p">,</span> k<span class="n">x</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"hrtf-44100-left.dat"</span><span class="p">,</span> <span class="s">"hrtf-44100-right.dat"</span><span class="p">,</span> <span class="mi">1</span>
+
+  <span class="c1">;later reverb, uses outputs from above</span>
+  a<span class="n">revl</span><span class="p">,</span> a<span class="n">revr</span><span class="p">,</span> i<span class="n">del</span> <span class="nb">hrtfreverb</span> ga<span class="n">src</span><span class="p">,</span> i<span class="n">rt60low</span><span class="p">,</span> i<span class="n">rt60high</span><span class="p">,</span> <span class="s">"hrtf-44100-left.dat"</span><span class="p">,</span> <span class="s">"hrtf-44100-right.dat"</span><span class="p">,</span> <span class="mi">44100</span><span class="p">,</span> i<span class="n">mfp</span>
+
+  <span class="c1">;delayed and scaled</span>
+  a<span class="n">latel</span> <span class="nb">delay</span> a<span class="n">revl</span> <span class="o">*</span> <span class="mf">.1</span><span class="p">,</span> i<span class="n">del</span>
+  a<span class="n">later</span> <span class="nb">delay</span> a<span class="n">revr</span> <span class="o">*</span> <span class="mf">.1</span><span class="p">,</span> i<span class="n">del</span>
+
+  <span class="nb">outs</span>	a<span class="n">earlyl</span> <span class="o">+</span> a<span class="n">latel</span><span class="p">,</span> a<span class="n">earlyr</span> <span class="o">+</span> a<span class="n">later</span>
+  
+  ga<span class="n">src</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="kd">endin</span>
+  
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument 1: a simple arpeggio</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mf">.2</span> <span class="mf">8.00</span> 
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">.2</span> <span class="mf">8.04</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">.2</span> <span class="mf">8.07</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">.2</span> <span class="mf">8.11</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">.2</span> <span class="mf">9.02</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="mf">8.11</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="mf">8.07</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="mf">8.04</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="mf">8.00</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="mf">7.09</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">4</span> <span class="mf">8.00</span>
+
+<span class="c1">; Play Instrument 10 for 13 seconds.</span>
+<span class="nb">i</span><span class="mi">10</span> <span class="mi">0</span> <span class="mi">13</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <br class="example-break" />
+      </div>
+      <div class="refsect1">
+        <a id="idm276099655008"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="hrtfreverb.html" title="hrtfreverb"><em class="citetitle">hrtfreverb</em></a>
+      <a class="link" href="hrtfmove.html" title="hrtfmove"><em class="citetitle">hrtfmove</em></a>,
+      <a class="link" href="hrtfmove2.html" title="hrtfmove2"><em class="citetitle">hrtfmove2</em></a>,
+      <a class="link" href="hrtfstat.html" title="hrtfstat"><em class="citetitle">hrtfstat</em></a>,
+      <a class="link" href="hrtfer.html" title="hrtfer"><em class="citetitle">hrtfer</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099649424"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Brian Carty</td>
+          </tr>
+          <tr>
+            <td>Maynooth</td>
+          </tr>
+          <tr>
+            <td>2011</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="hilbert2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="hrtfmove.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">hilbert2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> hrtfmove</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN03</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN02.html" title="GEN02" />
+    <link rel="next" href="GEN04.html" title="GEN04" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN03</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN02.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN04.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN03"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN03" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN03</span>
+        </h2>
+        <p>GEN03 — 
+      Generates a stored function table by evaluating a polynomial.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989790272"></a>
+        <h2>Description</h2>
+        <p>
+      This subroutine generates a stored function table by evaluating a polynomial in x over a fixed interval and with specified coefficients.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989788784"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span>  #  time  size  3  xval1  xval2  c0  c1  c2  ...  cn</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989786800"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size </em></span> -- number of points in the table. Must be a power of 2 or a power-of-2 plus 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>xval1, xval2 </em></span> -- left and right values of the x interval over which the polynomial is defined (<span class="emphasis"><em>xval1</em></span> &lt; <span class="emphasis"><em>xval2</em></span>). These will produce the 1st stored value and the (power-of-2 plus l)th stored value respectively in the generated function table.
+    </p>
+        <p>
+      <span class="emphasis"><em>c0, c1, c2, ..., cn</em></span> -- coefficients of the nth-order polynomial
+    </p>
+        <p>
+      <span class="emphasis"><em>C<sub>0</sub></em></span> + <span class="emphasis"><em>C<sub>1</sub>x</em></span> +
+      <span class="emphasis"><em>C<sub>2</sub>x<sup>2</sup></em></span> + . . . +
+      <span class="emphasis"><em>C<sub>n</sub>x<sup>n</sup></em></span>
+    </p>
+        <p>
+      Coefficients may be positive or negative real numbers; a zero denotes a missing term in the polynomial. The coefficient list begins in p7, providing a current upper limit of 144 terms.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>
+              The defined segment [fn(<span class="emphasis"><em>xval1</em></span>), fn(<span class="emphasis"><em>xval2</em></span>)] is evenly distributed. Thus a 512-point table over the interval [-1,1] will have its origin at location 257 (at the start of the 2nd half). Provided the extended guard point is requested, both fn(-1) and fn(1) will exist in the table.
+            </p>
+                    </li>
+                    <li class="listitem">
+                      <p>
+              <span class="emphasis"><em>GEN03</em></span> is useful in conjunction with <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a> or <a class="link" href="tablei.html" title="tablei"><em class="citetitle">tablei</em></a> for audio waveshaping (sound modification by non-linear distortion). Coefficients to produce a particular formant from a sinusoidal lookup index of known amplitude can be determined at preprocessing time using algorithms such as Chebyshev formulae. See also <a class="link" href="GEN13.html" title="GEN13"><em class="citetitle">GEN13</em></a>.
+            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989769536"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the GEN03 generator. It uses the file <a class="ulink" href="examples/gen03.csd" target="_top"><em class="citetitle">gen03.csd</em></a>.
+           </p>
+        <div class="example">
+          <a id="idm275989767728"></a>
+          <p class="title">
+            <strong>Example 1199. Example of the GEN03 generator.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276399142368"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen03.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">;example by Russell Pinkston - Univ. of Texas  (but slightly modified)</span>
+
+gi<span class="n">sine</span>   <span class="nb">ftgen</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">16384</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>						<span class="c1">;sine wave</span>
+
+<span class="kd">instr</span>   <span class="nf">1</span>
+
+i<span class="n">hertz</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+i<span class="n">pkamp</span> <span class="o">=</span> <span class="nb">p5</span>
+i<span class="n">wsfn</span>  <span class="o">=</span> <span class="nb">p6</span>									<span class="c1">;waveshaping function</span>
+i<span class="n">nmfn</span>  <span class="o">=</span> <span class="nb">p7</span>									<span class="c1">;normalization function</span>
+a<span class="n">env</span>    <span class="nb">linen</span>  <span class="mi">1</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.1</span>        						<span class="c1">;overall amp envelope</span>
+a<span class="n">ctrl</span>   <span class="nb">linen</span>  <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">2</span>							<span class="c1">;waveshaping index control</span>
+a<span class="n">index</span>  <span class="nb">poscil</span> a<span class="n">ctrl</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> i<span class="n">hertz</span><span class="p">,</span> gi<span class="n">sine</span>						<span class="c1">;sine wave to be distorted</span>
+a<span class="n">signal</span> <span class="nb">tablei</span> <span class="mf">.5</span><span class="o">+</span>a<span class="n">index</span><span class="p">,</span> i<span class="n">wsfn</span><span class="p">,</span> <span class="mi">1</span>						<span class="c1">;waveshaping</span>
+a<span class="n">normal</span> <span class="nb">tablei</span> a<span class="n">ctrl</span><span class="p">,</span> i<span class="n">nmfn</span><span class="p">,</span><span class="mi">1</span>							<span class="c1">;amplitude normalization</span>
+a<span class="n">sig</span>    <span class="o">=</span>      a<span class="n">signal</span><span class="o">*</span>a<span class="n">normal</span><span class="o">*</span>i<span class="n">pkamp</span><span class="o">*</span>a<span class="n">env</span>	
+a<span class="n">sig</span>    <span class="nb">dcblock2</span>  a<span class="n">sig</span>								<span class="c1">;get rid of possible DC						</span>
+        <span class="nb">outs</span>   a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+           
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; first four notes are specific Chebyshev polynomials using gen03. The values were obtained from Dodge page 147</span>
+
+<span class="nb">f</span><span class="mi">4</span> <span class="mi">0</span> <span class="mi">513</span> <span class="mi">3</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>			<span class="c1">; First-order Chebyshev: x</span>
+<span class="nb">f</span><span class="mi">5</span> <span class="mi">0</span> <span class="mi">257</span> <span class="mi">4</span> <span class="mi">4</span> <span class="mi">1</span>				<span class="c1">; Normalizing function for fn4</span>
+
+<span class="nb">f</span><span class="mi">6</span> <span class="mi">0</span> <span class="mi">513</span> <span class="mi">3</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>			<span class="c1">; Second-order Chebyshev: 2x2 - 1</span>
+<span class="nb">f</span><span class="mi">7</span> <span class="mi">0</span> <span class="mi">257</span> <span class="mi">4</span> <span class="mi">6</span> <span class="mi">1</span>				<span class="c1">; Normalizing function for fn6</span>
+
+<span class="nb">f</span><span class="mi">8</span> <span class="mi">0</span> <span class="mi">513</span> <span class="mi">3</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">4</span>		<span class="c1">; Third-order Chebyshev: 4x3 - 3x</span>
+<span class="nb">f</span><span class="mi">9</span> <span class="mi">0</span> <span class="mi">257</span> <span class="mi">4</span> <span class="mi">8</span> <span class="mi">1</span>				<span class="c1">; Normalizing function for fn8</span>
+
+<span class="nb">f</span><span class="mi">10</span> <span class="mi">0</span> <span class="mi">513</span> <span class="mi">3</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">10</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">0</span> <span class="mi">56</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">112</span> <span class="mi">0</span> <span class="mi">64</span>	<span class="c1">; Seventh-order Chebyshev: 64x7 - 112x5 + 56x3 - 7x</span>
+<span class="nb">f</span><span class="mi">11</span> <span class="mi">0</span> <span class="mi">257</span> <span class="mi">4</span> <span class="mi">10</span> <span class="mi">1</span>			<span class="c1">; Normalizing function for fn10</span>
+
+<span class="nb">f</span><span class="mi">12</span> <span class="mi">0</span> <span class="mi">513</span> <span class="mi">3</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mi">4</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">1</span>		<span class="c1">; a 4th order polynomial function over the x-interval -1 to 1</span>
+<span class="nb">f</span><span class="mi">13</span> <span class="mi">0</span> <span class="mi">257</span> <span class="mi">4</span> <span class="mi">12</span> <span class="mi">1</span>			<span class="c1">; Normalizing function for fn12</span>
+
+<span class="c1">; five notes with same fundamental, different waveshape &amp; normalizing functions</span>
+<span class="c1">;        pch	 amp	wsfn	nmfn</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span>  <span class="mi">3</span> <span class="mf">8.00</span>     <span class="mf">.7</span>      <span class="mi">4</span>	 <span class="mi">5</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="o">.</span>  <span class="o">.</span>	 <span class="o">.</span>	 <span class="mi">6</span>	 <span class="mi">7</span>    
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="o">.</span>  <span class="o">.</span>	 <span class="o">.</span>	 <span class="mi">8</span>	 <span class="mi">9</span>     
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="o">.</span>  <span class="o">.</span>       <span class="o">.</span>	 <span class="mi">10</span>	 <span class="mi">11</span>   
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="o">.</span>  <span class="o">.</span>       <span class="o">.</span>	 <span class="mi">12</span>	 <span class="mi">13</span> 
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />  
+        <span class="phrase">These are the diagrams of the waveforms of the GEN03 routines, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen03_1.png" alt="f4 0 513 3 1 1 0 1 - first-order Chebyshev: x" />
+          <div class="caption">
+            <p>f4 0 513 3 1 1 0 1 - first-order Chebyshev: x</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen03_2.png" alt="f6 0 513 3 -1 1 -1 0 2 - second-order Chebyshev: 2x2 - 1" />
+          <div class="caption">
+            <p>f6 0 513 3 -1 1 -1 0 2 - second-order Chebyshev: 2x2 - 1</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen03_3.png" alt="f8 0 513 3 -1 1 0 -3 0 4 - third-order Chebyshev: 4x3 - 3x" />
+          <div class="caption">
+            <p>f8 0 513 3 -1 1 0 -3 0 4 - third-order Chebyshev: 4x3 - 3x</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen03_4.png" alt="f10 0 513 3 -1 10 0 -7 0 56 0 -112 0 64 - seventh-order Chebyshev: 64x7 - 112x5 + 56x3 - 7x" />
+          <div class="caption">
+            <p>f10 0 513 3 -1 10 0 -7 0 56 0 -112 0 64 - seventh-order Chebyshev: 64x7 - 112x5 + 56x3 - 7x</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen03_5.png" alt="f12 0 513 3 -1 1 5 4 3 2 2 1 - a 4th order polynomial function over the x-interval -1 to 1" />
+          <div class="caption">
+            <p>f12 0 513 3 -1 1 5 4 3 2 2 1 - a 4th order polynomial function over the x-interval -1 to 1</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989746640"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="GEN13.html" title="GEN13"><em class="citetitle">GEN13</em></a>,
+      <a class="link" href="GEN14.html" title="GEN14"><em class="citetitle">GEN14</em></a>, and
+      <a class="link" href="GEN15.html" title="GEN15"><em class="citetitle">GEN15</em></a>.
+          </p>
+        <p> Information about the Chebyshev polynomials on Wikipedia: <a class="ulink" href="http://en.wikipedia.org/wiki/Chebyshev_polynomials" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Chebyshev_polynomials</em></a></p>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN02.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN04.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN02 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN04</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

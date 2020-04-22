@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>insremot</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ins.html" title="ins" />
+    <link rel="next" href="insglobal.html" title="insglobal" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">insremot</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ins.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="insglobal.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="insremot"></a>
+      <div class="titlepage"></div>
+      <a id="Indexinsremot" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">insremot</span>
+        </h2>
+        <p>insremot — 
+      An opcode which can be used to implement a remote
+      orchestra. This opcode will send note events from a source
+      machine to one destination. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097164544"></a>
+        <h2>Description</h2>
+        <p>
+      With the <span class="emphasis"><em>insremot</em></span> and <a class="link" href="insglobal.html" title="insglobal"><em class="citetitle">insglobal</em></a>
+      opcodes you are able to perform instruments on remote machines
+      and control them from a master machine. The remote opcodes are
+      implemented using the master/client model. All the machines
+      involved contain the same orchestra but only the master machine
+      contains the information of the score. During the performance
+      the master machine sends the note events to the clients. The
+      <span class="emphasis"><em>insremot</em></span> opcode will send events from a
+      source machine to one destination if you want to send events to
+      many destinations (broadcast) use the <a class="link" href="insglobal.html" title="insglobal"><em class="citetitle">insglobal</em></a>
+      opcode instead. These two opcodes can be used in combination.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097160128"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>insremot</strong></span> idestination, isource, instrnum [,instrnum...] </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097158144"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idestination</em></span>
+      -- a string that is the intended client computer (e.g. 192.168.0.100). This is the destination host which receives the events from the given instrument.
+    </p>
+        <p>
+      <span class="emphasis"><em>isource</em></span>
+      -- a string that is the intended server computer (e.g. 192.168.0.100). This is the source host which generates the events of the given instrument and sends it to the address given by idestination.
+    </p>
+        <p>
+      <span class="emphasis"><em>instrnum</em></span>
+      -- a list of instrument numbers which will be played on the destination machine
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097154512"></a>
+        <h2>Performance</h2>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+      If is essential the computers using this opcode have the same
+      byte-order, data size (double or float) and pointer size.  One
+      cannot use it with mixed 32 and 64 computers for instance.
+    </td>
+            </tr>
+          </table>
+        </div>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+      Internally this opcode may make use of the gethostname and
+      gethostbyname functions to determine the client's and server's
+      IP address for checking which messages are for which machine, or
+      on non-windows system other techniques.
+      If a computer has more than one IP address there is no way to
+      control which IP address is found (but see below).  On
+      non-windows systems the default network is eth0 or en0, and if
+      that fails wlan0.  (Since version 6.05) the network to be used
+      can be set with an environment variable CS_ETHER. 
+    </td>
+            </tr>
+          </table>
+        </div>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+      The remote operation does not allow the sending of strings at
+      all.
+    </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097151680"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the insremot opcode. It uses the files <a class="ulink" href="examples/insremot.csd" target="_top"><em class="citetitle">insremot.csd</em></a> and <a class="ulink" href="examples/insremotM.csd" target="_top"><em class="citetitle">insremotM.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276097149088"></a>
+          <p class="title">
+            <strong>Example 449. Example of the insremot opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>The simple example below shows the bilbar example played on a remote machine. The master machine is named "192.168.1.100" and the client "192.168.1.101". Start the client on the machine (it will wait to receive the events from the master machine) and then start the master. Here is the command on linux to start a client (csound -+rtaudio=alsa -odac -dm0 insremot.csd), and the command on the master machine will look like this (csound -+rtaudio=alsa -odac -dm0 insremotM.csd).</p>
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276460231632"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o insremot.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">insremot</span> <span class="s">"192.168.1.100"</span><span class="p">,</span> <span class="s">"192.168.1.101"</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  a<span class="n">q</span> <span class="nb">barmodel</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.23</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="nb">p5</span><span class="p">,</span> <span class="nb">p6</span><span class="p">,</span> <span class="nb">p7</span>
+     <span class="nb">out</span>      a<span class="n">q</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">0</span> <span class="mi">360</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+            <div class="refsect1">
+              <a id="idm276460366784"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o insremotM.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">insremot</span> <span class="s">"192.168.1.100"</span><span class="p">,</span> <span class="s">"192.168.1.101"</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  a<span class="n">q</span> <span class="nb">barmodel</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.23</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="nb">p5</span><span class="p">,</span> <span class="nb">p6</span><span class="p">,</span> <span class="nb">p7</span>
+     <span class="nb">out</span>      a<span class="n">q</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mf">0.5</span> <span class="mi">3</span> <span class="mf">0.2</span> <span class="mi">500</span> <span class="mf">0.05</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mf">0.5</span> <span class="mf">0.5</span> <span class="o">-</span><span class="mi">3</span> <span class="mf">0.3</span> <span class="mi">1000</span> <span class="mf">0.05</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mf">1.0</span> <span class="mf">0.5</span> <span class="o">-</span><span class="mi">3</span> <span class="mf">0.4</span> <span class="mi">1000</span> <span class="mf">0.1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mf">1.5</span> <span class="mf">4.0</span> <span class="o">-</span><span class="mi">3</span> <span class="mf">0.5</span> <span class="mi">800</span> <span class="mf">0.05</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097143152"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="insglobal.html" title="insglobal"><em class="citetitle">insglobal</em></a>, <a class="link" href="midglobal.html" title="midglobal"><em class="citetitle">midglobal</em></a>, <a class="link" href="midremot.html" title="midremot"><em class="citetitle">midremot</em></a>, <a class="link" href="remoteport.html" title="remoteport"><em class="citetitle">remoteport</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097138528"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Simon Schampijer</td>
+          </tr>
+          <tr>
+            <td>2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>
+      New in version 5.03
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ins.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="insglobal.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ins </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> insglobal</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

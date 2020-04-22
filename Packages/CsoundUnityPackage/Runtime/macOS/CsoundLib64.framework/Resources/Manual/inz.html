@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>inz</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="inx.html" title="inx" />
+    <link rel="next" href="JackoAudioIn.html" title="JackoAudioIn" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">inz</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="inx.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="JackoAudioIn.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="inz"></a>
+      <div class="titlepage"></div>
+      <a id="IndexInz" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">inz</span>
+        </h2>
+        <p>inz — 
+      Reads multi-channel audio samples into a ZAK array from an external device or stream.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112402320"></a>
+        <h2>Description</h2>
+        <p>
+      Reads multi-channel audio samples into a ZAK array from an external device or stream.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112401056"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>inz</strong></span> ksig1</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112399152"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>inz</em></span> reads audio samples in <a class="link" href="nchnls.html" title="nchnls"><em class="citetitle">nchnls</em></a> into a ZAK array starting at <span class="emphasis"><em>ksig1</em></span>. If the command-line <a class="link" href="CommandFlags.html#FlagsMinusLowerI"><em class="citetitle">-i</em></a> flag is set, sound is read continuously from the audio input stream (e.g. <span class="emphasis"><em>stdin</em></span> or a soundfile) into an internal buffer.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112394800"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="in32.html" title="in32"><em class="citetitle">in32</em></a>,
+      <a class="link" href="inch.html" title="inch"><em class="citetitle">inch</em></a>,
+      <a class="link" href="inx.html" title="inx"><em class="citetitle">inx</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112391056"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>May 2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound Version 4.07</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="inx.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="JackoAudioIn.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">inx </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> JackoAudioIn</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

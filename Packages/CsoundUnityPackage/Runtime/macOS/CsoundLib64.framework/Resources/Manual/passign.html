@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>passign</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="partikkelsync.html" title="partikkelsync" />
+    <link rel="next" href="paulstretch.html" title="paulstretch" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">passign</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="partikkelsync.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="paulstretch.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="passign"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPassign" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">passign</span>
+        </h2>
+        <p>passign — 
+      Assigns a range of p-fields to ivariables.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111969696"></a>
+        <h2>Description</h2>
+        <p>
+      Assigns a range of p-fields to ivariables, or i- or k-array.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111968448"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"> ivar1, ... <span class="command"><strong>passign</strong></span> [istart][, iend</pre>
+        <pre class="synopsis"> iarray <span class="command"><strong>passign</strong></span> [istart][, iend</pre>
+        <pre class="synopsis"> karray <span class="command"><strong>passign</strong></span> [istart][, iend</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111963728"></a>
+        <h2>Initialisation</h2>
+        <p>
+      The optional argument <span class="emphasis"><em>istart</em></span> gives the index of the first
+      p-field to assign.  The default value is 1, corresponding to the
+      instrument number.
+    </p>
+        <p>
+      The optional argument <span class="emphasis"><em>iend</em></span> gives the index of the last
+      p-field to assign.  The default value is 0, which means all.
+    </p>
+        <p>
+      One of the variables can be a string variable, in which case it
+      is assigned the only string parameter, if there is one, or an
+      error otherwise. 
+  </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111960496"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>passign</em></span> transfers the instrument p-fields
+      to instrument variables, starting with the one identified by the
+      <span class="emphasis"><em>istart</em></span> argument.   There should not be more
+      variables than p-fields, but there may be fewer.
+    </p>
+        <p>
+      <span class="emphasis"><em>passign</em></span> can transfer the instrument p-fields
+      to a one dimensional array, either an iarray or a karray.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111957392"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="assign.html" title="="><em class="citetitle">assign</em></a>,
+      <a class="link" href="pcount.html" title="pcount"><em class="citetitle">pcount</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111954352"></a>
+        <h2>Example</h2>
+        <p> 
+      Here is an example of the passign opcode. It uses the file <a class="ulink" href="examples/passign.csd" target="_top"><em class="citetitle">passign.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276111952560"></a>
+          <p class="title">
+            <strong>Example 686. A variant of toot8.csd that uses passign.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276439524464"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o passign.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">8</span>
+
+i<span class="n">dur</span><span class="p">,</span>i<span class="n">amp</span><span class="p">,</span>i<span class="n">skiptime</span><span class="p">,</span>i<span class="n">attack</span><span class="p">,</span>i<span class="n">release</span><span class="p">,</span>i<span class="n">rvbtime</span><span class="p">,</span>i<span class="n">rvbgain</span>  <span class="nb">passign</span>   <span class="mi">3</span>
+
+k<span class="n">amp</span>      <span class="nb">linen</span>     i<span class="n">amp</span><span class="p">,</span> i<span class="n">attack</span><span class="p">,</span> i<span class="n">dur</span><span class="p">,</span> i<span class="n">release</span>
+a<span class="n">sig</span>      <span class="nb">soundin</span>   <span class="s">"fox.wav"</span><span class="p">,</span> i<span class="n">skiptime</span>
+a<span class="n">rampsig</span>  <span class="o">=</span>         k<span class="n">amp</span> <span class="o">*</span> a<span class="n">sig</span>
+a<span class="n">effect</span>   <span class="nb">reverb</span>    a<span class="n">sig</span><span class="p">,</span> i<span class="n">rvbtime</span>
+a<span class="n">rvbretrn</span> <span class="o">=</span>         a<span class="n">effect</span> <span class="o">*</span> i<span class="n">rvbgain</span>
+<span class="c1">;mix dry &amp; wet signals</span>
+          <span class="nb">outs</span>      a<span class="n">rampsig</span> <span class="o">+</span> a<span class="n">rvbretrn</span><span class="p">,</span> a<span class="n">rampsig</span> <span class="o">+</span> a<span class="n">rvbretrn</span>
+
+          <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">;ins strt dur  amp  skip atk  rel       rvbt rvbgain</span>
+<span class="nb">i</span><span class="mi">8</span>   <span class="mi">0</span>    <span class="mi">4</span>    <span class="mf">.3</span>   <span class="mi">0</span>    <span class="mf">.03</span>  <span class="mf">.1</span>        <span class="mf">1.5</span>  <span class="mf">.3</span>
+<span class="nb">i</span><span class="mi">8</span>   <span class="mi">4</span>    <span class="mi">4</span>    <span class="mf">.3</span>   <span class="mf">1.6</span>  <span class="mf">.1</span>   <span class="mf">.1</span>        <span class="mf">3.1</span>  <span class="mf">.7</span>
+<span class="nb">i</span><span class="mi">8</span>   <span class="mi">8</span>    <span class="mi">4</span>    <span class="mf">.3</span>   <span class="mi">0</span>    <span class="mf">.5</span>   <span class="mf">.1</span>        <span class="mf">2.1</span>  <span class="mf">.2</span>
+<span class="nb">i</span><span class="mi">8</span>   <span class="mi">12</span>   <span class="mi">4</span>    <span class="mf">.4</span>   <span class="mi">0</span>    <span class="mf">.01</span>  <span class="mf">.1</span>        <span class="mf">1.1</span>  <span class="mf">.1</span>
+<span class="nb">i</span><span class="mi">8</span>   <span class="mi">16</span>   <span class="mi">4</span>    <span class="mf">.5</span>   <span class="mf">0.1</span>  <span class="mf">.01</span>  <span class="mf">.1</span>        <span class="mf">0.1</span>  <span class="mf">.1</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111950800"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>December 2009</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.12; end point and array version after 5.12</p>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="partikkelsync.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="paulstretch.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">partikkelsync </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> paulstretch</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

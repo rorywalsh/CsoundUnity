@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ATSinterpread</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ATSinfo.html" title="ATSinfo" />
+    <link rel="next" href="ATSread.html" title="ATSread" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ATSinterpread</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ATSinfo.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ATSread.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ATSinterpread"></a>
+      <div class="titlepage"></div>
+      <a id="IndexATSinterpread" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ATSinterpread</span>
+        </h2>
+        <p>ATSinterpread —  allows a user to determine the frequency envelope of any <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>.
+                    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124668384"></a>
+        <h2>Description</h2>
+        <p>
+            <span class="emphasis"><em>ATSinterpread</em></span> allows a user to determine the frequency envelope of any <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>.
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124665872"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kamp <span class="command"><strong>ATSinterpread</strong></span> kfreq</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124663792"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>kfreq</em></span> - a frequency value (given in Hertz) used by <span class="emphasis"><em>ATSinterpread</em></span> as in index into the table produced by an <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>.</p>
+        <p><span class="emphasis"><em>ATSinterpread</em></span> takes a frequency value (<span class="emphasis"><em>kfreq</em></span> in Hz). This frequency is used to index the data of an <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>. The return value is an amplitude gained from the <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>  after interpolation. <span class="emphasis"><em>ATSinterpread</em></span> allows a user to determine the frequency envelope of any <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>. This data could be useful for an number of reasons, one might be performing cross synthesis of data from an ATS file and non ATS data.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124656544"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the ATSinterpread opcode. It uses the file <a class="ulink" href="examples/ATSinterpread.csd" target="_top"><em class="citetitle">ATSinterpread.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276124654736"></a>
+          <p class="title">
+            <strong>Example 70. Example of the ATSinterpread opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276494821168"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc for RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o ATSinterpread.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; "beats.ats" is created by atsa</span>
+
+k<span class="n">time</span>	<span class="nb">line</span>	<span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">1.8</span>
+	<span class="nb">ATSbufread</span> k<span class="n">time</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"beats.ats"</span><span class="p">,</span> <span class="mi">42</span>
+k<span class="n">amp</span>	<span class="nb">ATSinterpread</span> 	<span class="nb">p4</span>
+a<span class="n">osc</span>	<span class="nb">oscili</span>	k<span class="n">amp</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">1</span>
+	<span class="nb">outs</span>	a<span class="n">osc</span> <span class="o">*</span> <span class="mi">25</span><span class="p">,</span> a<span class="n">osc</span> <span class="o">*</span><span class="mi">25</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">100</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+            This example shows how to use <span class="emphasis"><em>ATSinterpread</em></span>. Here a frequency is given by the score (p4) and this frequency is given to an <span class="emphasis"><em>ATSinterpread</em></span> (with a corresponding <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>). The <span class="emphasis"><em>ATSinterpread</em></span> uses this frequency to output a corresponding amplitude value, based on the atsfile given by the <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a> (beats.ats in this case). We then use that amplitude to scale a sine-wave that is synthesized with the same frequency (p4). You could extend this to include multiple sine-waves. This way you could synthesize any reasonable frequency (within the low and high frequencies of the indicated ATS file), and maintain the shape (in frequency) of the indicated atsfile (given by the <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>).
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124648080"></a>
+        <h2>See also</h2>
+        <p><a class="link" href="ATSread.html" title="ATSread"><em class="citetitle">ATSread</em></a>, 
+            <a class="link" href="ATSreadnz.html" title="ATSreadnz"><em class="citetitle">ATSreadnz</em></a>, 
+            <a class="link" href="ATSinfo.html" title="ATSinfo"><em class="citetitle">ATSinfo</em></a>, 
+            <a class="link" href="ATSsinnoi.html" title="ATSsinnoi"><em class="citetitle">ATSsinnoi</em></a>, 
+            <a class="link" href="ATSbufread.html" title="ATSbufread"><em class="citetitle">ATSbufread</em></a>, 
+            <a class="link" href="ATScross.html" title="ATScross"><em class="citetitle">ATScross</em></a>, 
+            <a class="link" href="ATSpartialtap.html" title="ATSpartialtap"><em class="citetitle">ATSpartialtap</em></a>, 
+            <a class="link" href="ATSadd.html" title="ATSadd"><em class="citetitle">ATSadd</em></a>, 
+            <a class="link" href="ATSaddnz.html" title="ATSaddnz"><em class="citetitle">ATSaddnz</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124639264"></a>
+        <h2>Credits</h2>
+        <p>
+            </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Alex Norman</td>
+          </tr>
+          <tr>
+            <td>Seattle,Washington</td>
+          </tr>
+          <tr>
+            <td>2004</td>
+          </tr>
+        </table>
+        <p>
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ATSinfo.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ATSread.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ATSinfo </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ATSread</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

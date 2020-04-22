@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>cosseg</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="cos.html" title="cos" />
+    <link rel="next" href="cossegb.html" title="cossegb" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">cosseg</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cos.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cossegb.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="cosseg"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCosseg" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">cosseg</span>
+        </h2>
+        <p>cosseg — 
+      Trace a series of line segments between specified points with
+      cosine interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119631248"></a>
+        <h2>Description</h2>
+        <p>
+      Trace a series of line segments between specified points with
+      cosine interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119629968"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>cosseg</strong></span> ia, idur1, ib [, idur2] [, ic] [...]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>cosseg</strong></span> ia, idur1, ib [, idur2] [, ic] [...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119626528"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ia</em></span> -- starting value.
+    </p>
+        <p>
+      <span class="emphasis"><em>ib, ic</em></span>, etc. -- value after
+      <span class="emphasis"><em>dur1</em></span> seconds, etc. 
+    </p>
+        <p>
+      <span class="emphasis"><em>idur1</em></span> -- duration in seconds of first
+      segment. A zero or negative value will cause all initialization
+      to be skipped. 
+    </p>
+        <p>
+      <span class="emphasis"><em>idur2, idur3</em></span>, etc. -- duration in seconds
+      of subsequent segments. A zero or negative value will terminate
+      the initialization process with the preceding point, permitting
+      the last-defined line or curve to be continued indefinitely in
+      performance. The default is zero. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119621664"></a>
+        <h2>Performance</h2>
+        <p>
+      These units generate control or audio signals whose values can
+      pass through 2 or more specified points. The sum of
+      <span class="emphasis"><em>dur</em></span> values may or may not equal the
+      instrument's performance time: a shorter performance will
+      truncate the specified pattern, while a longer one will cause
+      the last value to be repeated until the end of the note. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119619696"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the cosseg opcode. It uses the file <a class="ulink" href="examples/cosseg.csd" target="_top"><em class="citetitle">cosseg.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276119617904"></a>
+          <p class="title">
+            <strong>Example 155. Example of the cosseg opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276486449440"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">;-o linseg.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">Sine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">^</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+k<span class="n">env</span> <span class="nb">cosseg</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mi">0</span>	<span class="c1">; together = 1 sec</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> k<span class="n">env</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> gi<span class="n">Sine</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">; scaling to duration</span>
+
+k<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+k<span class="n">env</span> <span class="nb">cosseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.75</span><span class="p">,</span> <span class="mi">0</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> k<span class="n">env</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> gi<span class="n">Sine</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">3</span>	<span class="c1">; with negative value</span>
+
+k<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+a<span class="n">env</span> <span class="nb">cosseg</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mi">0</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> a<span class="n">env</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> gi<span class="n">Sine</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>   <span class="mf">7.00</span>	<span class="c1">; = 1 sec, p3 fits exactly</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">2</span>   <span class="mf">7.00</span>	<span class="c1">; = 2 sec, p3 truncated at 1 sec</span>
+
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">4</span> <span class="mi">1</span>   <span class="mf">7.00</span>	<span class="c1">; scales to duration</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">6</span> <span class="mi">2</span>   <span class="mf">7.00</span>	<span class="c1">; of p3</span>
+
+<span class="nb">i</span> <span class="mi">3</span> <span class="mi">9</span> <span class="mi">2</span>   <span class="mf">7.00</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119613920"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="expon.html" title="expon"><em class="citetitle">expon</em></a>,
+      <a class="link" href="expseg.html" title="expseg"><em class="citetitle">expseg</em></a>,
+      <a class="link" href="expsegb.html" title="expsegb"><em class="citetitle">expsegb</em></a>,
+      <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>,
+      <a class="link" href="line.html" title="line"><em class="citetitle">line</em></a>,
+      <a class="link" href="linseg.html" title="linseg"><em class="citetitle">linseg</em></a>,
+      <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>
+      <a class="link" href="transeg.html" title="transeg"><em class="citetitle">transeg</em></a>
+      <a class="link" href="transegb.html" title="transegb"><em class="citetitle">transegb</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119604880"></a>
+        <h2>Credits</h2>
+        <p>
+       </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>Aug 2012 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p> New in version 5.18</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cos.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cossegb.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cos </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> cossegb</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

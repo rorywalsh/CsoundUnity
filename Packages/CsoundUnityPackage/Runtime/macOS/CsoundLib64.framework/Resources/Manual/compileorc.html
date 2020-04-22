@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>compileorc</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="compilecsd.html" title="compilecsd" />
+    <link rel="next" href="compilestr.html" title="compilestr" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">compileorc</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="compilecsd.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="compilestr.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="compileorc"></a>
+      <div class="titlepage"></div>
+      <a id="Indexcompileorc" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">compileorc</span>
+        </h2>
+        <p>compileorc — 
+      compiles a new orchestra from an ASCII file
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120125056"></a>
+        <h2>Description</h2>
+        <p>
+      Compileorc will compile one or more instruments at init time, which will be added to the running engine. In case of
+existing instrument numbers or names, these will be replaced, but any instance still running of the old instrument
+definition will still perform until it terminates.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120123584"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ires <span class="command"><strong>compileorc</strong></span> Sfilename</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120121504"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">Sfilename</span>”</span></em></span> --  a string containing the name of the file containing the orchestra.
+</p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">ires</span>”</span></em></span> --  returns 0 if compilation was successful, or -1 if not.
+</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120118752"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the compileorc opcode. It uses the file <a class="ulink" href="examples/compileorc.csd" target="_top"><em class="citetitle">compileorc.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276120116960"></a>
+          <p class="title">
+            <strong>Example 146. Example of the compileorc opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276487846880"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-o dac -d
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">res</span> <span class="nb">compileorc</span> <span class="s">"does_not_exist.orc"</span>
+<span class="nb">print</span> i<span class="n">res</span> <span class="c1">; -1 as could not compile</span>
+i<span class="n">res</span> <span class="nb">compileorc</span> <span class="s">"my.orc"</span>
+<span class="nb">print</span> i<span class="n">res</span> <span class="c1">; 0 as compiled successfully</span>
+<span class="nb">event_i</span> <span class="s">"i"</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">.2</span><span class="p">,</span> <span class="mi">465</span> <span class="c1">;send event </span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120112960"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="event.html" title="event"><em class="citetitle">event</em></a>,
+      <a class="link" href="event_i.html" title="event_i"><em class="citetitle">event_i</em></a>,
+      <a class="link" href="schedule.html" title="schedule"><em class="citetitle">schedule</em></a>,
+      <a class="link" href="schedwhen.html" title="schedwhen"><em class="citetitle">schedwhen</em></a>,
+      <a class="link" href="schedkwhen.html" title="schedkwhen"><em class="citetitle">schedkwhen</em></a>,
+      <a class="link" href="schedkwhennamed.html" title="schedkwhennamed"><em class="citetitle">schedkwhennamed</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120106528"></a>
+        <h2>Credits</h2>
+        <p>Author: Victor Lazzarini, 2013 </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="compilecsd.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="compilestr.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">compilecsd </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> compilestr</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

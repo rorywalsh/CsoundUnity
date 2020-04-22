@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN18</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN17.html" title="GEN17" />
+    <link rel="next" href="GEN19.html" title="GEN19" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN18</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN17.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN19.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN18"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN18" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN18</span>
+        </h2>
+        <p>GEN18 — 
+      Writes composite waveforms made up of pre-existing waveforms.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988973520"></a>
+        <h2>Description</h2>
+        <p>
+      Writes composite waveforms made up of pre-existing waveforms. Each contributing waveform requires 4 pfields and can overlap with other waveforms.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988972192"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 18 fna ampa starta finisha fnb ampb startb finishb ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988970208"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size</em></span> -- number of points in the table. Must be a power-of-2 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)">f</a> statement).
+    </p>
+        <p>
+      <span class="emphasis"><em>fna, fnb, etc.</em></span> -- pre-existing table number to be written into the table.
+    </p>
+        <p>
+      <span class="emphasis"><em>ampa, ampb, etc.</em></span> -- strength of wavefoms. These are relative strengths, since the composite waveform may be rescaled later. Negative values are permitted and imply a 180 degree phase shift.
+    </p>
+        <p>
+      <span class="emphasis"><em>starta, startb, etc.</em></span> -- where to start writing the fn into the table.
+    </p>
+        <p>
+      <span class="emphasis"><em>finisha, finishb, etc.</em></span> -- where to stop writing the fn into the table. The last available location is the power of two - 1.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988964208"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">f</span> 1  0  4096  10  1
+<span class="stamnt">f</span> 2  0  1024  18  1  1  0  511  1  1  512  1023</pre>
+        </div>
+        <p>
+
+      f2 consists of two copies of f1 written in to locations 0-511 and 512-1023.
+    </p>
+        <p>
+	    Here is an example of the GEN18 routine. It uses the files <a class="ulink" href="examples/gen18.csd" target="_top"><em class="citetitle">gen18.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275988959600"></a>
+          <p class="title">
+            <strong>Example 1214. An example of the GEN18 routine.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276397053616"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen18.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">fn</span>   <span class="o">=</span> <span class="nb">p4</span>  
+i<span class="n">len</span>  <span class="o">=</span> <span class="nb">ftlen</span><span class="p">(</span>i<span class="n">fn</span><span class="p">)</span>
+a<span class="n">phase</span>  <span class="nb">phasor</span> <span class="mi">220</span> 
+a<span class="n">sig</span>    <span class="nb">tablei</span> a<span class="n">phase</span><span class="o">*</span>i<span class="n">len</span><span class="p">,</span> i<span class="n">fn</span>
+        <span class="nb">outs</span>   a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+      
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>                                         <span class="c1">;sine</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">0.5</span> <span class="mf">0.3</span> <span class="mf">0.25</span> <span class="mf">0.2</span> <span class="mf">0.167</span> <span class="mf">0.14</span> <span class="mf">0.125</span> <span class="mf">.111</span>  <span class="c1">;sawtooth</span>
+<span class="nb">f</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">11</span> <span class="mi">10</span> <span class="mi">5</span> <span class="mi">2</span>                                    <span class="c1">;cosine partials</span>
+
+<span class="nb">f</span> <span class="mi">11</span> <span class="mi">0</span> <span class="mi">8192</span>  <span class="mi">18</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4095</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">4096</span> <span class="mi">8191</span>    <span class="c1">;sine+sawtooth</span>
+<span class="nb">f</span> <span class="mi">12</span> <span class="mi">0</span> <span class="mi">8192</span>  <span class="mi">18</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4095</span> <span class="mi">3</span> <span class="mi">1</span> <span class="mi">4096</span> <span class="mi">8191</span>    <span class="c1">;sine+cosine partials</span>
+<span class="nb">f</span> <span class="mi">13</span> <span class="mi">0</span> <span class="mi">1024</span>  <span class="mi">18</span> <span class="mi">1</span> <span class="mf">0.7</span> <span class="mi">0</span> <span class="mi">767</span> <span class="mi">3</span> <span class="mf">0.7</span> <span class="mi">512</span> <span class="mi">1023</span>  <span class="c1">;sine+cosine partials overlapped, shorter table</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">2</span>    <span class="c1">;play sawtooth </span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mi">3</span>    <span class="c1">;then cosine partials</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mi">2</span> <span class="mi">11</span>   <span class="c1">;now sine+sawtooth</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mi">12</span>   <span class="c1">;and sine+cosine partials</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mi">13</span>   <span class="c1">;and sine+cosine partials overlapped, shorter table</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+        <span class="phrase">These are the diagrams of the waveforms generated by GEN18, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen18_1.png" />
+          <div class="caption">
+            <p>f 11 0 8193 18 1 1 0 4096 2 1 4097 8192 - composite waveform made up of a sine wave and a sawtooth</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen18_2.png" alt="f 12 0 8192 18 1 1 0 4096 3 1 4097 8192 - composite waveform made up of a sine wave and a wave of cosine partials" />
+          <div class="caption">
+            <p>f 12 0 8192  18 1 1 0 4096 3 1 4097 8192 - composite waveform made up of a sine wave and a wave of cosine partials</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen18_3.png" alt="f 13 0 1024 18 1 0.7 0 767 3 0.7 512 1023 - sine+cosine partials overlapped, also shorter table than f12" />
+          <div class="caption">
+            <p>f 13 0 1024  18 1 0.7 0 767 3 0.7 512 1023 - sine+cosine partials overlapped, also shorter table than f12</p>
+          </div>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988947152"></a>
+        <h2>Deprecated Names</h2>
+        <p>
+      <span class="emphasis"><em>GEN18</em></span> was called <span class="emphasis"><em>GEN22</em></span> in version 4.18. The name was changed due to a conflict with DirectCsound.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988945056"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: William <span class="quote">“<span class="quote">Pete</span>”</span> Moss</td>
+          </tr>
+          <tr>
+            <td>University of Texas at Austin</td>
+          </tr>
+          <tr>
+            <td>Austin, Texas USA</td>
+          </tr>
+          <tr>
+            <td>January 2002</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 4.18, changed in version 4.19</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN17.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN19.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN17 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN19</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

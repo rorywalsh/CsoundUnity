@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>remove</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="remoteport.html" title="remoteport" />
+    <link rel="next" href="repluck.html" title="repluck" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">remove</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="remoteport.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="repluck.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="remove"></a>
+      <div class="titlepage"></div>
+      <a id="IndexRemove" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">remove</span>
+        </h2>
+        <p>remove — 
+      Removes the definition of an instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062168992"></a>
+        <h2>Description</h2>
+        <p>
+      Removes the definition of an instrument as long as it is not in use.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062167728"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>remove</strong></span> insnum</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062165792"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>insnum</em></span> -- number or name of the instrument
+    to be deleted 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062164160"></a>
+        <h2>Performance</h2>
+        <p>
+      As long as the indicated instrument is not active,
+    <span class="emphasis"><em>remove</em></span> deletes the instrument and memory
+    associated with it.  It should be treated with care as it is possible
+    that in some cases its use may lead to a crash.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062162352"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>June, 2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.04</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="remoteport.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="repluck.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">remoteport </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> repluck</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

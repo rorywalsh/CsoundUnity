@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ptrack</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ptablew.html" title="ptablew" />
+    <link rel="next" href="puts.html" title="puts" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ptrack</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ptablew.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="puts.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ptrack"></a>
+      <div class="titlepage"></div>
+      <a id="Indexptrack" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ptrack</span>
+        </h2>
+        <p>ptrack — 
+      Tracks the pitch of a signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067648720"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>ptrack</em></span> takes an input signal, splits it into <span class="emphasis"><em>ihopsize</em></span> blocks and using a STFT method, extracts an estimated pitch for its fundamental frequency as well as estimating the total amplitude of the signal in dB, relative to full-scale (0dB). The method implies an analysis window size of 2*<span class="emphasis"><em>ihopsize</em></span> samples (overlaping by 1/2 window), which has to be a power-of-two, between 128 and 8192 (hopsizes between 64 and 4096). Smaller windows will give better time precision, but worse frequency accuracy (esp. in low fundamentals).This opcode is based on an original algorithm by M. Puckette.
+      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067645456"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kcps, kamp <span class="command"><strong>ptrack</strong></span> asig, ihopsize[,ipeaks]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067643344"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihopsize</em></span> -- size of the analysis 'hop', in samples, required to be power-of-two (min 64, max 4096). 
+      This is the period between measurements.
+    </p>
+        <p>
+      <span class="emphasis"><em>ipeaks</em></span>, <span class="emphasis"><em>ihi</em></span> -- number of spectral peaks to use in the analysis, defaults to 20 (optional)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067640128"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> -- estimated pitch in Hz.
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- estimated amplitude in dB relative to full-scale (0dB) (ie. always &lt;= 0).
+    </p>
+        <p>
+      <span class="emphasis"><em>ptrack</em></span> analyzes the input signal, <span class="emphasis"><em>asig</em></span>, 
+      to give a pitch/amplitude pair of outputs, for the fundamental of a monophonic signal. 
+      The output is updated every <span class="emphasis"><em>sr/ihopsize</em></span> seconds.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067635648"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the ptrack opcode. This example uses the files <a class="ulink" href="examples/ptrack.csd" target="_top"><em class="citetitle">ptrack.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276067633840"></a>
+          <p class="title">
+            <strong>Example 747. Example of the ptrack opcode.</strong>
+          </p>
+          <div class="example-contents">
+
+            See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> 
+            and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.
+            <div class="refsect1"><a id="idm276434463744"></a><pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o ptrack.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">hop</span>  <span class="o">=</span> <span class="nb">p4</span>
+a<span class="n">out</span>  <span class="nb">diskin2</span> <span class="s">"fox.wav"</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">f</span><span class="p">,</span>k<span class="n">a</span> <span class="nb">ptrack</span> a<span class="n">out</span><span class="p">,</span> i<span class="n">hop</span>	<span class="c1">; pitch track with different hopsizes</span>
+k<span class="n">cps</span>  <span class="nb">port</span> k<span class="n">f</span><span class="p">,</span> <span class="mf">0.01</span>	<span class="c1">; smooth freq</span>
+k<span class="n">amp</span>  <span class="nb">port</span> k<span class="n">a</span><span class="p">,</span> <span class="mf">0.01</span>	<span class="c1">; smooth amp</span>
+<span class="c1">; drive an oscillator</span>
+a<span class="n">sig</span>  <span class="nb">poscil</span> <span class="nb">ampdb</span><span class="p">(</span>k<span class="n">amp</span><span class="p">)</span><span class="o">*</span><span class="vg">0dbfs</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span>
+      <span class="nb">outs</span>  a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; simple sine wave</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">5</span> <span class="mi">128</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span>  <span class="mi">5</span> <span class="mi">512</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">12</span> <span class="mi">5</span> <span class="mi">1024</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre></div></div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067630112"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>NUI, Maynooth.</td>
+          </tr>
+          <tr>
+            <td>Maynooth, Ireland</td>
+          </tr>
+          <tr>
+            <td>March, 2007</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.05</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ptablew.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="puts.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ptablew </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> puts</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

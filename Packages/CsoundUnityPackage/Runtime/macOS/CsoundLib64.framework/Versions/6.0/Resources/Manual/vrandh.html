@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vrandh</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vpvoc.html" title="vpvoc" />
+    <link rel="next" href="vrandi.html" title="vrandi" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vrandh</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vpvoc.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vrandi.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vrandh"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVrandh" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vrandh</span>
+        </h2>
+        <p>vrandh — 
+      Generates a vector of random numbers stored into a table, holding the values for a period of time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037761280"></a>
+        <h2>Description</h2>
+        <p>
+      Generates a vector of random numbers stored into a table, holding the values for a period of time. Generates a sort of 'vectorial band-limited noise'.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037759936"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vrandh</strong></span>  ifn,  krange, kcps, ielements [, idstoffset] [, iseed] \
+      [, isize] [, ioffset]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037757920"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> - number of the table where the vectorial signal will be generated
+    </p>
+        <p>
+      <span class="emphasis"><em>ielements</em></span> - number of elements of the vector
+    </p>
+        <p>
+      <span class="emphasis"><em>idstoffset</em></span> - (optional, default=0) -- index offset for the destination table
+    </p>
+        <p>
+      <span class="emphasis"><em>iseed</em></span> (optional, default=0.5) -- seed value for the recursive pseudo-random formula. A value between 0 and +1 will produce an initial output of <span class="emphasis"><em>kamp</em></span> * <span class="emphasis"><em>iseed</em></span>. A negative value will cause seed re-initialization to be skipped. A value greater than 1 will seed from system time, this is the best option to generate a different random sequence for each run.
+    </p>
+        <p>
+      <span class="emphasis"><em>isize</em></span> (optional, default=0) -- if zero, a 16 bit number is generated. If non-zero, a 31-bit random number is generated. Default is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>ioffset</em></span> - (optional, default=0) -- a base value added to the random result.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037750864"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>krange</em></span> - range of random elements (from -<span class="emphasis"><em>krange</em></span> to <span class="emphasis"><em>krange</em></span>).
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> - rate of generated elements in cycles per seconds.
+    </p>
+        <p>
+      This opcode is similar to <a class="link" href="randh.html" title="randh"><em class="citetitle">randh</em></a>, but operates on vectors instead of with scalar values.
+    </p>
+        <p>
+      Though the argument <span class="emphasis"><em>isize</em></span> defaults to 0, thus using a 16-bit random number generator, using the newer 31-bit algorithm is recommended, as this will produce a random sequence with a longer period (more random numbers before the sequence starts repeating).
+    </p>
+        <p>
+      The output is a vector contained in <span class="emphasis"><em>ifn</em></span> (that must be previously allocated).
+    </p>
+        <p>
+      All these operators are designed to be used together with other opcodes that operate with vector such as <a class="link" href="adsynt.html" title="adsynt"><em class="citetitle">adsynt</em></a>, etc.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037742432"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vrandh opcode. It uses the file <a class="ulink" href="examples/vrandh.csd" target="_top"><em class="citetitle">vrandh.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276037740736"></a>
+          <p class="title">
+            <strong>Example 1125. Example of the vrandh opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276405339376"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o vranh.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;Example by Andres Cabrera</span>
+
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">128</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+gi<span class="n">tab</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">0</span>
+
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  k<span class="n">range</span> <span class="nb">init</span> <span class="nb">p4</span>
+  k<span class="n">cps</span> <span class="nb">init</span> <span class="nb">p5</span>
+  i<span class="n">offset</span> <span class="nb">init</span> <span class="nb">p6</span>
+
+  k<span class="n">av1</span> <span class="nb">init</span> <span class="mi">0</span>
+  k<span class="n">av2</span> <span class="nb">init</span> <span class="mi">0</span>
+  k<span class="n">count</span> <span class="nb">init</span> <span class="mi">0</span>
+
+  <span class="c1">;       table   krange  kcps  ielements   idstoffset  iseed  isize ioffset</span>
+  <span class="nb">vrandh</span>  gi<span class="n">tab</span><span class="p">,</span>  k<span class="n">range</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span>     <span class="mi">3</span><span class="p">,</span>         <span class="mi">3</span><span class="p">,</span>         <span class="mi">2</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   i<span class="n">offset</span>
+
+  k<span class="n">freq1</span> <span class="nb">table</span> <span class="mi">3</span><span class="p">,</span> gi<span class="n">tab</span>
+  k<span class="n">freq2</span> <span class="nb">table</span> <span class="mi">4</span><span class="p">,</span> gi<span class="n">tab</span>
+  k<span class="n">freq3</span> <span class="nb">table</span> <span class="mi">5</span><span class="p">,</span> gi<span class="n">tab</span>
+
+  <span class="c1">;Change the frequency of three oscillators according to the random values</span>
+  a<span class="n">osc1</span> <span class="nb">oscili</span> <span class="mi">4000</span><span class="p">,</span> k<span class="n">freq1</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">osc2</span> <span class="nb">oscili</span> <span class="mi">2000</span><span class="p">,</span> k<span class="n">freq2</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">osc3</span> <span class="nb">oscili</span> <span class="mi">4000</span><span class="p">,</span> k<span class="n">freq3</span><span class="p">,</span> <span class="mi">1</span>
+
+  <span class="nb">outs</span> a<span class="n">osc1</span><span class="o">+</span>a<span class="n">osc2</span><span class="p">,</span> a<span class="n">osc3</span><span class="o">+</span>a<span class="n">osc2</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="c1">;             krange  kcps    ioffset</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> 	<span class="mi">5</span>	<span class="mi">100</span>	<span class="mi">1</span>	<span class="mi">300</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">5</span> 	<span class="mi">5</span>	<span class="mi">300</span>	<span class="mi">1</span>	<span class="mi">400</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">10</span> 	<span class="mi">5</span>	<span class="mi">100</span>	<span class="mi">2</span>	<span class="mi">1000</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">15</span> 	<span class="mi">5</span>	<span class="mi">400</span>	<span class="mi">4</span>	<span class="mi">1000</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">20</span> 	<span class="mi">5</span>	<span class="mi">1000</span>	<span class="mi">8</span>	<span class="mi">2000</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">25</span> 	<span class="mi">5</span>	<span class="mi">250</span>	<span class="mi">16</span>	<span class="mi">300</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037736752"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="vrandi.html" title="vrandi"><em class="citetitle">vrandi</em></a>, 
+      <a class="link" href="randh.html" title="randh"><em class="citetitle">randh</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037733840"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado.</p>
+        <p>New in Csound 5 (Previously available only on CsoundAV)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vpvoc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vrandi.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vpvoc </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vrandi</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

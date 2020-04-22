@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>spat3di</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="spat3d.html" title="spat3d" />
+    <link rel="next" href="spat3dt.html" title="spat3dt" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">spat3di</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="spat3d.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="spat3dt.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="spat3di"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpat3di" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">spat3di</span>
+        </h2>
+        <p>spat3di — 
+      Positions the input sound in a 3D space with the sound source position set at i-time.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053953232"></a>
+        <h2>Description</h2>
+        <p>
+      This opcode positions the input sound in a 3D space, with optional simulation of room acoustics, in various output formats. With <span class="emphasis"><em>spat3di</em></span>, sound source position is set at i-time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053951472"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aW, aX, aY, aZ <span class="command"><strong>spat3di</strong></span> ain, iX, iY, iZ, idist, ift, imode [, istor]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053949360"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iX</em></span> -- Sound source X coordinate in meters (positive: right, negative: left)
+    </p>
+        <p>
+      <span class="emphasis"><em>iY</em></span> -- Sound source Y coordinate in meters (positive: front, negative: back)
+    </p>
+        <p>
+      <span class="emphasis"><em>iZ</em></span> -- Sound source Z coordinate in meters (positive: up, negative: down)
+    </p>
+        <p>
+      <span class="emphasis"><em>idist</em></span> -- For modes 0 to 3, <span class="emphasis"><em>idist</em></span> is the unit circle distance in meters. For mode 4, <span class="emphasis"><em>idist</em></span> is the distance between microphones. 
+    </p>
+        <p>
+      The following formulas describe amplitude and delay as a function of sound source distance from microphone(s):
+      </p>
+        <div class="literallayout">
+          <p><br />
+amplitude = 1 / (0.1 + distance)<br />
+      </p>
+        </div>
+        <p>
+
+      </p>
+        <div class="literallayout">
+          <p><br />
+delay = distance / 340 (in seconds)<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      Distance can be calculated as:
+
+      </p>
+        <div class="literallayout">
+          <p><br />
+distance = sqrt(iXˆ2 + iYˆ2 + iZˆ2)<br />
+      </p>
+        </div>
+        <p>
+
+      In Mode 4, distance can be calculated as:
+
+      </p>
+        <div class="literallayout">
+          <p><br />
+distance from left mic = sqrt((iX + idist/2)ˆ2 + iYˆ2 + iZˆ2)<br />
+distance from right mic = sqrt((iX - idist/2)ˆ2 + iYˆ2 + iZˆ2)<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      With <span class="emphasis"><em>spat3d</em></span> the distance between the sound source and any microphone should be at least (340 * 18) / sr meters. Shorter distances will work, but may produce artifacts in some cases.  There is no such limitation for <span class="emphasis"><em>spat3di</em></span> and <span class="emphasis"><em>spat3dt</em></span>.
+    </p>
+        <p>
+      Sudden changes or discontinuities in sound source location can result in pops or clicks. Very fast movement may also degrade quality.
+    </p>
+        <p>
+      <span class="emphasis"><em>ift</em></span> -- Function table storing room parameters (for free field spatialization, set it to zero or negative). Table size is 54. The values in the table are:
+
+      </p>
+        <div class="informaltable">
+          <table class="informaltable" border="1">
+            <colgroup>
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Room Parameter</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0</td>
+                <td>Early reflection recursion depth (0 is the sound source, 1 is the first reflection etc.) for spat3d and spat3di. The number of echoes for four walls (front, back, right, left) is: N = (2*R + 2) * R. If all six walls are enabled: N = (((4*R + 6)*R + 8)*R) / 3</td>
+              </tr>
+              <tr>
+                <td>1</td>
+                <td>Late reflection recursion depth (used by spat3dt only). spat3dt skips early reflections and renders echoes up to this level. If early reflection depth is negative, spat3d and spat3di will output zero, while spat3dt will start rendering from the sound source.</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>imdel for spat3d. Overrides opcode parameter if non-negative.</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>irlen for spat3dt. Overrides opcode parameter if non-negative.</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>idist value. Overrides opcode parameter if &gt;= 0.</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Random seed (0 - 65535) -1 seeds from current time.</td>
+              </tr>
+              <tr>
+                <td>6 - 53</td>
+                <td>wall parameters (w = 6: ceil, w = 14: floor, w = 22: front, w = 30: back, w = 38: right, w = 46: left)</td>
+              </tr>
+              <tr>
+                <td>w + 0</td>
+                <td>Enable reflections from this wall (0: no, 1: yes)</td>
+              </tr>
+              <tr>
+                <td>w + 1</td>
+                <td>Wall distance from listener (in meters)</td>
+              </tr>
+              <tr>
+                <td>w + 2</td>
+                <td>Randomization of wall distance (0 - 1) (in units of 1 / (wall distance))</td>
+              </tr>
+              <tr>
+                <td>w + 3</td>
+                <td>Reflection level (-1 - 1)</td>
+              </tr>
+              <tr>
+                <td>w + 4</td>
+                <td>Parametric equalizer frequency in Hz.</td>
+              </tr>
+              <tr>
+                <td>w + 5</td>
+                <td>Parametric equalizer level (1.0: no filtering)</td>
+              </tr>
+              <tr>
+                <td>w + 6</td>
+                <td>Parametric equalizer Q (0.7071: no resonance)</td>
+              </tr>
+              <tr>
+                <td>w + 7</td>
+                <td>Parametric equalizer mode (0: peak EQ, 1: low shelf, 2: high shelf)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>imode</em></span> -- Output mode
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0: B format with W output only (mono)
+</p>
+              <div class="literallayout">
+                <p><br />
+aout    =  aW<br />
+</p>
+              </div>
+              <p>
+        </p>
+            </li>
+            <li class="listitem">
+              <p>1: B format with W and Y output (stereo)
+</p>
+              <div class="literallayout">
+                <p><br />
+aleft   =  aW + 0.7071*aY<br />
+aright  =  aW - 0.7071*aY<br />
+</p>
+              </div>
+              <p>
+        </p>
+            </li>
+            <li class="listitem">
+              <p>2: B format with W, X, and Y output (2D). This can be converted to UHJ:
+</p>
+              <div class="literallayout">
+                <p><br />
+aWre, aWim      hilbert aW<br />
+aXre, aXim      hilbert aX<br />
+aYre, aYim      hilbert aY<br />
+aWXr    =  0.0928*aXre + 0.4699*aWre<br />
+aWXiYr  =  0.2550*aXim - 0.1710*aWim + 0.3277*aYre<br />
+aleft   =  aWXr + aWXiYr<br />
+aright  =  aWXr - aWXiYr<br />
+</p>
+              </div>
+              <p>
+        </p>
+            </li>
+            <li class="listitem">
+              <p>3: B format with all outputs (3D)</p>
+            </li>
+            <li class="listitem">
+              <p>4: Simulates a pair of microphones (stereo output)
+</p>
+              <div class="literallayout">
+                <p><br />
+aW      butterlp aW, ifreq      ; recommended values for ifreq<br />
+aY      butterlp aY, ifreq      ; are around 1000 Hz<br />
+aleft   =  aW + aX<br />
+aright  =  aY + aZ<br />
+</p>
+              </div>
+              <p>
+        </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      Mode 0 is the cheapest to calculate, while mode 4 is the most expensive.
+    </p>
+        <p>
+      In Mode 4, The optional lowpass filters can change the frequency response depending on direction. For example, if the sound source is located left to the listener then the high frequencies are attenuated in the right channel and slightly increased in the left. This effect can be disabled by not using filters. You can also experiment with other filters (tone etc.) for better effect.
+    </p>
+        <p>
+      Note that mode 4 is most useful for listening with headphones, and is also more expensive to calculate than the B-format (0 to 3) modes. The <span class="emphasis"><em>idist</em></span> parameter in this case sets the distance between left and right microphone; for headphones, values between 0.2 - 0.25 are recommended, although higher settings up to 0.4 may be used for wide stereo effects.
+    </p>
+        <p>
+      More information about B format can be found here: <a class="ulink" href="http://www.york.ac.uk/inst/mustech/3d_audio/ambis2.htm" target="_top"><em class="citetitle">http://www.york.ac.uk/inst/mustech/3d_audio/ambis2.htm</em></a>
+    </p>
+        <p>
+      <span class="emphasis"><em>istor</em></span> (optional, default=0) -- Skip initialization if non-zero (default: 0).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053901200"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span> -- Input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>aW, aX, aY, aZ</em></span> -- Output signals
+
+      </p>
+        <div class="informaltable">
+          <table class="informaltable" border="1">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th> </th>
+                <th>mode 0</th>
+                <th>mode 1</th>
+                <th>mode 2</th>
+                <th>mode 3</th>
+                <th>mode 4</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>aW</td>
+                <td>W out</td>
+                <td>W out</td>
+                <td>W out</td>
+                <td>W out</td>
+                <td>left chn / low freq.</td>
+              </tr>
+              <tr>
+                <td>aX</td>
+                <td>0</td>
+                <td>0</td>
+                <td>X out</td>
+                <td>X out</td>
+                <td>left chn / high frq.</td>
+              </tr>
+              <tr>
+                <td>aY</td>
+                <td>0</td>
+                <td>Y out</td>
+                <td>Y out</td>
+                <td>Y out</td>
+                <td>right chn / low frq.</td>
+              </tr>
+              <tr>
+                <td>aZ</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>Z out</td>
+                <td>right chn / high fr.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+    </p>
+        <p>
+      If you encounter very slow performance (up to 100 times slower), it may be caused by denormals (this is also true of many other IIR opcodes, including <a class="link" href="butterlp.html" title="butterlp"><em class="citetitle">butterlp</em></a>, <a class="link" href="pareq.html" title="pareq"><em class="citetitle">pareq</em></a>, <a class="link" href="hilbert.html" title="hilbert"><em class="citetitle">hilbert</em></a>, and many others). Underflows can be avoided by:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>Using the <a class="link" href="denorm.html" title="denorm"><em class="citetitle">denorm</em></a> opcode on <span class="emphasis"><em>ain</em></span> before <span class="emphasis"><em>spat3di</em></span>.</p>
+            </li>
+            <li class="listitem">
+              <p>mixing low level DC or noise to the input signal, e.g. </p>
+              <div class="literallayout">
+                <p>atmp rnd31 1/1e24, 0, 0</p>
+              </div>
+              <p> </p>
+              <div class="literallayout">
+                <p>aW, aX, aY, aZ spat3di ain + atmp, ...</p>
+              </div>
+              <p> or </p>
+              <div class="literallayout">
+                <p>aW, aX, aY, aZ spa3di ain + 1/1e24, ...</p>
+              </div>
+            </li>
+            <li class="listitem">
+              <p>reducing <span class="emphasis"><em>irlen</em></span> in the case of <span class="emphasis"><em>spat3dt</em></span> (which does not have an input signal). A value of about 0.005 is suitable for most uses, although it also depends on EQ settings. If the equalizer is not used, <span class="quote">“<span class="quote">irlen</span>”</span> can be set to 0.</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053871600"></a>
+        <h2>Examples</h2>
+        <p>
+      See the examples for <a class="link" href="spat3d.html" title="spat3d"><em class="citetitle">spat3d</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053869520"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="spat3d.html" title="spat3d"><em class="citetitle">spat3d</em></a>, 
+      <a class="link" href="spat3dt.html" title="spat3dt"><em class="citetitle">spat3dt</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053866608"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2001</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 4.12</p>
+        <p>Updated April 2002 by Istvan Varga</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="spat3d.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="spat3dt.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">spat3d </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> spat3dt</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

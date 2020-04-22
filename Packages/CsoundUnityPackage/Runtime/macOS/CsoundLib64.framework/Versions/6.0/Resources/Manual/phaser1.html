@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>phaser1</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pgmassign.html" title="pgmassign" />
+    <link rel="next" href="phaser2.html" title="phaser2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">phaser1</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pgmassign.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="phaser2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="phaser1"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPhaser1" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">phaser1</span>
+        </h2>
+        <p>phaser1 — 
+      First-order allpass filters arranged in a series.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073417648"></a>
+        <h2>Description</h2>
+        <p>
+      An implementation of <span class="emphasis"><em>iord</em></span> number of first-order allpass filters in series.
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073415920"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>phaser1</strong></span> asig, kfreq, kord, kfeedback [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073413792"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- used to control initial disposition of internal data space. Since filtering incorporates a feedback loop of previous output, the initial status of the storage space used is significant. A zero value will clear the space; a non-zero value will allow previous information to remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073411536"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- frequency (in Hz) of the filter(s). This is the frequency at which each filter in the series shifts its input by 90 degrees. 
+    </p>
+        <p>
+      <span class="emphasis"><em>kord</em></span> -- the number of allpass stages in series. These are first-order filters and can range from 1 to 4999.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Although <span class="emphasis"><em>kord</em></span> is listed as k-rate, it is in fact accessed only at init-time. So if you are using a k-rate argument, it must be assigned with <a class="link" href="init.html" title="init"><em class="citetitle">init</em></a>.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      <span class="emphasis"><em>kfeedback</em></span> -- amount of the output which is fed back into the input of the allpass chain. With larger amounts of feedback, more prominent notches appear in the spectrum of the output. <span class="emphasis"><em>kfeedback</em></span> must be between -1 and +1. for stability.
+    </p>
+        <p>
+      <span class="emphasis"><em>phaser1</em></span> implements <span class="emphasis"><em>iord</em></span> number of first-order allpass sections, serially connected, all sharing the same coefficient. Each allpass section can be represented by the following difference equation:
+      </p>
+        <div class="literallayout">
+          <p><br />
+y(n) = C * x(n) + x(n-1) - C * y(n-1)<br />
+      </p>
+        </div>
+        <p>
+      where x(n) is the input, x(n-1) is the previous input, y(n) is the output, y(n-1) is the previous output, and C is a coefficient which is calculated from the value of <span class="emphasis"><em>kfreq</em></span>, using the bilinear z-transform.
+    </p>
+        <p>
+      By slowly varying <span class="emphasis"><em>kfreq</em></span>, and mixing the output of the allpass chain with the input, the classic "phase shifter" effect is created, with notches moving up and down in frequency. This works best with <span class="emphasis"><em>iord</em></span> between 4 and 16. When the input to the allpass chain is mixed with the output, 1 notch is generated for every 2 allpass stages, so that with <span class="emphasis"><em>iord</em></span> = 6, there will be 3 notches in the output. With higher values for <span class="emphasis"><em>iord</em></span>, modulating <span class="emphasis"><em>kfreq</em></span> will result in a form of nonlinear pitch modulation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073398048"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the phaser1 opcode. It uses the file <a class="ulink" href="examples/phaser1.csd" target="_top"><em class="citetitle">phaser1.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276073396240"></a>
+          <p class="title">
+            <strong>Example 704. Example of the phaser1 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276438077776"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o phaser1.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; demonstration of phase shifting abilities of phaser1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Input mixed with output of phaser1 to generate notches.</span>
+  <span class="c1">; Shows the effects of different iorder values on the sound</span>
+  i<span class="n">dur</span>   <span class="o">=</span> <span class="nb">p3</span> 
+  i<span class="n">amp</span>   <span class="o">=</span> <span class="nb">p4</span> <span class="o">*</span> <span class="mf">.05</span>
+  i<span class="n">order</span> <span class="o">=</span> <span class="nb">p5</span>        <span class="c1">; number of 1st-order stages in phaser1 network.</span>
+                     <span class="c1">; Divide iorder by 2 to get the number of notches.</span>
+  i<span class="n">freq</span>  <span class="o">=</span> <span class="nb">p6</span>        <span class="c1">; frequency of modulation of phaser1</span>
+  i<span class="n">feed</span>  <span class="o">=</span> <span class="nb">p7</span>        <span class="c1">; amount of feedback for phaser1</span>
+
+  k<span class="n">amp</span>   <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.2</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">dur</span> <span class="o">-</span> <span class="mf">.2</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> <span class="mf">.2</span><span class="p">,</span> <span class="mi">0</span>
+
+  i<span class="n">harms</span> <span class="o">=</span> <span class="p">(</span><span class="vg">sr</span><span class="o">*</span><span class="mf">.4</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span>
+
+  a<span class="n">sig</span>   <span class="nb">gbuzz</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> i<span class="n">harms</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.95</span><span class="p">,</span> <span class="mi">2</span>  <span class="c1">; "Sawtooth" waveform modulation oscillator for phaser1 ugen.</span>
+  k<span class="n">freq</span>  <span class="nb">oscili</span> <span class="mi">5500</span><span class="p">,</span> i<span class="n">freq</span><span class="p">,</span> <span class="mi">1</span>
+  k<span class="n">mod</span>   <span class="o">=</span> k<span class="n">freq</span> <span class="o">+</span> <span class="mi">5600</span>
+
+  a<span class="n">phs</span>   <span class="nb">phaser1</span> a<span class="n">sig</span><span class="p">,</span> k<span class="n">mod</span><span class="p">,</span> i<span class="n">order</span><span class="p">,</span> i<span class="n">feed</span>
+
+  <span class="nb">out</span>    <span class="p">(</span>a<span class="n">sig</span> <span class="o">+</span> a<span class="n">phs</span><span class="p">)</span> <span class="o">*</span> i<span class="n">amp</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; inverted half-sine, used for modulating phaser1 frequency</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span>  <span class="mi">16384</span> <span class="mi">9</span> <span class="mf">.5</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">0</span>
+<span class="c1">; cosine wave for gbuzz</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span>  <span class="mi">8192</span> <span class="mi">9</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mf">.25</span>
+
+<span class="c1">; phaser1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span>  <span class="mi">5</span> <span class="mi">7000</span> <span class="mi">4</span>  <span class="mf">.2</span> <span class="mf">.9</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">6</span>  <span class="mi">5</span> <span class="mi">7000</span> <span class="mi">6</span>  <span class="mf">.2</span> <span class="mf">.9</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">12</span> <span class="mi">5</span> <span class="mi">7000</span> <span class="mi">8</span>  <span class="mf">.2</span> <span class="mf">.9</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">18</span> <span class="mi">5</span> <span class="mi">7000</span> <span class="mi">16</span> <span class="mf">.2</span> <span class="mf">.9</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">24</span> <span class="mi">5</span> <span class="mi">7000</span> <span class="mi">32</span> <span class="mf">.2</span> <span class="mf">.9</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">30</span> <span class="mi">5</span> <span class="mi">7000</span> <span class="mi">64</span> <span class="mf">.2</span> <span class="mf">.9</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073392208"></a>
+        <h2>Technical History</h2>
+        <p>
+      A general description of the differences between flanging and phasing can be found in Hartmann [1]. An early implementation of first-order allpass filters connected in series can be found in Beigel [2], where the bilinear z-transform is used for determining the phase shift frequency of each stage. Cronin [3] presents a similar implementation for a four-stage phase shifting network. Chamberlin [4] and Smith [5] both discuss using second-order allpass sections for greater control over notch depth, width, and frequency.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073391008"></a>
+        <h2>References</h2>
+        <p>
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>
+            Hartmann, W.M. "Flanging and Phasers." Journal of the Audio Engineering Society, Vol. 26, No. 6, pp. 439-443, June 1978. 
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Beigel, Michael I. "A Digital 'Phase Shifter' for Musical Applications, Using the Bell Labs (Alles-Fischer) Digital Filter Module." Journal of the Audio Engineering Society, Vol. 27, No. 9, pp. 673-676,September 1979. 
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Cronin, Dennis. "Examining Audio DSP Algorithms." Dr. Dobb's Journal, July 1994, p. 78-83.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Chamberlin, Hal. Musical Applications of Microprocessors. Second edition. Indianapolis, Indiana: Hayden Books, 1985.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Smith, Julius O. "An Allpass Approach to Digital Phasing and Flanging." Proceedings of the 1984 ICMC, p. 103-108.
+          </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073383744"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="phaser2.html" title="phaser2"><em class="citetitle">phaser2</em></a>
+          </p>
+        <p> Other information about phasers on Wikipedia: <a class="ulink" href="http://en.wikipedia.org/wiki/Phaser_(effect)" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Phaser_(effect)</em></a></p>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073380560"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Sean Costello</td>
+          </tr>
+          <tr>
+            <td>Seattle, Washington</td>
+          </tr>
+          <tr>
+            <td>1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>November 2002. Added a note about the <span class="emphasis"><em>kord</em></span> parameter, thanks to Rasmus Ekman.</p>
+        <p>New in Csound version 4.0</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pgmassign.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="phaser2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pgmassign </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> phaser2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

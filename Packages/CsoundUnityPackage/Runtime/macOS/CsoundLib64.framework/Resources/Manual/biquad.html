@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>biquad</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="binit.html" title="binit" />
+    <link rel="next" href="biquada.html" title="biquada" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">biquad</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="binit.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="biquada.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="biquad"></a>
+      <div class="titlepage"></div>
+      <a id="IndexBiquad" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">biquad</span>
+        </h2>
+        <p>biquad — 
+      A sweepable general purpose biquadratic digital filter.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123232480"></a>
+        <h2>Description</h2>
+        <p>
+      A sweepable general purpose biquadratic digital filter.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123231152"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>biquad</strong></span> asig, kb0, kb1, kb2, ka0, ka1, ka2 [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123229024"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- if non-zero, intialization will be skipped. Default value 0. (New in Csound version 3.50)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123227184"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>biquad</em></span> is a general purpose biquadratic digital filter of the form:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  a0*y(n) + a1*y[n-1] + a2*y[n-2] = b0*x[n] + b1*x[n-1] + b2*x[n-2]<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      This filter has the following frequency response:
+      </p>
+        <div class="literallayout">
+          <p><br />
+         B(Z)   b0 + b1*Z<sup>-1</sup>  + b2*Z<sup>-2</sup><br />
+  H(Z) = ---- = ------------------<br />
+         A(Z)   a0 + a1*Z<sup>-1</sup>  + a2*Z<sup>-2</sup><br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      This type of filter is often encountered in digital signal processing literature. It allows six user-defined k-rate coefficients.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123219744"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the biquad opcode. It uses the file <a class="ulink" href="examples/biquad.csd" target="_top"><em class="citetitle">biquad.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276123217936"></a>
+          <p class="title">
+            <strong>Example 96. Example of the biquad opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276498938368"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o biquad.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Get the values from the score.</span>
+  i<span class="n">dur</span> <span class="o">=</span> <span class="nb">p3</span>
+  i<span class="n">amp</span> <span class="o">=</span> <span class="nb">p4</span>
+  i<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p5</span><span class="p">)</span>
+  k<span class="n">fco</span> <span class="o">=</span> <span class="nb">p6</span>
+  k<span class="n">rez</span> <span class="o">=</span> <span class="nb">p7</span>
+
+  <span class="c1">; Calculate the biquadratic filter's coefficients </span>
+  k<span class="n">fcon</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="mf">3.14159265</span><span class="o">*</span>k<span class="n">fco</span><span class="o">/</span><span class="vg">sr</span>
+  k<span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span>k<span class="n">rez</span><span class="o">*</span><span class="nb">cos</span><span class="p">(</span>k<span class="n">fcon</span><span class="p">)</span><span class="o">*</span><span class="nb">cos</span><span class="p">(</span>k<span class="n">fcon</span><span class="p">)</span><span class="o">+</span>k<span class="n">rez</span><span class="o">*</span>k<span class="n">rez</span><span class="o">*</span><span class="nb">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span>k<span class="n">fcon</span><span class="p">)</span>
+  k<span class="n">beta</span> <span class="o">=</span> k<span class="n">rez</span><span class="o">*</span>k<span class="n">rez</span><span class="o">*</span><span class="nb">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span>k<span class="n">fcon</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span>k<span class="n">rez</span><span class="o">*</span><span class="nb">cos</span><span class="p">(</span>k<span class="n">fcon</span><span class="p">)</span><span class="o">*</span><span class="nb">sin</span><span class="p">(</span>k<span class="n">fcon</span><span class="p">)</span>
+  k<span class="n">gama</span> <span class="o">=</span> <span class="mi">1</span><span class="o">+</span><span class="nb">cos</span><span class="p">(</span>k<span class="n">fcon</span><span class="p">)</span>
+  k<span class="n">m1</span> <span class="o">=</span> k<span class="n">alpha</span><span class="o">*</span>k<span class="n">gama</span><span class="o">+</span>k<span class="n">beta</span><span class="o">*</span><span class="nb">sin</span><span class="p">(</span>k<span class="n">fcon</span><span class="p">)</span>
+  k<span class="n">m2</span> <span class="o">=</span> k<span class="n">alpha</span><span class="o">*</span>k<span class="n">gama</span><span class="o">-</span>k<span class="n">beta</span><span class="o">*</span><span class="nb">sin</span><span class="p">(</span>k<span class="n">fcon</span><span class="p">)</span>
+  k<span class="n">den</span> <span class="o">=</span> <span class="nb">sqrt</span><span class="p">(</span>k<span class="n">m1</span><span class="o">*</span>k<span class="n">m1</span><span class="o">+</span>k<span class="n">m2</span><span class="o">*</span>k<span class="n">m2</span><span class="p">)</span>
+  k<span class="n">b0</span> <span class="o">=</span> <span class="mf">1.5</span><span class="o">*</span><span class="p">(</span>k<span class="n">alpha</span><span class="o">*</span>k<span class="n">alpha</span><span class="o">+</span>k<span class="n">beta</span><span class="o">*</span>k<span class="n">beta</span><span class="p">)</span><span class="o">/</span>k<span class="n">den</span>
+  k<span class="n">b1</span> <span class="o">=</span> k<span class="n">b0</span>
+  k<span class="n">b2</span> <span class="o">=</span> <span class="mi">0</span>
+  k<span class="n">a0</span> <span class="o">=</span> <span class="mi">1</span>
+  k<span class="n">a1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span>k<span class="n">rez</span><span class="o">*</span><span class="nb">cos</span><span class="p">(</span>k<span class="n">fcon</span><span class="p">)</span>
+  k<span class="n">a2</span> <span class="o">=</span> k<span class="n">rez</span><span class="o">*</span>k<span class="n">rez</span>
+  
+  <span class="c1">; Generate an input signal.</span>
+  a<span class="n">xn</span> <span class="nb">vco</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span>
+
+  <span class="c1">; Filter the input signal.</span>
+  a<span class="n">yn</span> <span class="nb">biquad</span> a<span class="n">xn</span><span class="p">,</span> k<span class="n">b0</span><span class="p">,</span> k<span class="n">b1</span><span class="p">,</span> k<span class="n">b2</span><span class="p">,</span> k<span class="n">a0</span><span class="p">,</span> k<span class="n">a1</span><span class="p">,</span> k<span class="n">a2</span>
+  <span class="nb">outs</span> a<span class="n">yn</span><span class="o">*</span>i<span class="n">amp</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> a<span class="n">yn</span><span class="o">*</span>i<span class="n">amp</span><span class="o">/</span><span class="mi">2</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">;    Sta  Dur  Amp    Pitch Fco   Rez</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mf">0.0</span>  <span class="mf">1.0</span>  <span class="mi">20000</span>  <span class="mf">6.00</span>  <span class="mi">1000</span>  <span class="mf">.8</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mf">1.0</span>  <span class="mf">1.0</span>  <span class="mi">20000</span>  <span class="mf">6.03</span>  <span class="mi">2000</span>  <span class="mf">.95</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is another example of the biquad opcode used for modal synthesis. It uses the file <a class="ulink" href="examples/biquad-2.csd" target="_top"><em class="citetitle">biquad-2.csd</em></a>. See the <a class="link" href="MiscModalFreq.html" title="Appendix E. Modal Frequency Ratios"><em class="citetitle">Modal Frequency Ratios</em></a> appendix for other frequency ratios.
+
+      </p>
+        <div class="example">
+          <a id="idm276123211904"></a>
+          <p class="title">
+            <strong>Example 97. Example of the biquad opcode for modal synthesis.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276498764416"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o biquad-2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="cm">/*  modal synthesis using biquad filters as oscillators
+    Example by Scott Lindroth 2007 */</span>
+
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+    i<span class="n">pi</span> <span class="o">=</span> <span class="mf">3.1415926</span>
+    i<span class="n">denom</span> <span class="o">=</span> <span class="vg">sr</span><span class="o">*</span><span class="mf">0.5</span>
+
+    i<span class="n">pulseSpd</span> <span class="o">=</span> <span class="nb">p4</span>
+    i<span class="n">cps</span>     <span class="o">=</span> <span class="nb">p5</span>
+    i<span class="n">pan</span> <span class="o">=</span> <span class="nb">p6</span>
+    i<span class="n">amp</span>    <span class="o">=</span> <span class="nb">p7</span>
+    i<span class="n">Modes</span> <span class="o">=</span> <span class="nb">p8</span>
+
+    a<span class="n">pulse</span>    <span class="nb">mpulse</span> i<span class="n">amp</span><span class="p">,</span> <span class="mi">0</span>
+
+    i<span class="n">cps</span>    <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span> i<span class="n">cps</span> <span class="p">)</span>
+
+    <span class="c1">; filter gain</span>
+
+    i<span class="n">amp1</span> <span class="o">=</span> <span class="mi">600</span>
+    i<span class="n">amp2</span> <span class="o">=</span> <span class="mi">1000</span>
+    i<span class="n">amp3</span> <span class="o">=</span> <span class="mi">1000</span>
+    i<span class="n">amp4</span> <span class="o">=</span> <span class="mi">1000</span>
+    i<span class="n">amp5</span> <span class="o">=</span> <span class="mi">1000</span>
+    i<span class="n">amp6</span> <span class="o">=</span> <span class="mi">1000</span>
+
+    <span class="c1">; resonance</span>
+
+    i<span class="n">rpole1</span> <span class="o">=</span> <span class="mf">0.99999</span>
+    i<span class="n">rpole2</span> <span class="o">=</span> i<span class="n">rpole1</span>
+    i<span class="n">rpole3</span> <span class="o">=</span> i<span class="n">rpole1</span>
+    i<span class="n">rpole4</span> <span class="o">=</span> i<span class="n">rpole1</span>
+    i<span class="n">rpole5</span> <span class="o">=</span> i<span class="n">rpole1</span>
+    i<span class="n">rpole6</span> <span class="o">=</span> i<span class="n">rpole1</span>
+
+    <span class="c1">; modal frequencies</span>
+
+    <span class="k">if</span> <span class="p">(</span>i<span class="n">Modes</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">goto</span> <span class="nl">modes1</span>
+    <span class="k">if</span> <span class="p">(</span>i<span class="n">Modes</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="k">goto</span> <span class="nl">modes2</span>
+    
+    <span class="nl">modes1</span><span class="p">:</span>
+    i<span class="n">f1</span>    <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mi">1</span>            <span class="c1">;pot lid</span>
+    i<span class="n">f2</span>    <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mf">6.27</span>
+    i<span class="n">f3</span>    <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mf">3.2</span>
+    i<span class="n">f4</span>    <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mf">9.92</span>
+    i<span class="n">f5</span>    <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mf">14.15</span>
+    i<span class="n">f6</span>    <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mf">6.23</span>
+    <span class="k">goto</span> <span class="nl">nextPart</span>
+
+    <span class="nl">modes2</span><span class="p">:</span>
+    i<span class="n">f1</span>     <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mi">1</span>            <span class="c1">;uniform wood bar</span>
+    i<span class="n">f2</span>     <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mf">2.572</span>
+    i<span class="n">f3</span>     <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mf">4.644</span>
+    i<span class="n">f4</span>     <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mf">6.984</span>
+    i<span class="n">f5</span>     <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mf">9.723</span>
+    i<span class="n">f6</span>     <span class="o">=</span> i<span class="n">cps</span> <span class="o">*</span> <span class="mf">12.0</span>
+    <span class="k">goto</span> <span class="nl">nextPart</span>
+
+    <span class="nl">nextPart</span><span class="p">:</span>
+
+    <span class="c1">; convert frequency to radian frequency</span>
+
+    i<span class="n">theta1</span> <span class="o">=</span> <span class="p">(</span>i<span class="n">f1</span><span class="o">/</span>i<span class="n">denom</span><span class="p">)</span> <span class="o">*</span> i<span class="n">pi</span>
+    i<span class="n">theta2</span> <span class="o">=</span> <span class="p">(</span>i<span class="n">f2</span><span class="o">/</span>i<span class="n">denom</span><span class="p">)</span> <span class="o">*</span> i<span class="n">pi</span>
+    i<span class="n">theta3</span> <span class="o">=</span> <span class="p">(</span>i<span class="n">f3</span><span class="o">/</span>i<span class="n">denom</span><span class="p">)</span> <span class="o">*</span> i<span class="n">pi</span>
+    i<span class="n">theta4</span> <span class="o">=</span> <span class="p">(</span>i<span class="n">f4</span><span class="o">/</span>i<span class="n">denom</span><span class="p">)</span> <span class="o">*</span> i<span class="n">pi</span>
+    i<span class="n">theta5</span> <span class="o">=</span> <span class="p">(</span>i<span class="n">f5</span><span class="o">/</span>i<span class="n">denom</span><span class="p">)</span> <span class="o">*</span> i<span class="n">pi</span>
+    i<span class="n">theta6</span> <span class="o">=</span> <span class="p">(</span>i<span class="n">f6</span><span class="o">/</span>i<span class="n">denom</span><span class="p">)</span> <span class="o">*</span> i<span class="n">pi</span>
+
+    <span class="c1">; calculate coefficients</span>
+
+    i<span class="n">b11</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> i<span class="n">rpole1</span> <span class="o">*</span> <span class="nb">cos</span><span class="p">(</span>i<span class="n">theta1</span><span class="p">)</span>
+    i<span class="n">b21</span> <span class="o">=</span> i<span class="n">rpole1</span> <span class="o">*</span> i<span class="n">rpole1</span>
+    i<span class="n">b12</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> i<span class="n">rpole2</span> <span class="o">*</span> <span class="nb">cos</span><span class="p">(</span>i<span class="n">theta2</span><span class="p">)</span>
+    i<span class="n">b22</span> <span class="o">=</span> i<span class="n">rpole2</span> <span class="o">*</span> i<span class="n">rpole2</span>
+    i<span class="n">b13</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> i<span class="n">rpole3</span> <span class="o">*</span> <span class="nb">cos</span><span class="p">(</span>i<span class="n">theta3</span><span class="p">)</span>
+    i<span class="n">b23</span> <span class="o">=</span> i<span class="n">rpole3</span> <span class="o">*</span> i<span class="n">rpole3</span>
+    i<span class="n">b14</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> i<span class="n">rpole4</span> <span class="o">*</span> <span class="nb">cos</span><span class="p">(</span>i<span class="n">theta4</span><span class="p">)</span>
+    i<span class="n">b24</span> <span class="o">=</span> i<span class="n">rpole4</span> <span class="o">*</span> i<span class="n">rpole4</span>
+    i<span class="n">b15</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> i<span class="n">rpole5</span> <span class="o">*</span> <span class="nb">cos</span><span class="p">(</span>i<span class="n">theta5</span><span class="p">)</span>
+    i<span class="n">b25</span> <span class="o">=</span> i<span class="n">rpole5</span> <span class="o">*</span> i<span class="n">rpole5</span>
+    i<span class="n">b16</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> i<span class="n">rpole6</span> <span class="o">*</span> <span class="nb">cos</span><span class="p">(</span>i<span class="n">theta6</span><span class="p">)</span>
+    i<span class="n">b26</span> <span class="o">=</span> i<span class="n">rpole6</span> <span class="o">*</span> i<span class="n">rpole6</span>
+
+    <span class="c1">;printk 1, ib 11</span>
+    <span class="c1">;printk 1, ib 21</span>
+
+    <span class="c1">;  also try setting the -1 coeff. to 0, but be sure to scale down the amplitude!</span>
+
+    a<span class="n">sin1</span>     <span class="nb">biquad</span>  a<span class="n">pulse</span> <span class="o">*</span> i<span class="n">amp1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">b11</span><span class="p">,</span> i<span class="n">b21</span>
+         a<span class="n">sin2</span>       <span class="nb">biquad</span>  a<span class="n">pulse</span> <span class="o">*</span> i<span class="n">amp2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">b12</span><span class="p">,</span> i<span class="n">b22</span>
+         a<span class="n">sin3</span>       <span class="nb">biquad</span>  a<span class="n">pulse</span> <span class="o">*</span> i<span class="n">amp3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">b13</span><span class="p">,</span> i<span class="n">b23</span>
+         a<span class="n">sin4</span>       <span class="nb">biquad</span>  a<span class="n">pulse</span> <span class="o">*</span> i<span class="n">amp4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">b14</span><span class="p">,</span> i<span class="n">b24</span>
+         a<span class="n">sin5</span>       <span class="nb">biquad</span>  a<span class="n">pulse</span> <span class="o">*</span> i<span class="n">amp5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">b15</span><span class="p">,</span> i<span class="n">b25</span>
+         a<span class="n">sin6</span>       <span class="nb">biquad</span>  a<span class="n">pulse</span> <span class="o">*</span> i<span class="n">amp6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">b16</span><span class="p">,</span> i<span class="n">b26</span>
+
+
+    a<span class="n">fin</span>    <span class="o">=</span>    <span class="p">(</span>a<span class="n">sin1</span> <span class="o">+</span> a<span class="n">sin2</span> <span class="o">+</span> a<span class="n">sin3</span> <span class="o">+</span> a<span class="n">sin4</span> <span class="o">+</span> a<span class="n">sin5</span> <span class="o">+</span> a<span class="n">sin6</span><span class="p">)</span>
+
+    <span class="nb">outs</span>        a<span class="n">fin</span> <span class="o">*</span> <span class="nb">sqrt</span><span class="p">(</span><span class="nb">p6</span><span class="p">),</span> a<span class="n">fin</span><span class="o">*</span><span class="nb">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="nb">p6</span><span class="p">)</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;ins     st    dur  pulseSpd   pch    pan    amp     Modes</span>
+<span class="nb">i</span><span class="mi">1</span>        <span class="mi">0</span>    <span class="mi">12</span>    <span class="mi">0</span>       <span class="mf">7.089</span>    <span class="mi">0</span>      <span class="mf">0.7</span>    <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span>        <span class="o">.</span>    <span class="o">.</span>    <span class="o">.</span>        <span class="mf">7.09</span>     <span class="mi">1</span>      <span class="o">.</span>      <span class="o">.</span>
+<span class="nb">i</span><span class="mi">1</span>        <span class="o">.</span>    <span class="o">.</span>    <span class="o">.</span>        <span class="mf">7.091</span>    <span class="mf">0.5</span>    <span class="o">.</span>      <span class="o">.</span>
+
+<span class="nb">i</span><span class="mi">1</span>        <span class="mi">0</span>    <span class="mi">12</span>    <span class="mi">0</span>       <span class="mf">8.039</span>    <span class="mi">0</span>      <span class="mf">0.7</span>    <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span>        <span class="mi">0</span>    <span class="mi">12</span>    <span class="mi">0</span>       <span class="mf">8.04</span>     <span class="mi">1</span>      <span class="mf">0.7</span>    <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span>        <span class="mi">0</span>    <span class="mi">12</span>    <span class="mi">0</span>       <span class="mf">8.041</span>    <span class="mf">0.5</span>    <span class="mf">0.7</span>    <span class="mi">2</span>
+
+<span class="nb">i</span><span class="mi">1</span>        <span class="mi">9</span>    <span class="o">.</span>    <span class="o">.</span>        <span class="mf">7.089</span>    <span class="mi">0</span>      <span class="o">.</span>      <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span>        <span class="o">.</span>    <span class="o">.</span>    <span class="o">.</span>        <span class="mf">7.09</span>     <span class="mi">1</span>      <span class="o">.</span>      <span class="o">.</span>
+<span class="nb">i</span><span class="mi">1</span>        <span class="o">.</span>    <span class="o">.</span>    <span class="o">.</span>        <span class="mf">7.091</span>    <span class="mf">0.5</span>    <span class="o">.</span>      <span class="o">.</span>
+
+<span class="nb">i</span><span class="mi">1</span>        <span class="mi">9</span>    <span class="mi">12</span>    <span class="mi">0</span>       <span class="mf">8.019</span>    <span class="mi">0</span>      <span class="mf">0.7</span>    <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span>        <span class="mi">9</span>    <span class="mi">12</span>    <span class="mi">0</span>       <span class="mf">8.02</span>     <span class="mi">1</span>      <span class="mf">0.7</span>    <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span>        <span class="mi">9</span>    <span class="mi">12</span>    <span class="mi">0</span>       <span class="mf">8.021</span>    <span class="mf">0.5</span>    <span class="mf">0.7</span>    <span class="mi">2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123210208"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="biquada.html" title="biquada"><em class="citetitle">biquada</em></a>,
+      <a class="link" href="moogvcf.html" title="moogvcf"><em class="citetitle">moogvcf</em></a>,
+      <a class="link" href="rezzy.html" title="rezzy"><em class="citetitle">rezzy</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123206368"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Hans Mikelson</td>
+          </tr>
+          <tr>
+            <td>October 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.49</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="binit.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="biquada.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">binit </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> biquada</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

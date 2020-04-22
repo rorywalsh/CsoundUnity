@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tab2pvs</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tab2array.html" title="tab2array" />
+    <link rel="next" href="tambourine.html" title="tambourine" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tab2pvs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tab2array.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tambourine.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tab2pvs"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTab2pvs" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tab2pvs</span>
+        </h2>
+        <p>tab2pvs — 
+     Copies spectral data from k-rate arrays (or t-variables.). Also known as pvsfromarray.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046808960"></a>
+        <h2>Description</h2>
+        <p>
+       Copies a pvs frame from a t-variable or k-rate array. Currently only AMP+FREQ is produced. This opcode requires the t-type to be defined, which means it only works in the new bison/flex-based parser.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046807568"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>tab2pvs</strong></span> tvar|karr[][,ihopsize, iwinsize, iwintype]</pre>
+        <pre class="synopsis">fsig <span class="command"><strong>tab2pvs</strong></span> kmags[], kfreqs[][,ihopsize, iwinsize, iwintype]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046804112"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>tvar</em></span> -- k-rate array (or t-variable) containing the input. It is produced at every k-period, but may not contain a new frame, pvs frames are produced at their own frame rate that is independent of kr. The size of this vector will determine the fftsize, N = size - 2.
+    </p>
+        <p>
+      <span class="emphasis"><em>kmags[], kfreqs[]</em></span> -- k-rate arrays containing the input magnitude and frequency values. The output is produced at every k-period, but may not contain a new frame, pvs frames are produced at their own frame rate that is independent of kr. These vectors must be the same size and they will determine the fftsize, N = size - 2.
+    </p>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output fsig to be copied.
+    </p>
+        <p>
+      <span class="emphasis"><em>iolap</em></span> -- size of the analysis overlap, defaults to <span class="emphasis"><em>isize</em></span>/4.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwinsize</em></span> -- size of the analysis window, defaults to <span class="emphasis"><em>isize</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwintype</em></span> -- type of analysis window, defaults to 1, Hanning.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046796944"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276046796032"></a>
+          <p class="title">
+            <strong>Example 1017. Example</strong>
+          </p>
+          <div class="example-contents"><pre class="programlisting">
+karr[] init 1026
+...
+fsig1  <span class="opc">tab2pvs</span> karr</pre>
+aout pvsynth fsig1
+      </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046793664"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>October 2011 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>October 2011.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tab2array.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tambourine.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tab2array </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tambourine</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

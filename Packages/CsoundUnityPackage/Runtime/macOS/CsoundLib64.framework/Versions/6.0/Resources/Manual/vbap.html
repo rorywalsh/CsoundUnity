@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vbap</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vaset.html" title="vaset" />
+    <link rel="next" href="vbapmove.html" title="vbapmove" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vbap</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vaset.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vbapmove.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vbap"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVbap" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vbap</span>
+        </h2>
+        <p>vbap — 
+      Distributes an audio signal among many channels.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050427040"></a>
+        <h2>Description</h2>
+        <p>
+      Distributes an audio signal amongmany channels, up to 64 in the
+      first form, arbitrary in the second.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050425744"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar1[, ar2...] <span class="command"><strong>vbap</strong></span> asig, kazim [,
+    kelev] [, kspread] [, ilayout]</pre>
+        <pre class="synopsis">array[] <span class="command"><strong>vbap</strong></span> asig, kazim [,
+    kelev] [, kspread] [, ilayout]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050422272"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ilayout</em></span> -- index of the speaker layout in
+      the range 0-99, corresponding to a call to
+      <span class="emphasis"><em>vbaplsinit</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050420192"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- audio signal to be panned
+    </p>
+        <p>
+      <span class="emphasis"><em>kazim</em></span> -- azimuth angle of the virtual source
+    </p>
+        <p>
+      <span class="emphasis"><em>kelev</em></span> (optional) -- elevation angle of the virtual source
+    </p>
+        <p>
+      <span class="emphasis"><em>kspread</em></span> (optional) -- spreading of the
+      virtual source (range 0 - 100).  If value is zero, conventional
+      amplitude panning is used. When <span class="emphasis"><em>kspread</em></span> is
+      increased, the number of loudspeakers used in panning
+      increases. If value is 100, the sound is applied to all
+      loudspeakers. 
+    </p>
+        <p>
+      <span class="emphasis"><em>vbap</em></span> takes an input signal,
+      <span class="emphasis"><em>asig</em></span> and distributes it among the outputs,
+      according to the controls <span class="emphasis"><em>kazim</em></span> and
+      <span class="emphasis"><em>kelev</em></span>, and the configured loudspeaker
+      placement.  If <span class="emphasis"><em>idim</em></span> = 2,
+      <span class="emphasis"><em>kelev</em></span> is set to zero. The distribution is
+      performed using Vector Base Amplitude Panning (VBAP - See
+      reference).  VBAP distributes the signal using loudspeaker data
+      configured with <span class="emphasis"><em>vbaplsinit</em></span>. The signal is
+      applied to, at most, two loudspeakers in 2-D loudspeaker
+      configurations, and three loudspeakers in 3-D loudspeaker
+      configurations. If the virtual source is panned outside the
+      region spanned by loudspeakers, the nearest loudspeakers are
+      used in panning.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>Please note that all <span class="emphasis"><em>vbap</em></span> panning opcodes require the <span class="emphasis"><em>vbap</em></span> system to be initialized using <a class="link" href="vbaplsinit.html" title="vbaplsinit"><em class="citetitle">vbaplsinit</em></a>.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050408960"></a>
+        <h2>Examples</h2>
+        <p>
+      See the entry for <a class="link" href="vbap8.html" title="vbap8"><em class="citetitle">vbap8</em></a> for an example of usage of the <span class="emphasis"><em>vbap</em></span> opcodes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050406432"></a>
+        <h2>Reference</h2>
+        <p>
+      Ville Pulkki: <span class="quote">“<span class="quote">Virtual Sound Source Positioning Using Vector Base Amplitude Panning</span>”</span> <span class="emphasis"><em>Journal of the Audio Engineering Society</em></span>, 1997 June, Vol. 45/6, p. 456.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050404288"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vbap opcode. It uses the file <a class="ulink" href="examples/vbap.csd" target="_top"><em class="citetitle">vbap.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276050402512"></a>
+          <p class="title">
+            <strong>Example 1075. Example of the vbap opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276409769600"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o vbap.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">4</span>	<span class="c1">;quad</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">vbaplsinit</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">270</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">sig</span> <span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>			<span class="c1">;loop beats.wav</span>
+k<span class="n">az</span>  <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p4</span>					<span class="c1">;come from right rear speaker &amp;	</span>
+a<span class="n">1</span><span class="p">,</span>a<span class="n">2</span><span class="p">,</span>a<span class="n">3</span><span class="p">,</span>a<span class="n">4</span> <span class="nb">vbap</span>  a<span class="n">sig</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> k<span class="n">az</span>			<span class="c1">;change spread of soundsource</span>
+     <span class="nb">printks</span> <span class="s">"spread of source = </span><span class="si">%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">az</span>		<span class="c1">;print spread value</span>
+     <span class="nb">outq</span> a<span class="n">1</span><span class="p">,</span>a<span class="n">2</span><span class="p">,</span>a<span class="n">3</span><span class="p">,</span>a<span class="n">4</span>
+
+<span class="kd">endin</span> 
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">12</span> <span class="mi">100</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+        Its output should include lines like these:
+      </p>
+        <pre class="screen">
+spread of source = 0
+spread of source = 8
+spread of source = 17
+spread of source = 25
+spread of source = 33
+spread of source = 42
+spread of source = 50
+spread of source = 58
+spread of source = 67
+spread of source = 75
+spread of source = 83
+spread of source = 92
+spread of source = 100
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050397536"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vbapmove.html" title="vbapmove"><em class="citetitle">vbapmove</em></a>,
+      <a class="link" href="vbap16.html" title="vbap16"><em class="citetitle">vbap16</em></a>,
+      <a class="link" href="vbap16move.html" title="vbap16move"><em class="citetitle">vbap16move</em></a>,
+      <a class="link" href="vbap4.html" title="vbap4"><em class="citetitle">vbap4</em></a>,
+      <a class="link" href="vbap4move.html" title="vbap4move"><em class="citetitle">vbap4move</em></a>,
+      <a class="link" href="vbap8.html" title="vbap8"><em class="citetitle">vbap8</em></a>,
+      <a class="link" href="vbap8move.html" title="vbap8move"><em class="citetitle">vbap8move</em></a>,
+      <a class="link" href="vbaplsinit.html" title="vbaplsinit"><em class="citetitle">vbaplsinit</em></a>,
+      <a class="link" href="vbapz.html" title="vbapz"><em class="citetitle">vbapz</em></a>,
+      <a class="link" href="vbapzmove.html" title="vbapzmove"><em class="citetitle">vbapzmove</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050387488"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Ville Pulkki</td>
+          </tr>
+          <tr>
+            <td>Sibelius Academy Computer Music Studio</td>
+          </tr>
+          <tr>
+            <td>Laboratory of Acoustics and Audio Signal Processing</td>
+          </tr>
+          <tr>
+            <td>Helsinki University of Technology</td>
+          </tr>
+          <tr>
+            <td>Helsinki, Finland</td>
+          </tr>
+          <tr>
+            <td>May 2000</td>
+          </tr>
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>July 2012, Sept 2013</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound Version 5.17.13. </p>
+        <p>Array version new in Csound Version 6.01. </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vaset.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vbapmove.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vaset </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vbapmove</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

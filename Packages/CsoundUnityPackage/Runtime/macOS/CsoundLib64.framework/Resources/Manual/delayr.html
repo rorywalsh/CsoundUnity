@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>delayr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="delayk.html" title="delayk" />
+    <link rel="next" href="delayw.html" title="delayw" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">delayr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="delayk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="delayw.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="delayr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDelayr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">delayr</span>
+        </h2>
+        <p>delayr — 
+      Reads from an automatically established digital delay line.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117141216"></a>
+        <h2>Description</h2>
+        <p>
+      Reads from an automatically established digital delay line.
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117139968"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>delayr</strong></span> idlt [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117137888"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idlt</em></span> -- requested delay time in seconds. This can be as large as available memory will permit. The space required for n seconds of delay is 4n * <span class="emphasis"><em>sr</em></span> bytes. It is allocated at the time the instrument is first initialized, and returned to the pool at the end of a score section.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of delay-loop data space (see <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>). The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117133888"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>delayr</em></span> reads from an automatically established digital delay line, in which the signal retrieved has been resident for <span class="emphasis"><em>idlt</em></span> seconds. This unit must be paired with and precede an accompanying <a class="link" href="delayw.html" title="delayw"><em class="citetitle">delayw</em></a> unit. Any other Csound statements can intervene.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117130784"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the delayr opcode. It uses the file <a class="ulink" href="examples/delayr.csd" target="_top"><em class="citetitle">delayr.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276117128992"></a>
+          <p class="title">
+            <strong>Example 200. Example of the delayr opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276484101376"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o delayr.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>   
+
+ga<span class="n">sig</span>  <span class="nb">init</span> <span class="mi">0</span>   
+gi<span class="n">del</span>  <span class="o">=</span> <span class="mi">1</span>		<span class="c1">;delay time in seconds</span>
+                                                             
+<span class="kd">instr</span> <span class="nf">1</span>
+	
+a<span class="n">in</span>  <span class="nb">pluck</span> <span class="mf">.7</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">in</span><span class="p">,</span> a<span class="n">in</span>
+
+<span class="nb">vincr</span> ga<span class="n">sig</span><span class="p">,</span> a<span class="n">in</span>	<span class="c1">;send to global delay</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	
+
+i<span class="n">feedback</span> <span class="o">=</span> <span class="nb">p4</span>	
+
+a<span class="n">buf2</span>	<span class="nb">delayr</span>	gi<span class="n">del</span>
+a<span class="n">delL</span> 	<span class="nb">deltap</span>	<span class="mf">.4</span>		<span class="c1">;first tap (on left channel)</span>
+a<span class="n">delM</span> 	<span class="nb">deltap</span>	<span class="mi">1</span>		<span class="c1">;second tap (on middle channel)</span>
+	<span class="nb">delayw</span>	ga<span class="n">sig</span> <span class="o">+</span> <span class="p">(</span>a<span class="n">delL</span> <span class="o">*</span> i<span class="n">feedback</span><span class="p">)</span>
+
+a<span class="n">buf3</span>	<span class="nb">delayr</span>	gi<span class="n">del</span>
+k<span class="n">del</span>	<span class="nb">line</span>    <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.01</span>	<span class="c1">;vary delay time</span>
+a<span class="n">delR</span> 	<span class="nb">deltap</span>  <span class="mf">.65</span> <span class="o">*</span> k<span class="n">del</span>	<span class="c1">;one pitch changing tap (on the right chn.)</span>
+	<span class="nb">delayw</span>	ga<span class="n">sig</span> <span class="o">+</span> <span class="p">(</span>a<span class="n">delR</span> <span class="o">*</span> i<span class="n">feedback</span><span class="p">)</span>
+<span class="c1">;make a mix of all deayed signals	</span>
+	<span class="nb">outs</span>	a<span class="n">delL</span> <span class="o">+</span> a<span class="n">delM</span><span class="p">,</span> a<span class="n">delR</span> <span class="o">+</span> a<span class="n">delM</span>
+
+<span class="nb">clear</span>	ga<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">3</span>  <span class="mi">0</span>	<span class="c1">;no feedback</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">8</span> <span class="mf">.8</span>	<span class="c1">;lots of feedback</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117124976"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="delay.html" title="delay"><em class="citetitle">delay</em></a>,
+      <a class="link" href="delay1.html" title="delay1"><em class="citetitle">delay1</em></a>,
+      <a class="link" href="delayw.html" title="delayw"><em class="citetitle">delayw</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="delayk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="delayw.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">delayk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> delayw</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

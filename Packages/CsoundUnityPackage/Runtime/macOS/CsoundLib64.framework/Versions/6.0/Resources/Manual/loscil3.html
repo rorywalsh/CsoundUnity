@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>loscil3</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="loscil.html" title="loscil" />
+    <link rel="next" href="loscilx.html" title="loscilx" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">loscil3</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="loscil.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="loscilx.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="loscil3"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLoscil3" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">loscil3</span>
+        </h2>
+        <p>loscil3 — 
+      Read sampled sound from a table using cubic interpolation. A version that outputs the exact
+      table position (phase) corresponding to the output sample is
+      provided as an alternative opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106926544"></a>
+        <h2>Description</h2>
+        <p>
+      Read sampled sound (mono or stereo) from a table, with optional sustain and release looping, using cubic interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106925232"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar1 [,ar2] <span class="command"><strong>loscil3</strong></span> xamp, kcps, ifn [, ibas] [, imod1] [, ibeg1] [, iend1] \
+    [, imod2] [, ibeg2] [, iend2]</pre>
+        <pre class="synopsis">aph, ar1 [,ar2] <span class="command"><strong>loscil3phs</strong></span> xamp, kcps, ifn [, ibas] [, imod1] [, ibeg1] [, iend1] \
+      [, imod2] [, ibeg2] [, iend2]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106921680"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- function table number, typically denoting an sampled sound segment with prescribed looping points loaded using <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>. The source file may be mono or stereo.
+    </p>
+        <p>
+      <span class="emphasis"><em>ibas</em></span> (optional) -- base frequency in <span class="emphasis"><em>Hz</em></span> of the recorded sound. This optionally overrides the frequency given in the audio file, but is required if the file did not contain one. The default value is 261.626 Hz, i.e. middle C. (New in Csound 4.03). If this value is not known or not present, use 1 here and in <span class="emphasis"><em>kcps</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>imod1, imod2</em></span> (optional, default=-1) -- play modes for the sustain and release loops. A value of 1 denotes normal looping, 2 denotes forward &amp; backward looping, 0 denotes no looping. The default value (-1) will defer to the mode and the looping points given in the source file. Make sure you select an appropriate mode if the file does not contain this information.
+    </p>
+        <p>
+      <span class="emphasis"><em>ibeg1, iend1, ibeg2, iend2</em></span> (optional, dependent on <span class="emphasis"><em>mod1, mod2</em></span>) -- begin and end points of the sustain and release loops. These are measured in <span class="emphasis"><em>sample frames</em></span> from the beginning of the file, so will look the same whether the sound segment is monaural or stereo.  If no loop points are specified, and a looping mode (<span class="emphasis"><em>imod1</em></span>, <span class="emphasis"><em>imod2</em></span>) is given, the file will be looped for the whole length.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106912672"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>aph</em></span> -- the normalised table position
+      corresponding to the output sample (loscil3phs only).
+</p>
+        <p>
+      <span class="emphasis"><em>ar1, ar2</em></span> -- the output at audio-rate. There is just <span class="emphasis"><em>ar1</em></span> for mono output. However, there is both <span class="emphasis"><em>ar1</em></span> and <span class="emphasis"><em>ar2</em></span> for stereo output.
+    </p>
+        <p>
+      <span class="emphasis"><em>xamp</em></span> -- the amplitude of the output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> -- the frequency of the output signal in cycles per second.
+    </p>
+        <p>
+      <span class="emphasis"><em>loscil3</em></span> is identical to <a class="link" href="loscil.html" title="loscil"><em class="citetitle">loscil</em></a> except that it uses cubic interpolation. New in Csound version 3.50.
+    </p>
+        <div class="caution" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Caution: Note to Windows users">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Caution]" src="images/caution.png" />
+              </td>
+              <th align="left">Note to Windows users</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Windows users typically use back-slashes, <span class="quote">“<span class="quote">\</span>”</span>, when specifying the paths of their files. As an example, a Windows user might use the path <span class="quote">“<span class="quote">c:\music\samples\loop001.wav</span>”</span>. This is problematic because back-slashes are normally used to specify special characters.
+      </p>
+                <p>
+        To correctly specify this path in Csound, one may alternately:
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p><span class="emphasis"><em>Use forward slashes</em></span>: c:/music/samples/loop001.wav</p>
+                    </li>
+                    <li class="listitem">
+                      <p><span class="emphasis"><em>Use back-slash special characters, <span class="quote">“<span class="quote">\\</span>”</span></em></span>: c:\\music\\samples\\loop001.wav</p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        This is mono loscil3:
+
+        </p>
+                <div class="informalexample">
+                  <pre class="programlisting">
+a1 <span class="opc">loscil3</span> 10000, 1, 1, 1, 1</pre>
+                </div>
+                <p>
+ 
+        ...and this is stereo loscil3:
+ 
+        </p>
+                <div class="informalexample">
+                  <pre class="programlisting">
+a1, a2 <span class="opc">loscil3</span> 10000, 1, 1, 1, 1</pre>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106895776"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the loscil3 opcode. It uses the file <a class="ulink" href="examples/loscil3.csd" target="_top"><em class="citetitle">loscil3.csd</em></a>, <a class="ulink" href="examples/mary.wav" target="_top"><em class="citetitle">mary.wav</em></a> and <a class="ulink" href="examples/kickroll.wav" target="_top"><em class="citetitle">kickroll.wav</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276106892400"></a>
+          <p class="title">
+            <strong>Example 508. Example of the loscil3 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276455509936"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o loscil3.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">chnls</span> <span class="o">=</span> <span class="nb">ftchnls</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+<span class="nb">print</span> i<span class="n">chnls</span>
+
+<span class="k">if</span> <span class="p">(</span>i<span class="n">chnls</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">then</span>
+   a<span class="n">sigL</span> <span class="nb">loscil3</span> <span class="mf">.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">1</span>
+   a<span class="n">sigR</span> <span class="o">=</span> 	a<span class="n">sigL</span>
+<span class="k">elseif</span> <span class="p">(</span>i<span class="n">chnls</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="k">then</span>
+   a<span class="n">sigL</span><span class="p">,</span> a<span class="n">sigR</span> <span class="nb">loscil3</span> <span class="mf">.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">1</span>
+<span class="c1">;safety precaution if not mono or stereo</span>
+<span class="k">else</span>
+   a<span class="n">sigL</span> <span class="o">=</span> <span class="mi">0</span>
+   a<span class="n">sigR</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">endif</span>
+        <span class="nb">outs</span> a<span class="n">sigL</span><span class="p">,</span> a<span class="n">sigR</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="s">"mary.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="s">"kickroll.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">1</span> <span class="c1">;mono file</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mi">2</span> <span class="c1">;stereo file</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106888416"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="loscil.html" title="loscil"><em class="citetitle">loscil</em></a> and <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106885504"></a>
+        <h2>Credits</h2>
+        <p>Note about the mono/stereo difference was contributed by Rasmus Ekman.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="loscil.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="loscilx.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">loscil </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> loscilx</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

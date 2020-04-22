@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ntof</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ntom.html" title="ntom" />
+    <link rel="next" href="nstrnum.html" title="nstrnum" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ntof</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ntom.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="nstrnum.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ntof"></a>
+      <div class="titlepage"></div>
+      <a id="IndexNtof" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ntof</span>
+        </h2>
+        <p>ntof — 
+      Convert note name to frequency
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077356608"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in emugens.</p>
+        <p>
+      Convert note name to frequency (Hz). It allows note name to
+      include microtones or a deviation in cents.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077354896"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kfreq <span class="command"><strong>ntof</strong></span> Snote</pre>
+        <pre class="synopsis">ifreq <span class="command"><strong>ntof</strong></span> Snote</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077351088"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>Snote</em></span> -- Note name
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- Frequency
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The frequency returned depends on the value of the global variable A4
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        4C is the central C in the piano.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077346736"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the ntof opcode. It uses the file <a class="ulink" href="examples/ntof.csd" target="_top"><em class="citetitle">ntof.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276077343968"></a>
+          <p class="title">
+            <strong>Example 625. Example of the ntof opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276445535344"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+--nosound
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/*
+
+Example for ntof: notename to frequency 
+
+A notename is a string of the form
+
+&lt;octave&gt;&lt;pitchclass&gt;[cents]
+
+Example notenames are:
+
+"4A"     -&gt; A in the 4th octave
+"5C+31"  -&gt; C5, 31 cents higher
+"4Db-13" -&gt; D flat, 4th octave, 13 cents lower
+"7F#+"   -&gt; F# quarter tone higher 
+"5G-"    -&gt; G5 a quarter tone lower
+
+NB: the frequency returned by ntof depends on the value of A4
+
+*/</span>
+
+<span class="n">A4</span> <span class="o">=</span> <span class="mi">442</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    i<span class="n">freq</span> <span class="n">ntof</span> <span class="s">"4A"</span>
+    <span class="nb">print</span> i<span class="n">freq</span>
+
+    k<span class="n">octave</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="p">(</span>k<span class="n">octave</span> <span class="o">&lt;=</span> <span class="mi">8</span><span class="p">)</span> <span class="k">do</span>
+        S<span class="n">note</span> <span class="nb">sprintfk</span> <span class="s">"</span><span class="si">%d</span><span class="s">C"</span><span class="p">,</span> k<span class="n">octave</span>
+        k<span class="n">freq</span> <span class="n">ntof</span> S<span class="n">note</span>
+        <span class="nb">printf</span> <span class="s">"notename: %s  freq: %.2f </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">octave</span><span class="p">,</span> S<span class="n">note</span><span class="p">,</span> k<span class="n">freq</span>
+        k<span class="n">octave</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">od</span>
+
+    <span class="nb">turnoff</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077342224"></a>
+        <h2>See Also</h2>
+        <p>
+      
+      <a class="link" href="mtof.html" title="mtof"><em class="citetitle">mtof</em></a>,
+      <a class="link" href="ftom.html" title="ftom"><em class="citetitle">ftom</em></a>,
+      <a class="link" href="mton.html" title="mton"><em class="citetitle">mton</em></a>
+      <a class="link" href="ntom.html" title="ntom"><em class="citetitle">mton</em></a>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077336880"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2019</p>
+        <p>New in 6.13</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ntom.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="nstrnum.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ntom </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> nstrnum</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

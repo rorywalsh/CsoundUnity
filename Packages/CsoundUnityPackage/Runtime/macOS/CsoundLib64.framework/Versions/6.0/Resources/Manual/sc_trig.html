@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>sc_trig</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sc_phasor.html" title="sc_phasor" />
+    <link rel="next" href="seed.html" title="seed" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">sc_trig</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sc_phasor.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="seed.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="sc_trig"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSc_trig" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">sc_trig</span>
+        </h2>
+        <p>sc_trig — 
+      Timed trigger
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276059550256"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in scugens.</p>
+        <p>
+          Timed trigger. Port of Supercollider's Trig ugen
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276059548592"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>sc_trig</strong></span> ain, kdur</pre>
+        <pre class="synopsis">kout <span class="command"><strong>sc_trig</strong></span> kin, kdur</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276059544784"></a>
+        <h2>Initialization</h2>
+        <p>
+          <span class="emphasis"><em>initialvalue</em></span> If given, sets the internal
+          state. Default=0
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276059543136"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span> -- Trigger. Trigger can be any
+          signal. A trigger happens when the signal changes from
+          non-positive to positive. 
+    </p>
+        <p>
+      <span class="emphasis"><em>kdur</em></span> -- Duration of the trigger in seconds.
+    </p>
+        <p>
+          When a nonpositive to positive transition occurs at the input,
+          Trig outputs the level of the triggering input for the specified
+          duration, otherwise it outputs zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276059539680"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the sc_trig opcode. It uses the file <a class="ulink" href="examples/sc_trig.csd" target="_top"><em class="citetitle">sc_trig.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276059536928"></a>
+          <p class="title">
+            <strong>Example 882. Example of the sc_trig opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276425722048"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  k<span class="n">m</span> <span class="o">=</span> <span class="nb">metro</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  k<span class="n">t</span> <span class="nb">timeinsts</span>
+  k<span class="n">trig</span> <span class="o">=</span> <span class="n">sc_trig</span><span class="p">(</span>k<span class="n">m</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+  <span class="nb">printks</span> <span class="s">"t=%f  km=%f    ktrig=%f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> k<span class="n">t</span><span class="p">,</span> k<span class="n">m</span><span class="p">,</span> k<span class="n">trig</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+  a<span class="n">m</span> <span class="o">=</span> <span class="nb">upsamp</span><span class="p">(</span><span class="nb">metro</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+  a<span class="n">env</span> <span class="o">=</span> <span class="n">sc_trig</span><span class="p">(</span>a<span class="n">m</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+  a<span class="n">sig</span> <span class="nb">pinker</span>
+  <span class="nb">outch</span> <span class="mi">1</span><span class="p">,</span> a<span class="n">sig</span><span class="o">*</span>a<span class="n">env</span>
+  <span class="nb">outch</span> <span class="mi">2</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">10</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276059533008"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="sc_lag.html" title="sc_lag"><em class="citetitle">sc_lag</em></a>, 
+          <a class="link" href="metro.html" title="metro"><em class="citetitle">metro</em></a>, 
+          <a class="link" href="mpulse.html" title="mpulse"><em class="citetitle">mpulse</em></a>
+          <a class="link" href="trigger.html" title="trigger"><em class="citetitle">trigger</em></a>
+          
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276059528016"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2017</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sc_phasor.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="seed.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sc_phasor </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> seed</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

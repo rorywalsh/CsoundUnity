@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Score File Preprocessing</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="CommandTop.html" title="The Csound Command" />
+    <link rel="prev" href="CommandUnifileParFile.html" title="Command Line Parameter File (.csound6rc)" />
+    <link rel="next" href="CommandPreindie.html" title="Independent Pre-Processing with Scsort" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Score File Preprocessing</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CommandUnifileParFile.html">Prev</a> </td>
+          <th width="60%" align="center">The Csound Command</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CommandPreindie.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="CommandPreproc"></a>Score File Preprocessing</h2>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="commandpreextract"></a>The Extract Feature</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      <a id="IndexExtract" class="indexterm"></a>
+      This feature will extract a segment of a sorted numeric score file according to instructions taken from a control file. The control file contains an instrument list and two time points, from and to, in the form:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">instruments 1  2  from  1:27.5  to  2:2</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      The component labels may be abbreviated as i, f and t. The time points denote the beginning and end of the extract in terms of:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">[section no.] : [beat no.].</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      Each of the three parts of the argument is optional. The default values for missing i, f or t are:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">all instruments, beginning of score, end of score.</pre>
+        </div>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CommandUnifileParFile.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="CommandTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CommandPreindie.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Command Line Parameter File (.csound6rc) </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Independent Pre-Processing with Scsort</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

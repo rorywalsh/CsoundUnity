@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fof2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fof.html" title="fof" />
+    <link rel="next" href="fofilter.html" title="fofilter" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fof2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fof.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fofilter.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="fof2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFof2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fof2</span>
+        </h2>
+        <p>fof2 — 
+      Produces sinusoid bursts including k-rate incremental indexing with each successive burst.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103457600"></a>
+        <h2>Description</h2>
+        <p>
+      Audio output is a succession of sinusoid bursts initiated at frequency <span class="emphasis"><em>xfund</em></span> with a spectral peak at <span class="emphasis"><em>xform</em></span>. For <span class="emphasis"><em>xfund</em></span> above 25 Hz these bursts produce a speech-like formant with spectral characteristics determined by the k-input parameters. For lower fundamentals this generator provides a special form of granular synthesis.
+    </p>
+        <p>
+      <span class="emphasis"><em>fof2</em></span> implements k-rate incremental indexing into <span class="emphasis"><em>ifna</em></span> function with each successive burst.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103453600"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>fof2</strong></span> xamp, xfund, xform, koct, kband, kris, kdur, kdec, iolaps, \
+      ifna, ifnb, itotdur, kphs, kgliss [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103451424"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iolaps</em></span> -- number of preallocated spaces needed to hold overlapping burst data. Overlaps are frequency dependent, and the space required depends on the maximum value of <span class="emphasis"><em>xfund * kdur</em></span>. Can be over-estimated at no computation cost. Uses less than 50 bytes of memory per <span class="emphasis"><em>iolap</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifna, ifnb</em></span> -- table numbers of two stored functions. The first is a sine table for sineburst synthesis (size of at least 4096 recommended). The second is a rise shape, used forwards and backwards to shape the sineburst rise and decay; this may be linear (<a class="link" href="GEN07.html" title="GEN07"><em class="citetitle">GEN07</em></a>) or perhaps a sigmoid (<a class="link" href="GEN19.html" title="GEN19"><em class="citetitle">GEN19</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>itotdur</em></span> -- total time during which this <span class="emphasis"><em>fof</em></span> will be active. Normally set to p3. No new sineburst is created if it cannot complete its <span class="emphasis"><em>kdur</em></span> within the remaining <span class="emphasis"><em>itotdur</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- If non-zero, skip initialization (allows legato use).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103442912"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xamp</em></span> -- peak amplitude of each sineburst, observed at the true end of its rise pattern. The rise may exceed this value given a large bandwidth (say, Q &lt; 10) and/or when the bursts are overlapping.
+    </p>
+        <p>
+      <span class="emphasis"><em>xfund</em></span> -- the fundamental frequency (in Hertz) of the impulses that create new sinebursts.
+    </p>
+        <p>
+      <span class="emphasis"><em>xform</em></span> -- the formant frequency, i.e. freq of the sinusoid burst induced by each <span class="emphasis"><em>xfund</em></span> impulse. This frequency can be fixed for each burst or can vary continuously.
+    </p>
+        <p>
+      <span class="emphasis"><em>koct</em></span> -- octaviation index, normally zero. If greater than zero, lowers the effective <span class="emphasis"><em>xfund</em></span> frequency by attenuating odd-numbered sinebursts. Whole numbers are full octaves, fractions transitional.
+    </p>
+        <p>
+      <span class="emphasis"><em>kband</em></span> -- the formant bandwidth (at -6dB), expressed in Hz. The bandwidth determines the rate of exponential decay throughout the sineburst, before the enveloping described below is applied.
+    </p>
+        <p>
+      <span class="emphasis"><em>kris, kdur, kdec</em></span> -- rise, overall duration, and decay times (in seconds) of the sinusoid burst. These values apply an enveloped duration to each burst, in similar fashion to a Csound <span class="emphasis"><em>linen</em></span> generator but with rise and decay shapes derived from the <span class="emphasis"><em>ifnb</em></span> input. <span class="emphasis"><em>kris</em></span> inversely determines the skirtwidth (at -40 dB) of the induced formant region. <span class="emphasis"><em>kdur</em></span> affects the density of sineburst overlaps, and thus the speed of computation. Typical values for vocal imitation are .003,.02,.007.
+    </p>
+        <p>
+      <span class="emphasis"><em>kphs</em></span> -- allows k-rate indexing of function table <span class="emphasis"><em>ifna</em></span> with each successive burst, making it suitable for time-warping applications. Values of <span class="emphasis"><em>kphs</em></span> are normalized from 0 to 1, 1 being the end of the function table <span class="emphasis"><em>ifna</em></span>. 
+    </p>
+        <p>
+      <span class="emphasis"><em>kgliss</em></span> -- sets the end pitch of each grain relative to the initial pitch, in octaves. Thus <span class="emphasis"><em>kgliss</em></span> = 2 means that the grain ends two octaves above its initial pitch, while <span class="emphasis"><em>kgliss</em></span> = -3/4 has the grain ending a major sixth below. Each 1/12 added to <span class="emphasis"><em>kgliss</em></span> raises the ending frequency one half-step.  If you want no glissando, set <span class="emphasis"><em>kgliss</em></span> to 0.
+    </p>
+        <p>
+      Csound's <a class="link" href="fof.html" title="fof"><em class="citetitle">fof</em></a> generator is loosely based on Michael Clarke's C-coding of IRCAM's <span class="emphasis"><em>CHANT</em></span> program (Xavier Rodet et al.). Each <span class="emphasis"><em>fof</em></span> produces a single formant, and the output of four or more of these can be summed to produce a rich vocal imitation. <span class="emphasis"><em>fof</em></span> synthesis is a special form of granular synthesis, and this implementation aids transformation between vocal imitation and granular textures. Computation speed depends on <span class="emphasis"><em>kdur, xfund</em></span>, and the density of any overlaps.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>The ending frequency of any grain is equal to <span class="emphasis"><em>kform</em></span> * (2 ^ <span class="emphasis"><em>kgliss</em></span>), so setting <span class="emphasis"><em>kgliss</em></span> too high may result in aliasing.  For example, <span class="emphasis"><em>kform</em></span> = 3000 and <span class="emphasis"><em>kgliss</em></span> = 3 places the ending frequency over the Nyquist if <span class="emphasis"><em>sr</em></span> = 44100.  It is a good idea to scale <span class="emphasis"><em>kgliss</em></span> accordingly.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103421440"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the fof2 opcode. It uses the file <a class="ulink" href="examples/fof2.csd" target="_top"><em class="citetitle">fof2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276103419664"></a>
+          <p class="title">
+            <strong>Example 342. Example of the fof2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276471503408"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o fof2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">;By Andres Cabrera 2007</span>
+
+    <span class="kd">instr</span> <span class="nf">1</span>            <span class="c1">;table-lookup vocal synthesis</span>
+
+k<span class="n">ris</span> <span class="nb">init</span> <span class="nb">p12</span>
+k<span class="n">dur</span> <span class="nb">init</span> <span class="nb">p13</span>
+k<span class="n">dec</span> <span class="nb">init</span> <span class="nb">p14</span>
+
+i<span class="n">olaps</span> <span class="nb">init</span> <span class="nb">p15</span>
+
+i<span class="n">fna</span> <span class="nb">init</span> <span class="mi">1</span>  <span class="c1">; Sine wave</span>
+i<span class="n">fnb</span> <span class="nb">init</span> <span class="mi">2</span>  <span class="c1">; Straight line rise shape</span>
+
+i<span class="n">totdur</span> <span class="nb">init</span> <span class="nb">p3</span>
+
+k<span class="n">phs</span> <span class="nb">init</span> <span class="mi">0</span>  <span class="c1">; No phase modulation (constant kphs)</span>
+
+
+k<span class="n">fund</span> <span class="nb">line</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span>
+k<span class="n">form</span> <span class="nb">line</span> <span class="nb">p6</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p7</span>
+k<span class="n">oct</span> <span class="nb">line</span> <span class="nb">p8</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p9</span>
+k<span class="n">band</span> <span class="nb">line</span> <span class="nb">p10</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p11</span>
+k<span class="n">gliss</span> <span class="nb">line</span> <span class="nb">p16</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p17</span>
+
+k<span class="n">env</span> <span class="nb">linen</span> <span class="mi">5000</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.03</span>  <span class="c1">;to avoid clicking</span>
+
+
+a<span class="n">out</span>    <span class="nb">fof2</span>    k<span class="n">env</span><span class="p">,</span> k<span class="n">fund</span><span class="p">,</span> k<span class="n">form</span><span class="p">,</span> k<span class="n">oct</span><span class="p">,</span> k<span class="n">band</span><span class="p">,</span> k<span class="n">ris</span><span class="p">,</span> k<span class="n">dur</span><span class="p">,</span> k<span class="n">dec</span><span class="p">,</span> i<span class="n">olaps</span><span class="p">,</span> \
+      i<span class="n">fna</span><span class="p">,</span> i<span class="n">fnb</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> k<span class="n">phs</span><span class="p">,</span> k<span class="n">gliss</span>
+
+
+    <span class="nb">outs</span>    a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+    <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">7</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">1</span>
+
+<span class="c1">;              kfund1  kfund2  kform1  kform2  koct1  koct2  kband1 kband2 kris  kdur  kdec  iolaps  kgliss1 kgliss2</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="mi">0</span>    <span class="mi">4</span>    <span class="mi">220</span>     <span class="mi">220</span>      <span class="mi">510</span>     <span class="mi">510</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">30</span>   <span class="mi">30</span>   <span class="mf">0.01</span>  <span class="mf">0.03</span>  <span class="mf">0.01</span>   <span class="mi">20</span>       <span class="mi">1</span>        <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mi">220</span>     <span class="mi">220</span>      <span class="mi">510</span>     <span class="mi">910</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">30</span>   <span class="mi">30</span>   <span class="mf">0.01</span>  <span class="mf">0.03</span>  <span class="mf">0.01</span>   <span class="mi">20</span>       <span class="mi">1</span>        <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mi">220</span>     <span class="mi">220</span>      <span class="mi">510</span>     <span class="mi">510</span>       <span class="mi">0</span>      <span class="mi">0</span>     <span class="mi">100</span>   <span class="mi">30</span>   <span class="mf">0.01</span>  <span class="mf">0.03</span>  <span class="mf">0.01</span>   <span class="mi">20</span>       <span class="mi">1</span>        <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mi">220</span>     <span class="mi">220</span>      <span class="mi">510</span>     <span class="mi">510</span>       <span class="mi">0</span>      <span class="mi">1</span>      <span class="mi">30</span>   <span class="mi">30</span>   <span class="mf">0.01</span>  <span class="mf">0.03</span>  <span class="mf">0.01</span>   <span class="mi">20</span>       <span class="mi">1</span>        <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mi">220</span>     <span class="mi">220</span>      <span class="mi">510</span>     <span class="mi">510</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">30</span>   <span class="mi">30</span>   <span class="mf">0.01</span>  <span class="mf">0.03</span>  <span class="mf">0.01</span>   <span class="mi">20</span>       <span class="mi">1</span>        <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mi">220</span>     <span class="mi">220</span>      <span class="mi">510</span>     <span class="mi">510</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">30</span>   <span class="mi">30</span>   <span class="mf">0.01</span>  <span class="mf">0.03</span>  <span class="mf">0.01</span>   <span class="mi">20</span>       <span class="mf">0.5</span>      <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mi">220</span>     <span class="mi">220</span>      <span class="mi">510</span>     <span class="mi">510</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">30</span>   <span class="mi">30</span>   <span class="mf">0.01</span>  <span class="mf">0.05</span>  <span class="mf">0.01</span>   <span class="mi">100</span>      <span class="mi">1</span>        <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mi">220</span>     <span class="mi">440</span>      <span class="mi">510</span>     <span class="mi">510</span>       <span class="mi">0</span>      <span class="mi">0</span>      <span class="mi">30</span>   <span class="mi">30</span>   <span class="mf">0.01</span>  <span class="mf">0.05</span>  <span class="mf">0.01</span>   <span class="mi">100</span>      <span class="mi">1</span>        <span class="mi">1</span>
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is another example of the fof2 opcode, which generates vowel tones using formants generated by fof2 coinciding with values from the <a class="link" href="MiscFormants.html" title="Appendix D. Formant Values"><em class="citetitle">Formant Values</em></a> appendix. It uses the file <a class="ulink" href="examples/fof2-2.csd" target="_top"><em class="citetitle">fof2-2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276103413696"></a>
+          <p class="title">
+            <strong>Example 343. Example of the fof2 opcode to produce vowel sounds.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276471092656"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o fof2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; Example by Chuckk Hubbard 2007</span>
+
+    <span class="kd">instr</span> <span class="nf">1</span>            <span class="c1">;table-lookup vocal synthesis</span>
+
+i<span class="n">olaps</span>    <span class="o">=</span>    <span class="mi">120</span>
+i<span class="n">fna</span>    <span class="o">=</span>    <span class="mi">1</span>        <span class="c1">;f1 - sine wave</span>
+i<span class="n">fnb</span>    <span class="o">=</span>    <span class="mi">2</span>        <span class="c1">;f2 - linear rise shape</span>
+i<span class="n">totdur</span>    <span class="o">=</span>    <span class="nb">p3</span>
+i<span class="n">amp</span>    <span class="o">=</span>    <span class="nb">p4</span> <span class="o">*</span> <span class="vg">0dbfs</span>
+i<span class="n">freq1</span>    <span class="o">=</span>    <span class="nb">p5</span>        <span class="c1">;starting frequency</span>
+i<span class="n">freq2</span>    <span class="o">=</span>    <span class="nb">p6</span>        <span class="c1">;ending frequency</span>
+
+k<span class="n">amp</span>    <span class="nb">linseg</span>    <span class="mi">0</span><span class="p">,</span> <span class="mf">.003</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">totdur</span><span class="o">-</span><span class="mf">.007</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> <span class="mf">.003</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.001</span><span class="p">,</span> <span class="mi">0</span>
+k<span class="n">fund</span>    <span class="nb">expseg</span>    i<span class="n">freq1</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">freq2</span>
+k<span class="n">oct</span>    <span class="nb">init</span>    <span class="mi">0</span>
+k<span class="n">ris</span>    <span class="nb">init</span>    <span class="mf">.003</span>
+k<span class="n">dur</span>    <span class="nb">init</span>    <span class="mf">.02</span>
+k<span class="n">dec</span>    <span class="nb">init</span>    <span class="mf">.007</span>
+k<span class="n">phs</span>    <span class="nb">init</span>    <span class="mi">0</span>
+k<span class="n">gliss</span>    <span class="nb">init</span>    <span class="mi">0</span>
+
+i<span class="n">forma</span>    <span class="o">=</span>    <span class="nb">p7</span>        <span class="c1">;starting spectrum</span>
+i<span class="n">formb</span>    <span class="o">=</span>    <span class="nb">p8</span>        <span class="c1">;ending spectrum</span>
+
+i<span class="n">form1a</span>    <span class="nb">tab_i</span>    <span class="mi">0</span><span class="p">,</span> i<span class="n">forma</span>        <span class="c1">;read values of 5 formants for 1st spectrum</span>
+i<span class="n">form2a</span>    <span class="nb">tab_i</span>    <span class="mi">1</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">form3a</span>    <span class="nb">tab_i</span>    <span class="mi">2</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">form4a</span>    <span class="nb">tab_i</span>    <span class="mi">3</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">form5a</span>    <span class="nb">tab_i</span>    <span class="mi">4</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">db1a</span>    <span class="nb">tab_i</span>    <span class="mi">5</span><span class="p">,</span> i<span class="n">forma</span>        <span class="c1">;read decibel levels for same 5 formants</span>
+i<span class="n">db2a</span>    <span class="nb">tab_i</span>    <span class="mi">6</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">db3a</span>    <span class="nb">tab_i</span>    <span class="mi">7</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">db4a</span>    <span class="nb">tab_i</span>    <span class="mi">8</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">db5a</span>    <span class="nb">tab_i</span>    <span class="mi">9</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">band1a</span>    <span class="nb">tab_i</span>    <span class="mi">10</span><span class="p">,</span> i<span class="n">forma</span>    <span class="c1">;read bandwidths for same 5 formants</span>
+i<span class="n">band2a</span>    <span class="nb">tab_i</span>    <span class="mi">11</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">band3a</span>    <span class="nb">tab_i</span>    <span class="mi">12</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">band4a</span>    <span class="nb">tab_i</span>    <span class="mi">13</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">band5a</span>    <span class="nb">tab_i</span>    <span class="mi">14</span><span class="p">,</span> i<span class="n">forma</span>
+i<span class="n">amp1a</span>    <span class="o">=</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">db1a</span><span class="p">)</span>    <span class="c1">;convert db to linear multipliers</span>
+i<span class="n">amp2a</span>    <span class="o">=</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">db2a</span><span class="p">)</span>
+i<span class="n">amp3a</span>    <span class="o">=</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">db3a</span><span class="p">)</span>
+i<span class="n">amp4a</span>    <span class="o">=</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">db4a</span><span class="p">)</span>
+i<span class="n">amp5a</span>    <span class="o">=</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">db5a</span><span class="p">)</span>
+
+i<span class="n">form1b</span>    <span class="nb">tab_i</span>    <span class="mi">0</span><span class="p">,</span> i<span class="n">formb</span>        <span class="c1">;values of 5 formants for 2nd spectrum</span>
+i<span class="n">form2b</span>    <span class="nb">tab_i</span>    <span class="mi">1</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">form3b</span>    <span class="nb">tab_i</span>    <span class="mi">2</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">form4b</span>    <span class="nb">tab_i</span>    <span class="mi">3</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">form5b</span>    <span class="nb">tab_i</span>    <span class="mi">4</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">db1b</span>    <span class="nb">tab_i</span>    <span class="mi">5</span><span class="p">,</span> i<span class="n">formb</span>        <span class="c1">;decibel levels for 2nd set of formants</span>
+i<span class="n">db2b</span>    <span class="nb">tab_i</span>    <span class="mi">6</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">db3b</span>    <span class="nb">tab_i</span>    <span class="mi">7</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">db4b</span>    <span class="nb">tab_i</span>    <span class="mi">8</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">db5b</span>    <span class="nb">tab_i</span>    <span class="mi">9</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">band1b</span>    <span class="nb">tab_i</span>    <span class="mi">10</span><span class="p">,</span> i<span class="n">formb</span>    <span class="c1">;bandwidths for 2nd set of formants</span>
+i<span class="n">band2b</span>    <span class="nb">tab_i</span>    <span class="mi">11</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">band3b</span>    <span class="nb">tab_i</span>    <span class="mi">12</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">band4b</span>    <span class="nb">tab_i</span>    <span class="mi">13</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">band5b</span>    <span class="nb">tab_i</span>    <span class="mi">14</span><span class="p">,</span> i<span class="n">formb</span>
+i<span class="n">amp1b</span>    <span class="o">=</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">db1b</span><span class="p">)</span>    <span class="c1">;convert db to linear multipliers</span>
+i<span class="n">amp2b</span>    <span class="o">=</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">db2b</span><span class="p">)</span>
+i<span class="n">amp3b</span>    <span class="o">=</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">db3b</span><span class="p">)</span>
+i<span class="n">amp4b</span>    <span class="o">=</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">db4b</span><span class="p">)</span>
+i<span class="n">amp5b</span>    <span class="o">=</span>    <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">db5b</span><span class="p">)</span>
+
+k<span class="n">form1</span>    <span class="nb">line</span>    i<span class="n">form1a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">form1b</span>    <span class="c1">;transition between formants</span>
+k<span class="n">form2</span>    <span class="nb">line</span>    i<span class="n">form2a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">form2b</span>
+k<span class="n">form3</span>    <span class="nb">line</span>    i<span class="n">form3a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">form3b</span>
+k<span class="n">form4</span>    <span class="nb">line</span>    i<span class="n">form4a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">form4b</span>
+k<span class="n">form5</span>    <span class="nb">line</span>    i<span class="n">form5a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">form5b</span>
+k<span class="n">band1</span>    <span class="nb">line</span>    i<span class="n">band1a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">band1b</span>    <span class="c1">;transition of bandwidths</span>
+k<span class="n">band2</span>    <span class="nb">line</span>    i<span class="n">band2a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">band2b</span>
+k<span class="n">band3</span>    <span class="nb">line</span>    i<span class="n">band3a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">band3b</span>
+k<span class="n">band4</span>    <span class="nb">line</span>    i<span class="n">band4a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">band4b</span>
+k<span class="n">band5</span>    <span class="nb">line</span>    i<span class="n">band5a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">band5b</span>
+k<span class="n">amp1</span>    <span class="nb">line</span>    i<span class="n">amp1a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">amp1b</span>    <span class="c1">;transition of amplitudes of formants</span>
+k<span class="n">amp2</span>    <span class="nb">line</span>    i<span class="n">amp2a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">amp2b</span>
+k<span class="n">amp3</span>    <span class="nb">line</span>    i<span class="n">amp3a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">amp3b</span>
+k<span class="n">amp4</span>    <span class="nb">line</span>    i<span class="n">amp4a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">amp4b</span>
+k<span class="n">amp5</span>    <span class="nb">line</span>    i<span class="n">amp5a</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> i<span class="n">amp5b</span>
+
+<span class="c1">;5 formants for each spectrum</span>
+a<span class="n">1</span>    <span class="nb">fof2</span>    k<span class="n">amp1</span><span class="p">,</span> k<span class="n">fund</span><span class="p">,</span> k<span class="n">form1</span><span class="p">,</span> k<span class="n">oct</span><span class="p">,</span> k<span class="n">band1</span><span class="p">,</span> k<span class="n">ris</span><span class="p">,</span> k<span class="n">dur</span><span class="p">,</span> k<span class="n">dec</span><span class="p">,</span> i<span class="n">olaps</span><span class="p">,</span> i<span class="n">fna</span><span class="p">,</span> i<span class="n">fnb</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> k<span class="n">phs</span><span class="p">,</span> k<span class="n">gliss</span>
+a<span class="n">2</span>    <span class="nb">fof2</span>    k<span class="n">amp2</span><span class="p">,</span> k<span class="n">fund</span><span class="p">,</span> k<span class="n">form2</span><span class="p">,</span> k<span class="n">oct</span><span class="p">,</span> k<span class="n">band2</span><span class="p">,</span> k<span class="n">ris</span><span class="p">,</span> k<span class="n">dur</span><span class="p">,</span> k<span class="n">dec</span><span class="p">,</span> i<span class="n">olaps</span><span class="p">,</span> i<span class="n">fna</span><span class="p">,</span> i<span class="n">fnb</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> k<span class="n">phs</span><span class="p">,</span> k<span class="n">gliss</span>
+a<span class="n">3</span>    <span class="nb">fof2</span>    k<span class="n">amp3</span><span class="p">,</span> k<span class="n">fund</span><span class="p">,</span> k<span class="n">form3</span><span class="p">,</span> k<span class="n">oct</span><span class="p">,</span> k<span class="n">band3</span><span class="p">,</span> k<span class="n">ris</span><span class="p">,</span> k<span class="n">dur</span><span class="p">,</span> k<span class="n">dec</span><span class="p">,</span> i<span class="n">olaps</span><span class="p">,</span> i<span class="n">fna</span><span class="p">,</span> i<span class="n">fnb</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> k<span class="n">phs</span><span class="p">,</span> k<span class="n">gliss</span>
+a<span class="n">4</span>    <span class="nb">fof2</span>    k<span class="n">amp4</span><span class="p">,</span> k<span class="n">fund</span><span class="p">,</span> k<span class="n">form4</span><span class="p">,</span> k<span class="n">oct</span><span class="p">,</span> k<span class="n">band4</span><span class="p">,</span> k<span class="n">ris</span><span class="p">,</span> k<span class="n">dur</span><span class="p">,</span> k<span class="n">dec</span><span class="p">,</span> i<span class="n">olaps</span><span class="p">,</span> i<span class="n">fna</span><span class="p">,</span> i<span class="n">fnb</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> k<span class="n">phs</span><span class="p">,</span> k<span class="n">gliss</span>
+a<span class="n">5</span>    <span class="nb">fof2</span>    k<span class="n">amp5</span><span class="p">,</span> k<span class="n">fund</span><span class="p">,</span> k<span class="n">form5</span><span class="p">,</span> k<span class="n">oct</span><span class="p">,</span> k<span class="n">band5</span><span class="p">,</span> k<span class="n">ris</span><span class="p">,</span> k<span class="n">dur</span><span class="p">,</span> k<span class="n">dec</span><span class="p">,</span> i<span class="n">olaps</span><span class="p">,</span> i<span class="n">fna</span><span class="p">,</span> i<span class="n">fnb</span><span class="p">,</span> i<span class="n">totdur</span><span class="p">,</span> k<span class="n">phs</span><span class="p">,</span> k<span class="n">gliss</span>
+
+a<span class="n">out</span>    <span class="o">=</span>    <span class="p">(</span>a<span class="n">1</span><span class="o">+</span>a<span class="n">2</span><span class="o">+</span>a<span class="n">3</span><span class="o">+</span>a<span class="n">4</span><span class="o">+</span>a<span class="n">5</span><span class="p">)</span> <span class="o">*</span> k<span class="n">amp</span><span class="o">/</span><span class="mi">5</span>    <span class="c1">;sum and scale</span>
+
+a<span class="n">env</span> <span class="nb">linen</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.05</span>  <span class="c1">;to avoid clicking</span>
+
+    <span class="nb">outs</span>    a<span class="n">out</span><span class="o">*</span>a<span class="n">env</span><span class="p">,</span> a<span class="n">out</span><span class="o">*</span>a<span class="n">env</span>
+    <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">7</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">1</span>
+
+<span class="c1">;****************************************************************</span>
+<span class="c1">; tables of formant values adapted from MiscFormants.html</span>
+<span class="c1">; 100's: soprano    200's: alto    300's: countertenor        400's: tenor    500's: bass</span>
+<span class="c1">; -01: "a" sound    -02: "e" sound    -03: "i" sound    -04: "o" sound    -05: "u" sound</span>
+<span class="c1">; p-5 through p-9: frequencies of 5 formants</span>
+<span class="c1">; p-10 through p-14: decibel levels of 5 formants</span>
+<span class="c1">; p-15 through p-19: bandwidths of 5 formants</span>
+
+<span class="c1">;        formant frequencies            decibel levels                bandwidths</span>
+<span class="c1">;soprano</span>
+<span class="nb">f</span><span class="mi">101</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">800</span>      <span class="mi">1150</span>      <span class="mi">2900</span>      <span class="mi">3900</span>      <span class="mi">4950</span>     <span class="mf">0.001</span>     <span class="o">-</span><span class="mi">6</span>     <span class="o">-</span><span class="mi">32</span>     <span class="o">-</span><span class="mi">20</span>     <span class="o">-</span><span class="mi">50</span>     <span class="mi">80</span>     <span class="mi">90</span>     <span class="mi">120</span>     <span class="mi">130</span>     <span class="mi">140</span>
+<span class="nb">f</span><span class="mi">102</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">350</span>     <span class="mi">2000</span>     <span class="mi">2800</span>     <span class="mi">3600</span>     <span class="mi">4950</span>     <span class="mf">0.001</span>     <span class="o">-</span><span class="mi">20</span>     <span class="o">-</span><span class="mi">15</span>     <span class="o">-</span><span class="mi">40</span>     <span class="o">-</span><span class="mi">56</span>     <span class="mi">60</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">150</span>     <span class="mi">200</span>
+<span class="nb">f</span><span class="mi">103</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">270</span>     <span class="mi">2140</span>     <span class="mi">2950</span>     <span class="mi">3900</span>     <span class="mi">4950</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">12</span>     <span class="o">-</span><span class="mi">26</span>     <span class="o">-</span><span class="mi">26</span>     <span class="o">-</span><span class="mi">44</span>     <span class="mi">60</span>     <span class="mi">90</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="nb">f</span><span class="mi">104</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">450</span>     <span class="mi">800</span>     <span class="mi">2830</span>     <span class="mi">3800</span>     <span class="mi">4950</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">11</span>     <span class="o">-</span><span class="mi">22</span>     <span class="o">-</span><span class="mi">22</span>     <span class="o">-</span><span class="mi">50</span>     <span class="mi">40</span>     <span class="mi">80</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="nb">f</span><span class="mi">105</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">325</span>     <span class="mi">700</span>     <span class="mi">2700</span>     <span class="mi">3800</span>     <span class="mi">4950</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">16</span>     <span class="o">-</span><span class="mi">35</span>     <span class="o">-</span><span class="mi">40</span>     <span class="o">-</span><span class="mi">60</span>     <span class="mi">50</span>     <span class="mi">60</span>     <span class="mi">170</span>     <span class="mi">180</span>     <span class="mi">200</span>
+<span class="c1">;alto</span>
+<span class="nb">f</span><span class="mi">201</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">800</span>      <span class="mi">1150</span>      <span class="mi">2800</span>      <span class="mi">3500</span>      <span class="mi">4950</span>    <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">4</span>     <span class="o">-</span><span class="mi">20</span>     <span class="o">-</span><span class="mi">36</span>     <span class="o">-</span><span class="mi">60</span>    <span class="mi">80</span>    <span class="mi">90</span>     <span class="mi">120</span>     <span class="mi">130</span>     <span class="mi">140</span>
+<span class="nb">f</span><span class="mi">202</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">400</span>      <span class="mi">1600</span>      <span class="mi">2700</span>      <span class="mi">3300</span>      <span class="mi">4950</span>    <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">24</span>     <span class="o">-</span><span class="mi">30</span>     <span class="o">-</span><span class="mi">35</span>     <span class="o">-</span><span class="mi">60</span>    <span class="mi">60</span>     <span class="mi">80</span>     <span class="mi">120</span>     <span class="mi">150</span>     <span class="mi">200</span>
+<span class="nb">f</span><span class="mi">203</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>     <span class="mi">350</span>      <span class="mi">1700</span>      <span class="mi">2700</span>      <span class="mi">3700</span>      <span class="mi">4950</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">20</span>     <span class="o">-</span><span class="mi">30</span>     <span class="o">-</span><span class="mi">36</span>     <span class="o">-</span><span class="mi">60</span>     <span class="mi">50</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">150</span>     <span class="mi">200</span>
+<span class="nb">f</span><span class="mi">204</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">450</span>      <span class="mi">800</span>      <span class="mi">2830</span>      <span class="mi">3500</span>      <span class="mi">4950</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">9</span>     <span class="o">-</span><span class="mi">16</span>     <span class="o">-</span><span class="mi">28</span>     <span class="o">-</span><span class="mi">55</span>     <span class="mi">70</span>     <span class="mi">80</span>     <span class="mi">100</span>     <span class="mi">130</span>     <span class="mi">135</span>
+<span class="nb">f</span><span class="mi">205</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">325</span>      <span class="mi">700</span>      <span class="mi">2530</span>      <span class="mi">3500</span>      <span class="mi">4950</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">12</span>     <span class="o">-</span><span class="mi">30</span>     <span class="o">-</span><span class="mi">40</span>     <span class="o">-</span><span class="mi">64</span>     <span class="mi">50</span>     <span class="mi">60</span>     <span class="mi">170</span>     <span class="mi">180</span>     <span class="mi">200</span>
+<span class="c1">;countertenor</span>
+<span class="nb">f</span><span class="mi">301</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">660</span>      <span class="mi">1120</span>      <span class="mi">2750</span>      <span class="mi">3000</span>      <span class="mi">3350</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">6</span>     <span class="o">-</span><span class="mi">23</span>     <span class="o">-</span><span class="mi">24</span>     <span class="o">-</span><span class="mi">38</span>     <span class="mi">80</span>     <span class="mi">90</span>     <span class="mi">120</span>     <span class="mi">130</span>     <span class="mi">140</span>
+<span class="nb">f</span><span class="mi">302</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">440</span>     <span class="mi">1800</span>     <span class="mi">2700</span>     <span class="mi">3000</span>     <span class="mi">3300</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">14</span>     <span class="o">-</span><span class="mi">18</span>     <span class="o">-</span><span class="mi">20</span>     <span class="o">-</span><span class="mi">20</span>     <span class="mi">70</span>     <span class="mi">80</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="nb">f</span><span class="mi">303</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">270</span>     <span class="mi">1850</span>     <span class="mi">2900</span>     <span class="mi">3350</span>     <span class="mi">3590</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">24</span>     <span class="o">-</span><span class="mi">24</span>     <span class="o">-</span><span class="mi">36</span>     <span class="o">-</span><span class="mi">36</span>     <span class="mi">40</span>     <span class="mi">90</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="nb">f</span><span class="mi">304</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">430</span>     <span class="mi">820</span>     <span class="mi">2700</span>     <span class="mi">3000</span>     <span class="mi">3300</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">10</span>     <span class="o">-</span><span class="mi">26</span>     <span class="o">-</span><span class="mi">22</span>     <span class="o">-</span><span class="mi">34</span>     <span class="mi">40</span>     <span class="mi">80</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="nb">f</span><span class="mi">305</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">370</span>     <span class="mi">630</span>     <span class="mi">2750</span>     <span class="mi">3000</span>     <span class="mi">3400</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">20</span>     <span class="o">-</span><span class="mi">23</span>     <span class="o">-</span><span class="mi">30</span>     <span class="o">-</span><span class="mi">34</span>     <span class="mi">40</span>     <span class="mi">60</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="c1">;tenor</span>
+<span class="nb">f</span><span class="mi">401</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">650</span>      <span class="mi">1080</span>      <span class="mi">2650</span>      <span class="mi">2900</span>      <span class="mi">3250</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">6</span>     <span class="o">-</span><span class="mi">7</span>     <span class="o">-</span><span class="mi">8</span>     <span class="o">-</span><span class="mi">22</span>     <span class="mi">80</span>     <span class="mi">90</span>     <span class="mi">120</span>     <span class="mi">130</span>     <span class="mi">140</span>
+<span class="nb">f</span><span class="mi">402</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">400</span>     <span class="mi">1700</span>     <span class="mi">2600</span>     <span class="mi">3200</span>     <span class="mi">3580</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">14</span>     <span class="o">-</span><span class="mi">12</span>     <span class="o">-</span><span class="mi">14</span>     <span class="o">-</span><span class="mi">20</span>     <span class="mi">70</span>     <span class="mi">80</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="nb">f</span><span class="mi">403</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">290</span>     <span class="mi">1870</span>     <span class="mi">2800</span>     <span class="mi">3250</span>     <span class="mi">3540</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">15</span>     <span class="o">-</span><span class="mi">18</span>     <span class="o">-</span><span class="mi">20</span>     <span class="o">-</span><span class="mi">30</span>     <span class="mi">40</span>     <span class="mi">90</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="nb">f</span><span class="mi">404</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">400</span>     <span class="mi">800</span>     <span class="mi">2600</span>     <span class="mi">2800</span>     <span class="mi">3000</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">10</span>     <span class="o">-</span><span class="mi">12</span>     <span class="o">-</span><span class="mi">12</span>     <span class="o">-</span><span class="mi">26</span>     <span class="mi">70</span>     <span class="mi">80</span>     <span class="mi">100</span>     <span class="mi">130</span>     <span class="mi">135</span>
+<span class="nb">f</span><span class="mi">405</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">350</span>     <span class="mi">600</span>     <span class="mi">2700</span>     <span class="mi">2900</span>     <span class="mi">3300</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">20</span>     <span class="o">-</span><span class="mi">17</span>     <span class="o">-</span><span class="mi">14</span>     <span class="o">-</span><span class="mi">26</span>     <span class="mi">40</span>     <span class="mi">60</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="c1">;bass</span>
+<span class="nb">f</span><span class="mi">501</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">600</span>      <span class="mi">1040</span>      <span class="mi">2250</span>      <span class="mi">2450</span>      <span class="mi">2750</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">7</span>     <span class="o">-</span><span class="mi">9</span>     <span class="o">-</span><span class="mi">9</span>     <span class="o">-</span><span class="mi">20</span>     <span class="mi">60</span>     <span class="mi">70</span>     <span class="mi">110</span>     <span class="mi">120</span>     <span class="mi">130</span>
+<span class="nb">f</span><span class="mi">502</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">400</span>      <span class="mi">1620</span>      <span class="mi">2400</span>      <span class="mi">2800</span>      <span class="mi">3100</span>     <span class="mf">0.001</span>     <span class="o">-</span><span class="mi">12</span>     <span class="o">-</span><span class="mi">9</span>     <span class="o">-</span><span class="mi">12</span>     <span class="o">-</span><span class="mi">18</span>     <span class="mi">40</span>     <span class="mi">80</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="nb">f</span><span class="mi">503</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">250</span>      <span class="mi">1750</span>      <span class="mi">2600</span>      <span class="mi">3050</span>      <span class="mi">3340</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">30</span>     <span class="o">-</span><span class="mi">16</span>     <span class="o">-</span><span class="mi">22</span>     <span class="o">-</span><span class="mi">28</span>     <span class="mi">60</span>     <span class="mi">90</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="nb">f</span><span class="mi">504</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">400</span>      <span class="mi">750</span>      <span class="mi">2400</span>      <span class="mi">2600</span>      <span class="mi">2900</span>    <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">11</span>     <span class="o">-</span><span class="mi">21</span>     <span class="o">-</span><span class="mi">20</span>     <span class="o">-</span><span class="mi">40</span>     <span class="mi">40</span>     <span class="mi">80</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="nb">f</span><span class="mi">505</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">2</span>    <span class="mi">350</span>      <span class="mi">600</span>      <span class="mi">2400</span>      <span class="mi">2675</span>      <span class="mi">2950</span>     <span class="mf">0.001</span>    <span class="o">-</span><span class="mi">20</span>     <span class="o">-</span><span class="mi">32</span>     <span class="o">-</span><span class="mi">28</span>     <span class="o">-</span><span class="mi">36</span>     <span class="mi">40</span>     <span class="mi">80</span>     <span class="mi">100</span>     <span class="mi">120</span>     <span class="mi">120</span>
+<span class="c1">;****************************************************************</span>
+
+<span class="c1">;    start dur  amp    start freq    end freq    start formant   end formant</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="mi">0</span>    <span class="mi">1</span>    <span class="mf">.8</span>        <span class="mi">440</span>		<span class="mf">412.5</span>		<span class="mi">201</span>        <span class="mi">203</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mf">.8</span>        <span class="mf">412.5</span>		<span class="mi">550</span>		<span class="mi">201</span>        <span class="mi">204</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mf">.8</span>        <span class="mi">495</span>		<span class="mi">330</span>		<span class="mi">202</span>        <span class="mi">205</span>
+
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mf">.8</span>        <span class="mi">110</span>		<span class="mf">103.125</span>		<span class="mi">501</span>        <span class="mi">503</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mf">.8</span>        <span class="mf">103.125</span>	<span class="mf">137.5</span> 		<span class="mi">501</span>        <span class="mi">504</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mf">.8</span>        <span class="mf">123.75</span>	<span class="mf">82.5</span>		<span class="mi">502</span>        <span class="mi">505</span>
+
+<span class="nb">i</span><span class="mi">1</span>    <span class="mi">7</span>    <span class="o">.</span>    <span class="mf">.4</span>        <span class="mi">440</span>		<span class="mf">412.5</span>		<span class="mi">201</span>        <span class="mi">203</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="mi">8</span>    <span class="o">.</span>    <span class="mf">.4</span>        <span class="mf">412.5</span>		<span class="mi">550</span>		<span class="mi">201</span>        <span class="mi">204</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="mi">9</span>    <span class="o">.</span>    <span class="mf">.4</span>        <span class="mi">495</span>		<span class="mi">330</span>		<span class="mi">202</span>        <span class="mi">205</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="mi">7</span>    <span class="o">.</span>    <span class="mf">.4</span>        <span class="mi">110</span>		<span class="mf">103.125</span>		<span class="mi">501</span>        <span class="mi">503</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="mi">8</span>    <span class="o">.</span>    <span class="mf">.4</span>        <span class="mf">103.125</span>	<span class="mf">137.5</span>		<span class="mi">501</span>        <span class="mi">504</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="mi">9</span>    <span class="o">.</span>    <span class="mf">.4</span>        <span class="mf">123.75</span>	<span class="mf">82.5</span>		<span class="mi">502</span>        <span class="mi">505</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mf">.4</span>        <span class="mi">440</span>		<span class="mf">412.5</span>		<span class="mi">101</span>        <span class="mi">103</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mf">.4</span>        <span class="mf">412.5</span>		<span class="mi">550</span>		<span class="mi">101</span>        <span class="mi">104</span>
+<span class="nb">i</span><span class="mi">1</span>    <span class="o">+</span>    <span class="o">.</span>    <span class="mf">.4</span>        <span class="mi">495</span>		<span class="mi">330</span>		<span class="mi">102</span>        <span class="mi">105</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103412000"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="fof.html" title="fof"><em class="citetitle">fof</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103409984"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Rasmus Ekman</td>
+          </tr>
+          <tr>
+            <td><span class="emphasis"><em>fof2</em></span> is a modification of <span class="emphasis"><em>fof</em></span> by Rasmus Ekman</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound 3.45</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fof.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fofilter.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fof </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fofilter</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

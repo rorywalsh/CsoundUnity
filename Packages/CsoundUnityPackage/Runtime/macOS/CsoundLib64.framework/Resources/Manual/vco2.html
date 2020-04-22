@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vco2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vco.html" title="vco" />
+    <link rel="next" href="vco2ft.html" title="vco2ft" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vco2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vco.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vco2ft.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vco2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVco2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vco2</span>
+        </h2>
+        <p>vco2 — 
+      Implementation of a band-limited oscillator using pre-calculated tables.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041925968"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>vco2</em></span> is similar to <a class="link" href="vco.html" title="vco"><em class="citetitle">vco</em></a>. But the implementation uses pre-calculated tables of band-limited waveforms (see also <a class="link" href="GEN30.html" title="GEN30"><em class="citetitle">GEN30</em></a>) rather than integrating impulses. This opcode can be faster than <span class="emphasis"><em>vco</em></span> (especially if a low control-rate is used) and also allows better sound quality. Additionally, there are more waveforms and oscillator phase can be modulated at k-rate. The disadvantage is increased memory usage. For more details about vco2 tables, see also <a class="link" href="vco2init.html" title="vco2init"><em class="citetitle">vco2init</em></a> and <a class="link" href="vco2ft.html" title="vco2ft"><em class="citetitle">vco2ft</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041920096"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>vco2</strong></span> kamp, kcps [, imode] [, kpw] [, kphs] [, inyx]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041917984"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imode</em></span> (optional, default=0) -- a sum of values representing the waveform and its control values.
+    </p>
+        <p>
+      One may use any of the following values for <span class="emphasis"><em>imode</em></span>:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>16: enable k-rate phase control (if set, <span class="emphasis"><em>kphs</em></span> is a required k-rate parameter that allows phase modulation)</p>
+            </li>
+            <li class="listitem">
+              <p>1: skip initialization</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      One may use exactly one of these <span class="emphasis"><em>imode</em></span> values to select the waveform to be generated:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>14: user defined waveform -1 (requires using the <a class="link" href="vco2init.html" title="vco2init"><em class="citetitle">vco2init</em></a> opcode)</p>
+            </li>
+            <li class="listitem">
+              <p>12: triangle (no ramp, faster)</p>
+            </li>
+            <li class="listitem">
+              <p>10: square wave (no PWM, faster)</p>
+            </li>
+            <li class="listitem">
+              <p>8: 4 * x * (1 - x) (i.e. integrated sawtooth)</p>
+            </li>
+            <li class="listitem">
+              <p>6: pulse (not normalized)</p>
+            </li>
+            <li class="listitem">
+              <p>4: sawtooth / triangle / ramp</p>
+            </li>
+            <li class="listitem">
+              <p>2: square / PWM</p>
+            </li>
+            <li class="listitem">
+              <p>0: sawtooth</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+        The default value for <span class="emphasis"><em>imode</em></span> is zero, which means a sawtooth wave with no k-rate phase control.
+    </p>
+        <p>
+      <span class="emphasis"><em>inyx</em></span> (optional, default=0.5) -- bandwidth of the generated waveform, as percentage (0 to 1) of the sample rate. The expected range is 0 to 0.5 (i.e. up to <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a>/2), other values are limited to the allowed range.
+    </p>
+        <p>
+      Setting <span class="emphasis"><em>inyx</em></span> to 0.25 (<span class="emphasis"><em>sr</em></span>/4), or 0.3333 (<span class="emphasis"><em>sr</em></span>/3) can produce a <span class="quote">“<span class="quote">fatter</span>”</span> sound in some cases, although it is more likely to reduce quality.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041902080"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ares </em></span> -- the output audio signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude scale. In the case of a <span class="emphasis"><em>imode</em></span> waveform value of 6 (a pulse waveform), the actual output level can be a lot higher than this value.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> -- frequency in Hz (should be in the range -<span class="emphasis"><em>sr</em></span>/2 to <span class="emphasis"><em>sr</em></span>/2).
+    </p>
+        <p>
+      <span class="emphasis"><em>kpw</em></span> (optional) -- the pulse width of the square wave (<span class="emphasis"><em>imode</em></span> waveform=2) or the ramp characteristics of the triangle wave (<span class="emphasis"><em>imode</em></span> waveform=4). It is required only by these waveforms and ignored in all other cases. The expected range is 0 to 1, any other value is wrapped to the allowed range.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        <span class="emphasis"><em>kpw</em></span> must not be an exact integer value (e.g. 0 or 1) if a sawtooth / triangle / ramp (<span class="emphasis"><em>imode</em></span> waveform=4) is generated. In this case, the recommended range is about 0.01 to 0.99. There is no such limitation for a square/PWM waveform.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      <span class="emphasis"><em>kphs</em></span> (optional) -- oscillator phase (depending on <span class="emphasis"><em>imode</em></span>, this can be either an optional i-rate parameter that defaults to zero or required k-rate). Similarly to <span class="emphasis"><em>kpw</em></span>, the expected range is 0 to 1.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        When a low control-rate is used, pulse width (<span class="emphasis"><em>kpw</em></span>) and phase (<span class="emphasis"><em>kphs</em></span>) modulation is internally converted to frequency modulation. This allows for faster processing and reduced artifacts. But in the case of very long notes and continuous fast changes in <span class="emphasis"><em>kpw</em></span> or <span class="emphasis"><em>kphs</em></span>, the phase may drift away from the requested value. In most cases, the phase error is at most 0.037 per hour (assuming a sample rate of 44100 Hz).
+      </p>
+                <p>
+        This is a problem mainly in the case of pulse width (<span class="emphasis"><em>kpw</em></span>), where it may result in various artifacts. While future releases of <span class="emphasis"><em>vco2</em></span> may fix such errors, the following work-arounds may also be of some help:
+
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>Use <span class="emphasis"><em>kpw</em></span> values only in the range 0.05 to 0.95. (There are more artifacts around integer values)</p>
+                    </li>
+                    <li class="listitem">
+                      <p>Try to avoid modulating <span class="emphasis"><em>kpw</em></span> by asymmetrical waveforms like a sawtooth wave. Relatively slow (&lt;= 20 Hz) symmetrical modulation (e.g. sine or triangle), random splines (also slow), or a fixed pulse width is a lot less likely to cause synchronization problems.
+</p>
+                    </li>
+                    <li class="listitem">
+                      <p>In some cases, adding random jitter (for example: random splines with an amplitude of about 0.01) to <span class="emphasis"><em>kpw</em></span> may also fix the problem.</p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041883072"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vco2 opcode. It uses the file <a class="ulink" href="examples/vco2.csd" target="_top"><em class="citetitle">vco2.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276041881296"></a>
+          <p class="title">
+            <strong>Example 1086. Example of the vco2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276408584416"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o vco2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>      <span class="o">=</span>  <span class="mi">44100</span>
+<span class="vg">ksmps</span>   <span class="o">=</span>  <span class="mi">10</span>
+<span class="vg">nchnls</span>  <span class="o">=</span>  <span class="mi">1</span>
+
+<span class="c1">; user defined waveform -1: trapezoid wave with default parameters (can be</span>
+<span class="c1">; accessed at ftables starting from 10000)</span>
+i<span class="n">tmp</span>    <span class="nb">ftgen</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">16384</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">0</span>
+i<span class="n">ft</span>     <span class="nb">vco2init</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+<span class="c1">; user defined waveform -2: fixed table size (4096), number of partials</span>
+<span class="c1">; multiplier is 1.02 (~238 tables)</span>
+i<span class="n">tmp</span>    <span class="nb">ftgen</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">16384</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4095</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4095</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="mi">0</span>
+i<span class="n">ft</span>     <span class="nb">vco2init</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> i<span class="n">ft</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">2</span>
+
+        <span class="kd">instr</span> <span class="nf">1</span>
+k<span class="n">cps</span>    <span class="nb">expon</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span>                <span class="c1">; instr 1: basic vco2 example</span>
+a<span class="n">1</span>      <span class="nb">vco2</span> <span class="mi">12000</span><span class="p">,</span> k<span class="n">cps</span>                <span class="c1">; (sawtooth wave with default</span>
+        <span class="nb">out</span> a<span class="n">1</span>                          <span class="c1">; parameters)</span>
+        <span class="kd">endin</span>
+
+        <span class="kd">instr</span> <span class="nf">2</span>
+k<span class="n">cps</span>    <span class="nb">expon</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span>                        <span class="c1">; instr 2:</span>
+k<span class="n">pw</span>     <span class="nb">linseg</span> <span class="mf">0.1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.1</span>        <span class="c1">; PWM example</span>
+a<span class="n">1</span>      <span class="nb">vco2</span> <span class="mi">10000</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> k<span class="n">pw</span>
+        <span class="nb">out</span> a<span class="n">1</span>
+        <span class="kd">endin</span>
+
+        <span class="kd">instr</span> <span class="nf">3</span>
+k<span class="n">cps</span>    <span class="nb">expon</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span>                <span class="c1">; instr 3: vco2 with user</span>
+a<span class="n">1</span>      <span class="nb">vco2</span> <span class="mi">14000</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">14</span>            <span class="c1">; defined waveform (-1)</span>
+a<span class="n">env</span>    <span class="nb">linseg</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span>   <span class="c1">; de-click envelope</span>
+        <span class="nb">out</span> a<span class="n">1</span> <span class="o">*</span> a<span class="n">env</span>
+        <span class="kd">endin</span>
+
+        <span class="kd">instr</span> <span class="nf">4</span>
+k<span class="n">cps</span>    <span class="nb">expon</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span>                <span class="c1">; instr 4: vco2ft example,</span>
+k<span class="n">fn</span>     <span class="nb">vco2ft</span> k<span class="n">cps</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.25</span>           <span class="c1">; with user defined waveform</span>
+a<span class="n">1</span>      <span class="nb">oscilikt</span> <span class="mi">12000</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> k<span class="n">fn</span>       <span class="c1">; (-2), and sr/4 bandwidth</span>
+        <span class="nb">out</span> a<span class="n">1</span>
+        <span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">0</span> <span class="mi">3</span> <span class="mi">20</span> <span class="mi">2000</span>
+<span class="nb">i</span> <span class="mi">2</span>  <span class="mi">4</span> <span class="mi">2</span> <span class="mi">200</span> <span class="mi">400</span>
+<span class="nb">i</span> <span class="mi">3</span>  <span class="mi">7</span> <span class="mi">3</span> <span class="mi">400</span> <span class="mi">20</span>
+<span class="nb">i</span> <span class="mi">4</span> <span class="mi">11</span> <span class="mi">2</span> <span class="mi">100</span> <span class="mi">200</span>
+
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">14</span>
+
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041877312"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vco.html" title="vco"><em class="citetitle">vco</em></a>,
+      <a class="link" href="vco2ft.html" title="vco2ft"><em class="citetitle">vco2ft</em></a>,
+      <a class="link" href="vco2ift.html" title="vco2ift"><em class="citetitle">vco2ift</em></a>, and
+      <a class="link" href="vco2init.html" title="vco2init"><em class="citetitle">vco2init</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041872656"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vco.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vco2ft.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vco </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vco2ft</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

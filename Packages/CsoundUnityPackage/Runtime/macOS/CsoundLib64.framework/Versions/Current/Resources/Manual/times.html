@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>times</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="timek.html" title="timek" />
+    <link rel="next" href="timout.html" title="timout" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">times</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="timek.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="timout.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="times"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTimes" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">times</span>
+        </h2>
+        <p>times — 
+      Read absolute time in seconds.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046048112"></a>
+        <h2>Description</h2>
+        <p>
+      Read absolute time, in seconds, since the start of the performance.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046046768"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ires <span class="command"><strong>times</strong></span></pre>
+        <pre class="synopsis">kres <span class="command"><strong>times</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046043648"></a>
+        <h2>Performance</h2>
+        <p>
+      Time in seconds is available with <span class="emphasis"><em>times</em></span>. This would return 0.5 after half a second. 
+    </p>
+        <p>
+      <span class="emphasis"><em>times</em></span> can both produce a k-rate variable for output. There are no input parameters.
+    </p>
+        <p>
+      <span class="emphasis"><em>times</em></span> can also operate at the start of the instance of the instrument. It produces an i-rate variable (starting with <span class="emphasis"><em>i</em></span> or <span class="emphasis"><em>gi</em></span>) as its output.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046039168"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the times opcode. It uses the file <a class="ulink" href="examples/times_complex.csd" target="_top"><em class="citetitle">times_complex.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276046037344"></a>
+          <p class="title">
+            <strong>Example 1033. Example of the times opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276413200528"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span> 
+<span class="c1">; Select audio/midi flags here according to platform </span>
+-odac     <span class="c1">;;;realtime audio out </span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too </span>
+<span class="c1">; For Non-realtime ouput leave only the line below: </span>
+<span class="c1">; -o times_complex.wav -W ;;; for file output any platform </span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span> 
+<span class="c1">;by joachim heintz and rory walsh </span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span> 
+
+gi<span class="n">Wave</span>   <span class="nb">ftgen</span>      <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mf">.25</span> 
+
+<span class="kd">instr</span> <span class="nf">again</span> 
+
+i<span class="n">nstance</span> <span class="o">=</span>          <span class="nb">p4</span> 
+ <span class="c1">;reset the duration of this instance </span>
+i<span class="n">Dur</span>     <span class="nb">rnd31</span>      <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span>				<span class="c1">;shorter values are more probable </span>
+i<span class="n">Dur</span>     <span class="o">=</span>          <span class="nb">abs</span><span class="p">(</span>i<span class="n">Dur</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.2</span> 
+<span class="nb">p3</span>       <span class="o">=</span>          i<span class="n">Dur</span> 
+ <span class="c1">;trigger the effect instrument of this instance </span>
+         <span class="nb">event_i</span>    <span class="s">"i"</span><span class="p">,</span> <span class="s">"fx_processor"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">Dur</span><span class="p">,</span> i<span class="n">nstance</span> 
+ <span class="c1">;print the status quo </span>
+k<span class="n">Time</span>    <span class="nb">times</span> 
+         <span class="nb">prints</span>     <span class="s">"instance = </span><span class="si">%d</span><span class="s">, start = %f, duration = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> i<span class="n">nstance</span><span class="p">,</span> <span class="nb">i</span><span class="p">(</span>k<span class="n">Time</span><span class="p">),</span> i<span class="n">Dur</span> 
+ <span class="c1">;make sound </span>
+i<span class="n">amp</span>     <span class="nb">active</span>     <span class="mi">1</span>					<span class="c1">;scale amplitudes </span>
+i<span class="n">Oct</span>     <span class="nb">random</span>     <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span>				<span class="c1">;find pitch </span>
+a<span class="n">Env</span>     <span class="nb">transeg</span>    <span class="mi">0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span>i<span class="n">amp</span><span class="p">,</span> <span class="nb">p3</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">0</span>	<span class="c1">;output envelope </span>
+a<span class="n">Send</span>    <span class="nb">poscil</span>     a<span class="n">Env</span><span class="p">,</span> <span class="nb">cpsoct</span><span class="p">(</span>i<span class="n">Oct</span><span class="p">),</span> gi<span class="n">Wave</span>		<span class="c1">;audio signal </span>
+ <span class="c1">;send signal to effect instrument </span>
+S<span class="n">bus</span>     <span class="nb">sprintf</span>    <span class="s">"audio_</span><span class="si">%d</span><span class="s">"</span><span class="p">,</span> i<span class="n">nstance</span>		<span class="c1">;create unique software bus </span>
+         <span class="nb">chnset</span>     a<span class="n">Send</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> S<span class="n">bus</span>			<span class="c1">;send audio on this bus </span>
+ <span class="c1">;get the last k-cycle of this instance and trigger the successor in it </span>
+k<span class="n">Last</span>    <span class="nb">release</span> 
+         <span class="nb">schedkwhen</span> k<span class="n">Last</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">"again"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">nstance</span><span class="o">+</span><span class="mi">1</span> 
+<span class="kd">endin</span> 
+
+<span class="kd">instr</span> <span class="nf">fx_processor</span> 
+ <span class="c1">;apply feedback delay to the above instrument </span>
+i<span class="n">which</span>    <span class="o">=</span>         <span class="nb">p4</span>					<span class="c1">;receive instance number ... </span>
+S<span class="n">bus</span>      <span class="nb">sprintf</span>   <span class="s">"audio_</span><span class="si">%d</span><span class="s">"</span><span class="p">,</span> i<span class="n">which</span>			<span class="c1">; ... and related software bus </span>
+a<span class="n">udio</span>     <span class="nb">chnget</span>    S<span class="n">bus</span>				<span class="c1">;receive audio on this bus </span>
+i<span class="n">rvbtim</span>   <span class="nb">random</span>    <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span>				<span class="c1">;find reverb time </span>
+<span class="nb">p3</span>        <span class="o">=</span>         <span class="nb">p3</span><span class="o">+</span>i<span class="n">rvbtim</span>				<span class="c1">;adjust instrument duration </span>
+i<span class="n">ltptmL</span>   <span class="nb">random</span>    <span class="mf">.1</span><span class="p">,</span> <span class="mf">.5</span>				<span class="c1">;find looptime left ... </span>
+i<span class="n">ltptmR</span>   <span class="nb">random</span>    <span class="mf">.1</span><span class="p">,</span> <span class="mf">.5</span>				<span class="c1">;...and right </span>
+i<span class="n">pan</span>      <span class="nb">random</span>    <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>				<span class="c1">; pan and ... </span>
+i<span class="n">mix</span>      <span class="nb">random</span>    <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>				<span class="c1">;... mix audio </span>
+a<span class="n">L</span><span class="p">,</span>a<span class="n">R</span>     <span class="nb">pan2</span>      a<span class="n">udio</span><span class="p">,</span> i<span class="n">pan</span>				<span class="c1">;create stereo </span>
+a<span class="n">wetL</span>     <span class="nb">comb</span>      a<span class="n">L</span><span class="p">,</span> i<span class="n">rvbtim</span><span class="p">,</span> i<span class="n">ltptmL</span>		<span class="c1">;comb filter </span>
+a<span class="n">wetR</span>     <span class="nb">comb</span>      a<span class="n">R</span><span class="p">,</span> i<span class="n">rvbtim</span><span class="p">,</span> i<span class="n">ltptmR</span> 
+a<span class="n">outL</span>     <span class="nb">ntrpol</span>    a<span class="n">L</span><span class="p">,</span> a<span class="n">wetL</span><span class="p">,</span> i<span class="n">mix</span>			<span class="c1">;wet-dry mix </span>
+a<span class="n">outR</span>     <span class="nb">ntrpol</span>    a<span class="n">R</span><span class="p">,</span> a<span class="n">wetR</span><span class="p">,</span> i<span class="n">mix</span> 
+          <span class="nb">outs</span>      a<span class="n">outL</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> a<span class="n">outR</span><span class="o">/</span><span class="mi">2</span> 
+<span class="kd">endin</span> 
+
+<span class="nt">&lt;/CsInstruments&gt;</span> 
+<span class="nt">&lt;CsScore&gt;</span> 
+<span class="nb">i</span> <span class="s">"again"</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> 
+
+<span class="nb">e</span> <span class="mi">3600</span> 
+<span class="nt">&lt;/CsScore&gt;</span> 
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like these:
+      </p>
+        <pre class="screen">
+new alloc for instr again:
+instance = 1, start = 0.000000, duration = 0.650439
+new alloc for instr fx_processor:
+instance = 2, start = 0.650884, duration = 0.411043
+new alloc for instr fx_processor:
+instance = 3, start = 1.061587, duration = 0.231085
+new alloc for instr fx_processor:
+instance = 4, start = 1.292336, duration = 0.543473
+new alloc for instr fx_processor:
+instance = 5, start = 1.835828, duration = 1.777097
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046031744"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="timeinstk.html" title="timeinstk"><em class="citetitle">timeinstk</em></a>, <a class="link" href="timeinsts.html" title="timeinsts"><em class="citetitle">timeinsts</em></a>, <a class="link" href="timek.html" title="timek"><em class="citetitle">timek</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046027968"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Robin Whittle</td>
+          </tr>
+          <tr>
+            <td>Australia</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="timek.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="timout.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">timek </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> timout</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

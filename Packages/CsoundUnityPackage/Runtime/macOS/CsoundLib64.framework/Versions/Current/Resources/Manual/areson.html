@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>areson</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ampmidid.html" title="ampmidid" />
+    <link rel="next" href="aresonk.html" title="aresonk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">areson</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ampmidid.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="aresonk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="areson"></a>
+      <div class="titlepage"></div>
+      <a id="IndexAreson" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">areson</span>
+        </h2>
+        <p>areson — 
+      A notch filter whose transfer functions are the complements of
+      the reson opcode. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125470944"></a>
+        <h2>Description</h2>
+        <p>
+      A notch filter whose transfer functions are the complements of
+      the reson opcode. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125469568"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>areson</strong></span> asig, kcf, kbw [, iscl] [, iskip]</pre>
+        <pre class="synopsis">ares <span class="command"><strong>areson</strong></span> asig, acf, kbw [, iscl] [, iskip]</pre>
+        <pre class="synopsis">ares <span class="command"><strong>areson</strong></span> asig, kcf, abw [, iscl] [, iskip]</pre>
+        <pre class="synopsis">ares <span class="command"><strong>areson</strong></span> asig, acf, abw [, iscl] [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125463456"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iscl</em></span> (optional, default=0) -- coded scaling
+      factor for resonators. A value of 1 signifies a peak response
+      factor of 1, i.e. all frequencies other than kcf/acf are attenuated
+      in accordance with the (normalized) response curve. A value of 2
+      raises the response factor so that its overall RMS value equals
+      1. (This intended equalization of input and output power assumes
+      all frequencies are physically present; hence it is most
+      applicable to white noise.) A zero value signifies no scaling of
+      the signal, leaving that to some later adjustment (see <a class="link" href="balance.html" title="balance"><em class="citetitle">balance</em></a>). The
+      default value is 0. 
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of internal data space. Since filtering incorporates a feedback loop of previous output, the initial status of the storage space used is significant. A zero value will clear the space; a non-zero value will allow previous information to remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125459488"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ares</em></span> -- the output signal at audio rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- the input signal at audio rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcf</em></span>/<span class="emphasis"><em>acf</em></span>  -- the center
+      frequency of the filter, or frequency position of the peak
+      response. 
+    </p>
+        <p>
+      <span class="emphasis"><em>kbw</em></span>/<span class="emphasis"><em>abw</em></span> -- bandwidth
+      of the filter (the Hz difference between the upper and lower
+      half-power points). 
+    </p>
+        <p>
+      <span class="emphasis"><em>areson</em></span> is a filter whose transfer functions
+      is the complement of <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>. Thus
+      <span class="emphasis"><em>areson</em></span> is a notch filter whose transfer
+      functions represents the <span class="quote">“<span class="quote">filtered out</span>”</span> aspects of
+      their complements. However, power scaling is not normalized in
+      <span class="emphasis"><em>areson</em></span> but remains the true complement of
+      the corresponding unit. Thus an audio signal, filtered by
+      parallel matching <span class="emphasis"><em>reson</em></span> and
+      <span class="emphasis"><em>areson</em></span> units, would under addition simply
+      reconstruct the original spectrum.
+    </p>
+        <p>
+      This property is particularly useful for controlled mixing of
+      different sources (see <a class="link" href="lpreson.html" title="lpreson"><em class="citetitle">lpreson</em></a>). Complex
+      response curves such as those with multiple peaks can be
+      obtained by using a bank of suitable filters in series. (The
+      resultant response is the product of the component responses.)
+      In such cases, the combined attenuation may result in a serious
+      loss of signal power, but this can be regained by the use of
+      <a class="link" href="balance.html" title="balance"><em class="citetitle">balance</em></a>.
+    </p>
+        <p>
+      </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top"> When used with <span class="emphasis"><em>iscl</em></span> this opcode
+      is not a notch filter but similar to <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>.
+      </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125444512"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the areson opcode. It uses the file <a class="ulink" href="examples/areson.csd" target="_top"><em class="citetitle">areson.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276125442704"></a>
+          <p class="title">
+            <strong>Example 57. Example of the areson opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276495630720"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o areson.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; unfiltered noise</span>
+
+a<span class="n">sig</span> <span class="nb">rand</span> <span class="mf">0.5</span>		<span class="c1">; white noise signal.</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span> <span class="c1">; filtered noise</span>
+
+k<span class="n">cf</span>  <span class="nb">init</span> <span class="mi">1000</span>
+k<span class="n">bw</span>  <span class="nb">init</span> <span class="mi">100</span>
+a<span class="n">sig</span> <span class="nb">rand</span> <span class="mf">0.5</span>
+a<span class="n">fil</span> <span class="nb">areson</span> a<span class="n">sig</span><span class="p">,</span> k<span class="n">cf</span><span class="p">,</span> k<span class="n">bw</span>
+a<span class="n">fil</span> <span class="nb">balance</span> a<span class="n">fil</span><span class="p">,</span>a<span class="n">sig</span> 	<span class="c1">; afil = very loud</span>
+     <span class="nb">outs</span> a<span class="n">fil</span><span class="p">,</span> a<span class="n">fil</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125438656"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="aresonk.html" title="aresonk"><em class="citetitle">aresonk</em></a>, 
+      <a class="link" href="atone.html" title="atone"><em class="citetitle">atone</em></a>, 
+      <a class="link" href="atonek.html" title="atonek"><em class="citetitle">atonek</em></a>, 
+      <a class="link" href="port.html" title="port"><em class="citetitle">port</em></a>, 
+      <a class="link" href="portk.html" title="portk"><em class="citetitle">portk</em></a>, 
+      <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>, 
+      <a class="link" href="resonk.html" title="resonk"><em class="citetitle">resonk</em></a>, 
+      <a class="link" href="tone.html" title="tone"><em class="citetitle">tone</em></a>, 
+      <a class="link" href="tonek.html" title="tonek"><em class="citetitle">tonek</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125429440"></a>
+        <h2>Credits</h2>
+        <p>Audio rate parameters introduced in version 6.02</p>
+        <p>October 2013.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ampmidid.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="aresonk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ampmidid </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> aresonk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

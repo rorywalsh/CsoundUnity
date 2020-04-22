@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>control</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="connect.html" title="connect" />
+    <link rel="next" href="convle.html" title="convle" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">control</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="connect.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="convle.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="control"></a>
+      <div class="titlepage"></div>
+      <a id="IndexControl" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">control</span>
+        </h2>
+        <p>control — 
+      Configurable slider controls for realtime user input.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119909696"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in control.</p>
+        <p>
+      Configurable slider controls for realtime user input. Requires Winsound or TCL/TK. <span class="emphasis"><em>control</em></span> reads a slider's value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119907584"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>control</strong></span> knum</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119905504"></a>
+        <h2>Performance</h2>
+        <p>
+      Note that this opcode is not available on Windows due to the implimentation of pipes on that system 
+    </p>
+        <p>
+      <span class="emphasis"><em>knum</em></span> -- number of the slider to be read.
+    </p>
+        <p>
+      Calling <span class="emphasis"><em>control</em></span> will create a new slider on the screen. There is no theoretical limit to the number of sliders. Windows and TCL/TK use only integers for slider values, so the values may need rescaling. GUIs usually pass values at a fairly slow rate, so it may be advisable to pass the output of control through <span class="emphasis"><em>port</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119901856"></a>
+        <h2>Examples</h2>
+        <p>
+      See the <a class="link" href="setctrl.html" title="setctrl"><em class="citetitle">setctrl</em></a> opcode for an example.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119899776"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="setctrl.html" title="setctrl"><em class="citetitle">setctrl</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119897744"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist. Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>May, 2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 4.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="connect.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="convle.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">connect </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> convle</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

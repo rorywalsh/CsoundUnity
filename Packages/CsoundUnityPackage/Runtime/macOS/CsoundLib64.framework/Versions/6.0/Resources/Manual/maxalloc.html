@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>maxalloc</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="maxaccum.html" title="maxaccum" />
+    <link rel="next" href="max_k.html" title="max_k" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">maxalloc</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="maxaccum.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="max_k.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="maxalloc"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMaxalloc" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">maxalloc</span>
+        </h2>
+        <p>maxalloc — 
+      Limits the number of allocations of an instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081957648"></a>
+        <h2>Description</h2>
+        <p>
+      Limits the number of allocations of an instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081956336"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>maxalloc</strong></span> insnum, icount</pre>
+        <pre class="synopsis"><span class="command"><strong>maxalloc</strong></span> Sinsname, icount</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081953216"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>insnum</em></span> -- instrument number
+    </p>
+        <p>
+      <span class="emphasis"><em>Sinsname</em></span> -- instrument name
+    </p>
+        <p>
+      <span class="emphasis"><em>icount</em></span> -- number of instrument allocations
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081949824"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>maxalloc</em></span> limits the number of simultaneous instances (notes) of an instrument. Any score events after the maximum has been reached, are ignored.
+    </p>
+        <p>
+      All instances of <span class="emphasis"><em>maxalloc</em></span> must be defined in the header section, not in the instrument body.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081946976"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the maxalloc opcode. It uses the file <a class="ulink" href="examples/maxalloc.csd" target="_top"><em class="citetitle">maxalloc.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276081945168"></a>
+          <p class="title">
+            <strong>Example 539. Example of the maxalloc opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276453958352"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o maxalloc.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">maxalloc</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span>	<span class="c1">; Limit to three instances.</span>
+ 
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">sig</span> <span class="nb">oscil</span> <span class="mf">.3</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">32768</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span> <span class="mi">220</span>	<span class="c1">;1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">440</span>	<span class="c1">;2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">880</span>	<span class="c1">;3, limit is reached</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">1320</span>	<span class="c1">;is not played</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">1</span> <span class="mi">1760</span>	<span class="c1">;is not played</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should contain messages like these:
+      </p>
+        <pre class="screen">
+WARNING: cannot allocate last note because it exceeds instr maxalloc
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081940288"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="cpuprc.html" title="cpuprc"><em class="citetitle">cpuprc</em></a>, <a class="link" href="prealloc.html" title="prealloc"><em class="citetitle">prealloc</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081937376"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>July 1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.57</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="maxaccum.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="max_k.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">maxaccum </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> max_k</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

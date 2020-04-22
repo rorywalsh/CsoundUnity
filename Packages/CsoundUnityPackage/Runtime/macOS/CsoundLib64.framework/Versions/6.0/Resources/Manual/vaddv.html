@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vaddv</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vadd_i.html" title="vadd_i" />
+    <link rel="next" href="vaddv_i.html" title="vaddv_i" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vaddv</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vadd_i.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vaddv_i.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vaddv"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVaddv" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vaddv</span>
+        </h2>
+        <p>vaddv — 
+      Performs addition between two vectorial control signals.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044108832"></a>
+        <h2>Description</h2>
+        <p>
+      Performs addition between two vectorial control signals.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044107584"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vaddv</strong></span>  ifn1, ifn2, kelements [, kdstoffset] [, ksrcoffset] [,kverbose]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044105584"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn1</em></span>  - number of the table hosting the first vector to be processed
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn2</em></span>  - number of the table hosting the second vector to be processed
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044103072"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kelements</em></span> - number of elements of the two vectors
+    </p>
+        <p>
+      <span class="emphasis"><em>kdstoffset</em></span> - index offset for the destination (<span class="emphasis"><em>ifn1</em></span>) table (Default=0)
+    </p>
+        <p>
+      <span class="emphasis"><em>ksrcoffset</em></span> - index offset for the source (<span class="emphasis"><em>ifn2</em></span>) table (Default=0)
+    </p>
+        <p>
+      <span class="emphasis"><em>kverbose</em></span> - Selects whether or not warnings are printed (Default=0)
+    </p>
+        <p>
+      <span class="emphasis"><em>vaddv</em></span> adds two vectorial control signals, that is, each element of the first vector is processed (only) with the corresponding element of the other vector. Each vectorial signal is hosted by a table (<span class="emphasis"><em>ifn1</em></span> and <span class="emphasis"><em>ifn2</em></span>). The number of elements contained in both vectors must be the same.
+    </p>
+        <p>
+      The result is a new vectorial control signal that overrides old values of ifn1. If you want to keep the old ifn1 vector, use <a class="link" href="vcopy_i.html" title="vcopy_i"><em class="citetitle">vcopy_i</em></a>opcode to copy it in another table. You can use <span class="emphasis"><em>kdstoffset</em></span> and <span class="emphasis"><em>ksrcoffset</em></span> to specify vectors in any location of the tables.
+    </p>
+        <p>
+      Negative values for <span class="emphasis"><em>kdstoffset</em></span> and <span class="emphasis"><em>ksrcoffset</em></span> are acceptable. If <span class="emphasis"><em>kdstoffset</em></span> is negative, the out of range section of the vector will be discarded. If <span class="emphasis"><em>ksrcoffset</em></span> is negative, the out of range elements will be assumed to be 0 (i.e. the destination elements will not be changed). If elements for the destination vector are beyond the size of the table (including guard point), these elements are discarded (i.e. elements do not wrap around the tables). If elements for the source vector are beyond the table length, these elements are taken as 0 (i.e. the destination vector will not be changed for these elements).
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Using the same table as source and destination table in versions earlier than 5.04, might produce unexpected behavior, so use with care.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      This opcode works at k-rate (this means that every k-pass the vectors are added). There's an i-rate version of this opcode called <a class="link" href="vaddv_i.html" title="vaddv_i"><em class="citetitle">vaddv_i</em></a>.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Please note that the <span class="emphasis"><em>elements</em></span> argument has changed in version 5.03 from i-rate to k-rate. This will change the opcode's behavior in the unusual cases where the i-rate variable <span class="emphasis"><em>ielements</em></span> is changed inside the instrument, for example in:
+        </p>
+                <pre class="programlisting">
+    <span class="oblock">instr</span> 1
+ielements  <span class="op">=</span>        10
+           <span class="opc">vadd</span>     1, 1, ielements
+ielements  <span class="op">=</span>        20
+           <span class="opc">vadd</span>     2, 1, ielements
+           <span class="opc">turnoff</span>
+    <span class="oblock">endin</span></pre>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      All these operators (<a class="link" href="vaddv.html" title="vaddv"><em class="citetitle">vaddv</em></a>,<a class="link" href="vsubv.html" title="vsubv"><em class="citetitle">vsubv</em></a>,<a class="link" href="vmultv.html" title="vmultv"><em class="citetitle">vmultv</em></a>,<a class="link" href="vdivv.html" title="vdivv"><em class="citetitle">vdivv</em></a>,<a class="link" href="vpowv.html" title="vpowv"><em class="citetitle">vpowv</em></a>,<a class="link" href="vexpv.html" title="vexpv"><em class="citetitle">vexpv</em></a>, <a class="link" href="vcopy.html" title="vcopy"><em class="citetitle">vcopy</em></a> and <a class="link" href="vmap.html" title="vmap"><em class="citetitle">vmap</em></a>) are designed to be used together with other opcodes that operate with vectorial signals such as <a class="link" href="vcella.html" title="vcella"><em class="citetitle">vcella</em></a>, <a class="link" href="adsynt.html" title="adsynt"><em class="citetitle">adsynt</em></a>, <a class="link" href="adsynt2.html" title="adsynt2"><em class="citetitle">adsynt2</em></a> etc. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044071984"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vaddv opcode. It uses the file <a class="ulink" href="examples/vaddv.csd" target="_top"><em class="citetitle">vaddv.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276044070192"></a>
+          <p class="title">
+            <strong>Example 1070. Example of the vaddv opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276409985584"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc     -nm0 <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o cigoto.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">128</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+  <span class="kd">opcode</span> <span class="nf">TableDumpSimp</span><span class="p">,</span> <span class="kt">0</span><span class="p">,</span> <span class="kt">ijo</span>
+<span class="c1">;prints the content of a table in a simple way</span>
+i<span class="n">fn</span><span class="p">,</span> i<span class="n">prec</span><span class="p">,</span> i<span class="n">ppr</span>   <span class="nb">xin</span><span class="c1">; function table, float precision while printing (default = 3), parameters per row (default = 10, maximum = 32)</span>
+i<span class="n">prec</span>		<span class="o">=</span>		<span class="p">(</span>i<span class="n">prec</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="p">?</span> <span class="mi">3</span> <span class="p">:</span> i<span class="n">prec</span><span class="p">)</span>
+i<span class="n">ppr</span>		<span class="o">=</span>		<span class="p">(</span>i<span class="n">ppr</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">?</span> <span class="mi">10</span> <span class="p">:</span> i<span class="n">ppr</span><span class="p">)</span>
+i<span class="n">end</span>		<span class="o">=</span>		<span class="nb">ftlen</span><span class="p">(</span>i<span class="n">fn</span><span class="p">)</span>
+i<span class="n">ndx</span>		<span class="o">=</span>		<span class="mi">0</span>
+S<span class="n">format</span>	<span class="nb">sprintf</span>	<span class="s">"</span><span class="se">%%</span><span class="s">.</span><span class="si">%d</span><span class="s">f</span><span class="se">\t</span><span class="s">"</span><span class="p">,</span> i<span class="n">prec</span>
+S<span class="n">dump</span>		<span class="o">=</span>		<span class="s">""</span>
+<span class="nl">loop</span><span class="p">:</span>
+i<span class="n">val</span>		<span class="nb">tab_i</span>		i<span class="n">ndx</span><span class="p">,</span> i<span class="n">fn</span>
+S<span class="n">new</span>		<span class="nb">sprintf</span>	S<span class="n">format</span><span class="p">,</span> i<span class="n">val</span>
+S<span class="n">dump</span>		<span class="nb">strcat</span>		S<span class="n">dump</span><span class="p">,</span> S<span class="n">new</span>
+i<span class="n">ndx</span>		<span class="o">=</span>		i<span class="n">ndx</span> <span class="o">+</span> <span class="mi">1</span>
+i<span class="n">mod</span>		<span class="o">=</span>		i<span class="n">ndx</span> <span class="o">%</span> i<span class="n">ppr</span>
+	<span class="k">if</span> i<span class="n">mod</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">then</span>
+		<span class="nb">puts</span>		S<span class="n">dump</span><span class="p">,</span> <span class="mi">1</span>
+S<span class="n">dump</span>		<span class="o">=</span>		<span class="s">""</span>
+	<span class="k">endif</span>
+	<span class="k">if</span> i<span class="n">ndx</span> <span class="o">&lt;</span> i<span class="n">end</span> <span class="k">igoto</span> <span class="nl">loop</span>
+		<span class="nb">puts</span>		S<span class="n">dump</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="kd">endop</span>
+
+	<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">fn1</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">fn2</span> <span class="o">=</span> <span class="nb">p5</span>
+i<span class="n">elements</span> <span class="o">=</span> <span class="nb">p6</span>
+i<span class="n">dstoffset</span> <span class="o">=</span> <span class="nb">p7</span>
+i<span class="n">srcoffset</span> <span class="o">=</span> <span class="nb">p8</span>
+k<span class="n">val</span> <span class="nb">init</span> <span class="mi">25</span>
+<span class="nb">vaddv</span> i<span class="n">fn1</span><span class="p">,</span> i<span class="n">fn2</span><span class="p">,</span> i<span class="n">elements</span><span class="p">,</span> i<span class="n">dstoffset</span><span class="p">,</span> i<span class="n">srcoffset</span><span class="p">,</span> <span class="mi">1</span>
+<span class="nb">turnoff</span>
+	<span class="kd">endin</span>
+
+	<span class="kd">instr</span> <span class="nf">2</span>
+<span class="nf">TableDumpSimp</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">16</span>
+	<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">1</span> <span class="mi">15</span> <span class="mi">16</span>
+
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">1</span> <span class="mi">15</span> <span class="mi">2</span>
+
+
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">0.0</span>	<span class="mf">0.2</span>	<span class="mi">1</span>
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">0.2</span>	<span class="mf">0.2</span>	<span class="mi">2</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">0.4</span>	<span class="mf">0.01</span>	<span class="mi">1</span>	<span class="mi">2</span>	<span class="mi">5</span>	<span class="mi">3</span>	<span class="mi">8</span>	
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">0.8</span>	<span class="mf">0.2</span>	<span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">1.0</span>	<span class="mf">0.01</span>	<span class="mi">1</span>	<span class="mi">2</span>	<span class="mi">5</span>	<span class="mi">10</span>	<span class="o">-</span><span class="mi">2</span>	
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">1.2</span>	<span class="mf">0.2</span>	<span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">1.4</span>	<span class="mf">0.01</span>	<span class="mi">1</span>	<span class="mi">2</span>	<span class="mi">8</span>	<span class="mi">14</span>	<span class="mi">0</span>	
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">1.6</span>	<span class="mf">0.2</span>	<span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">1.8</span>	<span class="mf">0.01</span>	<span class="mi">1</span>	<span class="mi">2</span>	<span class="mi">8</span>	<span class="mi">0</span>	<span class="mi">14</span>	
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">2.0</span>	<span class="mf">0.2</span>	<span class="mi">1</span>	
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">2.2</span>	<span class="mf">0.002</span>	<span class="mi">1</span>	<span class="mi">1</span>	<span class="mi">8</span>	<span class="mi">5</span>	<span class="mi">2</span>	
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">2.4</span>	<span class="mf">0.2</span>	<span class="mi">1</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044066208"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado. Optional arguments added by Andres Cabrera and Istvan Varga.</p>
+        <p>New in Csound 5 (Previously available only on CsoundAV)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vadd_i.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vaddv_i.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vadd_i </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vaddv_i</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

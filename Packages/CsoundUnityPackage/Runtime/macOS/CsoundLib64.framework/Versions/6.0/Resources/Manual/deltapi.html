@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>deltapi</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="deltap3.html" title="deltap3" />
+    <link rel="next" href="deltapn.html" title="deltapn" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">deltapi</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="deltap3.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="deltapn.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="deltapi"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDeltapi" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">deltapi</span>
+        </h2>
+        <p>deltapi — 
+      Taps a delay line at variable offset times, uses interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116822400"></a>
+        <h2>Description</h2>
+        <p>
+      Taps a delay line at variable offset times, uses interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116821152"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>deltapi</strong></span> xdlt</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116819072"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xdlt</em></span> -- specifies the tapped delay time in seconds. Each can range from 1 control period to the full delay time of the read/write pair; however, since there is no internal check for adherence to this range, the user is wholly responsible. Each argument can be a constant, a variable, or a time-varying signal; the <span class="emphasis"><em>xdlt</em></span> argument in <span class="emphasis"><em>deltapi</em></span> implies that an audio-varying delay is permitted there.
+    </p>
+        <p>
+      <span class="emphasis"><em>deltapi</em></span> extracts sound by interpolated readout. By interpolating between adjacent stored samples <span class="emphasis"><em>deltapi</em></span> represents a particular delay time with more accuracy, but it will take about twice as long to run.
+    </p>
+        <p>
+      This opcode can tap into a <a class="link" href="delayr.html" title="delayr"><em class="citetitle">delayr</em></a>/<a class="link" href="delayw.html" title="delayw"><em class="citetitle">delayw</em></a> pair, extracting delayed audio from the <span class="emphasis"><em>idlt</em></span> seconds of stored sound. There can be any number of <a class="link" href="deltap.html" title="deltap"><em class="citetitle">deltap</em></a> and/or <span class="emphasis"><em>deltapi</em></span> units between a read/write pair. Each receives an audio tap with no change of original amplitude.
+    </p>
+        <p>
+      This opcode can provide multiple delay taps for arbitrary delay path and feedback networks. They can deliver either constant-time or time-varying taps, and are useful for building chorus effects, harmonizers, and Doppler shifts. Constant-time delay taps (and some slowly changing ones) do not need interpolated readout; they are well served by <span class="emphasis"><em>deltap</em></span>. Medium-paced or fast varying dlt's, however, will need the extra services of <span class="emphasis"><em>deltapi</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>delayr</em></span>/<span class="emphasis"><em>delayw</em></span> pairs may be interleaved. To associate a delay tap unit with a specific <span class="emphasis"><em>delayr</em></span> unit, it not only has to be located between that <span class="emphasis"><em>delayr</em></span> and the appropriate <span class="emphasis"><em>delayw</em></span> unit, but must also precede any following <span class="emphasis"><em>delayr</em></span> units. See Example 2. (This feature added in Csound version 3.57 by Jens Groh and John ffitch).
+    </p>
+        <p>
+      <span class="emphasis"><em>N.B.</em></span> k-rate delay times are not internally interpolated, but rather lay down stepped time-shifts of audio samples; this will be found quite adequate for slowly changing tap times. For medium to fast-paced changes, however, one should provide a higher resolution audio-rate timeshift as input.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116804912"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276116804000"></a>
+          <p class="title">
+            <strong>Example 208. deltap example #1</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+  asource  <span class="opc">buzz</span>      1, 440, 20, 1
+  atime    <span class="opc">linseg</span>    1, p3<span class="op">/</span>2,.01, p3<span class="op">/</span>2,1   <span class="comment">; trace a distance in secs</span>
+  ampfac   <span class="op">=</span>         1<span class="op">/</span>atime<span class="op">/</span>atime         <span class="comment">; and calc an amp factor</span>
+  adump    <span class="opc">delayr</span>    1                     <span class="comment">; set maximum distance</span>
+  amove    <span class="opc">deltapi</span>   atime                 <span class="comment">; move sound source past</span>
+           <span class="opc">delayw</span>    asource               <span class="comment">; the listener</span>
+           <span class="opc">out</span>       amove <span class="op">*</span> ampfac</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276116791328"></a>
+          <p class="title">
+            <strong>Example 209. deltap example #2</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+  ainput1 <span class="op">=</span>	..... 
+  ainput2 <span class="op">=</span>	..... 
+  kdlyt1  <span class="op">=</span>	..... 
+  kdlyt2  <span class="op">=</span>	..... 
+
+<span class="comment">;Read delayed signal, first delayr instance:</span>
+  adump   <span class="opc">delayr</span>  4.0 
+  adly1   <span class="opc">deltap</span>  kdlyt1       <span class="comment">; associated with first delayr instance</span>
+
+<span class="comment">;Read delayed signal, second delayr instance:</span>
+  adump   <span class="opc">delayr</span>  4.0 
+  adly2   <span class="opc">deltap</span>  kdlyt2       <span class="comment">; associated with second delayr instance</span>
+
+<span class="comment">;Do some cross-coupled manipulation:</span>
+  afdbk1  <span class="op">=</span>       0.7 <span class="op">*</span> adly1 <span class="op">+</span> 0.7 <span class="op">*</span> adly2 <span class="op">+</span> ainput1 
+  afdbk2  <span class="op">=</span>       -0.7 <span class="op">*</span> adly1 <span class="op">+</span> 0.7 <span class="op">*</span> adly2 <span class="op">+</span> ainput2 
+
+<span class="comment">;Feed back signal, associated with first delayr instance:</span>
+          <span class="opc">delayw</span>  afdbk1 
+
+<span class="comment">;Feed back signal, associated with second delayr instance:</span>
+          <span class="opc">delayw</span>  afdbk2
+          <span class="opc">outs</span>    adly1, adly2</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is yet another example of the deltapi opcode. It uses the file <a class="ulink" href="examples/deltapi.csd" target="_top"><em class="citetitle">deltapi.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276116770496"></a>
+          <p class="title">
+            <strong>Example 210. Example of the deltapi opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276484097136"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o deltapi.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>   
+
+ga<span class="n">sig</span>  <span class="nb">init</span> <span class="mi">0</span>   
+gi<span class="n">del</span>  <span class="o">=</span> <span class="mi">1</span>		<span class="c1">;delay time in seconds</span>
+                                                             
+<span class="kd">instr</span> <span class="nf">1</span>
+	
+a<span class="n">in</span>  <span class="nb">pluck</span> <span class="mf">.7</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">in</span><span class="p">,</span> a<span class="n">in</span>
+
+<span class="nb">vincr</span> ga<span class="n">sig</span><span class="p">,</span> a<span class="n">in</span>	<span class="c1">;send to global delay</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	
+
+i<span class="n">feedback</span> <span class="o">=</span> <span class="nb">p4</span>	
+
+a<span class="n">buf2</span>	<span class="nb">delayr</span>	gi<span class="n">del</span>
+a<span class="n">delL</span> 	<span class="nb">deltapi</span>	<span class="mf">.4</span>		<span class="c1">;first tap (on left channel)</span>
+a<span class="n">delM</span> 	<span class="nb">deltapi</span>	<span class="mi">1</span>		<span class="c1">;second tap (on middle channel)</span>
+	<span class="nb">delayw</span>	ga<span class="n">sig</span> <span class="o">+</span> <span class="p">(</span>a<span class="n">delL</span> <span class="o">*</span> i<span class="n">feedback</span><span class="p">)</span>
+
+a<span class="n">buf3</span>	<span class="nb">delayr</span>	gi<span class="n">del</span>
+k<span class="n">del</span>	<span class="nb">line</span>    <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.01</span>	<span class="c1">;vary delay time</span>
+a<span class="n">delR</span> 	<span class="nb">deltapi</span> <span class="mf">.65</span> <span class="o">*</span> k<span class="n">del</span>	<span class="c1">;one pitch changing tap (on the right chn.)</span>
+	<span class="nb">delayw</span>	ga<span class="n">sig</span> <span class="o">+</span> <span class="p">(</span>a<span class="n">delR</span> <span class="o">*</span> i<span class="n">feedback</span><span class="p">)</span>
+<span class="c1">;make a mix of all deayed signals	</span>
+	<span class="nb">outs</span>	a<span class="n">delL</span> <span class="o">+</span> a<span class="n">delM</span><span class="p">,</span> a<span class="n">delR</span> <span class="o">+</span> a<span class="n">delM</span>
+
+<span class="nb">clear</span>	ga<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">3</span>  <span class="mi">0</span>	<span class="c1">;no feedback</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">8</span> <span class="mf">.8</span>	<span class="c1">;lots of feedback</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116766512"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="deltap.html" title="deltap"><em class="citetitle">deltap</em></a>,
+      <a class="link" href="deltap3.html" title="deltap3"><em class="citetitle">deltap3</em></a>,
+      <a class="link" href="deltapn.html" title="deltapn"><em class="citetitle">deltapn</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="deltap3.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="deltapn.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">deltap3 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> deltapn</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

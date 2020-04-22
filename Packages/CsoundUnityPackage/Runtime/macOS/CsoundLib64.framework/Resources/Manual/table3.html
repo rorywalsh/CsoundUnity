@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>table3</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="table.html" title="table" />
+    <link rel="next" href="tablecopy.html" title="tablecopy" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">table3</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="table.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tablecopy.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="table3"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTable3" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">table3</span>
+        </h2>
+        <p>table3 — 
+      Accesses table values by direct indexing with cubic interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049046112"></a>
+        <h2>Description</h2>
+        <p>
+      Accesses table values by direct indexing with cubic interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049044864"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>table3</strong></span> andx, ifn [, ixmode] [, ixoff] [, iwrap]</pre>
+        <pre class="synopsis">ires <span class="command"><strong>table3</strong></span> indx, ifn [, ixmode] [, ixoff] [, iwrap]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>table3</strong></span> kndx, ifn [, ixmode] [, ixoff] [, iwrap]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049040096"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- function table number.
+    </p>
+        <p>
+      <span class="emphasis"><em>ixmode</em></span> (optional) -- index data mode. The default value is 0.
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 = raw index</p>
+            </li>
+            <li class="listitem">
+              <p>1 = normalized (0 to 1)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ixoff</em></span> (optional) -- amount by which index is to be offset. For a table with origin at center, use tablesize/2 (raw) or .5 (normalized). The default value is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwrap</em></span> (optional) -- wraparound index flag. The default value is 0.
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 = nowrap (index &lt; 0 treated as index=0; index &gt; tablesize sticks at index=size)</p>
+            </li>
+            <li class="listitem">
+              <p>1 = wraparound.</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049032320"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>table3</em></span> is identical to <a class="link" href="tablei.html" title="tablei"><em class="citetitle">tablei</em></a>, except that it uses cubic interpolation. (New in Csound version 3.50).
+    </p>
+        <p>
+      </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+        Reading tables which contain stereo- or multichannel-information
+        probably causes unwanted noise as the opcode interpolates between
+        subsequent positions of the table regardless of the origin of its
+        content. Usually just the content of one channel is expected
+        Consider using <span class="emphasis"><em>loscilx</em></span> instead.
+      </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049028256"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a>,
+      <a class="link" href="tablei.html" title="tablei"><em class="citetitle">tablei</em></a>,
+      <a class="link" href="oscil1.html" title="oscil1"><em class="citetitle">oscil1</em></a>,
+      <a class="link" href="oscil1i.html" title="oscil1i"><em class="citetitle">oscil1i</em></a>,
+      <a class="link" href="osciln.html" title="osciln"><em class="citetitle">osciln</em></a>,
+      <a class="link" href="loscilx.html" title="loscilx"><em class="citetitle">loscilx</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="table.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tablecopy.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">table </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tablecopy</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

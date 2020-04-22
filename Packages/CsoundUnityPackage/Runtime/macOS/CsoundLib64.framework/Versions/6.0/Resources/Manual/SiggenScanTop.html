@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Scanned Synthesis</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="SiggenTop.html" title="Signal Generators" />
+    <link rel="prev" href="SiggenSample.html" title="Sample Playback" />
+    <link rel="next" href="SiggenTableacc.html" title="Table Access" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Scanned Synthesis</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="SiggenSample.html">Prev</a> </td>
+          <th width="60%" align="center">Signal Generators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="SiggenTableacc.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="SiggenScanTop"></a>Scanned Synthesis</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Scanned synthesis is a variant of physical modeling, where a network of masses connected by springs is used to generate a dynamic waveform. The opcode <a class="link" href="scanu.html" title="scanu"><em class="citetitle">scanu</em></a> defines the mass/spring network and sets it in motion. The opcode <a class="link" href="scans.html" title="scans"><em class="citetitle">scans</em></a> follows a predefined path (trajectory) around the network and outputs the detected waveform. Several <span class="emphasis"><em>scans</em></span> instances may follow different paths around the same network.
+  </p>
+      <p>
+    These are highly efficient mechanical modelling algorithms for both synthesis and sonic animation via algorithmic processing. They should run in real-time. Thus, the output is useful either directly as audio, or as controller values for other parameters.
+  </p>
+      <p>
+    The Csound implementation adds support for a scanning path or matrix.  Essentially, this offers the possibility of reconnecting the masses in different orders, causing the signal to propagate quite differently. They do not necessarily need to be connected to their direct neighbors. Essentially, the matrix has the effect of <span class="quote">“<span class="quote">molding</span>”</span> this surface into a radically different shape.
+  </p>
+      <p>
+    To produce the matrices, the table format is straightforward. For example, for 4 masses we have the following grid describing the possible connections:
+  </p>
+      <div class="informaltable">
+        <table class="informaltable" border="1">
+          <colgroup>
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+          </colgroup>
+          <tbody>
+            <tr>
+              <td> </td>
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+              <td> </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+    Whenever two masses are connected, the point they define is 1. If two masses are not connected, then the point they define is 0. For example, a unidirectional string has the following connections: (1,2), (2,3), (3,4). If it is bidirectional, it also has (2,1), (3,2), (4,3)).  For the unidirectional string, the matrix appears:
+  </p>
+      <div class="informaltable">
+        <table class="informaltable" border="1">
+          <colgroup>
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+          </colgroup>
+          <tbody>
+            <tr>
+              <td> </td>
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>0</td>
+              <td>1</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+    The above table format of the connection matrix is for conceptual convenience only. The actual values shown in te table are obtained by <span class="emphasis"><em>scans</em></span> from an ASCII file using <a class="link" href="GEN23.html" title="GEN23"><em class="citetitle">GEN23</em></a>. The actual ASCII file is created from the table model row by row. Therefore the ASCII file for the example table shown above becomes:
+    </p>
+      <div class="literallayout">
+        <p><br />
+0100001000010000<br />
+    </p>
+      </div>
+      <p>
+  </p>
+      <p>
+    This matrix example is very small and simple. In practice, most scanned synthesis instruments will use many more masses than four, so their matrices will be much larger and more complex. See the example in the <a class="link" href="scans.html" title="scans"><em class="citetitle">scans</em></a> documentation.
+  </p>
+      <p>
+    Please note that the generated dynamic wavetables are very unstable. Certain values for masses, centering, and damping can cause the system to <span class="quote">“<span class="quote">blow up</span>”</span> and the most interesting sounds to emerge from your loudspeakers!
+  </p>
+      <p>
+    The supplement to this manual contains a tutorial on scanned synthesis. The tutorial, examples, and other information on scanned synthesis is available from the Scanned Synthesis page at cSounds.com.
+  </p>
+      <p>
+    Scanned synthesis developed by Bill Verplank, Max Mathews and Rob Shaw at Interval Research between 1998 and 2000.
+  </p>
+      <p>
+    Opcodes that implement scanned synthesis are:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="scanhammer.html" title="scanhammer">
+                <em class="citetitle">scanhammer</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="scans.html" title="scans">
+                <em class="citetitle">scans</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="scantable.html" title="scantable">
+                <em class="citetitle">scantable</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="scanu.html" title="scanu">
+                <em class="citetitle">scanu</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="xscanmap.html" title="xscanmap">
+                <em class="citetitle">xscanmap</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="xscans.html" title="xscans">
+                <em class="citetitle">xscans</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="xscansmap.html" title="xscansmap">
+                <em class="citetitle">xscansmap</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="xscanu.html" title="xscanu">
+                <em class="citetitle">xscanu</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="SiggenSample.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="SiggenTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="SiggenTableacc.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Sample Playback </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Table Access</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

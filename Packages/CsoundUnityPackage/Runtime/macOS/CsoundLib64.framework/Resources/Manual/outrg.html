@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>outrg</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="outq.html" title="outq" />
+    <link rel="next" href="outs1.html" title="outs1" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">outrg</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="outq.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="outs1.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="outrg"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOutrg" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">outrg</span>
+        </h2>
+        <p>outrg — 
+      Allow output to a range of adjacent audio channels on the audio output device
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072781168"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>outrg</em></span> outputs audio to a range of adjacent audio channels on the audio output device.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072779504"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>outrg</strong></span> kstart, aout1 [,aout2, aout3, ..., aoutN]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072777072"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kstart</em></span> - the number of the first channel of the output device to be accessed (channel numbers starts with 1, which is the first channel)
+    </p>
+        <p>
+      <span class="emphasis"><em>aout1, aout2, ... aoutN</em></span> - the arguments containing the audio to be output to the corresponding output channels.
+    </p>
+        <p>
+      <span class="emphasis"><em>outrg</em></span> allows to output a range of adjacent channels to the output device. <span class="emphasis"><em>kstart</em></span> indicates the first channel to be accessed (channel 1 is the first channel). The user must be sure that the number obtained by summing kstart plus the number of accessed channels -1 is &lt;= <a class="link" href="nchnls.html" title="nchnls"><em class="citetitle">nchnls</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072772032"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the outrg opcode. It uses the file <a class="ulink" href="examples/outrg.csd" target="_top"><em class="citetitle">outrg.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276072770240"></a>
+          <p class="title">
+            <strong>Example 669. Example of the outrg opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276442224048"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o outrg.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">4</span>        <span class="c1">;quad</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">left</span> <span class="nb">init</span> <span class="mi">1</span>
+a<span class="n">sig</span>  <span class="nb">vco2</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">220</span>			<span class="c1">;sawtooth</span>
+i<span class="n">dur</span> <span class="o">=</span> <span class="nb">p3</span><span class="o">/</span><span class="p">(</span><span class="vg">nchnls</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+k<span class="n">next</span> <span class="nb">init</span> i<span class="n">dur</span>
+k<span class="n">pos</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">rate</span> <span class="nb">init</span> <span class="mi">1</span><span class="o">/</span>i<span class="n">dur</span>
+k<span class="n">base</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">time</span> <span class="nb">timeinsts</span>
+<span class="k">if</span> k<span class="n">time</span><span class="o">&gt;=</span>k<span class="n">next</span> <span class="k">then</span>
+  k<span class="n">left</span> <span class="o">=</span> k<span class="n">left</span> <span class="o">+</span> <span class="mi">1</span>
+  k<span class="n">next</span> <span class="o">=</span> k<span class="n">next</span> <span class="o">+</span> i<span class="n">dur</span>
+  k<span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+  k<span class="n">base</span> <span class="o">=</span> k<span class="n">time</span>
+<span class="k">else</span>
+  k<span class="n">pos</span> <span class="o">=</span> <span class="p">(</span>k<span class="n">time</span><span class="o">-</span>k<span class="n">base</span><span class="p">)</span><span class="o">/</span>i<span class="n">dur</span>
+<span class="k">endif</span>
+<span class="nb">printks</span> <span class="s">"speaker </span><span class="si">%d</span><span class="s"> position %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">left</span><span class="p">,</span> k<span class="n">pos</span>
+a<span class="n">1</span><span class="p">,</span>a<span class="n">2</span> <span class="nb">pan2</span> a<span class="n">sig</span><span class="p">,</span> k<span class="n">pos</span>
+      <span class="nb">outrg</span>  k<span class="n">left</span><span class="p">,</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>
+k<span class="n">pos</span> <span class="o">=</span> k<span class="n">base</span><span class="o">/</span>i<span class="n">dur</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+        Its output should include lines like these:
+      </p>
+        <pre class="screen">
+speaker 1 position 0.000200
+speaker 1 position 0.000400
+speaker 1 position 0.000600
+.....
+speaker 1 position 1.000000
+speaker 2 position 0.000000
+speaker 2 position 0.000200
+....
+speaker 2 position 0.999800
+speaker 3 position 0.000000
+speaker 3 position 0.000200
+....
+speaker 3 position 0.999600
+speaker 4 position 0.000000
+.....</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072765232"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="outq.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="outs1.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">outq </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> outs1</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

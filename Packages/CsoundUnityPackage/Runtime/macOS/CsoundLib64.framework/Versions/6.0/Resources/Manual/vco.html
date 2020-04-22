@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vco</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vcella.html" title="vcella" />
+    <link rel="next" href="vco2.html" title="vco2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vco</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vcella.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vco2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vco"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVco" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vco</span>
+        </h2>
+        <p>vco — 
+      Implementation of a band limited, analog modeled oscillator.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042015792"></a>
+        <h2>Description</h2>
+        <p>
+      Implementation of a band limited, analog modeled oscillator, based on integration of band limited impulses. <span class="emphasis"><em>vco</em></span> can be used to simulate a variety of analog wave forms.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042013968"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>vco</strong></span> xamp, xcps, iwave, kpw [, ifn] [, imaxd] [, ileak] [, inyx] \
+      [, iphs] [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042011728"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iwave</em></span> -- determines the waveform:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p><span class="emphasis"><em>iwave</em></span> = 1 - sawtooth</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>iwave</em></span> = 2 - square/PWM</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>iwave</em></span> = 3 - triangle/saw/ramp</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> (optional, default = 1) -- should be the table number of a of a stored sine wave. Must point to a valid table which contains a sine wave. Csound will report an error if this parameter is not set and table 1 doesn't exist.
+    </p>
+        <p>
+      <span class="emphasis"><em>imaxd</em></span> (optional, default = 1) -- is the maximum delay time. A time of 1/<span class="emphasis"><em>ifqc</em></span> may be required for the PWM and triangle waveform. To bend the pitch down this value must be as large as 1/(minimum frequency).
+    </p>
+        <p>
+      <span class="emphasis"><em>ileak</em></span> (optional, default = 0) -- if <span class="emphasis"><em>ileak</em></span> is between zero and one (0 &lt; ileak &lt; 1) then <span class="emphasis"><em>ileak</em></span> is used as the leaky integrator value. Otherwise a leaky integrator value of .999 is used for the saw and square waves and .995 is used for the triangle wave. This can be used to <span class="quote">“<span class="quote">flatten</span>”</span> the square wave or <span class="quote">“<span class="quote">straighten</span>”</span> the saw wave at low frequencies by setting <span class="emphasis"><em>ileak</em></span> to .99999 or a similar value. This should give a hollower sounding square wave.
+    </p>
+        <p>
+      <span class="emphasis"><em>inyx</em></span> (optional, default = .5) -- this is used to determine the number of harmonics in the band limited pulse.  All overtones up to <span class="emphasis"><em>sr</em></span> * <span class="emphasis"><em>inyx</em></span> will be used.  The default gives <span class="emphasis"><em>sr</em></span> * .5 (<span class="emphasis"><em>sr</em></span>/2).  For <span class="emphasis"><em>sr</em></span>/4 use <span class="emphasis"><em>inyx</em></span> = .25.  This can generate a <span class="quote">“<span class="quote">fatter</span>”</span> sound in some cases.
+    </p>
+        <p>
+      <span class="emphasis"><em>iphs</em></span> (optional, default = 0) -- this is a phase value.  There is an artifact (bug-like feature) in <span class="emphasis"><em>vco</em></span> which occurs during the first half cycle of the square wave which causes the waveform to be greater in magnitude than all others.  The value of <span class="emphasis"><em>iphs</em></span> has an effect on this artifact.  In particular setting <span class="emphasis"><em>iphs</em></span> to .5 will cause the first half cycle of the square wave to resemble a small triangle wave.  This may be more desirable than the large wave artifact which is the current default.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default = 0) -- if non zero
+    skip the initialisation of the filter. (New in Csound version
+    4.23f13 and 5.0)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041992752"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kpw</em></span> -- determines either the pulse width (if <span class="emphasis"><em>iwave</em></span> is 2) or the saw/ramp character (if <span class="emphasis"><em>iwave</em></span> is 3) The value of <span class="emphasis"><em>kpw</em></span> should be greater than 0 and less than 1. A value of 0.5 will generate either a square wave (if <span class="emphasis"><em>iwave</em></span> is 2) or a triangle wave (if <span class="emphasis"><em>iwave</em></span> is 3).
+
+    </p>
+        <p>
+      <span class="emphasis"><em>xamp</em></span> -- determines the amplitude
+    </p>
+        <p>
+      <span class="emphasis"><em>xcps</em></span> -- is the frequency of the wave in cycles per second.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041987072"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vco opcode. It uses the file <a class="ulink" href="examples/vco.csd" target="_top"><em class="citetitle">vco.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276041985280"></a>
+          <p class="title">
+            <strong>Example 1085. Example of the vco opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276408917936"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o vco.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Set the amplitude.</span>
+  k<span class="n">amp</span> <span class="o">=</span> <span class="nb">p4</span> 
+
+  <span class="c1">; Set the frequency.</span>
+  k<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p5</span><span class="p">)</span> 
+
+  <span class="c1">; Select the wave form.</span>
+  i<span class="n">wave</span> <span class="o">=</span> <span class="nb">p6</span>
+
+  <span class="c1">; Set the pulse-width/saw-ramp character.</span>
+  k<span class="n">pw</span> <span class="nb">init</span> <span class="mf">0.5</span>
+
+  <span class="c1">; Use Table #1.</span>
+  i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+  
+  <span class="c1">; Generate the waveform.</span>
+  a<span class="n">sig</span> <span class="nb">vco</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> i<span class="n">wave</span><span class="p">,</span> k<span class="n">pw</span><span class="p">,</span> i<span class="n">fn</span>
+
+  <span class="c1">; Output and amplification.</span>
+  <span class="nb">out</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">65536</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Define the score.</span>
+<span class="c1">; p4 = raw amplitude (0-32767)</span>
+<span class="c1">; p5 = frequency, in pitch-class notation.</span>
+<span class="c1">; p6 = the waveform (1=Saw, 2=Square/PWM, 3=Tri/Saw-Ramp-Mod)</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">00</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">05.00</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">02</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">05.00</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">04</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">05.00</span> <span class="mi">3</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">06</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">07.00</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">08</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">07.00</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">10</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">07.00</span> <span class="mi">3</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">12</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">09.00</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">14</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">09.00</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">16</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">09.00</span> <span class="mi">3</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">18</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">11.00</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">20</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">11.00</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">22</span> <span class="mi">02</span> <span class="mi">20000</span> <span class="mf">11.00</span> <span class="mi">3</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041981248"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vco2.html" title="vco2"><em class="citetitle">vco2</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041979200"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Hans Mikelson</td>
+          </tr>
+          <tr>
+            <td>December 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.50</p>
+        <p>November 2002. Corrected the documentation for the <span class="emphasis"><em>kpw</em></span> parameter thanks to Luis Jure and Hans Mikelson.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vcella.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vco2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vcella </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vco2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

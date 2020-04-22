@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>OSCraw</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="OSClisten.html" title="OSClisten" />
+    <link rel="next" href="OSCsend.html" title="OSCsend" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">OSCraw</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="OSClisten.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OSCsend.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="OSCraw"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOSCraw" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">OSCraw</span>
+        </h2>
+        <p>OSCraw — 
+      Listen for all OSC messages at a given port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075379712"></a>
+        <h2>Description</h2>
+        <p>
+      On each k-cycle looks to see if an OSC message has been received
+      at a given port and copies its contents to a string array. All
+      messages are copied. If a bundle of messages is received, the
+      output array will contain all of the messages in it. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075378256"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">Smess[],klen <span class="command"><strong>OSCraw</strong></span> iport</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075376176"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iport</em></span>
+      -- a port where messages are going to be received from.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075374528"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>Smess[]</em></span> -- an array of strings containing
+      the message components: address, types, and data items. If the
+      array does not exist (ie. has not been initialised), one will be
+      created with size 2. Arrays cannot grow with the size of the
+      message, so if a message with more than 2 items (ie. with any
+      data items) is to be fully copied into the output, a larger array needs to initialised
+      before it is used. If a message has more items than an array has
+      space for, it is truncated.
+    </p>
+        <p>
+      <span class="emphasis"><em>klen</em></span> -- number of items placed in the
+      output array. It is 0 if no message has been received, and at
+      least 2 if a message has been received (address, types are the
+      minimum items).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075371440"></a>
+        <div class="example">
+          <a id="idm276075371152"></a>
+          <p class="title">
+            <strong>Example 648. Example.</strong>
+          </p>
+          <div class="example-contents">
+            <p>The following CSD file demonstrates how a message is
+	received by OSCraw:</p>
+            <div class="refsect1">
+              <a id="idm276443365600"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-o dac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="kd">instr</span>	<span class="nf">1</span>
+ k<span class="n">when</span>  <span class="nb">init</span> <span class="mi">0</span>
+ k<span class="n">metro</span> <span class="nb">metro</span> <span class="mi">1</span>
+ k<span class="n">when</span> <span class="o">+=</span> k<span class="n">metro</span>
+ <span class="nb">OSCsend</span> k<span class="n">when</span><span class="p">,</span> <span class="s">"127.0.0.1"</span><span class="p">,</span><span class="mi">7771</span><span class="p">,</span> <span class="s">"/foo/bar"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> k<span class="n">when</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+S<span class="n">mess</span><span class="p">[]</span> <span class="nb">init</span> <span class="mi">3</span>
+<span class="nl">top</span><span class="p">:</span>
+S<span class="n">mess</span><span class="p">,</span>k<span class="n">a</span> <span class="n">OSCraw</span> <span class="mi">7771</span>
+k<span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> k<span class="n">n</span> <span class="o">&lt;</span> k<span class="n">a</span> <span class="k">do</span>
+  <span class="nb">printf</span> <span class="s">": %s "</span><span class="p">,</span> k<span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> S<span class="n">mess</span><span class="p">[</span>k<span class="n">n</span><span class="p">]</span>
+  k<span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="k">od</span>
+<span class="nb">printf</span> <span class="s">"</span><span class="si">%d</span><span class="s"> items</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">a</span><span class="p">,</span> k<span class="n">n</span>
+<span class="k">if</span> k<span class="n">a</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">kgoto</span> <span class="nl">top</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <br class="example-break" />
+      </div>
+      <div class="refsect1">
+        <a id="idm276075369088"></a>
+        <h2>See Also</h2>
+        <p>
+        <a class="link" href="OSCsend.html" title="OSCsend"><em class="citetitle">OSCsend</em></a>,
+        <a class="link" href="OSCinit.html" title="OSCinit"><em class="citetitle">OSCinit</em></a>
+	 <a class="link" href="OSClisten.html" title="OSClisten"><em class="citetitle">OSClisten</em></a>
+      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075365280"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Authors: Oeyvind Brandtsegg, Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>2017</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>types aAG are new in Csound 6.07</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="OSClisten.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OSCsend.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">OSClisten </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> OSCsend</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

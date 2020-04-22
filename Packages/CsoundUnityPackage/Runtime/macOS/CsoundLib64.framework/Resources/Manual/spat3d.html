@@ -1,0 +1,774 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>spat3d</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="space.html" title="space" />
+    <link rel="next" href="spat3di.html" title="spat3di" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">spat3d</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="space.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="spat3di.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="spat3d"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpat3d" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">spat3d</span>
+        </h2>
+        <p>spat3d — 
+      Positions the input sound in a 3D space and allows moving the sound at k-rate.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054187072"></a>
+        <h2>Description</h2>
+        <p>
+      This opcode positions the input sound in a 3D space, with optional simulation of room acoustics, in various output formats. <span class="emphasis"><em>spat3d</em></span> allows moving the sound at k-rate (this movement is interpolated internally to eliminate "zipper noise" if sr not equal to kr).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054185072"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aW, aX, aY, aZ <span class="command"><strong>spat3d</strong></span> ain, kX, kY, kZ, idist, ift, imode, imdel, iovr [, istor]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054182928"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idist</em></span> -- For modes 0 to 3, <span class="emphasis"><em>idist</em></span> is the unit circle distance in meters. For mode 4, <span class="emphasis"><em>idist</em></span> is the distance between microphones. 
+    </p>
+        <p>
+      The following formulas describe amplitude and delay as a function of sound source distance from microphone(s):
+      </p>
+        <div class="literallayout">
+          <p><br />
+amplitude = 1 / (0.1 + distance)<br />
+      </p>
+        </div>
+        <p>
+
+      </p>
+        <div class="literallayout">
+          <p><br />
+delay = distance / 340 (in seconds)<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      Distance can be calculated as:
+
+      </p>
+        <div class="literallayout">
+          <p><br />
+distance = sqrt(iXˆ2 + iYˆ2 + iZˆ2)<br />
+      </p>
+        </div>
+        <p>
+
+      In Mode 4, distance can be calculated as:
+
+      </p>
+        <div class="literallayout">
+          <p><br />
+distance from left mic = sqrt((iX + idist/2)ˆ2 + iYˆ2 + iZˆ2)<br />
+distance from right mic = sqrt((iX - idist/2)ˆ2 + iYˆ2 + iZˆ2)<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      With <span class="emphasis"><em>spat3d</em></span> the distance between the sound source and any microphone should be at least (340 * 18) / sr meters. Shorter distances will work, but may produce artifacts in some cases.  There is no such limitation for <span class="emphasis"><em>spat3di</em></span> and <span class="emphasis"><em>spat3dt</em></span>.
+    </p>
+        <p>
+      Sudden changes or discontinuities in sound source location can result in pops or clicks. Very fast movement may also degrade quality.
+    </p>
+        <p>
+      <span class="emphasis"><em>ift</em></span> -- Function table storing room parameters (for free field spatialization, set it to zero or negative). Table size is 54. The values in the table are:
+
+      </p>
+        <div class="informaltable">
+          <table class="informaltable" border="1">
+            <colgroup>
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Room Parameter</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0</td>
+                <td>Early reflection recursion depth (0 is the sound source, 1 is the first reflection etc.) for spat3d and spat3di. The number of echoes for four walls (front, back, right, left) is: N = (2*R + 2) * R. If all six walls are enabled: N = (((4*R + 6)*R + 8)*R) / 3</td>
+              </tr>
+              <tr>
+                <td>1</td>
+                <td>Late reflection recursion depth (used by spat3dt only). spat3dt skips early reflections and renders echoes up to this level. If early reflection depth is negative, spat3d and spat3di will output zero, while spat3dt will start rendering from the sound source.</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>imdel for spat3d. Overrides opcode parameter if non-negative.</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>irlen for spat3dt. Overrides opcode parameter if non-negative.</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>idist value. Overrides opcode parameter if &gt;= 0.</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Random seed (0 - 65535) -1 seeds from current time.</td>
+              </tr>
+              <tr>
+                <td>6 - 53</td>
+                <td>wall parameters (w = 6: ceil, w = 14: floor, w = 22: front, w = 30: back, w = 38: right, w = 46: left)</td>
+              </tr>
+              <tr>
+                <td>w + 0</td>
+                <td>Enable reflections from this wall (0: no, 1: yes)</td>
+              </tr>
+              <tr>
+                <td>w + 1</td>
+                <td>Wall distance from listener (in meters)</td>
+              </tr>
+              <tr>
+                <td>w + 2</td>
+                <td>Randomization of wall distance (0 - 1) (in units of 1 / (wall distance))</td>
+              </tr>
+              <tr>
+                <td>w + 3</td>
+                <td>Reflection level (-1 - 1)</td>
+              </tr>
+              <tr>
+                <td>w + 4</td>
+                <td>Parametric equalizer frequency in Hz.</td>
+              </tr>
+              <tr>
+                <td>w + 5</td>
+                <td>Parametric equalizer level (1.0: no filtering)</td>
+              </tr>
+              <tr>
+                <td>w + 6</td>
+                <td>Parametric equalizer Q (0.7071: no resonance)</td>
+              </tr>
+              <tr>
+                <td>w + 7</td>
+                <td>Parametric equalizer mode (0: peak EQ, 1: low shelf, 2: high shelf)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>imode</em></span> -- Output mode
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0: B format with W output only (mono)
+</p>
+              <div class="literallayout">
+                <p><br />
+aout    =  aW<br />
+</p>
+              </div>
+              <p>
+        </p>
+            </li>
+            <li class="listitem">
+              <p>1: B format with W and Y output (stereo)
+</p>
+              <div class="literallayout">
+                <p><br />
+aleft   =  aW + 0.7071*aY<br />
+aright  =  aW - 0.7071*aY<br />
+</p>
+              </div>
+              <p>
+        </p>
+            </li>
+            <li class="listitem">
+              <p>2: B format with W, X, and Y output (2D). This can be converted to UHJ:
+</p>
+              <div class="literallayout">
+                <p><br />
+aWre, aWim      hilbert aW<br />
+aXre, aXim      hilbert aX<br />
+aYre, aYim      hilbert aY<br />
+aWXr    =  0.0928*aXre + 0.4699*aWre<br />
+aWXiYr  =  0.2550*aXim - 0.1710*aWim + 0.3277*aYre<br />
+aleft   =  aWXr + aWXiYr<br />
+aright  =  aWXr - aWXiYr<br />
+</p>
+              </div>
+              <p>
+        </p>
+            </li>
+            <li class="listitem">
+              <p>3: B format with all outputs (3D)</p>
+            </li>
+            <li class="listitem">
+              <p>4: Simulates a pair of microphones (stereo output)
+</p>
+              <div class="literallayout">
+                <p><br />
+aW      butterlp aW, ifreq      ; recommended values for ifreq<br />
+aY      butterlp aY, ifreq      ; are around 1000 Hz<br />
+aleft   =  aW + aX<br />
+aright  =  aY + aZ<br />
+</p>
+              </div>
+              <p>
+        </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      Mode 0 is the cheapest to calculate, while mode 4 is the most expensive.
+    </p>
+        <p>
+      In Mode 4, The optional lowpass filters can change the frequency response depending on direction. For example, if the sound source is located left to the listener then the high frequencies are attenuated in the right channel and slightly increased in the left. This effect can be disabled by not using filters. You can also experiment with other filters (tone etc.) for better effect.
+    </p>
+        <p>
+      Note that mode 4 is most useful for listening with headphones, and is also more expensive to calculate than the B-format (0 to 3) modes. The <span class="emphasis"><em>idist</em></span> parameter in this case sets the distance between left and right microphone; for headphones, values between 0.2 - 0.25 are recommended, although higher settings up to 0.4 may be used for wide stereo effects.
+    </p>
+        <p>
+      More information about B format can be found here: <a class="ulink" href="http://www.york.ac.uk/inst/mustech/3d_audio/ambis2.htm" target="_top"><em class="citetitle">http://www.york.ac.uk/inst/mustech/3d_audio/ambis2.htm</em></a>
+    </p>
+        <p>
+      <span class="emphasis"><em>imdel</em></span> -- Maximum delay time for spat3d in seconds. This has to be longer than the delay time of the latest reflection (depends on room dimensions, sound source distance, and recursion depth; using this formula gives a safe (although somewhat overestimated) value:
+
+       </p>
+        <div class="literallayout">
+          <p><br />
+imdel = (R + 1) * sqrt(W*W + H*H + D*D) / 340.0<br />
+       </p>
+        </div>
+        <p>
+
+      where R is the recursion depth, W, H, and D are the width, height, and depth
+  of the room, respectively).
+    </p>
+        <p>
+      <span class="emphasis"><em>iovr</em></span> -- Oversample ratio for spat3d (1 to 8). Setting it higher improves quality at the expense of memory and CPU usage. The recommended value is 2.
+    </p>
+        <p>
+      <span class="emphasis"><em>istor</em></span> (optional, default=0) -- Skip initialization if non-zero (default: 0).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054131264"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>aW, aX, aY, aZ</em></span> -- Output signals
+
+      </p>
+        <div class="informaltable">
+          <table class="informaltable" border="1">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th> </th>
+                <th>mode 0</th>
+                <th>mode 1</th>
+                <th>mode 2</th>
+                <th>mode 3</th>
+                <th>mode 4</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>aW</td>
+                <td>W out</td>
+                <td>W out</td>
+                <td>W out</td>
+                <td>W out</td>
+                <td>left chn / low freq.</td>
+              </tr>
+              <tr>
+                <td>aX</td>
+                <td>0</td>
+                <td>0</td>
+                <td>X out</td>
+                <td>X out</td>
+                <td>left chn / high frq.</td>
+              </tr>
+              <tr>
+                <td>aY</td>
+                <td>0</td>
+                <td>Y out</td>
+                <td>Y out</td>
+                <td>Y out</td>
+                <td>right chn / low frq.</td>
+              </tr>
+              <tr>
+                <td>aZ</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>Z out</td>
+                <td>right chn / high fr.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ain</em></span> -- Input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>kX, kY, kZ</em></span> -- Sound source coordinates (in meters)
+    </p>
+        <p>
+      If you encounter very slow performance (up to 100 times slower), it may be caused by denormals (this is also true of many other IIR opcodes, including <a class="link" href="butterlp.html" title="butterlp"><em class="citetitle">butterlp</em></a>, <a class="link" href="pareq.html" title="pareq"><em class="citetitle">pareq</em></a>, <a class="link" href="hilbert.html" title="hilbert"><em class="citetitle">hilbert</em></a>, and many others). Underflows can be avoided by:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>Using the <a class="link" href="denorm.html" title="denorm"><em class="citetitle">denorm</em></a> opcode on <span class="emphasis"><em>ain</em></span> before <span class="emphasis"><em>spat3d</em></span>.</p>
+            </li>
+            <li class="listitem">
+              <p>mixing low level DC or noise to the input signal, e.g. </p>
+              <div class="literallayout">
+                <p>atmp rnd31 1/1e24, 0, 0</p>
+              </div>
+              <p> </p>
+              <div class="literallayout">
+                <p>aW, aX, aY, aZ spa3di ain + atmp, ...</p>
+              </div>
+              <p> or </p>
+              <div class="literallayout">
+                <p>aW, aX, aY, aZ spa3di ain + 1/1e24, ...</p>
+              </div>
+            </li>
+            <li class="listitem">
+              <p>reducing <span class="emphasis"><em>irlen</em></span> in the case of <span class="emphasis"><em>spat3dt</em></span> (which does not have an input signal). A value of about 0.005 is suitable for most uses, although it also depends on EQ settings. If the equalizer is not used, <span class="quote">“<span class="quote">irlen</span>”</span> can be set to 0.</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054100400"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a example of the spat3d opcode that outputs a stereo file. It uses the file <a class="ulink" href="examples/spat3d_stereo.csd" target="_top"><em class="citetitle">spat3d_stereo.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276054098560"></a>
+          <p class="title">
+            <strong>Example 929. Stereo example of the spat3d opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276422562144"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o spat3d_stereo.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/* Written by Istvan Varga */</span>
+<span class="vg">sr</span>      <span class="o">=</span>  <span class="mi">48000</span>
+<span class="vg">kr</span>      <span class="o">=</span>  <span class="mi">1000</span>
+<span class="vg">ksmps</span>   <span class="o">=</span>  <span class="mi">48</span>
+<span class="vg">nchnls</span>  <span class="o">=</span>  <span class="mi">2</span>
+
+<span class="cm">/* room parameters */</span>
+
+i<span class="n">dep</span>    <span class="o">=</span>  <span class="mi">3</span>    <span class="cm">/* early reflection depth       */</span>
+
+i<span class="n">tmp</span>    <span class="nb">ftgen</span>   <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>                                           \
+		<span class="cm">/* depth1, depth2, max delay, IR length, idist, seed */</span> \
+		i<span class="n">dep</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span>                          \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">21.982</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">4000.0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* ceil  */</span> \
+		<span class="mi">1</span><span class="p">,</span>  <span class="mf">1.753</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">3500.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* floor */</span> \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">15.220</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* front */</span> \
+		<span class="mi">1</span><span class="p">,</span>  <span class="mf">9.317</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* back  */</span> \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">17.545</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* right */</span> \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">12.156</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span>  <span class="cm">/* left  */</span>
+
+	<span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="cm">/* some source signal */</span>
+
+a<span class="n">1</span>      <span class="nb">phasor</span> <span class="mi">150</span>              <span class="c1">; oscillator</span>
+a<span class="n">1</span>      <span class="nb">butterbp</span> a<span class="n">1</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">200</span>   <span class="c1">; filter</span>
+a<span class="n">1</span>      <span class="o">=</span>  <span class="nb">taninv</span><span class="p">(</span>a<span class="n">1</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+a<span class="n">2</span>      <span class="nb">phasor</span> <span class="mi">3</span>                <span class="c1">; envelope</span>
+a<span class="n">2</span>      <span class="nb">mirror</span> <span class="mi">40</span><span class="o">*</span>a<span class="n">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">5</span>
+a<span class="n">2</span>      <span class="nb">limit</span> a<span class="n">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">1</span>      <span class="o">=</span>  a<span class="n">1</span> <span class="o">*</span> a<span class="n">2</span> <span class="o">*</span> <span class="mi">9000</span>
+
+k<span class="n">azim</span>   <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">360</span>        <span class="c1">; move sound source around</span>
+k<span class="n">dist</span>   <span class="nb">line</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">4</span>           <span class="c1">; distance</span>
+
+<span class="c1">; convert polar coordinates</span>
+k<span class="n">X</span>      <span class="o">=</span>  <span class="nb">sin</span><span class="p">(</span>k<span class="n">azim</span> <span class="o">*</span> <span class="mf">3.14159</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> k<span class="n">dist</span>
+k<span class="n">Y</span>      <span class="o">=</span>  <span class="nb">cos</span><span class="p">(</span>k<span class="n">azim</span> <span class="o">*</span> <span class="mf">3.14159</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> k<span class="n">dist</span>
+k<span class="n">Z</span>      <span class="o">=</span>  <span class="mi">0</span>
+
+a<span class="n">1</span>      <span class="o">=</span>  a<span class="n">1</span> <span class="o">+</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="mf">0.000001</span>     <span class="c1">; avoid underflows</span>
+
+i<span class="n">mode</span>   <span class="o">=</span>  <span class="mi">1</span>    <span class="c1">; change this to 3 for 8 spk in a cube,</span>
+		<span class="c1">; or 1 for simple stereo</span>
+
+a<span class="n">W</span><span class="p">,</span> a<span class="n">X</span><span class="p">,</span> a<span class="n">Y</span><span class="p">,</span> a<span class="n">Z</span>  <span class="nb">spat3d</span> a<span class="n">1</span><span class="p">,</span> k<span class="n">X</span><span class="p">,</span> k<span class="n">Y</span><span class="p">,</span> k<span class="n">Z</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">mode</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+
+a<span class="n">W</span>      <span class="o">=</span>  a<span class="n">W</span> <span class="o">*</span> <span class="mf">1.4142</span>
+
+<span class="c1">; stereo</span>
+<span class="c1">;</span>
+a<span class="n">L</span>     <span class="o">=</span>  a<span class="n">W</span> <span class="o">+</span> a<span class="n">Y</span>              <span class="cm">/* left                 */</span>
+a<span class="n">R</span>     <span class="o">=</span>  a<span class="n">W</span> <span class="o">-</span> a<span class="n">Y</span>              <span class="cm">/* right                */</span>
+
+<span class="c1">; quad (square)</span>
+<span class="c1">;</span>
+<span class="c1">;aFL     =  aW + aX + aY         /* front left           */</span>
+<span class="c1">;aFR     =  aW + aX - aY         /* front right          */</span>
+<span class="c1">;aRL     =  aW - aX + aY         /* rear left            */</span>
+<span class="c1">;aRR     =  aW - aX - aY         /* rear right           */</span>
+
+<span class="c1">; eight channels (cube)</span>
+<span class="c1">;</span>
+<span class="c1">;aUFL   =  aW + aX + aY + aZ    /* upper front left     */</span>
+<span class="c1">;aUFR   =  aW + aX - aY + aZ    /* upper front right    */</span>
+<span class="c1">;aURL   =  aW - aX + aY + aZ    /* upper rear left      */</span>
+<span class="c1">;aURR   =  aW - aX - aY + aZ    /* upper rear right     */</span>
+<span class="c1">;aLFL   =  aW + aX + aY - aZ    /* lower front left     */</span>
+<span class="c1">;aLFR   =  aW + aX - aY - aZ    /* lower front right    */</span>
+<span class="c1">;aLRL   =  aW - aX + aY - aZ    /* lower rear left      */</span>
+<span class="c1">;aLRR   =  aW - aX - aY - aZ    /* lower rear right     */</span>
+
+	<span class="nb">outs</span> a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>
+
+	<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="cm">/* Written by Istvan Varga */</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is a example of the spat3d opcode that outputs a UHJ file. It uses the file <a class="ulink" href="examples/spat3d_UHJ.csd" target="_top"><em class="citetitle">spat3d_UHJ.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276054076880"></a>
+          <p class="title">
+            <strong>Example 930. UHJ example of the spat3d opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276422067184"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o spat3d_UHJ.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/* Written by Istvan Varga */</span>
+<span class="vg">sr</span>	<span class="o">=</span>  <span class="mi">48000</span>
+<span class="vg">kr</span>	<span class="o">=</span>  <span class="mi">750</span>
+<span class="vg">ksmps</span>	<span class="o">=</span>  <span class="mi">64</span>
+<span class="vg">nchnls</span>	<span class="o">=</span>  <span class="mi">2</span>
+
+i<span class="n">tmp</span>    <span class="nb">ftgen</span>   <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>                                           \
+		<span class="cm">/* depth1, depth2, max delay, IR length, idist, seed */</span> \
+		<span class="mi">3</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span>				\
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">21.982</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">4000.0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* ceil  */</span> \
+		<span class="mi">1</span><span class="p">,</span>  <span class="mf">1.753</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">3500.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* floor */</span> \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">15.220</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* front */</span> \
+		<span class="mi">1</span><span class="p">,</span>  <span class="mf">9.317</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* back  */</span> \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">17.545</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* right */</span> \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">12.156</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span>  <span class="cm">/* left  */</span>
+
+	<span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="nb">p3</span>	<span class="o">=</span>  <span class="nb">p3</span> <span class="o">+</span> <span class="mf">1.0</span>
+
+k<span class="n">azim</span>	<span class="nb">line</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">360.0</span>		<span class="c1">; azimuth</span>
+k<span class="n">elev</span>	<span class="nb">line</span> <span class="mi">40</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span>		<span class="c1">; elevation</span>
+k<span class="n">dist</span>	<span class="o">=</span>  <span class="mf">2.0</span>				<span class="c1">; distance</span>
+<span class="c1">; convert coordinates</span>
+k<span class="n">X</span>	<span class="o">=</span>  k<span class="n">dist</span> <span class="o">*</span> <span class="nb">cos</span><span class="p">(</span>k<span class="n">elev</span> <span class="o">*</span> <span class="mf">0.01745329</span><span class="p">)</span> <span class="o">*</span> <span class="nb">sin</span><span class="p">(</span>k<span class="n">azim</span> <span class="o">*</span> <span class="mf">0.01745329</span><span class="p">)</span>
+k<span class="n">Y</span>	<span class="o">=</span>  k<span class="n">dist</span> <span class="o">*</span> <span class="nb">cos</span><span class="p">(</span>k<span class="n">elev</span> <span class="o">*</span> <span class="mf">0.01745329</span><span class="p">)</span> <span class="o">*</span> <span class="nb">cos</span><span class="p">(</span>k<span class="n">azim</span> <span class="o">*</span> <span class="mf">0.01745329</span><span class="p">)</span>
+k<span class="n">Z</span>	<span class="o">=</span>  k<span class="n">dist</span> <span class="o">*</span> <span class="nb">sin</span><span class="p">(</span>k<span class="n">elev</span> <span class="o">*</span> <span class="mf">0.01745329</span><span class="p">)</span>
+
+<span class="c1">; source signal</span>
+a<span class="n">1</span>	<span class="nb">phasor</span> <span class="mf">160.0</span>
+a<span class="n">2</span>	<span class="nb">delay1</span> a<span class="n">1</span>
+a<span class="n">1</span>	<span class="o">=</span>  a<span class="n">1</span> <span class="o">-</span> a<span class="n">2</span>
+k<span class="n">ffrq1</span>	<span class="nb">port</span> <span class="mf">200.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">12000.0</span>
+a<span class="n">ffrq</span>	<span class="nb">upsamp</span> k<span class="n">ffrq1</span>
+a<span class="n">ffrq</span>	<span class="nb">pareq</span> a<span class="n">ffrq</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">2</span>
+k<span class="n">ffrq</span>	<span class="nb">downsamp</span> a<span class="n">ffrq</span>
+a<span class="n">env4</span>	<span class="nb">phasor</span> <span class="mf">3.0</span>
+a<span class="n">env4</span>	<span class="nb">limit</span> <span class="mf">2.0</span> <span class="o">-</span> a<span class="n">env4</span> <span class="o">*</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span>
+a<span class="n">1</span>	<span class="nb">butterbp</span> a<span class="n">1</span> <span class="o">*</span> a<span class="n">env4</span><span class="p">,</span> k<span class="n">ffrq</span><span class="p">,</span> <span class="mf">160.0</span>
+a<span class="n">env</span>	<span class="nb">linseg</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span>
+a<span class="n">_</span>	<span class="o">=</span>  <span class="mi">4000000</span> <span class="o">*</span> a<span class="n">1</span> <span class="o">*</span> a<span class="n">env</span> <span class="o">+</span> <span class="mf">0.00000001</span>
+
+<span class="c1">; spatialize</span>
+a<span class="n">_W</span><span class="p">,</span> a<span class="n">_X</span><span class="p">,</span> a<span class="n">_Y</span><span class="p">,</span> a<span class="n">_Z</span>	<span class="nb">spat3d</span> a<span class="n">_</span><span class="p">,</span> k<span class="n">X</span><span class="p">,</span> k<span class="n">Y</span><span class="p">,</span> k<span class="n">Z</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mi">2</span>
+
+<span class="c1">; convert to UHJ format (stereo)</span>
+a<span class="n">Wre</span><span class="p">,</span> a<span class="n">Wim</span>	<span class="nb">hilbert</span> a<span class="n">_W</span>
+a<span class="n">Xre</span><span class="p">,</span> a<span class="n">Xim</span>	<span class="nb">hilbert</span> a<span class="n">_X</span>
+a<span class="n">Yre</span><span class="p">,</span> a<span class="n">Yim</span>	<span class="nb">hilbert</span> a<span class="n">_Y</span>
+
+a<span class="n">WXre</span>	<span class="o">=</span>  <span class="mf">0.0928</span><span class="o">*</span>a<span class="n">Xre</span> <span class="o">+</span> <span class="mf">0.4699</span><span class="o">*</span>a<span class="n">Wre</span>
+a<span class="n">WXim</span>	<span class="o">=</span>  <span class="mf">0.2550</span><span class="o">*</span>a<span class="n">Xim</span> <span class="o">-</span> <span class="mf">0.1710</span><span class="o">*</span>a<span class="n">Wim</span>
+
+a<span class="n">L</span>	<span class="o">=</span>  a<span class="n">WXre</span> <span class="o">+</span> a<span class="n">WXim</span> <span class="o">+</span> <span class="mf">0.3277</span><span class="o">*</span>a<span class="n">Yre</span>
+a<span class="n">R</span>	<span class="o">=</span>  a<span class="n">WXre</span> <span class="o">-</span> a<span class="n">WXim</span> <span class="o">-</span> <span class="mf">0.3277</span><span class="o">*</span>a<span class="n">Yre</span>
+
+	<span class="nb">outs</span> a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>
+
+	<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="cm">/* Written by Istvan Varga */</span>
+<span class="nb">t</span> <span class="mi">0</span> <span class="mi">60</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mf">0.0</span> <span class="mf">8.0</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is a example of the spat3d opcode that outputs a quadrophonic file. It uses the file <a class="ulink" href="examples/spat3d_quad.csd" target="_top"><em class="citetitle">spat3d_quad.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276054074192"></a>
+          <p class="title">
+            <strong>Example 931. Quadrophonic example of the spat3d opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276422816640"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o spat3d_quad.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/* Written by Istvan Varga */</span>
+<span class="vg">sr</span>      <span class="o">=</span>  <span class="mi">48000</span>
+<span class="vg">kr</span>      <span class="o">=</span>  <span class="mi">1000</span>
+<span class="vg">ksmps</span>   <span class="o">=</span>  <span class="mi">48</span>
+<span class="vg">nchnls</span>  <span class="o">=</span>  <span class="mi">4</span>
+
+<span class="cm">/* room parameters */</span>
+
+i<span class="n">dep</span>    <span class="o">=</span>  <span class="mi">3</span>    <span class="cm">/* early reflection depth       */</span>
+
+i<span class="n">tmp</span>    <span class="nb">ftgen</span>   <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>                                           \
+		<span class="cm">/* depth1, depth2, max delay, IR length, idist, seed */</span> \
+		i<span class="n">dep</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span>                          \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">21.982</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">4000.0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* ceil  */</span> \
+		<span class="mi">1</span><span class="p">,</span>  <span class="mf">1.753</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">3500.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* floor */</span> \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">15.220</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* front */</span> \
+		<span class="mi">1</span><span class="p">,</span>  <span class="mf">9.317</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* back  */</span> \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">17.545</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="cm">/* right */</span> \
+		<span class="mi">1</span><span class="p">,</span> <span class="mf">12.156</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.87</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">2</span>  <span class="cm">/* left  */</span>
+
+	<span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="cm">/* some source signal */</span>
+
+a<span class="n">1</span>      <span class="nb">phasor</span> <span class="mi">150</span>              <span class="c1">; oscillator</span>
+a<span class="n">1</span>      <span class="nb">butterbp</span> a<span class="n">1</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">200</span>   <span class="c1">; filter</span>
+a<span class="n">1</span>      <span class="o">=</span>  <span class="nb">taninv</span><span class="p">(</span>a<span class="n">1</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+a<span class="n">2</span>      <span class="nb">phasor</span> <span class="mi">3</span>                <span class="c1">; envelope</span>
+a<span class="n">2</span>      <span class="nb">mirror</span> <span class="mi">40</span><span class="o">*</span>a<span class="n">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">5</span>
+a<span class="n">2</span>      <span class="nb">limit</span> a<span class="n">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">1</span>      <span class="o">=</span>  a<span class="n">1</span> <span class="o">*</span> a<span class="n">2</span> <span class="o">*</span> <span class="mi">9000</span>
+
+k<span class="n">azim</span>   <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">360</span>        <span class="c1">; move sound source around</span>
+k<span class="n">dist</span>   <span class="nb">line</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">4</span>           <span class="c1">; distance</span>
+
+<span class="c1">; convert polar coordinates</span>
+k<span class="n">X</span>      <span class="o">=</span>  <span class="nb">sin</span><span class="p">(</span>k<span class="n">azim</span> <span class="o">*</span> <span class="mf">3.14159</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> k<span class="n">dist</span>
+k<span class="n">Y</span>      <span class="o">=</span>  <span class="nb">cos</span><span class="p">(</span>k<span class="n">azim</span> <span class="o">*</span> <span class="mf">3.14159</span> <span class="o">/</span> <span class="mi">180</span><span class="p">)</span> <span class="o">*</span> k<span class="n">dist</span>
+k<span class="n">Z</span>      <span class="o">=</span>  <span class="mi">0</span>
+
+a<span class="n">1</span>      <span class="o">=</span>  a<span class="n">1</span> <span class="o">+</span> <span class="mf">0.000001</span> <span class="o">*</span> <span class="mf">0.000001</span>     <span class="c1">; avoid underflows</span>
+
+i<span class="n">mode</span>   <span class="o">=</span>  <span class="mi">2</span>    <span class="c1">; change this to 3 for 8 spk in a cube,</span>
+		<span class="c1">; or 1 for simple stereo</span>
+
+a<span class="n">W</span><span class="p">,</span> a<span class="n">X</span><span class="p">,</span> a<span class="n">Y</span><span class="p">,</span> a<span class="n">Z</span>  <span class="nb">spat3d</span> a<span class="n">1</span><span class="p">,</span> k<span class="n">X</span><span class="p">,</span> k<span class="n">Y</span><span class="p">,</span> k<span class="n">Z</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">mode</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+
+a<span class="n">W</span>      <span class="o">=</span>  a<span class="n">W</span> <span class="o">*</span> <span class="mf">1.4142</span>
+
+<span class="c1">; stereo</span>
+<span class="c1">;</span>
+<span class="c1">;aL     =  aW + aY              /* left                 */</span>
+<span class="c1">;aR     =  aW - aY              /* right                */</span>
+
+<span class="c1">; quad (square)</span>
+<span class="c1">;</span>
+a<span class="n">FL</span>     <span class="o">=</span>  a<span class="n">W</span> <span class="o">+</span> a<span class="n">X</span> <span class="o">+</span> a<span class="n">Y</span>         <span class="cm">/* front left           */</span>
+a<span class="n">FR</span>     <span class="o">=</span>  a<span class="n">W</span> <span class="o">+</span> a<span class="n">X</span> <span class="o">-</span> a<span class="n">Y</span>         <span class="cm">/* front right          */</span>
+a<span class="n">RL</span>     <span class="o">=</span>  a<span class="n">W</span> <span class="o">-</span> a<span class="n">X</span> <span class="o">+</span> a<span class="n">Y</span>         <span class="cm">/* rear left            */</span>
+a<span class="n">RR</span>     <span class="o">=</span>  a<span class="n">W</span> <span class="o">-</span> a<span class="n">X</span> <span class="o">-</span> a<span class="n">Y</span>         <span class="cm">/* rear right           */</span>
+
+<span class="c1">; eight channels (cube)</span>
+<span class="c1">;</span>
+<span class="c1">;aUFL   =  aW + aX + aY + aZ    /* upper front left     */</span>
+<span class="c1">;aUFR   =  aW + aX - aY + aZ    /* upper front right    */</span>
+<span class="c1">;aURL   =  aW - aX + aY + aZ    /* upper rear left      */</span>
+<span class="c1">;aURR   =  aW - aX - aY + aZ    /* upper rear right     */</span>
+<span class="c1">;aLFL   =  aW + aX + aY - aZ    /* lower front left     */</span>
+<span class="c1">;aLFR   =  aW + aX - aY - aZ    /* lower front right    */</span>
+<span class="c1">;aLRL   =  aW - aX + aY - aZ    /* lower rear left      */</span>
+<span class="c1">;aLRR   =  aW - aX - aY - aZ    /* lower rear right     */</span>
+
+	<span class="nb">outq</span> a<span class="n">FL</span><span class="p">,</span> a<span class="n">FR</span><span class="p">,</span> a<span class="n">RL</span><span class="p">,</span> a<span class="n">RR</span>
+
+	<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="cm">/* Written by Istvan Varga */</span>
+<span class="nb">t</span> <span class="mi">0</span> <span class="mi">60</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054072464"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="spat3di.html" title="spat3di"><em class="citetitle">spat3di</em></a>,
+      <a class="link" href="spat3dt.html" title="spat3dt"><em class="citetitle">spat3dt</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054069520"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2001</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 4.12</p>
+        <p>Updated April 2002 by Istvan Varga</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="space.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="spat3di.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">space </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> spat3di</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

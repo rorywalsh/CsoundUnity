@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>wgclar</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="wgbrass.html" title="wgbrass" />
+    <link rel="next" href="wgflute.html" title="wgflute" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">wgclar</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="wgbrass.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="wgflute.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="wgclar"></a>
+      <div class="titlepage"></div>
+      <a id="IndexWgclar" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">wgclar</span>
+        </h2>
+        <p>wgclar — 
+      Creates a tone similar to a clarinet.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036395008"></a>
+        <h2>Description</h2>
+        <p>
+      Audio output is a tone similar to a clarinet, using a physical model developed from Perry Cook, but re-coded for Csound.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036393456"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>wgclar</strong></span> kamp, kfreq, kstiff, \
+    iatt, idetk, kngain, kvibf, kvamp [, ifn] [, iminfreq]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036391296"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iatt</em></span> -- time in seconds to reach full blowing pressure. 0.1 seems to correspond to reasonable playing. A longer time gives a definite initial wind sound.
+    </p>
+        <p>
+      <span class="emphasis"><em>idetk</em></span> -- time in seconds taken to stop blowing. 0.1 is a smooth ending
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> (optional) -- table of shape of
+      vibrato, defaults yo te usual sine table.
+    </p>
+        <p>
+      <span class="emphasis"><em>iminfreq</em></span> (optional) -- lowest frequency at which the instrument will play. If it is omitted it is taken to be the same as the initial <span class="emphasis"><em>kfreq</em></span>. If <span class="emphasis"><em>iminfreq</em></span> is negative, initialization will be skipped.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036385632"></a>
+        <h2>Performance</h2>
+        <p>
+      A note is played on a clarinet-like instrument, with the arguments as below.
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- Amplitude of note.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- Frequency of note played.
+    </p>
+        <p>
+      <span class="emphasis"><em>kstiff</em></span> -- a stiffness parameter for the reed. Values should be negative, and about -0.3. The useful range is approximately -0.44 to -0.18.
+    </p>
+        <p>
+      <span class="emphasis"><em>kngain</em></span> -- amplitude of the noise component, about 0 to 0.5
+    </p>
+        <p>
+      <span class="emphasis"><em>kvibf</em></span> -- frequency of vibrato in Hertz. Suggested range is 0 to 12
+    </p>
+        <p>
+      <span class="emphasis"><em>kvamp</em></span> -- amplitude of the vibrato
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036378672"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the wgclar opcode. It uses the file <a class="ulink" href="examples/wgclar.csd" target="_top"><em class="citetitle">wgclar.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276036376864"></a>
+          <p class="title">
+            <strong>Example 1139. Example of the wgclar opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276403614048"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o wgclar.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">freq</span> <span class="o">=</span> <span class="mi">330</span>
+k<span class="n">stiff</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.3</span>
+i<span class="n">att</span> <span class="o">=</span> <span class="mf">0.1</span>
+i<span class="n">detk</span> <span class="o">=</span> <span class="mf">0.1</span>
+k<span class="n">ngain</span> <span class="nb">init</span> <span class="nb">p4</span>		<span class="c1">;vary breath</span>
+k<span class="n">vibf</span> <span class="o">=</span> <span class="mf">5.735</span>
+k<span class="n">vamp</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+a<span class="n">sig</span> <span class="nb">wgclar</span> <span class="mf">.9</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> k<span class="n">stiff</span><span class="p">,</span> i<span class="n">att</span><span class="p">,</span> i<span class="n">detk</span><span class="p">,</span> k<span class="n">ngain</span><span class="p">,</span> k<span class="n">vibf</span><span class="p">,</span> k<span class="n">vamp</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+      
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine wave</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mf">0.2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mf">0.5</span>		<span class="c1">;more breath</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036372832"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch (after Perry Cook)</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p>ifn optional in 6.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="wgbrass.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="wgflute.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">wgbrass </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> wgflute</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

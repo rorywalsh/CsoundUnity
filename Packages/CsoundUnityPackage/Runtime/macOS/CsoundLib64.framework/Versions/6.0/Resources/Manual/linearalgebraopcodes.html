@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Linear Algebra Opcodes</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="MathTop.html" title="Mathematical Operations" />
+    <link rel="prev" href="MathTrig.html" title="Trigonometric Functions" />
+    <link rel="next" href="arrayOpcodes.html" title="Array Opcodes" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Linear Algebra Opcodes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="MathTrig.html">Prev</a> </td>
+          <th width="60%" align="center">Mathematical Operations</th>
+          <td width="20%" align="right"> <a accesskey="n" href="arrayOpcodes.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="linearalgebraopcodes"></a>
+      <div class="titlepage"></div>
+      <a id="Indexlinearalgebra" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">Linear Algebra Opcodes</span>
+        </h2>
+        <p>Linear Algebra Opcodes — 
+      Scalar, vector, and matrix arithmetic on real and complex values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276131547232"></a>
+        <h2>Description</h2>
+        <p>Plugin opcodes in linear_algebra.</p>
+        <p>These opcodes implement many linear algebra operations,
+      from scalar, vector, and matrix arithmetic up to 
+      and including QR based eigenvalue decompositions.
+      The opcodes are designed for digital signal processing, 
+      and of course other mathematical operations, 
+      in the Csound orchestra language.</p>
+        <p>The numerical implementation uses the gmm++ library
+      from <a class="ulink" href="http://home.gna.org/getfem/gmm_intro" target="_top"><em class="citetitle">home.gna.org/getfem/gmm_intro</em></a>.</p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+	For applications with f-sig variables, array arithmetic must be
+	performed only when the f-sig is "current," because f-rate
+	is some fraction of k-rate; currency can be determined with the
+	la_k_current_f opcode.
+      </p>
+                <p>
+	For applications using assignments between real vectors and
+	a-rate variables, array arithmetic must be performed only when the
+	vectors are "current", because the size of the vector may be
+	some integral multiple of ksmps; currency can be determined 
+	by means of the la_k_current_vr opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="table">
+          <a id="LinearAlgebraDataTypes"></a>
+          <p class="title">
+            <strong>Table 4. Linear Algebra Data Types</strong>
+          </p>
+          <div class="table-contents">
+            <table class="table" summary="Linear Algebra Data Types" border="1">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Mathematical Type</th>
+                  <th>Code</th>
+                  <th>Corresponding Csound Type or Types</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>real scalar </td>
+                  <td>r</td>
+                  <td>i-rate or k-rate variable</td>
+                </tr>
+                <tr>
+                  <td>complex scalar</td>
+                  <td>c</td>
+                  <td>pair of i-rate or k-rate variables, e.g. "kr, ki"</td>
+                </tr>
+                <tr>
+                  <td>real vector</td>
+                  <td>vr</td>
+                  <td>i-rate variable holding address of array</td>
+                </tr>
+                <tr>
+                  <td>real vector</td>
+                  <td>a</td>
+                  <td>a-rate variable</td>
+                </tr>
+                <tr>
+                  <td>real vector</td>
+                  <td>t</td>
+                  <td>function table number</td>
+                </tr>
+                <tr>
+                  <td>complex vector</td>
+                  <td>vc</td>
+                  <td>i-rate variable holding address of array</td>
+                </tr>
+                <tr>
+                  <td>complex vector</td>
+                  <td>f</td>
+                  <td>fsig variable</td>
+                </tr>
+                <tr>
+                  <td>real matrix</td>
+                  <td>mr</td>
+                  <td>i-rate variable holding address of array</td>
+                </tr>
+                <tr>
+                  <td>complex matrix</td>
+                  <td>mc</td>
+                  <td>i-rate variable holding address of array</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <br class="table-break" />
+        <p>All arrays are 0-based; the first index iterates rows to give columns,
+      the second index iterates columns to give elements.</p>
+        <p>All arrays are general and dense; banded, Hermitian, symmetric 
+      and sparse routines are not implemented.</p>
+        <p>An array can be of type code vr, vc, mr, or mc
+      and is stored in an i-rate object. 
+      In orchestra code, an array is passed as a
+      MYFLT i-rate variable that contains the address
+      of the array object, which is actually stored 
+      in the allocator opcode instance.
+      Although array variables are i-rate, of course
+      their values and even shapes may change at i-rate or k-rate.
+    </p>
+        <p>All operands must be pre-allocated; except for the creation
+      opcodes, no opcode ever allocates any arrays.
+      This is true even if the array appears on the 
+      left-hand side of an opcode! However, some operations 
+      may reshape arrays to hold results.
+    </p>
+        <p>
+      Arrays are automatically deallocated when their instrument
+      is deallocated.
+    </p>
+        <p>
+      Not only for more efficient performance, 
+      but also to make it easier to remember opcode names,
+      the performance rate, output value types, operation names,
+      and input value types are deterministically 
+      encoded into the opcode name:
+    </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">"la" for "linear algebra opcode family".</li>
+            <li class="listitem">"i" or "k" for performance rate.</li>
+            <li class="listitem">Type code(s) (see above table) for output value(s), but only if the type is not implicit from the input values.</li>
+            <li class="listitem">Operation name: common mathematical name (preferred) or abbreviation.</li>
+            <li class="listitem">Type code(s) for input values, if not implicit.</li>
+          </ol>
+        </div>
+        <p>For additional details, see the gmm++ documentation at
+      <a class="ulink" href="http://download.gna.org/getfem/doc/gmmuser.pdf" target="_top"><em class="citetitle">http://download.gna.org/getfem/doc/gmmuser.pdf</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276131515184"></a>
+        <h2>Syntax</h2>
+        <h4><a id="idm276131514528"></a>
+      Array Creation
+    </h4>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_vr_create</strong></span>        irows</pre>
+        <p>
+      Create a real vector with irows rows.
+    </p>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_i_vc_create</strong></span>        irows</pre>
+        <p>
+      Create a complex vector with irows rows.
+    </p>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i_mr_create</strong></span>        irows, icolumns  [, odiagonal]</pre>
+        <p>
+      Create a real matrix with irows rows and icolumns columns, with an optional value on the diagonal.
+    </p>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_i_mc_create</strong></span>        irows, icolumns  [, odiagonal_r, odiagonal_i]</pre>
+        <p>
+      Create a complex matrix with irows rows and icolumns columns, with an optional complex value on the diagonal.
+    </p>
+        <h4><a id="idm276131506880"></a>
+      Array Introspection
+    </h4>
+        <pre class="synopsis">irows                       <span class="command"><strong>la_i_size_vr</strong></span>          ivr</pre>
+        <p>Return the number of rows in real vector ivr.</p>
+        <pre class="synopsis">irows                       <span class="command"><strong>la_i_size_vc</strong></span>          ivc</pre>
+        <p>Return the number of rows in complex vector ivc.</p>
+        <pre class="synopsis">irows, icolumns             <span class="command"><strong>la_i_size_mr</strong></span>          imr</pre>
+        <p>Return the number of rows and columns in real matrix imr.</p>
+        <pre class="synopsis">irows, icolumns             <span class="command"><strong>la_i_size_mc</strong></span>          imc</pre>
+        <p>Return the number of rows and columns in complex matrix imc.</p>
+        <pre class="synopsis">kfiscurrent                 <span class="command"><strong>la_k_current_f</strong></span>        fsig</pre>
+        <p>Return 1 if fsig is current, that is, if the value of fsig will change on the next kperiod.</p>
+        <pre class="synopsis">kvriscurrent                <span class="command"><strong>la_k_current_vr</strong></span>       ivr</pre>
+        <p>Return 1 if the real vector ivr is current, that is, if Csound's current audio sample frame stands at index 0 of the vector.</p>
+        <pre class="synopsis">                            <span class="command"><strong>la_i_print_vr</strong></span>         ivr</pre>
+        <p>Print the value of real vector ivr.</p>
+        <pre class="synopsis">                            <span class="command"><strong>la_i_print_vc</strong></span>         ivc</pre>
+        <p>Print the value of complex vector ivc.</p>
+        <pre class="synopsis">                            <span class="command"><strong>la_i_print_mr</strong></span>         imr</pre>
+        <p>Print the value of real matrix imr.</p>
+        <pre class="synopsis">                            <span class="command"><strong>la_i_print_mc</strong></span>         imc</pre>
+        <p>Print the value of complex matrix imc.</p>
+        <h4><a id="idm276131488944"></a>
+      Array Assignment and Conversion
+    </h4>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_assign_vr</strong></span>        ivr</pre>
+        <p>Assign the value of the real vector on the right-hand side to the real vector on the left-hand side, at i-rate.</p>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_k_assign_vr</strong></span>        ivr</pre>
+        <p>Assign the value of the real vector on the right-hand side to the real vector on the left-hand side, at k-rate.</p>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_i_assign_vc</strong></span>        ivc</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_assign_vc</strong></span>        ivr</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i_assign_mr</strong></span>        imr</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_k_assign_mr</strong></span>        imr</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_i_assign_mc</strong></span>        imc</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_k_assign_mc</strong></span>        imr</pre>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+	Assignments to vectors from tables or fsigs may resize the vectors.
+      </p>
+                <p>
+	Assignments to vectors from a-rate variables, or to a-rate variables
+	from vectors, will be performed incrementally, one chunk of ksmps elements
+	per kperiod. Therefore, array arithmetic on such vectors should only be
+	performed when the vectors are current, as determined by the la_k_currrent_vr opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_k_assign_a</strong></span>         asig</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_assign_t</strong></span>         itablenumber</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_k_assign_t</strong></span>         itablenumber</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_assign_f</strong></span>         fsig</pre>
+        <pre class="synopsis">asig                        <span class="command"><strong>la_k_a_assign</strong></span>         ivr</pre>
+        <pre class="synopsis">itablenum                   <span class="command"><strong>la_i_t_assign</strong></span>         ivr</pre>
+        <pre class="synopsis">itablenum                   <span class="command"><strong>la_k_t_assign</strong></span>         ivr</pre>
+        <pre class="synopsis">fsig                        <span class="command"><strong>la_k_f_assign</strong></span>         ivc</pre>
+        <h4><a id="idm276131464944"></a>
+      Fill Arrays with Random Elements
+    </h4>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_random_vr</strong></span>        [ifill_fraction]</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_k_random_vr</strong></span>        [kfill_fraction]</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_i_random_vc</strong></span>        [ifill_fraction]</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_random_vc</strong></span>        [kfill_fraction]</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i_random_mr</strong></span>        [ifill_fraction]</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_k_random_mr</strong></span>        [kfill_fraction]</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_i_random_mc</strong></span>        [ifill_fraction]</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_k_random_mc</strong></span>        [kfill_fraction]</pre>
+        <h4><a id="idm276131453888"></a>
+      Array Element Access
+    </h4>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_vr_set</strong></span>           irow, ivalue</pre>
+        <pre class="synopsis">kvr                         <span class="command"><strong>la_k_vr_set</strong></span>           krow, kvalue</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_i_vc_set</strong></span>           irow, ivalue_r, ivalue_i</pre>
+        <pre class="synopsis">kvc                         <span class="command"><strong>la_k_vc_set</strong></span>           krow, kvalue_r, kvalue_i</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i mr_set</strong></span>           irow, icolumn, ivalue</pre>
+        <pre class="synopsis">kmr                         <span class="command"><strong>la_k mr_set</strong></span>           krow, kcolumn, ivalue</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_i_mc_set</strong></span>           irow, icolumn, ivalue_r, ivalue_i</pre>
+        <pre class="synopsis">kmc                         <span class="command"><strong>la_k_mc_set</strong></span>           krow, kcolumn, kvalue_r, kvalue_i</pre>
+        <pre class="synopsis">ivalue                      <span class="command"><strong>la_i_get_vr</strong></span>           ivr, irow</pre>
+        <pre class="synopsis">kvalue                      <span class="command"><strong>la_k_get_vr</strong></span>           ivr, krow</pre>
+        <pre class="synopsis">ivalue_r, ivalue_i          <span class="command"><strong>la_i_get_vc</strong></span>           ivc, irow</pre>
+        <pre class="synopsis">kvalue_r, kvalue_i          <span class="command"><strong>la_k_get_vc</strong></span>           ivc, krow</pre>
+        <pre class="synopsis">ivalue                      <span class="command"><strong>la_i_get_mr</strong></span>           imr, irow, icolumn</pre>
+        <pre class="synopsis">kvalue                      <span class="command"><strong>la_k_get_mr</strong></span>           imr, krow, kcolumn</pre>
+        <pre class="synopsis">ivalue_r, ivalue_i          <span class="command"><strong>la_i_get_mc</strong></span>           imc, irow, icolumn</pre>
+        <pre class="synopsis">kvalue_r, kvalue_i          <span class="command"><strong>la_k_get_mc</strong></span>           imc, krow, kcolumn</pre>
+        <h4><a id="idm276131432048"></a>
+      Single Array Operations
+    </h4>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i_transpose_mr</strong></span>     imr</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_k_transpose_mr</strong></span>     imr</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_i_transpose_mc</strong></span>     imc</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_k_transpose_mc</strong></span>     imc</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_conjugate_vr</strong></span>     ivr</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_k_conjugate_vr</strong></span>     ivr</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_i_conjugate_vc</strong></span>     ivc</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_conjugate_vc</strong></span>     ivc</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i_conjugate_mr</strong></span>     imr</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_k_conjugate_mr</strong></span>     imr</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_i_conjugate_mc</strong></span>     imc</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_k_conjugate_mc</strong></span>     imc</pre>
+        <h4><a id="idm276131415680"></a>
+      Scalar Operations
+    </h4>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm1_vr</strong></span>         ivr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm1_vr</strong></span>         ivc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm1_vc</strong></span>         ivc</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm1_vc</strong></span>         ivc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm1_mr</strong></span>         imr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm1_mr</strong></span>         imr</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm1_mc</strong></span>         imc</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm1_mc</strong></span>         imc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm_euclid_vr</strong></span>   ivr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm_euclid_vr</strong></span>   ivr</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm_euclid_vc</strong></span>   ivc</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm_euclid_vc</strong></span>   ivc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm_euclid_mr</strong></span>   mvr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm_euclid_mr</strong></span>   mvr</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm_euclid_mc</strong></span>   mvc</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm_euclid_mc</strong></span>   mvc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_distance_vr</strong></span>      ivr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_distance_vr</strong></span>      ivr</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_distance_vc</strong></span>      ivc</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_distance_vc</strong></span>      ivc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm_max</strong></span>         imr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm_max</strong></span>         imc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm_max</strong></span>         imr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm_max</strong></span>         imc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm_inf_vr</strong></span>      ivr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm_inf_vr</strong></span>      ivr</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm_inf_vc</strong></span>      ivc</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm_inf_vc</strong></span>      ivc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm_inf_mr</strong></span>      imr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm_inf_mr</strong></span>      imr</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_norm_inf_mc</strong></span>      imc</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_norm_inf_mc</strong></span>      imc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_trace_mr</strong></span>         imr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_trace_mr</strong></span>         imr</pre>
+        <pre class="synopsis">ir, ii                      <span class="command"><strong>la_i_trace_mc</strong></span>         imc</pre>
+        <pre class="synopsis">kr, ki                      <span class="command"><strong>la_k_trace_mc</strong></span>         imc</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_lu_det</strong></span>           imr</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_lu_det</strong></span>           imr</pre>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_lu_det</strong></span>           imc</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_lu_det</strong></span>           imc</pre>
+        <h4><a id="idm276131362464"></a>
+      Elementwise Array-Array Operations
+    </h4>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_add_vr</strong></span>           ivr_a, ivr_b</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_add_vc</strong></span>           ivc_a, ivc_b</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i_add_mr</strong></span>           imr_a, imr_b</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_k_add_mc</strong></span>           imc_a, imc_b</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_subtract_vr</strong></span>      ivr_a, ivr_b</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_subtract_vc</strong></span>      ivc_a, ivc_b</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i_subtract_mr</strong></span>      imr_a, imr_b</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_k_subtract_mc</strong></span>      imc_a, imc_b</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_multiply_vr</strong></span>      ivr_a, ivr_b</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_multiply_vc</strong></span>      ivc_a, ivc_b</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i_multiply_mr</strong></span>      imr_a, imr_b</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_k_multiply_mc</strong></span>      imc_a, imc_b</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_divide_vr</strong></span>        ivr_a, ivr_b</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_divide_vc</strong></span>        ivc_a, ivc_b</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i_divide_mr</strong></span>        imr_a, imr_b</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_k_divide_mc</strong></span>        imc_a, imc_b</pre>
+        <h4><a id="idm276131340656"></a>
+      Inner Products
+    </h4>
+        <pre class="synopsis">ir                          <span class="command"><strong>la_i_dot_vr</strong></span>           ivr_a, ivr_b</pre>
+        <pre class="synopsis">kr                          <span class="command"><strong>la_k_dot_vr</strong></span>           ivr_a, ivr_b</pre>
+        <pre class="synopsis">ir, ii                      <span class="command"><strong>la_i_dot_vc</strong></span>           ivc_a, ivc_b</pre>
+        <pre class="synopsis">kr, ki                      <span class="command"><strong>la_k_dot_vc</strong></span>           ivc_a, ivc_b</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_i_dot_mr</strong></span>           imr_a, imr_b</pre>
+        <pre class="synopsis">imr                         <span class="command"><strong>la_k_dot_mr</strong></span>           imr_a, imr_b</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_i_dot_mc</strong></span>           imc_a, imc_b</pre>
+        <pre class="synopsis">imc                         <span class="command"><strong>la_k_dot_mc</strong></span>           imc_a, imc_b</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_dot_mr_vr</strong></span>        imr_a, ivr_b</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_k_dot_mr_vr</strong></span>        imr_a, ivr_b</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_i_dot_mc_vc</strong></span>        imc_a, ivc_b</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_dot_mc_vc</strong></span>        imc_a, ivc_b</pre>
+        <h4><a id="idm276131324304"></a>
+      Matrix Inversion
+    </h4>
+        <pre class="synopsis">imr, icondition             <span class="command"><strong>la_i_invert_mr</strong></span>        imr</pre>
+        <pre class="synopsis">imr, kcondition             <span class="command"><strong>la_k_invert_mr</strong></span>        imr</pre>
+        <pre class="synopsis">imc, icondition             <span class="command"><strong>la_i_invert_mc</strong></span>        imc</pre>
+        <pre class="synopsis">imc, kcondition             <span class="command"><strong>la_k_invert_mc</strong></span>        imc</pre>
+        <h4><a id="idm276131318640"></a>
+      Matrix Decompositions and Solvers
+    </h4>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_upper_solve_mr</strong></span>   imr [, j_1_diagonal]</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_k_upper_solve_mr</strong></span>   imr [, j_1_diagonal]</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_i_upper_solve_mc</strong></span>   imc [, j_1_diagonal]</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_upper_solve_mc</strong></span>   imc [, j_1_diagonal]</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_i_lower_solve_mr</strong></span>   imr [, j_1_diagonal]</pre>
+        <pre class="synopsis">ivr                         <span class="command"><strong>la_k_lower_solve_mr</strong></span>   imr [, j_1_diagonal]</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_i_lower_solve_mc</strong></span>   imc [, j_1_diagonal]</pre>
+        <pre class="synopsis">ivc                         <span class="command"><strong>la_k_lower_solve_mc</strong></span>   imc [, j_1_diagonal]</pre>
+        <pre class="synopsis">imr, ivr_pivot, isize       <span class="command"><strong>la_i_lu_factor_mr</strong></span>     imr</pre>
+        <pre class="synopsis">imr, ivr_pivot, ksize       <span class="command"><strong>la_k_lu_factor_mr</strong></span>     imr</pre>
+        <pre class="synopsis">imc, ivr_pivot, isize       <span class="command"><strong>la_i_lu_factor_mc</strong></span>     imc</pre>
+        <pre class="synopsis">imc, ivr_pivot, ksize       <span class="command"><strong>la_k_lu_factor_mc</strong></span>     imc</pre>
+        <pre class="synopsis">ivr_x                       <span class="command"><strong>la_i_lu_solve_mr</strong></span>      imr, ivr_b</pre>
+        <pre class="synopsis">ivr_x                       <span class="command"><strong>la_k_lu_solve_mr</strong></span>      imr, ivr_b</pre>
+        <pre class="synopsis">ivc_x                       <span class="command"><strong>la_i_lu_solve_mc</strong></span>      imc, ivc_b</pre>
+        <pre class="synopsis">ivc_x                       <span class="command"><strong>la_k_lu_solve_mc</strong></span>      imc, ivc_b</pre>
+        <pre class="synopsis">imr_q, imr_r                <span class="command"><strong>la_i_qr_factor_mr</strong></span>     imr</pre>
+        <pre class="synopsis">imr_q, imr_r                <span class="command"><strong>la_k_qr_factor_mr</strong></span>     imr</pre>
+        <pre class="synopsis">imc_q, imc_r                <span class="command"><strong>la_i_qr_factor_mc</strong></span>     imc</pre>
+        <pre class="synopsis">imc_q, imc_r                <span class="command"><strong>la_k_qr_factor_mc</strong></span>     imc</pre>
+        <pre class="synopsis">ivr_eig_vals                <span class="command"><strong>la_i_qr_eigen_mr</strong></span>      imr, i_tolerance</pre>
+        <pre class="synopsis">ivr_eig_vals                <span class="command"><strong>la_k_qr_eigen_mr</strong></span>      imr, k_tolerance</pre>
+        <pre class="synopsis">ivr_eig_vals                <span class="command"><strong>la_i_qr_eigen_mc</strong></span>      imc, i_tolerance</pre>
+        <pre class="synopsis">ivr_eig_vals                <span class="command"><strong>la_k_qr_eigen_mc</strong></span>      imc, k_tolerance</pre>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+    Matrix must be Hermitian in order to compute eigenvectors.
+  </td>
+            </tr>
+          </table>
+        </div>
+        <pre class="synopsis">ivr_eig_vals, imr_eig_vecs  <span class="command"><strong>la_i_qr_sym_eigen_mr</strong></span>  imr, i_tolerance</pre>
+        <pre class="synopsis">ivr_eig_vals, imr_eig_vecs  <span class="command"><strong>la_k_qr_sym_eigen_mr</strong></span>  imr, k_tolerance</pre>
+        <pre class="synopsis">ivc_eig_vals, imc_eig_vecs  <span class="command"><strong>la_i_qr_sym_eigen_mc</strong></span>  imc, i_tolerance</pre>
+        <pre class="synopsis">ivc_eig_vals, imc_eig_vecs  <span class="command"><strong>la_k_qr_sym_eigen_mc</strong></span>  imc, k_tolerance</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276131280112"></a>
+        <h2>Credits</h2>
+        <p>Michael Gogins</p>
+        <p>New in Csound version 5.09</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="MathTrig.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="MathTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="arrayOpcodes.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Trigonometric Functions </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Array Opcodes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

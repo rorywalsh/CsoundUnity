@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsbuffer</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsblur.html" title="pvsblur" />
+    <link rel="next" href="pvsbufread.html" title="pvsbufread" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsbuffer</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsblur.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsbufread.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvsbuffer"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpvsbuffer" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsbuffer</span>
+        </h2>
+        <p>pvsbuffer — 
+        This opcode creates and writes to a circular buffer for f-signals (streaming PV signals).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067770944"></a>
+        <h2>Description</h2>
+        <p>
+        This opcode sets up and writes to a circular buffer of length ilen (secs),
+        giving a handle for the buffer and a time pointer, which holds the
+        current write position (also in seconds). It can be used with one or 
+        more <a class="link" href="pvsbufread.html" title="pvsbufread"><em class="citetitle">pvsbufread</em></a> opcodes. Writing is circular, wrapping around at the
+        end of the buffer.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067768400"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ihandle, ktime  <span class="command"><strong>pvsbuffer</strong></span> fsig, ilen </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067766288"></a>
+        <h2>Initialisation</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> -- handle identifying this particular buffer, which should be passed to a reader opcode.
+    </p>
+        <p>
+      <span class="emphasis"><em>ilen</em></span> -- buffer length in seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- an input pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>ktime</em></span> -- the current time of writing in the buffer
+    </p>
+        <p>
+        <span class="emphasis"><em>pvsbuffer</em></span> stores <span class="emphasis"><em>fsig</em></span> in a buffer which can be read by <a class="link" href="pvsbufread.html" title="pvsbufread"><em class="citetitle">pvsbufread</em></a> using the handle <span class="emphasis"><em>ihandle</em></span>. Different buffers will have different handles so they can be read independently by different <a class="link" href="pvsbufread.html" title="pvsbufread"><em class="citetitle">pvsbufread</em></a> opcodes. <span class="emphasis"><em>pvsbuffer</em></span> gives in its output the current time (<span class="emphasis"><em>ktime</em></span>) inside the ring buffer which has just been written.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067756976"></a>
+        <h2>Examples</h2>
+        <p>
+      See <a class="link" href="pvsbufread.html" title="pvsbufread"><em class="citetitle">pvsbufread</em></a> for examples of the pvsbuffer opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067754816"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="pvsbufread.html" title="pvsbufread"><em class="citetitle">pvsbufread</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067752768"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>July 2007</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsblur.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsbufread.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsblur </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsbufread</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

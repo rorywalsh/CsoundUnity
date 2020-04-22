@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>nrpn</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="nreverb.html" title="nreverb" />
+    <link rel="next" href="nsamp.html" title="nsamp" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">nrpn</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="nreverb.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="nsamp.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="nrpn"></a>
+      <div class="titlepage"></div>
+      <a id="IndexNrpn" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">nrpn</span>
+        </h2>
+        <p>nrpn — 
+      Sends a Non-Registered Parameter Number to the MIDI OUT port.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077609264"></a>
+        <h2>Description</h2>
+        <p>
+      Sends a NPRN (Non-Registered Parameter Number) message to the MIDI OUT port each time one of the input arguments changes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077607952"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>nrpn</strong></span> kchan, kparmnum, kparmvalue</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077606000"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kchan</em></span> -- MIDI channel (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>kparmnum</em></span> -- number of NRPN parameter
+    </p>
+        <p>
+      <span class="emphasis"><em>kparmvalue</em></span> -- value of NRPN parameter
+    </p>
+        <p>
+      This opcode sends new message when the MIDI translated value of one of the input arguments changes. It operates at k-rate. Useful with the MIDI instruments that recognize NRPNs (for example with the newest sound-cards with internal MIDI synthesizer such as SB AWE32, AWE64, GUS etc. in which each patch parameter can be changed during the performance via NRPN)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077601968"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the nrpn opcode. It uses the file <a class="ulink" href="examples/nrpn.csd" target="_top"><em class="citetitle">nrpn.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276077600192"></a>
+          <p class="title">
+            <strong>Example 621. Example of the nrpn opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <p>This example generates notes for every note received on the MIDI input. It generates MIDI notes on csound's MIDI output, so be sure to connect something.</p>
+            <div class="refsect1">
+              <a id="idm276445819424"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span> 
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  -Q1   <span class="c1">;;;realtime audio out with MIDI out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; change attack time of external synth</span>
+
+<span class="nb">initc7</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">0</span>		<span class="c1">; set controller 6 to 0</span>
+<span class="nb">nrpn</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; set MSB</span>
+<span class="nb">nrpn</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">98</span><span class="p">,</span> <span class="mi">99</span>		<span class="c1">; set LSB</span>
+k<span class="n">att</span> <span class="nb">ctrl7</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">127</span>	<span class="c1">; DataEntMSB</span>
+i<span class="n">dur</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="nb">noteondur2</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> i<span class="n">dur</span> <span class="c1">; play note on synth</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077595664"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.492</p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel and controller number ranges.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="nreverb.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="nsamp.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">nreverb </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> nsamp</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

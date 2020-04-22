@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Next-P and Previous-P Symbols</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoreTop.html" title="The Standard Numeric Score" />
+    <link rel="prev" href="ScoreStatements.html" title="Score Statements" />
+    <link rel="next" href="ScoreRamping.html" title="Ramping" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Next-P and Previous-P Symbols</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ScoreStatements.html">Prev</a> </td>
+          <th width="60%" align="center">The Standard Numeric Score</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ScoreRamping.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="ScoreNextp"></a>Next-P and Previous-P Symbols</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    At the close of any of the operations <a class="link" href="ScoreTop.html#ScoreCarry" title="Carry"><em class="citetitle">Carry</em></a>, <a class="link" href="ScoreTop.html#ScoreTempo" title="Tempo"><em class="citetitle">Tempo</em></a>, and <a class="link" href="ScoreTop.html#ScoreSort" title="Sort"><em class="citetitle">Sort</em></a>, three additional score features are interpreted during file writeout: next-p, previous-p, and <span class="emphasis"><em>ramping</em></span>.
+
+    <a id="IndexNp" class="indexterm"></a>
+    <a id="IndexPp" class="indexterm"></a>
+    <a id="IndexScoreNextP" class="indexterm"></a>
+    <a id="IndexScorePreviousP" class="indexterm"></a>
+  </p>
+      <p>
+    <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statement</em></a> pfields containing the symbols <span class="emphasis"><em>np</em></span><span class="emphasis"><em>x</em></span> or <span class="emphasis"><em>pp</em></span><span class="emphasis"><em>x</em></span> (where <span class="emphasis"><em>x</em></span> is some integer) will be replaced by the appropriate pfield value found on the next i statement (or previous i statement) that has the same p1. For example, the symbol <span class="emphasis"><em>np</em></span>7 will be replaced by the value found in p7 of the next note that is to be played by this instrument. <span class="emphasis"><em>np</em></span> and <span class="emphasis"><em>pp </em></span>symbols are recursive and can reference other <span class="emphasis"><em>np</em></span> and <span class="emphasis"><em>pp</em></span> symbols which can reference others, etc. References must eventually terminate in a real number or a <span class="emphasis"><em>ramp symbol</em></span>. Closed loop references should be avoided. <span class="emphasis"><em>np</em></span> and <span class="emphasis"><em>pp</em></span> symbols are illegal in p1, p2 and p3 (although they may reference these). <span class="emphasis"><em>np</em></span> and <span class="emphasis"><em>pp</em></span> symbols may be Carried. <span class="emphasis"><em>np</em></span> and <span class="emphasis"><em>pp</em></span> references cannot cross a Section boundary. Any forward or backward reference to a non-existent note-statement will be given the value zero.
+  </p>
+      <p>
+   E.g.: the statements
+   </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="stamnt">i</span>1   0    1    10   np4  pp5 
+<span class="stamnt">i</span>1   1    1    20
+<span class="stamnt">i</span>1   1    1    30</pre>
+      </div>
+      <p>
+
+   will result in
+
+   </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="stamnt">i</span>1   0    1    10   20   0 
+<span class="stamnt">i</span>1   1    1    20   30   20 
+<span class="stamnt">i</span>1   2    1    30   0    30</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    <span class="emphasis"><em>np</em></span> and <span class="emphasis"><em>pp</em></span> symbols can provide an instrument with contextual knowledge of the score, enabling it to glissando or crescendo, for instance, toward the pitch or dynamic of some future event (which may or may not be immediately adjacent). Note that while the <a class="link" href="ScoreTop.html#ScoreCarry" title="Carry"><em class="citetitle">Carry</em></a> feature will propagate <span class="emphasis"><em>np</em></span> and <span class="emphasis"><em>pp</em></span> through unsorted statements, the operation that interprets these symbols is acting on a fully sorted version of the score. 
+The tempo operation is applied after the pp and/or np processing.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ScoreStatements.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoreTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ScoreRamping.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Score Statements </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Ramping</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

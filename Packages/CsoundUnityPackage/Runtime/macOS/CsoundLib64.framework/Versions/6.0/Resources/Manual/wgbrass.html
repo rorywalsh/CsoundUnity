@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>wgbrass</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="wgbowedbar.html" title="wgbowedbar" />
+    <link rel="next" href="wgclar.html" title="wgclar" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">wgbrass</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="wgbowedbar.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="wgclar.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="wgbrass"></a>
+      <div class="titlepage"></div>
+      <a id="IndexWgbrass" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">wgbrass</span>
+        </h2>
+        <p>wgbrass — 
+      Creates a tone related to a brass instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036453936"></a>
+        <h2>Description</h2>
+        <p>
+      Audio output is a tone related to a brass instrument, using a physical model developed from Perry Cook, but re-coded for Csound. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036452352"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>wgbrass</strong></span> kamp, kfreq, ktens, iatt, kvibf, kvamp \
+    [, ifn] [, iminfreq]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036450128"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iatt</em></span> -- time taken to reach full pressure
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- optional table of shape of vibrato,
+      defaults to a sine table.
+    </p>
+        <p>
+      <span class="emphasis"><em>iminfreq</em></span> -- lowest frequency at which the instrument will play. If it is omitted it is taken to be the same as the initial <span class="emphasis"><em>kfreq</em></span>. If <span class="emphasis"><em>iminfreq</em></span> is negative, initialization will be skipped.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036445664"></a>
+        <h2>Performance</h2>
+        <p>
+      A note is played on a brass-like instrument, with the arguments as below.
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- Amplitude of note.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- Frequency of note played.
+    </p>
+        <p>
+      <span class="emphasis"><em>ktens</em></span> -- lip tension of the player. Suggested value is about 0.4
+    </p>
+        <p>
+      <span class="emphasis"><em>kvibf</em></span> -- frequency of vibrato in Hertz. Suggested range is 0 to 12
+    </p>
+        <p>
+      <span class="emphasis"><em>kvamp</em></span> -- amplitude of the vibrato
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: NOTE">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">NOTE</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        This is rather poor, and at present uncontrolled. Needs revision, and possibly more parameters.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036438384"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the wgbrass opcode. It uses the file <a class="ulink" href="examples/wgbrass.csd" target="_top"><em class="citetitle">wgbrass.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276036436576"></a>
+          <p class="title">
+            <strong>Example 1138. Example of the wgbrass opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276403859248"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o wgbrass.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  k<span class="n">amp</span> <span class="o">=</span> <span class="mf">0.7</span>
+  k<span class="n">freq</span> <span class="o">=</span> <span class="nb">p4</span>
+  k<span class="n">tens</span> <span class="o">=</span> <span class="nb">p5</span>
+  i<span class="n">att</span> <span class="o">=</span> <span class="nb">p6</span>
+  k<span class="n">vibf</span> <span class="o">=</span> <span class="nb">p7</span>
+  i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+
+  <span class="c1">; Create an amplitude envelope for the vibrato.</span>
+  k<span class="n">vamp</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.5</span>
+
+  a<span class="n">1</span> <span class="nb">wgbrass</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> k<span class="n">tens</span><span class="p">,</span> i<span class="n">att</span><span class="p">,</span> k<span class="n">vibf</span><span class="p">,</span> k<span class="n">vamp</span><span class="p">,</span> i<span class="n">fn</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">;        freq   tens  att  vibf</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span>  <span class="mi">440</span>    <span class="mf">0.4</span>   <span class="mf">0.1</span>  <span class="mf">6.137</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">4</span>  <span class="mi">440</span>    <span class="mf">0.4</span>   <span class="mf">0.01</span> <span class="mf">0.137</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">8</span> <span class="mi">4</span>  <span class="mi">880</span>    <span class="mf">0.4</span>   <span class="mf">0.1</span>  <span class="mf">6.137</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036432656"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch (after Perry Cook)</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p>ifn optional in 6.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="wgbowedbar.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="wgclar.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">wgbowedbar </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> wgclar</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

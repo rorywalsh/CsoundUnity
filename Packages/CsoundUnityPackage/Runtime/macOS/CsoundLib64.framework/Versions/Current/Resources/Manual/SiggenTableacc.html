@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Table Access</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="SiggenTop.html" title="Signal Generators" />
+    <link rel="prev" href="SiggenScanTop.html" title="Scanned Synthesis" />
+    <link rel="next" href="SiggenWaveterr.html" title="Wave Terrain Synthesis" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Table Access</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="SiggenScanTop.html">Prev</a> </td>
+          <th width="60%" align="center">Signal Generators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="SiggenWaveterr.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="SiggenTableacc"></a>Table Access</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    The opcodes that access tables are:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="oscil1.html" title="oscil1">
+                <em class="citetitle">oscil1</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="oscil1i.html" title="oscil1i">
+                <em class="citetitle">oscil1i</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="osciln.html" title="osciln">
+                <em class="citetitle">osciln</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="oscilx.html" title="oscilx">
+                <em class="citetitle">oscilx</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="table.html" title="table">
+                <em class="citetitle">table</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="table3.html" title="table3">
+                <em class="citetitle">table3</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="tablei.html" title="tablei">
+                <em class="citetitle">tablei</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+
+    Opcodes ending in 'i' implement linear interpolation and opcodes ending in '3' implement cubic interpolation.
+  </p>
+      <p>The following opcodes implement fast table reading/writing without boundary checks: 
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="tab.html" title="tab">
+                <em class="citetitle">tab</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="tab.html" title="tab">
+                <em class="citetitle">tab_i</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="tab.html" title="tab">
+                <em class="citetitle">tabw</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="tab.html" title="tab">
+                <em class="citetitle">tabw_i</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    See the sections <a class="link" href="TableTop.html#TableQueries" title="Table Queries"><em class="citetitle">Table Queries</em></a>, <a class="link" href="TableReadwrit.html" title="Read/Write Operations"><em class="citetitle">Read/Write Operations</em></a>and <a class="link" href="TableSelect.html" title="Table Reading with Dynamic Selection"><em class="citetitle">Table Reading with Dynamic Selection</em></a> for other table operations.
+  </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>
+      Although tables with a size which is not a power of two can be created using a negative size (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f score statement</em></a>), some opcodes will not accept them.
+  </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="SiggenScanTop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="SiggenTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="SiggenWaveterr.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Scanned Synthesis </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Wave Terrain Synthesis</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

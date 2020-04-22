@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>scoreline_i</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="scoreline.html" title="scoreline" />
+    <link rel="next" href="sc_lag.html" title="sc_lag" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">scoreline_i</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="scoreline.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sc_lag.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="scoreline_i"></a>
+      <div class="titlepage"></div>
+      <a id="Indexscoreline_i" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">scoreline_i</span>
+        </h2>
+        <p>scoreline_i — 
+      Issues one or more score line events from an instrument at i-time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066696096"></a>
+        <h2>Description</h2>
+        <p>
+      scoreline_i will issue score events at i-time.  It can handle strings in the same conditions as the standard score. Multi-line strings are accepted, using {{  }} to enclose the string.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066694720"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>scoreline_i</strong></span> Sin</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066692784"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">Sin</span>”</span></em></span> --  a string (in double-quotes or enclosed by {{ }}) containing one or more score events.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066691008"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the scoreline_i opcode. It uses the file <a class="ulink" href="examples/scoreline_i.csd" target="_top"><em class="citetitle">scoreline_i.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276066689216"></a>
+          <p class="title">
+            <strong>Example 878. Example of the scoreline_i opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276426512560"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac --old-parser   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o scoreline.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="nb">scoreline_i</span> <span class="s">{{</span>
+            <span class="nb">i</span> <span class="mi">2</span>  <span class="mi">0</span>  <span class="mi">3</span>  <span class="s">"flute.aiff"</span>
+            <span class="nb">i</span> <span class="mi">2</span>  <span class="mi">1</span>  <span class="mi">3</span>  <span class="s">"beats.wav"</span>
+            <span class="s">}}</span>
+        
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+a<span class="n">sig</span> <span class="nb">soundin</span> <span class="nb">p4</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="o">*</span><span class="mf">.8</span><span class="p">,</span> a<span class="n">sig</span><span class="o">*</span><span class="mf">.8</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066685200"></a>
+        <h2>See also</h2>
+        <p><a class="link" href="event.html" title="event"><em class="citetitle">event</em></a>,
+    <a class="link" href="event_i.html" title="event_i"><em class="citetitle">event_i</em></a>,
+    <a class="link" href="schedule.html" title="schedule"><em class="citetitle">schedule</em></a>,
+    <a class="link" href="schedwhen.html" title="schedwhen"><em class="citetitle">schedwhen</em></a>,
+    <a class="link" href="schedkwhen.html" title="schedkwhen"><em class="citetitle">schedkwhen</em></a>,
+    <a class="link" href="schedkwhennamed.html" title="schedkwhennamed"><em class="citetitle">schedkwhennamed</em></a>,
+    <a class="link" href="scoreline.html" title="scoreline"><em class="citetitle">scoreline</em></a>
+    </p>
+        <p> More information on this opcode: <a class="ulink" href="http://www.csoundjournal.com/issue15/phrase_loops.html" target="_top"><em class="citetitle">http://www.csoundjournal.com/issue15/phrase_loops.html</em></a>
+    written by Jim Aikin, and in the Floss Manuals: <a class="ulink" href="http://write.flossmanuals.net/csound/f-live-events/" target="_top"><em class="citetitle">http://write.net/csound/f-live-events/</em></a>.</p>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276059319248"></a>
+        <h2>Credits</h2>
+        <p>Author: Victor Lazzarini, 2007 </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="scoreline.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sc_lag.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">scoreline </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> sc_lag</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

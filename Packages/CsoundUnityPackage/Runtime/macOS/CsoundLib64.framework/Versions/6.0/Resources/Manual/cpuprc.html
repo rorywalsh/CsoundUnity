@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>cpuprc</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="cpumeter.html" title="cpumeter" />
+    <link rel="next" href="cross2.html" title="cross2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">cpuprc</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cpumeter.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cross2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="cpuprc"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCpuprc" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">cpuprc</span>
+        </h2>
+        <p>cpuprc — 
+      Control allocation of cpu resources on a per-instrument basis, to optimize realtime output.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118570992"></a>
+        <h2>Description</h2>
+        <p>
+      Control allocation of cpu resources on a per-instrument basis, to optimize realtime output.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118569600"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>cpuprc</strong></span> insnum, ipercent</pre>
+        <pre class="synopsis"><span class="command"><strong>cpuprc</strong></span> Sinsname, ipercent</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118566464"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>insnum</em></span> -- instrument number or string
+    </p>
+        <p>
+      <span class="emphasis"><em>Sinsname</em></span> -- instrument number or string
+    </p>
+        <p>
+      <span class="emphasis"><em>ipercent</em></span> -- percent of cpu processing-time to assign. Can also be expressed as a fractional value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118562944"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>cpuprc</em></span> sets the cpu processing-time percent usage of an instrument, in order to avoid buffer underrun in realtime performances, enabling a sort of polyphony theshold. The user must set <span class="emphasis"><em>ipercent</em></span> value for each instrument to be activated in realtime. Assuming that the total theoretical processing time of the cpu of the computer is 100%, this percent value can only be defined empirically, because there are too many factors that contribute to limiting realtime polyphony in different computers.
+    </p>
+        <p>
+      For example, if <span class="emphasis"><em>ipercent</em></span> is set to 5% for instrument 1, the maximum number of voices that can be allocated in realtime, is 20 (5% * 20 = 100%). If the user attempts to play a further note while the 20 previous notes are still playing, Csound inhibits the allocation of that note and will display the following warning message:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  can't allocate last note because it exceeds 100% of cpu time<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      In order to avoid audio buffer underruns, it is suggested to set the maximum number of voices slightly lower than the real processing power of the computer. Sometimes an instrument can require more processing time than normal. If, for example, the instrument contains an oscillator which reads a table that doesn't fit in cache memory, it will be slower than normal. In addition, any program running concurrently in multitasking, can subtract processing power to varying degrees.
+    </p>
+        <p>
+      At the start, all instruments are set to a default value of <span class="emphasis"><em>ipercent</em></span> = 0.0% (i.e. zero processing time or rather infinite cpu processing-speed). This setting is OK for deferred-time sessions.
+    </p>
+        <p>
+      All instances of <span class="emphasis"><em>cpuprc</em></span> must be defined in the header section, not in the instrument body.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118554144"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the cpuprc opcode. It uses the file <a class="ulink" href="examples/cpuprc.csd" target="_top"><em class="citetitle">cpuprc.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276118552336"></a>
+          <p class="title">
+            <strong>Example 176. Example of the cpuprc opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276485256384"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o cpuprc.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+
+<span class="nb">cpuprc</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
+<span class="nb">cpuprc</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">30</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">;cpu processing-time percent usage is set to 2% for each note</span>
+
+a<span class="n">sig</span> <span class="nb">oscil</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+ 
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">;cpu processing-time percent usage is set to 30% for each note</span>
+	<span class="c1">;so the 4 notes of the score exceeds 100% by far</span>
+a<span class="n">sig</span> <span class="nb">oscil</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">32768</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">; sine wave</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+
+<span class="c1">;too many notes to process,</span>
+<span class="c1">;check Csound output!</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">1</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118548304"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="maxalloc.html" title="maxalloc"><em class="citetitle">maxalloc</em></a>, <a class="link" href="prealloc.html" title="prealloc"><em class="citetitle">prealloc</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118545392"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>July, 1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.57; named instruments added version 5.13</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cpumeter.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cross2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cpumeter </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> cross2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

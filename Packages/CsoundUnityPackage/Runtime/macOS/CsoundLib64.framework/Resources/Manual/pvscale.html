@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvscale</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsbufread2.html" title="pvsbufread2" />
+    <link rel="next" href="pvscent.html" title="pvscent" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvscale</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsbufread2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvscent.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvscale"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvscale" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvscale</span>
+        </h2>
+        <p>pvscale — 
+      Scale the frequency components of a pv stream.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065438688"></a>
+        <h2>Description</h2>
+        <p>
+      Scale the frequency components of a pv stream, resulting
+      in pitch shift. Output amplitudes can be optionally modified in order
+      to attempt formant preservation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065437328"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvscale</strong></span> fsigin, kscal[, kkeepform, kgain, kcoefs]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065435216"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>fsigin</em></span> -- input pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>kscal</em></span> -- scaling ratio.
+    </p>
+        <p>
+      <span class="emphasis"><em>kkeepform</em></span> -- attempt to keep input signal
+      formants; 0: do not keep formants;
+      1: keep formants using a liftered cepstrum method; 2: keep formants by 
+      using a true envelope method
+      (defaults to 0). 
+    </p>
+        <p>
+      <span class="emphasis"><em>kgain</em></span> -- amplitude scaling (defaults to 1).
+    </p>
+        <p>
+      <span class="emphasis"><em>kcoefs</em></span> -- number of cepstrum coefs used in formant preservation (defaults to 80).
+    </p>
+        <p>
+      The quality of the pitch shift will be improved with the use of a
+      Hanning window in the pvoc analysis. Formant preservation method 1 is less intensive than method 2, which might not be suited
+      to realtime use.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        It is unsafe to use the same f-variable for both input and output of pvs opcodes. Using the same one might lead to undefined behavior on some opcodes. Use a different one on the left and right sides of the opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065427632"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276065426720"></a>
+          <p class="title">
+            <strong>Example 766. Example</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+asig  <span class="opc">in</span>                                 <span class="comment">; get the signal in</span>
+
+fsig  <span class="opc">pvsanal</span>   asig, 1024, 256, 1024, 1 <span class="comment">; analyse it</span>
+ftps  <span class="opc">pvscale</span>   fsig, 1.5, 1, 1          <span class="comment">; transpose it keeping formants</span>
+atps  <span class="opc">pvsynth</span>   ftps                     <span class="comment">; synthesise it</span>
+
+adp   <span class="opc">delayr</span>    0.1                      <span class="comment">; delay original signal</span>
+adel  <span class="opc">deltapn</span>   1024                     <span class="comment">; by 1024 samples</span>
+      <span class="opc">delayw</span>    asig
+      <span class="opc">out</span>       atps <span class="op">+</span> adel              <span class="comment">; add tranposed and original</span></pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+    The example above shows a vocal harmoniser. The delay is necessary to
+    time-align the signals, as the analysis-synthesis process will imply a
+    delay of 1024 samples between the analysis input and the synthesis output.
+    </p>
+        <p>
+      Here is an example of the use of the <span class="emphasis"><em>pvscale</em></span> opcode. It uses the file <a class="ulink" href="examples/pvscale.csd" target="_top"><em class="citetitle">pvscale.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276065412672"></a>
+          <p class="title">
+            <strong>Example 767. Example of the <span class="emphasis"><em>pvscale</em></span> opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276456852128"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">;; example written by joachim heintz 2009</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">fftsize</span>	<span class="o">=</span>		<span class="mi">1024</span>
+i<span class="n">overlap</span>	<span class="o">=</span>		i<span class="n">fftsize</span> <span class="o">/</span> <span class="mi">4</span>
+i<span class="n">winsize</span>	<span class="o">=</span>		i<span class="n">fftsize</span>
+i<span class="n">winshape</span>	<span class="o">=</span>		<span class="mi">1</span><span class="c1">; von-Hann window</span>
+S<span class="n">file</span>		<span class="o">=</span>		<span class="s">"fox.wav"</span>
+a<span class="n">in</span>		<span class="nb">soundin</span>	S<span class="n">file</span>
+<span class="n">fftin</span>		<span class="nb">pvsanal</span>	a<span class="n">in</span><span class="p">,</span> i<span class="n">fftsize</span><span class="p">,</span> i<span class="n">overlap</span><span class="p">,</span> i<span class="n">winsize</span><span class="p">,</span> i<span class="n">winshape</span><span class="c1">; fft-analysis of the audio-signal</span>
+<span class="n">fftblur</span>	<span class="nb">pvscale</span>	<span class="n">fftin</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span><span class="p">,</span> <span class="nb">p6</span><span class="c1">; scale</span>
+a<span class="n">out</span>		<span class="nb">pvsynth</span>	<span class="n">fftblur</span><span class="c1">; resynthesis</span>
+		<span class="nb">out</span>		a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span><span class="c1">; original sound</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">3</span> <span class="mf">1.5</span> <span class="mi">0</span> <span class="mi">2</span><span class="c1">; fifth higher without ...</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span> <span class="mi">3</span> <span class="mf">1.5</span> <span class="mi">1</span> <span class="mi">2</span><span class="c1">; ... and with different ...</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">9</span> <span class="mi">3</span> <span class="mf">1.5</span> <span class="mi">2</span> <span class="mi">5</span><span class="c1">; ... kinds of formant preservation</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065408288"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvsanal.html" title="pvsanal"><em class="citetitle">pvsanal</em></a>,
+      <a class="link" href="pvsynth.html" title="pvsynth"><em class="citetitle">pvsynth</em></a>,
+      <a class="link" href="pvsadsyn.html" title="pvsadsyn"><em class="citetitle">pvsadsyn</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065404496"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>November 2004 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>November 2004.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsbufread2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvscent.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsbufread2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvscent</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>User Defined Opcodes (UDO)</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="prev" href="OrchNamedInstruments.html" title="Named Instruments" />
+    <link rel="next" href="Orchtab.html" title="Vectors and Arrays" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">User Defined Opcodes (UDO)</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="OrchNamedInstruments.html">Prev</a> </td>
+          <th width="60%" align="center">Syntax of the Orchestra</th>
+          <td width="20%" align="right"> <a accesskey="n" href="Orchtab.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="OrchUDO"></a>User Defined Opcodes (UDO)</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Csound allows the definition of opcodes inside the orchestra header using the opcodes <a class="link" href="opcode.html" title="opcode"><em class="citetitle">opcode</em></a> and <a class="link" href="endop.html" title="endop"><em class="citetitle">endop</em></a>. The defined opcode may run with a different number of control samples (<a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a>) using <a class="link" href="setksmps.html" title="setksmps"><em class="citetitle">setksmps</em></a>.
+  </p>
+      <p>
+    To connect inputs and outputs for the UDO, use <a class="link" href="xin.html" title="xin"><em class="citetitle">xin</em></a> and <a class="link" href="xout.html" title="xout"><em class="citetitle">xout</em></a>.
+  </p>
+      <p>
+    An UDO looks like this:
+  </p>
+      <pre class="programlisting">
+        <span class="oblock">opcode</span> Lowpass, a, akk
+
+        <span class="opc">setksmps</span> 1              <span class="comment">; need sr=kr</span>
+ain, ka1, ka2   <span class="opc">xin</span>             <span class="comment">; read input parameters</span>
+aout    <span class="opc">init</span> 0                  <span class="comment">; initialize output</span>
+aout    <span class="op">=</span>  ain<span class="op">*</span>ka1 <span class="op">+</span> aout<span class="op">*</span>ka2   <span class="comment">; simple tone-like filter</span>
+        <span class="opc">xout</span> aout               <span class="comment">; write output</span>
+
+        <span class="oblock">endop</span></pre>
+      <p>
+    This UDO called <span class="emphasis"><em>Lowpass</em></span> takes 3 inputs (the first is a-rate, and the next two are k-rate), and delivers 1 a-rate output. Notice the use of <a class="link" href="xin.html" title="xin"><em class="citetitle">xin</em></a> to receive inputs and <a class="link" href="xout.html" title="xout"><em class="citetitle">xout</em></a> to deliver outputs. Also note the use of <a class="link" href="setksmps.html" title="setksmps"><em class="citetitle">setksmps</em></a>, which is needed for the filter to work properly.
+  </p>
+      <p>To use this UDO within an instrument, you would do something like:</p>
+      <pre class="programlisting">
+afiltered Lowpass asource, kvalue1, kvalue2</pre>
+      <p>See the entry for <a class="link" href="opcode.html" title="opcode"><em class="citetitle">opcode</em></a> for detailed information on UDO definition.
+  </p>
+      <p>
+    You can find many ready made UDO's (or contribute your own) at <a class="ulink" href="http://www.csounds.com/" target="_top"><em class="citetitle">Csounds.com</em></a>'s <a class="ulink" href="http://www.csounds.com/udo/" target="_top"><em class="citetitle">User Defined Opcode Database</em></a>.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="OrchNamedInstruments.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OrchTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="Orchtab.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Named Instruments </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Vectors and Arrays</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

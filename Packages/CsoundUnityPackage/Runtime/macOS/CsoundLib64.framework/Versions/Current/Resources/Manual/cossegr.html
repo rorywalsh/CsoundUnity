@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>cossegr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="cossegb.html" title="cossegb" />
+    <link rel="next" href="cosh.html" title="cosh" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">cossegr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cossegb.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cosh.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="cossegr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCossegr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">cossegr</span>
+        </h2>
+        <p>cossegr — 
+      Trace a series of line segments between specified points with
+      cosine interpolation, including a release segment.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119496848"></a>
+        <h2>Description</h2>
+        <p>
+      Trace a series of line segments between specified points with
+      cosine interpolation, including a release segment.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119495408"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>cossegr</strong></span> ia, idur1, ib [, idur2] [, ic] [...], irel, iz</pre>
+        <pre class="synopsis">kres <span class="command"><strong>cossegr</strong></span> ia, idur1, ib [, idur2] [, ic] [...], irel, iz</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119491936"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ia</em></span> -- starting value.
+    </p>
+        <p>
+      <span class="emphasis"><em>ib, ic</em></span>, etc. -- value after <span class="emphasis"><em>dur1</em></span> seconds, etc.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur1</em></span> -- duration in seconds of first segment. A zero or negative value will cause all initialization to be skipped.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur2, idur3</em></span>, etc. -- duration in seconds of subsequent segments. A zero or negative value will terminate the initialization process with the preceding point, permitting the last-defined line or curve to be continued indefinitely in performance. The default is zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>irel, iz</em></span> -- duration in seconds and final value of a note releasing segment.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119485680"></a>
+        <h2>Performance</h2>
+        <p>
+      These units generate control or audio signals whose values can pass through 2 or more specified points. The sum of <span class="emphasis"><em>dur</em></span> values may or may not equal the instrument's performance time: a shorter performance will truncate the specified pattern, while a longer one will cause the last-defined segment to continue on in the same direction.
+    </p>
+        <p>
+      <span class="emphasis"><em>cossegr</em></span> is amongst the Csound <span class="quote">“<span class="quote">r</span>”</span> units that contain a note-off sensor and release time extender. When each senses an event termination or MIDI noteoff, it immediately extends the performance time of the current instrument by <span class="emphasis"><em>irel </em></span>seconds, and sets out to reach the value <span class="emphasis"><em>iz</em></span> by the end of that period (no matter which segment the unit is in). <span class="quote">“<span class="quote">r</span>”</span> units can also be modified by MIDI noteoff velocities. For two or more extenders in an instrument, extension is by the greatest period.
+    </p>
+        <p>
+      You can use other pre-made envelopes which start a release segment upon receiving a note off message, like <a class="link" href="linenr.html" title="linenr"><em class="citetitle">linenr</em></a> and <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>, or you can construct more complex envelopes using <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> and <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a>. Note that you don't need to use <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> if you are using <span class="emphasis"><em>cossegr</em></span>, since the time is extended automatically.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119474976"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the cossegr opcode. It uses the file <a class="ulink" href="examples/cossegr.csd" target="_top"><em class="citetitle">cossegr.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276119473168"></a>
+          <p class="title">
+            <strong>Example 157. Example of the cossegr opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276486450176"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  -+rtmidi=virtual -M0   <span class="c1">;;;realtime audio out and realtime midi in</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o linsegr.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+	 	 
+i<span class="n">cps</span>	<span class="nb">cpsmidi</span>	 	 
+i<span class="n">amp</span>	<span class="nb">ampmidi</span>	<span class="mf">.3</span>	 
+ 	 	 	 
+k<span class="n">env</span>	<span class="nb">cossegr</span>	<span class="mi">1</span><span class="p">,</span> <span class="mf">.05</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+a<span class="n">sig</span>	<span class="nb">pluck</span>	k<span class="n">env</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>	 
+	<span class="nb">outs</span>	a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+	 
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine wave</span>
+
+<span class="nb">f</span><span class="mi">0</span> <span class="mi">30</span>	<span class="c1">;runs 30 seconds</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119469168"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="linenr.html" title="linenr"><em class="citetitle">linenr</em></a>,
+      <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>,
+      <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>,
+      <a class="link" href="envlpxr.html" title="envlpxr"><em class="citetitle">envlpxr</em></a>,
+      <a class="link" href="mxadsr.html" title="mxadsr"><em class="citetitle">mxadsr</em></a>,
+      <a class="link" href="madsr.html" title="madsr"><em class="citetitle">madsr</em></a>
+      <a class="link" href="expon.html" title="expon"><em class="citetitle">expon</em></a>,
+      <a class="link" href="expseg.html" title="expseg"><em class="citetitle">expseg</em></a>,
+      <a class="link" href="expsega.html" title="expsega"><em class="citetitle">expsega</em></a>
+      <a class="link" href="line.html" title="line"><em class="citetitle">line</em></a>,
+      <a class="link" href="linseg.html" title="linseg"><em class="citetitle">linseg</em></a>,
+      <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a>,
+      <a class="link" href="transegr.html" title="transegr"><em class="citetitle">transegr</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276119456432"></a>
+        <h2>Credits</h2>
+        <p>Author: John ffitch</p>
+        <p>August 2012.</p>
+        <p>New in Csound 5.18</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cossegb.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cosh.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cossegb </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> cosh</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

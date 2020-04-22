@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vdelayxws</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vdelayxwq.html" title="vdelayxwq" />
+    <link rel="next" href="vdelayk.html" title="vdelayk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vdelayxws</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vdelayxwq.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vdelayk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vdelayxws"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVdelayxws" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vdelayxws</span>
+        </h2>
+        <p>vdelayxws — 
+      Variable delay opcodes with high quality interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040991008"></a>
+        <h2>Description</h2>
+        <p>
+       Variable delay opcodes with high quality interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040989760"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout1, aout2 <span class="command"><strong>vdelayxws</strong></span> ain1, ain2, adl, imd, iws [, ist]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040987648"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imd</em></span> -- max. delay time (seconds)
+    </p>
+        <p>
+      <span class="emphasis"><em>iws</em></span> -- interpolation window size (see below)
+    </p>
+        <p>
+      <span class="emphasis"><em>ist</em></span> (optional) -- skip initialization if not zero
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040984400"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain1, ain2</em></span> -- input audio signals
+    </p>
+        <p>
+      <span class="emphasis"><em>aout1, aout2</em></span> -- output audio signals
+    </p>
+        <p>
+      <span class="emphasis"><em>adl</em></span> -- delay time in seconds
+    </p>
+        <p>
+      These opcodes use high quality (and slow) interpolation, that is much more accurate than the currently available linear and cubic interpolation. The <span class="emphasis"><em>iws</em></span> parameter sets the number of input samples used for calculating one output sample (allowed values are any integer multiply of 4 in the range 4 - 1024); higher values mean better quality and slower speed.
+    </p>
+        <p>
+      The vdelayxw opcodes change the position of the write tap in the delay line (unlike all other delay ugens that move the read tap), and are most useful for implementing Doppler effects where the position of the listener is fixed, and the sound source is moving.
+    </p>
+        <p>
+      The multichannel opcodes (eg. <span class="emphasis"><em>vdelayxq</em></span>) allow delaying 2 or 4 variables at once (stereo or quad signals); this is much more efficient than using separate opcodes for each channel.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Notes">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Notes</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>Delay time is measured in seconds (unlike in vdelay and vdelay3), and must be a-rate.</p>
+                    </li>
+                    <li class="listitem">
+                      <p>The minimum allowed delay is iws/2 samples.</p>
+                    </li>
+                    <li class="listitem">
+                      <p>Using the same variables as input and output is allowed in these opcodes.</p>
+                    </li>
+                    <li class="listitem">
+                      <p>In vdelayxw*, changing the delay time has some effects on output volume: </p>
+                      <div class="literallayout">
+                        <p>a = 1 / (1 + dt)</p>
+                      </div>
+                      <p> where a is the output gain, and dt is the change of delay time per seconds.</p>
+                    </li>
+                    <li class="listitem">
+                      <p>These opcodes are best used in the double-precision version of Csound.</p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040972896"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the use of the <span class="emphasis"><em>vdelayxws</em></span> opcode. It uses the file <a class="ulink" href="examples/vdelayxws.csd" target="_top"><em class="citetitle">vdelayxws.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276040970704"></a>
+          <p class="title">
+            <strong>Example 1098. Example of the <span class="emphasis"><em>vdelayxws</em></span> opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276407399744"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o vdelayxws.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> 
+
+i<span class="n">ms</span>  <span class="o">=</span>	<span class="mf">.5</span>						<span class="c1">;maximum delay time in seconds</span>
+i<span class="n">ws</span>  <span class="o">=</span>	<span class="mi">1024</span>						<span class="c1">;window size</span>
+a<span class="n">dl</span>  <span class="o">=</span>	<span class="mf">.5</span>						<span class="c1">;delay time</span>
+a<span class="n">sig1</span><span class="p">,</span> a<span class="n">sig2</span> <span class="nb">diskin2</span> <span class="s">"kickroll.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">;loop stereo file kickroll.wav</span>
+a<span class="n">2</span>   <span class="nb">poscil</span> <span class="mf">.2</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mi">1</span>					<span class="c1">;make an LFO, 1 cycle per 10 seconds</span>
+a<span class="n">dl</span>  <span class="o">=</span> a<span class="n">2</span> <span class="o">+</span> i<span class="n">ms</span><span class="o">/</span><span class="mi">2</span>      					<span class="c1">;offset the LFO so that it is positive</span>
+a<span class="n">outL</span><span class="p">,</span> a<span class="n">outR</span> <span class="nb">vdelayxws</span> a<span class="n">sig1</span><span class="p">,</span> a<span class="n">sig2</span><span class="p">,</span> a<span class="n">dl</span><span class="p">,</span> i<span class="n">ms</span><span class="p">,</span> i<span class="n">ws</span>	<span class="c1">;use the LFO to control delay time</span>
+     <span class="nb">outs</span> a<span class="n">outL</span><span class="p">,</span> a<span class="n">outR</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040966320"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vdelayx.html" title="vdelayx"><em class="citetitle">vdelayx</em></a>, 
+      <a class="link" href="vdelayxq.html" title="vdelayxq"><em class="citetitle">vdelayxq</em></a>, 
+      <a class="link" href="vdelayxs.html" title="vdelayxs"><em class="citetitle">vdelayxs</em></a>, 
+      <a class="link" href="vdelayxw.html" title="vdelayxw"><em class="citetitle">vdelayxw</em></a>, 
+      <a class="link" href="vdelayxwq.html" title="vdelayxwq"><em class="citetitle">vdelayxwq</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vdelayxwq.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vdelayk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vdelayxwq </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vdelayk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

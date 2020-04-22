@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>urandom</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="upsamp.html" title="upsamp" />
+    <link rel="next" href="urd.html" title="urd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">urandom</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="upsamp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="urd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="urandom"></a>
+      <div class="titlepage"></div>
+      <a id="IndexUrandom" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">urandom</span>
+        </h2>
+        <p>urandom — 
+      truly random opcodes with controllable range.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043569088"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in urandom.</p>
+        <p>
+      Truly random opcodes with controllable range. These
+      units are for Unix-like systems only and use /dev/urandom to construct
+      Csound random values
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043567216"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ax <span class="command"><strong>urandom</strong></span> [imin, imax]</pre>
+        <pre class="synopsis">ix <span class="command"><strong>urandom</strong></span> [imin, imax]</pre>
+        <pre class="synopsis">kx <span class="command"><strong>urandom</strong></span> [imin, imax]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043562544"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- i-rate output value.
+    </p>
+        <p>
+      <span class="emphasis"><em>imin</em></span> -- minimum value of range; defaults to -1.
+    </p>
+        <p>
+      <span class="emphasis"><em>imax</em></span> -- maximum value of range; defaults to +1.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Notes">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Notes</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The algorithm produces 2^64 different possible values which
+        are scaled to fit the range requested.  The randomness comes
+        form the usual Linux/OSX /dev/urandom method, and there is no
+        guarantee that it will be truly random, but there is a good
+        chance.  It does not show any cycles.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043557248"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ax</em></span> -- a-rate output value.
+    </p>
+        <p>
+      <span class="emphasis"><em>kx</em></span> -- k-rate output value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043554768"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the urandom opcode at a-rate. It uses the file <a class="ulink" href="examples/urandom.csd" target="_top"><em class="citetitle">urandom.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276043552960"></a>
+          <p class="title">
+            <strong>Example 1064. An example of the urandom opcode at a-rate.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276410508128"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o rnd31.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Create random numbers at a-rate in the range -2 to 2</span>
+  a<span class="n">ur</span> <span class="n">urandom</span>  <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+
+  <span class="c1">; Use the random numbers to choose a frequency.</span>
+  a<span class="n">freq</span> <span class="o">=</span> a<span class="n">ur</span> <span class="o">*</span> <span class="mi">500</span> <span class="o">+</span> <span class="mi">100</span>
+
+  a<span class="n">1</span> <span class="nb">oscil</span> <span class="mi">30000</span><span class="p">,</span> a<span class="n">freq</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Play Instrument #1 for one second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is an example of the urandom opcode at k-rate. It uses the file <a class="ulink" href="examples/urandom_krate.csd" target="_top"><em class="citetitle">urandom_krate.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276043547888"></a>
+          <p class="title">
+            <strong>Example 1065. An example of the urandom opcode at k-rate.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276410488976"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o rnd31_krate.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Create random numbers at k-rate in the range -1 to 1 </span>
+  <span class="c1">; with a uniform distribution.</span>
+  k<span class="n">1</span> <span class="n">urandom</span>
+        
+  <span class="nb">printks</span> <span class="s">"k1=%f</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> k<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for one second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like this:
+      </p>
+        <pre class="screen">
+k1=0.229850
+k1=-0.077047
+k1=-0.199339
+k1=-0.620577
+k1=-0.119447
+k1=-0.596258
+k1=0.525800
+k1=-0.171583
+k1=-0.017196
+k1=-0.974613
+k1=-0.036276
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043545168"></a>
+        <h2>Credits</h2>
+        <p>Author: John ffitch</p>
+        <p>New in version 5.13</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="upsamp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="urd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">upsamp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> urd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

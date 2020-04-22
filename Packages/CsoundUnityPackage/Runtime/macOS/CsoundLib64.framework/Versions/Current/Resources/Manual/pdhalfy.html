@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pdhalfy</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pdhalf.html" title="pdhalf" />
+    <link rel="next" href="peak.html" title="peak" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pdhalfy</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pdhalf.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="peak.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pdhalfy"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPdhalfy" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pdhalfy</span>
+        </h2>
+        <p>pdhalfy — 
+      Distorts a phasor for reading two unequal portions of a table in equal periods.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071587952"></a>
+        <h2>Description</h2>
+        <p>
+      The <span class="emphasis"><em>pdhalfy</em></span> opcode is a variation on the phase distortion synthesis method of the <a class="link" href="pdhalf.html" title="pdhalf"><em class="citetitle">pdhalf</em></a> opcode.  It is useful for distorting a phasor in order to read two unequal portions of a table in the same number of samples.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071585280"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>pdhalfy</strong></span> ain, kShapeAmount [, ibipolar [, ifullscale]]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071583168"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ibipolar</em></span> -- an optional parameter specifying either unipolar (0) or bipolar (1) mode.  Defaults to unipolar mode.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifullscale</em></span> -- an optional parameter specifying the range of input and output values. The maximum will be <span class="emphasis"><em>ifullscale</em></span>. The minimum depends on the mode of operation: zero for unipolar or -<span class="emphasis"><em>ifullscale</em></span> for bipolar.  Defaults to 1.0 -- you should set this parameter to the maximum expected input value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071579616"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span> --  the input signal to be distorted.
+    </p>
+        <p>
+      <span class="emphasis"><em>aout</em></span> --  the output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kShapeAmount</em></span> --  the amount of distortion applied to the input.  Must be between negative one and one (-1 to 1). An amount of zero means no distortion.
+    </p>
+        <p>
+      </p>
+        <div class="mediaobject">
+          <img src="images/pdhalfy.png" alt="Transfer function created by pdhalfy and a negative kShapeAmount." />
+          <div class="caption">
+            <p>Transfer function created by pdhalfy and a negative kShapeAmount.</p>
+          </div>
+        </div>
+        <p>
+
+      The <span class="emphasis"><em>pdhalfy</em></span> opcode calculates a transfer function that is composed of two linear segments (see the graph).  These segments meet at a "pivot point" which always lies on the same vertical axis.  (In unipolar mode, the axis is x = 0.5, and for bipolar mode it is the y axis).  So, <span class="emphasis"><em>pdhalfy</em></span> is a variation of the <a class="link" href="pdhalf.html" title="pdhalf"><em class="citetitle">pdhalf</em></a> opcode that places the pivot point of the phase distortion pattern on a vertical axis instead of a horizontal axis.
+    </p>
+        <p>
+      The <span class="emphasis"><em>kShapeAmount</em></span> parameter specifies where on the vertical axis this point falls.  When <span class="emphasis"><em>kShapeAmount</em></span> is zero, the pivot point is in the middle of the output range, forming a straight line for the transfer function and thus causing no change in the input signal.  As <span class="emphasis"><em>kShapeAmount</em></span> changes from zero (0) to negative one (-1), the pivot point downward towards the bottom of the graph.  As it changes from zero (0) to positive one (1), the pivot point moves upward, producing an inverted pattern.
+    </p>
+        <p>
+      If the input to <span class="emphasis"><em>pdhalfy</em></span> is a phasor and the output is used to index a table, the use of <span class="emphasis"><em>pdhalfy</em></span> will divide the table into two segments of different sizes with each segment being mapped to half of the oscillator period.  Values for <span class="emphasis"><em>kShapeAmount</em></span> that are less than zero will cause less than half of the table to be read in the first half of the period of oscillation.  The rest of the table will be read in the second half of the period.  The reverse is true for values of <span class="emphasis"><em>kShapeAmount</em></span> greater than zero. Note that the frequency of the phasor is always unchanged.  Thus, this method of phase distortion can only produce higher partials in a harmonic series.  It cannot produce inharmonic sidebands in the way that frequency modulation does. <span class="emphasis"><em>pdhalfy</em></span> tends to have a milder quality to its distortion than <span class="emphasis"><em>pdhalf</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>pdhalfy</em></span> can work in either unipolar or bipolar modes. Unipolar mode is appropriate for signals like phasors that range between zero and some maximum value (selectable with <span class="emphasis"><em>ifullscale</em></span>). Bipolar mode is appropriate for signals that range above and below zero by roughly equal amounts such as most audio signals.  Applying <span class="emphasis"><em>pdhalfy</em></span> directly to an audio signal in this way results in a crude but adjustable sort of waveshaping/distortion.
+    </p>
+        <p>
+      A typical example of the use of pdhalfy is
+
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+    aphase    <span class="opc">phasor</span>     ifreq
+    apd       <span class="opc">pdhalfy</span>    aphase, kamount
+    aout      <span class="opc">tablei</span>     apd, 1, 1</pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071559392"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pdhalfy opcode. It uses the file <a class="ulink" href="examples/pdhalfy.csd" target="_top"><em class="citetitle">pdhalfy.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276071557600"></a>
+          <p class="title">
+            <strong>Example 699. Example of the pdhalfy opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276438491408"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pdhalfy.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">5</span>
+
+    i<span class="n">dur</span>        <span class="o">=</span> <span class="nb">p3</span>
+    i<span class="n">amp</span>        <span class="o">=</span> <span class="nb">p4</span>
+    i<span class="n">freq</span>       <span class="o">=</span> <span class="nb">p5</span>
+    i<span class="n">amtinit</span>    <span class="o">=</span> <span class="nb">p6</span>      <span class="c1">; initial amount of phase distortion</span>
+    i<span class="n">att</span>        <span class="o">=</span> <span class="nb">p7</span>      <span class="c1">; attack time</span>
+    i<span class="n">suslvl</span>     <span class="o">=</span> <span class="nb">p8</span>      <span class="c1">; sustain amplitude</span>
+    i<span class="n">distdec</span>    <span class="o">=</span> <span class="nb">p9</span>      <span class="c1">; time for distortion amount to reach zero</span>
+    i<span class="n">table</span>      <span class="o">=</span> <span class="nb">p10</span>
+    
+    i<span class="n">dec</span>        <span class="o">=</span>  i<span class="n">distdec</span> <span class="o">-</span> i<span class="n">att</span>
+    i<span class="n">rel</span>        <span class="o">=</span>  <span class="mf">.05</span>
+    i<span class="n">sus</span>        <span class="o">=</span>  i<span class="n">dur</span> <span class="o">-</span> <span class="p">(</span>i<span class="n">distdec</span> <span class="o">+</span> i<span class="n">rel</span><span class="p">)</span>
+    
+    a<span class="n">env</span>        <span class="nb">linseg</span>      <span class="mi">0</span><span class="p">,</span> i<span class="n">att</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> i<span class="n">dec</span><span class="p">,</span> i<span class="n">suslvl</span><span class="p">,</span> i<span class="n">sus</span><span class="p">,</span> i<span class="n">suslvl</span><span class="p">,</span> i<span class="n">rel</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    k<span class="n">amount</span>     <span class="nb">linseg</span>      <span class="o">-</span>i<span class="n">amtinit</span><span class="p">,</span> i<span class="n">distdec</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> i<span class="n">dur</span><span class="o">-</span>i<span class="n">distdec</span><span class="p">,</span> <span class="mf">0.0</span>
+    a<span class="n">osc</span>        <span class="nb">phasor</span>      i<span class="n">freq</span>
+    a<span class="n">pd</span>         <span class="nb">pdhalfy</span>     a<span class="n">osc</span><span class="p">,</span> k<span class="n">amount</span>
+    a<span class="n">out</span>        <span class="nb">tablei</span>      a<span class="n">pd</span><span class="p">,</span> i<span class="n">table</span><span class="p">,</span> <span class="mi">1</span>
+    
+                <span class="nb">outs</span>        a<span class="n">env</span><span class="o">*</span>a<span class="n">out</span><span class="o">*</span>i<span class="n">amp</span><span class="p">,</span> a<span class="n">env</span><span class="o">*</span>a<span class="n">out</span><span class="o">*</span>i<span class="n">amp</span>       
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16385</span> <span class="mi">10</span> <span class="mi">1</span>                 <span class="c1">; sine</span>
+<span class="nb">f</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">16385</span>  <span class="mi">9</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">270</span>           <span class="c1">; inverted cosine</span>
+
+<span class="c1">; descending "just blues" scale</span>
+
+<span class="c1">; pdhalfy with cosine table</span>
+<span class="nb">t</span> <span class="mi">0</span> <span class="mi">100</span>
+<span class="nb">i</span><span class="mi">5</span> <span class="mi">0</span> <span class="mf">.333</span> <span class="mf">.6</span>    <span class="mi">512</span>     <span class="mf">1.0</span>   <span class="mf">.02</span>  <span class="mf">0.5</span>  <span class="mf">.12</span>   <span class="mi">3</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mi">448</span>     <span class="o">&lt;</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mi">384</span>     <span class="o">&lt;</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">358.4</span>   <span class="o">&lt;</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">341.33</span>  <span class="o">&lt;</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">298.67</span>  <span class="o">&lt;</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mi">2</span>    <span class="o">.</span>     <span class="mi">256</span>     <span class="mf">0.5</span>
+<span class="nb">s</span>
+
+<span class="c1">; pdhalfy with sine table</span>
+<span class="nb">t</span> <span class="mi">0</span> <span class="mi">100</span>
+<span class="nb">i</span><span class="mi">5</span> <span class="mi">0</span> <span class="mf">.333</span> <span class="mf">.6</span>    <span class="mi">512</span>     <span class="mf">1.0</span>   <span class="mf">.001</span> <span class="mf">0.1</span>  <span class="mf">.07</span>   <span class="mi">1</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mi">448</span>     <span class="o">&lt;</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mi">384</span>     <span class="o">&lt;</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">358.4</span>   <span class="o">&lt;</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">341.33</span>  <span class="o">&lt;</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">298.67</span>  <span class="o">&lt;</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mi">2</span>    <span class="o">.</span>     <span class="mi">256</span>     <span class="mf">0.5</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071553616"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pdhalf.html" title="pdhalf"><em class="citetitle">pdhalf</em></a>,
+      <a class="link" href="pdclip.html" title="pdclip"><em class="citetitle">pdclip</em></a> 
+          </p>
+        <p> More information about phase distortion on Wikipedia: <a class="ulink" href="http://en.wikipedia.org/wiki/Phase_distortion_synthesis" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Phase_distortion_synthesis</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071549520"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Anthony Kozar</td>
+          </tr>
+          <tr>
+            <td>January 2008</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pdhalf.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="peak.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pdhalf </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> peak</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

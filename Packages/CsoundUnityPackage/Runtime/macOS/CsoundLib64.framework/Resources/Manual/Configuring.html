@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Configuring</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartOverview.html" title="Part I. Overview" />
+    <link rel="prev" href="UsingOptimizing.html" title="Optimizing Audio I/O Latency" />
+    <link rel="next" href="OrchTop.html" title="Syntax of the Orchestra" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Configuring</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="UsingOptimizing.html">Prev</a> </td>
+          <th width="60%" align="center">Part I. Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OrchTop.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="Configuring"></a>Configuring</h2>
+          </div>
+        </div>
+      </div>
+      <p>Once you have either unpacked a binary distribution, or built
+    Csound from sources, you will need to configure Csound so that it will run properly on your system. Installers usually perform these steps for you automatically.
+  </p>
+      <p>On all platforms, make sure the directory or directories
+  containing Csound's plugin libraries are in an
+  <code class="literal">OPCODE6DIR</code> or <code class="literal">OPCODE6DIR64</code>
+  environment variable depending on the precision of the compiled
+  binary.
+  (Note that for csound5 these environment variables were
+  <code class="literal">OPCODEDIR</code> and <code class="literal">OPCODEDIR64</code>.)
+  </p>
+      <p>The Python opcodes currently require at least Python 2.4, which can be downloaded from <a class="ulink" href="http://www.python.org" target="_top">www.python.org</a> if it is not already on your system. You can check if it is available by typing 'python' on a command prompt or DOS window.
+  </p>
+      <h2><a id="idm276137239232"></a>Windows</h2>
+      <p>On Windows, make sure the directory or directories (normally the <code class="filename">C:\Program Files\Csound</code> directory) containing the Csound executables directory are in your <code class="literal">PATH</code> variable, or else copy all the executable files to your Windows <code class="filename">system32</code> directory. Depending on your installation method, you might also need to set the <code class="literal">OPCODE6DIR</code> and <code class="literal">OPCODE6DIR64</code> environment variables. Assuming that Csound is installed to the default location of <code class="filename">C:\Program Files\Csound</code> you can use (otherwise set the paths accordingly):
+    </p>
+      <pre class="screen">set OPCODE6DIR=C:\Program Files\Csound\plugins
+set OPCODE6DIR64=C:\Program Files\Csound\plugins64
+set PATH=%PATH%;C:\Program Files\Csound\bin</pre>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note: Missing python24.dll or python25.dll">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Missing python24.dll or python25.dll</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>If you get a pop-up about the missing Python library (python24.dll or python25.dll) and don't need the python opcodes, just delete <code class="filename">C:\Program Files\Csound\plugins\py.dll</code> and <code class="filename">C:\Program Files\Csound\plugins64\py.dll</code>, and the pop-up about the missing Python library should be gone.</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <h2><a id="idm276137230512"></a>Unix and Linux</h2>
+      <p>On Unix and Linux, either install the Csound program in one of the system <code class="filename">bin</code> directories, typically <code class="filename">/usr/local/bin</code>, and the Csound and plugin shared libraries in places like <code class="filename">/usr/local/lib/csound/plugins</code> or <code class="filename">/usr/local/lib/csound/plugins64</code> and make sure that <code class="literal">OPCODE6DIR</code> and <code class="literal">OPCODE6DIR64</code> environment variable are set correctly.
+  </p>
+      <h2><a id="idm276137225552"></a>CsoundAC</h2>
+      <p>CsoundAC requires some additional configuration. On all
+      platforms, CsoundAC requires that you have Python installed on your
+      computer. The directory containing the <code class="filename">_csoundAC</code> shared
+      library and the <code class="filename">CsoundAC.py</code> file must be in your
+      <code class="literal">PYTHONPATH</code> environment variable, so that the Python runtime
+      knows how to load these files.</p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="UsingOptimizing.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartOverview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OrchTop.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Optimizing Audio I/O Latency </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Syntax of the Orchestra</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

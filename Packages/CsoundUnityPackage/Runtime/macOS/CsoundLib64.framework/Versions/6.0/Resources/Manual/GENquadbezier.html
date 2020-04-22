@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GENquadbezier</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GENsone.html" title="GENsone" />
+    <link rel="next" href="GENfarey.html" title="GENfarey" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GENquadbezier</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GENsone.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GENfarey.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GENquadbezier"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGENquadbezier" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GENquadbezier</span>
+        </h2>
+        <p>"quadbezier" — 
+      Generate a table with values from a quadratic Bézier function.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987708768"></a>
+        <h2>Description</h2>
+        <p>Plugin gen in quadbezier.</p>
+        <p>
+      This subroutine creates an ftable from segments constructed by
+      paths traced by the quadratic Bézier function.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987706944"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size "quadbezier" y1 cx1 cy1 x2 y2 [cx2 cy2 x3 y3 ...]
+</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987704976"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>x2, x3,</em></span> etc. -- Locations in table at which to attain the following y value. Must be in increasing order. It is assumed that x1 equals 0. If the last value is less than size, then the rest will be set to zero. Should not be negative.
+    </p>
+        <p>
+      <span class="emphasis"><em>y1, y2, y3,</em></span> etc. -- Breakpoint values attained at the location specified by the preceding x value.
+    </p>
+        <p>
+      <span class="emphasis"><em>cx1, cx2, cx3,</em></span> etc. -- Virtual x coordinates for the different control points. cx[n] can be equal to but not less than x[n] and equal to but not greater than x[n+1]. Should not be negative but can be zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>cy1, cy2, cy3,</em></span> etc. -- Virtual y coordinates for the different control points.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987700432"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a simple example of the GENquadbezier routine. It uses the file <a class="ulink" href="examples/genquadbezier.csd" target="_top"><em class="citetitle">genquadbezier.csd</em></a>.
+           </p>
+        <div class="example">
+          <a id="idm275987698624"></a>
+          <p class="title">
+            <strong>Example 1238. Example of the GENquadbezierroutine.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276394915952"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o quadbezier.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+k<span class="n">ndx</span> <span class="nb">phasor</span> <span class="mi">1</span><span class="o">/</span><span class="nb">p3</span>
+k<span class="n">env</span> <span class="nb">tablei</span> k<span class="n">ndx</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> k<span class="n">env</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+  
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">32768</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="s">"quadbezier"</span> <span class="mi">0</span> <span class="mi">140</span> <span class="mf">0.61</span> <span class="mi">324</span> <span class="mf">0.53</span> <span class="mi">338</span> <span class="mf">0.27</span> <span class="mi">449</span> <span class="mf">0.32</span> <span class="mi">571</span> <span class="mf">0.08</span> <span class="mi">675</span> <span class="mf">0.5</span> <span class="mi">873</span> <span class="mf">0.47</span> <span class="mi">1024</span> <span class="mi">0</span>
+<span class="nb">f</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="s">"quadbezier"</span> <span class="mi">0</span> <span class="mi">92</span> <span class="mf">0.04</span> <span class="mi">94</span> <span class="mf">0.25</span> <span class="mi">177</span> <span class="mf">0.58</span> <span class="mi">373</span> <span class="mf">0.39</span> <span class="mi">537</span> <span class="mf">0.15</span> <span class="mi">675</span> <span class="mf">0.5</span> <span class="mi">910</span> <span class="mf">0.68</span> <span class="mi">1024</span> <span class="mi">0</span>
+<span class="nb">f</span> <span class="mi">4</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="s">"quadbezier"</span> <span class="mi">0</span> <span class="mi">196</span> <span class="mf">0.68</span> <span class="mi">537</span> <span class="mf">0.71</span> <span class="mi">873</span> <span class="mf">0.7</span> <span class="mi">1024</span> <span class="mi">0</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">4</span> <span class="mi">3</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">8</span> <span class="mi">4</span> <span class="mi">4</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+        <span class="phrase">These are the diagrams of the envelopes drawn by the
+          GENquadbezier routine, as used in the example
+          above:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/genquadbezier_1.png" alt="f 2 0 1024 &quot;quadbezier&quot; 0 140 0.61 324 0.53 338 0.27 449 0.32 571 0.08 675 0.5 873 0.47 1024 0" />
+          <div class="caption">
+            <p>  f 2 0 1024 "quadbezier" 0 140 0.61 324 0.53 338 0.27 449 0.32 571 0.08 675 0.5 873 0.47 1024 0</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/genquadbezier_2.png" alt="f 3 0 1024 &quot;quadbezier&quot; 0 92 0.04 94 0.25 177 0.58 373 0.39 537 0.15 675 0.5 910 0.68 1024 0" />
+          <div class="caption">
+            <p>  f 3 0 1024 "quadbezier" 0 92 0.04 94 0.25 177 0.58 373 0.39 537 0.15 675 0.5 910 0.68 1024 0</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/genquadbezier_3.png" alt="f 4 0 1024 &quot;quadbezier&quot; 0 196 0.68 537 0.71 873 0.7 1024 0" />
+          <div class="caption">
+            <p>  f 4 0 1024 "quadbezier" 0 196 0.68 537 0.71 873 0.7 1024 0</p>
+          </div>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987684048"></a>
+        <h2>See also</h2>
+        <p> For references, check the comments in the <a class="ulink" href="https://github.com/csound/csound/blob/develop/Opcodes/quadbezier.c" target="_top"><em class="citetitle">source code</em></a>.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987682000"></a>
+        <h2>Credits</h2>
+        <p>Written by Guillermo Senna</p>
+        <p>2016</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GENsone.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GENfarey.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GENsone </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GENfarey</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

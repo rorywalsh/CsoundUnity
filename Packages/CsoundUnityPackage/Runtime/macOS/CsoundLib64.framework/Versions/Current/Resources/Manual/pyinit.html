@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pyinit Opcodes</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pyexec.html" title="pyexec Opcodes" />
+    <link rel="next" href="pyrun.html" title="pyrun Opcodes" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pyinit Opcodes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pyexec.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pyrun.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pyinit"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPyInit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pyinit Opcodes</span>
+        </h2>
+        <p>pyinit — Initialize the Python interpreter.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063577792"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">
+          <span class="command">
+            <strong>pyinit</strong>
+          </span>
+        </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063576000"></a>
+        <h2>Description</h2>
+        <p>In Csound, you must first invoke the
+      <span class="emphasis"><em>pyinit</em></span> opcode in the orchestra header to initialize the Python
+      interpreter, before using any of the other Python opcodes.</p>
+        <p>But if you use the Python opcodes within CsoundAC, or from a python frontend using the
+       csnd6 module, Csound, you need not invoke <span class="emphasis"><em>pyinit</em></span>, because 
+      the Python interpreter will have already been initialized. In this case, CsoundAC (or the csnd6 python module)
+      automatically creates a Python interface to the Csound API. In CsoundAC, this exists in the
+      form a global instance of the <code class="literal">CsoundAC.CppSound</code> class named
+      <code class="literal">csound</code>. From a python frontend which imports the csnd6 module, the name
+       of the variable holding the Csound instance will depend on the frontend code.
+      Therefore, Python code written in the Csound orchestra has
+      access to the global <code class="literal">csound</code> object.</p>
+        <p>
+      The running Csound instance in which pyinit has been called is stored in a global python variable
+      called _CSOUND_. This holds the actual memory address of the instance and it can be used with
+      the csnd6 module via the csoundGetInstance(instance) call. This python function returns an object
+      that can be used with all the Csound API functions. 
+</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063570048"></a>
+        <h2>Credits</h2>
+        <p>Copyright (c) 2002 by Maurizio Umberto Puxeddu. All rights
+      reserved. Portions copyright (c) 2004 and 2005 by Michael Gogins, and (c) 2013, V Lazzarini.
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pyexec.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pyrun.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pyexec Opcodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pyrun Opcodes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

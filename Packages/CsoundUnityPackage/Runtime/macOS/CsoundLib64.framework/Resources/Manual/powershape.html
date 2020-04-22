@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>powershape</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pow.html" title="pow" />
+    <link rel="next" href="powoftwo.html" title="powoftwo" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">powershape</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pow.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="powoftwo.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="powershape"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPowershape" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">powershape</span>
+        </h2>
+        <p>powershape — 
+      Waveshapes a signal by raising it to a variable exponent.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069605408"></a>
+        <h2>Description</h2>
+        <p>
+      The <span class="emphasis"><em>powershape</em></span> opcode raises an input signal to a power with pre- and post-scaling of the signal so that the output will be in a predictable range.  It also processes negative inputs in a symmetrical way to positive inputs, calculating a dynamic transfer function that is useful for waveshaping.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069603536"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>powershape</strong></span> ain, kShapeAmount [, ifullscale]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069601424"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifullscale</em></span> -- optional parameter specifying the range of input values from -<span class="emphasis"><em>ifullscale</em></span> to <span class="emphasis"><em>ifullscale</em></span>.  Defaults to 1.0 -- you should set this parameter to the maximum expected input value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069598864"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span> --  the input signal to be shaped.
+    </p>
+        <p>
+      <span class="emphasis"><em>aout</em></span> --  the output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kShapeAmount</em></span> --  the amount of the shaping effect applied to the input; equal to the power that the input signal is raised.
+    </p>
+        <p>
+The <span class="emphasis"><em>powershape</em></span> opcode is very similar to the <span class="emphasis"><em>pow</em></span> unit generators for calculating the mathematical "power of" operation.  However, it introduces a couple of twists that can make it much more useful for waveshaping audio-rate signals.  The <span class="emphasis"><em>kShapeAmount</em></span> parameter is the exponent to which the input signal is raised.
+    </p>
+        <p>
+To avoid discontinuities, the <span class="emphasis"><em>powershape</em></span> opcode treats all input values as positive (by taking their absolute value) but preserves their original sign in the output signal.  This allows for smooth shaping of any input signal while varying the exponent over any range.  (<span class="emphasis"><em>powershape</em></span> also (hopefully) deals intelligently with  discontinuities that could arise when the exponent and input are both zero.  Note though that negative exponents will usually cause the signal to exceed the maximum amplitude specified by the ifullscale parameter and should normally be avoided).
+    </p>
+        <p>
+The other adaptation involves the <span class="emphasis"><em>ifullscale</em></span> parameter.  The input signal is divided by <span class="emphasis"><em>ifullscale</em></span> before being raised to <span class="emphasis"><em>kShapeAmount</em></span> and then multiplied by <span class="emphasis"><em>ifullscale</em></span> before being output.  This normalizes the input signal to the interval [-1,1], guaranteeing that the output (before final scaling) will also be within this range for positive shaping amounts and providing a smoothly evolving transfer function while varying the amount of shaping.  Values of <span class="emphasis"><em>kShapeAmount</em></span> between (0,1) will make the signal more "convex" while values greater than 1 will make it more "concave". A value of exactly 1.0 will produce no change in the input signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069588848"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pow.html" title="pow"><em class="citetitle">pow</em></a>, 
+      <a class="link" href="powoftwo.html" title="powoftwo"><em class="citetitle">powoftwo</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069585968"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the powershape opcode. It uses the file <a class="ulink" href="examples/powershape.csd" target="_top"><em class="citetitle">powershape.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276069584176"></a>
+          <p class="title">
+            <strong>Example 729. Example of the powershape opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276436111040"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o abs.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+	i<span class="n">maxamp</span>    <span class="o">=</span>           <span class="mi">10000</span>
+	k<span class="n">shapeamt</span>  <span class="nb">line</span>        <span class="nb">p5</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p6</span>
+	a<span class="n">osc</span>       <span class="nb">oscili</span>      <span class="mf">1.0</span><span class="p">,</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">),</span> <span class="mi">1</span>
+	a<span class="n">out</span>       <span class="nb">powershape</span>  a<span class="n">osc</span><span class="p">,</span> k<span class="n">shapeamt</span>
+	a<span class="n">declick</span>   <span class="nb">linseg</span>      <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">0.06</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span>
+	
+		     <span class="nb">out</span>         a<span class="n">out</span> <span class="o">*</span> a<span class="n">declick</span> <span class="o">*</span> i<span class="n">maxamp</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">32768</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>    <span class="mf">7.00</span>  <span class="mf">0.000001</span> <span class="mf">0.8</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.5</span>  <span class="mf">7.02</span>  <span class="mf">0.01</span>   <span class="mf">1.0</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.05</span>  <span class="mf">0.5</span>    <span class="mf">1.0</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.07</span>  <span class="mf">4.0</span>    <span class="mf">1.0</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="o">.</span>    <span class="mf">7.09</span>  <span class="mf">1.0</span>    <span class="mf">10.0</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span>    <span class="mf">7.06</span>  <span class="mf">1.0</span>    <span class="mf">25.0</span>
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069580176"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Anthony Kozar</td>
+          </tr>
+          <tr>
+            <td>January 2008</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pow.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="powoftwo.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pow </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> powoftwo</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

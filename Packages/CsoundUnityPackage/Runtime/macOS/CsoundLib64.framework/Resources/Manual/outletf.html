@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>outletf</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="outleta.html" title="outleta" />
+    <link rel="next" href="outletk.html" title="outletk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">outletf</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="outleta.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="outletk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="outletf"></a>
+      <div class="titlepage"></div>
+      <a id="Indexoutletf" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">outletf</span>
+        </h2>
+        <p>outletf — 
+      Sends a frate signal (fsig) out from an instrument to a named port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083573488"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in signalflowgraph</p>
+        <p>
+      Sends a frate signal (fsig) out from an instrument to a named port. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083571792"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>outletf </strong></span>Sname, fsignal</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083569856"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sname</em></span> -- String name of the outlet port.       
+      The name of the outlet is implicitly qualified by the instrument name 
+      or number, so it is valid to use the same outlet name in more than one 
+      instrument (but not to use the same outlet name twice in one instrument).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083568000"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsignal</em></span> -- frate output signal (fsig)
+    </p>
+        <p>
+      During performance, the output signal is sent to each instance of an instrument
+      containing an inlet port to which this outlet has been connected using the <a class="link" href="connect.html" title="connect">connect</a> opcode.
+      The signals of all the outlets connected to an inlet are combined in the inlet.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083564976"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="outleta.html" title="outleta"><em class="citetitle">outleta</em></a>
+      <a class="link" href="outletk.html" title="outletk"><em class="citetitle">outletk</em></a>
+      <a class="link" href="outletkid.html" title="outletkid"><em class="citetitle">outletkid</em></a>
+      <a class="link" href="inleta.html" title="inleta"><em class="citetitle">inleta</em></a>
+      <a class="link" href="inletk.html" title="inletk"><em class="citetitle">inletk</em></a>
+      <a class="link" href="inletkid.html" title="inletkid"><em class="citetitle">inletkid</em></a>
+      <a class="link" href="inletf.html" title="inletf"><em class="citetitle">inletf</em></a>
+      <a class="link" href="connect.html" title="connect"><em class="citetitle">connect</em></a>
+      <a class="link" href="alwayson.html" title="alwayson"><em class="citetitle">alwayson</em></a>
+      <a class="link" href="ftgenonce.html" title="ftgenonce"><em class="citetitle">ftgenonce</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083555168"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2009</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="outleta.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="outletk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">outleta </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> outletk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>loopseg</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="loop_lt.html" title="loop_lt" />
+    <link rel="next" href="loopsegp.html" title="loopsegp" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">loopseg</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="loop_lt.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="loopsegp.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="loopseg"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLoopseg" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">loopseg</span>
+        </h2>
+        <p>loopseg — 
+      Generate control signal consisting of linear segments delimited by two or more specified points.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085368512"></a>
+        <h2>Description</h2>
+        <p>
+      Generate control signal consisting of linear segments delimited by two or more specified points. The entire envelope is looped at <span class="emphasis"><em>kfreq</em></span> rate. Each parameter can be varied at k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085366736"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ksig <span class="command"><strong>loopseg</strong></span> kfreq, ktrig, iphase, kvalue0, ktime0 [, kvalue1] [, ktime1] \
+[, kvalue2] [, ktime2][...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085364576"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iphase</em></span> -- A value between 0 and 1 to say
+      where to start the loop.  Zero, the commonest value, indicates
+      the beginning.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085362864"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ksig</em></span> -- Output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- Repeat rate in Hz or fraction of Hz.
+    </p>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> -- If non-zero, retriggers the envelope from start (see <a class="link" href="trigger.html" title="trigger"><em class="citetitle">trigger opcode</em></a>), before the envelope cycle is completed.
+    </p>
+        <p>
+      <span class="emphasis"><em>kvalue0...kvalueN</em></span> -- Values of points
+    </p>
+        <p>
+      <span class="emphasis"><em>ktime0...ktimeN</em></span> -- Times between points; expressed in fractions of a cycle (see below). The final time designates a ramp between the final value and the first value. 
+    </p>
+        <p>
+      <span class="emphasis"><em>loopseg</em></span> opcode is similar to <a class="link" href="linseg.html" title="linseg"><em class="citetitle">linseg</em></a>, but the entire envelope is looped at <span class="emphasis"><em>kfreq</em></span> rate. Notice that times are not expressed in seconds but in fraction of a cycle. Actually each duration represent is proportional to the other, and the entire cycle duration is proportional to the sum of all duration values.  
+    </p>
+        <p>
+      The sum of all duration is then rescaled according to <span class="emphasis"><em>kfreq</em></span> argument. For example, considering an envelope made up of 3 segments, each segment having 100 as duration value, their sum will be 300. This value represents the total duration of the envelope, and is actually divided into 3 equal parts, a part for each segment.
+    </p>
+        <p>
+      Actually, the real envelope duration in seconds is determined by <span class="emphasis"><em>kfreq</em></span>. Again, if the envelope is made up of 3 segments, but this time the first and last segments have a duration of 50, whereas the central segment has a duration of 100 again, their sum will be 200. This time 200 represent the total duration of the 3 segments, so the central segment will be twice as long as the other segments.
+    </p>
+        <p>
+      All parameters can be varied at k-rate.  Negative frequency values are allowed, reading the envelope backward.  <span class="emphasis"><em>ktime0</em></span> should always be set to 0, except if the user wants some special effect.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085351216"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the loopseg opcode. It uses the file <a class="ulink" href="examples/loopseg.csd" target="_top"><em class="citetitle">loopseg.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276085349424"></a>
+          <p class="title">
+            <strong>Example 499. Example of the loopseg opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276455373200"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o loopseg.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+k<span class="n">freq</span>  <span class="nb">init</span>     <span class="nb">p4</span>  <span class="c1">; frequency of loop repetition</span>
+i<span class="n">frac</span>  <span class="o">=</span>        <span class="nb">p5</span>  <span class="c1">; frequency ratio of restart triggers</span>
+k<span class="n">trig</span>  <span class="nb">metro</span>    k<span class="n">freq</span> <span class="o">*</span> i<span class="n">frac</span>  <span class="c1">; triggers to restart loop</span>
+i<span class="n">phase</span> <span class="o">=</span>        <span class="mi">0</span>   <span class="c1">; initial phase</span>
+<span class="c1">; loop of note values (some glissandi)</span>
+<span class="c1">;                                    val dur val dur etc...</span>
+k<span class="n">note</span> <span class="nb">loopseg</span>  k<span class="n">freq</span><span class="p">,</span> k<span class="n">trig</span><span class="p">,</span> i<span class="n">phase</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">40</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">43</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">43</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">48</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> \
+ <span class="mi">47</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">47</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">46</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">47</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">49</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">43</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">46</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">39</span><span class="p">,</span><span class="mi">0</span>    
+<span class="c1">; loop of filter cutoff values (oct format). This loop, half speed of note loop.</span>
+k<span class="n">cfoct</span> <span class="nb">loopseg</span>  k<span class="n">freq</span><span class="o">*</span><span class="mf">0.5</span><span class="p">,</span> k<span class="n">trig</span><span class="p">,</span> i<span class="n">phase</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> \
+ <span class="mf">11.5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span>
+k<span class="n">env</span>  <span class="nb">linseg</span>   <span class="mi">0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">p3</span><span class="o">-</span><span class="mf">5.01</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span>
+i<span class="n">oct</span>  <span class="o">=</span>        <span class="nb">int</span><span class="p">((</span><span class="nb">rnd</span><span class="p">(</span><span class="mf">0.999</span><span class="p">)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="c1">; random value either -1, 0 or 1</span>
+a<span class="n">sig</span>  <span class="nb">vco2</span>     <span class="mf">0.2</span><span class="o">*</span>k<span class="n">env</span><span class="p">,</span><span class="nb">cpsmidinn</span><span class="p">(</span>k<span class="n">note</span><span class="p">)</span><span class="o">*</span><span class="nb">octave</span><span class="p">(</span>i<span class="n">oct</span><span class="p">),</span><span class="mi">0</span> <span class="c1">; sawtooth</span>
+a<span class="n">sig</span>  <span class="nb">moogladder</span>  a<span class="n">sig</span><span class="p">,</span><span class="nb">cpsoct</span><span class="p">(</span>k<span class="n">cfoct</span><span class="p">),</span><span class="nb">rnd</span><span class="p">(</span><span class="mf">0.6</span><span class="p">)</span>          <span class="c1">; filter sawtooth</span>
+a<span class="n">L</span><span class="p">,</span>a<span class="n">R</span> <span class="nb">pan2</span>     a<span class="n">sig</span><span class="p">,</span><span class="nb">rnd</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1">; random static pan location</span>
+      <span class="nb">outs</span>     a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; 4 layers, each with a different frequency of loop repetition (p4),</span>
+<span class="c1">;  frequency ratio of restart triggers (p5) and pan position (p6).</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">0</span> <span class="mi">30</span> <span class="mf">0.5</span>   <span class="p">[</span><span class="mi">11</span><span class="o">/</span><span class="mi">19</span><span class="p">]</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">6</span> <span class="mi">30</span> <span class="mf">0.25</span>  <span class="p">[</span><span class="mi">11</span><span class="o">/</span><span class="mi">13</span><span class="p">]</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">12</span> <span class="mi">30</span> <span class="mf">0.125</span> <span class="p">[</span><span class="mi">11</span><span class="o">/</span><span class="mi">16</span><span class="p">]</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">18</span> <span class="mi">30</span> <span class="mi">1</span>     <span class="p">[</span><span class="mi">11</span><span class="o">/</span><span class="mi">12</span><span class="p">]</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085345440"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="lpshold.html" title="lpshold"><em class="citetitle">lpshold</em></a>
+      <a class="link" href="loopxseg.html" title="loopxseg"><em class="citetitle">loopxseg</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085342544"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in Version 4.13</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="loop_lt.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="loopsegp.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">loop_lt </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> loopsegp</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

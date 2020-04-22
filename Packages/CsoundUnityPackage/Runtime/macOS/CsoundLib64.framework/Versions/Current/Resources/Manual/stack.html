@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>stack</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="DeprecatedTop.html" title="Deprecated Orchestra Opcodes and GEN Routines" />
+    <link rel="prev" href="soundouts.html" title="soundouts" />
+    <link rel="next" href="tb.html" title="tb" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">stack</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="soundouts.html">Prev</a> </td>
+          <th width="60%" align="center">Deprecated Orchestra Opcodes and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tb.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="stack"></a>
+      <div class="titlepage"></div>
+      <a id="IndexStack" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">stack</span>
+        </h2>
+        <p>stack — 
+      Initializes the stack.  Deprecated.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983363344"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in stackops.</p>
+        <p>
+      Initializes and sets the size of the global stack.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983361696"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>stack</strong></span>  iStackSize</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983359760"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iStackSize</em></span>  - size of the stack in bytes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983358144"></a>
+        <h2>Performance</h2>
+        <p>
+      Csound implements a single global stack. Initializing the stack with the <span class="emphasis"><em>stack</em></span> opcode is not required - it is optional, and if not done, the first use of <a class="link" href="push.html" title="push"><em class="citetitle">push</em></a> or <a class="link" href="push_f.html" title="push_f"><em class="citetitle">push_f</em></a> will automatically create a stack of 32768 bytes. Otherwise, <span class="emphasis"><em>stack</em></span> is normally called from the orchestra header, and takes a stack size parameter in bytes (there is an upper limit of about 16 MB). Once set, the stack size is fixed and cannot be changed during performance.
+    </p>
+        <p>
+      The global stack works in LIFO order: after multiple <a class="link" href="push.html" title="push"><em class="citetitle">push</em></a> calls, <a class="link" href="pop.html" title="pop"><em class="citetitle">pop</em></a> should be used in reverse order.
+    </p>
+        <p>
+      Each <a class="link" href="push.html" title="push"><em class="citetitle">push</em></a> or <a class="link" href="pop.html" title="pop"><em class="citetitle">pop</em></a> operation can work on a "bundle" of multiple variables. When using <a class="link" href="pop.html" title="pop"><em class="citetitle">pop</em></a>, the number, type, and order of items must match those used by the corresponding <a class="link" href="push.html" title="push"><em class="citetitle">push</em></a>. That is, after a 'push Sfoo, ibar', you must call something like 'Sbar, ifoo pop', and not e.g. two separate 'pop' statements.
+    </p>
+        <p>
+      <a class="link" href="push.html" title="push"><em class="citetitle">push</em></a> and <a class="link" href="pop.html" title="pop"><em class="citetitle">pop</em></a> opcodes can take variables of any type (i-, k-, a- and strings). Variables of type 'a' and 'k' are passed at performance time only, while 'i' and 'S' are passed at init time only.
+    </p>
+        <p>
+      push/pop for a, k, i, and S types copy data by value. By contrast, <a class="link" href="push_f.html" title="push_f"><em class="citetitle">push_f</em></a> only pushes a "reference" to the f-signal, and then the corresponding <a class="link" href="pop_f.html" title="pop_f"><em class="citetitle">pop_f</em></a> will copy directly from the original variable to its output signal. For this reason, changing the source f-signal of <a class="link" href="push_f.html" title="push_f"><em class="citetitle">push_f</em></a> before <a class="link" href="pop_f.html" title="pop_f"><em class="citetitle">pop_f</em></a> is called is not recommended, and if the instrument instance owning the variable that was passed by push_f is deactivated before pop_f is called, undefined behavior may occur.
+    </p>
+        <p>
+      Any stack errors (trying to push when there is no more space, or pop from an empty stack, inconsistent number or type of arguments, etc.) are fatal and terminate performance.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983340432"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the stack opcode. It uses the file <a class="ulink" href="examples/stack.csd" target="_top"><em class="citetitle">stack.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275983338640"></a>
+          <p class="title">
+            <strong>Example 1252. Example of the stack opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276390498848"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o stack.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span> 
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="nb">stack</span> <span class="mi">100000</span> 
+
+<span class="kd">instr</span> <span class="nf">1</span> 
+
+a<span class="n">1</span>	<span class="nb">oscils</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">0</span> 
+k<span class="n">1</span>	<span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span> 
+        <span class="nb">push</span> <span class="s">"blah"</span><span class="p">,</span> <span class="mf">123.45</span><span class="p">,</span> a<span class="n">1</span><span class="p">,</span> k<span class="n">1</span> 
+        <span class="nb">push</span> <span class="nb">rnd</span><span class="p">(</span>k<span class="n">1</span><span class="p">)</span> 
+
+k<span class="n">_rnd</span>	<span class="nb">pop</span> 
+S<span class="n">01</span><span class="p">,</span> i<span class="n">01</span><span class="p">,</span> a<span class="n">01</span><span class="p">,</span> k<span class="n">01</span> <span class="nb">pop</span> 
+        <span class="nb">printf_i</span> <span class="s">"S01 = '%s', i01 = %g</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> S<span class="n">01</span><span class="p">,</span> i<span class="n">01</span> 
+k<span class="n">trig</span>	<span class="nb">metro</span> <span class="mf">5.0</span> 
+        <span class="nb">printf</span> <span class="s">"k01 = %.3f, k_rnd = %.3f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">trig</span><span class="p">,</span> k<span class="n">01</span><span class="p">,</span> k<span class="n">_rnd</span> 
+        <span class="nb">outs</span> a<span class="n">01</span><span class="p">,</span> a<span class="n">01</span> 
+
+<span class="kd">endin</span> 
+<span class="nt">&lt;/CsInstruments&gt;</span> 
+<span class="nt">&lt;CsScore&gt;</span> 
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span> 
+<span class="nb">e</span> 
+<span class="nt">&lt;/CsScore&gt;</span> 
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983334656"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="pop.html" title="pop"><em class="citetitle">pop</em></a>,
+      <a class="link" href="push.html" title="push"><em class="citetitle">push</em></a>,
+      <a class="link" href="pop_f.html" title="pop_f"><em class="citetitle">pop_f</em></a> and 
+      <a class="link" href="push_f.html" title="push_f"><em class="citetitle">push_f</em></a>.
+    </p>
+        <p>Using this opcode is somewhat hackish, as you can read here: <a class="ulink" href="http://csound.1045644.n5.nabble.com/passing-a-string-to-a-UDO-td1099284.html" target="_top">http://csound.1045644.n5.nabble.com/passing-a-string-to-a-UDO-td1099284.html</a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983329120"></a>
+        <h2>Credits</h2>
+        <p>By: Istvan Varga.</p>
+        <p>2006</p>
+        <p>Deprecated as of version 6.04.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="soundouts.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="DeprecatedTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tb.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">soundouts </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tb</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Operations Between two Vectorial Signals</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="vectorial.html" title="Vectorial Opcodes" />
+    <link rel="prev" href="vectorialscalar.html" title="Operations Between a Vectorial and a Scalar Signal" />
+    <link rel="next" href="envelopeGenerators.html" title="Vectorial Envelope Generators" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Operations Between two  Vectorial Signals</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vectorialscalar.html">Prev</a> </td>
+          <th width="60%" align="center">Vectorial Opcodes</th>
+          <td width="20%" align="right"> <a accesskey="n" href="envelopeGenerators.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="vectorialvectorial"></a>Operations Between two  Vectorial Signals</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+  These opcodes perform operations between two vectors, that is, each element of the first vector is processed with the corresponding element of the other vector.  The result is a new vector that overrides the old values of the source vector.
+    </p>
+      <p>
+      Operations Between two  Vectorial Signals:
+      </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="vaddv.html" title="vaddv">
+                <em class="citetitle">vaddv</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vsubv.html" title="vsubv">
+                <em class="citetitle">vsubv</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vmultv.html" title="vmultv">
+                <em class="citetitle">vmultv</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vdivv.html" title="vdivv">
+                <em class="citetitle">vdivv</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vpowv.html" title="vpowv">
+                <em class="citetitle">vpowv</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vexpv.html" title="vexpv">
+                <em class="citetitle">vexpv</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vcopy.html" title="vcopy">
+                <em class="citetitle">vcopy</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vmap.html" title="vmap">
+                <em class="citetitle">vmap</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vaddv_i.html" title="vaddv_i">
+                <em class="citetitle">vaddv_i</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vsubv_i.html" title="vsubv_i">
+                <em class="citetitle">vsubv_i</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vmultv_i.html" title="vmultv_i">
+                <em class="citetitle">vmultv_i</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vdivv_i.html" title="vdivv_i">
+                <em class="citetitle">vdivv_i</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vpowv_i.html" title="vpowv_i">
+                <em class="citetitle">vpowv_i</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vexpv_i.html" title="vexpv_i">
+                <em class="citetitle">vexpv_i</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vcopy_i.html" title="vcopy_i">
+                <em class="citetitle">vcopy_i</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    All these operators are designed to be used together with other opcodes that operate with vectorial signals such as <a class="link" href="vcella.html" title="vcella"><em class="citetitle">vcella</em></a>, <a class="link" href="adsynt.html" title="adsynt"><em class="citetitle">adsynt</em></a>, <a class="link" href="adsynt2.html" title="adsynt2"><em class="citetitle">adsynt2</em></a>, etc.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vectorialscalar.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="vectorial.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="envelopeGenerators.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Operations Between a Vectorial and a Scalar Signal </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Vectorial Envelope Generators</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

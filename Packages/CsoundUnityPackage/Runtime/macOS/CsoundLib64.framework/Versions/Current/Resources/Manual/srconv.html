@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>srconv</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilityConversion.html" title="File Conversion (HET_IMPORT, HET_EXPORT, PVLOOK, PV_EXPORT, PV_IMPORT, SDIF2AD, SRCONV)" />
+    <link rel="prev" href="sdif2ad.html" title="sdif2ad" />
+    <link rel="next" href="src_conv.html" title="src_conv" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">srconv</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sdif2ad.html">Prev</a> </td>
+          <th width="60%" align="center">File Conversion (HET_IMPORT, HET_EXPORT, PVLOOK, PV_EXPORT, PV_IMPORT, SDIF2AD, SRCONV)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="src_conv.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="srconv"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">srconv</span>
+        </h2>
+        <p>srconv — 
+      Converts the sample rate of an audio file.
+      <a id="IndexSrconv" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275980011216"></a>
+        <h2>Description</h2>
+        <p>
+      Converts the sample rate of an audio file at sample rate Rin to
+    a sample rate of Rout.  Optionally the ratio (Rin / Rout) may be
+    linearly time-varying according to a set of (time, ratio) pairs in
+    an auxiliary file.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">This utility is suspect.  Better is to use libsamplerate.
+    srconv will be removed or replaced soon.</td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275980009312"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>srconv</strong></span> [flags] infile</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275980007376"></a>
+        <h2>Initialization</h2>
+        <p>
+      Flags:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>P num</em></span> = pitch
+    transposition ratio (srate / r) [don't specify both P and
+    r]</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>Q num</em></span>  =quality factor
+    (1, 2, 3, or 4: default = 2)</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>i filnam</em></span> = auxiliary 
+    breakpoints file (no breakpoint by default. i.e. No ratio change)
+    </p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>r num</em></span> = output sample
+    rate (must be specified)</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>o fnam</em></span> = sound output
+    filename</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>A</em></span> = create an AIFF
+    format output soundfile</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>J</em></span> = create an IRCAM
+    format output soundfile</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>W</em></span> = create a WAV format
+    output soundfile</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>h</em></span> = no header on output
+    soundfile</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>c</em></span> = 8-bit signed_char
+    sound samples</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>a</em></span> = alaw sound
+    samples</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>8</em></span> = 8-bit unsigned_char
+    sound samples</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>u</em></span> = ulaw sound
+    samples</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>s</em></span> = short_int sound
+    samples</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>l</em></span> = long_int sound
+    samples</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>f</em></span> = float sound
+    samples</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>r N</em></span> = orchestra srate
+    override</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>K</em></span> = Do not generate PEAK
+    chunks</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>R</em></span> = continually rewrite
+    header while writing soundfile (WAV/AIFF)</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>H#</em></span> = print a heartbeat
+    style 1, 2 or 3 at each soundfile write</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>N</em></span> = notify (ring the
+    bell) when score or miditrack is done</p>
+            </li>
+            <li class="listitem">
+              <p>-<span class="emphasis"><em>- fnam</em></span> = log output to
+    file</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      This program performs arbitrary sample-rate conversion with high
+      fidelity.  The method is to step through the input at the
+      desired sampling increment, and to compute the output points as
+      appropriately weighted averages of the surrounding input points.
+      There are two cases to consider:
+
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>sample rates are in a small-integer ratio -
+        weights are obtained from table.</p>
+            </li>
+            <li class="listitem">
+              <p>sample rates are in a large-integer ratio -
+        weights are linearly interpolated from
+        table.</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+        <p>
+      Calculate increment: if decimating, then window is impulse
+    response of low-pass filter with cutoff frequency at half of
+    output sample rate; if interpolating, then window is impulse
+    response of lowpass filter with cutoff frequency at half of input
+    sample rate. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979981248"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="src_conv.html" title="src_conv"><em class="citetitle">src_conv</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979979216"></a>
+        <h2>Credits</h2>
+        <p>Author: Mark Dolson</p>
+        <p>August 26, 1989</p>
+        <p>Author: John ffitch</p>
+        <p>December 30, 2000</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sdif2ad.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilityConversion.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="src_conv.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sdif2ad </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> src_conv</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

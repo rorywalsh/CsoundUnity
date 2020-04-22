@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvbufread</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvadd.html" title="pvadd" />
+    <link rel="next" href="pvcross.html" title="pvcross" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvbufread</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvadd.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvcross.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvbufread"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvbufread" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvbufread</span>
+        </h2>
+        <p>pvbufread — 
+      Reads from a phase vocoder analysis file and makes the retrieved data available.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068363888"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>pvbufread</em></span> reads from a <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a> file and makes the retrieved data available to any following <a class="link" href="pvinterp.html" title="pvinterp"><em class="citetitle">pvinterp</em></a> and <a class="link" href="pvcross.html" title="pvcross"><em class="citetitle">pvcross</em></a> units that appear in an instrument before a subsequent <span class="emphasis"><em>pvbufread</em></span> (just as <a class="link" href="lpread.html" title="lpread"><em class="citetitle">lpread</em></a> and <a class="link" href="lpreson.html" title="lpreson"><em class="citetitle">lpreson</em></a> work together). The data is passed internally and the unit has no output of its own. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068357312"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>pvbufread</strong></span> ktimpnt, ifile</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068355376"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifile</em></span> -- the <span class="emphasis"><em>pvoc</em></span> number (n in pvoc.n) or the name in quotes of the analysis file made using <span class="emphasis"><em>pvanal</em></span>. (See <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>.)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068352016"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktimpnt</em></span> -- the passage of time, in seconds, through this file. <span class="emphasis"><em>ktimpnt</em></span> must always be positive, but can move forwards or backwards in time, be stationary or discontinuous, as a pointer into the analysis file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068349840"></a>
+        <h2>Examples</h2>
+        <p>
+      The example below shows an example using <span class="emphasis"><em>pvbufread</em></span> with <span class="emphasis"><em>pvinterp</em></span> to interpolate between the sound of an oboe and the sound of a clarinet. The value of <span class="emphasis"><em>kinterp</em></span> returned by a <span class="emphasis"><em>linseg</em></span> is used to determine the timing of the transitions between the two sounds. The interpolation of frequencies and amplitudes are controlled by the same factor in this example, but for other effects it might be interesting to not have them synchronized in this way. In this example the sound will begin as a clarinet, transform into the oboe and then return again to the clarinet sound. The value of <span class="emphasis"><em>kfreqscale2</em></span> is 1.065 because the oboe in this case is a semitone higher in pitch than the clarinet and this brings them approximately to the same pitch. The value of <span class="emphasis"><em>kampscale2</em></span> is 0.75 because the analyzed clarinet was somewhat louder than the analyzed oboe. The setting of these two parameters make the transition quite smooth in this case, but such adjustments are by no means necessary or even advocated.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+ktime1  <span class="opc">line</span>      0, p3, 3.5 <span class="comment">; used as index in the "oboe.pvoc" file</span>
+ktime2  <span class="opc">line</span>      0, p3, 4.5 <span class="comment">; used as index in the  "clar.pvoc" file</span>
+kinterp <span class="opc">linseg</span>    1, p3<span class="op">*</span>0.15, 1, p3<span class="op">*</span>0.35, 0, p3<span class="op">*</span>0.25, 0, p3<span class="op">*</span>0.15, 1, p3<span class="op">*</span>0.1, 1
+        <span class="opc">pvbufread</span> ktime1, "oboe.pvoc"
+apv     <span class="opc">pvinterp</span>  ktime2,1,"clar.pvoc", 1, 1.065, 1, 0.75, 1<span class="op">-</span>kinterp, 1<span class="op">-</span>kinterp</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      Below is an example using <span class="emphasis"><em>pvbufread</em></span> with <span class="emphasis"><em>pvcross</em></span>. In this example the amplitudes used in the resynthesis gradually change from those of the oboe to those of the clarinet. The frequencies, of course, remain those of the clarinet throughout the process since <span class="emphasis"><em>pvcross</em></span> does not use the frequency data from the file read by <span class="emphasis"><em>pvbufread</em></span>.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+ktime1  <span class="opc">line</span>      0, p3, 3.5 <span class="comment">; used as index in the "oboe.pvoc" file</span>
+ktime2  <span class="opc">line</span>      0, p3, 4.5 <span class="comment">; used as index in the "clar.pvoc" file</span>
+kcross  <span class="opc">expon</span>     0.001, p3, 1
+        <span class="opc">pvbufread</span> ktime1, "oboe.pvoc"
+apv     <span class="opc">pvcross</span>   ktime2, 1, "clar.pvoc", 1<span class="op">-</span>kcross, kcross</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      Here is a complete example of the pvbufread opcode. It uses the file <a class="ulink" href="examples/pvbufread.csd" target="_top"><em class="citetitle">pvbufread.csd</em></a>
+      </p>
+        <div class="example">
+          <a id="idm276068324640"></a>
+          <p class="title">
+            <strong>Example 750. Example of the pvbufread opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276434841424"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pvbufread.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">; analyze "fox.wav" and "flute.aiff" with PVANAL first</span>
+k<span class="n">time1</span> <span class="nb">line</span>  <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.8</span>		<span class="c1">; use a part of "flute.pvx" file</span>
+k<span class="n">time2</span> <span class="nb">line</span>  <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">1.2</span>		<span class="c1">; use a part of "beats.pvx" file</span>
+k<span class="n">cross</span> <span class="nb">expon</span> <span class="mf">.03</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span>
+       <span class="nb">pvbufread</span> k<span class="n">time1</span><span class="p">,</span> <span class="s">"flute.pvx"</span>
+a<span class="n">sig</span>   <span class="nb">pvcross</span>   k<span class="n">time2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"beats.pvx"</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span>k<span class="n">cross</span><span class="p">,</span> k<span class="n">cross</span>
+       <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">10</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068320640"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvcross.html" title="pvcross"><em class="citetitle">pvcross</em></a>,
+      <a class="link" href="pvinterp.html" title="pvinterp"><em class="citetitle">pvinterp</em></a>,
+      <a class="link" href="pvread.html" title="pvread"><em class="citetitle">pvread</em></a>,
+      <a class="link" href="tableseg.html" title="tableseg"><em class="citetitle">tableseg</em></a>,
+      <a class="link" href="tablexseg.html" title="tablexseg"><em class="citetitle">tablexseg</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068315088"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, WA USA</td>
+          </tr>
+          <tr>
+            <td>1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvadd.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvcross.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvadd </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvcross</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

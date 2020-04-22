@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ctrlinit</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ctrl7.html" title="ctrl7" />
+    <link rel="next" href="cuserrnd.html" title="cuserrnd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ctrlinit</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ctrl7.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cuserrnd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ctrlinit"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCtrlinit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ctrlinit</span>
+        </h2>
+        <p>ctrlinit — 
+      Sets the initial values for a set of MIDI controllers.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118024080"></a>
+        <h2>Description</h2>
+        <p>
+      Sets the initial values for a set of MIDI controllers.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118022832"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>ctrlinit</strong></span> ichnl, ictlno1, ival1 [, ictlno2] [, ival2] [, ictlno3] \
+      [, ival3] [,...ival32]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118020816"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ichnl</em></span> -- MIDI channel number (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>ictlno1</em></span>, <span class="emphasis"><em>ictlno1</em></span>, etc. -- MIDI controller numbers (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>ival1</em></span>, <span class="emphasis"><em>ival2</em></span>, etc. -- initial value for corresponding MIDI controller number
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118016704"></a>
+        <h2>Performance</h2>
+        <p>
+      Sets the initial values for a set of MIDI controllers.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118015456"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="massign.html" title="massign"><em class="citetitle">massign</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118013424"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Barry L. Vercoe - Mike Berry</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge, Mass.</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel and controller number ranges.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ctrl7.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cuserrnd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ctrl7 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> cuserrnd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvoc</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvinterp.html" title="pvinterp" />
+    <link rel="next" href="pvread.html" title="pvread" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvoc</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvinterp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvread.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvoc"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvoc" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvoc</span>
+        </h2>
+        <p>pvoc — 
+      Implements signal reconstruction using an fft-based phase vocoder.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068181280"></a>
+        <h2>Description</h2>
+        <p>
+      Implements signal reconstruction using an fft-based phase vocoder.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068180032"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>pvoc</strong></span> ktimpnt, kfmod, ifilcod [, ispecwp] [, iextractmode] \
+      [, ifreqlim] [, igatefn]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068177872"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilcod</em></span> -- integer or character-string denoting a control-file derived from analysis of an audio signal. An integer denotes the suffix of a file <span class="emphasis"><em>pvoc.m</em></span>; a character-string (in double quotes) gives a filename, optionally a full pathname. If not fullpath, the file is sought first in the current directory, then in the one given by the environment variable <a class="link" href="OrchDirFiles.html" title="Directories and Files"><em class="citetitle">SADIR</em></a> (if defined).  <span class="emphasis"><em>pvoc</em></span> control contains breakpoint amplitude and frequency envelope values organized for fft resynthesis. Memory usage depends on the size of the files involved, which are read and held entirely in memory during computation but are shared by multiple calls (see also <a class="link" href="lpread.html" title="lpread"><em class="citetitle">lpread</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>ispecwp</em></span> (optional) -- if non-zero, attempts to preserve the spectral envelope while its frequency content is varied by <span class="emphasis"><em>kfmod</em></span>. The default value is zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>iextractmode</em></span> (optional) -- determines if spectral extraction will be carried out and if so whether components that have changes in frequency below <span class="emphasis"><em>ifreqlim</em></span> or above <span class="emphasis"><em>ifreqlim</em></span> will be discarded. A value for <span class="emphasis"><em>iextractmode</em></span> of 1 will cause <span class="emphasis"><em>pvoc</em></span> to synthesize only those components where the frequency difference between analysis frames is greater than <span class="emphasis"><em>ifreqlim</em></span>. A value of 2 for <span class="emphasis"><em>iextractmode</em></span> will cause <span class="emphasis"><em>pvoc</em></span> to synthesize only those components where the frequency difference between frames is less than <span class="emphasis"><em>ifreqlim</em></span>. The default values for <span class="emphasis"><em>iextractmode</em></span> and <span class="emphasis"><em>ifreqlim</em></span> are 0, in which case a simple resynthesis will be done. See examples under <a class="link" href="pvadd.html" title="pvadd"><em class="citetitle">pvadd</em></a> for how to use spectral extraction. 
+    </p>
+        <p>
+      <span class="emphasis"><em>igatefn</em></span> (optional) -- the number of a stored function which will be applied to the amplitudes of the analysis bins before resynthesis takes place. If <span class="emphasis"><em>igatefn</em></span> is greater than 0 the amplitudes of each bin will be scaled by <span class="emphasis"><em>igatefn</em></span> through a simple mapping process. First, the  amplitudes of all of the bins in all of the frames in the entire analysis file are compared to determine the maximum amplitude value. This value is then used create normalized amplitudes as indeces into the stored function <span class="emphasis"><em>igatefn</em></span>. The maximum amplitude will map to the last point in the function. An amplitude of 0 will map to the first point in the function. Values between 0 and 1 will map accordingly to points along the function table. See examples under <a class="link" href="pvadd.html" title="pvadd"><em class="citetitle">pvadd</em></a> for how to use amplitude gating.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068161776"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktimpnt</em></span> -- The passage of time, in seconds, through the analysis file. <span class="emphasis"><em>ktimpnt</em></span> must always be positive, but can move forwards or backwards in time, be stationary or discontinuous, as a pointer into the analysis file.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfmod</em></span> -- a control-rate transposition factor: a value of 1 incurs no transposition,
+1.5 transposes up a perfect fifth, and .5 down an octave.
+    </p>
+        <p>
+      <span class="emphasis"><em>pvoc</em></span> implements signal reconstruction using an fft-based phase vocoder. The control data stems from a precomputed analysis file with a known frame rate.
+    </p>
+        <p>
+      This implementation of <span class="emphasis"><em>pvoc</em></span> was orignally written by Dan Ellis. It is based in part on the system of Mark Dolson, but the pre-analysis concept is new. The  spectral extraction and amplitude gating (new in Csound version 3.56) were added by Richard Karpen based on functions in SoundHack by Tom Erbe.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068156608"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pvoc opcode. It uses the file <a class="ulink" href="examples/pvoc.csd" target="_top"><em class="citetitle">pvoc.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276068154832"></a>
+          <p class="title">
+            <strong>Example 753. Example of the pvoc opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276434457408"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pvoc.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">; analyze "fox.wav" with PVANAL first</span>
+i<span class="n">spec</span> <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">time</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">1.55</span>
+k<span class="n">frq</span>  <span class="nb">line</span> <span class="mf">.8</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">2</span>
+a<span class="n">sig</span>  <span class="nb">pvoc</span> k<span class="n">time</span><span class="p">,</span> k<span class="n">frq</span><span class="p">,</span> <span class="s">"fox.pvx"</span><span class="p">,</span> i<span class="n">spec</span> 
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mi">0</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">6</span> <span class="mi">1</span>	<span class="c1">;preserve spectral envelope</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068150848"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vpvoc.html" title="vpvoc"><em class="citetitle">vpvoc</em></a>, <a class="link" href="pvanal.html" title="pvanal"><em class="citetitle">PVANAL</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068147936"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Authors: Dan Ellis and Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, Wash</td>
+          </tr>
+          <tr>
+            <td>1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvinterp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvread.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvinterp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvread</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

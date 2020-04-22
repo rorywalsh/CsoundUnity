@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLtabs</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLslider.html" title="FLslider" />
+    <link rel="next" href="FLtabsEnd.html" title="FLtabsEnd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLtabs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLslider.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLtabsEnd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLtabs"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLtabs" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLtabs</span>
+        </h2>
+        <p>FLtabs — 
+      Creates a tabbed FLTK interface.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105317088"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLtabs</em></span> is a <span class="quote">“<span class="quote">file card tabs</span>”</span> interface that is useful to display several areas containing widgets in the same windows, alternatively. It must be used together with <a class="link" href="FLgroup.html" title="FLgroup"><em class="citetitle">FLgroup</em></a>, another container that groups child widgets.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105314032"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLtabs</strong></span> iwidth, iheight, ix, iy</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105312080"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of upper left corner of the valuator, relative
+to the upper left corner of corresponding window. Expressed in pixels.
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of upper left corner of the valuator, relative to the upper left corner of corresponding window. Expressed in pixels.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105307808"></a>
+        <h2>Performance</h2>
+        <p>
+      Containers are useful to format the graphic appearance of the widgets. The most important container is <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a>, that actually creates a window. It can be filled with other containers and/or valuators or other kinds of widgets.
+    </p>
+        <p>
+      There are no k-rate arguments in containers.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLtabs</em></span> is a <span class="quote">“<span class="quote">file card tabs</span>”</span> interface that is useful to display several alternate areas containing widgets in the same window.
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/fltabs.png" alt="FLtabs." />
+          <div class="caption">
+            <p>FLtabs.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+        <p>
+      It must be used together with <a class="link" href="FLgroup.html" title="FLgroup"><em class="citetitle">FLgroup</em></a>, another FLTK container opcode that groups child widgets.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105299344"></a>
+        <h2>Examples</h2>
+        <p>
+      The following example code:
+
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+         <span class="opc">FLpanel</span>  "Panel1", 450, 550, 100, 100
+         <span class="opc">FLscroll</span> 450, 550, 0, 0
+         <span class="opc">FLtabs</span>   400, 550, 5, 5
+         
+         <span class="opc">FLgroup</span>  "sliders", 380, 500, 10, 40, 1
+gk1, ihs <span class="opc">FLslider</span>  "FLslider 1", 500, 1000, 2 ,1, -1, 300,15, 20,50
+gk2, ihs <span class="opc">FLslider</span>  "FLslider 2", 300, 5000, 2 ,3, -1, 300,15, 20,100
+gk3, ihs <span class="opc">FLslider</span>  "FLslider 3", 350, 1000, 2 ,5, -1, 300,15, 20,150
+gk4, ihs <span class="opc">FLslider</span>  "FLslider 4", 250, 5000, 1 ,11, -1, 300,30, 20,200
+gk5, ihs <span class="opc">FLslider</span>  "FLslider 5", 220, 8000, 2 ,1, -1, 300,15, 20,250
+gk6, ihs <span class="opc">FLslider</span>  "FLslider 6", 1, 5000, 1 ,13, -1, 300,15, 20,300
+gk7, ihs <span class="opc">FLslider</span>  "FLslider 7", 870, 5000, 1 ,15, -1, 300,30, 20,350
+gk8, ihs <span class="opc">FLslider</span>  "FLslider 8", 20, 20000, 2 ,6, -1, 30,400, 350,50
+         <span class="opc">FLgroupEnd</span>
+
+         <span class="opc">FLgroup</span>  "rollers", 380, 500, 10, 30, 2
+gk1, ihr <span class="opc">FLroller</span>  "FLroller 1", 50, 1000,.1,2 ,1 ,-1, 200,22, 20,50
+gk2, ihr <span class="opc">FLroller</span>  "FLroller 2", 80, 5000,1,2 ,1 ,-1, 200,22, 20,100
+gk3, ihr <span class="opc">FLroller</span>  "FLroller 3", 50, 1000,.1,2 ,1 ,-1, 200,22, 20,150
+gk4, ihr <span class="opc">FLroller</span>  "FLroller 4", 80, 5000,1,2 ,1 ,-1, 200,22, 20,200
+gk5, ihr <span class="opc">FLroller</span>  "FLroller 5", 50, 1000,.1,2 ,1 ,-1, 200,22, 20,250
+gk6, ihr <span class="opc">FLroller</span>  "FLroller 6", 80, 5000,1,2 ,1 ,-1, 200,22, 20,300
+gk7, ihr <span class="opc">FLroller</span>  "FLroller 7",50, 5000,1,1 ,2 ,-1, 30,300, 280,50
+         <span class="opc">FLgroupEnd</span>
+
+         <span class="opc">FLgroup</span> "joysticks", 380, 500, 10, 40, 3
+gk1, gk2, ihj1, ihj2 <span class="opc">FLjoy</span> "FLjoy", 50, 18000, 50, 18000, 2, 2, -1, -1, 300, 300, 30, 60
+         <span class="opc">FLgroupEnd</span>
+
+         <span class="opc">FLtabsEnd</span>
+         <span class="opc">FLscrollEnd</span>
+         <span class="opc">FLpanelEnd</span></pre>
+        </div>
+        <p>
+
+       ...will produce the following result:
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/fltabs_sliders-tab.png" alt="FLtabs example, sliders tab." />
+          <div class="caption">
+            <p>FLtabs example, sliders tab.</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/fltabs_rollers-tab.png" alt="FLtabs example, rollers tab." />
+          <div class="caption">
+            <p>FLtabs example, rollers tab.</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/fltabs_joysticks-tab.png" alt="FLtabs example, joysticks tab." />
+          <div class="caption">
+            <p>FLtabs example, joysticks tab.</p>
+          </div>
+        </div>
+        <p>
+
+       (Each picture shows a different tab selection inside the same window.)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105268944"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLtabs opcode. It uses the file <a class="ulink" href="examples/FLtabs.csd" target="_top"><em class="citetitle">FLtabs.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276105267152"></a>
+          <p class="title">
+            <strong>Example 319. Example of the FLtabs opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276029027936"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o FLtabs.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; A single oscillator with frequency, amplitude and</span>
+<span class="c1">; panning controls on separate file tab cards</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">441</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="nb">FLpanel</span> <span class="s">"Tabs"</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span>
+i<span class="n">tabswidth</span> <span class="o">=</span> <span class="mi">280</span>
+i<span class="n">tabsheight</span> <span class="o">=</span> <span class="mi">330</span>
+i<span class="n">x</span> <span class="o">=</span> <span class="mi">5</span>
+i<span class="n">y</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="nb">FLtabs</span> i<span class="n">tabswidth</span><span class="p">,</span>i<span class="n">tabsheight</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span>i<span class="n">y</span>
+
+    i<span class="n">tab1width</span> <span class="o">=</span> <span class="mi">280</span>
+    i<span class="n">tab1height</span> <span class="o">=</span> <span class="mi">300</span>
+    i<span class="n">tab1x</span> <span class="o">=</span> <span class="mi">10</span>
+    i<span class="n">tab1y</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="nb">FLgroup</span> <span class="s">"Tab 1"</span><span class="p">,</span> i<span class="n">tab1width</span><span class="p">,</span> i<span class="n">tab1height</span><span class="p">,</span> i<span class="n">tab1x</span><span class="p">,</span> i<span class="n">tab1y</span>
+        gk<span class="n">freq</span><span class="p">,</span> i<span class="n">1</span> <span class="nb">FLknob</span> <span class="s">"Frequency"</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">130</span>
+        <span class="nb">FLsetVal_i</span> <span class="mi">400</span><span class="p">,</span> i<span class="n">1</span>
+    <span class="nb">FLgroupEnd</span>
+
+    i<span class="n">tab2width</span> <span class="o">=</span> <span class="mi">280</span>
+    i<span class="n">tab2height</span> <span class="o">=</span> <span class="mi">300</span>
+    i<span class="n">tab2x</span> <span class="o">=</span> <span class="mi">10</span>
+    i<span class="n">tab2y</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="nb">FLgroup</span> <span class="s">"Tab 2"</span><span class="p">,</span> i<span class="n">tab2width</span><span class="p">,</span> i<span class="n">tab2height</span><span class="p">,</span> i<span class="n">tab2x</span><span class="p">,</span> i<span class="n">tab2y</span>
+        gk<span class="n">amp</span><span class="p">,</span> i<span class="n">2</span> <span class="nb">FLknob</span> <span class="s">"Amplitude"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">15000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">130</span>
+        <span class="nb">FLsetVal_i</span> <span class="mi">15000</span><span class="p">,</span> i<span class="n">2</span>
+    <span class="nb">FLgroupEnd</span>
+
+    i<span class="n">tab3width</span> <span class="o">=</span> <span class="mi">280</span>
+    i<span class="n">tab3height</span> <span class="o">=</span> <span class="mi">300</span>
+    i<span class="n">tab3x</span> <span class="o">=</span> <span class="mi">10</span>
+    i<span class="n">tab3y</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="nb">FLgroup</span> <span class="s">"Tab 3"</span><span class="p">,</span> i<span class="n">tab3width</span><span class="p">,</span> i<span class="n">tab3height</span><span class="p">,</span> i<span class="n">tab3x</span><span class="p">,</span> i<span class="n">tab3y</span>
+        gk<span class="n">pan</span><span class="p">,</span> i<span class="n">3</span> <span class="nb">FLknob</span> <span class="s">"Pan position"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">130</span>
+        <span class="nb">FLsetVal_i</span> <span class="mf">0.5</span><span class="p">,</span> i<span class="n">3</span>
+    <span class="nb">FLgroupEnd</span>
+<span class="nb">FLtabsEnd</span>
+<span class="nb">FLpanelEnd</span>
+<span class="c1">; Run the widget thread!</span>
+<span class="nb">FLrun</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+    a<span class="n">sig</span> <span class="nb">oscili</span> gk<span class="n">amp</span><span class="p">,</span> gk<span class="n">freq</span><span class="p">,</span> i<span class="n">fn</span>
+    <span class="nb">outs</span> a<span class="n">sig</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span>gk<span class="n">pan</span><span class="p">),</span> a<span class="n">sig</span><span class="o">*</span>gk<span class="n">pan</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Function table that defines a single cycle</span>
+<span class="c1">; of a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument 1 will play a note for 1 hour.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3600</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105263168"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLgroup.html" title="FLgroup"><em class="citetitle">FLgroup</em></a>, 
+      <a class="link" href="FLgroupEnd.html" title="FLgroupEnd"><em class="citetitle">FLgroupEnd</em></a>, 
+      <a class="link" href="FLpack.html" title="FLpack"><em class="citetitle">FLpack</em></a>, 
+      <a class="link" href="FLpackEnd.html" title="FLpackEnd"><em class="citetitle">FLpackEnd</em></a>, 
+      <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a>, 
+      <a class="link" href="FLpanelEnd.html" title="FLpanelEnd"><em class="citetitle">FLpanelEnd</em></a>, 
+      <a class="link" href="FLscroll.html" title="FLscroll"><em class="citetitle">FLscroll</em></a>, 
+      <a class="link" href="FLscrollEnd.html" title="FLscrollEnd"><em class="citetitle">FLscrollEnd</em></a>, 
+      <a class="link" href="FLtabsEnd.html" title="FLtabsEnd"><em class="citetitle">FLtabsEnd</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105254096"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+        <p>Example written by Iain McCurdy, edited by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLslider.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLtabsEnd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLslider </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLtabsEnd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

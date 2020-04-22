@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>filescal</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="filepeak.html" title="filepeak" />
+    <link rel="next" href="filesr.html" title="filesr" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">filescal</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="filepeak.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="filesr.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="filescal"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFilescal" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">filescal</span>
+        </h2>
+        <p>filescal — 
+      Phase-locked vocoder processing with onset detection/processing, 'tempo-scaling'.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111180832"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>filescal</em></span> implements phase-locked vocoder
+      processing from disk files, resampling if necessary.
+    </p>
+        <p>
+      This opcode allows for time and frequency-independent scaling. Time is advanced internally, but controlled by a tempo scaling parameter; when an onset is detected, timescaling is momentarily stopped to avoid smearing of attacks. The quality of the effect is generally improved with phase locking switched on. 
+    </p>
+        <p>
+      <span class="emphasis"><em>filescal</em></span> will also scale pitch, independently of frequency, using a transposition factor (k-rate).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111177552"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig[,asig2] <span class="command"><strong>filescal</strong></span> ktimescal, kamp, kpitch, Sfile, klock [,ifftsize, idecim, ithresh]
+      </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111175408"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sfile</em></span> -- source soundfile, mono or stereo
+      files are allowed, but need to match the number of outputs.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifftsize</em></span> -- FFT size (power-of-two), defaults to 2048.
+    </p>
+        <p>
+      <span class="emphasis"><em>idecim</em></span> -- decimation, defaults to 4 (meaning hopsize = fftsize/4)
+    </p>
+        <p>
+      <span class="emphasis"><em>idbthresh</em></span> -- threshold based on dB power spectrum ratio between two successive windows. A detected ratio above it will cancel timescaling momentarily, to avoid smearing (defaults to 1)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111171040"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktimescal</em></span> -- timescaling ratio, &lt; 1
+      stretch, &gt; 1 contract. Non-negative numbers only.
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude scaling
+    </p>
+        <p>
+      <span class="emphasis"><em>kpitch</em></span> -- grain pitch scaling (1=normal pitch, &lt; 1 lower, &gt; 1 higher; negative, backwards)
+    </p>
+        <p>
+      <span class="emphasis"><em>klock</em></span> -- switchec phase-locking on
+      (non-zero) or off (zero).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111166496"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the filescal opcode. It uses the file <a class="ulink" href="examples/filescal.csd" target="_top"><em class="citetitle">filescal.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276111164704"></a>
+          <p class="title">
+            <strong>Example 280. Example of the filescal opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276478555968"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="nb">p3</span> <span class="o">=</span> <span class="nb">filelen</span><span class="p">(</span><span class="s">"fox.wav"</span><span class="p">)</span><span class="o">/</span><span class="nb">p4</span>
+k<span class="n">1</span> <span class="nb">linen</span> <span class="mi">1</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="nb">p3</span><span class="p">,</span><span class="mf">0.1</span>
+a<span class="n">1</span> <span class="n">filescal</span> <span class="nb">p4</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">"fox.wav"</span><span class="p">,</span><span class="mi">1</span>
+  <span class="nb">out</span> a<span class="n">1</span><span class="o">*</span>k<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mf">1.25</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mf">2.5</span> <span class="mi">1</span> <span class="mf">.75</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111160720"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>April 2016</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.07</p>
+        <p>April 2016.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="filepeak.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="filesr.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">filepeak </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> filesr</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

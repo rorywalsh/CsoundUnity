@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tabifd</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tab.html" title="tab" />
+    <link rel="next" href="table.html" title="table" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tabifd</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tab.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="table.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tabifd"></a>
+      <div class="titlepage"></div>
+      <a id="Indextabifd" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tabifd</span>
+        </h2>
+        <p>tabifd — 
+     Instantaneous Frequency Distribution, magnitude and phase analysis.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049170032"></a>
+        <h2>Description</h2>
+        <p>
+  The tabifd opcode takes an input function table and performs an Instantaneous Frequency,
+  magnitude and phase analysis, using the STFT and tabifd (Instantaneous Frequency Distribution),
+  as described in Lazzarini et al, "Time-stretching using the Instantaneous Frequency Distribution and Partial
+  Tracking", Proc.of ICMC05, Barcelona. It generates two PV streaming signals, one containing the
+  amplitudes and frequencies (a similar output to pvsanal) and another containing amplitudes and 
+  unwrapped phases. 
+	      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049168336"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ffr,fphs <span class="command"><strong>tabifd</strong></span> ktimpt, kamp, kpitch, ifftsize, ihopsize, iwintype,ifn</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049166208"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifftsize</em></span> -- FFT analysis size, must be power-of-two and integer multiple of the hopsize.
+    </p>
+        <p>
+      <span class="emphasis"><em>ihopsize</em></span> -- hopsize in samples
+    </p>
+        <p>
+      <span class="emphasis"><em>iwintype</em></span> -- window type (O: Hamming, 1: Hanning) 
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- source function table
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049162096"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ffr</em></span> -- output pv stream in AMP_FREQ format
+    </p>
+        <p>
+      <span class="emphasis"><em>fphs</em></span> -- output pv stream in AMP_PHASE format
+    </p>
+        <p>
+      <span class="emphasis"><em>ktimpt</em></span> -- time point (in secs) to read from
+      table (if less than 0 or bigger than table length, it will wraparound)
+	</p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude scaling
+	    </p>
+        <p>
+      <span class="emphasis"><em>kpitch</em></span> -- pitch scaling (transposition)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049157040"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tabifd opcode. It uses the file <a class="ulink" href="examples/tabifd.csd" target="_top"><em class="citetitle">tabifd.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276049155248"></a>
+          <p class="title">
+            <strong>Example 994. Example of the tabifd opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276422064480"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tabifd.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">1</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">1</span>
+<span class="kd">opcode</span> <span class="nf">TrackPlay</span><span class="p">,</span> <span class="kt">a</span><span class="p">,</span> <span class="kt">kkiiii</span>
+ k<span class="n">time</span><span class="p">,</span>k<span class="n">thr</span><span class="p">,</span>i<span class="n">siz</span><span class="p">,</span>i<span class="n">hsiz</span><span class="p">,</span>i<span class="n">fcos</span><span class="p">,</span>i<span class="n">fn</span>  <span class="nb">xin</span> 
+ i<span class="n">del</span> <span class="o">=</span> i<span class="n">siz</span><span class="o">-</span>i<span class="n">hsiz</span><span class="o">*</span><span class="p">(</span>i<span class="n">siz</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span>i<span class="n">hsiz</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+ <span class="n">ffr</span><span class="p">,</span><span class="n">fphs</span> <span class="n">tabifd</span> k<span class="n">time</span><span class="p">,</span><span class="mi">10000</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> i<span class="n">siz</span><span class="p">,</span> i<span class="n">hsiz</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">fn</span>
+ <span class="n">ftrk</span> <span class="nb">partials</span> <span class="n">ffr</span><span class="p">,</span> <span class="n">fphs</span><span class="p">,</span>k<span class="n">thr</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">500</span>
+ a<span class="n">out</span> <span class="nb">tradsyn</span>   <span class="n">ftrk</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> i<span class="n">fcos</span> 
+ <span class="nb">xout</span> a<span class="n">out</span>
+<span class="kd">endop</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="nb">p3</span> <span class="o">=</span> <span class="nb">ftlen</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="vg">sr</span>
+k<span class="n">time</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span><span class="nb">p3</span><span class="p">,</span><span class="nb">p3</span>
+a<span class="n">res</span> <span class="nf">TrackPlay</span> k<span class="n">time</span><span class="p">,</span> <span class="mf">0.003</span><span class="p">,</span><span class="mi">2048</span><span class="p">,</span><span class="mi">256</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span>
+     <span class="nb">outs</span> a<span class="n">res</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">9</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">90</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="s">"fox.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">0</span> <span class="mi">1</span> 
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>The example above shows the tabifd analysis feeding into partial tracking andcubic-phase additive resynthesis with pitch shifting.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049150736"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>Aug 2015 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 6</p>
+        <p>Aug 2015</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tab.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="table.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tab </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> table</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

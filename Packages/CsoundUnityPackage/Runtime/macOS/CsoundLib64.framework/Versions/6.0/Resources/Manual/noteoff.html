@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>noteoff</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="noise.html" title="noise" />
+    <link rel="next" href="noteon.html" title="noteon" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">noteoff</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="noise.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="noteon.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="noteoff"></a>
+      <div class="titlepage"></div>
+      <a id="IndexNoteoff" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">noteoff</span>
+        </h2>
+        <p>noteoff — 
+      Send a noteoff message to the MIDI OUT port.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106647776"></a>
+        <h2>Description</h2>
+        <p>
+      Send a noteoff message to the MIDI OUT port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106646560"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>noteoff</strong></span> ichn, inum, ivel</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106644624"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ichn</em></span> -- MIDI channel number (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>inum</em></span> -- note number (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>ivel</em></span> -- velocity (0-127)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106641376"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>noteon</em></span> (i-rate note on) and <span class="emphasis"><em>noteoff</em></span> (i-rate note off) are the simplest MIDI OUT opcodes. <span class="emphasis"><em>noteon</em></span> sends a MIDI noteon message to MIDI OUT port, and <span class="emphasis"><em>noteoff</em></span> sends a noteoff message. A <a class="link" href="noteon.html" title="noteon"><em class="citetitle">noteon</em></a> opcode must always be followed by an <span class="emphasis"><em>noteoff</em></span> with the same channel and number inside the same instrument, otherwise the note will play endlessly. 
+    </p>
+        <p>
+      These <span class="emphasis"><em>noteon</em></span> and <span class="emphasis"><em>noteoff</em></span> opcodes are useful only when introducing a <a class="link" href="timout.html" title="timout"><em class="citetitle">timout</em></a> statement to play a non-zero duration MIDI note. For most purposes, it is better to use <a class="link" href="noteondur.html" title="noteondur"><em class="citetitle">noteondur</em></a> and <a class="link" href="noteondur2.html" title="noteondur2"><em class="citetitle">noteondur2</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106633008"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="noteon.html" title="noteon"><em class="citetitle">noteon</em></a>, 
+      <a class="link" href="noteondur.html" title="noteondur"><em class="citetitle">noteondur</em></a>, 
+      <a class="link" href="noteondur2.html" title="noteondur2"><em class="citetitle">noteondur2</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106629216"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel and controller number ranges.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="noise.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="noteon.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">noise </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> noteon</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

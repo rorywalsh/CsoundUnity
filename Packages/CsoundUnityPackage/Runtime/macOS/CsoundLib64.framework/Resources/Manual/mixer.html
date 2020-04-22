@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mixer</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilityOther.html" title="Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR, MAKECSD, MIXER, SCALE, MKDB)" />
+    <link rel="prev" href="makecsd.html" title="makecsd" />
+    <link rel="next" href="scaleutility.html" title="scale" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mixer</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="makecsd.html">Prev</a> </td>
+          <th width="60%" align="center">Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR,
+  MAKECSD, MIXER, SCALE, MKDB)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="scaleutility.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mixer"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mixer</span>
+        </h2>
+        <p>mixer — 
+      Mixes together a number of soundfiles.
+      <a id="IndexMixer" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979277584"></a>
+        <h2>Description</h2>
+        <p>
+        Mixes together a number of soundfiles, starting at different
+    times and with individual channel selection from the input files.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979276256"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>mixer</strong></span> [OPTIONS ... ] infile [[OPTIONS... ] infile] ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979274272"></a>
+        <h2>Initialization</h2>
+        <p>
+      Flags:
+    </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>A</em></span>
+            = Generate an AIFF output file.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>W</em></span>
+            = Generate an WAV output file.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>h</em></span>
+            = Generate an output file with no header.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+              -<span class="emphasis"><em>c</em></span>
+            = Generate 8-bit signed_char sound samples.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+              -<span class="emphasis"><em>a</em></span>
+            = Generate alaw sound samples.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+              -<span class="emphasis"><em>u</em></span>
+            = Generate ulaw sound samples.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+              -<span class="emphasis"><em>s</em></span>
+            = Generate short integer sound samples.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>l</em></span>
+            = Generate long (32 bit) integer sound samples.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>f</em></span>
+            = Generate floating point samples.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>F arg</em></span>
+            = Specifies the gain to be applied to the following 
+            input file.  If arg is a
+            floating point number that gain is applied uniformly to
+            the input.  Alternatively it could be a file name which
+            specifies a breakpoint file for varying the gain for
+            different periods.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>S integer</em></span>
+            = Indicate at which sample to start to mix in the next
+            input file.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>T fpnum</em></span>
+            = Indicate at which time (in seconds) to start to mix in the next
+            input file.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>1</em></span>
+            = Mix in channel 1 from next sound file.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>2</em></span>
+            = Mix in channel 2 from next sound file.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>3</em></span>
+            = Mix in channel 3 from next sound file.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>4</em></span>
+            = Mix in channel 4 from next sound file.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>^ intx inty</em></span>
+            = Mix in channel x from next sound file as channel y in
+            the output.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>v</em></span>
+            = Verbose mode.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>R</em></span>
+            = Continually rewrite the header while writing soundfile
+            (WAV/AIFF). 
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>H integer</em></span>
+            = Show a "heart-beat" to indicate progress, in style 1,
+            2 or 3.          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            -<span class="emphasis"><em>N</em></span>
+            = Alert call (usually ringing the bell) when finished.
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+                      -<span class="emphasis"><em>o fname</em></span>
+                      = output file name (default: test.wav)
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979244832"></a>
+        <h2>Examples</h2>
+        <p>
+
+        The default values are
+</p>
+        <pre class="programlisting">
+    <span class="emphasis"><em>mixer</em></span> -s -otest -F 1.0 -S 0</pre>
+        <p>
+
+    For example
+</p>
+        <pre class="programlisting">
+    <span class="emphasis"><em>mixer</em></span> -F 0.96 in1.wav -S 300 -2 in2.aiff -S 300 -^4 1 in3.wav -o out.wav</pre>
+        <p>
+
+
+  		This creates a new sound file with a constant gain of
+  		0.96 from in1.wav with the second channel of in2.aiff
+  		mixed in after 300 samples and channel 4 of in3.wav
+  		outpout as channel 1 after 300 samples.
+  	</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979241200"></a>
+        <h2>Credits</h2>
+        <p>Author: John ffitch</p>
+        <p>1994</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="makecsd.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilityOther.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="scaleutility.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">makecsd </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> scale</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

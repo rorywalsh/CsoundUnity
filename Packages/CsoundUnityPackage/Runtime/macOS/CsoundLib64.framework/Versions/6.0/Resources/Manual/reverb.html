@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>reverb</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="return.html" title="return" />
+    <link rel="next" href="reverb2.html" title="reverb2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">reverb</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="return.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="reverb2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="reverb"></a>
+      <div class="titlepage"></div>
+      <a id="IndexReverb" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">reverb</span>
+        </h2>
+        <p>reverb — 
+      Reverberates an input signal with a <span class="quote">“<span class="quote">natural room</span>”</span> frequency response.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066769584"></a>
+        <h2>Description</h2>
+        <p>
+      Reverberates an input signal with a <span class="quote">“<span class="quote">natural room</span>”</span> frequency response.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066767888"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>reverb</strong></span> asig, krvt [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066765776"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of delay-loop data space (cf. <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>). The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066763184"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>krvt</em></span> -- the reverberation time (defined as the time in seconds for a signal to decay to 1/1000, or 60dB down from its original amplitude).
+    </p>
+        <p>
+      A standard <span class="emphasis"><em>reverb</em></span> unit is composed of four <a class="link" href="comb.html" title="comb"><em class="citetitle">comb</em></a> filters in parallel followed by two <a class="link" href="alpass.html" title="alpass"><em class="citetitle">alpass</em></a> units in series. Loop times are set for optimal <span class="quote">“<span class="quote">natural room response.</span>”</span> Core storage requirements for this unit are proportional only to the sampling rate, each unit requiring approximately 3K words for every 10KC. The <a class="link" href="comb.html" title="comb"><em class="citetitle">comb</em></a>, <a class="link" href="alpass.html" title="alpass"><em class="citetitle">alpass</em></a>, <a class="link" href="delay.html" title="delay"><em class="citetitle">delay</em></a>, <a class="link" href="tone.html" title="tone"><em class="citetitle">tone</em></a> and other Csound units provide the means for experimenting with alternate reverberator designs.
+    </p>
+        <p>
+      Since output from the standard <span class="emphasis"><em>reverb</em></span> will begin to appear only after 1/20 second or so of delay, and often with less than three-fourths of the original power, it is normal to output both the source and the reverberated signal. If <span class="emphasis"><em>krvt</em></span> is inadvertently set to a non-positive number, <span class="emphasis"><em>krvt</em></span> will be reset automatically to 0.01. (New in Csound version 4.07.) Also, since the reverberated sound will persist long after the cessation of source events, it is normal to put <span class="emphasis"><em>reverb</em></span> in a separate instrument to which sound is passed via a <span class="emphasis"><em>global variable</em></span>, and to leave that instrument running throughout the performance.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066751248"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the reverb opcode. It uses the file <a class="ulink" href="examples/reverb.csd" target="_top"><em class="citetitle">reverb.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276066749440"></a>
+          <p class="title">
+            <strong>Example 850. Example of the reverb opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276428949568"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o reverb.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+ga<span class="n">1</span> <span class="nb">init</span> <span class="mi">0</span> 
+
+<span class="kd">instr</span> <span class="nf">1</span> 
+
+a<span class="n">sig</span> <span class="nb">poscil</span> <span class="mf">.2</span><span class="p">,</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">),</span> <span class="mi">1</span> 
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span> 
+
+ga<span class="n">1</span>  <span class="o">+=</span> a<span class="n">sig</span>     <span class="c1">;add direct signal to global reverb</span>
+ 
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">99</span>	<span class="c1">;(highest instr number executed last)</span>
+
+a<span class="n">rev</span> <span class="nb">reverb</span> ga<span class="n">1</span><span class="p">,</span> <span class="mf">1.5</span>
+     <span class="nb">outs</span> a<span class="n">rev</span><span class="p">,</span> a<span class="n">rev</span> 
+  
+ga<span class="n">1</span>  <span class="o">=</span> <span class="mi">0</span>	<span class="c1">;clear</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">128</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">0.1</span> <span class="mf">7.00</span>	<span class="c1">;short sounds</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mf">0.1</span> <span class="mf">8.02</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mf">0.1</span> <span class="mf">8.04</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mf">0.1</span> <span class="mf">8.06</span>
+
+<span class="nb">i</span> <span class="mi">99</span> <span class="mi">0</span> <span class="mi">6</span>	<span class="c1">;reverb runs for 6 seconds</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066745408"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="alpass.html" title="alpass"><em class="citetitle">alpass</em></a>,
+      <a class="link" href="comb.html" title="comb"><em class="citetitle">comb</em></a>,
+      <a class="link" href="valpass.html" title="valpass"><em class="citetitle">valpass</em></a>,
+      <a class="link" href="vcomb.html" title="vcomb"><em class="citetitle">vcomb</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066740672"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: William <span class="quote">“<span class="quote">Pete</span>”</span> Moss</td>
+          </tr>
+          <tr>
+            <td>University of Texas at Austin</td>
+          </tr>
+          <tr>
+            <td>Austin, Texas USA</td>
+          </tr>
+          <tr>
+            <td>January 2002</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="return.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="reverb2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">return </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> reverb2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

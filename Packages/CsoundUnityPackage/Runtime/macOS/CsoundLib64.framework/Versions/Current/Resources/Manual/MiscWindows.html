@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Appendix F. Window Functions</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="prev" href="MiscModalFreq.html" title="Appendix E. Modal Frequency Ratios" />
+    <link rel="next" href="MiscSf2.html" title="Appendix G. SoundFont2 File Format" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Appendix F. Window Functions</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="MiscModalFreq.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="MiscSf2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="appendix">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h1 class="title"><a id="MiscWindows"></a>Appendix F. Window Functions</h1>
+          </div>
+        </div>
+      </div>
+      <p>
+    Windowing functions are used for analysis, and as waveform envelopes, particularly in granular synthesis. Window functions are built in to some opcodes, but others require a function table to generate the window. <a class="link" href="GEN20.html" title="GEN20"><em class="citetitle">GEN20</em></a> is used for this purpose. The diagram of each window below, is accompanied by the f statement used to generate the it.
+  </p>
+      <p><strong>Hamming. </strong>
+      </p>
+      <div class="example">
+        <a id="idm276504627056"></a>
+        <p class="title">
+          <strong>Example F.1. Hamming window function statement</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting"><span class="stamnt">f</span>81   0   8192   20   1   1</pre>
+        </div>
+      </div>
+      <p><br class="example-break" />
+
+      </p>
+      <div class="mediaobject">
+        <img src="images/image1.png" alt="Hamming Window Function." />
+        <div class="caption">
+          <p>Hamming Window Function.</p>
+        </div>
+      </div>
+      <p>
+    </p>
+      <p><strong>Hanning. </strong>
+      </p>
+      <div class="example">
+        <a id="idm276504620816"></a>
+        <p class="title">
+          <strong>Example F.2. Hanning window function statement</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting"><span class="stamnt">f</span>82   0   8192   20   2   1</pre>
+        </div>
+      </div>
+      <p><br class="example-break" />
+ 
+      </p>
+      <div class="mediaobject">
+        <img src="images/image2.png" alt="Hanning Window Function" />
+        <div class="caption">
+          <p>Hanning Window Function</p>
+        </div>
+      </div>
+      <p>
+    </p>
+      <p><strong>Bartlett. </strong>
+      </p>
+      <div class="example">
+        <a id="idm276504614576"></a>
+        <p class="title">
+          <strong>Example F.3. Bartlett window function statement</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting"><span class="stamnt">f</span>83   0   8192   20   3   1</pre>
+        </div>
+      </div>
+      <p><br class="example-break" />
+ 
+      </p>
+      <div class="mediaobject">
+        <img src="images/image3.png" alt="Bartlett Window Function" />
+        <div class="caption">
+          <p>Bartlett Window Function</p>
+        </div>
+      </div>
+      <p>
+    </p>
+      <p><strong>Blackman. </strong>
+      </p>
+      <div class="example">
+        <a id="idm276504608336"></a>
+        <p class="title">
+          <strong>Example F.4. Blackman window function statement</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting"><span class="stamnt">f</span>84   0   8192   20   4   1</pre>
+        </div>
+      </div>
+      <p><br class="example-break" />
+ 
+      </p>
+      <div class="mediaobject">
+        <img src="images/image4.png" alt="Blackman Window Function" />
+        <div class="caption">
+          <p>Blackman Window Function</p>
+        </div>
+      </div>
+      <p>
+    </p>
+      <p><strong>Blackman-Harris. </strong>
+      </p>
+      <div class="example">
+        <a id="idm276504602096"></a>
+        <p class="title">
+          <strong>Example F.5. Blackman-Harris window function statement</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting"><span class="stamnt">f</span>85   0   8192   20   5   1</pre>
+        </div>
+      </div>
+      <p><br class="example-break" />
+ 
+      </p>
+      <div class="mediaobject">
+        <img src="images/image5.png" alt="Blackman-Harris Window Function" />
+        <div class="caption">
+          <p>Blackman-Harris Window Function</p>
+        </div>
+      </div>
+      <p>
+    </p>
+      <p><strong>Gaussian. </strong>
+      </p>
+      <div class="example">
+        <a id="idm276504595856"></a>
+        <p class="title">
+          <strong>Example F.6. Gaussian window function statement</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting"><span class="stamnt">f</span>86   0   8192   20   6   1</pre>
+        </div>
+      </div>
+      <p><br class="example-break" />
+ 
+      </p>
+      <div class="mediaobject">
+        <img src="images/image6.png" alt="Gaussian Window Function" />
+        <div class="caption">
+          <p>Gaussian Window Function</p>
+        </div>
+      </div>
+      <p>
+    </p>
+      <p><strong>Rectangle. </strong>
+      </p>
+      <div class="example">
+        <a id="idm276504589616"></a>
+        <p class="title">
+          <strong>Example F.7. Rectangle window function statement</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting"><span class="stamnt">f</span>88   0   8192   -20   8   .1</pre>
+        </div>
+      </div>
+      <p><br class="example-break" />
+
+      <span class="emphasis"><em>Note</em></span>: Vertical scale is exaggerated in this diagram.
+
+      </p>
+      <div class="mediaobject">
+        <img src="images/image7.png" alt="Rectangle Window Function" />
+        <div class="caption">
+          <p>Rectangle Window Function</p>
+        </div>
+      </div>
+      <p>
+    </p>
+      <p><strong>Sync. </strong>
+      </p>
+      <div class="example">
+        <a id="idm276504582912"></a>
+        <p class="title">
+          <strong>Example F.8. Sync window function statement</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting"><span class="stamnt">f</span>89   0   4096   -20   9   .75</pre>
+        </div>
+      </div>
+      <p><br class="example-break" />
+
+      </p>
+      <div class="mediaobject">
+        <img src="images/image8.png" alt="Sync Window Function" />
+        <div class="caption">
+          <p>Sync Window Function</p>
+        </div>
+      </div>
+      <p>
+    </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="MiscModalFreq.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="MiscSf2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Appendix E. Modal Frequency Ratios </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Appendix G. SoundFont2 File Format</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

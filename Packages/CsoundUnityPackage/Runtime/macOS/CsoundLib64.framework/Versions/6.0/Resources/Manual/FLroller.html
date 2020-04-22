@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLroller</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLprintk2.html" title="FLprintk2" />
+    <link rel="next" href="FLrun.html" title="FLrun" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLroller</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLprintk2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLrun.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLroller"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLroller" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLroller</span>
+        </h2>
+        <p>FLroller — 
+      A FLTK widget that creates a transversal knob.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109121312"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLroller</em></span> is a sort of knob, but put transversally.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109119632"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout, ihandle <span class="command"><strong>FLroller</strong></span> "label", imin, imax, istep, iexp, itype, idisp, \
+      iwidth, iheight, ix, iy</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109117424"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> -- a handle value (an integer number) that unequivocally references a corresponding widget. This is used by other opcodes that modify a widget's properties (see <a class="link" href="ControlFltkAppearance.html" title="Modifying FLTK Widget Appearance"><em class="citetitle">Modifying FLTK Widget Appearance</em></a>). It is automatically output by <span class="emphasis"><em>FLroller</em></span> and must not be set by the user label. (The user label is a double-quoted string containing some user-provided text placed near the widget.)
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">label</span>”</span></em></span> -- a double-quoted string containing some user-provided text, placed near the corresponding widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>imin</em></span> -- minimum value of output range.
+    </p>
+        <p>
+      <span class="emphasis"><em>imax</em></span> -- maximum value of output range.
+    </p>
+        <p>
+      <span class="emphasis"><em>istep</em></span> -- a floating-point number indicating the increment of valuator value corresponding to of each mouse click. The <span class="emphasis"><em>istep</em></span> argument allows the user to arbitrarily slow roller's motion, enabling arbitrary precision.
+    </p>
+        <p>
+      <span class="emphasis"><em>iexp</em></span> -- an integer number denoting the behaviour of valuator: 
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 = valuator output is linear</p>
+            </li>
+            <li class="listitem">
+              <p>-1 = valuator output is exponential</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      All other positive numbers for <span class="emphasis"><em>iexp</em></span> indicate the number of an existing table that is used for indexing. Linear interpolation is provided in table indexing. A negative table number suppresses interpolation. 
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: IMPORTANT!">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">IMPORTANT!</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Notice that the tables used by valuators must be created with the <a class="link" href="ftgen.html" title="ftgen"><em class="citetitle">ftgen</em></a> opcode and placed in the orchestra before the corresponding valuator. They can not placed
+in the score. In fact, tables placed in the score are created later than the initialization of the opcodes placed in the header section of the orchestra.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      <span class="emphasis"><em>itype</em></span> -- an integer number denoting the appearance of the valuator.
+    </p>
+        <p>
+      The <span class="emphasis"><em>itype</em></span> argument can be set to the following values:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 - horizontal roller</p>
+            </li>
+            <li class="listitem">
+              <p>2 - vertical roller</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>idisp</em></span> -- a handle value that was output from a previous instance of the <a class="link" href="FLvalue.html" title="FLvalue"><em class="citetitle">FLvalue</em></a> opcode to display the current value of the current valuator in the <span class="emphasis"><em>FLvalue</em></span> widget itself. If the user doesn't want to use this feature that displays current values, it must be set to a negative number by the user.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109093488"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kout</em></span> -- output value
+    </p>
+        <p>
+      <span class="emphasis"><em>FLroller</em></span> is a sort of knob, but put transversally:
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/flroller.png" alt="FLroller." />
+          <div class="caption">
+            <p>FLroller.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109087840"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLroller opcode. It uses the file <a class="ulink" href="examples/FLroller.csd" target="_top"><em class="citetitle">FLroller.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276109086032"></a>
+          <p class="title">
+            <strong>Example 308. Example of the FLroller opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276499791408"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o FLroller.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; A sine with oscillator with flroller controlled frequency</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">441</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">FLpanel</span> <span class="s">"Frequency Roller"</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span>
+    <span class="c1">; Minimum value output by the roller</span>
+    i<span class="n">min</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="c1">; Maximum value output by the roller</span>
+    i<span class="n">max</span> <span class="o">=</span> <span class="mi">5000</span>
+    <span class="c1">; Increment with each pixel</span>
+    i<span class="n">step</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1">; Logarithmic type roller selected</span>
+    i<span class="n">exp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> 
+    <span class="c1">; Roller graphic type (1=horizontal)</span>
+    i<span class="n">type</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1">; Display handle (-1=not used)</span>
+    i<span class="n">disp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="c1">; Width of the roller in pixels</span>
+    i<span class="n">width</span> <span class="o">=</span> <span class="mi">300</span>
+    <span class="c1">; Height of the roller in pixels</span>
+    i<span class="n">height</span> <span class="o">=</span> <span class="mi">50</span> 
+    <span class="c1">; Distance of the left edge of the knob</span>
+    <span class="c1">; from the left edge of the panel </span>
+    i<span class="n">x</span> <span class="o">=</span> <span class="mi">300</span>
+    <span class="c1">; Distance of the top edge of the knob</span>
+    <span class="c1">; from the top edge of the panel</span>
+    i<span class="n">y</span> <span class="o">=</span> <span class="mi">50</span>
+
+    gk<span class="n">freq</span><span class="p">,</span> i<span class="n">handle</span> <span class="nb">FLroller</span> <span class="s">"Frequency"</span><span class="p">,</span> i<span class="n">min</span><span class="p">,</span> i<span class="n">max</span><span class="p">,</span> i<span class="n">step</span><span class="p">,</span> i<span class="n">exp</span><span class="p">,</span> i<span class="n">type</span><span class="p">,</span> i<span class="n">disp</span><span class="p">,</span> i<span class="n">width</span><span class="p">,</span> i<span class="n">height</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span>
+<span class="c1">; End of panel contents</span>
+<span class="nb">FLpanelEnd</span>
+<span class="c1">; Run the widget thread!</span>
+<span class="nb">FLrun</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    i<span class="n">amp</span> <span class="o">=</span> <span class="mi">15000</span>
+    i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+    a<span class="n">sig</span> <span class="nb">oscili</span> i<span class="n">amp</span><span class="p">,</span> gk<span class="n">freq</span><span class="p">,</span> i<span class="n">fn</span>
+    <span class="nb">out</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Function table that defines a single cycle</span>
+<span class="c1">; of a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument 1 will play a note for 1 hour.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3600</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109082016"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLcount.html" title="FLcount"><em class="citetitle">FLcount</em></a>,
+      <a class="link" href="FLjoy.html" title="FLjoy"><em class="citetitle">FLjoy</em></a>,
+      <a class="link" href="FLknob.html" title="FLknob"><em class="citetitle">FLknob</em></a>,
+      <a class="link" href="FLslider.html" title="FLslider"><em class="citetitle">FLslider</em></a>,
+      <a class="link" href="FLtext.html" title="FLtext"><em class="citetitle">FLtext</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109076384"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+        <p>Example written by Iain McCurdy, edited by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLprintk2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLrun.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLprintk2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLrun</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

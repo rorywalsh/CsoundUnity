@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tab</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="system.html" title="system" />
+    <link rel="next" href="tabifd.html" title="tabifd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tab</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="system.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tabifd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tab"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTabw_i" class="indexterm"></a>
+      <a id="IndexTabw" class="indexterm"></a>
+      <a id="IndexTab_i" class="indexterm"></a>
+      <a id="IndexTab" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tab</span>
+        </h2>
+        <p>tab — 
+      Fast table opcodes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049241600"></a>
+        <h2>Description</h2>
+        <p>
+      Fast table opcodes. Faster than
+    <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a> and
+    <a class="link" href="tablew.html" title="tablew"><em class="citetitle">tablew</em></a> because it does not
+    allow wrap-around and limit and it does not check index validity. Has
+    been implemented in order to provide fast access to
+    arrays.
+    
+    
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049237632"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ir <span class="command"><strong>tab_i</strong></span> indx, ifn[, ixmode]</pre>
+        <pre class="synopsis">kr <span class="command"><strong>tab</strong></span> kndx, ifn[, ixmode]</pre>
+        <pre class="synopsis">ar <span class="command"><strong>tab</strong></span> xndx, ifn[, ixmode]</pre>
+        <pre class="synopsis"><span class="command"><strong>tabw_i</strong></span> isig, indx, ifn [,ixmode]</pre>
+        <pre class="synopsis"><span class="command"><strong>tabw</strong></span> ksig, kndx, ifn [,ixmode]</pre>
+        <pre class="synopsis"><span class="command"><strong>tabw</strong></span> asig, andx, ifn [,ixmode]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049229600"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- table number
+    </p>
+        <p>
+      <span class="emphasis"><em>ixmode</em></span> -- defaults to zero.  If zero
+      <span class="emphasis"><em>xndx</em></span> range matches the length of the table;
+      if non zero <span class="emphasis"><em>xndx</em></span> has a 0 to 1 range.  
+    </p>
+        <p>
+      <span class="emphasis"><em>isig</em></span> -- input value to write.
+    </p>
+        <p>
+      <span class="emphasis"><em>indx</em></span> -- table index
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049224720"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig, ksig</em></span> -- input signal to write.
+    </p>
+        <p>
+      <span class="emphasis"><em>andx, kndx</em></span> -- table index.
+    </p>
+        <p>
+      <span class="emphasis"><em>tab</em></span> and <span class="emphasis"><em>tabw</em></span>
+      opcodes are similar to <span class="emphasis"><em>table</em></span> and
+      <span class="emphasis"><em>tablew</em></span>, but are faster, and use rounding of
+      the index. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049218832"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tab opcode. It uses the file <a class="ulink" href="examples/tab.csd" target="_top"><em class="citetitle">tab.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276049217168"></a>
+          <p class="title">
+            <strong>Example 993. Example of the tab opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276420920080"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tab.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">fn1</span> <span class="nb">ftgen</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"flute.aiff"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>	<span class="c1">;deferred-size table</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> 
+
+a<span class="n">tab</span>  <span class="nb">init</span> <span class="mi">0</span> 
+i<span class="n">size</span> <span class="nb">tableng</span> <span class="mi">1</span>					<span class="c1">;length of table?</span>
+<span class="nb">print</span> i<span class="n">size</span>
+a<span class="n">ndx</span>  <span class="nb">phasor</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span>i<span class="n">size</span> <span class="o">/</span> <span class="vg">sr</span><span class="p">)</span> 
+a<span class="n">sig</span>  <span class="nb">tab</span> a<span class="n">ndx</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>				<span class="c1">;has a 0 to 1 range</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span> 
+<span class="nt">&lt;/CsInstruments&gt;</span> 
+<span class="nt">&lt;CsScore&gt;</span> 
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.3</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span> 
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049213184"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="system.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tabifd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">system </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tabifd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

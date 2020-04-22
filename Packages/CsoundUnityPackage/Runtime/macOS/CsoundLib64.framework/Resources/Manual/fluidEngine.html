@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fluidEngine</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fluidControl.html" title="fluidControl" />
+    <link rel="next" href="fluidInfo.html" title="fluidInfo" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fluidEngine</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fluidControl.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fluidInfo.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="fluidEngine"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFluidEngine" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fluidEngine</span>
+        </h2>
+        <p>fluidEngine — 
+      Instantiates a fluidsynth engine.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104968640"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ienginenum <span class="command"><strong>fluidEngine</strong></span> [iChorusEnabled] [, iRevervEnabled] [, iNumChannels] [, iPolyphony] </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104966496"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in fluidOpcodes.</p>
+        <p>Instantiates a fluidsynth engine, and returns <span class="emphasis"><em>ienginenum</em></span> to identify the
+    engine. <span class="emphasis"><em>ienginenum</em></span> is passed to other other opcodes for loading
+    and playing SoundFonts and gathering the generated sound.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104963936"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>ienginenum </em></span> -- engine number assigned from fluidEngine.</p>
+        <p><span class="emphasis"><em>iChorusEnabled </em></span> -- optionally set to 0 to disable any chorus effect in the loaded SoundFonts.</p>
+        <p><span class="emphasis"><em>iReverbEnabled </em></span> -- optionally set to 0 to disable any reverb effect in the loaded SoundFonts.</p>
+        <p><span class="emphasis"><em>iNumChannels </em></span> -- number of channels to use; range is 16-256 and Csound default is 256 (Fluidsynth's default is 16).</p>
+        <p><span class="emphasis"><em>iPolyphony </em></span> -- number of voices to be played in parallel; range is 16-4096 and Csound default is 4096 (Fluidsynth's default is 256).
+    Note: this is not the number of notes played at the same time as a single note may use create multiple voices depending on instrument zones
+    and velocity/key of played note.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104959232"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is example of the fluidsynth opcodes using 2 engines. It uses the file <a class="ulink" href="examples/fluidEngine.csd" target="_top"><em class="citetitle">fluidEngine.csd</em></a> and <a class="ulink" href="examples/midichn_advanced.mid" target="_top"><em class="citetitle">midichn_advanced.mid</em></a>.
+    </p>
+        <div class="refsect1">
+          <a id="idm276473049648"></a>
+          <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  -F  midichn_advanced.mid <span class="c1">;;;reatime audio out and midifile in</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o fluidEngine.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>  
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; LOAD SOUNDFONTS</span>
+gi<span class="n">enginenum1</span>	<span class="nb">fluidEngine</span>
+gi<span class="n">enginenum2</span>	<span class="nb">fluidEngine</span>
+i<span class="n">sfnum1</span>	<span class="nb">fluidLoad</span> <span class="s">"sf_GMbank.sf2"</span><span class="p">,</span> gi<span class="n">enginenum1</span><span class="p">,</span> <span class="mi">1</span>
+                <span class="c1">; Piano 2, program 1, channel 1</span>
+		<span class="nb">fluidProgramSelect</span>	gi<span class="n">enginenum1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">sfnum1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+                <span class="c1">; Piano 3, program 2, channel 2</span>
+		<span class="nb">fluidProgramSelect</span>	gi<span class="n">enginenum1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> i<span class="n">sfnum1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span>
+i<span class="n">sfnum2</span>	<span class="nb">fluidLoad</span> <span class="s">"19Trumpet.sf2"</span><span class="p">,</span> gi<span class="n">enginenum2</span><span class="p">,</span> <span class="mi">1</span>
+                <span class="c1">; Trumpet, program 56, channel 3</span>
+		<span class="nb">fluidProgramSelect</span>	gi<span class="n">enginenum2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> i<span class="n">sfnum2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">56</span>
+
+<span class="c1">;Look for midifile in folder manual/examples</span>
+<span class="c1">;"midichn_advanced.mid" sends notes to the soundfonts</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">; GM soundfont</span>
+  <span class="c1">; INITIALIZATION</span>
+	<span class="nb">mididefault</span>	<span class="mi">60</span><span class="p">,</span> <span class="nb">p3</span> <span class="c1">; Default duration of 60 -- overridden by score.</span>
+	<span class="nb">midinoteonkey</span>	<span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span> <span class="c1">; Channels MIDI input to pfields.</span>
+  <span class="c1">; Use channel assigned in fluidload.</span>
+  i<span class="n">channel</span>   <span class="o">=</span> <span class="mi">1</span>
+  i<span class="n">key</span>       <span class="o">=</span> <span class="nb">p4</span>
+  i<span class="n">velocity</span>  <span class="o">=</span> <span class="nb">p5</span>
+	<span class="nb">fluidNote</span> gi<span class="n">enginenum1</span><span class="p">,</span> i<span class="n">channel</span><span class="p">,</span> i<span class="n">key</span><span class="p">,</span> i<span class="n">velocity</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span> <span class="c1">; GM soundfont</span>
+  <span class="c1">; INITIALIZATION</span>
+         <span class="nb">mididefault</span>   <span class="mi">60</span><span class="p">,</span> <span class="nb">p3</span> <span class="c1">; Default duration of 60 -- overridden by score.</span>
+         <span class="nb">midinoteonkey</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span> <span class="c1">; Channels MIDI input to pfields.</span>
+  <span class="c1">; Use channel assigned in fluidload.</span>
+  i<span class="n">channel</span>   <span class="o">=</span> <span class="mi">2</span>
+  i<span class="n">key</span>       <span class="o">=</span> <span class="nb">p4</span>
+  i<span class="n">velocity</span>  <span class="o">=</span> <span class="nb">p5</span>
+         <span class="nb">fluidNote</span> gi<span class="n">enginenum1</span><span class="p">,</span> i<span class="n">channel</span><span class="p">,</span> i<span class="n">key</span><span class="p">,</span> i<span class="n">velocity</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">3</span> <span class="c1">; Trumpet</span>
+  <span class="c1">; INITIALIZATION</span>
+         <span class="nb">mididefault</span>   <span class="mi">60</span><span class="p">,</span> <span class="nb">p3</span> <span class="c1">; Default duration of 60 -- overridden by score.</span>
+         <span class="nb">midinoteonkey</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span> <span class="c1">; Channels MIDI input to pfields.</span>
+  <span class="c1">; Use channel assigned in fluidload.</span>
+  i<span class="n">channel</span>   <span class="o">=</span> <span class="mi">3</span>
+  i<span class="n">key</span>       <span class="o">=</span> <span class="nb">p4</span>
+  i<span class="n">velocity</span>  <span class="o">=</span> <span class="nb">p5</span>
+         <span class="nb">fluidNote</span> gi<span class="n">enginenum2</span><span class="p">,</span> i<span class="n">channel</span><span class="p">,</span> i<span class="n">key</span><span class="p">,</span> i<span class="n">velocity</span>
+<span class="kd">endin</span>
+
+<span class="c1">; COLLECT AUDIO FROM ALL SOUNDFONTS</span>
+
+<span class="kd">instr</span> <span class="nf">100</span> <span class="c1">; Fluidsynth output</span>
+
+  i<span class="n">amplitude1</span> <span class="o">=</span> <span class="mi">7</span>
+  i<span class="n">amplitude2</span> <span class="o">=</span> <span class="mi">7</span>
+
+<span class="c1">; AUDIO</span>
+a<span class="n">left1</span><span class="p">,</span> a<span class="n">right1</span> <span class="nb">fluidOut</span>   gi<span class="n">enginenum1</span>
+a<span class="n">left2</span><span class="p">,</span> a<span class="n">right2</span> <span class="nb">fluidOut</span>   gi<span class="n">enginenum2</span>
+                <span class="nb">outs</span>       <span class="p">(</span>a<span class="n">left1</span> <span class="o">*</span> i<span class="n">amplitude1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>a<span class="n">left2</span> <span class="o">*</span> i<span class="n">amplitude2</span><span class="p">),</span>  \
+                           <span class="p">(</span>a<span class="n">right1</span> <span class="o">*</span> i<span class="n">amplitude1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>a<span class="n">right2</span> <span class="o">*</span> i<span class="n">amplitude2</span><span class="p">)</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span>  <span class="mi">60</span>  <span class="mi">100</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">3</span>  <span class="mi">60</span>  <span class="mi">100</span>
+<span class="nb">i</span> <span class="mi">3</span> <span class="mi">3</span> <span class="mi">3</span>  <span class="mi">63</span>  <span class="mi">100</span>
+<span class="nb">i</span> <span class="mi">100</span> <span class="mi">0</span> <span class="mi">10</span>		<span class="c1">;run for 10 seconds </span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104955648"></a>
+        <h2>See Also</h2>
+        <p><a class="link" href="fluidNote.html" title="fluidNote"><em class="citetitle">fluidNote</em></a>, <a class="link" href="fluidLoad.html" title="fluidLoad"><em class="citetitle">fluidLoad</em></a></p>
+        <p> More information on soundfonts is in the Floss Manuals: <a class="ulink" href="http://write.flossmanuals.net/csound/d-reading-midi-files" target="_top"><em class="citetitle">http://write.flossmanuals.net/csound/d-reading-midi-files</em></a></p>
+        <p> For other information on soundfonts look in the
+        Wikipedia: <a class="ulink" href="http://en.wikipedia.org/wiki/Soundfont" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Soundfont</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104950656"></a>
+        <h2>Credits</h2>
+        <p>Michael Gogins (gogins at pipeline dot com), Steven Yi.
+      Thanks to Peter Hanappe for Fluidsynth.</p>
+        <p>Optional <span class="emphasis"><em>iNumChannels</em></span> and
+    <span class="emphasis"><em>iPolyphony</em></span> parameters added in 5.07</p>
+        <p>Order of arguments corrected in manual August 2019.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fluidControl.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fluidInfo.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fluidControl </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fluidInfo</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

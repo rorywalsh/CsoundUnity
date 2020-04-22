@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsout</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsmooth.html" title="pvsmooth" />
+    <link rel="next" href="pvsosc.html" title="pvsosc" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsout</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsmooth.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsosc.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvsout"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpvsout" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsout</span>
+        </h2>
+        <p>pvsout — 
+      Write a fsig to the pvs output bus.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064338848"></a>
+        <h2>Description</h2>
+        <p>
+      This opcode writes a fsig to a channel of the pvs output bus. Note that the pvs out bus and
+	    the pvs in bus are separate and independent. A new channel is created if non-existent.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064337472"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>pvsout</strong></span> fsig, kchan</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064335536"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- fsig input data.
+    </p>
+        <p>
+      <span class="emphasis"><em>kchan </em></span> -- pvs out bus channel number.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064333104"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276064332192"></a>
+          <p class="title">
+            <strong>Example 795. Example</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+asig     <span class="opc">in</span>                                <span class="comment">; input</span>
+fsig     <span class="opc">pvsanal</span> asig, 1024, 256, 1024, 1  <span class="comment">; analysis</span>
+         <span class="opc">pvsout</span>  fsig, 0                   <span class="comment">; write signal to pvs out bus channel 0</span></pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064326720"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>August 2006 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsmooth.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsosc.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsmooth </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsosc</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

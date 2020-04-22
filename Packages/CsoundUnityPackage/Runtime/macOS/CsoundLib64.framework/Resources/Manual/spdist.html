@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>spdist</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="spat3dt.html" title="spat3dt" />
+    <link rel="next" href="specaddm.html" title="specaddm" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">spdist</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="spat3dt.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="specaddm.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="spdist"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpdist" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">spdist</span>
+        </h2>
+        <p>spdist — 
+      Calculates distance values from xy coordinates.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071192448"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>spdist</em></span> uses the same xy data as <a class="link" href="space.html" title="space"><em class="citetitle">space</em></a>, also either from a text file using <a class="link" href="GEN28.html" title="GEN28"><em class="citetitle">Gen28</em></a> or from x and y arguments given to the unit directly. The purpose of this unit is to make available the values for distance that are calculated from the xy coordinates. 
+    </p>
+        <p>
+       In the case of <span class="emphasis"><em>space</em></span>, the xy values are used to determine a distance which is used to attenuate the signal and prepare it for use in <a class="link" href="spsend.html" title="spsend"><em class="citetitle">spsend</em></a>. But it is also useful to have these values for distance available to scale the frequency of the signal before it is sent to the <span class="emphasis"><em>space</em></span> unit.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071186528"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">k1 <span class="command"><strong>spdist</strong></span> ifn, ktime, kx, ky</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071184416"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- number of the stored function created using <a class="link" href="GEN28.html" title="GEN28"><em class="citetitle">Gen28</em></a>. This function generator reads a text file which contains sets of three values representing the xy coordinates and a time-tag for when the signal should be placed at that location. The file should look like:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  0       -1       1<br />
+  1        1       1<br />
+  2        4       4<br />
+  2.1     -4      -4<br />
+  3       10     -10<br />
+  5      -40       0</p>
+        </div>
+        <p>
+    </p>
+        <p>
+      If that file were named "move" then the <span class="emphasis"><em>Gen28</em></span> call in the score would like:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  f1 0 0 28 "move"</p>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>Gen28</em></span> takes 0 as the size and automatically allocates memory. It creates values to 10 milliseconds of resolution. So in this case there will be 500 values created by interpolating X1 to X2 to X3 and so on, and Y1 to Y2 to Y3 and so on, over the appropriate number of values that are stored in the function table. In the above example, the sound will begin in the left front, over 1 second it will move to the right front, over another second it move further into the distance but still in the right front, then in just 1/10th of a second it moves to the left rear, a bit distant. Finally over the last .9 seconds the sound will move to the right rear, moderately distant, and it comes to rest between the two left channels (due west!), quite distant. Since the values in the table are accessed through the use of a time-pointer in the <span class="emphasis"><em>space</em></span> unit, the actual timing can be made to follow the file's timing exactly or it can be made to go faster or slower through the same trajectory. If you have access to the GUI that allows one to draw and edit the files, there is no need to create the text files manually. But as long as the file is ASCII and in the format shown above, it doesn't matter how it is made!
+    </p>
+        <p>
+      IMPORTANT: If <span class="emphasis"><em>ifn</em></span> is 0 then <span class="emphasis"><em>spdist</em></span> will take its values for the xy coordinates from <span class="emphasis"><em>kx</em></span> and <span class="emphasis"><em>ky</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071174432"></a>
+        <h2>Performance</h2>
+        <p>
+      The configuration of the xy coordinates in space places the signal in the following way:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>a1 is -1, 1</p>
+            </li>
+            <li class="listitem">
+              <p>a2 is 1, 1</p>
+            </li>
+            <li class="listitem">
+              <p>a3 is -1, -1</p>
+            </li>
+            <li class="listitem">
+              <p>a4 is 1, -1</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      This assumes a loudspeaker set up as a1 is left front, a2 is right front, a3 is left back, a4 is right back. Values greater than 1 will result in sounds being attenuated, as if in the distance. <span class="emphasis"><em>space</em></span> considers the speakers to be at a distance of 1; smaller values of xy can be used, but <span class="emphasis"><em>space</em></span> will not amplify the signal in this case. It will, however balance the signal so that it can sound as if it were within the 4 speaker space.  x=0, y=1, will place the signal equally balanced between left and right front channels, x=y=0 will place the signal equally in all 4 channels, and so on. Although there must be 4 output signals from <span class="emphasis"><em>space</em></span>, it can be used in a 2 channel orchestra. If the xy's are kept so that Y&gt;=1, it should work well to do panning and fixed localization in a stereo field.
+    </p>
+        <p>
+      <span class="emphasis"><em>ktime</em></span> -- index into the table containing the xy coordinates. If used like:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  ktime           <span class="emphasis"><em>line</em></span>  0, 5, 5<br />
+  a1, a2, a3, a4  <span class="emphasis"><em>space</em></span> asig, 1, ktime, ...<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      with the file "move" described above, the speed of the signal's movement will be exactly as described in that file. However:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  ktime           <span class="emphasis"><em>line</em></span>  0, 10, 5<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      the signal will move at half the speed specified. Or in the case of:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  ktime           <span class="emphasis"><em>line</em></span>  5, 15, 0<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      the signal will move in the reverse direction as specified and 3 times slower! Finally:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  ktime           <span class="emphasis"><em>line</em></span>  2, 10, 3<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      will cause the signal to move only from the place specified in line 3 of the text file to the place specified in line 5 of the text file, and it will take 10 seconds to do it.
+    </p>
+        <p>
+      <span class="emphasis"><em>kx, ky</em></span> -- when <span class="emphasis"><em>ifn</em></span> is 0, <span class="emphasis"><em>space</em></span> and <span class="emphasis"><em>spdist</em></span> will use these values as the XY coordinates to localize the signal. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071155952"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the spdist opcode. It uses the file <a class="ulink" href="examples/spdist.csd" target="_top"><em class="citetitle">spdist.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276071154160"></a>
+          <p class="title">
+            <strong>Example 933. Example of the spdist opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276422560176"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o spdist.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">4</span>
+  
+ga<span class="n">1</span>	<span class="nb">init</span>	<span class="mi">0</span>
+ga<span class="n">2</span>	<span class="nb">init</span>	<span class="mi">0</span>
+ga<span class="n">3</span>	<span class="nb">init</span>	<span class="mi">0</span>
+ga<span class="n">4</span>	<span class="nb">init</span>	<span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;uses GEN28 file "move2", as found in /manual/examples</span>
+
+i<span class="n">freq</span> <span class="o">=</span> <span class="mi">1</span>
+k<span class="n">x</span>    <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">y</span>    <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">time</span> <span class="nb">line</span>  <span class="mi">0</span><span class="p">,</span> <span class="mf">5.6</span><span class="p">,</span> <span class="mf">5.6</span>				<span class="c1">;same time as in table 1 (="move2")</span>
+k<span class="n">dist</span> <span class="nb">spdist</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">time</span><span class="p">,</span> k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span>
+k<span class="n">freq</span> <span class="o">=</span> <span class="p">(</span>i<span class="n">freq</span><span class="o">*</span><span class="mi">340</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">340</span> <span class="o">+</span> k<span class="n">dist</span><span class="p">)</span>		<span class="c1">;calculate doppler shift</span>
+<span class="nb">printk2</span> k<span class="n">dist</span>					<span class="c1">;print distance values</span>
+a<span class="n">sig</span>  <span class="nb">diskin2</span> <span class="s">"flute.aiff"</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">;sound source is looped</span>
+a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span> <span class="nb">space</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">time</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span>	<span class="c1">;use table 1 = GEN28</span>
+a<span class="n">r1</span><span class="p">,</span> a<span class="n">r2</span><span class="p">,</span> a<span class="n">r3</span><span class="p">,</span> a<span class="n">r4</span> <span class="nb">spsend</span>			<span class="c1">;send to reverb</span>
+
+ga<span class="n">1</span>  <span class="o">=</span> ga<span class="n">1</span><span class="o">+</span>a<span class="n">r1</span>
+ga<span class="n">2</span>  <span class="o">=</span> ga<span class="n">2</span><span class="o">+</span>a<span class="n">r2</span>
+ga<span class="n">3</span>  <span class="o">=</span> ga<span class="n">3</span><span class="o">+</span>a<span class="n">r3</span>
+ga<span class="n">4</span>  <span class="o">=</span> ga<span class="n">4</span><span class="o">+</span>a<span class="n">r4</span>
+     <span class="nb">outq</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">99</span> <span class="c1">; reverb instrument</span>
+
+a<span class="n">1</span> <span class="nb">reverb2</span> ga<span class="n">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+a<span class="n">2</span> <span class="nb">reverb2</span> ga<span class="n">2</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+a<span class="n">3</span> <span class="nb">reverb2</span> ga<span class="n">3</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+a<span class="n">4</span> <span class="nb">reverb2</span> ga<span class="n">4</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+   <span class="nb">outq</span>	a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span>
+
+ga<span class="n">1</span><span class="o">=</span><span class="mi">0</span>	
+ga<span class="n">2</span><span class="o">=</span><span class="mi">0</span>
+ga<span class="n">3</span><span class="o">=</span><span class="mi">0</span>
+ga<span class="n">4</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">28</span> <span class="s">"move2"</span>	<span class="c1">;from left front and left rear to the middle in front</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">5.6</span>		<span class="c1">;same time as ktime</span>
+<span class="nb">i</span> <span class="mi">99</span> <span class="mi">0</span> <span class="mi">10</span>		<span class="c1">;keep reverb active</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      The same function and time values are used for both <span class="emphasis"><em>spdist</em></span> and <span class="emphasis"><em>space</em></span>. This insures that the distance values used internally in the <span class="emphasis"><em>space</em></span> unit will be the same as those returned by <span class="emphasis"><em>spdist</em></span> to give the impression of a Doppler shift!
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071147936"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="space.html" title="space"><em class="citetitle">space</em></a>,
+      <a class="link" href="spsend.html" title="spsend"><em class="citetitle">spsend</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071145024"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, WA USA</td>
+          </tr>
+          <tr>
+            <td>1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.48</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="spat3dt.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="specaddm.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">spat3dt </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> specaddm</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

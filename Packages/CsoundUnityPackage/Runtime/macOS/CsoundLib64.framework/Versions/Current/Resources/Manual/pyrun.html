@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pyrun Opcodes</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pyinit.html" title="pyinit Opcodes" />
+    <link rel="next" href="pwd.html" title="pwd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pyrun Opcodes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pyinit.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pwd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pyrun"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPyRun" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pyrun Opcodes</span>
+        </h2>
+        <p>pyrun — Run a Python statement or block of statements.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063550480"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>pyrun</strong></span> "statement"</pre>
+        <pre class="synopsis"><span class="command"><strong>pyruni</strong></span> "statement"</pre>
+        <pre class="synopsis"><span class="command"><strong>pylrun</strong></span> "statement"</pre>
+        <pre class="synopsis"><span class="command"><strong>pylruni</strong></span> "statement"</pre>
+        <pre class="synopsis"><span class="command"><strong>pyrunt</strong></span> ktrigger, "statement"</pre>
+        <pre class="synopsis"><span class="command"><strong>pylrunt</strong></span> ktrigger, "statement"</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063542752"></a>
+        <h2>Description</h2>
+        <p>Execute the specified Python statement at k-time
+      (<span class="emphasis"><em>pyrun</em></span> and <span class="emphasis"><em>pylrun</em></span>) or i-time
+      (<span class="emphasis"><em>pyruni</em></span> and <span class="emphasis"><em>pylruni</em></span>).</p>
+        <p>The statement is executed in the global environment for pyrun
+      and pyruni or the local environment for pylrun and pylruni.</p>
+        <p>These opcodes perform no message passing. However, since the
+      statement have access to the main namespace and the private namespace,
+      it can interact with objects previously created in that
+      environment.</p>
+        <p>The "local" version of the <span class="emphasis"><em>pyrun</em></span> opcodes are useful when the
+      code ran by different instances of an instrument should not
+      interact.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063537808"></a>
+        <h2>Example of the pyrun Opcode Group</h2>
+        <div class="example">
+          <a id="idm276063537120"></a>
+          <p class="title">
+            <strong>Example 814. Orchestra</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+<span class="ohdr">sr</span>=44100
+<span class="ohdr">kr</span>=4410
+<span class="ohdr">ksmps</span>=10
+<span class="ohdr">nchnls</span>=1
+
+<span class="comment">;If you're not running CsoundAC you need the following line</span>
+<span class="comment">;to initialize the python interpreter</span>
+<span class="comment">;pyinit</span>
+
+<span class="opc">pyruni</span> "import random"
+
+<span class="oblock">instr 1</span>
+        <span class="comment">; This message is stored in the main namespace</span>
+        <span class="comment">; and is the same for every instance</span>
+        <span class="opc">pyruni</span>  "message = 'a global random number: %f' % random.random()"
+        <span class="opc">pyrun</span>   "print message"
+
+        <span class="comment">; This message is stored in the private namespace</span>
+        <span class="comment">; and is different for different instances</span>
+        <span class="opc">pylruni</span> "message = 'a private random number: %f' % random.random()"
+        <span class="opc">pylrun</span>  "print message"
+<span class="oblock">endin</span></pre>
+          </div>
+        </div>
+        <br class="example-break" />
+        <div class="example">
+          <a id="idm276063507376"></a>
+          <p class="title">
+            <strong>Example 815. Score</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+<span class="stamnt">i</span>1 0 0.1</pre>
+          </div>
+        </div>
+        <br class="example-break" />
+        <p>Running this score you should get intermixed pairs of messages
+       from the two instances of instrument 1.</p>
+        <p>The first message of each pair is stored into the main namespace
+       and so the second instance overwrites the message of the first
+       instance. The result is that first message will be the same for both
+       instances.</p>
+        <p>The second message is different for the two instances, being
+       stored in the private namespace.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063503584"></a>
+        <h2>Credits</h2>
+        <p>Copyright (c) 2002 by Maurizio Umberto Puxeddu. All rights
+       reserved. Portions copyright (c) 2004 and 2005 by Michael Gogins. This
+       document has been updated Sunday 25 July 2004 and 1 February 2005 by
+       Michael Gogins.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pyinit.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pwd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pyinit Opcodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pwd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

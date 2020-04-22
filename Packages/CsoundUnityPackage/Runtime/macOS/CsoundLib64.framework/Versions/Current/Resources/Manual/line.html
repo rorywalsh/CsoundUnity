@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>line</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="limit1.html" title="limit1" />
+    <link rel="next" href="linen.html" title="linen" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">line</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="limit1.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="linen.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="line"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLine" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">line</span>
+        </h2>
+        <p>line — 
+      Trace a straight line between specified points.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087005824"></a>
+        <h2>Description</h2>
+        <p>
+      Trace a straight line between specified points.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087004512"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>line</strong></span> ia, idur, ib</pre>
+        <pre class="synopsis">kres <span class="command"><strong>line</strong></span> ia, idur, ib</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087001104"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ia</em></span> -- starting value.
+    </p>
+        <p>
+      <span class="emphasis"><em>ib</em></span> -- value after <span class="emphasis"><em>idur</em></span> seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur</em></span> -- duration in seconds of segment. A zero or negative value will cause all initialization to be skipped.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086997200"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>line</em></span> generates control or audio signals whose values move linearly from an initial value to a final one.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        A common error with this opcode is to assume that the value of
+        <span class="emphasis"><em>ib</em></span> is held after the time
+        <span class="emphasis"><em>idur1</em></span>. <span class="emphasis"><em>line</em></span> does not
+        automatically end or stop at the end of the duration given. If your
+        note length is longer than <span class="emphasis"><em>idur</em></span> seconds,
+        <span class="emphasis"><em>kres</em></span> (or <span class="emphasis"><em>ares</em></span>) will not come
+        to rest at <span class="emphasis"><em>ib</em></span>, but will instead continue to rise
+        or fall with the same rate. If a rise (or fall) and then hold is
+        required that the <span class="emphasis"><em>linseg</em></span> opcode should be 
+        considered instead.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086990560"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the line opcode. It uses the file <a class="ulink" href="examples/line.csd" target="_top"><em class="citetitle">line.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276086988768"></a>
+          <p class="title">
+            <strong>Example 472. Example of the line opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276457612688"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o line.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> 
+
+k<span class="n">p</span> <span class="o">=</span> <span class="nb">p6</span>
+<span class="c1">;choose between expon or line</span>
+<span class="k">if</span> <span class="p">(</span>k<span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span> 	
+  k<span class="n">pitch</span> <span class="nb">expon</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span> 
+<span class="k">elseif</span> <span class="p">(</span>k<span class="n">p</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">then</span>
+  k<span class="n">pitch</span> <span class="nb">line</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span> 
+<span class="k">endif</span>
+
+a<span class="n">sig</span>   <span class="nb">vco2</span> <span class="mf">.6</span><span class="p">,</span> k<span class="n">pitch</span> 
+       <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span> 
+<span class="nt">&lt;/CsInstruments&gt;</span> 
+<span class="nt">&lt;CsScore&gt;</span> 
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">2</span> <span class="mi">300</span>  <span class="mi">600</span>  <span class="mi">0</span>	<span class="c1">;if p6=0 then expon is used</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span>  <span class="mi">2</span> <span class="mi">300</span>  <span class="mi">600</span>  <span class="mi">1</span>	<span class="c1">;if p6=1 then line is used</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span>  <span class="mi">2</span> <span class="mi">600</span>  <span class="mi">1200</span> <span class="mi">0</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">9</span>  <span class="mi">2</span> <span class="mi">600</span>  <span class="mi">1200</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">12</span> <span class="mi">2</span> <span class="mi">1200</span> <span class="mi">2400</span> <span class="mi">0</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">15</span> <span class="mi">2</span> <span class="mi">1200</span> <span class="mi">2400</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">18</span> <span class="mi">2</span> <span class="mi">2400</span> <span class="mi">30</span>   <span class="mi">0</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">21</span> <span class="mi">2</span> <span class="mi">2400</span> <span class="mi">30</span>   <span class="mi">1</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span> 
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086984768"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="expon.html" title="expon"><em class="citetitle">expon</em></a>, 
+      <a class="link" href="expseg.html" title="expseg"><em class="citetitle">expseg</em></a>, 
+      <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>, 
+      <a class="link" href="linseg.html" title="linseg"><em class="citetitle">linseg</em></a>, 
+      <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086979136"></a>
+        <h2>Credits</h2>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="limit1.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="linen.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">limit1 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> linen</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

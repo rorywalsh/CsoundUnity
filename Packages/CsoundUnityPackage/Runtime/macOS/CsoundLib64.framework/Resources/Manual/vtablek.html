@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vtablek</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vtablei.html" title="vtablei" />
+    <link rel="next" href="vtablea.html" title="vtablea" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vtablek</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vtablei.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vtablea.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vtablek"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVtablek" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vtablek</span>
+        </h2>
+        <p>vtablek — 
+     Read vectors (from tables -or arrays of vectors).
+      
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037350016"></a>
+        <h2>Description</h2>
+        <p>
+	This opcode reads vectors from tables at k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037348736"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vtablek</strong></span>  kndx, kfn, kinterp, ixmode, kout1 [, kout2, kout3, .... , koutN ]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037346720"></a>
+        <h2>Initialization</h2>
+        <p> <span class="emphasis"><em>ixmode</em></span> -  index data mode. The default value is 0.
+    </p>
+        <p>                == 0 index is treated as a raw table location,
+      </p>
+        <p>                == 1 index is normalized (0 to 1).
+      </p>
+        <p>
+      <span class="emphasis"><em>kinterp</em></span> - switch beetween interpolated or non-interpolated output. 0 -&gt; non-interpolation , non-zero -&gt; interpolation activated
+      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037343056"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kndx</em></span> - Index into f-table, either a positive number range matching the table length (ixmode = 0) or a 0 to 1 range (ixmode != 0).
+     </p>
+        <p>
+      <span class="emphasis"><em>kfn</em></span> - table number
+     </p>
+        <p>
+      <span class="emphasis"><em>kout1...koutN</em></span> - output vector elements
+    </p>
+        <p>
+      This opcode is useful in all cases in which one needs to access sets of values associated to unique indexes (for example, multi-channel samples, STFT bin frames, spectral formants, p-field based scores etc.). The number of elements of each vector (length of the vector) is determined by the number of optional arguments on the right (kout1 , kout2, kout3, ....  koutN).
+    </p>
+        <p>
+      <span class="emphasis"><em>vtablek</em></span> allows the user to switch beetween interpolated or non-interpolated output at k-rate by means of kinterp argument.
+    </p>
+        <p>
+      <span class="emphasis"><em>vtablek</em></span> allows also to switch the table number at k-rate (but this is possible only when vector frames of each used table have the same number of elements, otherwise unpredictable results could occurr), as well as to choose indexing style (raw or normalized, see  also ixmode argument of table opcode ).
+    </p>
+        <p>
+      Notice that no wrap nor limit mode is implemented.  So, if  an index attempt to access to a zone not allocated by the table, Csound will probably crash. However this drawback can be easily avoided by using wrap or limit opcodes applied to indexes before using vtable, in order to correct eventual out-of-range values.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Notice that <span class="emphasis"><em>vtablek</em></span>'s output arguments are placed at the left of the opcode name, differently from usual (this style is already used in other opcodes using undefined lists of output arguments such as <a class="link" href="fin.html" title="fin"><em class="citetitle">fin</em></a> or <a class="link" href="trigseq.html" title="trigseq"><em class="citetitle">trigseq</em></a>).
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037331712"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vtablek opcode. It uses the files <a class="ulink" href="examples/vtablek.csd" target="_top"><em class="citetitle">vtablek.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276037329904"></a>
+          <p class="title">
+            <strong>Example 1130. Example of the vtablek opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276404244288"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac -B441 -b441
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>     <span class="o">=</span>        <span class="mi">44100</span>
+<span class="vg">kr</span>     <span class="o">=</span>        <span class="mi">100</span>
+<span class="vg">ksmps</span>  <span class="o">=</span>        <span class="mi">441</span>
+<span class="vg">nchnls</span> <span class="o">=</span>        <span class="mi">2</span>
+
+gk<span class="n">indx</span> <span class="nb">init</span> <span class="o">-</span><span class="mi">1</span>
+
+       <span class="kd">instr</span>    <span class="nf">1</span>
+k<span class="n">index</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">trig</span> <span class="nb">metro</span> <span class="mf">0.5</span>
+<span class="k">if</span> k<span class="n">trig</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">goto</span> <span class="nl">noevent</span>
+gk<span class="n">indx</span> <span class="o">=</span> gk<span class="n">indx</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="nl">noevent</span><span class="p">:</span>
+
+	<span class="kd">endin</span>
+
+	<span class="kd">instr</span>	<span class="nf">2</span>
+k<span class="n">out1</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">out2</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">out3</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">out4</span> <span class="nb">init</span> <span class="mi">0</span>
+<span class="nb">vtablek</span>  gk<span class="n">indx</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">out1</span><span class="p">,</span>k<span class="n">out2</span><span class="p">,</span> k<span class="n">out3</span><span class="p">,</span> k<span class="n">out4</span>
+<span class="nb">printk2</span> k<span class="n">out1</span>
+<span class="nb">printk2</span> k<span class="n">out2</span>
+<span class="nb">printk2</span> k<span class="n">out3</span>
+<span class="nb">printk2</span> k<span class="n">out4</span>
+	<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">32</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">20</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">20</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037328128"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="vtablea.html" title="vtablea"><em class="citetitle">vtablea</em></a>,
+      <a class="link" href="vtablei.html" title="vtablei"><em class="citetitle">vtablei</em></a>,
+      <a class="link" href="vtabk.html" title="vtabk"><em class="citetitle">vtabk</em></a>,
+      <a class="link" href="vtablewk.html" title="vtablewk"><em class="citetitle">vtablewk</em></a>,
+      <a class="link" href="vtabwk.html" title="vtabwk"><em class="citetitle">vtabwk</em></a>,
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037322480"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado.</p>
+        <p>Example written by Andres Cabrera.</p>
+        <p>New in Csound 5 (Previously available only on CsoundAV)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vtablei.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vtablea.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vtablei </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vtablea</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

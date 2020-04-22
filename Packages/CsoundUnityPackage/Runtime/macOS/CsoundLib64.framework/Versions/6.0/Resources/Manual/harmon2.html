@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>harmon2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="harmon.html" title="harmon" />
+    <link rel="next" href="hdf5read.html" title="hdf5read" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">harmon2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="harmon.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="hdf5read.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="harmon2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexHarmon2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">harmon2</span>
+        </h2>
+        <p>harmon2 — 
+      Analyze an audio input and generate harmonizing voices in
+      synchrony with formants preserved.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100046544"></a>
+        <h2>Description</h2>
+        <p>
+      Generate harmonizing voices with formants preserved.
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100045312"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>harmon2</strong></span> asig, koct, kfrq1, kfrq2, icpsmode, ilowest[, ipolarity]</pre>
+        <pre class="synopsis">ares <span class="command"><strong>harmon3</strong></span> asig, koct, kfrq1, \
+    kfrq2, kfrq3, icpsmode, ilowest[, ipolarity]</pre>
+        <pre class="synopsis">ares <span class="command"><strong>harmon4</strong></span> asig, koct, kfrq1, \
+    kfrq2, kfrq3, kfrq4, icpsmode, ilowest[, ipolarity]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100040464"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>icpsmode</em></span> -- interpreting mode for the
+	generating frequency inputs <span class="emphasis"><em>kfrq1</em></span>, <span class="emphasis"><em>kfrq2</em></span>, <span class="emphasis"><em>kfrq3</em></span> and <span class="emphasis"><em>kfrq4</em></span>:
+	0: input values are ratios w.r.t. the cps equivalent of <span class="emphasis"><em>koct</em></span>.
+	1: input values are the actual requested frequencies in cps.
+    </p>
+        <p>
+      <span class="emphasis"><em>ilowest</em></span> -- lowest value of the <span class="emphasis"><em>koct</em></span> input for which harmonizing voices will be generated.
+    </p>
+        <p>
+      <span class="emphasis"><em>ipolarity</em></span> -- polarity of <span class="emphasis"><em>asig</em></span> input, 1 = positive glottal pulses, 0 = negative. Default is 1.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100034096"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="command"><strong>Harmon2</strong></span>, <span class="command"><strong>harmon3</strong></span>
+      and <span class="command"><strong>harmon4</strong></span> are high-performance harmonizers,
+      able to provide up to four pitch-shifted copies of the input
+      <span class="emphasis"><em>asig</em></span> with spectral formants preserved. The
+      pitch-shifting algorithm requires an accurate running estimate
+      (<span class="emphasis"><em>koct</em></span>, in decimal oct units) of the pitched
+      content of <span class="emphasis"><em>asig</em></span>, normally gained from an
+      independent pitch tracker such as <span class="emphasis"><em>specptrk</em></span>.
+      The algorithm then isolates the most recent full pulse
+      within <span class="emphasis"><em>asig</em></span>, and uses this to generate the
+      other voices at their required pulse rates.
+    </p>
+        <p>
+      If the frequency (or ratio) presented
+      to <span class="emphasis"><em>kfrq1</em></span>, <span class="emphasis"><em>kfrq2</em></span>, <span class="emphasis"><em>kfrq3</em></span>
+      or <span class="emphasis"><em>kfrq4</em></span> is zero, then no signal is
+      generated for that voice.  If any of them is non-zero, but
+      the <span class="emphasis"><em>koct</em></span> input is below the
+      value <span class="emphasis"><em>ilowest</em></span>, then that voice will output
+      a direct copy of the input <span class="emphasis"><em>asig.</em></span>  As a
+      consequence, the data arriving at the k-rate inputs can
+      variously cause the generated voices to be turned on or off, to
+      pass a direct copy of a non-voiced fricative source, or to
+      harmonize the source according to some constructed algorithm.
+      The transition from one mode to another is cross-faded, giving
+      seemless alternating between voiced (harmonized) and non-voiced
+      fricatives during spoken or sung input. 
+    </p>
+        <p>
+      <span class="emphasis"><em>harmon2</em></span>, <span class="emphasis"><em>harmon3</em></span>, 
+      <span class="emphasis"><em>harmon4</em></span> are especially matched to the output
+      of <span class="emphasis"><em>specptrk</em></span>.  The latter generates pitch
+      data in decimal octave format; it also emits its base value if
+      no pitch is identified (as in fricative noise) and emits zero if
+      the energy falls below a threshold, so
+      that <span class="emphasis"><em>harmon2</em></span>, <span class="emphasis"><em>harmon3</em></span>, 
+      <span class="emphasis"><em>harmon4</em></span> can be set to pass the direct
+      signal in both cases.  Of course, any other form of pitch
+      estimation could also be used.  Since pitch trackers usually
+      incur a slight delay for accurate estimation
+      (for <span class="emphasis"><em>specptrk</em></span> the delay is printed by the
+      <span class="emphasis"><em>spectrum</em></span> unit), it is normal to delay the audio signal by the
+      same amount so that <span class="emphasis"><em>harmon2</em></span>, 
+      <span class="emphasis"><em>harmon3</em></span>, <span class="emphasis"><em>harmon4</em></span>
+      can work from a fully concurrent estimate.
+     </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100018512"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the harmon2 opcode. It uses the file <a class="ulink" href="examples/harmon.csd" target="_top"><em class="citetitle">harmon.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276100016720"></a>
+          <p class="title">
+            <strong>Example 409. Example of the harmon2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+a1,a2      <span class="opc">ins</span>                                     <span class="comment">; get mic input</span>
+w1         <span class="opc">spectrum</span>  a1, .02, 7, 24, 12, 1, 3      <span class="comment">; and examine it</span>
+koct,kamp  <span class="opc">specptrk</span>  w1, 1, 6.5, 9.5, 7.5, 10, 7, .7, 0, 3, 1
+a3         <span class="opc">delay</span>     a1, .065                      <span class="comment">; allow for ptrk delay</span>
+a4         <span class="opc">harmon2</span>   a3, koct, 1.25, 0.75, 0, 6.9  <span class="comment">; output a fixed 6-4 harmony</span>
+           <span class="opc">outs</span>      a3, a4                        <span class="comment">; as well as the original</span></pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is a complete example of the harmon3 opcode. It uses the file <a class="ulink" href="examples/harmon3.csd" target="_top"><em class="citetitle">harmon3.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276100006816"></a>
+          <p class="title">
+            <strong>Example 410. Example of the harmon3 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276465002016"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o harmon3.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">low</span> <span class="o">=</span> <span class="nb">p4</span>					<span class="c1">;lowest value to harmonize			</span>
+a<span class="n">out</span> <span class="nb">diskin2</span> <span class="s">"sing.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">oct</span><span class="p">,</span> k<span class="n">amp</span> <span class="nb">pitch</span> a<span class="n">out</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span>		<span class="c1">;track pitch</span>
+a<span class="n">sig</span> <span class="nb">harmon3</span> a<span class="n">out</span><span class="p">,</span> k<span class="n">oct</span><span class="p">,</span> <span class="mf">.9</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">low</span>
+     <span class="nb">outs</span> <span class="p">(</span>a<span class="n">sig</span> <span class="o">+</span> a<span class="n">out</span><span class="p">)</span><span class="o">*</span><span class="mf">.4</span><span class="p">,</span> <span class="p">(</span>a<span class="n">sig</span> <span class="o">+</span> a<span class="n">out</span><span class="p">)</span><span class="o">*</span><span class="mf">.4</span>	<span class="c1">;mix dry&amp;wet signal</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.2</span> <span class="mf">8.8</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">3</span> <span class="mf">2.2</span> <span class="mf">8.2</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">6</span> <span class="mf">2.2</span> <span class="mf">7.0</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100002832"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Barry L. Vercoe</td>
+          </tr>
+          <tr>
+            <td>M.I.T., Cambridge, Mass</td>
+          </tr>
+          <tr>
+            <td>2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.04</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="harmon.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="hdf5read.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">harmon </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> hdf5read</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLvkeybd</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLvalue.html" title="FLvalue" />
+    <link rel="next" href="FLvslidBnk.html" title="FLvslidBnk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLvkeybd</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLvalue.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLvslidBnk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLvkeybd"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLvkeybd" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLvkeybd</span>
+        </h2>
+        <p>FLvkeybd — 
+      An FLTK widget opcode that creates a virtual keyboard widget.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104515536"></a>
+        <h2>Description</h2>
+        <p>
+      An FLTK widget opcode that creates a virtual keyboard widget. This must
+      be used in conjunction with the virtual midi keyboard driver for this to
+      operate correctly.  The purpose of this opcode is for making demo versions
+      of MIDI orchestras with the virtual keyboard embedded within the main
+      window.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The widget version of the virtual keyboard does not include the MIDI
+        sliders found in the full window version of the virtual keyboard.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104512704"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLvkeybd</strong></span> "keyboard.map", iwidth, iheight, ix, iy</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104510656"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">keyboard.map</span>”</span></em></span>
+      -- a double-quoted string containing the keyboard map to use. An empty
+      string ("") may be used to use the default bank/channel name
+      values. See
+      <a class="link" href="MidiTop.html#MidiVirtual" title="Virtual MIDI Keyboard">Virtual Midi Keyboard</a>
+      for more information on keyboard mappings.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span>
+      -- horizontal position of upper left corner of the keyboard, relative to
+      the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span>
+      -- vertical position of upper left corner of the keyboard, relative to the
+      upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The standard width and height for the virtual keyboard is 624x120 for
+        the dialog version that is shown when FLvkeybd is not used.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104503072"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLbutton.html" title="FLbutton"><em class="citetitle">FLbutton</em></a>,
+      <a class="link" href="FLbox.html" title="FLbox"><em class="citetitle">FLbox</em></a>,
+      <a class="link" href="FLbutBank.html" title="FLbutBank"><em class="citetitle">FLbutBank</em></a>,
+      <a class="link" href="FLprintk.html" title="FLprintk"><em class="citetitle">FLprintk</em></a>,
+      <a class="link" href="FLprintk2.html" title="FLprintk2"><em class="citetitle">FLprintk2</em></a>,
+      <a class="link" href="FLvalue.html" title="FLvalue"><em class="citetitle">FLvalue</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104496640"></a>
+        <h2>Credits</h2>
+        <p>Author: Steven Yi</p>
+        <p>New in version 5.05</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLvalue.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLvslidBnk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLvalue </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLvslidBnk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

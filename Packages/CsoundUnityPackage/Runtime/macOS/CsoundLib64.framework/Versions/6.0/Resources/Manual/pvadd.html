@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvadd</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="puts.html" title="puts" />
+    <link rel="next" href="pvbufread.html" title="pvbufread" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvadd</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="puts.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvbufread.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvadd"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvadd" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvadd</span>
+        </h2>
+        <p>pvadd — 
+      Reads from a <span class="emphasis"><em>pvoc</em></span> file and uses the data to perform additive synthesis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067552080"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>pvadd</em></span> reads from a <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a> file and uses the data to perform additive synthesis using an internal array of interpolating oscillators. The user supplies the wave table (usually one period of a sine wave), and can choose which analysis bins will be used in the re-synthesis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067549376"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>pvadd</strong></span> ktimpnt, kfmod, ifilcod, ifn, ibins [, ibinoffset] \
+      [, ibinincr] [, iextractmode] [, ifreqlim] [, igatefn]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067547184"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilcod</em></span> -- integer or character-string denoting a control-file derived from <a class="link" href="pvanal.html" title="pvanal"><em class="citetitle">pvanal</em></a> analysis of an audio signal. An integer denotes the suffix of a file <span class="emphasis"><em>pvoc.m</em></span>; a character-string (in double quotes) gives a filename, optionally a full pathname. If not fullpath, the file is sought first in the current directory, then in the one given by the environment variable <a class="link" href="OrchDirFiles.html" title="Directories and Files"><em class="citetitle">SADIR</em></a> (if defined). <span class="emphasis"><em>pvoc</em></span> control files contain data organized for fft resynthesis. Memory usage depends on the size of the files involved, which are read and held entirely in memory during computation but are shared by multiple calls (see also <a class="link" href="lpread.html" title="lpread"><em class="citetitle">lpread</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- table number of a stored function containing a sine wave.
+    </p>
+        <p>
+      <span class="emphasis"><em>ibins</em></span> -- number of bins that will be used in the resynthesis (each bin counts as one oscillator in the re-synthesis)
+    </p>
+        <p>
+      <span class="emphasis"><em>ibinoffset</em></span> (optional) -- is the first bin used (it is optional and defaults to 0).
+    </p>
+        <p>
+      <span class="emphasis"><em>ibinincr</em></span> (optional) -- sets an increment by which <span class="emphasis"><em>pvadd</em></span> counts up from <span class="emphasis"><em>ibinoffset</em></span> for <span class="emphasis"><em>ibins</em></span> components in the re-synthesis (see below for a further explanation).
+    </p>
+        <p>
+      <span class="emphasis"><em>iextractmode</em></span> (optional) -- determines if spectral extraction will be carried out and if so whether components that have changes in frequency below <span class="emphasis"><em>ifreqlim</em></span> or above <span class="emphasis"><em>ifreqlim</em></span> will be discarded. A value for <span class="emphasis"><em>iextractmode</em></span> of 1 will cause <span class="emphasis"><em>pvadd</em></span> to synthesize only those components where the frequency difference between analysis frames is greater than <span class="emphasis"><em>ifreqlim</em></span>. A value of 2 for <span class="emphasis"><em>iextractmode</em></span> will cause <span class="emphasis"><em>pvadd</em></span> to synthesize only those components where the frequency difference between frames is less than <span class="emphasis"><em>ifreqlim</em></span>. The default values for <span class="emphasis"><em>iextractmode</em></span> and <span class="emphasis"><em>ifreqlim</em></span> are 0, in which case a simple resynthesis will be done. See examples below.
+    </p>
+        <p>
+      <span class="emphasis"><em>igatefn</em></span> (optional) -- is the number of a stored function which will be applied to the amplitudes of the analysis bins before resynthesis takes place. If <span class="emphasis"><em>igatefn</em></span> is greater than 0 the amplitudes of each bin will be scaled by <span class="emphasis"><em>igatefn</em></span> through a simple mapping process. First, the  amplitudes of all of the bins in all of the frames in the entire analysis file are compared to determine the maximum amplitude value. This value is then used create normalized amplitudes as indeces into the stored function <span class="emphasis"><em>igatefn</em></span>. The maximum amplitude will map to the last point in the function. An amplitude of 0 will map to the first point in the function. Values between 0 and 1 will map accordingly to points along the function table.This will be made clearer in the examples below.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067528608"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktimpnt</em></span> and <span class="emphasis"><em>kfmod</em></span> are used in the same way as in <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067525696"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+ktime <span class="opc">line</span>  0, p3, p3
+asig  <span class="opc">pvadd</span> ktime, 1, <span class="quote">“<span class="quote">oboe.pvoc</span>”</span>, 1, 100, 2</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      In the above, <span class="emphasis"><em>ibins</em></span> is 100 and <span class="emphasis"><em>ibinoffset</em></span> is 2. Using these settings the resynthesis will contain 100 components beginning with bin #2 (bins are counted starting with 0). That is, resynthesis will be done using bins 2-101 inclusive. It is usually a good idea to begin with bin 1 or 2 since the 0th and often 1st bin have data that is neither necessary nor even helpful for creating good clean resynthesis.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+ktime <span class="opc">line</span>  0, p3, p3
+asig  <span class="opc">pvadd</span> ktime, 1, <span class="quote">“<span class="quote">oboe.pvoc</span>”</span>, 1, 100, 2, 2</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      The above is the same as the previous example with the addition of the value 2 used for the optional <span class="emphasis"><em>ibinincr</em></span> argument. This result will still result in 100 components in the resynthesis, but <span class="emphasis"><em>pvadd</em></span> will count through the bins by 2 instead of by 1. It will use bins 2, 4, 6, 8, 10, and so on. For <span class="emphasis"><em>ibins</em></span>=10, <span class="emphasis"><em>ibinoffset</em></span>=10, and <span class="emphasis"><em>ibinincr</em></span>=10, <span class="emphasis"><em>pvadd</em></span> would use bins 10, 20, 30, 40, up to and including 100.
+    </p>
+        <p>
+      Below is an example using spectral extraction. In this example <span class="emphasis"><em>iextractmode</em></span> is 1 and <span class="emphasis"><em>ifreqlim</em></span> is 9. This will cause pvadd to synthesize only those bins where the frequency deviation, averaged over 6 frames, is greater than 9.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+ktime <span class="opc">line</span>  0, p3, p3
+asig  <span class="opc">pvadd</span> ktime, 1, <span class="quote">“<span class="quote">oboe.pvoc</span>”</span>, 1, 100, 2, 2, 1, 9</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      If <span class="emphasis"><em>iextractmode</em></span> were 2 in the above, then only those bins with an average frequency deviation of less than 9 would be synthesized. If tuned correctly, this technique can be used to separate the pitched parts of the spectrum from the noisy parts. In practice this depends greatly on the type of sound, the quality of the recording and digitization, and also on the analysis window size and frame increment.
+    </p>
+        <p>
+      Next is an example using amplitude gating. The last 2 in the argument list stands for f2 in the score.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+asig  <span class="opc">pvadd</span> ktime, 1, <span class="quote">“<span class="quote">oboe.pvoc</span>”</span>, 1, 100, 2, 2, 0, 0, 2</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      Suppose the score for the above were to contain:
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">f</span>2 0 512 7 0 256 1 256 1</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      Then those bins with amplitudes of 50% of the maximum or greater would be left unchanged, while those with amplitudes less than 50% of the maximum would be scaled down. In this case the lower the amplitude the more severe the scaling down would be. But suppose the score contains:
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">f</span>2 0 512 5 1 512 .001</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      In this case lower amplitudes will be left unchanged and greater ones will be scaled down, turning the sound <span class="quote">“<span class="quote">upside-down</span>”</span> in terms of the amplitude spectrum! Functions can be arbitrarily complex. Just remember that the normalized amplitude values of the analysis are themselves the indeces into the function.
+    </p>
+        <p>
+      Finally, both spectral extraction and amplitude gating can be used together. The example below will synthesize only those components that with a frequency deviation of less than 5Hz per frame and it will scale the amplitudes according to f2.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+asig  <span class="opc">pvadd</span> ktime, 1, <span class="quote">“<span class="quote">oboe.pvoc</span>”</span>, 1, 100, 1, 1, 2, 5, 2</pre>
+        </div>
+        <p>
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: USEFUL HINTS">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">USEFUL HINTS</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        By using several <span class="emphasis"><em>pvadd</em></span> units together, one can gradually fade in different parts of the resynthesis, creating various <span class="quote">“<span class="quote">filtering</span>”</span> effects. The author uses <span class="emphasis"><em>pvadd</em></span> to synthesis one bin at a time to have control over each separate component of the re-synthesis.
+      </p>
+                <p>
+        If any combination of <span class="emphasis"><em>ibins</em></span>, <span class="emphasis"><em>ibinoffset</em></span>, and <span class="emphasis"><em>ibinincr</em></span>, creates a situation where <span class="emphasis"><em>pvadd</em></span> is asked to used a bin number greater than the number of bins in the analysis, it will just use all of the available bins, and give no complaint.  So to use every bin just make <span class="emphasis"><em>ibins</em></span> a big number (ie. 2000).
+      </p>
+                <p>
+        Expect to have to scale up the amplitudes by factors of 10-100, by the way.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      Here is a complete example of the pvadd opcode. It uses the file <a class="ulink" href="examples/pvadd.csd" target="_top"><em class="citetitle">pvadd.csd</em></a>
+      </p>
+        <div class="example">
+          <a id="idm276067488784"></a>
+          <p class="title">
+            <strong>Example 749. Example of the pvadd opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276434461584"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pvadd.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">; analyze "fox.wav" with PVANAL first</span>
+i<span class="n">gatefn</span> <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">time</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p3</span>
+a<span class="n">sig</span>  <span class="nb">pvadd</span> k<span class="n">time</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"fox.pvx"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">gatefn</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span> a<span class="n">sig</span><span class="o">*</span><span class="mi">3</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine wave</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">512</span> <span class="mi">5</span> <span class="mi">1</span> <span class="mi">256</span> <span class="mf">.001</span>
+<span class="nb">f</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">512</span> <span class="mi">7</span> <span class="mi">0</span> <span class="mi">256</span> <span class="mi">1</span> <span class="mi">256</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.8</span> <span class="mi">2</span> 
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">2.8</span> <span class="mi">3</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067484800"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, WA USA</td>
+          </tr>
+          <tr>
+            <td>1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.48, additional arguments version 3.56</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="puts.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvbufread.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">puts </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvbufread</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

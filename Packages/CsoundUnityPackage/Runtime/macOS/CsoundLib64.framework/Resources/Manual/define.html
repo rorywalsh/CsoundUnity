@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>#define</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="notequal.html" title="!=" />
+    <link rel="next" href="include.html" title="#include" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">#define</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="notequal.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="include.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="define"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDefine" class="indexterm"></a>
+      <a id="IndexDefineOrch" class="indexterm"></a>
+      <a id="IndexDefineMacros" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">#define</span>
+        </h2>
+        <p>#define — 
+      Defines a macro.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127952016"></a>
+        <h2>Description</h2>
+        <p>
+      Macros are textual replacements which are made in the orchestra as it is being read.  The macro system in Csound is a very simple one, and uses the characters # and $ to define and call macros. This can save typing, and can lead to a coherent structure and consistent style.  This is similar to, but independent of, the <a class="link" href="ScoreMacros.html" title="Score Macros"><em class="citetitle">macro system in the score language</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em>#define NAME</em></span> -- defines a simple macro. The name of the macro must begin with a letter and can consist of any combination of letters and numbers. Case is significant. This form is limiting, in that the variable names are fixed.  More flexibility can be obtained by using a macro with arguments, described below.
+    </p>
+        <p>
+      <span class="emphasis"><em>#define NAME</em></span>(<span class="emphasis"><em>a' b' c'</em></span>) -- defines a macro with arguments. This can be used in more complex situations. The name of the macro must begin with a letter and can consist of any combination of letters and numbers. Within the replacement text, the arguments can be substituted by the form: $A.  In fact, the implementation defines the arguments as simple macros.  The names may be any choice of letters.  Remember that case is significant in macro names.
+      </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">In earlier versions of Csound there was a limit of 5 arguments,
+      but this restriction was removed in 2011; memory is the only constraint.
+      </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127946288"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>#define</strong></span> NAME # replacement text #</pre>
+        <pre class="synopsis"><span class="command"><strong>#define</strong></span> NAME(a' b' c') # replacement text #</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127943136"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em># replacement text #</em></span> --  The replacement text is any character string (not containing a #) and can extend over multiple lines. The replacement text is enclosed within the # characters, which ensure that additional characters are not inadvertently captured.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127941232"></a>
+        <h2>Performance</h2>
+        <p>
+      Some care is needed with textual replacement macros, as they can sometimes do strange things.  They take no notice of any meaning, so spaces are significant. This is why, unlike the C programming language, the definition has the replacement text surrounded by # characters. Used carefully, this simple macro system is a powerful concept, but it can be abused.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127940208"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a simple example of the defining a macro. It uses the file <a class="ulink" href="examples/define.csd" target="_top"><em class="citetitle">define.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276127938000"></a>
+          <p class="title">
+            <strong>Example 13. Simple example of the define macro.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276507119728"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o define.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Define the macros.</span>
+<span class="cp">#define</span> <span class="cp">VOLUME</span> <span class="p">#</span><span class="cp">5000</span><span class="p">#</span>
+<span class="cp">#define</span> <span class="cp">FREQ</span> <span class="p">#</span><span class="cp">440</span><span class="p">#</span>
+<span class="cp">#define</span> <span class="cp">TABLE</span> <span class="p">#</span><span class="cp">1</span><span class="p">#</span>
+
+<span class="c1">; Instrument #1</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Use the macros.</span>
+  <span class="c1">; This will be expanded to "a1 oscil 5000, 440, 1".</span>
+  a<span class="n">1</span> <span class="nb">oscil</span> <span class="cp">$VOLUME</span><span class="p">,</span> <span class="cp">$FREQ</span><span class="p">,</span> <span class="cp">$TABLE</span>
+
+  <span class="c1">; Send it to the output.</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Define Table #1 with an ordinary sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">32768</span> <span class="mi">10</span> <span class="mi">1</span> 
+         
+<span class="c1">; Play Instrument #1 for two seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like this:
+      </p>
+        <pre class="screen">
+Macro definition for VOLUME
+Macro definition for CPS
+Macro definition for TABLE</pre>
+        <p>
+    </p>
+        <p>
+      Here is an example of the defining a macro with arguments. It uses the file <a class="ulink" href="examples/define_args.csd" target="_top"><em class="citetitle">define_args.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276127932192"></a>
+          <p class="title">
+            <strong>Example 14. Example of the define macro with arguments.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276498388896"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o define_args.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Define the oscillator macro.</span>
+<span class="cp">#define</span> <span class="cp">OSCMACRO</span>(<span class="cp">VOLUME</span><span class="p">'</span><span class="cp">FREQ</span><span class="p">'</span><span class="cp">TABLE</span><span class="p">)</span> <span class="p">#</span><span class="cp">oscil $VOLUME, $FREQ, $TABLE</span><span class="p">#</span>
+
+<span class="c1">; Instrument #1</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Use the oscillator macro.</span>
+  <span class="c1">; This will be expanded to "a1 oscil 5000, 440, 1".</span>
+  a<span class="n">1</span> <span class="cp">$OSCMACRO</span><span class="p">(</span><span class="cp">5000</span><span class="p">'</span><span class="cp">440</span><span class="p">'</span><span class="cp">1</span><span class="p">)</span>
+
+  <span class="c1">; Send it to the output.</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Define Table #1 with an ordinary sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">32768</span> <span class="mi">10</span> <span class="mi">1</span> 
+         
+<span class="c1">; Play Instrument #1 for two seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like this:
+      </p>
+        <pre class="screen">
+Macro definition for OSCMACRO</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="opcodesDefineMathConstMacros"></a>
+        <h2>Predefined Math Constant Macros</h2>
+        <p>New in Csound 5.04 are predefined Math Constant Macros.  The values
+    defined are those found in the C header math.h, and are automatically
+    defined when Csound starts and available for use in orchestras.</p>
+        <div class="informaltable">
+          <table class="informaltable" border="1">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Macro</th>
+                <th>Value</th>
+                <th>Equivalent to</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>$M_E</td>
+                <td>2.7182818284590452354</td>
+                <td>e</td>
+              </tr>
+              <tr>
+                <td>$M_LOG2E</td>
+                <td>1.4426950408889634074</td>
+                <td>log_2(e)</td>
+              </tr>
+              <tr>
+                <td>$M_LOG10E</td>
+                <td>0.43429448190325182765</td>
+                <td>log_10(e)</td>
+              </tr>
+              <tr>
+                <td>$M_LN2</td>
+                <td>0.69314718055994530942</td>
+                <td>log_e(2)</td>
+              </tr>
+              <tr>
+                <td>$M_LN10</td>
+                <td>2.30258509299404568402</td>
+                <td>log_e(10)</td>
+              </tr>
+              <tr>
+                <td>$M_PI</td>
+                <td>3.14159265358979323846</td>
+                <td>pi</td>
+              </tr>
+              <tr>
+                <td>$M_PI_2</td>
+                <td>1.57079632679489661923</td>
+                <td>pi/2</td>
+              </tr>
+              <tr>
+                <td>$M_PI_4</td>
+                <td>0.78539816339744830962</td>
+                <td>pi/4</td>
+              </tr>
+              <tr>
+                <td>$M_1_PI</td>
+                <td>0.31830988618379067154</td>
+                <td>1/pi</td>
+              </tr>
+              <tr>
+                <td>$M_2_PI</td>
+                <td>0.63661977236758134308</td>
+                <td>2/pi</td>
+              </tr>
+              <tr>
+                <td>$M_2_SQRTPI</td>
+                <td>1.12837916709551257390</td>
+                <td>2/sqrt(pi)</td>
+              </tr>
+              <tr>
+                <td>$M_SQRT2</td>
+                <td>1.41421356237309504880</td>
+                <td>sqrt(2)</td>
+              </tr>
+              <tr>
+                <td>$M_SQRT1_2</td>
+                <td>0.70710678118654752440</td>
+                <td>1/sqrt(2)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127903200"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="dollar.html" title="$NAME"><em class="citetitle">$NAME</em></a>,
+      <a class="link" href="undef.html" title="#undef"><em class="citetitle">#undef</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127900288"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>April 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Examples written by Kevin Conder.</p>
+        <p>New in Csound version 3.48</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="notequal.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="include.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">!= </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> #include</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

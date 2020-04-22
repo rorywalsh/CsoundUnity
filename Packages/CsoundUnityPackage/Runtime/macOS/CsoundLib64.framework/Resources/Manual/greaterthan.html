@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>&gt;</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="opand.html" title="&amp;&amp;" />
+    <link rel="next" href="greaterequal.html" title="&gt;=" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">&gt;</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="opand.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="greaterequal.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="greaterthan"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGtColon" class="indexterm"></a>
+      <a id="IndexGtQuestion" class="indexterm"></a>
+      <a id="IndexGtExpression" class="indexterm"></a>
+      <a id="IndexGt" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">&gt;</span>
+        </h2>
+        <p>&gt; — 
+      Determines if one value is greater than another.
+                            </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127358544"></a>
+        <h2>Description</h2>
+        <p>
+      Determines if one value is greater than another.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127357232"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">(a <span class="command"><strong>&gt;</strong></span>  b <span class="command"><strong>?</strong></span> v1 <span class="command"><strong>:</strong></span> v2)</pre>
+        <p>
+      where <span class="emphasis"><em>a</em></span>, <span class="emphasis"><em>b</em></span>, <span class="emphasis"><em>v1</em></span> and <span class="emphasis"><em>v2</em></span> may be expressions, but <span class="emphasis"><em>a</em></span>, <span class="emphasis"><em>b</em></span> not audio-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127351056"></a>
+        <h2>Performance</h2>
+        <p>
+      In the above conditional, <span class="emphasis"><em>a</em></span> and <span class="emphasis"><em>b</em></span> are first compared. If the indicated relation is true (<span class="emphasis"><em>a</em></span> greater than <span class="emphasis"><em>b</em></span>), then the conditional expression has the value of <span class="emphasis"><em>v1</em></span>; if the relation is false, the expression has the value of <span class="emphasis"><em>v2</em></span>.
+    </p>
+        <p>
+      NB.: If <span class="emphasis"><em>v1</em></span> or <span class="emphasis"><em>v2</em></span> are expressions, these will be evaluated before the conditional is determined.
+    </p>
+        <p>
+      In terms of binding strength, all conditional operators (i.e. the relational operators (<span class="emphasis"><em>&lt;</em></span>, etc.), and <span class="emphasis"><em>?</em></span>, and <span class="emphasis"><em>:</em></span> ) are weaker than the arithmetic and logical operators (<span class="emphasis"><em>+</em></span>, <span class="emphasis"><em>-</em></span>, <span class="emphasis"><em>*</em></span>, <span class="emphasis"><em>/</em></span>, <span class="emphasis"><em>&amp;&amp;</em></span> and <span class="emphasis"><em>||</em></span>).
+    </p>
+        <p>
+      These are <span class="emphasis"><em>operators</em></span> not <span class="emphasis"><em>opcodes</em></span>. Therefore, they can be used within orchestra statements, but do not form complete statements themselves.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127340320"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the &gt; operator. It uses the file <a class="ulink" href="examples/greaterthan.csd" target="_top"><em class="citetitle">greaterthan.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276127338512"></a>
+          <p class="title">
+            <strong>Example 22. Example of the &gt; operator.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276498163984"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o greaterthan.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Get the 4th p-field from the score.</span>
+  k<span class="n">1</span> <span class="o">=</span>  <span class="nb">p4</span>
+
+  <span class="c1">; Is it greater than 3? (1 = true, 0 = false)</span>
+  k<span class="n">2</span> <span class="o">=</span> <span class="p">(</span><span class="nb">p4</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="p">?</span> <span class="mi">1</span> <span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+
+  <span class="c1">; Print the values of k1 and k2.</span>
+  <span class="nb">printks</span> <span class="s">"k1 = %f, k2 = %f</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">1</span><span class="p">,</span> k<span class="n">2</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Call Instrument #1 with a p4 = 2.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">0.5</span> <span class="mi">2</span>
+<span class="c1">; Call Instrument #1 with a p4 = 3.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mf">0.5</span> <span class="mi">3</span>
+<span class="c1">; Call Instrument #1 with a p4 = 4.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mf">0.5</span> <span class="mi">4</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like this:
+      </p>
+        <pre class="screen">
+k1 = 2.000000, k2 = 0.000000
+k1 = 3.000000, k2 = 0.000000
+k1 = 4.000000, k2 = 1.000000</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127333632"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="equals.html" title="=="><em class="citetitle">==</em></a>,
+      <a class="link" href="greaterequal.html" title="&gt;="><em class="citetitle">&gt;=</em></a>,
+      <a class="link" href="lessequal.html" title="&lt;="><em class="citetitle">&lt;=</em></a>,
+      <a class="link" href="lessthan.html" title="&lt;"><em class="citetitle">&lt;</em></a>,
+      <a class="link" href="notequal.html" title="!="><em class="citetitle">!=</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127328032"></a>
+        <h2>Credits</h2>
+        <p>Example written by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="opand.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="greaterequal.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">&amp;&amp; </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> &gt;=</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

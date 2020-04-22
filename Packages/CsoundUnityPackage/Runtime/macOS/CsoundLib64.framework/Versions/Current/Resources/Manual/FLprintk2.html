@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLprintk2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLprintk.html" title="FLprintk" />
+    <link rel="next" href="FLroller.html" title="FLroller" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLprintk2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLprintk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLroller.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLprintk2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLprintk2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLprintk2</span>
+        </h2>
+        <p>FLprintk2 — 
+      A FLTK opcode that prints a new value every time a control-rate variable changes.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150645728"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLprintk2</em></span> is similar to <a class="link" href="FLprintk.html" title="FLprintk"><em class="citetitle">FLprintk</em></a> but shows a k-rate variable's value only when it changes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150643216"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLprintk2</strong></span> kval, idisp</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150641280"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idisp</em></span> -- a handle value that was output from a previous instance of the <a class="link" href="FLvalue.html" title="FLvalue"><em class="citetitle">FLvalue</em></a> opcode to display the current value of the current valuator in the <span class="emphasis"><em>FLvalue</em></span> widget itself. If the user doesn't want to use this feature that displays current values, it must be set to a negative number by the user.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150638128"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kval</em></span> -- k-rate signal to be displayed.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLprintk2</em></span> is similar to <a class="link" href="FLprintk.html" title="FLprintk"><em class="citetitle">FLprintk</em></a>, but shows the k-rate variable's value only each time it changes. Useful for monitoring MIDI control changes when using sliders. It should be used for debugging purposes only, since it slows-down performance.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150634624"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLbox.html" title="FLbox"><em class="citetitle">FLbox</em></a>,
+      <a class="link" href="FLbutBank.html" title="FLbutBank"><em class="citetitle">FLbutBank</em></a>,
+      <a class="link" href="FLbutton.html" title="FLbutton"><em class="citetitle">FLbutton</em></a>,
+      <a class="link" href="FLprintk.html" title="FLprintk"><em class="citetitle">FLprintk</em></a>,
+      <a class="link" href="FLvalue.html" title="FLvalue"><em class="citetitle">FLvalue</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276150629072"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLprintk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLroller.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLprintk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLroller</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

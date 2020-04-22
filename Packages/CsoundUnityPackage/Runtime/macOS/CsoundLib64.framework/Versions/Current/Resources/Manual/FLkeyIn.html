@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLkeyIn</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLjoy.html" title="FLjoy" />
+    <link rel="next" href="FLknob.html" title="FLknob" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLkeyIn</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLjoy.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLknob.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLkeyIn"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLkeyIn" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLkeyIn</span>
+        </h2>
+        <p>FLkeyIn — 
+      Reports keys pressed (on alphanumeric keyboard) when an FLTK panel has focus.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109759584"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLkeyIn</em></span> informs about the status of a key pressed by the user on the alphanumeric keyboard when an FLTK panel has got the focus.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109757888"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kascii <span class="command"><strong>FLkeyIn</strong></span> [ifn]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109755808"></a>
+        <h2>Initialization</h2>
+        <p>ifn – (optional, default value is zero) set the behavior of FLkeyIn (see below).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109754464"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>kascii</em></span> - the ascii value of last pressed key. If the key is pressed, the value is positive, when the key is released the value is negative.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLkeyIn</em></span> is useful to know whether a key has been pressed on the computer keyboard. The behavior of this opcode depends on the optional <span class="emphasis"><em>ifn</em></span> argument.
+    </p>
+        <p>
+      If <span class="emphasis"><em>ifn</em></span> = 0 (default), <span class="emphasis"><em>FLkeyIn</em></span> outputs the ascii code of the last pressed key. If it is a special key (ctrl, shift, alt, f1-f12 etc.), a value of 256 is added to the output value in order to distinguish it from normal keys. The output will continue to output the last key value, until a new key is pressed or released. Notice that the output will be negative when a key is depressed.
+    </p>
+        <p>
+      If <span class="emphasis"><em>ifn</em></span> is set to the number of an already-allocated table having at least 512 elements, then the table element having index equal to the ascii code of the key pressed is set to 1, all other table elements are set to 0. This allows to check the state of a certain key or set of keys.
+    </p>
+        <p>
+      Be aware that you must set the <span class="emphasis"><em>ikbdcapture</em></span> parameter to something other than 0 on a designated <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a> for <span class="emphasis"><em>FLkeyIn</em></span> to capture keyboard events from that panel.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p><span class="emphasis"><em>FLkeyIn</em></span> works internally at k-rate, so it can't be used in the header as other FLTK opcodes. It must be used inside an instrument.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109745472"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLkeyIn opcode. It uses the file <a class="ulink" href="examples/FLkeyIn.csd" target="_top"><em class="citetitle">FLkeyIn.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276109743680"></a>
+          <p class="title">
+            <strong>Example 298. Example of the FLkeyIn opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276500248256"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">128</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+<span class="c1">;Example by Andres Cabrera 2007</span>
+
+<span class="nb">FLpanel</span> <span class="s">"FLkeyIn"</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+<span class="nb">FLpanelEnd</span>
+
+<span class="nb">FLrun</span>
+
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+k<span class="n">ascii</span>   <span class="nb">FLkeyIn</span>
+k<span class="n">trig</span> <span class="nb">changed</span> k<span class="n">ascii</span>
+<span class="k">if</span> <span class="p">(</span>k<span class="n">ascii</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
+  <span class="nb">printf</span> <span class="s">"Key Down: </span><span class="si">%i</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">trig</span><span class="p">,</span> k<span class="n">ascii</span>
+<span class="k">else</span>
+  <span class="nb">printf</span> <span class="s">"Key Up: </span><span class="si">%i</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">trig</span><span class="p">,</span> <span class="o">-</span>k<span class="n">ascii</span>
+<span class="k">endif</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">120</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109739104"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLjoy.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLknob.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLjoy </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLknob</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

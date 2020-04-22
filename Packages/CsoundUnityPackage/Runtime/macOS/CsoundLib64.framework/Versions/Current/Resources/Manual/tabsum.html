@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tabsum</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tabrowlin.html" title="tabrowlin" />
+    <link rel="next" href="tab2array.html" title="tab2array" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tabsum</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tabrowlin.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tab2array.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tabsum"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTabsum" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tabsum</span>
+        </h2>
+        <p>tabsum — 
+      Adding values in a range of a table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046914864"></a>
+        <h2>Description</h2>
+        <p>
+      Sums the values in an f-table in a consecutive range.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046913616"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kr <span class="command"><strong>tabsum</strong></span> ifn[[, kmin] [, kmax]]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046911536"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- table number
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046909952"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kr</em></span> -- input signal to write.
+    </p>
+        <p>
+      <span class="emphasis"><em>kmin, kmax</em></span> -- range of the table to sum.
+                                If omitted or zero they default to 0
+                                to length of the table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046907408"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tabsum opcode. It uses the file <a class="ulink" href="examples/tabsum.csd" target="_top"><em class="citetitle">tabsum.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276046905616"></a>
+          <p class="title">
+            <strong>Example 1015. Example of the tabsum opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276415082000"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tab.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">2205</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>       <span class="c1">;;; Give a value to the increment</span>
+  k<span class="n">max</span> <span class="o">=</span> <span class="mi">256</span>
+  k<span class="n">norm</span> <span class="nb">tabsum</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">max</span>
+  gk<span class="n">inc</span> <span class="o">=</span> k<span class="n">norm</span><span class="o">/</span><span class="mi">10</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+  k<span class="n">max</span> <span class="o">=</span> <span class="mi">256</span>
+  k<span class="n">x</span> <span class="o">=</span> <span class="nb">rnd</span><span class="p">(</span>k<span class="n">max</span><span class="p">)</span>
+  k<span class="n">rnd</span>  <span class="nb">tabsum</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">x</span>
+  k<span class="n">norm</span> <span class="nb">tabsum</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">max</span>
+  k<span class="n">var</span>  <span class="o">=</span> k<span class="n">rnd</span> <span class="o">/</span> k<span class="n">norm</span>          <span class="c1">;;; now n [0,1] range</span>
+  a<span class="n">sig</span>  <span class="nb">oscil</span>  k<span class="n">var</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">2</span>
+        <span class="nb">out</span>    a<span class="n">sig</span>
+<span class="c1">;;; Make randomness give 1 more often</span>
+  k<span class="n">c</span>    <span class="nb">tab</span>     <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="nb">tablew</span>  k<span class="n">c</span><span class="o">+</span>gk<span class="n">inc</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">256</span> <span class="mi">21</span> <span class="mi">1</span>  
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mf">0.1</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mf">0.1</span> <span class="mi">3</span> <span class="mi">440</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046901632"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vectorial.html" title="Vectorial Opcodes"><em class="citetitle"></em>Vectorial opcodes</a>
+</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046899568"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>Codemist Ltd</td>
+          </tr>
+          <tr>
+            <td>2009</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.11</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tabrowlin.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tab2array.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tabrowlin </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tab2array</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

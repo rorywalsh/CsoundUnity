@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>chani</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="changed2.html" title="changed2" />
+    <link rel="next" href="chano.html" title="chano" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">chani</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="changed2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="chano.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="chani"></a>
+      <div class="titlepage"></div>
+      <a id="Indexchani" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">chani</span>
+        </h2>
+        <p>chani — 
+      Reads data from the software bus
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121752576"></a>
+        <h2>Description</h2>
+        <p>
+      Reads data from a channel of the inward software bus.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121751328"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kval <span class="command"><strong>chani</strong></span> kchan</pre>
+        <pre class="synopsis">aval <span class="command"><strong>chani</strong></span> kchan</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121747488"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kchan</em></span> -- a positive integer that indicates
+    which channel of the software bus to read
+    </p>
+        <p>
+   Note that the inward and outward software busses are independent, and
+  are not mixer buses.  Also the k-rate and a-rate busses are
+  independent.  The last value remains until a new value is
+  written.  There is no imposed limit to the number of busses but they
+  use memory so small numbers are to be preferred.
+  </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121745200"></a>
+        <h2>Example</h2>
+        <p>
+      The example shows the software bus being used as an asynchronous
+    control signal to select a filter cutoff.  It assumes that an
+    external program that has access to the API is feeding the values
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+        <span class="ohdr">sr</span> <span class="op">=</span> 44100
+        <span class="ohdr">kr</span> <span class="op">=</span> 100
+        <span class="ohdr">ksmps</span> <span class="op">=</span> 1
+
+
+        <span class="oblock">instr</span>   1
+           kc   <span class="opc">chani</span>     1
+           a1   <span class="opc">oscil</span>     p4, p5, 100
+           a2   <span class="opc">lowpass2</span>  a1, kc, 200
+                <span class="opc">out</span>       a2
+        <span class="oblock">endin</span>
+        </pre>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121735104"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound 5.00</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="changed2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="chano.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">changed2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> chano</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

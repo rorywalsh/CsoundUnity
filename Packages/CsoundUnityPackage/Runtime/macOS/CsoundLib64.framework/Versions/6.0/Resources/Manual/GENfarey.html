@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GENfarey</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GENquadbezier.html" title="GENquadbezier" />
+    <link rel="next" href="GENwave.html" title="GENwave" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GENfarey</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GENquadbezier.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GENwave.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GENfarey"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGENfarey" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GENfarey</span>
+        </h2>
+        <p>"farey" — 
+      Fills a table with the Farey Sequence F<sub>n</sub> of the integer n.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024352112"></a>
+        <h2>Description</h2>
+        <p>Plugin gen in fareygen.</p>
+        <p>
+      A Farey Sequence F<sub>n</sub> of order n is a list of fractions in their lowest terms between 0 and 1 and in ascending order. Their denominators do not exceed n. 
+      This means a fraction a/b belongs to F<sub>n</sub> if 0 ≤ a ≤ b ≤ n.
+      The numerator and denominator of each fraction are always coprime.
+      0 and 1 are included in F<sub>n</sub> as the fractions 0/1 and 1/1.
+      For example F<sub>5</sub> = {0/1, 1/5, 1/4, 1/3, 2/5, 1/2, 3/5, 2/3, 3/4, 4/5, 1/1}
+      Some properties of the Farey Sequence:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+          If a/b and c/d are two successive terms of F<sub>n</sub>, then bc - ad = 1.
+        </li>
+            <li class="listitem">
+          If a/b, c/d, e/f are three successive terms of F<sub>n</sub>, then:
+          c/d = (a+e) / (b+f).
+          In this case c/d is called the mediant fraction between a/b and e/f.
+        </li>
+            <li class="listitem">
+          If n &gt; 1, then no two successive terms ofF<sub>n</sub> have the same denominator.
+        </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      The length of any Farey Sequence F<sub>n</sub> is determined by
+      |F<sub>n</sub>| = 1 + SUM over n (phi(m))
+      where phi(m) is Euler's totient function, which gives the number of integers ≤ m that are coprime to m.
+    </p>
+        <p>
+      Some values for the length of F<sub>n</sub> given n:
+      </p>
+        <div class="informaltable">
+          <table class="informaltable" border="1">
+            <colgroup>
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>n</th>
+                <th>F<sub>n</sub></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>5</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>7</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>11</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>13</td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>19</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>23</td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>29</td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>33</td>
+              </tr>
+              <tr>
+                <td>11</td>
+                <td>43</td>
+              </tr>
+              <tr>
+                <td>12</td>
+                <td>47</td>
+              </tr>
+              <tr>
+                <td>13</td>
+                <td>59</td>
+              </tr>
+              <tr>
+                <td>14</td>
+                <td>65</td>
+              </tr>
+              <tr>
+                <td>15</td>
+                <td>73</td>
+              </tr>
+              <tr>
+                <td>16</td>
+                <td>81</td>
+              </tr>
+              <tr>
+                <td>17</td>
+                <td>97</td>
+              </tr>
+              <tr>
+                <td>18</td>
+                <td>103</td>
+              </tr>
+              <tr>
+                <td>19</td>
+                <td>121</td>
+              </tr>
+              <tr>
+                <td>20</td>
+                <td>129</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024316720"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size "farey" fareynum mode</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024314816"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size</em></span> -- number of points in the table. Must
+      be a power of 2 or power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>fareynum</em></span> -- the integer n for generating Farey Sequence F<sub>n</sub>
+   </p>
+        <p>
+      <span class="emphasis"><em>mode</em></span> -- integer to trigger a specific
+      output to be written into the table:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 -- outputs floating point numbers representing the
+          elements of F<sub>n</sub>.</p>
+            </li>
+            <li class="listitem">
+              <p> 1 -- outputs delta values of successive elements of
+          F<sub>n</sub>, useful for generating note durations for
+          example.</p>
+            </li>
+            <li class="listitem">
+              <p> 2 -- outputs only the denominators of the integer
+          ratios, useful for indexing other tables or instruments for
+          example.</p>
+            </li>
+            <li class="listitem">
+              <p> 3 -- same as mode 2 but with normalised
+          output.</p>
+            </li>
+            <li class="listitem">
+              <p> 4 -- same as mode 0 but with 1 added to each number,
+          useful for generating tables for tuning opcodes, for example
+          <span class="emphasis"><em>cps2pch</em></span>.
+          </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024304192"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample"><pre class="programlisting">
+<span class="stamnt">f</span>1 0	-23 "farey" 8 0</pre>
+        Generates generates Farey Sequence F<sub>8</sub>. The table contains all
+        23 elements of F<sub>8</sub> as floating point numbers.
+        
+        <pre class="programlisting">
+<span class="stamnt">f</span>1 0 -18 "farey" 7 1</pre>
+This generates Farey Sequence F<sub>7</sub>. The table contains 18 delta values of F<sub>7</sub>,
+i.e. the difference between r<sub>i+1</sub> - r<sub>i</sub>, where r is the ith element of F<sub>n</sub>.
+ 
+        <pre class="programlisting">
+<span class="stamnt">f</span>1 0	-43 "farey" 11 2</pre>
+This generates Farey Sequence F<sub>11</sub>. The table contains the denominators of all
+43 fractions in F<sub>11</sub>.
+
+        <pre class="programlisting">
+<span class="stamnt">f</span>1 0	-43 "farey" 11 3</pre>
+This generates Farey Sequence F<sub>11</sub>. The table contains the denominators of all
+43 fractions in F<sub>11</sub>, each of those divided by 11, i.e. normalised.
+
+        <pre class="programlisting">
+<span class="stamnt">f</span>1 0	-18 "farey" 7 4</pre>
+This generates Farey Sequence F<sub>7</sub>. The table contains all fractions of F<sub>7</sub>,
+same as mode 0, but this time '1' is added to each table element. 
+      </div>
+        <p>
+    </p>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276024290240"></a>
+          <p class="title">
+            <strong>Example 1239. A simple example of the GENfarey routine.</strong>
+          </p>
+          <div class="example-contents">
+            <p>
+          See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.
+        </p>
+            <div class="refsect1">
+              <a id="idm276475662800"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">10</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">4</span>
+      k<span class="n">ndx</span> <span class="nb">init</span> <span class="mi">0</span> <span class="c1">; read out elements of F_8 one by one and print to file</span>
+      <span class="k">if</span> <span class="p">(</span>k<span class="n">ndx</span> <span class="o">&lt;</span> <span class="mi">23</span><span class="p">)</span> <span class="k">then</span>    
+      	 k<span class="n">elem</span> <span class="nb">tab</span> k<span class="n">ndx</span><span class="p">,</span> <span class="mi">1</span>
+      	 <span class="nb">fprintks</span> <span class="s">"farey8table.txt"</span><span class="p">,</span> <span class="s">"%2.6f</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span> k<span class="n">elem</span>
+      	 k<span class="n">ndx</span> <span class="o">=</span> k<span class="n">ndx</span><span class="o">+</span><span class="mi">1</span>
+      <span class="k">endif</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; initialise integer for Farey Sequence F_8</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">23</span> <span class="s">"farey"</span> <span class="mi">8</span> <span class="mi">0</span>
+      <span class="c1">; if mode=0 then the table stores all elements of the Farey Sequence</span>
+      <span class="c1">; as fractions in the range [0,1]</span>
+<span class="nb">i</span><span class="mi">4</span>	<span class="mi">0</span>     <span class="mi">1</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is a complete example of the GENfarey routine. It uses the files <a class="ulink" href="examples/genfarey-2.csd" target="_top"><em class="citetitle">genfarey-2.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275987643552"></a>
+          <p class="title">
+            <strong>Example 1240. Another example of the GENfarey routine.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276393695520"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc for RT audio input as well </span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o genfarey.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; GENfarey creates table gidelta. </span>
+<span class="c1">; The table contains the delta values of Farey Sequence 7 (p5=7).</span>
+<span class="c1">; They are used as Inter Onset Intervals (IOIs) or event durations.</span>
+<span class="c1">; If p6 is set to 1 for IOI output then the length of the table (p3=-18) is -(|F_7| - 1)</span>
+<span class="c1">; Remember that a negative sign is for non-power-of-2 table lengths.</span>
+<span class="c1">; The negative sign in front of the GEN number prevents post-normalisation of its values.</span>
+
+gi<span class="n">delta</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">18</span><span class="p">,</span><span class="s">"farey"</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">1</span>
+
+<span class="c1">; Use GENfarey with p6 set to 2 to generate the denominators of fractions of F_7 </span>
+<span class="c1">; this is used in this example as factors to create a series of pitches:</span>
+gi<span class="n">mult</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">18</span><span class="p">,</span><span class="s">"farey"</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">2</span>
+
+<span class="c1">;-------- loop and trigger instrument 901 using a Farey Sequence polyrhythm</span>
+	  <span class="kd">instr</span> <span class="nf">1</span>
+k<span class="n">indx</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">indx2</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">trigger</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">time_unit</span> <span class="nb">init</span> <span class="nb">p6</span>
+k<span class="n">start</span> <span class="nb">init</span> <span class="nb">p4</span>
+k<span class="n">loop</span> <span class="nb">init</span> <span class="nb">p5</span>
+k<span class="n">initndx</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">fn_times</span> <span class="nb">init</span> gi<span class="n">delta</span>
+k<span class="n">note</span> <span class="nb">init</span> <span class="mi">60</span>
+k<span class="n">basenote</span> <span class="nb">init</span> <span class="nb">p8</span>
+i<span class="n">fundam</span> <span class="nb">init</span> <span class="nb">p7</span>
+k<span class="n">trigger</span> <span class="nb">seqtime</span> k<span class="n">time_unit</span><span class="p">,</span> k<span class="n">start</span><span class="p">,</span> k<span class="n">loop</span><span class="p">,</span> k<span class="n">initndx</span><span class="p">,</span> k<span class="n">fn_times</span>
+  <span class="k">if</span> <span class="p">(</span>k<span class="n">trigger</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">)</span> <span class="k">then</span>
+     k<span class="n">pitch</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span>i<span class="n">fundam</span><span class="p">)</span>
+     k<span class="n">mult</span> <span class="nb">tab</span> k<span class="n">indx2</span><span class="p">,</span> gi<span class="n">mult</span>
+     k<span class="n">pitch</span> <span class="o">=</span> k<span class="n">pitch</span> <span class="o">*</span> k<span class="n">mult</span>
+     k<span class="n">note</span> <span class="o">=</span> k<span class="n">basenote</span> <span class="o">+</span> k<span class="n">mult</span>
+     <span class="nb">event</span> <span class="s">"i"</span><span class="p">,</span> <span class="mi">901</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mf">.4</span><span class="p">,</span> <span class="mf">.10</span><span class="p">,</span> k<span class="n">pitch</span><span class="p">,</span> k<span class="n">pitch</span> <span class="o">*</span> <span class="mf">.9</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>   <span class="mf">.75</span><span class="p">,</span> <span class="mf">.8</span><span class="p">,</span>  <span class="mf">1.0</span><span class="p">,</span> <span class="mf">.15</span><span class="p">,</span> <span class="mf">.0</span><span class="p">,</span>  <span class="mf">.125</span><span class="p">,</span> <span class="mf">.125</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span>  <span class="mf">1.0</span><span class="p">,</span> <span class="mf">.0</span><span class="p">,</span> <span class="mf">.0</span><span class="p">,</span>  <span class="mf">.0</span><span class="p">,</span>  <span class="mf">.0</span><span class="p">,</span>  <span class="mf">.125</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> k<span class="n">note</span>
+     k<span class="n">indx</span> <span class="o">=</span> k<span class="n">indx</span> <span class="o">+</span> <span class="mi">1</span>
+     k<span class="n">indx</span> <span class="o">=</span> k<span class="n">indx</span> <span class="o">%</span> k<span class="n">loop</span>
+     k<span class="n">indx2</span> <span class="o">=</span> k<span class="n">indx2</span> <span class="o">+</span> <span class="mi">1</span>
+     k<span class="n">indx2</span> <span class="o">=</span> k<span class="n">indx2</span> <span class="o">%</span> k<span class="n">loop</span>
+  <span class="k">endif</span>
+<span class="kd">endin</span>
+
+<span class="c1">;------ basic 2 Operators FM algorithm ----------------</span>
+	<span class="kd">instr</span> <span class="nf">901</span>
+i<span class="n">notedur</span>	<span class="o">=</span>		<span class="nb">p3</span>
+i<span class="n">maxamp</span>		<span class="o">=</span>		<span class="nb">p4</span> <span class="c1">;ampdb(p4)</span>
+i<span class="n">carrfreq</span>	<span class="o">=</span>		<span class="nb">p5</span>
+i<span class="n">modfreq</span>	<span class="o">=</span>		<span class="nb">p6</span>
+i<span class="n">lowndx</span>		<span class="o">=</span>		<span class="nb">p7</span>
+i<span class="n">ndxdiff</span>	<span class="o">=</span>		<span class="nb">p8</span><span class="o">-</span><span class="nb">p7</span>
+k<span class="n">note</span>	        <span class="o">=</span>		<span class="nb">p27</span>
+a<span class="n">ampenv</span>		<span class="nb">linseg</span>	<span class="nb">p9</span><span class="p">,</span> <span class="nb">p14</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p10</span><span class="p">,</span> <span class="nb">p15</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p11</span><span class="p">,</span> <span class="nb">p16</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p12</span><span class="p">,</span> <span class="nb">p17</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p13</span> 
+a<span class="n">devenv</span>		<span class="nb">linseg</span>	<span class="nb">p18</span><span class="p">,</span> <span class="nb">p23</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p19</span><span class="p">,</span> <span class="nb">p24</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p20</span><span class="p">,</span> <span class="nb">p25</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p21</span><span class="p">,</span> <span class="nb">p26</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p22</span>
+a<span class="n">modosc</span>		<span class="nb">oscili</span>	<span class="p">(</span>i<span class="n">lowndx</span><span class="o">+</span>i<span class="n">ndxdiff</span><span class="o">*</span>a<span class="n">devenv</span><span class="p">)</span><span class="o">*</span>i<span class="n">modfreq</span><span class="p">,</span> i<span class="n">modfreq</span><span class="p">,</span> <span class="mi">10</span> 
+a<span class="n">carosc</span>		<span class="nb">oscili</span>	i<span class="n">maxamp</span><span class="o">*</span>a<span class="n">ampenv</span><span class="p">,</span> i<span class="n">carrfreq</span><span class="o">+</span>a<span class="n">modosc</span><span class="p">,</span> <span class="mi">10</span> 
+		<span class="nb">outs</span>		a<span class="n">carosc</span><span class="p">,</span> a<span class="n">carosc</span>  
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">10</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine wave			</span>
+<span class="c1">; p4 kstart  := index offset into the Farey Sequence</span>
+<span class="c1">; p5 kloop   := end index into Farey Seq.</span>
+<span class="c1">; p6 timefac := time in seconds for one loop to complete</span>
+<span class="c1">; p7 fundam  := fundamental of the FM instrument</span>
+<span class="c1">; p8 basenote:= root pitch of the midi voice output</span>
+<span class="c1">; note that pitch structures of the midi file output are not equivalent to the</span>
+<span class="c1">; ones used for the FM real-time synthesis.</span>
+
+<span class="c1">;	start		dur		kstart	kloop   timefac	fundam. basenote</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">0.0</span>		<span class="mi">44</span>		<span class="mi">0</span> 	<span class="mi">18</span>	<span class="mi">2</span>	<span class="mf">6.05</span>	<span class="mi">60</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">4</span>		<span class="mi">30</span>		<span class="mi">0</span> 	<span class="mi">18</span>	<span class="mi">3</span>	<span class="mf">7.05</span>	<span class="mi">72</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">34</span>		<span class="mi">12</span>		<span class="mi">9</span> 	<span class="mi">18</span>	<span class="mi">3</span>	<span class="mf">7.05</span>	<span class="mi">72</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">10</span>		<span class="mi">12</span>		<span class="mi">0</span> 	<span class="mi">18</span>	<span class="mf">1.5</span>	<span class="mi">8</span>	<span class="mi">84</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">22</span>		<span class="mi">12</span>		<span class="mi">0</span> 	<span class="mi">9</span>	<span class="mf">1.5</span>	<span class="mi">8</span>	<span class="mi">84</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">15</span>		<span class="mi">16</span>		<span class="mi">0</span>	<span class="mi">18</span>	<span class="mi">1</span>	<span class="mi">5</span>	<span class="mi">48</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">22</span>		<span class="mi">20</span>		<span class="mi">5</span>	<span class="mi">17</span>	<span class="mf">1.7</span>	<span class="mi">4</span>	<span class="mi">36</span>
+
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">46</span>		<span class="mi">20</span>		<span class="mi">3</span> 	<span class="mi">11</span>	<span class="mf">2.5</span>	<span class="mf">7.04</span>	<span class="mi">71</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">51</span>		<span class="mi">20</span>		<span class="mi">5</span> 	<span class="mi">13</span>	<span class="mf">2.5</span>	<span class="mf">7.06</span>	<span class="mi">72</span>
+
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">73.5</span>		<span class="mf">1.5</span>		<span class="mi">11</span>	<span class="mi">18</span>	<span class="mf">1.5</span>	<span class="mf">5.05</span>	<span class="mi">48</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">75</span>		<span class="mi">1</span>		<span class="mi">12</span>	<span class="mi">18</span>	<span class="mi">1</span>	<span class="mf">6.03</span>	<span class="mi">58</span>	
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+        <span class="phrase">These are the diagrams of the waveforms of the GENfarey routines, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/genfarey-2_1.png" alt="gidelta ftgen 100,0,-18,&quot;farey&quot;,7,1 - delta values of Farey Sequence 7" />
+          <div class="caption">
+            <p>gidelta ftgen 100,0,-18,"farey",7,1 - delta values of Farey Sequence 7</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/genfarey-2_2.png" alt="gimult ftgen 101,0,-18,&quot;farey&quot;,7,2 - generate the denominators of fractions of F_7" />
+          <div class="caption">
+            <p>gimult ftgen 101,0,-18,"farey",7,2 - generate the denominators of fractions of F_7 </p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987632336"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Georg Boenn</td>
+          </tr>
+          <tr>
+            <td>University of Glamorgan</td>
+          </tr>
+          <tr>
+            <td>2010</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.13</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GENquadbezier.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GENwave.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GENquadbezier </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GENwave</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

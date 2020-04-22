@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>websocket</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="waveset.html" title="waveset" />
+    <link rel="next" href="weibull.html" title="weibull" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">websocket</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="waveset.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="weibull.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="websocket"></a>
+      <div class="titlepage"></div>
+      <a id="IndexWebsocket" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">websocket</span>
+        </h2>
+        <p>websocket — 
+      Read and write signals and arrays using a websocket connection.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036701104"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in websocketIO.</p>
+        <p>
+      <span class="emphasis"><em>websocket</em></span> reads and writes <span class="emphasis"><em>N</em></span> signals and arrays using a websocket connection.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036698640"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">xout1[, xout2, xout3, ..., xoutN] <span class="command"><strong>websocket</strong></span> iport, xin</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036696528"></a>
+        <h2>Initialization</h2>
+        <p>
+        <span class="emphasis"><em>iport</em></span> the local web port to read/write data.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036694912"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xout1,... xoutN</em></span> -- The output variables which contain data received from a websocket. On the web side the websocket must send data using a protocol name that matches the output variable name e.g. "ksignal" for a k-rate variable. If an array is intended to be received from a websocket it must be first initialised before being used as an output to the opcode. Otherwise the opcode doesn't know what size data to expect from the websocket. When sending data to a websocket from the web page it must be sent as a 32 or 64 bit array, depending on the build of Csound that is being used. 
+    </p>
+        <p>
+        <span class="emphasis"><em>xin</em></span> -- The input variable
+        which contains data to be sent to a websocket. On the web
+        side the websocket receives data using a protocol name that
+        matches the input variable name e.g. "ksignal" for a k-rate
+        variable. When receiving data from a websocket on the web page
+        it must be read as a 32 or 64 bit array, depending on the
+        build of Csound that is being used. </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">The total number of
+        input and output arguments is limited to 20.</td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+        <p> 
+        A-rate variables must be send and received as arrays that are <span class="emphasis"><em>ksmps</em></span> samples large. A-rate arrays similarly are sent and received as <span class="emphasis"><em>ksmps</em></span> by the number of elements in the array. K-rate variables are sent and received as a single element array. K-rate arrays are sent and received as arrays with matching numbers of elements. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036689168"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a simple example of the websocket opcode. It uses the file <a class="ulink" href="examples/websocket.csd" target="_top"><em class="citetitle">websocket.csd</em></a> and <a class="ulink" href="examples/websocket.html" target="_top"><em class="citetitle">websocket.html</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276036686576"></a>
+          <p class="title">
+            <strong>Example 1134. Example of the websocket opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276404798752"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">256</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+
+<span class="nb">schedule</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    k<span class="n">lfo</span> <span class="nb">lfo</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+    i<span class="n">port</span> <span class="nb">init</span> <span class="mi">8888</span>
+    k<span class="n">input</span> w<span class="n">ebsocket</span> i<span class="n">port</span><span class="p">,</span> k<span class="n">lfo</span>
+    <span class="nb">printk2</span> k<span class="n">input</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036682576"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="OSClisten.html" title="OSClisten"><em class="citetitle">OSClisten</em></a>
+      <a class="link" href="OSCsend.html" title="OSCsend"><em class="citetitle">OSCsend</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036679680"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Edward Costello;</td>
+          </tr>
+          <tr>
+            <td>NUIM, 2015</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="waveset.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="weibull.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">waveset </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> weibull</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

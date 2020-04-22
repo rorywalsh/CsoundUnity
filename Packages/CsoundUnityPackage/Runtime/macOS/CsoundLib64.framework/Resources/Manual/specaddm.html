@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>specaddm</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="spdist.html" title="spdist" />
+    <link rel="next" href="specdiff.html" title="specdiff" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">specaddm</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="spdist.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="specdiff.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="specaddm"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpecaddm" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">specaddm</span>
+        </h2>
+        <p>specaddm — 
+      Perform a weighted add of two input spectra.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066289952"></a>
+        <h2>Description</h2>
+        <p>
+      Perform a weighted add of two input spectra.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066288720"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">wsig <span class="command"><strong>specaddm</strong></span> wsig1, wsig2 [, imul2]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066286624"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imul2</em></span> (optional, default=0) -- if non-zero, scale the <span class="emphasis"><em>wsig2</em></span> magnitudes before adding. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066284528"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>wsig1</em></span> -- the first input spectra.
+    </p>
+        <p>
+      <span class="emphasis"><em>wsig2</em></span> -- the second input spectra.
+    </p>
+        <p>
+      Do a weighted add of two input spectra. For each channel of the two input spectra, the two magnitudes are combined and written to the output according to:
+      </p>
+        <div class="literallayout">
+          <p><br />
+magout = mag1in + mag2in * imul2</p>
+        </div>
+        <p>
+    </p>
+        <p>
+      The operation is performed whenever the input <span class="emphasis"><em>wsig1</em></span> is sensed to be new. This unit will (at Initialization) verify the consistency of the two spectra (equal size, equal period, equal mag types).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066279600"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="specdiff.html" title="specdiff"><em class="citetitle">specdiff</em></a>,
+      <a class="link" href="specfilt.html" title="specfilt"><em class="citetitle">specfilt</em></a>,
+      <a class="link" href="spechist.html" title="spechist"><em class="citetitle">spechist</em></a>,
+      <a class="link" href="specscal.html" title="specscal"><em class="citetitle">specscal</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="spdist.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="specdiff.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">spdist </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> specdiff</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

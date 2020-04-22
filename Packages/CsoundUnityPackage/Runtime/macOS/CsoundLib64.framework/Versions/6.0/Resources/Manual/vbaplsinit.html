@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vbaplsinit</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vbap8move.html" title="vbap8move" />
+    <link rel="next" href="vbapz.html" title="vbapz" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vbaplsinit</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vbap8move.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vbapz.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vbaplsinit"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVbaplsinit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vbaplsinit</span>
+        </h2>
+        <p>vbaplsinit — 
+      Configures VBAP output according to loudspeaker parameters.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042326816"></a>
+        <h2>Description</h2>
+        <p>
+      Configures VBAP output according to loudspeaker parameters.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042325568"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vbaplsinit</strong></span> idim, ilsnum [, idir1] [, idir2] [...] [, idir32]</pre>
+        <pre class="synopsis"><span class="command"><strong>vbaplsinit</strong></span> idim, ilsnum, ilsarray</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042322416"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idim</em></span> -- dimensionality of loudspeaker
+      array. Either 2 or 3.  If the dimension has a fractional part
+      then that is used as the index of the layout created (used in
+      <span class="emphasis"><em>vbap</em></span>, <span class="emphasis"><em>vbapz</em></span> and
+      <span class="emphasis"><em>vbapg</em></span> only).  The factional part should be
+      between .00 and .99.
+    </p>
+        <p>
+      <span class="emphasis"><em>ilsnum</em></span> -- number of loudspeakers. In two
+      dimensions, the number can vary from 2 to 64. In three
+      dimensions, the number can vary from 3 and 64.
+    </p>
+        <p>
+      <span class="emphasis"><em>idir1, idir2, ..., idir32</em></span> -- directions of
+      loudspeakers. Number of directions must be less than or equal to
+      16. In two-dimensional loudspeaker positioning,
+      <span class="emphasis"><em>idir</em></span>n is the azimuth angle respective to
+      <span class="emphasis"><em>n</em></span>th channel.  In three-dimensional
+      loudspeaker positioning, fields are the azimuth and elevation
+      angles of each loudspeaker consequently
+      (<span class="emphasis"><em>azi1</em></span>, <span class="emphasis"><em>ele1</em></span>,
+      <span class="emphasis"><em>azi2</em></span>, <span class="emphasis"><em>ele2</em></span>, etc.).
+    </p>
+        <p>
+      <span class="emphasis"><em>ilsarray</em></span> -- a one dimesional array of the
+      data as described above.
+    </p>
+        <p>
+      </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top"> In 2 dimensions the angle between two adjacent speakers
+      must be less than 179 degrees (170 degrees in earlier versions).
+      This is a restriction of the algorithm.</td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042313024"></a>
+        <h2>Performance</h2>
+        <p>
+      VBAP distributes the signal using loudspeaker data configured with <span class="emphasis"><em>vbaplsinit</em></span>. The signal is applied to, at most, two loudspeakers in 2-D loudspeaker configurations, and three loudspeakers in 3-D loudspeaker configurations. If the virtual source is panned outside the region spanned by loudspeakers, the nearest loudspeakers are used in panning.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042311088"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vbaplsinit opcode. It uses the file <a class="ulink" href="examples/vbaplsinit.csd" target="_top"><em class="citetitle">vbaplsinit.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276042309296"></a>
+          <p class="title">
+            <strong>Example 1083. Example of the vbaplsinit opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276408818128"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o vbaplsinit.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">8</span>	
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">vbaplsinit</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>		<span class="c1">;5 speakers for 5.1 amps</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">sig</span> <span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>			<span class="c1">;loop beats.wav</span>
+k<span class="n">azim</span> <span class="nb">line</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">355</span>				
+a<span class="n">1</span><span class="p">,</span>a<span class="n">2</span><span class="p">,</span>a<span class="n">3</span><span class="p">,</span>a<span class="n">4</span><span class="p">,</span>a<span class="n">5</span><span class="p">,</span>a<span class="n">6</span><span class="p">,</span>a<span class="n">7</span><span class="p">,</span>a<span class="n">8</span> <span class="nb">vbap8</span>  a<span class="n">sig</span><span class="p">,</span> k<span class="n">azim</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">;change azimuth of soundsource</span>
+<span class="c1">; Speaker mapping</span>
+a<span class="n">FL</span> <span class="o">=</span> a<span class="n">1</span> 						<span class="c1">; Front Left</span>
+a<span class="n">MF</span> <span class="o">=</span> a<span class="n">5</span> 						<span class="c1">; Mid Front </span>
+a<span class="n">FR</span> <span class="o">=</span> a<span class="n">2</span> 						<span class="c1">; Front Right</span>
+a<span class="n">BL</span> <span class="o">=</span> a<span class="n">3</span> 						<span class="c1">; Back Left</span>
+a<span class="n">BR</span> <span class="o">=</span> a<span class="n">4</span> 						<span class="c1">; Back Right</span>
+    <span class="nb">outo</span> a<span class="n">FL</span><span class="p">,</span>a<span class="n">FR</span><span class="p">,</span>a<span class="n">BL</span><span class="p">,</span>a<span class="n">BR</span><span class="p">,</span>a<span class="n">MF</span><span class="p">,</span>a<span class="n">6</span><span class="p">,</span>a<span class="n">7</span><span class="p">,</span>a<span class="n">8</span>			<span class="c1">;a6, a7 and a8 are dummies				</span>
+
+<span class="kd">endin</span> 
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+      See the other entries of the vbap opcodes for different examples.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042305216"></a>
+        <h2>Reference</h2>
+        <p>
+      Ville Pulkki: <span class="quote">“<span class="quote">Virtual Sound Source Positioning Using Vector Base Amplitude Panning</span>”</span> <span class="emphasis"><em>Journal of the Audio Engineering Society</em></span>, 1997 June, Vol. 45/6, p. 456.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042303072"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vbap.html" title="vbap"><em class="citetitle">vbap</em></a>,
+      <a class="link" href="vbapg.html" title="vbapg"><em class="citetitle">vbapg</em></a>,
+      <a class="link" href="vbap4.html" title="vbap4"><em class="citetitle">vbap4</em></a>,
+      <a class="link" href="vbap4move.html" title="vbap4move"><em class="citetitle">vbap4move</em></a>,
+      <a class="link" href="vbap8.html" title="vbap8"><em class="citetitle">vbap8</em></a>,
+      <a class="link" href="vbap8move.html" title="vbap8move"><em class="citetitle">vbap8move</em></a>,
+      <a class="link" href="vbap16.html" title="vbap16"><em class="citetitle">vbap16</em></a>,
+      <a class="link" href="vbap16move.html" title="vbap16move"><em class="citetitle">vbap16move</em></a>,
+      <a class="link" href="vbapz.html" title="vbapz"><em class="citetitle">vbapz</em></a>,
+      <a class="link" href="vbapzmove.html" title="vbapzmove"><em class="citetitle">vbapzmove</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042293120"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Ville Pulkki</td>
+          </tr>
+          <tr>
+            <td>Sibelius Academy Computer Music Studio</td>
+          </tr>
+          <tr>
+            <td>Laboratory of Acoustics and Audio Signal Processing</td>
+          </tr>
+          <tr>
+            <td>Helsinki University of Technology</td>
+          </tr>
+          <tr>
+            <td>Helsinki, Finland</td>
+          </tr>
+          <tr>
+            <td>May 2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound Version 4.07</p>
+        <p>Multiple layouts new ib version 5.17.14</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vbap8move.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vbapz.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vbap8move </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vbapz</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

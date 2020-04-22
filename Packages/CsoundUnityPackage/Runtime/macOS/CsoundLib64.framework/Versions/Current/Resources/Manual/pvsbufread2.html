@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsbufread2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsbufread.html" title="pvsbufread" />
+    <link rel="next" href="pvscale.html" title="pvscale" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsbufread2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsbufread.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvscale.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvsbufread2"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpvsbufread2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsbufread2</span>
+        </h2>
+        <p>pvsbufread2 — 
+      This opcode reads a circular buffer of f-signals (streaming PV signals), with binwise additional delays.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065506432"></a>
+        <h2>Description</h2>
+        <p>
+      This opcode reads from a circular buffer of length ilen (secs),
+      taking a handle for the buffer and a time pointer, which holds the
+      current read position (also in seconds). It is used in conjunction with a <span class="emphasis"><em>pvsbuffer</em></span> opocde. 
+      Reading is circular, wrapping around at the end of the buffer. Extra delay times are taken from
+      a function table, with each point on it defining a delay time in seconds affecting the corresponding bin.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065504384"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsbufread2</strong></span>  ktime, khandle, ift1, ift2 </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065502288"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ift1</em></span> -- function table with at least fftisze/2+1 points where delays (in secs) for bin amplitudes are
+      set (function table positions are equivalent to bin numbers)
+    </p>
+        <p>
+      <span class="emphasis"><em>ift2</em></span> -- function table with at least fftisze/2+1 points where delays (in secs) for bin frequencies are
+      set (function table positions are equivalent to bin numbers)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065499584"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>ktime</em></span> -- time position of reading pointer (in secs).
+    </p>
+        <p>
+      <span class="emphasis"><em>khandle</em></span> -- handle identifying the buffer to be read. When using k-rate
+      handles, it is important to initialise the k-rate variable to a given existing handle. When changing
+      buffers, fsig buffers need to be compatible (same fsig format).
+    </p>
+        <p>
+      With this opcode and <a class="link" href="pvsbuffer.html" title="pvsbuffer"><em class="citetitle">pvsbuffer</em></a>, it is possible to, among other things:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">time-stretch/compress a fsig stream, by reading it at
+        different rates</li>
+            <li class="listitem">delay a fsig or portions of it.</li>
+            <li class="listitem">'brassage' two or more fsigs by switching buffers, since
+        the reading handles are k-rate. Note that, when using k-rate
+        handles, it is important to initialise the k-rate variable to a
+        given handle (so that the fsig initialisation can take place)
+        and it is only possible to switch handles between compatible
+        fsig buffers (with the same fftsize and overlap).</li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        It is important that the handle value passed to <span class="emphasis"><em>pvsbufread2</em></span> is valid and was created by <a class="link" href="pvsbuffer.html" title="pvsbuffer"><em class="citetitle">pvsbuffer</em></a>. Csound will crash with invalid handles.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065490144"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pvsbufread2 opcode. It uses the file <a class="ulink" href="examples/pvsbufread2.csd" target="_top"><em class="citetitle">pvsbufread2.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276065488352"></a>
+          <p class="title">
+            <strong>Example 765. Example of the pvsbufread2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276432587184"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">ksmps</span>  <span class="o">=</span> <span class="mi">64</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+k<span class="n">cnt</span>     <span class="nb">init</span>         <span class="mi">0</span>
+i<span class="n">fftsize</span> <span class="o">=</span>            <span class="mi">2048</span>
+i<span class="n">hop</span>     <span class="o">=</span>            i<span class="n">fftsize</span><span class="o">/</span><span class="mi">4</span>
+
+a<span class="n">1</span>       <span class="nb">diskin2</span>      <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">1</span>       <span class="o">=</span>            a<span class="n">1</span><span class="o">*</span><span class="mf">0.5</span>
+<span class="n">fsig1</span>    <span class="nb">pvsanal</span>      a<span class="n">1</span><span class="p">,</span> i<span class="n">fftsize</span><span class="p">,</span> i<span class="n">hop</span><span class="p">,</span> i<span class="n">fftsize</span><span class="p">,</span> <span class="mi">1</span>
+i<span class="n">h</span><span class="p">,</span> k<span class="n">t</span>   <span class="nb">pvsbuffer</span>    <span class="n">fsig1</span><span class="p">,</span> <span class="mi">10</span>
+
+<span class="n">fsig2</span>    <span class="nb">pvsbufread2</span>  k<span class="n">t</span><span class="p">,</span> i<span class="n">h</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">fsig3</span>    <span class="nb">pvsbufread2</span>  k<span class="n">t</span><span class="p">,</span> i<span class="n">h</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+
+a<span class="n">2</span>       <span class="nb">pvsynth</span>      <span class="n">fsig3</span>
+a<span class="n">3</span>       <span class="nb">pvsynth</span>      <span class="n">fsig2</span>
+
+         <span class="nb">outs</span>         a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">2048</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">0</span> <span class="mi">128</span> <span class="mf">1.1</span> <span class="mi">128</span> <span class="mf">0.5</span>  <span class="mi">256</span> <span class="mf">1.8</span> <span class="mi">512</span> <span class="mf">1.1</span> <span class="mi">1024</span> <span class="mf">0.1</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">2048</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">1</span> <span class="mi">128</span> <span class="mf">0.2</span> <span class="mi">128</span> <span class="mf">0.05</span> <span class="mi">256</span> <span class="mf">0.5</span> <span class="mi">512</span> <span class="mf">0.9</span> <span class="mi">1024</span> <span class="mf">0.1</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">60</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065484336"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvsanal.html" title="pvsanal"><em class="citetitle">pvsanal</em></a>,
+      <a class="link" href="pvsynth.html" title="pvsynth"><em class="citetitle">pvsynth</em></a>,
+      <a class="link" href="pvsbuffer.html" title="pvsbuffer"><em class="citetitle">pvsbuffer</em></a>,
+      <a class="link" href="pvsadsyn.html" title="pvsadsyn"><em class="citetitle">pvsadsyn</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065479664"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>July 2011</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsbufread.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvscale.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsbufread </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvscale</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

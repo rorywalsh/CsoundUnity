@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLcloseButton</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLbutton.html" title="FLbutton" />
+    <link rel="next" href="FLcolor.html" title="FLcolor" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLcloseButton</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLbutton.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLcolor.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLcloseButton"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLcloseButton" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLcloseButton</span>
+        </h2>
+        <p>FLcloseButton — 
+      A FLTK widget opcode that creates a button that will close the panel
+      window it is a part of.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110460368"></a>
+        <h2>Description</h2>
+        <p>
+      A FLTK widget opcode that creates a button that will close the panel
+      window it is a part of.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110459088"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ihandle <span class="command"><strong>FLcloseButton</strong></span> "label", iwidth, iheight, ix, iy</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110456928"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> -- a handle value (an integer number) that unequivocally references a corresponding widget. This is used by other opcodes that modify a widget's properties (see <a class="link" href="ControlFltkAppearance.html" title="Modifying FLTK Widget Appearance"><em class="citetitle">Modifying FLTK Widget Appearance</em></a>). It is automatically output by <span class="emphasis"><em>FLcloseButton</em></span> and must not be set by the user label. (The user label is a double-quoted string containing some user-provided text placed near the widget.)
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">label</span>”</span></em></span> -- a double-quoted string containing some user-provided text, placed near the corresponding widget.
+    </p>
+        <p>
+      Notice that with <span class="emphasis"><em>FLcloseButton</em></span>, it is not necessary to call the <a class="link" href="FLsetTextType.html" title="FLsetTextType"><em class="citetitle">FLsetTextType</em></a> opcode at all in order to use a symbol. In this case, it is sufficient to set a label starting with <span class="quote">“<span class="quote">@</span>”</span> followed by the proper formatting string.
+    </p>
+        <p>
+      The following symbols are supported:
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/symbols.png" alt="FLTK label supported symbols." />
+          <div class="caption">
+            <p>FLTK label supported symbols.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+        <p>
+      The @ sign may be followed by the following optional <span class="quote">“<span class="quote">formatting</span>”</span> characters, in this order:
+
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p><span class="quote">“<span class="quote">#</span>”</span> forces square scaling rather than distortion to the widget's shape.</p>
+            </li>
+            <li class="listitem">
+              <p>+[1-9] or -[1-9] tweaks the scaling a little bigger or smaller.</p>
+            </li>
+            <li class="listitem">
+              <p>[1-9] rotates by a multiple of 45 degrees. <span class="quote">“<span class="quote">6</span>”</span> does nothing, the others point in the direction of that key on a numeric keypad.</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110439120"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLbutton.html" title="FLbutton"><em class="citetitle">FLbutton</em></a>,
+      <a class="link" href="FLbox.html" title="FLbox"><em class="citetitle">FLbox</em></a>,
+      <a class="link" href="FLbutBank.html" title="FLbutBank"><em class="citetitle">FLbutBank</em></a>,
+      <a class="link" href="FLprintk.html" title="FLprintk"><em class="citetitle">FLprintk</em></a>,
+      <a class="link" href="FLprintk2.html" title="FLprintk2"><em class="citetitle">FLprintk2</em></a>,
+      <a class="link" href="FLvalue.html" title="FLvalue"><em class="citetitle">FLvalue</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110432688"></a>
+        <h2>Credits</h2>
+        <p>Author: Steven Yi</p>
+        <p>New in version 5.05</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLbutton.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLcolor.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLbutton </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLcolor</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

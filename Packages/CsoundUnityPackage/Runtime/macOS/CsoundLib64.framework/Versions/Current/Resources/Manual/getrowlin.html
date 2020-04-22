@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>getrowlin</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="getrow.html" title="getrow" />
+    <link rel="next" href="getseed.html" title="getseed" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">getrowlin</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="getrow.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="getseed.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="getrowlin"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGetrowlin" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">getrowlin</span>
+        </h2>
+        <p>getrowlin — 
+      Copy a row from a 2D array or table, with interpolation between rows
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100437376"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in beosc.</p>
+        <p>
+      Given a 2D array (i- or k- array), or a table representing a
+      2D matrix, get a row of this matrix (possibly a slice). If krow is
+      not an integer, the values are the result of the interpolation
+      between the two adjacent rows.
+      
+      Assuming such a 2D matrix containing multiple rows of sampled streams
+      (for instance, the amplitudes of a set of oscillators, sampled at a
+      regular interval), this opcode extracts one row of that data with
+      linear interpolation between adjacent rows (if the row is not a round
+      number) and places the result in a 1D array
+	</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100435184"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kOut[] <span class="command"><strong>getrowlin</strong></span> kMtx[], krow [, kstart, kend, kstep ]</pre>
+        <pre class="synopsis">kOut[] <span class="command"><strong>getrowlin</strong></span> krow, ifn, inumcols [, iskip, start, iend, istep ]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100431296"></a>
+        <h2>Initialization / Performance</h2>
+        <p>
+      <span class="emphasis"><em>kMtrx[]</em></span> - a 2D array
+    </p>
+        <p>
+      <span class="emphasis"><em>krow</em></span> - the row to read (can be a fractional number,
+      in which case interpolation with the next row is performed)
+    </p>
+        <p>
+      <span class="emphasis"><em>kstart</em></span> - start index to read from the row (default = 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>kend</em></span> - end index to read from the row (not inclusive)
+    </p>
+        <p>
+      <span class="emphasis"><em>kstep</em></span> - step used to read the along the row (default = 1)
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> - in the case of using a table as input, iskip indicates
+      the start of the sampled data (skipping a possible header in the data) (default = 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>inumcols</em></span> - in the case of using a table as input, inumcols
+      indicates the number of columns of the 2D matrix. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100424368"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the getrowlin opcode. It uses the file <a class="ulink" href="examples/getrowlin.csd" target="_top"><em class="citetitle">getrowlin.csd</em></a>. See also the example for beadsynt: <a class="ulink" href="examples/beadsynt.csd" target="_top"><em class="citetitle">beadsynt.csd</em></a>
+      </p>
+        <div class="example">
+          <a id="idm276100420800"></a>
+          <p class="title">
+            <strong>Example 400. Example of the getrowlin opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276465516288"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/*
+
+This is the example file for getrowlin
+
+getrowlin
+=========
+
+  Given a 2D array (i- or k- array), or a table representing a
+  2D matrix, get a row of this matrix (possibly a slice). If krow is
+  not an integer, the values are the result of the interpolation
+  between the two adjacent rows.
+
+  Assuming such a 2D matrix containing multiple rows of sampled streams
+  (for instance, the amplitudes of a set of oscillators, sampled at a
+  regular interval), this opcode extracts one row of that data with
+  linear interpolation between adjacent rows and places the result in
+  a 1D array
+
+  NB: The destination array (the left hand term) does not
+      need to be previously initialized
+
+  NB2: if the destination array is too small to fit the data, it will
+       be enlarged
+
+Syntax
+======
+
+kOut[] getrowlin kMtrx[], krow, kstart=0, kend=0, kstep=1
+kOut[] getrowlin krow, ifn, inumcols, iskip=0, istart=0, iend=0, istep=1
+
+      
+kMtrx[]  : a 2D array
+krow     : the row to read (can be a fractional number, in which case interpolation
+           with the next row is performed)
+kstart   : start index to read from the row 
+kend     : end index to read from the row (not inclusive)
+kstep    : step used to read the along the row
+iskip    : in the case of using a table as input, iskip indicates the start of the
+           sampled data (skipping a possible header in the data)
+inumcols : in the case of using a table as input, inumcols indicates the number of
+           columns of the 2D matrix.
+      
+*/</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; just a simple test of the bare functionality</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; make a 4x3 array</span>
+  k<span class="n">Mtx</span><span class="p">[]</span> <span class="nb">init</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span>
+  k<span class="n">Mtx</span> <span class="nb">fillarray</span>  <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>   \
+                 <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span>   \
+                 <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span>
+  k<span class="n">row</span> <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">2</span>
+  <span class="nb">printk2</span> k<span class="n">row</span><span class="p">,</span> <span class="mi">20</span>
+  k<span class="n">Out</span><span class="p">[]</span> <span class="n">getrowlin</span> k<span class="n">Mtx</span><span class="p">,</span> k<span class="n">row</span>
+  <span class="n">printarray</span> k<span class="n">Out</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">"kOut"</span>
+
+  <span class="c1">; the same, but use cosine interpolation</span>
+  k<span class="n">row0</span> <span class="o">=</span> <span class="nb">floor</span><span class="p">(</span>k<span class="n">row</span><span class="p">)</span>
+  k<span class="n">row1</span> <span class="o">=</span> k<span class="n">row0</span> <span class="o">+</span> <span class="mi">1</span>
+  k<span class="n">rowcos</span> <span class="o">=</span> <span class="n">lincos</span><span class="p">(</span>k<span class="n">row</span><span class="p">,</span> k<span class="n">row0</span><span class="p">,</span> k<span class="n">row1</span><span class="p">,</span> k<span class="n">row0</span><span class="p">,</span> k<span class="n">row1</span><span class="p">)</span>
+  k<span class="n">Out2</span><span class="p">[]</span> <span class="n">getrowlin</span> k<span class="n">Mtx</span><span class="p">,</span> k<span class="n">rowcos</span>
+  <span class="n">printarray</span> k<span class="n">Out2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">"kOut2"</span>
+<span class="kd">endin</span>
+
+<span class="c1">; simplified example taken from beadsynt, to show a practical use case</span>
+<span class="c1">; this uses the file fox.mtx.wav, which is not a real soundfile, but</span>
+<span class="c1">; a 2D matrix saved as a soundfile, generated with loristrck_pack</span>
+<span class="c1">; (see https://github.com/gesellkammer/loristrck)      </span>
+<span class="kd">instr</span> <span class="nf">2</span>
+  i<span class="n">fn</span> <span class="nb">ftgentmp</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">"fox.mtx.wav"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+  <span class="c1">; ifn is organized as follow:</span>
+  <span class="c1">; header: iskip, idt, inumcols, inumrows, itimestart</span>
+  <span class="c1">; multiple rows of the form f0, a0, bw0, f1, a1, bw1, ...    </span>
+  i<span class="n">skip</span>      <span class="nb">tab_i</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">fn</span>
+  i<span class="n">dt</span>        <span class="nb">tab_i</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">fn</span>
+  i<span class="n">numcols</span>   <span class="nb">tab_i</span> <span class="mi">2</span><span class="p">,</span> i<span class="n">fn</span>
+  i<span class="n">numrows</span>   <span class="nb">tab_i</span> <span class="mi">3</span><span class="p">,</span> i<span class="n">fn</span>
+  i<span class="n">timestart</span> <span class="nb">tab_i</span> <span class="mi">4</span><span class="p">,</span> i<span class="n">fn</span>
+  i<span class="n">numpartials</span> <span class="o">=</span> i<span class="n">numcols</span> <span class="o">/</span> <span class="mi">3</span>
+  i<span class="n">maxrow</span> <span class="o">=</span> i<span class="n">numrows</span> <span class="o">-</span> <span class="mi">2</span>
+  i<span class="n">dur</span> <span class="o">=</span> i<span class="n">numrows</span> <span class="o">*</span> i<span class="n">dt</span>
+  k<span class="n">freqscale</span> <span class="nb">cosseg</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">dur</span><span class="p">,</span> <span class="mi">2</span>  
+  k<span class="n">playhead</span>  <span class="nb">phasor</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span>i<span class="n">dur</span><span class="p">)</span><span class="o">*</span>i<span class="n">dur</span>
+  k<span class="n">row</span> <span class="o">=</span> <span class="nb">limit</span><span class="p">(</span>k<span class="n">playhead</span> <span class="o">/</span> i<span class="n">dt</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">maxrow</span><span class="p">)</span>
+  <span class="c1">;                                              start end step  </span>
+  k<span class="n">Freqs</span><span class="p">[]</span> <span class="n">getrowlin</span> k<span class="n">row</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">numcols</span><span class="p">,</span> i<span class="n">skip</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>  <span class="mi">3</span>
+  k<span class="n">Amps</span><span class="p">[]</span>  <span class="n">getrowlin</span> k<span class="n">row</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">numcols</span><span class="p">,</span> i<span class="n">skip</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>  <span class="mi">3</span>
+  k<span class="n">Bws</span><span class="p">[]</span>   <span class="n">getrowlin</span> k<span class="n">row</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">numcols</span><span class="p">,</span> i<span class="n">skip</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>  <span class="mi">3</span>
+  a<span class="n">out</span> <span class="n">beadsynt</span> k<span class="n">Freqs</span><span class="p">,</span> k<span class="n">Amps</span><span class="p">,</span> k<span class="n">Bws</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">freqscale</span>
+  <span class="nb">outch</span> <span class="mi">1</span><span class="p">,</span> a<span class="n">out</span>
+  <span class="k">if</span><span class="p">(</span><span class="nb">timeinsts</span><span class="p">()</span> <span class="o">&gt;</span> i<span class="n">dur</span><span class="p">)</span> <span class="k">then</span>
+    <span class="nb">event</span> <span class="s">"e"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+  <span class="k">endif</span>
+<span class="kd">endin</span>
+ 
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">3600</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100419088"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="tabrowlin.html" title="tabrowlin"><em class="citetitle">tabrowlin</em></a>,
+      <a class="link" href="beadsynt.html" title="beadsynt"><em class="citetitle">beadsynt</em></a>,
+      <a class="link" href="getrow.html" title="getrow"><em class="citetitle">getrow</em></a>,
+      <a class="link" href="slicearray.html" title="slicearray"><em class="citetitle">slicearray</em></a>,
+      <a class="link" href="copyf2array.html" title="copyf2array"><em class="citetitle">copyf2array</em></a>,
+	  <a class="link" href="tab2array.html" title="tab2array"><em class="citetitle">tab2array</em></a>,
+      <a class="link" href="ftslice.html" title="ftslice"><em class="citetitle">ftslice</em></a>,
+   	</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100411296"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2018</p>
+        <p>New plugin in version 6.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="getrow.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="getseed.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">getrow </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> getseed</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

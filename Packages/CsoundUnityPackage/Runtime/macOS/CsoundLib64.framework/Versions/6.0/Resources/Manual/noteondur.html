@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>noteondur</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="noteondur2.html" title="noteondur2" />
+    <link rel="next" href="notnum.html" title="notnum" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">noteondur</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="noteondur2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="notnum.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="noteondur"></a>
+      <div class="titlepage"></div>
+      <a id="IndexNoteondur" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">noteondur</span>
+        </h2>
+        <p>noteondur — 
+      Sends a noteon and a noteoff MIDI message both with the same channel, number and velocity.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083917440"></a>
+        <h2>Description</h2>
+        <p>
+      Sends a noteon and a noteoff MIDI message both with the same channel, number and velocity.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083916160"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>noteondur</strong></span> ichn, inum, ivel, idur</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083914208"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ichn</em></span> -- MIDI channel number (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>inum</em></span> -- note number (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>ivel</em></span> -- velocity (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>idur</em></span> -- how long, in seconds, this note should last.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083910112"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>noteondur</em></span> (i-rate note on with duration) sends a noteon and a noteoff MIDI message both with the same channel, number and velocity. Noteoff message is sent after <span class="emphasis"><em>idur</em></span> seconds are elapsed by the time <span class="emphasis"><em>noteondur</em></span> was active.
+    </p>
+        <p>
+      <span class="emphasis"><em>noteondur</em></span> differs from <span class="emphasis"><em>noteondur2</em></span> in that <span class="emphasis"><em>noteondur</em></span> truncates note duration when current instrument is deactivated by score or by real-time playing, while <span class="emphasis"><em>noteondur2</em></span> will extend performance time of current instrument until <span class="emphasis"><em>idur</em></span> seconds have elapsed. In real-time playing, it is suggested to use <span class="emphasis"><em>noteondur</em></span> also for undefined durations, giving a large <span class="emphasis"><em>idur</em></span> value.
+    </p>
+        <p>
+      Any number of <span class="emphasis"><em>noteondur</em></span> opcodes can appear in the same Csound instrument, allowing chords to be played by a single instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083903040"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the noteondur opcode. It uses the file <a class="ulink" href="examples/noteondur.csd" target="_top"><em class="citetitle">noteondur.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276083901248"></a>
+          <p class="title">
+            <strong>Example 617. Example of the noteondur opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <p>This example generates notes for every note received on the MIDI input. It generates MIDI notes on csound's MIDI output, so be sure to connect something.</p>
+            <div class="refsect1">
+              <a id="idm276446419168"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d         -M0  -Q1<span class="c1">;;;RT audio I/O with MIDI in</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; Example by Giorgio Zucco 2007</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>  <span class="c1">;Turned on by MIDI notes on channel 1</span>
+
+  i<span class="n">fund</span>   <span class="nb">notnum</span>
+  i<span class="n">vel</span> 	<span class="nb">veloc</span>
+  i<span class="n">dur</span> <span class="o">=</span> <span class="mi">1</span>
+
+  <span class="c1">;chord with single key</span>
+  <span class="nb">noteondur</span> 	<span class="mi">1</span><span class="p">,</span> i<span class="n">fund</span><span class="p">,</span>   i<span class="n">vel</span><span class="p">,</span> i<span class="n">dur</span>
+  <span class="nb">noteondur</span> 	<span class="mi">1</span><span class="p">,</span> i<span class="n">fund</span><span class="o">+</span><span class="mi">3</span><span class="p">,</span> i<span class="n">vel</span><span class="p">,</span> i<span class="n">dur</span>
+  <span class="nb">noteondur</span> 	<span class="mi">1</span><span class="p">,</span> i<span class="n">fund</span><span class="o">+</span><span class="mi">7</span><span class="p">,</span> i<span class="n">vel</span><span class="p">,</span> i<span class="n">dur</span>
+  <span class="nb">noteondur</span> 	<span class="mi">1</span><span class="p">,</span> i<span class="n">fund</span><span class="o">+</span><span class="mi">9</span><span class="p">,</span> i<span class="n">vel</span><span class="p">,</span> i<span class="n">dur</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; Play Instrument #1 for 60 seconds.</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">60</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083896704"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="noteoff.html" title="noteoff"><em class="citetitle">noteoff</em></a>,
+      <a class="link" href="noteon.html" title="noteon"><em class="citetitle">noteon</em></a>,
+      <a class="link" href="noteondur2.html" title="noteondur2"><em class="citetitle">noteondur2</em></a>,
+      <a class="link" href="midion.html" title="midion"><em class="citetitle">midion</em></a>,
+      <a class="link" href="midion2.html" title="midion2"><em class="citetitle">midion2</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083891152"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel and controller number ranges.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="noteondur2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="notnum.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">noteondur2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> notnum</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

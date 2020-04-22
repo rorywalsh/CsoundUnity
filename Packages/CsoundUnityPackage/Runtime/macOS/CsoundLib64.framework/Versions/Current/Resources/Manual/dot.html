@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>dot</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="doppler.html" title="doppler" />
+    <link rel="next" href="downsamp.html" title="downsamp" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">dot</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="doppler.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="downsamp.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="dot"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDot" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">dot</span>
+        </h2>
+        <p>dot — 
+      Calculates the dot product of two arrays.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115604880"></a>
+        <h2>Description</h2>
+        <p>
+      Takes two numeric arrays (k or i-rate) and calculates the dot product.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115603632"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres/ires<span class="command"><strong>dot</strong></span> karr1[]/iarr1[], karr2[]/iarr2[]   (k- or i-arrays )</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115601520"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the dot opcode. It uses the file <a class="ulink" href="examples/dot.csd" target="_top"><em class="citetitle">dota.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276115599744"></a>
+          <p class="title">
+            <strong>Example 227. Example of the dot opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276482137872"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-n
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+ k<span class="n">Arr1</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span>
+ k<span class="n">Arr2</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span>
+ k<span class="n">d</span> <span class="n">dot</span> k<span class="n">Arr1</span><span class="p">,</span>k<span class="n">Arr2</span>
+ <span class="nb">printk2</span> k<span class="n">d</span>
+ <span class="nb">turnoff</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115595760"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="sumarray.html" title="sumarray"><em class="citetitle">sumarray</em></a>
+      <a class="link" href="productarray.html" title="product"><em class="citetitle">product</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115592720"></a>
+        <h2>Credits</h2>
+        <p>Author: Victor Lazzarini</p>
+        <p>New in version 6.09</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="doppler.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="downsamp.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">doppler </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> downsamp</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

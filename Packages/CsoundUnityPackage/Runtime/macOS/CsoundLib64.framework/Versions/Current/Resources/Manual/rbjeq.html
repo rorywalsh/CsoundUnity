@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>rbjeq</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="randomi.html" title="randomi" />
+    <link rel="next" href="readclock.html" title="readclock" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">rbjeq</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="randomi.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="readclock.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="rbjeq"></a>
+      <div class="titlepage"></div>
+      <a id="IndexRbjeq" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">rbjeq</span>
+        </h2>
+        <p>rbjeq — 
+      Parametric equalizer and filter opcode with 7 filter types, based
+      on algorithm by Robert Bristow-Johnson.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066903952"></a>
+        <h2>Description</h2>
+        <p>
+    	Parametric equalizer and filter opcode with 7 filter types,
+    	based on algorithm by Robert Bristow-Johnson.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066902512"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar <span class="command"><strong>rbjeq</strong></span> asig, kfco, klvl, kQ, kS[, imode]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066900400"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imode (</em></span>
+      optional, defaults to zero) - sum of:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+      			1: skip initialization (should be used in tied, or
+      			re-initialized notes only)
+      		</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+      and exactly one of the following values to select filter type:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+      			 0: resonant lowpass filter. kQ controls the resonance: at the
+      cutoff frequency (kfco), the amplitude gain is kQ (e.g. 20 dB for
+      kQ = 10), and higher kQ values result in a narrower resonance
+      peak. If kQ is set to sqrt(0.5) (about 0.7071), there is no
+      resonance, and the filter has a response that is very similar to
+      that of butterlp. If kQ is less than sqrt(0.5), there is no
+      resonance, and the filter has a -6 dB / octave response from about
+      kfco * kQ to kfco. Above kfco, there is always a -12 dB / octave
+      cutoff.
+
+
+      		</p>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <table border="0" summary="Note: NOTE">
+                  <tr>
+                    <td rowspan="2" align="center" valign="top" width="25">
+                      <img alt="[Note]" src="images/note.png" />
+                    </td>
+                    <th align="left">NOTE</th>
+                  </tr>
+                  <tr>
+                    <td align="left" valign="top">
+                      <p>
+      				The rbjeq lowpass filter is basically the same as
+      				ar pareq asig, kfco, 0, kQ, 2 but is faster to
+      				calculate.
+      			</p>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <p>
+
+
+      		</p>
+            </li>
+            <li class="listitem">
+              <p>
+      			2: resonant highpass filter. The parameters are the
+      			same as for the lowpass filter, but the equivalent
+      			filter is butterhp if kQ is 0.7071, and "ar pareq
+      			asig, kfco, 0, kQ, 1" in other cases.
+      		</p>
+            </li>
+            <li class="listitem">
+              <p>
+      			4: bandpass filter. kQ controls the bandwidth, which
+      			is kfco / kQ, and must be always less than sr / 2. The
+      			bandwidth is measured between -3 dB points (i.e.
+      			amplitude gain = 0.7071), beyond which there is a +/-
+      			6 dB / octave slope. This filter type is very similar
+      			to ar butterbp asig, kfco, kfco / kQ.
+      		</p>
+            </li>
+            <li class="listitem">
+              <p>
+      			6: band-reject filter, with the same parameters as the
+      			bandpass filter, and a response similar to that of
+      			butterbr.
+      		</p>
+            </li>
+            <li class="listitem">
+              <p>
+      			8: peaking EQ. It has an amplitude gain of 1 (0 dB) at
+      			0 Hz and sr / 2, and klvl at the center frequency
+      			(kfco). Thus, klvl controls the amount of boost (if it
+      			is greater than 1), or cut (if it is less than 1).
+      			Setting klvl to 1 results in a flat response.
+      			Similarly to the bandpass and band-reject filters, the
+      			bandwidth is determined by kfco / kQ (which must be
+      			less than sr / 2 again); however, this time it is
+      			between sqrt(klvl) points (or, in other words, half
+      			the boost or cut in decibels). NOTE: excessively low
+      			or high values of klvl should be avoided (especially
+      			with 32-bit floats), though the opcode was tested with
+      			klvl = 0.01 and klvl = 100. klvl = 0 is always an
+      			error, unlike in the case of pareq, which does allow a
+      			zero level.
+      		</p>
+            </li>
+            <li class="listitem">
+              <p>
+      			10: low shelf EQ, controlled by klvl and kS (kQ is
+      			ignored by this filter type). There is an amplitude
+      			gain of klvl at zero frequency, while the level of
+      			high frequencies (around sr / 2) is not changed. At
+      			the corner frequency (kfco), the gain is sqrt(klvl)
+      			(half the boost or cut in decibels). The kS parameter
+      			controls the steepness of the slope of the frequency
+      			response (see below).
+      		</p>
+            </li>
+            <li class="listitem">
+              <p>
+      			12: high shelf EQ. Very similar to the low shelf EQ,
+      			but affects the high frequency range.
+      		</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+
+      The default value for imode is zero (lowpass filter,
+      initialization not skipped).
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066887088"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ar</em></span>
+      -- the output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>asig</em></span>
+      -- the input signal
+
+      </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: NOTE">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">NOTE</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+      	If the input contains silent sections, on Intel CPUs a
+      	significant slowdown can occur due to denormals. In such
+      	cases, it is recommended to process the input signal with
+      	"denorm" opcode before filtering it with rbjeq (and actually
+      	many other filters).
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>kfco</em></span>
+      -- cutoff, corner, or center frequency, depending on filter type,
+      in Hz. It must be greater than zero, and less than sr / 2 (the
+      range of about sr * 0.0002 to sr * 0.49 should be safe).
+    </p>
+        <p>
+      <span class="emphasis"><em>klvl</em></span>
+      -- level (amount of boost or cut), as amplitude gain (e.g. 1: flat
+      response, 4: 12 dB boost, 0.1: 20 dB cut); zero or negative values
+      are not allowed. It is recognized by the peaking and shelving EQ
+      types (8, 10, 12) only, and is ignored by other filters.
+    </p>
+        <p>
+      <span class="emphasis"><em>kQ</em></span>
+      -- resonance (also kfco / bandwidth in many filter types). Not
+      used by the shelving EQs (imode = 10 and 12). The exact meaning of
+      this parameter depends on the filter type (see above), but it
+      should be always greater than zero, and usually (kfco / kQ) less
+      than sr / 2.
+    </p>
+        <p>
+      <span class="emphasis"><em>kS</em></span>
+      -- shelf slope parameter for shelving filters. Must be greater
+      than zero; a higher value means a steeper slope, with resonance if
+      kS &gt; 1 (however, a too high kS value may make the filter
+      unstable). If kS is set to exactly 1, the shelf slope is as steep
+      as possible without a resonance. Note that the effect of kS -
+      especially if it is greater than 1 - also depends on klvl, and it
+      does not have any well defined unit.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066877504"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the <span class="emphasis"><em>rbjeq</em></span> opcode. It uses the file <a class="ulink" href="examples/rbjeq.csd" target="_top"><em class="citetitle">rbjeq.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276066875296"></a>
+          <p class="title">
+            <strong>Example 826. An example of the rbjeq opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276429687232"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o rbjeq.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">mode</span> <span class="o">=</span> <span class="nb">p4</span>
+a<span class="n">1</span>    <span class="nb">vco2</span>    <span class="mf">.3</span><span class="p">,</span> <span class="mf">155.6</span>			<span class="c1">; sawtooth wave</span>
+k<span class="n">fco</span>  <span class="nb">expon</span>   <span class="mi">8000</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">200</span>		<span class="c1">; filter frequency</span>
+a<span class="n">sig</span>  <span class="nb">rbjeq</span>   a<span class="n">1</span><span class="p">,</span> k<span class="n">fco</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">fco</span> <span class="o">*</span> <span class="mf">0.005</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">mode</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">5</span> <span class="mi">0</span>	<span class="c1">;lowpass</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span>  <span class="mi">5</span> <span class="mi">2</span>	<span class="c1">;highpass</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">12</span> <span class="mi">5</span> <span class="mi">4</span>	<span class="c1">;bandpass</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">18</span> <span class="mi">5</span> <span class="mi">8</span>	<span class="c1">;equalizer</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062918224"></a>
+        <h2>Credits</h2>
+        <p>
+	  </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Original algorithm by Robert Bristow-Johnson</td>
+          </tr>
+          <tr>
+            <td>
+        	Csound orchestra version by Josep M Comajuncosas, Aug 1999
+        </td>
+          </tr>
+          <tr>
+            <td>
+        	Converted to C (with optimizations and bug fixes) by Istvan
+        	Varga, Dec 2002
+        </td>
+          </tr>
+        </table>
+        <p>
+   </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="randomi.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="readclock.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">randomi </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> readclock</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

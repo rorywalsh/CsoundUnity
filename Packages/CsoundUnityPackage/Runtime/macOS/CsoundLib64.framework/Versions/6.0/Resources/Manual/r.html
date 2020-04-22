@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>r Statement (Repeat Statement)</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="q.html" title="q Statement" />
+    <link rel="next" href="s.html" title="s Statement" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">r Statement (Repeat Statement)</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="q.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="s.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="r"></a>
+      <div class="titlepage"></div>
+      <a id="IndexRStatement" class="indexterm"></a>
+      <a id="IndexRepeatStatement" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">r Statement (Repeat Statement)</span>
+        </h2>
+        <p>r — 
+      Starts a repeated section.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024556768"></a>
+        <h2>Description</h2>
+        <p>
+      Starts a repeated section, which lasts until the next <span class="emphasis"><em>s</em></span>, <span class="emphasis"><em>r</em></span> or <span class="emphasis"><em>e statement</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024554320"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>r</strong></span> p1 p2</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024552384"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>p1</em></span> -- Number of times to repeat the section.
+    </p>
+        <p>
+      <span class="emphasis"><em>p2</em></span> -- Macro(name) to advance with each repetition (optional).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024549792"></a>
+        <h2>Performance</h2>
+        <p>
+      In order that the sections may be more flexible than simple editing, the macro named p2 is given the value of 1 for the first time through the section, 2 for the second, and 3 for the third.  This can be used to change p-field parameters, or ignored.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Because of serious problems of interaction with macro expansion, sections must start and end in the same file, and not in a macro.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024546592"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the r statement. It uses the file <a class="ulink" href="examples/r.csd" target="_top"><em class="citetitle">r.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276024544816"></a>
+          <p class="title">
+            <strong>Example 1188. Example of the r statement.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276399618096"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o r.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; The score's p4 parameter has the number of repeats.</span>
+  k<span class="n">reps</span> <span class="o">=</span> <span class="nb">p4</span>
+  <span class="c1">; The score's p5 parameter has our note's frequency.</span>
+  k<span class="n">cps</span> <span class="o">=</span> <span class="nb">p5</span>
+  
+  <span class="c1">; Print the number of repeats.</span>
+  <span class="nb">printks</span> <span class="s">"Repeated </span><span class="si">%i</span><span class="s"> time(s).</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">reps</span>
+
+  <span class="c1">; Generate a nice beep.</span>
+  a<span class="n">1</span> <span class="nb">oscil</span> <span class="mi">20000</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; We'll repeat this section 6 times. Each time it </span>
+<span class="c1">; is repeated, its macro REPS_MACRO is incremented. </span>
+<span class="nb">r</span><span class="mi">6</span> <span class="cp">REPS_MACRO</span>
+
+<span class="c1">; Play Instrument #1.</span>
+<span class="c1">; p4 = the r statement's macro, REPS_MACRO.</span>
+<span class="c1">; p5 = the frequency in cycles per second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mf">00.10</span> <span class="mf">00.10</span> <span class="cp">$REPS_MACRO</span> <span class="mi">1760</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mf">00.30</span> <span class="mf">00.10</span> <span class="cp">$REPS_MACRO</span> <span class="mi">880</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mf">00.50</span> <span class="mf">00.10</span> <span class="cp">$REPS_MACRO</span> <span class="mi">440</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mf">00.70</span> <span class="mf">00.10</span> <span class="cp">$REPS_MACRO</span> <span class="mi">220</span>
+
+<span class="c1">; Marks the end of the section.</span>
+<span class="nb">s</span>
+
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276024543040"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>April, 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.48</p>
+        <p>Example written by Kevin Conder</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="q.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="s.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">q Statement </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> s Statement</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

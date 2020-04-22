@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>c2r</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="buzz.html" title="buzz" />
+    <link rel="next" href="cabasa.html" title="cabasa" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">c2r</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="buzz.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cabasa.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="c2r"></a>
+      <div class="titlepage"></div>
+      <a id="IndexC2r" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">c2r</span>
+        </h2>
+        <p>c2r — 
+    Real to complex format conversion.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122402768"></a>
+        <h2>Description</h2>
+        <p>
+      Converts a complex-valued input array into a real-valued array, by removing its imaginary part. The output array will be halt the size of the input. This is a utility operation to facilitate complex-valued operations where the result is purely real.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122401344"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout[] <span class="command"><strong>c2r</strong></span> kin[]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122399280"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kout[]</em></span> -- output array containing the real-valued output. It will be created if it does not exist.
+         </p>
+        <p>
+      <span class="emphasis"><em>kin[]</em></span> -- input array containing the complex-valued real-imaginary input.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122396736"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the c2r opcode. It uses the file <a class="ulink" href="examples/c2r.csd" target="_top"><em class="citetitle">c2r.csd</em></a>.</p>
+        <div class="example">
+          <a id="idm276122394848"></a>
+          <p class="title">
+            <strong>Example 109. Example of the c2r opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276490069248"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-d -o dac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">64</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">fftsize</span> <span class="o">=</span> <span class="mi">1024</span>
+k<span class="n">cnt</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">In</span><span class="p">[]</span> <span class="nb">init</span>  i<span class="n">fftsize</span>
+k<span class="n">Out</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">fftsize</span>
+
+a<span class="n">1</span> <span class="nb">oscili</span> <span class="vg">0dbfs</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">440</span>
+
+<span class="k">if</span> k<span class="n">cnt</span> <span class="o">&gt;=</span> i<span class="n">fftsize</span> <span class="k">then</span>
+ k<span class="n">Cmplx</span><span class="p">[]</span> <span class="nb">r2c</span> k<span class="n">In</span>
+ k<span class="n">Spec</span><span class="p">[]</span> <span class="nb">fft</span> k<span class="n">Cmplx</span>
+ k<span class="n">Cmplx</span> <span class="nb">fftinv</span> k<span class="n">Spec</span>
+ k<span class="n">Out</span> <span class="nb">c2r</span> k<span class="n">Cmplx</span>
+ k<span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span> 
+<span class="k">endif</span>
+
+k<span class="n">In</span><span class="p">[]</span> <span class="nb">shiftin</span> a<span class="n">1</span>
+a<span class="n">2</span> <span class="nb">shiftout</span> k<span class="n">Out</span>
+k<span class="n">cnt</span> <span class="o">+=</span> <span class="vg">ksmps</span>
+   <span class="nb">out</span> a<span class="n">2</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <br class="example-break" />
+      </div>
+      <div class="refsect1">
+        <a id="idm276122390992"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vectorial.html" title="Vectorial Opcodes"><em class="citetitle"></em>Vectorial opcodes</a>,
+      <a class="link" href="arrayOpcodes.html" title="Array Opcodes"><em class="citetitle"></em>array opcodes</a>
+</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122388000"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>NUI Maynooth</td>
+          </tr>
+          <tr>
+            <td>2014</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.04</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="buzz.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cabasa.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">buzz </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> cabasa</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

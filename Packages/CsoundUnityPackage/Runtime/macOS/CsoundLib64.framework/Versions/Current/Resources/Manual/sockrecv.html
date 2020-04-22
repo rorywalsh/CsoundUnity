@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>sockrecv</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sndwarpst.html" title="sndwarpst" />
+    <link rel="next" href="socksend.html" title="socksend" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">sockrecv</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sndwarpst.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="socksend.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="sockrecv"></a>
+      <div class="titlepage"></div>
+      <a id="Indexsockrecv" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">sockrecv</span>
+        </h2>
+        <p>sockrecv — 
+      Receives data from other processes using the low-level UDP or TCP protocols
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058646032"></a>
+        <h2>Description</h2>
+        <p>
+      Receives directly using the UDP (<span class="emphasis"><em>sockrecv</em></span> and
+      <span class="emphasis"><em>sockrecvs</em></span>) or TCP (<span class="emphasis"><em>strecv</em></span>)
+      protocol onto a network. The data is not subject to any encoding or special
+      routing. The <span class="emphasis"><em>sockrecvs</em></span> opcode receives a stereo signal
+      interleaved.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058643008"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>sockrecv</strong></span> iport, ilength</pre>
+        <pre class="synopsis">ksig <span class="command"><strong>sockrecv</strong></span> iport, ilength</pre>
+        <pre class="synopsis">asigl, asigr <span class="command"><strong>sockrecvs</strong></span> iport, ilength</pre>
+        <pre class="synopsis">String <span class="command"><strong>sockrecv</strong></span> iport, ilength</pre>
+        <pre class="synopsis">asig[,kstate] <span class="command"><strong>strecv</strong></span> Sipaddr, iport</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058635744"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sipaddr</em></span>
+      -- a string that is the IP address of the sender in standard
+    4-octet dotted form.
+    </p>
+        <p>
+      <span class="emphasis"><em>iport</em></span>
+      -- the number of the port that is used for the communication.
+    </p>
+        <p>
+      <span class="emphasis"><em>ilength</em></span>
+      -- the length of the individual packets in UDP transmission.
+      This number must be sufficiently small to fit a single MTU,
+      which is set to the save value of 1456.  In UDP transmissions
+      the sender and receiver needs agree on this value
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058632144"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig, asigl, asigr</em></span> -- audio data to be
+      received.
+    </p>
+        <p>
+      <span class="emphasis"><em>ksig</em></span> -- control data to be received.
+    </p>
+        <p>
+      <span class="emphasis"><em>String</em></span> -- string data to be received.
+    </p>
+        <p>
+      <span class="emphasis"><em>kstate</em></span> -- optional output to give the state
+      of the receipt.  Gives the number of bytes transferred in the
+      current performance cycle or -1 if the sender has ceased writing.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058627872"></a>
+        <h2>Example</h2>
+        <p>
+      The example shows a mono signal being received on port 7777 using UDP.
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+        <span class="ohdr">sr</span> <span class="op">=</span> 44100
+        <span class="ohdr">ksmps</span> <span class="op">=</span> 100
+        <span class="ohdr">nchnls</span> <span class="op">=</span> 1
+
+
+        <span class="oblock">instr</span>   1
+        a1 <span class="opc">sockrecv</span>   7777, 200
+           <span class="opc">out</span>        a1
+        <span class="oblock">endin</span></pre>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058619344"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>kstate optional output new in 6.14</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sndwarpst.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="socksend.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sndwarpst </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> socksend</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

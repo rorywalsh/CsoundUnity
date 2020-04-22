@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>readscore</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="readk4.html" title="readk4" />
+    <link rel="next" href="readscratch.html" title="readscratch" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">readscore</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="readk4.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="readscratch.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="readscore"></a>
+      <div class="titlepage"></div>
+      <a id="Indexreadscore" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">readscore</span>
+        </h2>
+        <p>readscore — 
+      Read, preprocess and schedule a score from an input string.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062427600"></a>
+        <h2>Description</h2>
+        <p>
+      Readscore will issue one or more score events. 
+	  It can handle strings in the same conditions as
+	  the standard score, including preprocessing (carry, sort, ramp, etc). 
+Multi-line strings are accepted, using {{  }} to enclose the string.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062426176"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>readscore</strong></span> Sin </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062424240"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">Sin</span>”</span></em></span> --  a string (in double-quotes or enclosed by {{ }}) containing one or more score events.
+</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062422432"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the readscore opcode. It uses the file <a class="ulink" href="examples/readscore.csd" target="_top"><em class="citetitle">readscore.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276062420640"></a>
+          <p class="title">
+            <strong>Example 835. Example of the readscore opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276471089952"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>  
+<span class="nt">&lt;CsOptions&gt;</span>
+-d -o dac
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span>   
+ 
+<span class="kd">instr</span> <span class="nf">1</span>
+a<span class="n">1</span> <span class="nb">flooper2</span> <span class="mi">1000</span><span class="p">,</span><span class="nb">p4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">1</span> 
+   <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+i<span class="n">res</span> <span class="nb">readscore</span> <span class="s">{{
+{12  COUNT 
+i1 $COUNT 1 [1 + $COUNT/12]
+}
+}}</span>
+<span class="kd">endin</span>
+ 
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">0</span> <span class="mi">12</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="s">"fox.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span>
+
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span>
+
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+ 
+</pre>
+            </div>
+            <p>
+      You can use string opcodes like <a class="link" href="sprintfk.html" title="sprintfk"><em class="citetitle">sprintfk</em></a> to produce strings to be passed to <span class="emphasis"><em>readscore</em></span> like this:
+</p>
+            <pre class="programlisting">
+Sfil <span class="op">=</span> "/Volumes/Bla/file.aif"
+String  <span class="opc">sprintfk</span> {{i 2 0 %f "%s" %f %f %f %f}}, idur, Sfil, p5, p6, knorm, iskip
+<span class="opc">readscore</span> String
+ </pre>
+            <p>
+    </p>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062412240"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="event.html" title="event"><em class="citetitle">event</em></a>,
+      <a class="link" href="event_i.html" title="event_i"><em class="citetitle">event_i</em></a>,
+      <a class="link" href="schedule.html" title="schedule"><em class="citetitle">schedule</em></a>,
+      <a class="link" href="schedwhen.html" title="schedwhen"><em class="citetitle">schedwhen</em></a>,
+      <a class="link" href="schedkwhen.html" title="schedkwhen"><em class="citetitle">schedkwhen</em></a>,
+      <a class="link" href="schedkwhennamed.html" title="schedkwhennamed"><em class="citetitle">schedkwhennamed</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062405808"></a>
+        <h2>Credits</h2>
+        <p>Author: Victor Lazzarini, 2013 </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="readk4.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="readscratch.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">readk4 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> readscratch</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

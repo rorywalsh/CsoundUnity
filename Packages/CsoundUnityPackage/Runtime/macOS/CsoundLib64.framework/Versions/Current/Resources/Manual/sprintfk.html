@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>sprintfk</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sprintf.html" title="sprintf" />
+    <link rel="next" href="spsend.html" title="spsend" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">sprintfk</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sprintf.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="spsend.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="sprintfk"></a>
+      <div class="titlepage"></div>
+      <a id="Indexsprintfk" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">sprintfk</span>
+        </h2>
+        <p>sprintfk — 
+      printf-style formatted output to a string variable at k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053432320"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>sprintfk</em></span> writes printf-style formatted output to a string variable, similarly to the C function sprintf(). <span class="emphasis"><em>sprintfk</em></span> runs both at initialization and performance time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053430176"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">Sdst <span class="command"><strong>sprintfk</strong></span> Sfmt, xarg1[, xarg2[, ... ]]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053428080"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sfmt</em></span> -- format string, has the same format as in printf() and other similar C functions, except length modifiers (l, ll, h, etc.) are not supported. The following conversion specifiers are allowed:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>d, i, o, u, x, X, e, E, f, F, g, G, c, s</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>xarg1, xarg2, ...</em></span> -- input arguments (max. 30) for format, should be i-rate for all conversion specifiers except %s, which requires a string argument. sprintfk also allows k-rate number arguments, but these should still be valid at init time as well (unless sprintfk is skipped with igoto). Integer formats like %d round the input values to the nearest integer.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053423952"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>Sdst</em></span> -- output string variable
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053422352"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the sprintfk opcode. It uses the file <a class="ulink" href="examples/sprintfk.csd" target="_top"><em class="citetitle">sprintfk.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276053420560"></a>
+          <p class="title">
+            <strong>Example 935. Example of the sprintfk opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276427678480"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o sprintfk.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+  <span class="vg">sr</span>	    <span class="o">=</span>  <span class="mi">48000</span>
+  <span class="vg">ksmps</span>	    <span class="o">=</span>  <span class="mi">16</span>
+  <span class="vg">nchnls</span>    <span class="o">=</span>  <span class="mi">2</span>
+  <span class="vg">0dbfs</span>	    <span class="o">=</span>  <span class="mi">1</span>
+
+<span class="c1">; Example by Jonathan Murphy 2007</span>
+
+    <span class="kd">instr</span> <span class="nf">1</span>
+
+  S<span class="n">1</span>	    <span class="o">=</span>  <span class="s">"1"</span>
+  S<span class="n">2</span>	    <span class="o">=</span>  <span class="s">" + 1"</span>
+  k<span class="n">trig</span>	    <span class="nb">init</span>      <span class="mi">0</span>
+  k<span class="n">val</span>	    <span class="nb">init</span>      <span class="mi">2</span>
+<span class="k">if</span> <span class="p">(</span>k<span class="n">trig</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">then</span>
+  S<span class="n">1</span>	    <span class="nb">strcatk</span>   S<span class="n">1</span><span class="p">,</span> S<span class="n">2</span>
+  k<span class="n">val</span>	    <span class="o">=</span>  k<span class="n">val</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="k">endif</span>
+  S<span class="n">tring</span>    <span class="nb">sprintfk</span>  <span class="s">"%s = </span><span class="si">%d</span><span class="s">"</span><span class="p">,</span> S<span class="n">1</span><span class="p">,</span> k<span class="n">val</span>
+	    <span class="nb">puts</span>      S<span class="n">tring</span><span class="p">,</span> k<span class="n">val</span>
+  k<span class="n">trig</span>	    <span class="nb">metro</span>     <span class="mi">1</span>
+
+    <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+            Its output should include lines like this:
+      </p>
+        <pre class="screen">
+1 + 1 = 2
+1 + 1 + 1 = 3
+1 + 1 + 1 + 1 = 4
+1 + 1 + 1 + 1 + 1 = 5
+1 + 1 + 1 + 1 + 1 + 1 = 6
+1 + 1 + 1 + 1 + 1 + 1 + 1 = 7
+1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 = 8
+1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 = 9
+1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 = 10
+1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 = 11
+1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 = 12</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053415552"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="sprintf.html" title="sprintf"><em class="citetitle">sprintf</em></a>,
+      <a class="link" href="puts.html" title="puts"><em class="citetitle">puts</em></a>,
+      <a class="link" href="strcatk.html" title="strcatk"><em class="citetitle">strcatk</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053411760"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+          <tr>
+            <td>Example by Jonathan Murphy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sprintf.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="spsend.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sprintf </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> spsend</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

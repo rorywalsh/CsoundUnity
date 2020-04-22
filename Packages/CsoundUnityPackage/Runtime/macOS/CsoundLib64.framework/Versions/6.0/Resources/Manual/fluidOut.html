@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fluidOut</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fluidNote.html" title="fluidNote" />
+    <link rel="next" href="fluidProgramSelect.html" title="fluidProgramSelect" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fluidOut</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fluidNote.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fluidProgramSelect.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="fluidOut"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFluidOut" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fluidOut</span>
+        </h2>
+        <p>fluidOut — 
+      Outputs sound from a given fluidEngine
+           </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104753920"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aleft, aright <span class="command"><strong>fluidOut</strong></span> ienginenum</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104751824"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in fluidOpcodes.</p>
+        <p>Outputs the sound from a fluidEngine.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104750112"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>ienginenum </em></span> -- engine number assigned from
+fluidEngine</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104748528"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>aleft</em></span> -- Left channel audio output.</p>
+        <p><span class="emphasis"><em>aright</em></span> -- Right channel audio output.</p>
+        <p>Invoke fluidOut in an instrument definition numbered higher than any
+    fluidcontrol instrument definitions. All SoundFonts used in the fluidEngine
+    numbered <span class="emphasis"><em>ienginenum</em></span> send their audio output
+    to this one opcode. Send a note with an indefinite duration to this
+    instrument to turn the SoundFonts on for as long as required.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104745024"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the fluidOut opcode with two fluidOuts. It uses the file <a class="ulink" href="examples/fluidOut.csd" target="_top"><em class="citetitle">fluidOut.csd</em>,  <em class="citetitle">01hpschd.sf2</em> and </a><a class="ulink" href="examples/22Bassoon.sf2" target="_top"><em class="citetitle">22Bassoon.sf2</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276104741616"></a>
+          <p class="title">
+            <strong>Example 324. Example of the fluidOut opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276472715376"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   -+rtmidi=virtual  -M0    <span class="c1">;;;realtime audio out and realtime midi in</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">;-o fluidOut.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">engine1</span> <span class="nb">fluidEngine</span>
+<span class="c1">; soundfont path to manual/examples</span>
+i<span class="n">sfnum1</span>	 <span class="nb">fluidLoad</span> <span class="s">"01hpschd.sf2"</span><span class="p">,</span> gi<span class="n">engine1</span><span class="p">,</span> <span class="mi">1</span>
+	 <span class="nb">fluidProgramSelect</span> gi<span class="n">engine1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">sfnum1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+gi<span class="n">engine2</span> <span class="nb">fluidEngine</span>
+<span class="c1">; soundfont path to manual/examples</span>
+i<span class="n">sfnum2</span>	 <span class="nb">fluidLoad</span> <span class="s">"22Bassoon.sf2"</span><span class="p">,</span> gi<span class="n">engine2</span><span class="p">,</span> <span class="mi">1</span>
+	 <span class="nb">fluidProgramSelect</span> gi<span class="n">engine2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">sfnum2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">70</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+	<span class="nb">mididefault</span>   <span class="mi">60</span><span class="p">,</span> <span class="nb">p3</span>
+	<span class="nb">midinoteonkey</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span>
+i<span class="n">key</span>	<span class="nb">init</span> <span class="nb">p4</span>
+i<span class="n">vel</span>	<span class="nb">init</span> <span class="nb">p5</span>
+	<span class="nb">fluidNote</span> gi<span class="n">engine1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">key</span><span class="p">,</span> i<span class="n">vel</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+	<span class="nb">mididefault</span>   <span class="mi">60</span><span class="p">,</span> <span class="nb">p3</span>
+	<span class="nb">midinoteonkey</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span>
+i<span class="n">key</span>	<span class="nb">init</span> <span class="nb">p4</span>
+i<span class="n">vel</span>	<span class="nb">init</span> <span class="nb">p5</span>
+	<span class="nb">fluidNote</span> gi<span class="n">engine2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">key</span><span class="p">,</span> i<span class="n">vel</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">98</span>
+
+i<span class="n">mvol</span>  <span class="nb">init</span> <span class="mi">7</span>
+a<span class="n">sigl</span><span class="p">,</span> a<span class="n">sigr</span> <span class="nb">fluidOut</span> gi<span class="n">engine1</span>
+       <span class="nb">outs</span> a<span class="n">sigl</span><span class="o">*</span>i<span class="n">mvol</span><span class="p">,</span> a<span class="n">sigr</span><span class="o">*</span>i<span class="n">mvol</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">99</span>
+
+i<span class="n">mvol</span> <span class="nb">init</span> <span class="mi">4</span>
+a<span class="n">sigl</span><span class="p">,</span> a<span class="n">sigr</span> <span class="nb">fluidOut</span> gi<span class="n">engine2</span>		 <span class="c1">;add a stereo flanger</span>
+a<span class="n">delL</span> <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mi">0</span>	 <span class="c1">;max delay time =20ms</span>
+a<span class="n">delR</span> <span class="nb">linseg</span> <span class="mf">0.02</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">0.02</span> <span class="c1">;max delay time =20ms		</span>
+a<span class="n">sigL</span> <span class="nb">flanger</span> a<span class="n">sigl</span><span class="p">,</span> a<span class="n">delL</span><span class="p">,</span> <span class="mf">.6</span>
+a<span class="n">sigR</span> <span class="nb">flanger</span> a<span class="n">sigr</span><span class="p">,</span> a<span class="n">delR</span><span class="p">,</span> <span class="mf">.6</span>
+      <span class="nb">outs</span> a<span class="n">sigL</span><span class="o">*</span>i<span class="n">mvol</span><span class="p">,</span> a<span class="n">sigR</span><span class="o">*</span>i<span class="n">mvol</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">60</span> <span class="mi">100</span> <span class="c1">;play one note of instr 1</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">60</span> <span class="mi">100</span> <span class="c1">;play another note of instr 2 and...</span>
+<span class="nb">i</span> <span class="mi">98</span> <span class="mi">0</span> <span class="mi">60</span>      <span class="c1">;play virtual keyboard for 60 sec.</span>
+<span class="nb">i</span> <span class="mi">99</span> <span class="mi">0</span> <span class="mi">60</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+The output should include lines like these:
+      </p>
+        <pre class="screen">
+chnl 1 using instr 1
+chnl 2 using instr 2
+
+SoundFont:   1  Bank:   0  Preset:   0  Harpsichord I-8
+SoundFont:   1  Bank:   0  Preset:  70  Ethan Bassoon mono
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104736432"></a>
+        <h2>See Also</h2>
+        <p><a class="link" href="fluidEngine.html" title="fluidEngine"><em class="citetitle">fluidEngine</em></a>, <a class="link" href="fluidNote.html" title="fluidNote"><em class="citetitle">fluidNote</em></a>, <a class="link" href="fluidLoad.html" title="fluidLoad"><em class="citetitle">fluidLoad</em></a></p>
+        <p> More information on soundfonts is in the Floss Manuals: <a class="ulink" href="http://write.flossmanuals.net/csound/d-reading-midi-files" target="_top"><em class="citetitle">http://write.flossmanuals.net/csound/d-reading-midi-files</em></a></p>
+        <p> For other information on soundfonts look in the
+        Wikipedia: <a class="ulink" href="http://en.wikipedia.org/wiki/Soundfont" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Soundfont</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104730512"></a>
+        <h2>Credits</h2>
+        <p>Michael Gogins (gogins at pipeline dot com), Steven Yi. 
+    Thanks to Peter Hanappe for Fluidsynth.</p>
+      </div>
+      <p>New in Csound5.00</p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fluidNote.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fluidProgramSelect.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fluidNote </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fluidProgramSelect</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

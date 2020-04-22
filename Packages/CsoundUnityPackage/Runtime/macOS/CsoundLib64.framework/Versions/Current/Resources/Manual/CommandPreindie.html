@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Independent Pre-Processing with Scsort</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="CommandPreproc.html" title="Score File Preprocessing" />
+    <link rel="prev" href="CommandPreproc.html" title="Score File Preprocessing" />
+    <link rel="next" href="Using.html" title="Using Csound" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Independent Pre-Processing with Scsort</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CommandPreproc.html">Prev</a> </td>
+          <th width="60%" align="center">Score File Preprocessing</th>
+          <td width="20%" align="right"> <a accesskey="n" href="Using.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a id="CommandPreindie"></a>Independent Pre-Processing with Scsort</h3>
+          </div>
+        </div>
+      </div>
+      <p>
+      <a id="IndexScsort" class="indexterm"></a>
+      Although the result of all score preprocessing is retained in the file score.srt after orchestra performance (it exists as soon as score preprocessing has completed), the user may sometimes want to run these phases independently. The command
+
+      </p>
+      <div class="informalexample">
+        <pre class="programlisting"><span class="command"><strong>scot</strong></span> filename</pre>
+      </div>
+      <p>
+    </p>
+      <p>
+      will process the Scot formatted filename, and leave a <a class="link" href="ScoreTop.html" title="The Standard Numeric Score"><em class="citetitle">standard numeric score</em></a> result in a file named score for perusal or later processing.
+    </p>
+      <p>
+      The command
+      </p>
+      <div class="informalexample">
+        <pre class="programlisting"><span class="command"><strong>scsort</strong></span> &lt; infile &gt; outfile</pre>
+      </div>
+      <p>
+    </p>
+      <p>
+      will put a numeric score infile through Carry, Tempo, and Sort preprocessing, leaving the result in outfile.
+    </p>
+      <p>
+      Likewise <span class="emphasis"><em>extract</em></span>, also normally invoked as part of the <a class="link" href="CommandTop.html" title="The Csound Command"><em class="citetitle">Csound command</em></a>, can be invoked as a standalone program:
+      </p>
+      <div class="informalexample">
+        <pre class="programlisting"><span class="command"><strong>extract</strong></span> xfile &lt; score.sort &gt; score.extract</pre>
+      </div>
+      <p>
+    </p>
+      <p>
+      This command expects an already sorted score. An unsorted score should first be sent through Scsort then piped to the extract program:
+      </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="command"><strong>scsort</strong></span> &lt; scorefile | <span class="command"><strong>extract</strong></span> xfile &gt; score.extract</pre>
+      </div>
+      <p>
+    </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CommandPreproc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="CommandPreproc.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="Using.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Score File Preprocessing </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Using Csound</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

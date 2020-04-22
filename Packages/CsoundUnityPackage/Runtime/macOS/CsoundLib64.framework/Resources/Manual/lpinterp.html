@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lpinterp</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="lphasor.html" title="lphasor" />
+    <link rel="next" href="lposcil.html" title="lposcil" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lpinterp</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lphasor.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lposcil.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lpinterp"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLpinterp" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lpinterp</span>
+        </h2>
+        <p>lpslot, lpinterp — 
+      Computes a new set of poles from the interpolation between two analysis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083311408"></a>
+        <h2>Description</h2>
+        <p>
+      Computes a new set of poles from the interpolation between two analysis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083310144"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>lpinterp</strong></span> islot1, islot2, kmix</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083308192"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>islot1</em></span> -- slot where the first analysis was stored
+    </p>
+        <p>
+      <span class="emphasis"><em>islot2</em></span> -- slot where the second analysis was stored
+    </p>
+        <p>
+      <span class="emphasis"><em>kmix</em></span> -- mix value between the two analysis. Should be between 0 and 1. 0 means analysis 1 only. 1 means analysis 2 only. Any value in between will produce interpolation between the filters.
+    </p>
+        <p>
+      <span class="emphasis"><em>lpinterp</em></span> computes a new set of poles from the interpolation between two analysis. The poles will be stored in the current <span class="emphasis"><em>lpslot</em></span> and used by the next <span class="emphasis"><em>lpreson</em></span> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083302976"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a typical orc using the opcodes:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+ipower <span class="opc">init</span> 50000  <span class="comment">; Define sound generator</span>
+ifreq  <span class="opc">init</span> 440 
+asrc   <span class="opc">buzz</span> ipower, ifreq, 10, 1
+  
+ktime  <span class="opc">line</span> 0, p3, p3              <span class="comment">; Define time lin</span>
+       <span class="opc">lpslot</span> 0                    <span class="comment">; Read square data poles</span>
+krmsr, krmso, kerr, kcps <span class="opc">lpread</span> ktime,"square.pol"                     
+       <span class="opc">lpslot</span> 1                    <span class="comment">; Read triangle data poles</span>
+krmsr, krmso, kerr, kcps <span class="opc">lpread</span> ktime,"triangle.pol"
+kmix   <span class="opc">line</span> 0, p3, 1               <span class="comment">; Compute result of mixing</span>
+       <span class="opc">lpinterp</span> 0, 1, kmix         <span class="comment">; and balance power</span>
+ares   <span class="opc">lpreson</span> asrc
+aout   <span class="opc">balance</span> ares, asrc
+       <span class="opc">out</span> aout</pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083288160"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="lpslot.html" title="lpslot"><em class="citetitle">lpslot</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083286128"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lphasor.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lposcil.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lphasor </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> lposcil</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

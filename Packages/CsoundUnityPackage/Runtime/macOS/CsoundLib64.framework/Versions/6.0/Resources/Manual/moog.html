@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>moog</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="monitor.html" title="monitor" />
+    <link rel="next" href="moogladder.html" title="moogladder" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">moog</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="monitor.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="moogladder.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="moog"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMoog" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">moog</span>
+        </h2>
+        <p>moog — 
+      An emulation of a mini-Moog synthesizer.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079273008"></a>
+        <h2>Description</h2>
+        <p>
+      An emulation of a mini-Moog synthesizer.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079271712"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>moog</strong></span> kamp, kfreq, kfiltq, kfiltrate, kvibf, kvamp, iafn, iwfn, ivfn</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079269568"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iafn, iwfn, ivfn</em></span> -- three table numbers containing the attack waveform (unlooped), the main looping wave form, and the vibrato waveform. The files <a class="ulink" href="examples/mandpluk.aiff" target="_top"><em class="citetitle">mandpluk.aiff</em></a> and <a class="ulink" href="examples/impuls20.aiff" target="_top"><em class="citetitle">impuls20.aiff</em></a> are suitable for the first two, and a sine wave for the last. 
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The files <span class="quote">“<span class="quote">mandpluk.aiff</span>”</span> and <span class="quote">“<span class="quote">impuls20.aiff</span>”</span> are also available at <a class="ulink" href="ftp://ftp.cs.bath.ac.uk/pub/dream/documentation/sounds/modelling/" target="_top"><em class="citetitle">ftp://ftp.cs.bath.ac.uk/pub/dream/documentation/sounds/modelling/</em></a>.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079263104"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- Amplitude of note.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- Frequency of note played.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfiltq</em></span> -- Q of the filter, in the range 0.8 to 0.9
+    </p>
+        <p>
+      <span class="emphasis"><em>kfiltrate</em></span> -- rate control for the filter in the range 0 to 0.0002
+    </p>
+        <p>
+      <span class="emphasis"><em>kvibf</em></span> -- frequency of vibrato in Hertz. Suggested range is 0 to 12
+    </p>
+        <p>
+      <span class="emphasis"><em>kvamp</em></span> -- amplitude of the vibrato
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079240400"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the moog opcode. It uses the file <a class="ulink" href="examples/moog.csd" target="_top"><em class="citetitle">moog.csd</em></a>, <a class="ulink" href="examples/mandpluk.aiff" target="_top"><em class="citetitle">mandpluk.aiff</em></a>, and <a class="ulink" href="examples/impuls20.aiff" target="_top"><em class="citetitle">impuls20.aiff</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276079237024"></a>
+          <p class="title">
+            <strong>Example 589. Example of the moog opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276447957248"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o moog.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">freq</span>  <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+k<span class="n">filtq</span> <span class="o">=</span> <span class="nb">p5</span>
+k<span class="n">filtrate</span> <span class="o">=</span> <span class="mf">0.0002</span>
+k<span class="n">vibf</span>  <span class="o">=</span> <span class="mi">5</span>
+k<span class="n">vamp</span>  <span class="o">=</span> <span class="mf">.01</span>
+<span class="c1">;low volume is needed</span>
+a<span class="n">sig</span> <span class="nb">moog</span> <span class="mf">.15</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> k<span class="n">filtq</span><span class="p">,</span> k<span class="n">filtrate</span><span class="p">,</span> k<span class="n">vibf</span><span class="p">,</span> k<span class="n">vamp</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">1</span> <span class="s">"mandpluk.aiff"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">256</span> <span class="mi">1</span> <span class="s">"impuls20.aiff"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="nb">f</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">256</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">; sine</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mf">6.00</span> <span class="mf">.1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="mf">6.05</span> <span class="mf">.89</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="mf">6.09</span> <span class="mf">.50</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079232992"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch (after Perry Cook)</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="monitor.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="moogladder.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">monitor </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> moogladder</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

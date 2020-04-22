@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Signal Flow Graph Opcodes</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartOpcodesOverview.html" title="Part II. Opcodes Overview" />
+    <link rel="prev" href="MixerOpcodes.html" title="Mixer Opcodes" />
+    <link rel="next" href="JackoOpcodes.html" title="Jacko Opcodes" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">
+    Signal Flow Graph Opcodes
+</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="MixerOpcodes.html">Prev</a> </td>
+          <th width="60%" align="center">Part II. Opcodes Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="JackoOpcodes.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="SignalFlowGraphOpcodes"></a>
+    Signal Flow Graph Opcodes
+</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    These opcodes enable the use of signal flow graphs
+    (AKA asynchronous data flow graphs) in Csound orchestras.
+    Signals flow from the outlets of source instruments
+    and are summed in the inlets of sink instruments.
+    Signals may be krate, arate, frate, or arate arrays.
+    Any number of outlets may be connected to any number of inlets.
+    When a new instance of an instrument is instantiated during performance,
+    the declared connections also are automatically instantiated.
+  </p>
+      <p>
+    Signal flow graphs simplify the construction of complex mixers,
+    signal processing chains, and the like. They also simplify the re-use
+    of "plug and play" instrument definitions and even entire sub-orchestras,
+    which can simply be #included and then "plugged in" to existing orchestras.
+  </p>
+      <p>
+    Note that inlets and outlets are defined in instruments without reference
+    to how they are connected. Connections are defined in the orchestra header.
+    It is this separation that enables plug-in instruments.
+  </p>
+      <p>
+    Inlets must be named. Instruments may be named or numbered, but in
+    either case each source instrument must be defined
+    in the orchestra before any of its sinks. Naming instruments makes
+    it easier to connect outlets and inlets in any higher-level orchestra
+    to inlets and outlets in any lower-level #included orchestra.
+  </p>
+      <p>
+    The signal flow graph opcodes include:
+
+    <a class="link" href="outleta.html" title="outleta"><em class="citetitle">outleta</em></a>, for
+    sending an arate signal from any instrument out a named port.
+
+    <a class="link" href="outletk.html" title="outletk"><em class="citetitle">outletk</em></a>, for
+    sending a krate signal from any instrument out a named port.
+
+    <a class="link" href="outletkid.html" title="outletkid"><em class="citetitle">outletkid</em></a>,
+    similar to outletk, but receiving a krate signal only from an identified instance of a port.
+
+    <a class="link" href="outletf.html" title="outletf"><em class="citetitle">outletf</em></a>, for
+    sending an frate signal from any instrument out a named port.
+
+    <a class="link" href="outletv.html" title="outletv"><em class="citetitle">outletv</em></a>, for
+    sending an arate array signal from any instrument out a named port.
+
+    <a class="link" href="inleta.html" title="inleta"><em class="citetitle">inleta</em></a>, for
+    receiving an arate signal through a named port.
+
+    <a class="link" href="inletk.html" title="inletk"><em class="citetitle">inletk</em></a>, for
+    receiving a krate signal through a named port.
+
+    <a class="link" href="inletkid.html" title="inletkid"><em class="citetitle">inletkid</em></a>,
+    similiar to inletk, but transmitting a signal only between inlet and outlet opcodes
+    .
+    <a class="link" href="inletf.html" title="inletf"><em class="citetitle">inletf</em></a>, for
+    receiving an frate signal through a named port.
+
+    <a class="link" href="inletv.html" title="inletv"><em class="citetitle">inletv</em></a>, for
+    receiving an arate array signal through a named port.
+
+    <a class="link" href="connect.html" title="connect"><em class="citetitle">connect</em></a>, for
+    routing the signal from a named outlet in a source instrument
+    to a named inlet in a sink instrument.
+
+    <a class="link" href="alwayson.html" title="alwayson"><em class="citetitle">alwayson</em></a> for
+    permanently activating an instrument from the orchestra header,
+    without need of a score statement, e.g. for use as an effect processor
+    receiving inputs from a number of sources.
+
+    <a class="link" href="ftgenonce.html" title="ftgenonce"><em class="citetitle">ftgenonce</em></a> for
+    instantiating function tables from within instrument definitions, without
+    need for f-statements in the score or ftgen opcodes in the orchestra header.
+  </p>
+      <p>
+    A typical scenario for the use of these opcodes would be something like this.
+    A set of instruments would be defined, each in its own orchestra file, and
+    each instrument would define inlet ports, outlet ports, and function tables within itself. Such
+    instruments are completely self-contained. Then, a set of effects processors, such
+    as equalizers, reverbs, compressors, and so on, would also be defined, each in its
+    own file. Then, a customized master orchestra would #include the instruments
+    and effects to be used, route the outputs of some instruments into one equalizer
+    and the outputs of other effects into another equalizer, then route the outputs of
+    both equalizers into a reverb, the output of the reverb into a compressor, and
+    the output of the compressor into a stereo output soundfile.
+  </p>
+      <div class="refsect1">
+        <a id="idm276128268864"></a>
+        <h2>Example</h2>
+        <p>
+      Here is an example of the signal flow graph opcodes. It uses the file <a class="ulink" href="examples/signalflowgraph.csd" target="_top"><em class="citetitle">signalflowgraph.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276128265952"></a>
+          <p class="title">
+            <strong>Example 10. Example of the signal flow graph opcodes.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276507739616"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o madsr.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/* Written by Michael Gogins */</span>
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; Connect up the instruments to create a signal flow graph.</span>
+
+<span class="nb">connect</span> <span class="s">"SimpleSine"</span><span class="p">,</span>   <span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"leftin"</span>
+<span class="nb">connect</span> <span class="s">"SimpleSine"</span><span class="p">,</span>   <span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"rightin"</span>
+
+<span class="nb">connect</span> <span class="s">"Moogy"</span><span class="p">,</span>        <span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"leftin"</span>
+<span class="nb">connect</span> <span class="s">"Moogy"</span><span class="p">,</span>        <span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"rightin"</span>
+
+<span class="nb">connect</span> <span class="s">"Reverberator"</span><span class="p">,</span> <span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Compressor"</span><span class="p">,</span>       	<span class="s">"leftin"</span>
+<span class="nb">connect</span> <span class="s">"Reverberator"</span><span class="p">,</span> <span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Compressor"</span><span class="p">,</span>       	<span class="s">"rightin"</span>
+
+<span class="nb">connect</span> <span class="s">"Compressor"</span><span class="p">,</span>   <span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Soundfile"</span><span class="p">,</span>       	<span class="s">"leftin"</span>
+<span class="nb">connect</span> <span class="s">"Compressor"</span><span class="p">,</span>   <span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Soundfile"</span><span class="p">,</span>       	<span class="s">"rightin"</span>
+
+<span class="c1">; Turn on the "effect" units in the signal flow graph.</span>
+
+<span class="nb">alwayson</span> <span class="s">"Reverberator"</span><span class="p">,</span> <span class="mf">0.91</span><span class="p">,</span> <span class="mi">12000</span>
+<span class="nb">alwayson</span> <span class="s">"Compressor"</span>
+<span class="nb">alwayson</span> <span class="s">"Soundfile"</span>
+
+<span class="kd">instr</span> <span class="nf">SimpleSine</span>
+  i<span class="n">hz</span> <span class="o">=</span> <span class="nb">cpsmidinn</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+  i<span class="n">amplitude</span> <span class="o">=</span> <span class="nb">ampdb</span><span class="p">(</span><span class="nb">p5</span><span class="p">)</span>
+  <span class="nb">print</span> i<span class="n">hz</span><span class="p">,</span> i<span class="n">amplitude</span>
+  <span class="c1">; Use ftgenonce instead of ftgen, ftgentmp, or f statement.</span>
+  i<span class="n">sine</span> <span class="nb">ftgenonce</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">1</span> <span class="nb">oscili</span> i<span class="n">amplitude</span><span class="p">,</span> i<span class="n">hz</span><span class="p">,</span> i<span class="n">sine</span>
+  a<span class="n">env</span> <span class="nb">madsr</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span>
+  a<span class="n">signal</span> <span class="o">=</span> a<span class="n">1</span> <span class="o">*</span> a<span class="n">env</span>
+  <span class="c1">; Stereo audio outlet to be routed in the orchestra header.</span>
+  <span class="nb">outleta</span> <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">signal</span> <span class="o">*</span> <span class="mf">0.25</span>
+  <span class="nb">outleta</span> <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">signal</span> <span class="o">*</span> <span class="mf">0.75</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">Moogy</span>
+  i<span class="n">hz</span> <span class="o">=</span> <span class="nb">cpsmidinn</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+  i<span class="n">amplitude</span> <span class="o">=</span> <span class="nb">ampdb</span><span class="p">(</span><span class="nb">p5</span><span class="p">)</span>
+  <span class="c1">; Use ftgenonce instead of ftgen, ftgentmp, or f statement.</span>
+  i<span class="n">sine</span> <span class="nb">ftgenonce</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">signal</span> <span class="nb">vco</span> i<span class="n">amplitude</span><span class="p">,</span> i<span class="n">hz</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> i<span class="n">sine</span>
+  k<span class="n">fco</span> <span class="nb">line</span> <span class="mi">200</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">2000</span>
+  k<span class="n">rez</span> <span class="nb">init</span> <span class="mf">0.9</span>
+  a<span class="n">signal</span> <span class="nb">moogvcf</span> a<span class="n">signal</span><span class="p">,</span> k<span class="n">fco</span><span class="p">,</span> k<span class="n">rez</span><span class="p">,</span> <span class="mi">100000</span>
+  <span class="c1">; Stereo audio outlet to be routed in the orchestra header.</span>
+  <span class="nb">outleta</span> <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">signal</span> <span class="o">*</span> <span class="mf">0.75</span>
+  <span class="nb">outleta</span> <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">signal</span> <span class="o">*</span> <span class="mf">0.25</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">Reverberator</span>
+  <span class="c1">; Stereo input.</span>
+  a<span class="n">leftin</span> <span class="nb">inleta</span> <span class="s">"leftin"</span>
+  a<span class="n">rightin</span> <span class="nb">inleta</span> <span class="s">"rightin"</span>
+  i<span class="n">delay</span> <span class="o">=</span> <span class="nb">p4</span>
+  i<span class="n">cutoff</span> <span class="o">=</span> <span class="nb">p5</span>
+  a<span class="n">leftout</span><span class="p">,</span> a<span class="n">rightout</span> <span class="nb">reverbsc</span> a<span class="n">leftin</span><span class="p">,</span> a<span class="n">rightin</span><span class="p">,</span> i<span class="n">delay</span><span class="p">,</span> i<span class="n">cutoff</span>
+  <span class="c1">; Stereo output.</span>
+  <span class="nb">outleta</span> <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">leftout</span>
+  <span class="nb">outleta</span> <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">rightout</span> 
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">Compressor</span>
+  <span class="c1">; Stereo input.</span>
+  a<span class="n">leftin</span> <span class="nb">inleta</span> <span class="s">"leftin"</span>
+  a<span class="n">rightin</span> <span class="nb">inleta</span> <span class="s">"rightin"</span>
+  k<span class="n">threshold</span> <span class="o">=</span> <span class="mi">25000</span>
+  i<span class="n">comp1</span> <span class="o">=</span> <span class="mf">0.5</span>
+  i<span class="n">comp2</span> <span class="o">=</span> <span class="mf">0.763</span>
+  i<span class="n">rtime</span> <span class="o">=</span> <span class="mf">0.1</span>
+  i<span class="n">ftime</span> <span class="o">=</span> <span class="mf">0.1</span>
+  a<span class="n">leftout</span> <span class="nb">dam</span> a<span class="n">leftin</span><span class="p">,</span> k<span class="n">threshold</span><span class="p">,</span> i<span class="n">comp1</span><span class="p">,</span> i<span class="n">comp2</span><span class="p">,</span> i<span class="n">rtime</span><span class="p">,</span> i<span class="n">ftime</span>
+  a<span class="n">rightout</span> <span class="nb">dam</span> a<span class="n">rightin</span><span class="p">,</span> k<span class="n">threshold</span><span class="p">,</span> i<span class="n">comp1</span><span class="p">,</span> i<span class="n">comp2</span><span class="p">,</span> i<span class="n">rtime</span><span class="p">,</span> i<span class="n">ftime</span>
+  <span class="c1">; Stereo output.</span>
+  <span class="nb">outleta</span> <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">leftout</span> 
+  <span class="nb">outleta</span> <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">rightout</span> 
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">Soundfile</span>
+  <span class="c1">; Stereo input.</span>
+  a<span class="n">leftin</span> <span class="nb">inleta</span> <span class="s">"leftin"</span>
+  a<span class="n">rightin</span> <span class="nb">inleta</span> <span class="s">"rightin"</span>
+  <span class="nb">outs</span> a<span class="n">leftin</span><span class="p">,</span> a<span class="n">rightin</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; Not necessary to activate "effects" or create f-tables in the score!</span>
+<span class="c1">; Overlapping notes to create new instances of instruments.</span>
+<span class="nb">i</span> <span class="s">"SimpleSine"</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mi">60</span> <span class="mi">85</span>
+<span class="nb">i</span> <span class="s">"SimpleSine"</span> <span class="mi">2</span> <span class="mi">5</span> <span class="mi">64</span> <span class="mi">80</span>
+<span class="nb">i</span> <span class="s">"Moogy"</span> <span class="mi">3</span> <span class="mi">5</span> <span class="mi">67</span> <span class="mi">75</span>
+<span class="nb">i</span> <span class="s">"Moogy"</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">71</span> <span class="mi">70</span>
+<span class="nb">e</span> <span class="mi">1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="MixerOpcodes.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartOpcodesOverview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="JackoOpcodes.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Mixer Opcodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Jacko Opcodes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

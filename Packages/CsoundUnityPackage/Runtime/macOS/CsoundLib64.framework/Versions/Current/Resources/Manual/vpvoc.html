@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vpvoc</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vpowv_i.html" title="vpowv_i" />
+    <link rel="next" href="vrandh.html" title="vrandh" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vpvoc</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vpowv_i.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vrandh.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vpvoc"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVpvoc" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vpvoc</span>
+        </h2>
+        <p>vpvoc — 
+      Implements signal reconstruction using an fft-based phase vocoder and an extra envelope.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037862128"></a>
+        <h2>Description</h2>
+        <p>
+      Implements signal reconstruction using an fft-based phase vocoder and an extra envelope.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037860848"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>vpvoc</strong></span> ktimpnt, kfmod, ifile [, ispecwp] [, ifn]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037858736"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifile</em></span> -- the pvoc number (n in pvoc.n) or the name in quotes of the analysis file made using <a class="link" href="pvanal.html" title="pvanal"><em class="citetitle">pvanal</em></a>. (See <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>.)
+    </p>
+        <p>
+      <span class="emphasis"><em>ispecwp</em></span> (optional, default=0) -- if non-zero, attempts to preserve the spectral envelope while its frequency content is varied by <span class="emphasis"><em>kfmod</em></span>. The default value is zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> (optional, default=0) -- optional function table containing control information for <span class="emphasis"><em>vpvoc</em></span>. If <span class="emphasis"><em>ifn</em></span> = 0, control is derived internally from a previous <span class="emphasis"><em>tableseg</em></span> or <span class="emphasis"><em>tablexseg</em></span> unit. Default is 0. (New in Csound version 3.59)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037851344"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktimpnt</em></span> -- The passage of time, in seconds, through the analysis file. <span class="emphasis"><em>ktimpnt</em></span> must always be positive, but can move forwards or backwards in time, be stationary or discontinuous, as a pointer into the analysis file. 
+    </p>
+        <p>
+      <span class="emphasis"><em>kfmod</em></span> -- a control-rate transposition factor: a value of 1 incurs no transposition, 1.5 transposes up a perfect fifth, and .5 down an octave.
+    </p>
+        <p>
+      This implementation of <span class="emphasis"><em>pvoc</em></span> was orignally written by Dan Ellis. It is based in part on the system of Mark Dolson, but the pre-analysis concept is new. The  spectral extraction and amplitude gating (new in Csound version 3.56) were added by Richard Karpen based on functions in SoundHack by Tom Erbe.
+    </p>
+        <p>
+      <span class="emphasis"><em>vpvoc</em></span> is identical to <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a> except that it takes the result of a previous <a class="link" href="tableseg.html" title="tableseg"><em class="citetitle">tableseg</em></a> or <a class="link" href="tablexseg.html" title="tablexseg"><em class="citetitle">tablexseg</em></a> and uses the resulting function table (passed internally to the <span class="emphasis"><em>vpvoc</em></span>), as an envelope over the magnitudes of the analysis data channels. Optionally, a table specified by <span class="emphasis"><em>ifn</em></span> may be used. 
+    </p>
+        <p>
+      The result is spectral enveloping. The function size used in the <span class="emphasis"><em>tableseg</em></span> should be <span class="emphasis"><em>framesize/2,</em></span> where framesize is the number of bins in the phase vocoder analysis file that is being used by the <span class="emphasis"><em>vpvoc</em></span>. Each location in the table will be used to scale a single analysis bin. By using different functions for <span class="emphasis"><em>ifn1</em></span>, <span class="emphasis"><em>ifn2</em></span>, etc.. in the <span class="emphasis"><em>tableseg</em></span>, the spectral envelope becomes a dynamically changing one. See also <a class="link" href="tableseg.html" title="tableseg"><em class="citetitle">tableseg</em></a> and <a class="link" href="tablexseg.html" title="tablexseg"><em class="citetitle">tablexseg</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037837664"></a>
+        <h2>Examples</h2>
+        <p>
+      The following example, using <span class="emphasis"><em>vpvoc</em></span>, shows the use of functions such as
+
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">f</span> 1 0 256 5 .001 128 1 128 .001
+<span class="stamnt">f</span> 2 0 256 5 1 128 .001 128 1
+<span class="stamnt">f</span> 3 0 256 7 1 256 1</pre>
+        </div>
+        <p>
+
+      to scale the amplitudes of the separate analysis bins.
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+ktime   <span class="opc">line</span>         0, p3, 3 <span class="comment">; time pointer, in seconds, into file</span>
+        <span class="opc">tablexseg</span>    1, p3<span class="op">*</span>0.5, 2, p3<span class="op">*</span>0.5, 3
+apv     <span class="opc">vpvoc</span>        ktime, 1, "pvoc.file"</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      The result would be a time-varying <span class="quote">“<span class="quote">spectral envelope</span>”</span> applied to the phase vocoder analysis data. Since this amplifies or attenuates the amount of signal at the frequencies that are paired with the amplitudes which are scaled by these functions, it has the effect of applying very accurate filters to the signal. In this example the first table would have the effect of a band-pass filter, gradually be band-rejected over half the note's duration, and then go towards no modification of the magnitudes over the second half.
+   </p>
+        <p>
+      Here is a complete example of the vpvoc opcode. It uses the file <a class="ulink" href="examples/vpvoc.csd" target="_top"><em class="citetitle">vpvoc.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276037825312"></a>
+          <p class="title">
+            <strong>Example 1124. </strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276406092832"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o vpvoc.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">; analyze "fox.wav" with PVANAL first</span>
+i<span class="n">end</span>  <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">time</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">end</span>
+      <span class="nb">tablexseg</span> <span class="nb">p5</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p6</span>		<span class="c1">;morph from table 1</span>
+a<span class="n">sig</span>  <span class="nb">vpvoc</span> k<span class="n">time</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"fox.pvx"</span>		<span class="c1">;to table 2</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span> a<span class="n">sig</span><span class="o">*</span><span class="mi">3</span>
+
+<span class="kd">endin</span>      
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">512</span> <span class="mi">9</span> <span class="mf">.5</span> <span class="mi">1</span> <span class="mi">0</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">512</span> <span class="mi">5</span> <span class="mi">1</span> <span class="mi">60</span> <span class="mf">0.01</span> <span class="mi">390</span> <span class="mf">0.01</span> <span class="mi">62</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span> <span class="mf">2.7</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037821744"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276037819712"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Authors: Dan Ellis and Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, WA USA</td>
+          </tr>
+          <tr>
+            <td>1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 3.44</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vpowv_i.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vrandh.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vpowv_i </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vrandh</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

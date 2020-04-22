@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN51</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN49.html" title="GEN49" />
+    <link rel="next" href="GEN52.html" title="GEN52" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN51</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN49.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN52.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN51"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN51" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN51</span>
+        </h2>
+        <p>GEN51 — 
+      This subroutine fills a table with a fully customized micro-tuning scale, in the manner of Csound opcodes <span class="emphasis"><em>cpstun</em></span>, <span class="emphasis"><em>cpstuni</em></span> and <span class="emphasis"><em>cpstmid</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276029752000"></a>
+        <h2>Description</h2>
+        <p>
+      This subroutine fills a table with a fully customized micro-tuning
+ 	  scale, in the manner of Csound opcodes <a class="link" href="cpstun.html" title="cpstun"><em class="citetitle">cpstun</em></a>,
+      <a class="link" href="cpstuni.html" title="cpstuni"><em class="citetitle">cpstuni</em></a> et
+      <a class="link" href="cpstmid.html" title="cpstmid"><em class="citetitle">cpstmid</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276029748064"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size -51 numgrades interval basefreq basekey tuningRatio1 tuningRatio2  .... tuningRationN</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276029746048"></a>
+        <h2>Performance</h2>
+        <p>
+      The first four parameters (i.e. p5, p6, p7 and p8) define the following
+ generation directives:</p>
+        <p>
+ 	<span class="emphasis"><em>p5 (numgrades)</em></span>
+ 	-- the number of grades of the micro-tuning scale
+ 	</p>
+        <p>
+ 	<span class="emphasis"><em>p6 (interval)</em></span>
+ 	-- the frequency range covered before repeating the grade
+ ratios, for example 2 for one octave, 1.5 for a fifth etcetera
+	</p>
+        <p>
+	<span class="emphasis"><em>p7 (basefreq)</em></span>
+	-- the base frequency of the scale in cps
+	</p>
+        <p>
+	<span class="emphasis"><em>p8 (basekey)</em></span>
+	-- the integer index of the scale to which to assign basefreq unmodified
+	</p>
+        <p>
+	The other parameters define the ratios of the scale:
+	</p>
+        <p>
+	 <span class="emphasis"><em>p9...pN (tuningRatio1...etc.)</em></span>
+	 -- the tuning ratios of the scale
+	 </p>
+        <p>
+ For example, for a standard 12-grade scale with the base-frequency of
+ 261 cps assigned to the key-number 60, the corresponding f-statement in
+ the score to generate the table should be:</p>
+        <pre class="programlisting">
+<span class="comment">;             numgrades        basefreq           tuning-ratios  (eq.temp) .......</span>
+<span class="comment">;                     interval         basekey</span>
+<span class="stamnt">f</span>1 0 64 -51     12       2      261      60        1   1.059463 1.12246 1.18920 ..etc...</pre>
+        <p>
+	 After the gen has been processed, the table f1 is filled with 64
+	 different frequency values. The 60th element is filled with the
+	 frequency value of 261, and all other elements (preceding and
+	 subsequents) of the table are filled according to the tuning ratios
+	</p>
+        <p>
+	 Another example with a 24-grade scale with a base frequency of 440
+	 assigned to the key-number 48, and a repetition interval of 1.5:</p>
+        <pre class="programlisting">
+<span class="comment">;            numgrades       basefreq             tuning-ratios .....</span>
+<span class="comment">;                     interval         basekey</span>
+<span class="stamnt">f</span>1 0 64 -51     24      1.5     440      48         1   1.01  1.02  1.03  ..etc...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276029732704"></a>
+        <h2>Examples</h2>
+        <p>
+	    Here is an example of the GEN51 routine. It uses the files <a class="ulink" href="examples/gen51.csd" target="_top"><em class="citetitle">gen51.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276029730912"></a>
+          <p class="title">
+            <strong>Example 1232. An example of the GEN51 routine.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276395045120"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span> 
+<span class="c1">; Select audio/midi flags here according to platform </span>
+-odac   -M0    <span class="c1">;;;realtime audio out and midi input</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too </span>
+<span class="c1">; For Non-realtime ouput leave only the line below: </span>
+<span class="c1">; -o gen51.wav -W ;;; for file output any platform </span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span> 
+<span class="c1">;example by Iain McCurdy</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+
+gi<span class="n">EqTmp12</span>	<span class="nb">ftgen</span>	<span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="o">-</span><span class="mi">51</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="nb">cpsoct</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span><span class="mi">60</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">4</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">6</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">7</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">8</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">9</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">10</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">11</span><span class="o">/</span><span class="mi">12</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">12</span><span class="o">/</span><span class="mi">12</span><span class="p">)</span>
+gi<span class="n">EqTmp10</span>	<span class="nb">ftgen</span>	<span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="o">-</span><span class="mi">51</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="nb">cpsoct</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span><span class="mi">60</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">4</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">6</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">7</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">8</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">9</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">10</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span>
+gi<span class="n">EqTmp24</span>	<span class="nb">ftgen</span>	<span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="o">-</span><span class="mi">51</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="nb">cpsoct</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span><span class="mi">60</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">4</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">5</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">6</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">7</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">8</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">9</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">10</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">11</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span> <span class="err">\</span> <span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">12</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">13</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">14</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">15</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">16</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">17</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">18</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">19</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">20</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">21</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">22</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">23</span><span class="o">/</span><span class="mi">24</span><span class="p">),</span><span class="mi">2</span><span class="o">^</span><span class="p">(</span><span class="mi">24</span><span class="o">/</span><span class="mi">24</span><span class="p">)</span>
+
+<span class="kd">instr</span>	<span class="nf">1</span>	<span class="c1">;midi input instrument</span>
+	<span class="cm">/*USE PITCH BEND TO MODULATE NOTE NUMBER UP OR DOWN ONE STEP - ACTUAL INTERVAL IT WILL MODULATE BY WILL BE DEPENDENT UPON THE GEN51 SCALE USED*/</span>
+	<span class="c1">;kbend	pchbend	0,2</span>
+	
+	<span class="cm">/*ALTERNATIVELY IF USING VIRTUAL MIDI DEVICE OR A KEYBOARD WITH NO PITCH BEND WHEEL, USE CONTROLLERS 1 AND 2 TO MODULATE PITCH UP OR DOWN 1 STEP*/</span>
+k<span class="n">up</span>	<span class="nb">ctrl7</span>	<span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">down</span>	<span class="nb">ctrl7</span>	<span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+k<span class="n">bend</span>	<span class="o">=</span>	k<span class="n">up</span><span class="o">+</span>k<span class="n">down</span>
+	
+i<span class="n">num</span>	<span class="nb">notnum</span>
+k<span class="n">cps</span>	<span class="nb">tablei</span>	i<span class="n">num</span><span class="o">+</span>k<span class="n">bend</span><span class="p">,</span> gi<span class="n">EqTmp24</span>	<span class="c1">;read cps values from GEN51, scale table using a combination of note played and pitch bend/controllers 1 and 2</span>
+a<span class="n">1</span>	<span class="nb">vco2</span>	<span class="mf">0.2</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.5</span>
+	<span class="nb">outs</span>	a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span>	<span class="nf">2</span>	<span class="c1">;score input instrument</span>
+
+k<span class="n">num</span>	<span class="nb">line</span>	<span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span>		<span class="c1">;gliss using a straight line bewteen p4 and p5 for the entire note duration</span>
+k<span class="n">cps</span>	<span class="nb">tablei</span>	k<span class="n">num</span><span class="p">,</span> gi<span class="n">EqTmp24</span>		<span class="c1">;read cps values from GEN51 scale table</span>
+a<span class="n">1</span>	<span class="nb">vco2</span>	<span class="mf">0.2</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.5</span>	
+	<span class="nb">outs</span>	a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">3600</span>
+
+<span class="c1">;instr 2. Score input. Gliss from step number p4 to step number p5</span>
+<span class="c1">;p4 - starting note number</span>
+<span class="c1">;p5 - ending note number</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">60</span>    <span class="mi">61</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="mi">70</span>    <span class="mi">58</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="mi">66</span>    <span class="mf">66.5</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span> <span class="mf">71.25</span> <span class="mi">71</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+        <span class="phrase">These are the diagrams of the waveforms of the GEN51 routines, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen51_1.png" alt="f 1 0 128 -51 12 2 cpsoct(8) 60 1 2^(1/12) 2^(2/12) 2^(3/12) 2^(4/12) 2^(5/12) 2^(6/12) 2^(7/12) 2^(8/12) 2^(9/12) 2^(10/12) 2^(11/12) 2^(12/12)" />
+          <div class="caption">
+            <p>f 1 0 128 -51 12 2 cpsoct(8) 60 1 2^(1/12) 2^(2/12) 2^(3/12) 2^(4/12) 2^(5/12) 2^(6/12) 2^(7/12) 2^(8/12) 2^(9/12) 2^(10/12) 2^(11/12) 2^(12/12)</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen51_2.png" alt="f 2 0 128 -51 10 2 cpsoct(8) 60 1 2^(1/10) 2^(2/10) 2^(3/10) 2^(4/10) 2^(5/10) 2^(6/10) 2^(7/10) 2^(8/10) 2^(9/10) 2^(10/10)" />
+          <div class="caption">
+            <p>f 2 0 128 -51 10 2 cpsoct(8) 60 1 2^(1/10) 2^(2/10) 2^(3/10) 2^(4/10) 2^(5/10) 2^(6/10) 2^(7/10) 2^(8/10) 2^(9/10) 2^(10/10)</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen51_3.png" alt="f 3 0 128 -51 24 2 cpsoct(8) 60 1 2^(1/24) 2^(2/24) 2^(3/24) 2^(4/24) 2^(5/24) 2^(6/24) 2^(7/24) 2^(8/24) 2^(9/24) 2^(10/24) 2^(11/24) 2^(12/24) 2^(13/24) 2^(14/24) 2^(15/24) 2^(16/24) 2^(17/24) 2^(18/24) 2^(19/24) 2^(20/24) 2^(21/24) 2^(22/24) 2^(23/24) 2^(24/24)" />
+          <div class="caption">
+            <p>f 3 0 128 -51 24 2 cpsoct(8) 60 1 2^(1/24) 2^(2/24) 2^(3/24) 2^(4/24) 2^(5/24) 2^(6/24) 2^(7/24) 2^(8/24) 2^(9/24) 2^(10/24) 2^(11/24) 2^(12/24) 2^(13/24) 2^(14/24) 2^(15/24) 2^(16/24) 2^(17/24) 2^(18/24) 2^(19/24) 2^(20/24) 2^(21/24) 2^(22/24) 2^(23/24) 2^(24/24)</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276029718048"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN49.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN52.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN49 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN52</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>locsend</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="liveconv.html" title="liveconv" />
+    <link rel="next" href="locsig.html" title="locsig" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">locsend</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="liveconv.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="locsig.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="locsend"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLocsend" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">locsend</span>
+        </h2>
+        <p>locsend — 
+      Distributes the audio signals of a previous <span class="emphasis"><em>locsig</em></span> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085904480"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>locsend</em></span> depends upon the existence of a previously defined <a class="link" href="locsig.html" title="locsig"><em class="citetitle">locsig</em></a>. The number of output signals must match the number in the previous <span class="emphasis"><em>locsig</em></span>. The output signals from <span class="emphasis"><em>locsend</em></span> are derived from the values given for distance and reverb in the <span class="emphasis"><em>locsig</em></span> and are ready to be sent to local or global reverb units (see example below). The reverb amount and the balance between the 2 or 4 channels are calculated in the same way as described in the Dodge book (an essential text!).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085900352"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>locsend</strong></span></pre>
+        <pre class="synopsis">a1, a2,  a3, a4 <span class="command"><strong>locsend</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085897248"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  asig some audio signal
+  kdegree            <span class="opc">line</span>    0, p3, 360
+  kdistance          <span class="opc">line</span>    1, p3, 10
+  a1, a2, a3, a4     <span class="opc">locsig</span>  asig, kdegree, kdistance, .1
+  ar1, ar2, ar3, ar4 <span class="opc">locsend</span>
+  ga1 <span class="op">=</span> ga1<span class="op">+</span>ar1
+  ga2 <span class="op">=</span> ga2<span class="op">+</span>ar2
+  ga3 <span class="op">=</span> ga3<span class="op">+</span>ar3
+  ga4 <span class="op">=</span> ga4<span class="op">+</span>ar4
+                     <span class="emphasis"><em>outq</em></span>    a1, a2, a3, a4
+<span class="oblock">endin</span>
+
+<span class="oblock">instr</span> 99 <span class="comment">; reverb instrument</span>
+  a1                 <span class="opc">reverb2</span> ga1, 2.5, .5
+  a2                 <span class="opc">reverb2</span> ga2, 2.5, .5
+  a3                 <span class="opc">reverb2</span> ga3, 2.5, .5
+  a4                 <span class="opc">reverb2</span> ga4, 2.5, .5
+                     <span class="opc">outq</span>    a1, a2, a3, a4
+  ga1<span class="op">=</span>0
+  ga2<span class="op">=</span>0
+  ga3<span class="op">=</span>0
+  ga4<span class="op">=</span>0</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      In the above example, the signal, <span class="emphasis"><em>asig</em></span>, is sent around a complete circle once during the duration of a note while at the same time it becomes more and more <span class="quote">“<span class="quote">distant</span>”</span> from the listeners' location. <span class="emphasis"><em>locsig</em></span> sends the appropriate amount of the signal internally to <span class="emphasis"><em>locsend</em></span>. The outputs of the <span class="emphasis"><em>locsend</em></span> are added to global accumulators in a common Csound style and the global signals are used as inputs to the reverb units in a separate instrument.
+ For an example, see <a class="link" href="locsig.html" title="locsig"><em class="citetitle">locsig</em></a>.  
+      </p>
+        <p>
+      <span class="emphasis"><em>locsig</em></span> is useful for quad and stereo panning as well as fixed placed of sounds anywhere between two loudspeakers. Below is an example of the fixed placement of sounds in a stereo field.
+It uses the file <a class="ulink" href="examples/locsend_stereo.csd" target="_top"><em class="citetitle">locsend_stereo.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276085873808"></a>
+          <p class="title">
+            <strong>Example 490. Example of the locsend opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276456337824"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o locsend_stereo.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+ga<span class="n">1</span> <span class="nb">init</span> <span class="mi">0</span>
+ga<span class="n">2</span> <span class="nb">init</span> <span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">revsend</span>  <span class="o">=</span> <span class="nb">p4</span>
+a<span class="n">out</span>	  <span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">degree</span>	  <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">180</span> <span class="c1">;left to right</span>
+k<span class="n">distance</span> <span class="nb">line</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">30</span>
+a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>	  <span class="nb">locsig</span> a<span class="n">out</span><span class="p">,</span> k<span class="n">degree</span><span class="p">,</span> k<span class="n">distance</span><span class="p">,</span> <span class="nb">p4</span>
+a<span class="n">r1</span><span class="p">,</span> a<span class="n">r2</span>  <span class="nb">locsend</span>
+ga<span class="n">1</span> <span class="o">=</span> ga<span class="n">1</span><span class="o">+</span>a<span class="n">r1</span>
+ga<span class="n">2</span> <span class="o">=</span> ga<span class="n">2</span><span class="o">+</span>a<span class="n">r2</span>
+          <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">99</span> <span class="c1">; reverb instrument</span>
+a<span class="n">1</span>	<span class="nb">reverb2</span> ga<span class="n">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+a<span class="n">2</span>	<span class="nb">reverb2</span> ga<span class="n">2</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+	<span class="nb">outs</span>	a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>
+ga<span class="n">1</span> <span class="o">=</span> <span class="mi">0</span>
+ga<span class="n">2</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span> <span class="mf">.1</span>	<span class="c1">;with reverb</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">4</span> <span class="mi">0</span>	<span class="c1">;no reverb</span>
+<span class="nb">i</span><span class="mi">99</span> <span class="mi">0</span> <span class="mi">7</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+</p>
+        <p>
+      A few notes:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  <span class="comment">;place the sound in the left speaker and near:</span>
+  <span class="stamnt">i</span>1 0 1 0 1
+  
+  <span class="comment">;place the sound in the right speaker and far:</span>
+  <span class="stamnt">i</span>1 1 1 90 25
+  
+  <span class="comment">;place the sound equally between left and right and in the middle ground distance:</span>
+  <span class="stamnt">i</span>1 2 1 45 12
+  <span class="stamnt">e</span></pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      The next example shows a simple intuitive use of the distance value to simulate Doppler shift. The same value is used to scale the frequency as is used as the distance input to <span class="emphasis"><em>locsig</em></span>.
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  kdistance          <span class="opc">line</span>    1, p3, 10
+  kfreq <span class="op">=</span> (ifreq <span class="op">*</span> 340) <span class="op">/</span> (340 <span class="op">+</span> kdistance)
+  asig               <span class="opc">oscili</span>  iamp, kfreq, 1
+  kdegree            <span class="opc">line</span>    0, p3, 360
+  a1, a2, a3, a4     <span class="opc">locsig</span>  asig, kdegree, kdistance, .1
+  ar1, ar2, ar3, ar4 <span class="opc">locsend</span></pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085856112"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="locsig.html" title="locsig"><em class="citetitle">locsig</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085854080"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, WA USA</td>
+          </tr>
+          <tr>
+            <td>1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.48</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="liveconv.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="locsig.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">liveconv </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> locsig</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

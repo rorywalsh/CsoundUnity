@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>xscanmap</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="xout.html" title="xout" />
+    <link rel="next" href="xscansmap.html" title="xscansmap" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">xscanmap</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="xout.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="xscansmap.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="xscanmap"></a>
+      <div class="titlepage"></div>
+      <a id="IndexXscanmap" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">xscanmap</span>
+        </h2>
+        <p>xscanmap — 
+      Allows the position and velocity of a node in a scanned process to be read.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035499136"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in scansyn.</p>
+        <p>
+      Allows the position and velocity of a node in a scanned process to be read.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035497456"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kpos, kvel <span class="command"><strong>xscanmap</strong></span> iscan, kamp, kvamp [, iwhich]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035495360"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iscan</em></span> -- which scan process to read
+    </p>
+        <p>
+      <span class="emphasis"><em>iwhich</em></span> (optional) -- which node to sense. The default is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035492896"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amount to amplify the <span class="emphasis"><em>kpos</em></span> value.
+    </p>
+        <p>
+      <span class="emphasis"><em>kvamp</em></span> -- amount to amplify the <span class="emphasis"><em>kvel</em></span> value.
+    </p>
+        <p>
+      The internal state of a node is read. This includes its position and velocity. They are amplified by the <span class="emphasis"><em>kamp</em></span> and <span class="emphasis"><em>kvamp</em></span> values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035488304"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the xscanmap opcode. It uses the file <a class="ulink" href="examples/xscanmap.csd" target="_top"><em class="citetitle">xscanmap.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276035486512"></a>
+          <p class="title">
+            <strong>Example 1153. Example of the xscanmap opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276403824464"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o xscanmap.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">nchnls_i</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">;the matrices can be found in /manual/examples</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; Plain scanned syntnesis</span>
+	<span class="c1">; note - scanu display is turned off</span>
+a<span class="n">0</span>    <span class="o">=</span> <span class="mi">0</span>							
+      <span class="nb">xscanu</span>   <span class="mi">1</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">"128-stringcircularX"</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">.01</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> a<span class="n">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>  		
+  a<span class="n">1</span>  <span class="nb">xscans</span>   <span class="nb">p4</span><span class="p">,</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p5</span><span class="p">),</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span>
+k<span class="n">1</span><span class="p">,</span>k<span class="n">2</span> <span class="nb">xscanmap</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">64</span>
+      <span class="nb">display</span>  k<span class="n">1</span><span class="p">,</span> <span class="mf">.25</span> <span class="c1">; note - display is updated every second</span>
+      <span class="nb">outs</span>     a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">; Scan synthesis with audio injection and dual scan paths</span>
+	<span class="c1">; note - scanu display is turned off</span>
+a<span class="n">in</span>   <span class="nb">diskin2</span> <span class="s">"fox.wav"</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span>	
+a<span class="n">in</span>   <span class="nb">in</span>
+a<span class="n">0</span>    <span class="o">=</span> a<span class="n">in</span><span class="o">/</span><span class="mi">10000</span> 						
+      <span class="nb">xscanu</span>   <span class="mi">1</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">"128,8-gridX"</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="mf">.05</span><span class="p">,</span> <span class="o">-</span><span class="mf">.05</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> a<span class="n">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> 		
+a<span class="n">1</span>    <span class="nb">xscans</span>   <span class="nb">p4</span><span class="p">,</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p5</span><span class="p">),</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span>
+a<span class="n">2</span>    <span class="nb">xscans</span>   <span class="nb">p4</span><span class="p">,</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p6</span><span class="p">),</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span>
+k<span class="n">1</span><span class="p">,</span>k<span class="n">2</span> <span class="nb">xscanmap</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">127</span>
+      <span class="nb">display</span>  k<span class="n">2</span><span class="p">,</span> <span class="mf">.5</span>  						<span class="c1">; note - display is updated ever 500ms</span>
+      <span class="nb">outs</span>     a<span class="n">1</span><span class="p">,</span>a<span class="n">2</span>
+<span class="kd">endin</span> 
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; Initial condition</span>
+<span class="c1">;f1 0 16 7 0 8 1 8 0</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">128</span> <span class="mi">7</span> <span class="mi">0</span> <span class="mi">64</span> <span class="mi">1</span> <span class="mi">64</span> <span class="mi">0</span>
+
+<span class="c1">; Masses</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">128</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">1</span> <span class="mi">128</span> <span class="mi">1</span>
+
+<span class="c1">; Centering force</span>
+<span class="nb">f</span><span class="mi">4</span>  <span class="mi">0</span> <span class="mi">128</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">0</span> <span class="mi">128</span> <span class="mi">2</span>
+<span class="nb">f</span><span class="mi">14</span> <span class="mi">0</span> <span class="mi">128</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">2</span> <span class="mi">64</span> <span class="mi">0</span> <span class="mi">64</span> <span class="mi">2</span>
+
+<span class="c1">; Damping</span>
+<span class="nb">f</span><span class="mi">5</span> <span class="mi">0</span> <span class="mi">128</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">1</span> <span class="mi">128</span> <span class="mi">1</span>
+
+<span class="c1">; Initial velocity</span>
+<span class="nb">f</span><span class="mi">6</span> <span class="mi">0</span> <span class="mi">128</span> <span class="o">-</span><span class="mi">7</span> <span class="o">-</span><span class="mf">.0</span> <span class="mi">128</span> <span class="mf">.0</span>
+
+<span class="c1">; Trajectories</span>
+<span class="nb">f</span><span class="mi">7</span> <span class="mi">0</span> <span class="mi">128</span> <span class="o">-</span><span class="mi">5</span> <span class="mf">.001</span> <span class="mi">128</span> <span class="mi">128</span>
+<span class="nb">f</span><span class="mi">77</span> <span class="mi">0</span> <span class="mi">128</span> <span class="o">-</span><span class="mi">23</span> <span class="s">"128-spiral-8,16,128,2,1over2"</span>
+
+<span class="c1">; Sine</span>
+<span class="nb">f</span><span class="mi">9</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="c1">;--------------------------------</span>
+<span class="c1">; Note list</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span> <span class="mf">.9</span> <span class="mf">7.00</span>                                  
+<span class="nb">s</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">10</span> <span class="mi">1</span>  <span class="mf">8.00</span> <span class="mf">6.00</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">10</span> <span class="mi">1</span>  <span class="mf">7.00</span> <span class="mf">8.05</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035482528"></a>
+        <h2>See Also</h2>
+        <p>
+More information on Scanned Synthesis (as well as several other matrices) is available on the <a class="ulink" href="http://www.csounds.com/scanned/" target="_top"><em class="citetitle">Scanned Synthesis page</em></a> at cSounds.com.
+    </p>
+        <p> Also an article on these opcodes: <a class="ulink" href="http://www.csounds.com/stevenyi/scanned/yi_scannedSynthesis.html" target="_top"><em class="citetitle">http://www.csounds.com/stevenyi/scanned/yi_scannedSynthesis.html</em></a>  , written by Steven Yi </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035479072"></a>
+        <h2>Credits</h2>
+        <p>Author: John ffitch</p>
+        <p>New in version 4.20</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="xout.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="xscansmap.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">xout </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> xscansmap</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

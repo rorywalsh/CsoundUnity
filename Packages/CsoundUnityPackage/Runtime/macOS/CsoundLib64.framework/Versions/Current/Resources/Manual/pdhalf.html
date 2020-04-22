@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pdhalf</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pdclip.html" title="pdclip" />
+    <link rel="next" href="pdhalfy.html" title="pdhalfy" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pdhalf</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pdclip.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pdhalfy.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pdhalf"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPdhalf" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pdhalf</span>
+        </h2>
+        <p>pdhalf — 
+      Distorts a phasor for reading the two halves of a table at different rates.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072113696"></a>
+        <h2>Description</h2>
+        <p>
+      The <span class="emphasis"><em>pdhalf</em></span> opcode is designed to emulate the "classic" phase distortion synthesis method of the Casio CZ-series of synthesizers from the mid-1980's.  This technique reads the first and second halves of a function table at different rates in order to warp the waveform.  For example, <span class="emphasis"><em>pdhalf</em></span> can smoothly transform a sine wave into something approximating the shape of a saw wave.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072111328"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>pdhalf</strong></span> ain, kShapeAmount [, ibipolar [, ifullscale]]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072109216"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ibipolar</em></span> -- an optional parameter specifying either unipolar (0) or bipolar (1) mode.  Defaults to unipolar mode.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifullscale</em></span> -- an optional parameter specifying the range of input and output values. The maximum will be <span class="emphasis"><em>ifullscale</em></span>. The minimum depends on the mode of operation: zero for unipolar or -<span class="emphasis"><em>ifullscale</em></span> for bipolar.  Defaults to 1.0 -- you should set this parameter to the maximum expected input value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072105664"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span> --  the input signal to be distorted.
+    </p>
+        <p>
+      <span class="emphasis"><em>aout</em></span> --  the output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kShapeAmount</em></span> --  the amount of distortion applied to the input.  Must be between negative one and one (-1 to 1). An amount of zero means no distortion.
+    </p>
+        <p>
+      </p>
+        <div class="mediaobject">
+          <img src="images/pdhalf.png" alt="Transfer function created by pdhalf and a negative kShapeAmount." />
+          <div class="caption">
+            <p>Transfer function created by pdhalf and a negative kShapeAmount.</p>
+          </div>
+        </div>
+        <p>
+
+      The <span class="emphasis"><em>pdhalf</em></span> opcode calculates a transfer function that is composed of two linear segments (see the graph).  These segments meet at a "pivot point" which always lies on the same horizontal axis.  (In unipolar mode, the axis is y = 0.5, and for bipolar mode it is the x axis).  The <span class="emphasis"><em>kShapeAmount</em></span> parameter specifies where on the horizontal axis this point falls.  When <span class="emphasis"><em>kShapeAmount</em></span> is zero, the pivot point is in the middle of the input range, forming a straight line for the transfer function and thus causing no change in the input signal.  As <span class="emphasis"><em>kShapeAmount</em></span> changes from zero (0) to negative one (-1), the pivot point moves towards the left side of the graph, producing a phase distortion pattern like the Casio CZ's "sawtooth waveform".  As it changes from zero (0) to positive one (1), the pivot point moves toward the right, producing an inverted pattern.
+    </p>
+        <p>
+      If the input to <span class="emphasis"><em>pdhalf</em></span> is a phasor and the output is used to index a table, values for <span class="emphasis"><em>kShapeAmount</em></span> that are less than zero will cause the first half of the table to be read more quickly than the second half.  The reverse is true for values of <span class="emphasis"><em>kShapeAmount</em></span> greater than zero. The rates at which the halves are read are calculated so that the frequency of the phasor is unchanged.  Thus, this method of phase distortion can only produce higher partials in a harmonic series.  It cannot produce inharmonic sidebands in the way that frequency modulation does. 
+    </p>
+        <p>
+      <span class="emphasis"><em>pdhalf</em></span> can work in either unipolar or bipolar modes. Unipolar mode is appropriate for signals like phasors that range between zero and some maximum value (selectable with <span class="emphasis"><em>ifullscale</em></span>). Bipolar mode is appropriate for signals that range above and below zero by roughly equal amounts such as most audio signals.  Applying <span class="emphasis"><em>pdhalf</em></span> directly to an audio signal in this way results in a crude but adjustable sort of waveshaping/distortion.
+    </p>
+        <p>
+      A typical example of the use of pdhalf is
+
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+    aphase    <span class="opc">phasor</span>    ifreq
+    apd       <span class="opc">pdhalf</span>    aphase, kamount
+    aout      <span class="opc">tablei</span>    apd, 1, 1</pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072088624"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pdhalf opcode. It uses the file <a class="ulink" href="examples/pdhalf.csd" target="_top"><em class="citetitle">pdhalf.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276072086832"></a>
+          <p class="title">
+            <strong>Example 698. Example of the pdhalf opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276438995968"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pdhalf.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">4</span>
+
+    i<span class="n">dur</span>        <span class="o">=</span> <span class="nb">p3</span>
+    i<span class="n">amp</span>        <span class="o">=</span> <span class="nb">p4</span>
+    i<span class="n">freq</span>       <span class="o">=</span> <span class="nb">p5</span>
+    i<span class="n">table</span>      <span class="o">=</span> <span class="nb">p6</span>
+    
+    a<span class="n">env</span>        <span class="nb">linseg</span>      <span class="mi">0</span><span class="p">,</span> <span class="mf">.001</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> i<span class="n">dur</span> <span class="o">-</span> <span class="mf">.051</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">.05</span><span class="p">,</span> <span class="mi">0</span>
+    a<span class="n">osc</span>        <span class="nb">phasor</span>      i<span class="n">freq</span>
+    k<span class="n">amount</span>     <span class="nb">linseg</span>      <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9</span><span class="p">,</span> i<span class="n">dur</span><span class="o">-</span><span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.0</span>
+    a<span class="n">pd</span>         <span class="nb">pdhalf</span>      a<span class="n">osc</span><span class="p">,</span> k<span class="n">amount</span>
+    a<span class="n">out</span>        <span class="nb">tablei</span>      a<span class="n">pd</span><span class="p">,</span> i<span class="n">table</span><span class="p">,</span> <span class="mi">1</span>
+    
+                <span class="nb">outs</span>         a<span class="n">env</span><span class="o">*</span>a<span class="n">out</span><span class="o">*</span>i<span class="n">amp</span><span class="p">,</span> a<span class="n">env</span><span class="o">*</span>a<span class="n">out</span><span class="o">*</span>i<span class="n">amp</span>     
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16385</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">16385</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">.5</span> <span class="mf">.3333</span> <span class="mf">.25</span> <span class="mf">.5</span>
+<span class="nb">f</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">16385</span>  <span class="mi">9</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">270</span>           <span class="c1">; inverted cosine</span>
+
+<span class="c1">; descending "just blues" scale</span>
+
+<span class="c1">; pdhalf with cosine table</span>
+<span class="c1">; (imitates the CZ-101 "sawtooth waveform")</span>
+<span class="nb">t</span> <span class="mi">0</span> <span class="mi">100</span>
+<span class="nb">i</span><span class="mi">4</span> <span class="mi">0</span> <span class="mi">3</span>   <span class="mf">.6</span>     <span class="mi">512</span>     <span class="mi">3</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mi">448</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mi">384</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">358.4</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">341.33</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">298.67</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mi">5</span>    <span class="o">.</span>     <span class="mi">256</span>
+<span class="nb">s</span>
+<span class="c1">; pdhalf with a sine table</span>
+<span class="nb">t</span> <span class="mi">0</span> <span class="mi">120</span>
+<span class="nb">i</span><span class="mi">4</span> <span class="mi">0</span> <span class="mi">3</span>   <span class="mf">.6</span>     <span class="mi">512</span>     <span class="mi">1</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mi">448</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mi">384</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">358.4</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">341.33</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">298.67</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mi">5</span>    <span class="o">.</span>     <span class="mi">256</span>
+<span class="nb">s</span>
+<span class="c1">; pdhalf with a sawtooth-like table</span>
+<span class="nb">t</span> <span class="mi">0</span> <span class="mi">150</span>
+<span class="nb">i</span><span class="mi">4</span> <span class="mi">0</span> <span class="mi">3</span>   <span class="mf">.6</span>     <span class="mi">512</span>     <span class="mi">2</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mi">448</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mi">384</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">358.4</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">341.33</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="o">.</span>    <span class="o">.</span>     <span class="mf">298.67</span>
+<span class="nb">i</span><span class="o">.</span> <span class="o">+</span> <span class="mi">5</span>    <span class="o">.</span>     <span class="mi">256</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072082816"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pdhalfy.html" title="pdhalfy"><em class="citetitle">pdhalfy</em></a>,
+      <a class="link" href="pdclip.html" title="pdclip"><em class="citetitle">pdclip</em></a>
+    </p>
+        <p> More information about phase distortion on Wikipedia: <a class="ulink" href="http://en.wikipedia.org/wiki/Phase_distortion_synthesis" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Phase_distortion_synthesis</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276072078720"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Anthony Kozar</td>
+          </tr>
+          <tr>
+            <td>January 2008</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pdclip.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pdhalfy.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pdclip </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pdhalfy</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

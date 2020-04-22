@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mpulse</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mp3scal.html" title="mp3scal" />
+    <link rel="next" href="mrtmsg.html" title="mrtmsg" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mpulse</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mp3scal.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="mrtmsg.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mpulse"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMpulse" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mpulse</span>
+        </h2>
+        <p>mpulse — 
+      Generates a set of impulses.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078700128"></a>
+        <h2>Description</h2>
+        <p>
+      Generates a set of impulses of amplitude <span class="emphasis"><em>kamp</em></span> separated by <span class="emphasis"><em>kintvl</em></span> seconds (or samples if <span class="emphasis"><em>kintvl</em></span> is negative).  The first impulse is generated after a delay of <span class="emphasis"><em>ioffset</em></span> seconds.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078697120"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>mpulse</strong></span> kamp, kintvl [, ioffset]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078695008"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ioffset</em></span> (optional, default=0) -- the delay before the first impulse. If it is negative, the value is taken as the number of samples, otherwise it is in seconds. Default is zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078693072"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude of the impulses generated
+    </p>
+        <p>
+      <span class="emphasis"><em>kintvl</em></span> -- Interval of time in seconds (or samples if <span class="emphasis"><em>kintvl</em></span> is negative) to the next pulse.
+    </p>
+        <p>
+      After the initial delay, an impulse of <span class="emphasis"><em>kamp</em></span> amplitude is generated as a single sample.  Immediately after generating the impulse, the time of the next one is determined from the value of <span class="emphasis"><em>kintvl</em></span> at that precise moment. This means that any changes in <span class="emphasis"><em>kintvl</em></span> between impulses are discarded. If <span class="emphasis"><em>kintvl</em></span> is zero, there is an infinite wait to the next impulse. If <span class="emphasis"><em>kintvl</em></span> is negative, the interval is counted in number of samples rather than seconds.
+
+    </p>
+        <p>
+      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078686720"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the mpulse opcode. It uses the file <a class="ulink" href="examples/mpulse.csd" target="_top"><em class="citetitle">mpulse.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276078684912"></a>
+          <p class="title">
+            <strong>Example 598. Example of the mpulse opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276447880624"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o mpulse.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+gk<span class="n">freq</span> <span class="nb">init</span> <span class="mf">0.1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  k<span class="n">amp</span> <span class="o">=</span> <span class="mi">10000</span>
+
+  a<span class="n">1</span> <span class="nb">mpulse</span> k<span class="n">amp</span><span class="p">,</span> gk<span class="n">freq</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+<span class="c1">; Assign the value of p4 to gkfreq</span>
+gk<span class="n">freq</span> <span class="nb">init</span> <span class="nb">p4</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for one second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">11</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">1</span>    <span class="mf">0.05</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">4</span> <span class="mi">1</span>    <span class="mf">0.01</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">6</span> <span class="mi">1</span>    <span class="mf">0.005</span>
+<span class="c1">; only last notes are audible</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">8</span> <span class="mi">1</span>    <span class="mf">0.003</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">10</span> <span class="mi">1</span>    <span class="mf">0.002</span>
+
+
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078680912"></a>
+        <h2>See Also</h2>
+        <p>
+      Another example of how to use mpulse can be found here: <a class="link" href="mode.html" title="mode"><em class="citetitle">mode</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078678800"></a>
+        <h2>Credits</h2>
+        <p>Written by John ffitch.</p>
+        <p>New in version 4.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mp3scal.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="mrtmsg.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mp3scal </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> mrtmsg</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

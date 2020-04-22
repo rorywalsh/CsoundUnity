@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>timeinsts</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="timeinstk.html" title="timeinstk" />
+    <link rel="next" href="timek.html" title="timek" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">timeinsts</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="timeinstk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="timek.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="timeinsts"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTimeinsts" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">timeinsts</span>
+        </h2>
+        <p>timeinsts — 
+      Read absolute time in seconds.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046163136"></a>
+        <h2>Description</h2>
+        <p>
+      Read absolute time, in seconds, since the start of an instance of an instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046161760"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>timeinsts</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046159808"></a>
+        <h2>Performance</h2>
+        <p>
+      Time in seconds is available with <span class="emphasis"><em>timeinsts</em></span>. This would return 0.5 after half a second.
+    </p>
+        <p>
+      <span class="emphasis"><em>timeinsts</em></span> produces a k-rate variable for output. There are no input parameters.
+    </p>
+        <p>
+      <span class="emphasis"><em>timeinsts</em></span> is similar to <a class="link" href="times.html" title="times"><em class="citetitle">times</em></a> except it returns the time since the start of this instance of the instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046155248"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the timeinsts opcode. It uses the file <a class="ulink" href="examples/timeinsts.csd" target="_top"><em class="citetitle">timeinsts.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276046153440"></a>
+          <p class="title">
+            <strong>Example 1031. Example of the timeinsts opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276413705328"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o timeinsts.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">Sine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">^</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">vib</span> <span class="nb">init</span> <span class="mi">1</span>
+k<span class="n">tim</span> <span class="nb">timeinsts</span>				<span class="c1">;read time </span>
+
+<span class="k">if</span> k<span class="n">tim</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">then</span>			<span class="c1">;do something after 2 seconds</span>
+   k<span class="n">vib</span> <span class="nb">oscili</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> gi<span class="n">Sine</span>		<span class="c1">;make a vibrato</span>
+<span class="k">endif</span>
+
+a<span class="n">sig</span> <span class="nb">poscil</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">600</span><span class="o">+</span>k<span class="n">vib</span><span class="p">,</span> gi<span class="n">Sine</span>	<span class="c1">;add vibrato</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span> 
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046149424"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="timeinstk.html" title="timeinstk"><em class="citetitle">timeinstk</em></a>, <a class="link" href="timek.html" title="timek"><em class="citetitle">timek</em></a>, <a class="link" href="times.html" title="times"><em class="citetitle">times</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046145648"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Robin Whittle</td>
+          </tr>
+          <tr>
+            <td>Australia</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="timeinstk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="timek.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">timeinstk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> timek</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

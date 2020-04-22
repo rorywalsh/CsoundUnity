@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>sfplay</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sfplay3m.html" title="sfplay3m" />
+    <link rel="next" href="sfplaym.html" title="sfplaym" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">sfplay</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sfplay3m.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sfplaym.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="sfplay"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSfplay" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">sfplay</span>
+        </h2>
+        <p>sfplay — 
+      Plays a SoundFont2 (SF2) sample preset, generating a stereo sound.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056717136"></a>
+        <h2>Description</h2>
+        <p>
+      Plays a SoundFont2 (SF2) sample preset, generating a stereo sound. These opcodes allow management the sample-structure of SF2 files. In order to understand the usage of these opcodes, the user must have some knowledge of the SF2 format, so a brief description of this format can be found in the <a class="link" href="MiscSf2.html" title="Appendix G. SoundFont2 File Format"><em class="citetitle">SoundFont2 File Format Appendix</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056714768"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar1, ar2 <span class="command"><strong>sfplay</strong></span> ivel, inotenum, xamp, xfreq, ipreindex [, iflag] [, ioffset] [, ienv]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056712624"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ivel</em></span> -- velocity value
+    </p>
+        <p>
+      <span class="emphasis"><em>inotenum</em></span> -- MIDI note number value
+    </p>
+        <p>
+      <span class="emphasis"><em>ipreindex</em></span> -- preset index
+    </p>
+        <p>
+      <span class="emphasis"><em>iflag</em></span> (optional) -- flag regarding the behavior of <span class="emphasis"><em>xfreq</em></span> and <span class="emphasis"><em>inotenum</em></span>
+    </p>
+        <p>
+      <span class="emphasis"><em>ioffset</em></span> (optional) -- start playing at offset, in samples.
+    </p>
+        <p>
+      <span class="emphasis"><em>ienv</em></span> (optional) -- enables and determines amplitude envelope. 0 = no envelope, 1 = linear attack and decay, 2 = linear attack, exponential decay (see below). Default = 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056705936"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xamp</em></span> -- amplitude correction factor
+    </p>
+        <p>
+      <span class="emphasis"><em>xfreq</em></span> -- frequency value or frequency multiplier, depending by <span class="emphasis"><em>iflag</em></span>. When <span class="emphasis"><em>iflag</em></span> = 0, <span class="emphasis"><em>xfreq</em></span> is a multiplier of a the default frequency, assigned by SF2 preset to the <span class="emphasis"><em>inotenum</em></span> value. When <span class="emphasis"><em>iflag</em></span> = 1, <span class="emphasis"><em>xfreq</em></span> is the absolute frequency of the output sound, in Hz. Default is 0.
+    </p>
+        <p>
+      When <span class="emphasis"><em>iflag</em></span> = 0, <span class="emphasis"><em>inotenum</em></span> sets the frequency of the output according to the MIDI note number used, and <span class="emphasis"><em>xfreq</em></span> is used as a multiplier. When <span class="emphasis"><em>iflag</em></span> = 1, the frequency of the output, is set directly by <span class="emphasis"><em>xfreq</em></span>. This allows the user to use any kind of micro-tuning based scales. However, this method is designed to work correctly only with presets tuned to the default equal temperament. Attempts to use this method with a preset already having non-standard tunings, or with drum-kit-based presets, could give unexpected results.
+    </p>
+        <p>
+      Adjustment of the amplitude can be done by varying the <span class="emphasis"><em>xamp</em></span> argument, which acts as a multiplier.
+    </p>
+        <p>
+      Notice that both <span class="emphasis"><em>xamp</em></span> and <span class="emphasis"><em>xfreq</em></span> can use k-rate as well as a-rate signals. Both arguments must use variables of the same rate, or <span class="emphasis"><em>sfplay</em></span> will not work correctly. <span class="emphasis"><em>ipreindex</em></span> must contain the number of a previously assigned preset, or Csound will crash.
+    </p>
+        <p>
+      The <span class="emphasis"><em>ioffset</em></span> parameter allows the sound to start from a sample different than the first one. The user should make sure that its value is within the length of the specific sound. Otherwise, Csound will probably crash.
+    </p>
+        <p>
+      The <span class="emphasis"><em>ienv</em></span> parameter enables and determines the type of amplitude envelope used. The default value is 0, or no envelope. If <span class="emphasis"><em>ienv</em></span> is set to 1, the attack and decay portions are linear. If set to 2, the attack is linear and the decay is exponential. The release portion of the envelope has not yet been implemented.
+    </p>
+        <p>
+      <span class="emphasis"><em>sfplay</em></span> plays a preset, generating a stereo sound. <span class="emphasis"><em>ivel</em></span> does not directly affect the amplitude of the output, but informs <span class="emphasis"><em>sfplay</em></span> about which sample should be chosen in multi-sample, velocity-split presets.
+    </p>
+        <p>
+      These opcodes only support the sample structure of SF2 files. The modulator structure of the SoundFont2 format is not supported in Csound. Any modulation or processing to the sample data is left to the Csound user, bypassing all restrictions forced by the SF2 standard.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056689728"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="sfilist.html" title="sfilist"><em class="citetitle">sfilist</em></a>,
+      <a class="link" href="sfinstr.html" title="sfinstr"><em class="citetitle">sfinstr</em></a>,
+      <a class="link" href="sfinstrm.html" title="sfinstrm"><em class="citetitle">sfinstrm</em></a>,
+      <a class="link" href="sfload.html" title="sfload"><em class="citetitle">sfload</em></a>,
+      <a class="link" href="sfpassign.html" title="sfpassign"><em class="citetitle">sfpassign</em></a>,
+      <a class="link" href="sfplay3.html" title="sfplay3"><em class="citetitle">sfplay3</em></a>,
+      <a class="link" href="sfplaym.html" title="sfplaym"><em class="citetitle">sfplaym</em></a>,
+      <a class="link" href="sfplay3m.html" title="sfplay3m"><em class="citetitle">sfplay3m</em></a>,
+      <a class="link" href="sfplist.html" title="sfplist"><em class="citetitle">sfplist</em></a>,
+      <a class="link" href="sfpreset.html" title="sfpreset"><em class="citetitle">sfpreset</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056679776"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>May 2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound Version 4.07</p>
+        <p>New optional parameter <span class="emphasis"><em>ienv</em></span> in version 5.09</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sfplay3m.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sfplaym.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sfplay3m </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> sfplaym</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

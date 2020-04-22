@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Nomenclature</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="prev" href="OrchDirFiles.html" title="Directories and Files" />
+    <link rel="next" href="OrchMacros.html" title="Macros" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Nomenclature</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="OrchDirFiles.html">Prev</a> </td>
+          <th width="60%" align="center">Syntax of the Orchestra</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OrchMacros.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="OrchNomen"></a>Nomenclature</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Throughout this document, opcodes are indicated in <span class="strong"><strong>boldface</strong></span> and their argument and result mnemonics, when mentioned in the text, are given in <span class="emphasis"><em>italics</em></span>. Argument names are generally mnemonic (<span class="emphasis"><em>amp</em></span>, <span class="emphasis"><em>phs</em></span>), and the result is usually denoted by the letter <span class="emphasis"><em>r</em></span>. Both are preceded by a type qualifier <span class="emphasis"><em>i, k, a,</em></span> or <span class="emphasis"><em>x</em></span> (e.g. <span class="emphasis"><em>kamp, iphs, ar</em></span>). The prefix <span class="emphasis"><em>i</em></span> denotes scalar values valid at note init time; prefixes <span class="emphasis"><em>k</em></span> or <span class="emphasis"><em>a</em></span> denote control (scalar) and audio (vector) values, modified and referenced continuously throughout performance (i.e. at every control period while the instrument is active). Arguments are used at the prefix-listed times; results are created at their listed times, then remain available for use as inputs elsewhere. With few exceptions, argument rates may not exceed the rate of the result. The validity of inputs is defined by the following:
+
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>arguments with prefix <span class="emphasis"><em>i</em></span> must be valid at init time;</p>
+          </li>
+          <li class="listitem">
+            <p>arguments with prefix <span class="emphasis"><em>k</em></span> can be either control or init values (which remain valid);</p>
+          </li>
+          <li class="listitem">
+            <p>arguments with prefix <span class="emphasis"><em>a</em></span> must be vector inputs;</p>
+          </li>
+          <li class="listitem">
+            <p>arguments with prefix <span class="emphasis"><em>x</em></span> may be either vector or scalar (the compiler will distinguish).</p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    All arguments, unless otherwise stated, can be expressions whose results conform to the above. Most opcodes (such as <span class="strong"><strong>linen</strong></span> and <span class="strong"><strong>oscil</strong></span>) can be used in more than one mode, which one being determined by the prefix of the result symbol.
+  </p>
+      <p>
+    Thoughout this manual, the term "opcode" is used to indicate a command that usually produces an a-, k-, or i-rate output, and always forms the basis of a complete Csound orchestra statement. Items such as "<span class="emphasis"><em>+</em></span>" or "<span class="emphasis"><em>sin</em></span>(x)" or, "( a <span class="emphasis"><em>&gt;=</em></span>  b <span class="emphasis"><em>?</em></span> c <span class="emphasis"><em>:</em></span> d)" are called "operators."
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="OrchDirFiles.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OrchTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OrchMacros.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Directories and Files </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Macros</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

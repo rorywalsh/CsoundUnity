@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsmooth</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsmorph.html" title="pvsmorph" />
+    <link rel="next" href="pvsout.html" title="pvsout" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsmooth</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsmorph.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsout.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvsmooth"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpvsmooth" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsmooth</span>
+        </h2>
+        <p>pvsmooth — 
+      Smooth the amplitude and frequency time functions of a pv stream using parallel 1st order
+      lowpass IIR filters with time-varying cutoff frequency. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071382464"></a>
+        <h2>Description</h2>
+        <p>
+      Smooth the amplitude and frequency time functions of a pv stream using a 1st order
+      lowpass IIR with time-varying cutoff frequency. This opcode uses the same filter 
+      as the <span class="emphasis"><em>tone</em></span> opcode, but this time acting separately on the amplitude and frequency
+      time functions that make up a pv stream. The cutoff frequency parameter runs at the
+      control-rate, but unlike <span class="emphasis"><em>tone</em></span> and <span class="emphasis"><em>tonek</em></span>, it is not specified in Hz, but as fractions
+      of 1/2 frame-rate (actually the pv stream sampling rate), which is easier to
+      understand. This means that the highest cutoff frequency is 1 and the lowest 0; the lower
+      the frequency the smoother the functions and more pronounced the effect will be. 
+    </p>
+        <p>
+      These are filters applied to control signals so the effect is basically blurring the spectral evolution. The effects produced are more or less similar to <span class="emphasis"><em>pvsblur</em></span>, but with two important
+      differences: 1.smoothing of amplitudes and frequencies use separate sets of filters; and 2. there is
+      no increase in computational cost when higher amounts of 'blurring' (smoothing) are desired.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071378160"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsmooth</strong></span> fsigin, kacf, kfcf</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071376064"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>fsigin</em></span> -- input pv stream.
+    </p>
+        <p>
+      <span class="emphasis"><em>kacf</em></span> -- amount of cutoff frequency for amplitude function filtering, between 0 and 1,
+      in fractions of 1/2 frame-rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfcf</em></span> -- amount of cutoff frequency for frequency function filtering, between 0 and 1,
+      in fractions of 1/2 frame-rate.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        It is unsafe to use the same f-variable for both input and output of pvs opcodes. Using the same one might lead to undefined behavior on some opcodes. Use a different one on the left and right sides of the opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071370816"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pvsmooth opcode. It uses the file <a class="ulink" href="examples/pvsmooth.csd" target="_top"><em class="citetitle">pvsmooth.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276071369024"></a>
+          <p class="title">
+            <strong>Example 794. Example of the pvsmooth opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276431490096"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pvsmooth.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">acf</span> <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">fcf</span> <span class="o">=</span> <span class="nb">p5</span>
+a<span class="n">sig</span> <span class="nb">soundin</span> <span class="s">"fox.wav"</span>
+<span class="n">fsig</span> <span class="nb">pvsanal</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; analyse it</span>
+<span class="n">ftps</span> <span class="nb">pvsmooth</span> <span class="n">fsig</span><span class="p">,</span> k<span class="n">acf</span><span class="p">,</span> k<span class="n">fcf</span>
+a<span class="n">tps</span> <span class="nb">pvsynth</span> <span class="n">ftps</span>			<span class="c1">; synthesise it                      </span>
+     <span class="nb">outs</span> a<span class="n">tps</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span> a<span class="n">tps</span><span class="o">*</span><span class="mi">3</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;       amp  freq </span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mf">0.01</span> <span class="mf">0.01</span>	<span class="c1">;smooth amplitude and frequency with cutoff frequency of filter at 1% of 1/2 frame-rate (ca 0.86 Hz)</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span>  <span class="mi">1</span>   <span class="mf">0.01</span>	<span class="c1">;no smoothing on amplitude, but frequency with cf at 1% of 1/2 frame-rate (ca 0.86 Hz)</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">10</span> <span class="mf">.001</span>  <span class="mi">1</span>	<span class="c1">;smooth amplitude with cf at 0.1% of 1/2 frame-rate (ca 0.086 Hz)</span>
+			<span class="c1">;and no smoothing of frequency</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+     The formula for calculating the cutoff frequency of the filter: frame rate / hopsize = new frame starts per second (in Hz), then the percentage of half the framerate.
+     For example, looking at the first note in the example, the frame rate is 44100 / 256 = 172,265625 Hz (= 172 new frame starts per 
+second). half of the frame rate is about 86 Hz, and one percent of this is 0.86 Hz.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071364256"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>May 2006 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>May 2006.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsmorph.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsout.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsmorph </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsout</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>s Statement</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="r.html" title="r Statement (Repeat Statement)" />
+    <link rel="next" href="t.html" title="t Statement (Tempo Statement)" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">s Statement</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="r.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="t.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="s"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSStatement" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">s Statement</span>
+        </h2>
+        <p>s — 
+      Marks the end of a section.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013402544"></a>
+        <h2>Description</h2>
+        <p>
+      The <span class="emphasis"><em>s statement</em></span> marks the end of a section.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013400912"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>s</strong></span> [time]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013398992"></a>
+        <h2>Initialization</h2>
+        <p>
+      The first p-field <span class="emphasis"><em>time</em></span> is optional and if present determines the end time (length in beats) of the section.  This time must be after the end of the last event in the section otherwise it will have no effect. This can be used to create a pause before the beginning of the next section or to allow "always on" instruments such as effects to play by themselves for some length of time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013397024"></a>
+        <h2>Performance</h2>
+        <p>
+      Sorting of the <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statement</em></a>, <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a> and <a class="link" href="a.html" title="a Statement (or Advance Statement)"><em class="citetitle">a statement</em></a> by action time is done section by section.
+    </p>
+        <p>
+      Time warping for the <a class="link" href="t.html" title="t Statement (Tempo Statement)"><em class="citetitle">t statement</em></a> is done section by section.
+    </p>
+        <p>
+      All action times within a section are relative to its beginning. A section statement establishes a new relative time of 0, but has no other reinitializing effects (e.g. stored function tables are preserved across section boundaries).
+    </p>
+        <p>
+      A section is considered complete when all action times and finite durations have been satisfied (i.e., the "length" of a section is determined by the last occurring action or turn-off). A section can be extended by the use of an <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f0 statement</em></a> or by supplying the optional <span class="emphasis"><em>p1</em></span> value to the <span class="emphasis"><em>s statement</em></span>.
+    </p>
+        <p>
+      A section ending automatically invokes a purge of inactive instrument and data spaces.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>
+              Since score statements are processed section by section, the amount of memory required depends on the maximum number of score statements in a section. Memory allocation is dynamic, and the user will be informed as extra memory blocks are requested during score processing.
+            </p>
+                    </li>
+                    <li class="listitem">
+                      <p>
+              For the end of the final section of a score, the <span class="emphasis"><em>s statement</em></span> is optional; the <a class="link" href="e.html" title="e Statement"><em class="citetitle">e statement</em></a> may be used instead.
+            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+    </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013383168"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the s statement. It uses the file <a class="ulink" href="examples/s.csd" target="_top"><em class="citetitle">s.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276013381408"></a>
+          <p class="title">
+            <strong>Example 1189. Example of the s statement.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276399771584"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o s.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">env</span> <span class="nb">expseg</span> <span class="mf">.01</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.01</span>
+a<span class="n">sig</span> <span class="nb">poscil3</span> <span class="mf">.8</span><span class="o">*</span>a<span class="n">env</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span><span class="c1">;sine wave</span>
+
+<span class="nb">s</span>		<span class="c1">;first section</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">110</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">220</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span> <span class="mi">2</span> <span class="mi">440</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">9</span> <span class="mi">2</span> <span class="mi">880</span>
+
+<span class="nb">s</span>		<span class="c1">;second section</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">880</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">440</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span> <span class="mi">2</span> <span class="mi">220</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">9</span> <span class="mi">2</span> <span class="mi">110</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="r.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="t.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">r Statement (Repeat Statement) </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> t Statement (Tempo Statement)</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

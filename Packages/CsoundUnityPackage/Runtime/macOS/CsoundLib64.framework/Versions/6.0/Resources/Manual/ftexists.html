@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ftexists</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ftcps.html" title="ftcps" />
+    <link rel="next" href="ftfree.html" title="ftfree" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ftexists</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ftcps.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ftfree.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ftexists"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFtexists" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ftexists</span>
+        </h2>
+        <p>ftexists — 
+      Query if a given table exists
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102272576"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in emugens.</p>
+        <p>
+      Returns 1 if a given index refers to an existing table,
+      0 if the table does not exist.
+      Works at i-time if output is an ivariable, at k-time otherwise
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102270816"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">iexists <span class="command"><strong>ftexists</strong></span> ifn </pre>
+        <pre class="synopsis">kexists <span class="command"><strong>ftexists</strong></span> kfn / ifn</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102267440"></a>
+        <h2>Arguments</h2>
+        <p>
+	  <span class="emphasis"><em>ifn / kfm</em></span> - The table to query
+	</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102265840"></a>
+        <h2>Output</h2>
+        <p>
+      <span class="emphasis"><em>iexists / kexists</em></span> - 1 if the table exists, 0 otherwise
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102263872"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the ftexists opcode. It uses the file <a class="ulink" href="examples/ftexists.csd" target="_top"><em class="citetitle">ftexists.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276102261072"></a>
+          <p class="title">
+            <strong>Example 367. Example of the ftexists opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276477138304"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+
+--nosound 
+
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; This is the example file for ftexists</span>
+
+<span class="cm">/*
+
+  ftexists
+
+  Returns 1 if a given table index refers to an existing
+  ftable
+
+  iexists  ftexists  ifn
+  kexists  ftexists  kfn
+
+  Args:
+  	ifn / kfn: the table index to query
+
+  Returns:
+    iexists / kexists: 1 if a table with index ifn exists, 0 otherwise
+
+*/</span>
+
+gi<span class="n">fn1</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    i<span class="n">exists1</span> <span class="n">ftexists</span> gi<span class="n">fn1</span>
+    <span class="nb">print</span> i<span class="n">exists1</span>
+
+    i<span class="n">exists2</span> <span class="n">ftexists</span> <span class="mi">2</span>
+    <span class="nb">print</span> i<span class="n">exists2</span>
+
+    k<span class="n">exists</span> <span class="n">ftexists</span> <span class="mi">3</span>
+    <span class="nb">printf</span> <span class="s">"table 3 exists at time %f"</span><span class="p">,</span> k<span class="n">exists</span><span class="p">,</span> <span class="nb">timeinsts</span><span class="p">()</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">8</span> <span class="mi">2</span> <span class="mi">0</span>
+<span class="nb">f</span> <span class="mi">3</span> <span class="mf">1.5</span> <span class="mi">8</span> <span class="mi">2</span> <span class="mi">0</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102259376"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="ftlen.html" title="ftlen"><em class="citetitle">ftlen</em></a>,
+      <a class="link" href="nsamp.html" title="nsamp"><em class="citetitle">nsamp</em></a>,
+      <a class="link" href="ftsr.html" title="ftsr"><em class="citetitle">ftsr</em></a>,
+      <a class="link" href="ftchnls.html" title="ftchnls"><em class="citetitle">ftchnls</em></a>,
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102254368"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2019</p>
+        <p>New plugin in version 6.14</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ftcps.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ftfree.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ftcps </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ftfree</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

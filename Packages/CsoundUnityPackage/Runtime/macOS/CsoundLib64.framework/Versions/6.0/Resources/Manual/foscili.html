@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>foscili</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="foscil.html" title="foscil" />
+    <link rel="next" href="fout.html" title="fout" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">foscili</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="foscil.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fout.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="foscili"></a>
+      <div class="titlepage"></div>
+      <a id="Indexfoscili" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">foscili</span>
+        </h2>
+        <p>foscili — 
+      Basic frequency modulated oscillator with linear interpolation.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106210400"></a>
+        <h2>Description</h2>
+        <p>
+      Basic frequency modulated oscillator with linear interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106209056"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>foscili</strong></span> xamp, kcps, xcar, xmod, kndx, ifn [, iphs]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106206928"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- function table number. Requires a wrap-around guard point.
+    </p>
+        <p>
+      <span class="emphasis"><em>iphs</em></span> (optional, default=0) -- initial phase of waveform in table <span class="emphasis"><em>ifn</em></span>, expressed as a fraction of a cycle (0 to 1). A negative value will cause phase initialization to be skipped. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106203680"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xamp</em></span> -- the amplitude of the output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> -- a common denominator, in cycles per second, for the carrier and modulating frequencies.
+    </p>
+        <p>
+      <span class="emphasis"><em>xcar</em></span> -- a factor that, when multiplied by the <span class="emphasis"><em>kcps</em></span> parameter, gives the carrier frequency.
+    </p>
+        <p>
+      <span class="emphasis"><em>xmod</em></span> -- a factor that, when multiplied by the <span class="emphasis"><em>kcps</em></span> parameter, gives the modulating frequency.
+    </p>
+        <p>
+      <span class="emphasis"><em>kndx</em></span> -- the modulation index.
+    </p>
+        <p>
+      <span class="emphasis"><em>foscili</em></span> differs from <a class="link" href="foscil.html" title="foscil"><em class="citetitle">foscil</em></a> in that the standard procedure of using a truncated phase as a sampling index is here replaced by a process that interpolates between two successive lookups. Interpolating generators will produce a noticeably cleaner output signal, but they may take as much as twice as long to run. Adequate accuracy can also be gained without the time cost of interpolation by using large stored function tables of 2K, 4K or 8K points if the space is available.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106194832"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the foscili opcode. It uses the file <a class="ulink" href="examples/foscili.csd" target="_top"><em class="citetitle">foscili.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276106193024"></a>
+          <p class="title">
+            <strong>Example 350. Example of the foscili opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276470359872"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o foscili.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">cps</span> <span class="o">=</span> <span class="mi">440</span>
+k<span class="n">car</span> <span class="o">=</span> <span class="mi">1</span>
+k<span class="n">mod</span> <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">ndx</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">20</span>	<span class="c1">;intensivy sidebands</span>
+
+a<span class="n">sig</span> <span class="nb">foscili</span> <span class="mf">.5</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> k<span class="n">car</span><span class="p">,</span> k<span class="n">mod</span><span class="p">,</span> k<span class="n">ndx</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">9</span> <span class="mf">.01</span>	<span class="c1">;vibrato</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">10</span> <span class="o">.</span>  <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">20</span> <span class="o">.</span> <span class="mf">1.414</span>	<span class="c1">;gong-ish</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">30</span> <span class="mi">5</span> <span class="mf">2.05</span>	<span class="c1">;with "beat"</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106189008"></a>
+        <h2>See Also</h2>
+        <p> More information about frequency modulation on Wikipedia: <a class="ulink" href="http://en.wikipedia.org/wiki/Frequency_modulation_synthesis" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Frequency_modulation_synthesis</em></a></p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="foscil.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fout.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">foscil </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fout</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

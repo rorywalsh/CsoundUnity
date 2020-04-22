@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mute</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="multitap.html" title="multitap" />
+    <link rel="next" href="mvchpf.html" title="mvchpf" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mute</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="multitap.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="mvchpf.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mute"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMute" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mute</span>
+        </h2>
+        <p>mute — 
+      Mutes/unmutes new instances of a given instrument.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078457424"></a>
+        <h2>Description</h2>
+        <p>
+      Mutes/unmutes new instances of a given instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078456112"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>mute</strong></span> insnum [, iswitch]</pre>
+        <pre class="synopsis"><span class="command"><strong>mute</strong></span> "insname" [, iswitch]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078452976"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>insnum</em></span> -- instrument number. Equivalent to <span class="emphasis"><em>p1</em></span> in a score <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statement</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">insname</span>”</span></em></span> -- A string (in double-quotes) representing a named instrument.
+    </p>
+        <p>
+      <span class="emphasis"><em>iswitch</em></span> (optional, default=0) -- represents a switch to mute/unmute an instrument. A value of 0 will mute new instances of an instrument, other values will unmute them. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078447792"></a>
+        <h2>Performance</h2>
+        <p>
+      All new instances of instrument inst will me muted (iswitch = 0) or unmuted (iswitch not equal to 0). There is no difficulty with muting muted instruments or unmuting unmuted instruments. The mechanism is the same as used by the score <a class="link" href="q.html" title="q Statement"><em class="citetitle">q statement</em></a>. For example, it is possible to mute in the score and unmute in some instrument.
+    </p>
+        <p>
+      Muting/Unmuting is indicated by a message (depending on message level).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078444752"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the mute opcode. It uses the file <a class="ulink" href="examples/mute.csd" target="_top"><em class="citetitle">mute.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276078442960"></a>
+          <p class="title">
+            <strong>Example 602. Example of the mute opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276446966608"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o mute.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Mute Instrument #2.</span>
+<span class="nb">mute</span> <span class="mi">2</span>
+<span class="c1">; Mute Instrument three.</span>
+<span class="nb">mute</span> <span class="s">"three"</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">1</span> <span class="nb">oscils</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">0</span>
+   <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">; gets muted</span>
+
+a<span class="n">1</span> <span class="nb">oscils</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">880</span><span class="p">,</span> <span class="mi">0</span>
+   <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">three</span>	<span class="c1">; gets muted</span>
+
+a<span class="n">1</span> <span class="nb">oscils</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span>
+   <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="s">"three"</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078438928"></a>
+        <h2>Credits</h2>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="multitap.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="mvchpf.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">multitap </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> mvchpf</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

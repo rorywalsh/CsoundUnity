@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pop_f</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="DeprecatedTop.html" title="Deprecated Orchestra Opcodes and GEN Routines" />
+    <link rel="prev" href="pop.html" title="pop" />
+    <link rel="next" href="push.html" title="push" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pop_f</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pop.html">Prev</a> </td>
+          <th width="60%" align="center">Deprecated Orchestra Opcodes and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="push.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pop_f"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpop_f" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pop_f</span>
+        </h2>
+        <p>pop_f — 
+      Pops an f-sig frame from the global stack.  Deprecated.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983700192"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in stackops.</p>
+        <p>
+      Pops an f-sig frame from the global stack.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983698544"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pop_f</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983696208"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig </em></span>  - f-signal to be popped from the stack.
+    </p>
+        <p>
+      The values are popped the stack. The global stack must be initialized before used, and its size must be set. The global stack works in LIFO order: after multiple <a class="link" href="push_f.html" title="push_f"><em class="citetitle">push_f</em></a> calls, <span class="emphasis"><em>pop_f</em></span> should be used in reverse order.
+    </p>
+        <p>
+      push/pop for a, k, i, and S types copy data by value. By contrast, <a class="link" href="push_f.html" title="push_f"><em class="citetitle">push_f</em></a> only pushes a "reference" to the f-signal, and then the corresponding <span class="emphasis"><em>pop_f</em></span> will copy directly from the original variable to its output signal. For this reason, changing the source f-signal of <a class="link" href="push_f.html" title="push_f"><em class="citetitle">push_f</em></a> before <span class="emphasis"><em>pop_f</em></span> is called is not recommended, and if the instrument instance owning the variable that was passed by <a class="link" href="push_f.html" title="push_f"><em class="citetitle">push_f</em></a> is deactivated before <span class="emphasis"><em>pop_f</em></span> is called, undefined behavior may occur.
+    </p>
+        <p>
+      <a class="link" href="push_f.html" title="push_f"><em class="citetitle">push_f</em></a> and <span class="emphasis"><em>pop_f</em></span> can only take a single argument, and the data is passed both at init and performance time.
+    </p>
+        <p>
+      Any stack errors (trying to push when there is no more space, or pop from an empty stack, inconsistent number or type of arguments, etc.) are fatal and terminate performance.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983685744"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="stack.html" title="stack"><em class="citetitle">stack</em></a>,
+      <a class="link" href="push.html" title="push"><em class="citetitle">push</em></a>,
+      <a class="link" href="pop.html" title="pop"><em class="citetitle">pop</em></a> and 
+      <a class="link" href="push_f.html" title="push_f"><em class="citetitle">push_f</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983681088"></a>
+        <h2>Credits</h2>
+        <p>By: Istvan Varga.</p>
+        <p>2006</p>
+        <p>Deprecated as of version 6.04.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="DeprecatedTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="push.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pop </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> push</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

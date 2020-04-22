@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>cell</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ceil.html" title="ceil" />
+    <link rel="next" href="cent.html" title="cent" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">cell</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ceil.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cent.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="cell"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCell" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">cell</span>
+        </h2>
+        <p>cell — 
+      Cellular Automaton
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122140464"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in cellular</p>
+        <p>
+	 One-Dimensional Cellular Automaton. This opcode is the
+         modified version of <span class="emphasis"><em>vcella</em></span> by Gabriel Maldonado.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122138352"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>cell</strong></span> ktrig, kreinit, ioutFunc, initStateFunc, iRuleFunc, ielements</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122136368"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ioutFunc</em></span> -- number of the table where the state of each cell is stored.
+    </p>
+        <p>
+      <span class="emphasis"><em>initStateFunc</em></span> -- number of the table
+      containing the inital states of cells. 
+    </p>
+        <p>
+      <span class="emphasis"><em>iRuleFunc</em></span> -- number of a lookup table
+      containing the 8-bit rule.
+    </p>
+        <p>
+      <span class="emphasis"><em>ielements</em></span> -- total number of cells in a row. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122132160"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktri</em></span> -- trigger signal. Each time it is
+      non-zero, a new generation of cells is evaluated. 
+    </p>
+        <p>
+      <span class="emphasis"><em>kreinit</em></span> -- reset signal. Each time it is
+      non-zero, state of all cells is forced to be that of
+      initStateFunc.
+    </p>
+        <p>
+      <span class="emphasis"><em>cell</em></span> models a classical 1D cellular
+      automaton and stores the state of each cell in the table
+      identified by <span class="emphasis"><em>ioutFunc</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>initStateFunc</em></span> is an input vector containing
+      the inital value of the row of cells, while
+      <span class="emphasis"><em>iRuleFunc</em></span> is an input vector containing the
+      chosen rule in the binary form (least significant bit first). 
+    </p>
+        <p>
+      A new generation of cells is evaluated each time
+      <span class="emphasis"><em>ktrig</em></span> contains a non-zero value.  Also the
+      status of all cells can be forced to assume the status
+      corresponding to the contents of
+      <span class="emphasis"><em>initStateFunc</em></span> each time
+      <span class="emphasis"><em>kreinit</em></span> contains a non-zero value.
+    </p>
+        <p>
+      Note that each cell is supposed to be in one of two possible
+      states (1 = "alive", 0 = "dead"), although fractional values
+      should work too, because truncation is used. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122124384"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a simple example of the cell opcode. It uses the file
+      <a class="ulink" href="examples/cell.csd" target="_top"><em class="citetitle">cell.csd</em></a>. 
+      </p>
+        <div class="example">
+          <a id="idm276122122592"></a>
+          <p class="title">
+            <strong>Example 114. A simple example of the cell opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276489787040"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">;-odac           -iadc     ;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o cell.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">; cell.csd by Gleb Rogozinsky</span>
+
+<span class="vg">sr</span>        <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span>        <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span>     <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span>    <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span>     <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Cellular automaton-driven synthesis in spectral domain</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+
+  i<span class="n">att</span>      <span class="o">=</span> <span class="nb">p4</span>                                <span class="c1">; envelope attack time</span>
+  i<span class="n">sus</span>      <span class="o">=</span> <span class="nb">p5</span>                                <span class="c1">; envelope sustain time</span>
+  i<span class="n">rel</span>      <span class="o">=</span> <span class="nb">p6</span>                                <span class="c1">; envelope release time</span>
+  i<span class="n">vol</span>      <span class="o">=</span> <span class="nb">p7</span>                                <span class="c1">; overall volume</span>
+  
+  <span class="c1">; create some white noise</span>
+  a<span class="n">sig</span>      <span class="nb">rand</span>      <span class="mf">0.8</span>                      
+  
+  <span class="c1">; spectral analysis of asig</span>
+  <span class="n">fsig</span>      <span class="nb">pvsanal</span>   a<span class="n">sig</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">0</span>  <span class="c1">; get a vector of magnitudes</span>
+           
+  <span class="c1">; calculate cellular automaton state</span>
+  k<span class="n">freq</span>     <span class="nb">line</span>      <span class="mi">50</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span>                  <span class="c1">; variable CA triggering frequency</span>
+  k<span class="n">trig</span>     <span class="nb">metro</span>     k<span class="n">freq</span>                     <span class="c1">; trigger the CA to update cells</span>
+            <span class="nb">cell</span>      k<span class="n">trig</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2048</span>   <span class="c1">; cells are written into ftable 3 </span>
+                                                                        
+                                                                         
+  <span class="c1">; use current row of cells in spectral domain</span>
+  <span class="n">fmas</span>      <span class="nb">pvstencil</span> <span class="n">fsig</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span>             <span class="c1">; apply spectral mask </span>
+  a<span class="n">out</span>      <span class="nb">pvsynth</span>   <span class="n">fmas</span>                      <span class="c1">; reconstruct time signal </span>
+  
+  <span class="c1">; apply envelope and out signal</span>
+  k<span class="n">env</span>      <span class="nb">expseg</span>    <span class="mf">.001</span><span class="p">,</span> i<span class="n">att</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">sus</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">rel</span><span class="p">,</span> <span class="mf">.001</span>
+            <span class="nb">out</span>       a<span class="n">out</span><span class="o">*</span>k<span class="n">env</span><span class="o">*</span>i<span class="n">vol</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; This example uses one-dimensional cellular automaton</span>
+<span class="c1">; to produce structures in spectral domain</span>
+
+<span class="c1">; We have to prepare initial row of cells.</span>
+<span class="c1">; One alive cell is enough to produce a simple fractal,</span>
+<span class="c1">; so two alivee cells will make structure more sophisticated</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">2048</span> <span class="mi">7</span> <span class="mi">0</span> <span class="mi">150</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">45</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span>
+
+<span class="c1">; The CA rule is used as follows:</span>
+<span class="c1">; the states (values) of each cell are summed with their neighboring cells.</span>
+<span class="c1">; Each sum is used as an index to read a next state of cell</span>
+<span class="c1">; from the rule table.</span>
+<span class="c1">; Let us try rule # 129 (LSB binary 1 0 0 0 0 0 0 1).</span>
+<span class="c1">; This rule will produce a fractal structure for single active cell</span>
+<span class="c1">; For more rules see http://mathworld.wolfram.com/ElementaryCellularAutomaton.html</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">8</span> <span class="o">-</span><span class="mi">2</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="c1">; Try some different rules i.E. 254 (0 1 1 1 1 1 1 1) or 169 (1 0 0 1 0 1 0 1)</span>
+
+<span class="c1">; Prepare the output table of ielements size</span>
+<span class="nb">f</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">2048</span> <span class="mi">10</span> <span class="mi">0</span>
+
+<span class="c1">; Time to make it sound!</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span>  <span class="mi">13</span>  <span class="mf">0.3</span>  <span class="mi">7</span>  <span class="mi">3</span>  <span class="mi">1</span> 
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122118592"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gleb Rogozinsky</td>
+          </tr>
+          <tr>
+            <td>October 2011</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.16.6</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ceil.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cent.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ceil </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> cent</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

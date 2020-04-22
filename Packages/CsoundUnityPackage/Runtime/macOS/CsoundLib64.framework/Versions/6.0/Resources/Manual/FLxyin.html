@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLxyin</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLvslidBnk2.html" title="FLvslidBnk2" />
+    <link rel="next" href="fmanal.html" title="fmanal" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLxyin</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLvslidBnk2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fmanal.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLxyin"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLxyin" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLxyin</span>
+        </h2>
+        <p>FLxyin — 
+      Senses the mouse cursor position in a user-defined area inside an FLpanel.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104241408"></a>
+        <h2>Description</h2>
+        <p>
+      Similar to <a class="link" href="xyin.html" title="xyin"><em class="citetitle">xyin</em></a>, sense the mouse cursor position in a user-defined area inside an FLpanel.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104239248"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">koutx, kouty, kinside  <span class="command"><strong>FLxyin</strong></span> ioutx_min, ioutx_max, iouty_min, iouty_max, \
+      iwindx_min, iwindx_max, iwindy_min, iwindy_max [, iexpx, iexpy, ioutx, iouty]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104237024"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ioutx_min, ioutx_max</em></span> - the minimum and maximum limits of the interval to be output (X or horizontal axis).
+    </p>
+        <p>
+      <span class="emphasis"><em>iouty_min, iouty_max </em></span> - the minimum and maximum limits of the interval to be output (Y or vertical axis).
+    </p>
+        <p>
+      <span class="emphasis"><em>iwindx_min, iwindx_max</em></span> - the X coordinate of the horizontal edges of the sensible area, relative to the FLpanel ,in pixels.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwindy_min, iwindy_max</em></span>  - the Y coordinates of the vertical edges of the sensible area, relative to the FLpanel, in pixels.
+    </p>
+        <p>
+      <span class="emphasis"><em>iexpx, iexpy</em></span> - (optional) integer numbers denoting the behavior of the x or y output: 0 -&gt; output is linear; -1 -&gt; output is exponential; any other number indicates the number of an existing table that is used for indexing. With a positive value for table number, linear interpolation is provided in table indexing. A negative table number suppresses interpolation. Notice that in normal operations, the table should be normalized and unipolar (i.e. all table elements should be in the zero to one range). In this case all table elements will be rescaled according to imax and imin. Anyway, it is possible to use non-normalized tables (created with a negative table number, that can contain elements of any value), in order to access the actual values of table elements, without rescaling, by assigning 0 to iout_min and 1 to iout_max.
+    </p>
+        <p>
+      <span class="emphasis"><em>ioutx, iouty</em></span> – (optional) initial output values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104230128"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>koutx, kouty</em></span> - output values, scaled according to user choices.
+    </p>
+        <p>
+      <span class="emphasis"><em>kinside</em></span> - a flag that informs if the mouse cursor falls out of the rectangle of the user-defined area. If it is out of the area, kinside is set to zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLxyin</em></span> senses the mouse cursor position in a user-defined area inside an <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a>. When <span class="emphasis"><em>FLxyin</em></span> is called, the position of the mouse within the chosen area is returned at k-rate. It is possible to define the sensible area, as well the minimum and maximum values corresponding to the minimum and maximum mouse positions. Mouse buttons don’t need to be pressed to make <span class="emphasis"><em>FLxyin</em></span> to operate. It is able to function correctly even if other widgets (present in the <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a>) overlap the sensible area.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLxyin</em></span> unlike most other FLTK opcodes can't be used inside the header, since it is not a widget. It is just a definition of an area for mouse sensing within an FLTK panel.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104222480"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLxyin opcode. It uses the file <a class="ulink" href="examples/FLxyin.csd" target="_top"><em class="citetitle">FLxyin.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276104220688"></a>
+          <p class="title">
+            <strong>Example 328. Example of the FLxyin opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276472331680"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span><span class="o">=</span><span class="mi">48000</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">128</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+<span class="c1">; Example by Andres Cabrera 2007</span>
+
+<span class="nb">FLpanel</span>	<span class="s">"FLxyin"</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span>
+<span class="nb">FLpanelEnd</span>
+<span class="nb">FLrun</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  k<span class="n">outx</span><span class="p">,</span> k<span class="n">outy</span><span class="p">,</span> k<span class="n">inside</span> <span class="nb">FLxyin</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">190</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">90</span>
+  a<span class="n">out</span> <span class="nb">buzz</span> <span class="mi">10000</span><span class="p">,</span> k<span class="n">outy</span><span class="p">,</span> k<span class="n">outx</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="nb">printk2</span> k<span class="n">outx</span>
+  <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3600</span>
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is another example of the FLxyin opcode. It uses the file <a class="ulink" href="examples/FLxyin-2.csd" target="_top"><em class="citetitle">FLxyin-2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276104215696"></a>
+          <p class="title">
+            <strong>Example 329. Example of the FLxyin opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276472331280"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">kr</span><span class="o">=</span><span class="mi">441</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">100</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+<span class="c1">; Example by Gabriel Maldonado</span>
+
+	<span class="nb">FLpanel</span>	<span class="s">"Move the mouse inside this panel to hear the effect"</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">400</span>
+	<span class="nb">FLpanel_end</span>
+	<span class="nb">FLrun</span>
+
+	<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">1</span><span class="p">,</span> k<span class="n">2</span><span class="p">,</span> k<span class="n">inside</span>	<span class="nb">FLxyin</span>   <span class="mi">50</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span>
+<span class="c1">;if k1 &lt;= 50 || k1 &gt;=5000 || k2 &lt;=100 || k2 &gt;= 8000 kgoto end ; if cursor is outside bounds, then don't play!!!</span>
+
+a<span class="n">1</span>	<span class="nb">oscili</span>	<span class="mi">3000</span><span class="p">,</span> k<span class="n">1</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">2</span>	<span class="nb">oscili</span>	<span class="mi">3000</span><span class="p">,</span> k<span class="n">2</span><span class="p">,</span> <span class="mi">1</span>
+
+	<span class="nb">outs</span>	a<span class="n">1</span><span class="p">,</span>a<span class="n">2</span>
+<span class="nb">printk2</span> k<span class="n">1</span>
+<span class="nb">printk2</span> k<span class="n">2</span><span class="p">,</span> <span class="mi">10</span>
+<span class="nb">printk2</span> k<span class="n">inside</span><span class="p">,</span> <span class="mi">20</span>
+<span class="nl">end</span><span class="p">:</span>
+	<span class="kd">endin</span>
+	
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">17</span> <span class="mi">19</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">90</span> <span class="mi">1</span>
+<span class="nb">f</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">17</span> <span class="mi">19</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">90</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">3600</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104214032"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104212000"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLvslidBnk2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fmanal.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLvslidBnk2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fmanal</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

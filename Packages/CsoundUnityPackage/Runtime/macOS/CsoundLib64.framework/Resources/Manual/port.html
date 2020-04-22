@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>port</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="polynomial.html" title="polynomial" />
+    <link rel="next" href="portk.html" title="portk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">port</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="polynomial.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="portk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="port"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPort" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">port</span>
+        </h2>
+        <p>port — 
+      Applies portamento to a step-valued control signal.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073055744"></a>
+        <h2>Description</h2>
+        <p>
+      Applies portamento to a step-valued control signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073054512"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>port</strong></span> ksig, ihtim [, isig]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073052416"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihtim</em></span> -- half-time of the function, in seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>isig</em></span>
+      (optional, default=0) -- initial (i.e. previous) value for
+      internal feedback. The default value is 0. Negative value will
+      cause initialization to be skipped and last value from previous instance to be used
+      as initial value for note.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073049744"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kres</em></span> -- the output signal at control-rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>ksig</em></span> -- the input signal at control-rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>port</em></span> applies portamento to a step-valued control signal. At each new step value, <span class="emphasis"><em>ksig</em></span> is low-pass filtered to move towards that value at a rate determined by <span class="emphasis"><em>ihtim</em></span>. <span class="emphasis"><em>ihtim</em></span> is the <span class="quote">“<span class="quote">half-time</span>”</span> of the function (in seconds), during which the curve will traverse half the distance towards the new value, then half as much again, etc., theoretically never reaching its asymptote. With <a class="link" href="portk.html" title="portk"><em class="citetitle">portk</em></a>, the half-time can be varied at the control rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073043616"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the port opcode. It uses the file <a class="ulink" href="examples/port.csd" target="_top"><em class="citetitle">port.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276073041840"></a>
+          <p class="title">
+            <strong>Example 723. Example of the port opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276436113808"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o port.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">out</span>  <span class="nb">diskin2</span> <span class="s">"fox.wav"</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">f</span><span class="p">,</span>k<span class="n">a</span> <span class="nb">ptrack</span> a<span class="n">out</span><span class="p">,</span> <span class="mi">512</span>	<span class="c1">; pitch track with winsize=1024</span>
+k<span class="n">cps</span>  <span class="nb">port</span> k<span class="n">f</span><span class="p">,</span> <span class="mf">0.01</span>	<span class="c1">; smooth freq</span>
+k<span class="n">amp</span>  <span class="nb">port</span> k<span class="n">a</span><span class="p">,</span> <span class="mf">0.01</span>	<span class="c1">; smooth amp</span>
+<span class="c1">; drive an oscillator</span>
+a<span class="n">sig</span>  <span class="nb">poscil</span> <span class="nb">ampdb</span><span class="p">(</span>k<span class="n">amp</span><span class="p">)</span><span class="o">*</span><span class="vg">0dbfs</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span>
+      <span class="nb">outs</span>  a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; simple sine wave</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">5</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073037856"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="areson.html" title="areson"><em class="citetitle">areson</em></a>,
+      <a class="link" href="aresonk.html" title="aresonk"><em class="citetitle">aresonk</em></a>,
+      <a class="link" href="atone.html" title="atone"><em class="citetitle">atone</em></a>,
+      <a class="link" href="atonek.html" title="atonek"><em class="citetitle">atonek</em></a>,
+      <a class="link" href="portk.html" title="portk"><em class="citetitle">portk</em></a>,
+      <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>,
+      <a class="link" href="resonk.html" title="resonk"><em class="citetitle">resonk</em></a>,
+      <a class="link" href="tone.html" title="tone"><em class="citetitle">tone</em></a>,
+      <a class="link" href="tonek.html" title="tonek"><em class="citetitle">tonek</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="polynomial.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="portk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">polynomial </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> portk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLsetText</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLsetSnapGroup.html" title="FLsetSnapGroup" />
+    <link rel="next" href="FLsetTextColor.html" title="FLsetTextColor" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLsetText</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLsetSnapGroup.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLsetTextColor.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLsetText"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLsetText" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLsetText</span>
+        </h2>
+        <p>FLsetText — 
+      Sets the label of a FLTK widget.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107470016"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLsetText</em></span> sets the label of the target widget to the double-quoted text string provided with the <span class="emphasis"><em>itext</em></span> argument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107467904"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLsetText</strong></span> "itext", ihandle</pre>
+        <pre class="synopsis"><span class="command"><strong>FLsetText</strong></span> istr, ihandle</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107464784"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">itext</span>”</span></em></span> -- a double-quoted string denoting the text of the label of the widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>istr</em></span> -- an i-value that denotes a string via strset denoting the text of the label of the widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> -- an integer number (used as unique identifier) taken from the output of a previously located widget opcode (which corresponds to the target widget). It is used to unequivocally identify the widget when modifying its appearance with this class of opcodes. The user must not set the <span class="emphasis"><em>ihandle</em></span> value directly, otherwise a Csound crash will occur.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107460320"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLsetText opcode. It uses the file <a class="ulink" href="examples/FLsetText.csd" target="_top"><em class="citetitle">FLsetText.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276107458512"></a>
+          <p class="title">
+            <strong>Example 313. Example of the FLsetText opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276029378160"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span> 
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o FLsetText.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; Example by Giorgio Zucco and Andres Cabrera 2007</span>
+
+<span class="nb">FLpanel</span> <span class="s">"FLsetText"</span><span class="p">,</span><span class="mi">250</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span>
+
+gk<span class="n">1</span><span class="p">,</span>gi<span class="n">ha</span> <span class="nb">FLcount</span> <span class="s">""</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="nb">FLpanelEnd</span>
+<span class="nb">FLrun</span>
+
+
+    <span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">; This instrument is triggered by FLcount above each time</span>
+<span class="c1">; its value changes</span>
+i<span class="n">name</span> <span class="o">=</span> <span class="nb">i</span><span class="p">(</span>gk<span class="n">1</span><span class="p">)</span>
+<span class="nb">print</span> i<span class="n">name</span>
+<span class="c1">; Must use FLsetText on the init pass!</span>
+<span class="k">if</span> <span class="p">(</span>i<span class="n">name</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">igoto</span> <span class="nl">text1</span>
+<span class="k">if</span> <span class="p">(</span>i<span class="n">name</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="k">igoto</span> <span class="nl">text2</span>
+<span class="k">if</span> <span class="p">(</span>i<span class="n">name</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="k">igoto</span> <span class="nl">text3</span>
+
+<span class="k">igoto</span> <span class="nl">end</span>
+
+<span class="nl">text1</span><span class="p">:</span>
+<span class="nb">FLsetText</span> <span class="s">"FM"</span><span class="p">,</span>gi<span class="n">ha</span>
+<span class="k">igoto</span> <span class="nl">end</span>
+
+<span class="nl">text2</span><span class="p">:</span>
+<span class="nb">FLsetText</span> <span class="s">"GRANUL"</span><span class="p">,</span>gi<span class="n">ha</span>
+<span class="k">igoto</span> <span class="nl">end</span>
+
+<span class="nl">text3</span><span class="p">:</span>
+<span class="nb">FLsetText</span> <span class="s">"PLUCK"</span><span class="p">,</span>gi<span class="n">ha</span>
+<span class="k">igoto</span> <span class="nl">end</span>
+
+<span class="nl">end</span><span class="p">:</span>
+    <span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">3600</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107454496"></a>
+        <h2>See Also</h2>
+        <p>
+        <a class="link" href="FLcolor2.html" title="FLcolor2"><em class="citetitle">FLcolor2</em></a>, 
+        <a class="link" href="FLhide.html" title="FLhide"><em class="citetitle">FLhide</em></a>, 
+        <a class="link" href="FLlabel.html" title="FLlabel"><em class="citetitle">FLlabel</em></a>, 
+        <a class="link" href="FLsetAlign.html" title="FLsetAlign"><em class="citetitle">FLsetAlign</em></a>, 
+        <a class="link" href="FLsetBox.html" title="FLsetBox"><em class="citetitle">FLsetBox</em></a>, 
+        <a class="link" href="FLsetColor.html" title="FLsetColor"><em class="citetitle">FLsetColor</em></a>, 
+        <a class="link" href="FLsetColor2.html" title="FLsetColor2"><em class="citetitle">FLsetColor2</em></a>, 
+        <a class="link" href="FLsetFont.html" title="FLsetFont"><em class="citetitle">FLsetFont</em></a>, 
+        <a class="link" href="FLsetPosition.html" title="FLsetPosition"><em class="citetitle">FLsetPosition</em></a>, 
+        <a class="link" href="FLsetSize.html" title="FLsetSize"><em class="citetitle">FLsetSize</em></a>, 
+        <a class="link" href="FLsetText.html" title="FLsetText"><em class="citetitle">FLsetText</em></a>, 
+        <a class="link" href="FLsetTextColor.html" title="FLsetTextColor"><em class="citetitle">FLsetTextColor</em></a>, 
+        <a class="link" href="FLsetTextSize.html" title="FLsetTextSize"><em class="citetitle">FLsetTextSize</em></a>, 
+        <a class="link" href="FLsetTextType.html" title="FLsetTextType"><em class="citetitle">FLsetTextType</em></a>, 
+        <a class="link" href="FLsetVal_i.html" title="FLsetVal_i"><em class="citetitle">FLsetVal_i</em></a>, 
+        <a class="link" href="FLsetVal.html" title="FLsetVal"><em class="citetitle">FLsetVal</em></a>, 
+        <a class="link" href="FLshow.html" title="FLshow"><em class="citetitle">FLshow</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107438112"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLsetSnapGroup.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLsetTextColor.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLsetSnapGroup </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLsetTextColor</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLslidBnkGetHandle</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLslidBnk2.html" title="FLslidBnk2" />
+    <link rel="next" href="FLslidBnkSet.html" title="FLslidBnkSet" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLslidBnkGetHandle</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLslidBnk2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLslidBnkSet.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLslidBnkGetHandle"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLslidBnkGetHandle" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLslidBnkGetHandle</span>
+        </h2>
+        <p>FLslidBnkGetHandle — 
+      gets the handle of last slider bank created.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107948288"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLslidBnkGetHandle</em></span> gets the handle of last slider bank created.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107946656"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ihandle <span class="command"><strong>FLslidBnkGetHandle</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107944704"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> - handle of the sliderBnk (to be used to set its values).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107943072"></a>
+        <h2>Performance</h2>
+        <p>
+      There are no k-rate arguments, even if cells of the output table (or the zak space) are updated at k-rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLslidBnkGetHandle</em></span> gets the handle of last slider bank created. This opcode must follow corresponding <a class="link" href="FLslidBnk.html" title="FLslidBnk"><em class="citetitle">FLslidBnk</em></a> (or <a class="link" href="FLvslidBnk.html" title="FLvslidBnk"><em class="citetitle">FLvslidBnk</em></a>, <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a> and <a class="link" href="FLvslidBnk2.html" title="FLvslidBnk2"><em class="citetitle">FLvslidBnk2</em></a>) immediately, in order to get its handle.
+    </p>
+        <p>
+      See the entry for <a class="link" href="FLslidBnk2Setk.html" title="FLslidBnk2Setk"><em class="citetitle">FLslidBnk2Setk</em></a> to see an example of usage.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107935744"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLslider.html" title="FLslider"><em class="citetitle">FLslider</em></a>,
+      <a class="link" href="FLslidBnk.html" title="FLslidBnk"><em class="citetitle">FLslidBnk</em></a>,
+      <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a>,
+      <a class="link" href="FLvslidBnk.html" title="FLvslidBnk"><em class="citetitle">FLvslidBnk</em></a>,
+      <a class="link" href="FLvslidBnk2.html" title="FLvslidBnk2"><em class="citetitle">FLvslidBnk2</em></a>,
+      <a class="link" href="FLslidBnk2Set.html" title="FLslidBnk2Set"><em class="citetitle">FLslidBnk2Set</em></a>,
+      <a class="link" href="FLslidBnk2Setk.html" title="FLslidBnk2Setk"><em class="citetitle">FLslidBnk2Setk</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107927712"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLslidBnk2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLslidBnkSet.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLslidBnk2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLslidBnkSet</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

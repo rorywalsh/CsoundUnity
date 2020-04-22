@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsbandp</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsarp.html" title="pvsarp" />
+    <link rel="next" href="pvsbandr.html" title="pvsbandr" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsbandp</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsarp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsbandr.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvsbandp"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvsbandp" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsbandp</span>
+        </h2>
+        <p>pvsbandp — 
+      A band pass filter working in the spectral domain.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071495616"></a>
+        <h2>Description</h2>
+        <p>
+      Filter the pvoc frames, passing bins whose frequency is within a
+      band, and with linear interpolation for transitional bands.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071494304"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsbandp</strong></span> fsigin, xlowcut, xlowfull, \
+      xhighfull, xhighcut[, ktype]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071492160"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>fsigin</em></span> -- input pv stream.
+    </p>
+        <p>
+      <span class="emphasis"><em>xlowcut, xlowfull, xhighfull, xhighcut</em></span> --
+      define a trapezium shape for the band that is passed.  The a-rate
+      versions only apply to the sliding case.
+    </p>
+        <p>
+      <span class="emphasis"><em>ktype</em></span> -- specifies the shape of the
+      transitional band.  If at the default value of zero the shape is
+      as below, with linear transition in amplitude.  Other values
+      yield and exponential shape:
+      </p>
+        <div class="literallayout">
+          <p><br />
+(1 - exp( r*type )) / (1 - exp(type))<br />
+      </p>
+        </div>
+        <p>
+      This includes a linear dB shape when <span class="emphasis"><em>ktype</em></span> is
+      <span class="emphasis"><em>log</em></span>(10) or about 2.30.
+    </p>
+        <p>
+      The opcode performs a band-pass filter with a spectral envelope
+      shaped like
+</p>
+        <div class="literallayout">
+          <p><br />
+     klowfull __________________________ khighfull<br />
+             /                          \<br />
+            /                            \<br />
+           /                              \<br />
+          /                                \<br />
+         /                                  \<br />
+________/                                    \______________<br />
+        klowcut                       khighcut<br />
+</p>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071484272"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pvsbandp opcode. It uses the file <a class="ulink" href="examples/pvsbandp.csd" target="_top"><em class="citetitle">pvsbandp.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276071482480"></a>
+          <p class="title">
+            <strong>Example 759. Example of the pvsbandp opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276433620944"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pvsbandp.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">;; example written by joachim heintz 2009</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+S<span class="n">file</span>		<span class="o">=</span>		<span class="s">"fox.wav"</span>
+k<span class="n">lowcut</span> <span class="o">=</span> <span class="mi">100</span>
+k<span class="n">lowfull</span> <span class="o">=</span> <span class="mi">200</span>
+k<span class="n">highfull</span> <span class="o">=</span> <span class="mi">1900</span>
+k<span class="n">highcut</span> <span class="o">=</span> <span class="mi">2000</span>
+a<span class="n">in</span>		<span class="nb">soundin</span>	S<span class="n">file</span>
+<span class="n">fftin</span>		<span class="nb">pvsanal</span>	a<span class="n">in</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">1</span><span class="c1">; fft-analysis of the audio-signal</span>
+<span class="n">fftbp</span>		<span class="nb">pvsbandp</span>	<span class="n">fftin</span><span class="p">,</span> k<span class="n">lowcut</span><span class="p">,</span> k<span class="n">lowfull</span><span class="p">,</span> k<span class="n">highfull</span><span class="p">,</span> k<span class="n">highcut</span> <span class="c1">; band pass</span>
+a<span class="n">bp</span>		<span class="nb">pvsynth</span>	<span class="n">fftbp</span><span class="c1">; resynthesis</span>
+		<span class="nb">out</span>		a<span class="n">bp</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071478496"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvsanal.html" title="pvsanal"><em class="citetitle">pvsanal</em></a>,
+      <a class="link" href="pvsynth.html" title="pvsynth"><em class="citetitle">pvsynth</em></a>,
+      <a class="link" href="pvsadsyn.html" title="pvsadsyn"><em class="citetitle">pvsadsyn</em></a>,
+      <a class="link" href="pvsbandr.html" title="pvsbandr"><em class="citetitle">pvsbandr</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071473824"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>December 2007 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsarp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsbandr.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsarp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsbandr</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

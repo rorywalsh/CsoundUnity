@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLbutton</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLbutBank.html" title="FLbutBank" />
+    <link rel="next" href="FLcloseButton.html" title="FLcloseButton" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLbutton</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLbutBank.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLcloseButton.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLbutton"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFlbutton" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLbutton</span>
+        </h2>
+        <p>FLbutton — 
+      A FLTK widget opcode that creates a button.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110515456"></a>
+        <h2>Description</h2>
+        <p>
+      A FLTK widget opcode that creates a button.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110514160"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout, ihandle <span class="command"><strong>FLbutton</strong></span> "label", ion, ioff, itype, iwidth, iheight, ix, \
+      iy, iopcode [, kp1] [, kp2] [, kp3] [, kp4] [, kp5] [....] [, kpN]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110511952"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> -- a handle value (an integer number) that unequivocally references a corresponding widget. This is used by other opcodes that modify a widget's properties (see <a class="link" href="ControlFltkAppearance.html" title="Modifying FLTK Widget Appearance"><em class="citetitle">Modifying FLTK Widget Appearance</em></a>). It is automatically output by <span class="emphasis"><em>FLbutton</em></span> and must not be set by the user label. (The user label is a double-quoted string containing some user-provided text placed near the widget.)
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">label</span>”</span></em></span> -- a double-quoted string containing some user-provided text, placed near the corresponding widget.
+    </p>
+        <p>
+      Notice that with <span class="emphasis"><em>FLbutton</em></span>, it is not necessary to call the <a class="link" href="FLsetTextType.html" title="FLsetTextType"><em class="citetitle">FLsetTextType</em></a> opcode at all in order to use a symbol. In this case, it is sufficient to set a label starting with <span class="quote">“<span class="quote">@</span>”</span> followed by the proper formatting string.
+    </p>
+        <p>
+      The following symbols are supported:
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/symbols.png" alt="FLTK label supported symbols." />
+          <div class="caption">
+            <p>FLTK label supported symbols.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+        <p>
+      The @ sign may be followed by the following optional <span class="quote">“<span class="quote">formatting</span>”</span> characters, in this order:
+
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p><span class="quote">“<span class="quote">#</span>”</span> forces square scaling rather than distortion to the widget's shape.</p>
+            </li>
+            <li class="listitem">
+              <p>+[1-9] or -[1-9] tweaks the scaling a little bigger or smaller.</p>
+            </li>
+            <li class="listitem">
+              <p>[1-9] rotates by a multiple of 45 degrees. <span class="quote">“<span class="quote">6</span>”</span> does nothing, the others point in the direction of that key on a numeric keypad.</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ion</em></span> -- value output when the button is checked.
+    </p>
+        <p>
+      <span class="emphasis"><em>ioff</em></span> -- value output when the button is unchecked.
+    </p>
+        <p>
+      <span class="emphasis"><em>itype</em></span> -- an integer number denoting the appearance of the widget.
+    </p>
+        <p>
+      Several kind of buttons are possible, according to the value of <span class="emphasis"><em>itype</em></span> argument:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 - normal button</p>
+            </li>
+            <li class="listitem">
+              <p>2 - light button</p>
+            </li>
+            <li class="listitem">
+              <p>3 - check button</p>
+            </li>
+            <li class="listitem">
+              <p>4 - round button</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+      You can add 20 to the value to create a "plastic" type button. (Note that there is no Platic Round button. i.e. if you set type to 24 it will look exactly like type 23).
+    </p>
+        <p>
+      This is the appearance of the buttons:
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/flbutton.png" alt="FLbutton." />
+          <div class="caption">
+            <p>FLbutton.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iopcode</em></span> -- score opcode type. You have to provide the ascii code of the letter corresponding to the score opcode. At present time only <span class="quote">“<span class="quote">i</span>”</span> (ascii code 105) score statements are supported. A zero value refers to a default value of <span class="quote">“<span class="quote">i</span>”</span>. So both 0 and 105 activates the <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i</em></a> opcode. A value of -1 disables this opcode feature.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110480128"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kout</em></span> -- output value
+    </p>
+        <p>
+      <span class="emphasis"><em>kp1</em></span>, <span class="emphasis"><em>kp2</em></span>, ..., <span class="emphasis"><em>kpN</em></span> -- arguments of the activated instruments.
+    </p>
+        <p>
+      Buttons of type 2, 3, and 4 also output (<span class="emphasis"><em>kout</em></span> argument) the value contained in the <span class="emphasis"><em>ion</em></span> argument when checked, and that contained in <span class="emphasis"><em>ioff</em></span> argument when unchecked.
+    </p>
+        <p>
+      By adding 10 to <span class="emphasis"><em>itype</em></span> argument (i.e. by setting 11 for type 1, 12 for type 2, 13 for type 3 and 14 for type 4) it is possible to skip the button value when getting/setting snapshots (see later section). <span class="emphasis"><em>FLbutton</em></span> not only outputs a value, but can also activate (or schedule) an instrument provided by the user each time a button is pressed. You can also add 10 to "plastic" button types (31 for type 1, 32 for type 2, etc.)
+    </p>
+        <p>
+      If the <span class="emphasis"><em>iopcode</em></span> argument is set to a negative number, no instrument is activated. So this feature is optional. In order to activate an instrument, <span class="emphasis"><em>iopcode</em></span> must be set to 0 or to 105 (the ascii code of character <span class="quote">“<span class="quote">i</span>”</span>, referring to the <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i</em></a> score opcode).
+    </p>
+        <p>
+      P-fields of the activated instrument are <span class="emphasis"><em>kp1</em></span> (instrument number), <span class="emphasis"><em>kp2</em></span> (action time), <span class="emphasis"><em>kp3</em></span> (duration) and so on with user p-fields. Notice that in dual state buttons (light button, check button and round button), the instrument is activated only when button state changes from unchecked to checked (not when passing from checked to unchecked).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110468208"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLbutton opcode. It uses the file <a class="ulink" href="examples/FLbutton.csd" target="_top"><em class="citetitle">FLbutton.csd</em></a>, and <a class="ulink" href="examples/beats.wav" target="_top"><em class="citetitle">beats.wav</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276110465600"></a>
+          <p class="title">
+            <strong>Example 294. Example of the FLbutton opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276478939120"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o FLbutton.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Using FLbuttons to create on screen controls for play, </span>
+<span class="c1">; stop, fast forward and fast rewind of a sound file</span>
+<span class="c1">; This example also makes use of a preset graphic for buttons.</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="nb">FLpanel</span> <span class="s">"Buttons"</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span>
+    i<span class="n">on</span> <span class="o">=</span> <span class="mi">0</span>
+    i<span class="n">off</span> <span class="o">=</span> <span class="mi">0</span>
+    i<span class="n">type</span> <span class="o">=</span> <span class="mi">1</span>
+    i<span class="n">width</span> <span class="o">=</span> <span class="mi">50</span>
+    i<span class="n">height</span> <span class="o">=</span> <span class="mi">50</span>
+    i<span class="n">x</span> <span class="o">=</span> <span class="mi">10</span>
+    i<span class="n">y</span> <span class="o">=</span> <span class="mi">10</span>
+    i<span class="n">opcode</span> <span class="o">=</span> <span class="mi">0</span>
+    i<span class="n">starttim</span> <span class="o">=</span> <span class="mi">0</span>
+    i<span class="n">dur</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1">;Turn instruments on idefinitely</span>
+
+    <span class="c1">; Normal speed forwards</span>
+    gk<span class="n">play</span><span class="p">,</span> i<span class="n">hb1</span> <span class="nb">FLbutton</span> <span class="s">"@&gt;"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span> i<span class="n">off</span><span class="p">,</span> i<span class="n">type</span><span class="p">,</span> i<span class="n">width</span><span class="p">,</span> i<span class="n">height</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span><span class="p">,</span> i<span class="n">opcode</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">starttim</span><span class="p">,</span> i<span class="n">dur</span><span class="p">,</span> <span class="mi">1</span> 
+    <span class="c1">; Stationary </span>
+    gk<span class="n">stop</span><span class="p">,</span> i<span class="n">hb2</span> <span class="nb">FLbutton</span> <span class="s">"@square"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span>i<span class="n">off</span><span class="p">,</span> i<span class="n">type</span><span class="p">,</span> i<span class="n">width</span><span class="p">,</span> i<span class="n">height</span><span class="p">,</span> i<span class="n">x</span><span class="o">+</span><span class="mi">55</span><span class="p">,</span> i<span class="n">y</span><span class="p">,</span> i<span class="n">opcode</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> i<span class="n">starttim</span><span class="p">,</span> i<span class="n">dur</span>
+    <span class="c1">; Double speed backwards</span>
+    gk<span class="n">rew</span><span class="p">,</span> i<span class="n">hb3</span> <span class="nb">FLbutton</span> <span class="s">"@&lt;&lt;"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span> i<span class="n">off</span><span class="p">,</span> i<span class="n">type</span><span class="p">,</span> i<span class="n">width</span><span class="p">,</span> i<span class="n">height</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">110</span><span class="p">,</span> i<span class="n">y</span><span class="p">,</span> i<span class="n">opcode</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">starttim</span><span class="p">,</span> i<span class="n">dur</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span>
+    <span class="c1">; Double speed forward</span>
+    gk<span class="n">ff</span><span class="p">,</span> i<span class="n">hb4</span> <span class="nb">FLbutton</span> <span class="s">"@&gt;&gt;"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span> i<span class="n">off</span><span class="p">,</span> i<span class="n">type</span><span class="p">,</span> i<span class="n">width</span><span class="p">,</span> i<span class="n">height</span><span class="p">,</span> i<span class="n">x</span><span class="o">+</span><span class="mi">165</span><span class="p">,</span> i<span class="n">y</span><span class="p">,</span> i<span class="n">opcode</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">starttim</span><span class="p">,</span> i<span class="n">dur</span><span class="p">,</span> <span class="mi">2</span>
+    <span class="c1">; Type 1</span>
+    gk<span class="n">t1</span><span class="p">,</span> i<span class="n">ht1</span> <span class="nb">FLbutton</span> <span class="s">"1-Normal Button"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span> i<span class="n">off</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">65</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> 
+    <span class="c1">; Type 2</span>
+    gk<span class="n">t2</span><span class="p">,</span> i<span class="n">ht2</span> <span class="nb">FLbutton</span> <span class="s">"2-Light Button"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span> i<span class="n">off</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">110</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> 
+    <span class="c1">; Type 3</span>
+    gk<span class="n">t3</span><span class="p">,</span> i<span class="n">ht3</span> <span class="nb">FLbutton</span> <span class="s">"3-Check Button"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span> i<span class="n">off</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">155</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> 
+    <span class="c1">; Type 4</span>
+    gk<span class="n">t4</span><span class="p">,</span> i<span class="n">ht4</span> <span class="nb">FLbutton</span> <span class="s">"4-Round Button"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span> i<span class="n">off</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">200</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> 
+    <span class="c1">; Type 21</span>
+    gk<span class="n">t5</span><span class="p">,</span> i<span class="n">ht5</span> <span class="nb">FLbutton</span> <span class="s">"21-Plastic Button"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span> i<span class="n">off</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">245</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> 
+    <span class="c1">; Type 22</span>
+    gk<span class="n">t6</span><span class="p">,</span> i<span class="n">ht6</span> <span class="nb">FLbutton</span> <span class="s">"22-Plastic Light Button"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span> i<span class="n">off</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">290</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="c1">; Type 23</span>
+    gk<span class="n">t7</span><span class="p">,</span> i<span class="n">ht7</span> <span class="nb">FLbutton</span> <span class="s">"23-Plastic Check Button"</span><span class="p">,</span> i<span class="n">on</span><span class="p">,</span> i<span class="n">off</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">335</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> 
+<span class="nb">FLpanelEnd</span>
+<span class="nb">FLrun</span>
+
+<span class="c1">; Ensure that only 1 instance of instr 1</span>
+<span class="c1">; plays even if the play button is clicked repeatedly</span>
+i<span class="n">nsnum</span> <span class="o">=</span> <span class="mi">1</span>
+i<span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="nb">maxalloc</span> i<span class="n">nsnum</span><span class="p">,</span> i<span class="n">count</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    a<span class="n">sig</span> <span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+    <span class="nb">turnoff2</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>   <span class="c1">;Turn off instr 1</span>
+    <span class="nb">turnoff</span>   <span class="c1">;Turn off this instrument</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Real-time performance for 1 hour.</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">3600</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276114274032"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLbox.html" title="FLbox"><em class="citetitle">FLbox</em></a>,
+      <a class="link" href="FLbutBank.html" title="FLbutBank"><em class="citetitle">FLbutBank</em></a>,
+      <a class="link" href="FLprintk.html" title="FLprintk"><em class="citetitle">FLprintk</em></a>,
+      <a class="link" href="FLprintk2.html" title="FLprintk2"><em class="citetitle">FLprintk2</em></a>,
+      <a class="link" href="FLvalue.html" title="FLvalue"><em class="citetitle">FLvalue</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276114268400"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+        <p>Example written by Iain McCurdy, edited by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLbutBank.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLcloseButton.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLbutBank </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLcloseButton</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
