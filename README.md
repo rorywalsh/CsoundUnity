@@ -1,16 +1,34 @@
-# Csound Unity Package Test Project
+#### Csound wrapper for the Unity3d game engine.
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Test Project that uses Csound as a Unity Package
+Please visit [homepage](http://rorywalsh.github.io/CsoundUnity/)
 
-Package available here:
-https://github.com/giovannibedetti/CsoundUnityPackage
+This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If you wish to 
+use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
+http://csound6net.codeplex.com
 
-Code coming from https://github.com/rorywalsh/CsoundUnity
 
-Csound wrapper for Unity3d
 
-CsoundUnity is a fully integrated audio middleware for the Unity(3D) game engine based in C#. It extends Unity's audio API by creating Csound-based AudioSource objects that can interact and exist alongside regular AudioSource objects. With CsoundUnity, games developers have at their fingertips one of the most powerful synthesis systems in existence.
+## Contributors ✨
 
-Please visit homepage: http://rorywalsh.github.io/CsoundUnity/
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
-This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If you wish to use the Csound API in a model that is idiomatic to .net please use his wrapper instead. http://csound6net.codeplex.com
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="http://www.giovannibedetti.com"><img src="https://avatars1.githubusercontent.com/u/1912983?v=4" width="100px;" alt=""/><br /><sub><b>Giovanni Bedetti</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=giovannibedetti" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/berntisak"><img src="https://avatars0.githubusercontent.com/u/9213871?v=4" width="100px;" alt=""/><br /><sub><b>Bernt Isak Wærstad</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=berntisak" title="Code">💻</a></td>
+    <td align="center"><a href="http://bermondo.com"><img src="https://avatars1.githubusercontent.com/u/33271566?v=4" width="100px;" alt=""/><br /><sub><b>Charles Berman</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=ceberman" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.hcenteno.net"><img src="https://avatars3.githubusercontent.com/u/4064498?v=4" width="100px;" alt=""/><br /><sub><b>Hector Centeno</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=hectorC" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
