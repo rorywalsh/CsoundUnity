@@ -55,7 +55,7 @@ public class CsoundUnityEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        GUI.skin = (GUISkin)(AssetDatabase.LoadAssetAtPath("Assets/CsoundUnity/Editor/CsoundUnity.guiskin", typeof(GUISkin)));
+        GUI.skin = (GUISkin)(AssetDatabase.LoadAssetAtPath("Packages/com.csound.csoundunity/Editor/CsoundUnity.guiskin", typeof(GUISkin)));
 
         //get caption info first
         for (int i = 0; i < channelControllers.Count; i++)
