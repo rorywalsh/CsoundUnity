@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Ramping</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoreTop.html" title="The Standard Numeric Score" />
+    <link rel="prev" href="ScoreNextp.html" title="Next-P and Previous-P Symbols" />
+    <link rel="next" href="ScoreMacros.html" title="Score Macros" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Ramping</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ScoreNextp.html">Prev</a> </td>
+          <th width="60%" align="center">The Standard Numeric Score</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ScoreMacros.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="ScoreRamping"></a>Ramping</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    <span class="emphasis"><em>i statement</em></span> pfields containing the symbol <span class="emphasis"><em>&lt;</em></span> will be replaced by values derived from linear interpolation of a time-based ramp. Ramps are anchored at each end by the first real number found in the same pfield of a preceding and following note played by the same instrument. E.g.: the statements
+
+    <a id="IndexRamping" class="indexterm"></a>
+
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="stamnt">i</span>1   0    1    100
+<span class="stamnt">i</span>1   1    1    &lt;
+<span class="stamnt">i</span>1   2    1    &lt;
+<span class="stamnt">i</span>1   3    1    400
+<span class="stamnt">i</span>1   4    1    &lt;
+<span class="stamnt">i</span>1   5    1    0</pre>
+      </div>
+      <p>
+
+    will result in
+
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="stamnt">i</span>1   0    1    100 
+<span class="stamnt">i</span>1   1    1    200
+<span class="stamnt">i</span>1   2    1    300
+<span class="stamnt">i</span>1   3    1    400
+<span class="stamnt">i</span>1   4    1    200
+<span class="stamnt">i</span>1   5    1    0</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    Ramps cannot cross a Section boundary. Ramps cannot be anchored by an <span class="emphasis"><em>np</em></span> or <span class="emphasis"><em>pp</em></span> symbol (although they may be referenced by these). Ramp symbols are illegal in p1, p2 and p3. Ramp symbols may be Carried. Note, however, that while the Carry feature will propagate ramp symbols through unsorted statements, the operation that interprets these symbols is acting on a time-warped and fully sorted version of the score. In fact, time-based linear interpolation is based on warped score-time, so that a ramp which spans a group of accelerating notes will remain linear with respect to strict chronological time.
+  </p>
+      <p>
+    Starting with Csound version 3.52, using the symbols ( or ) will result in an exponential interpolation ramp, similar to <span class="emphasis"><em>expon</em></span>. Using the symbol ˜ (a tilde) will result in uniform, random distribution between the first and last values of the ramp. Use of these functions must follow the same rules as the linear ramp function.
+
+    <a id="IndexLeftParen" class="indexterm"></a>
+    <a id="IndexRightParen" class="indexterm"></a>
+    <a id="IndexTilde" class="indexterm"></a>
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ScoreNextp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoreTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ScoreMacros.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Next-P and Previous-P Symbols </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Score Macros</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

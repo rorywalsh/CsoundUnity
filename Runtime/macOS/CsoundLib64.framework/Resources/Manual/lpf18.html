@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lpf18</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="lowresx.html" title="lowresx" />
+    <link rel="next" href="lpfreson.html" title="lpfreson" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lpf18</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lowresx.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lpfreson.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lpf18"></a>
+      <div class="titlepage"></div>
+      <a id="Indexlpf18" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lpf18</span>
+        </h2>
+        <p>lpf18 — 
+      A 3-pole sweepable resonant lowpass filter.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276084577760"></a>
+        <h2>Description</h2>
+        <p>
+      Implementation of a 3 pole sweepable resonant lowpass filter.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276084576512"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>lpf18</strong></span> asig, xfco, xres, xdist [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276084574400"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- Skip initialization if present and non-zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276084572752"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xfco</em></span> -- the filter cutoff frequency in Hz. Should be in the range 0 to <span class="emphasis"><em>sr</em></span>/2.
+    </p>
+        <p>
+      <span class="emphasis"><em>xres</em></span> -- the amount of resonance. Self-oscillation occurs when <span class="emphasis"><em>xres</em></span> is approximately 1. Should usually be in the range 0 to 1, however, values slightly greater than 1 are possible for more sustained oscillation and an <span class="quote">“<span class="quote">overdrive</span>”</span> effect.
+    </p>
+        <p>
+      <span class="emphasis"><em>xdist</em></span> -- amount of distortion. <span class="emphasis"><em>kdist</em></span> = 0 gives a clean output. <span class="emphasis"><em>xdist</em></span> &gt; 0 adds <span class="emphasis"><em>tanh</em></span>() distortion controlled by the filter parameters, in such a way that both low cutoff and high resonance increase the distortion amount. Some experimentation is encouraged.
+    </p>
+        <p>
+      <span class="emphasis"><em>lpf18</em></span> is a digital emulation of a 3 pole (18 dB/oct.) lowpass filter capable of self-oscillation with a built-in distortion unit. It is really a 3-pole version of <a class="link" href="moogvcf.html" title="moogvcf"><em class="citetitle">moogvcf</em></a>, retuned, recalibrated and with some performance improvements. The tuning and feedback tables use no more than 6 adds and 6 multiplies per control rate. The distortion unit, itself, is based on a modified <a class="link" href="tanh.html" title="tanh"><em class="citetitle">tanh</em></a> function driven by the filter controls.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Before version 6.04 this filter requires that the input signal
+        be normalized to one.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276084562400"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the lpf18 opcode. It uses the file <a class="ulink" href="examples/lpf18.csd" target="_top"><em class="citetitle">lpf18.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276084560608"></a>
+          <p class="title">
+            <strong>Example 513. Example of the lpf18 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276453749360"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o lpf18.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Generate a sine waveform.</span>
+  <span class="c1">; Note that its amplitude (kamp) ranges from 0 to 1.</span>
+  k<span class="n">amp</span> <span class="nb">init</span> <span class="mi">1</span>
+  k<span class="n">cps</span> <span class="nb">init</span> <span class="mi">440</span>
+  k<span class="n">nh</span> <span class="nb">init</span> <span class="mi">3</span>
+  i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+  a<span class="n">sine</span> <span class="nb">buzz</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> k<span class="n">nh</span><span class="p">,</span> i<span class="n">fn</span>
+
+  <span class="c1">; Filter the sine waveform.</span>
+  <span class="c1">; Vary the cutoff frequency (kfco) from 300 to 3,000 Hz.</span>
+  k<span class="n">fco</span> <span class="nb">line</span> <span class="mi">300</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">3000</span>
+  k<span class="n">res</span> <span class="nb">init</span> <span class="mf">0.8</span>
+  k<span class="n">dist</span> <span class="o">=</span> <span class="nb">p4</span>
+  i<span class="n">vol</span> <span class="o">=</span> <span class="nb">p5</span>
+  a<span class="n">out</span> <span class="nb">lpf18</span> a<span class="n">sine</span><span class="p">,</span> k<span class="n">fco</span><span class="p">,</span> k<span class="n">res</span><span class="p">,</span> k<span class="n">dist</span>
+
+  <span class="nb">out</span> a<span class="n">out</span> <span class="o">*</span> i<span class="n">vol</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; different distortion and volumes to compensate</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span> <span class="mf">0.2</span> <span class="mi">30000</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mf">4.5</span> <span class="mi">4</span> <span class="mf">0.9</span> <span class="mi">27000</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276084556624"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Josep M Comajuncosas</td>
+          </tr>
+          <tr>
+            <td>Spain</td>
+          </tr>
+          <tr>
+            <td>December 2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Example written by Kevin Conder with help from Iain Duncan. Thanks goes to Iain for helping with the example.</p>
+        <p>New in Csound version 4.10</p>
+        <p>Audio rate parameters introduced in version 6.02</p>
+        <p>October 2013.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lowresx.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lpfreson.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lowresx </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> lpfreson</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

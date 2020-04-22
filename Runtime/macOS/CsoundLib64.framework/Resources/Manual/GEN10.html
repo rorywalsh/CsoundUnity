@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN10</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN09.html" title="GEN09" />
+    <link rel="next" href="GEN11.html" title="GEN11" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN10</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN09.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN11.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN10"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN10" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN10</span>
+        </h2>
+        <p>GEN10 — 
+      Generate composite waveforms made up of weighted sums of simple sinusoids.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989308784"></a>
+        <h2>Description</h2>
+        <p>
+      These subroutines generate composite waveforms made up of weighted sums of simple sinusoids. The specification of each contributing partial requires 1 pfield using <span class="emphasis"><em>GEN10</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989307008"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 10 str1 str2 str3 str4 ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989305040"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size</em></span> -- number of points in the table. Must be a power of 2 or power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>str1, str2, str3, etc.</em></span> -- relative strengths of the fixed harmonic partial numbers 1,2,3, etc., beginning in p5. Partials not required should be given a strength of zero.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>
+              These subroutines generate stored functions as sums of sinusoids of different frequencies. The two major restrictions on <span class="emphasis"><em>GEN10</em></span> that the partials be harmonic and in phase do not apply to <span class="emphasis"><em>GEN09</em></span> or <span class="emphasis"><em>GEN19</em></span>.
+            </p>
+                      <p>
+              In each case the composite wave, once drawn, is then rescaled to unity if p4 was positive. A negative p4 will cause rescaling to be skipped.
+            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989296816"></a>
+        <h2>Examples</h2>
+        <p>
+	    Here is an example of the GEN10 routine. It uses the files <a class="ulink" href="examples/gen10.csd" target="_top"><em class="citetitle">gen10.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275989295008"></a>
+          <p class="title">
+            <strong>Example 1206. An example of the GEN10 routine.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276398206736"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen10.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">amp</span> <span class="o">=</span> <span class="mf">.6</span>
+k<span class="n">cps</span> <span class="o">=</span> <span class="mi">440</span>
+i<span class="n">fn</span>  <span class="o">=</span> <span class="nb">p4</span>
+
+a<span class="n">sig</span> <span class="nb">oscil</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> i<span class="n">fn</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span>a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>                                          <span class="c1">; Sine</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">0.5</span> <span class="mf">0.3</span> <span class="mf">0.25</span> <span class="mf">0.2</span> <span class="mf">0.167</span> <span class="mf">0.14</span> <span class="mf">0.125</span> <span class="mf">.111</span>   <span class="c1">; Sawtooth</span>
+<span class="nb">f</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">0</span>   <span class="mf">0.3</span> <span class="mi">0</span>    <span class="mf">0.2</span> <span class="mi">0</span>     <span class="mf">0.14</span> <span class="mi">0</span>     <span class="mf">.111</span>   <span class="c1">; Square</span>
+<span class="nb">f</span><span class="mi">4</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">1</span>   <span class="mi">1</span>   <span class="mi">1</span>    <span class="mf">0.7</span> <span class="mf">0.5</span>   <span class="mf">0.3</span>  <span class="mf">0.1</span>          <span class="c1">; Pulse</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span> <span class="mi">2</span> <span class="mi">3</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">9</span> <span class="mi">2</span> <span class="mi">4</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+        <span class="phrase">These are the diagrams of the waveforms of the GEN10 routines, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen10_1.png" alt="f 1 0 16384 10 1 - sine wave with only the fundamental frequency" />
+          <div class="caption">
+            <p>f 1 0 16384 10 1 - sine wave with only the fundamental frequency</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen10_2.png" alt="f 2 0 16384 10 1 0.5 0.3 0.25 0.2 0.167 0.14 0.125 .111 - sawtooth, with a fundamental and 8 harmonics" />
+          <div class="caption">
+            <p>f 2 0 16384 10 1 0.5 0.3 0.25 0.2 0.167 0.14 0.125 .111 - sawtooth, with a fundamental and 8 harmonics </p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen10_3.png" alt="f 3 0 16384 10 1 0 0.3 0 0.2 0 0.14 0 .111 - square wave, with a fundamental and 8 harmonics but 4 have 0 strength" />
+          <div class="caption">
+            <p>f 3 0 16384 10 1 0 0.3 0 0.2 0 0.14 0 .111 - square wave, with a fundamental and 8 harmonics but 4 have 0 strength</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen10_4.png" alt="f 4 0 16384 10 1 1 1 1 0.7 0.5 0.3 0.1 - pulse wave, with a fundamental and 8 harmonics" />
+          <div class="caption">
+            <p>f 4 0 16384 10 1 1 1 1 0.7 0.5 0.3 0.1 - pulse wave, with a fundamental and 8 harmonics</p>
+          </div>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989279168"></a>
+        <h2>See Also</h2>
+        <p>
+       <a class="link" href="GEN09.html" title="GEN09"><em class="citetitle">GEN09</em></a>,
+       <a class="link" href="GEN11.html" title="GEN11"><em class="citetitle">GEN11</em></a>, and
+       <a class="link" href="GEN19.html" title="GEN19"><em class="citetitle">GEN19</em></a>.
+     </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN09.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN11.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN09 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN11</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

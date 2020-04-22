@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>link_beat_get</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="link_beat_force.html" title="link_beat_force" />
+    <link rel="next" href="link_beat_request.html" title="link_beat_request" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">link_beat_get</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="link_beat_force.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="link_beat_request.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="link_beat_get"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLinkBeatGet" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">link_beat_get</span>
+        </h2>
+        <p>link_beat_get — 
+     Returns the beat, phase with respect to the local quantum, and current time for the session.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086708832"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in ableton_link_opcodes.</p>
+        <p>
+      Returns the beat number, phase of the beat with respect to the local quantum of the beat, and current time for the global network Ableton Link session.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086707056"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">k_beat_number, k_phase, k_current_time_seconds <span class="command"><strong>link_beat_get</strong></span> i_peer [, k_quantum]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086704304"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>i_peer</em></span> -- The Ableton Link peer object.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086702576"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>k_quantum</em></span> -- The local quantum of the beat; the default value is 1,
+    </p>
+        <p>
+      <span class="emphasis"><em>k_beat_number</em></span> -- The number of the current beat.
+    </p>
+        <p>
+      <span class="emphasis"><em>k_phase</em></span> -- The current phase of the beat with respect to the local quantum of the beat.
+    </p>
+        <p>
+      <span class="emphasis"><em>k_current_time_seconds</em></span> -- The current time with respect to the time this peer was enabled.
+    </p>
+        <p>
+      Consider using link_metro if you need a periodic trigger driven by the session beat.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086697520"></a>
+        <h2>See Also</h2>
+        <p>
+     <a class="link" href="OSCNetwork.html#AbletonLink" title="Ableton Link Opcodes"><em class="citetitle">Ableton Link Opcodes</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086695088"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2017</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="link_beat_force.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="link_beat_request.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">link_beat_force </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> link_beat_request</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

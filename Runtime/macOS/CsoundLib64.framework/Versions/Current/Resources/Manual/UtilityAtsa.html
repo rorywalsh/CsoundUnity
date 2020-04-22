@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>atsa</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilitySoundfile.html#UtilityAnalysis" title="Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL)" />
+    <link rel="prev" href="UtilitySoundfile.html#UtilityAnalysis" title="Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL)" />
+    <link rel="next" href="cvanal.html" title="cvanal" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">atsa</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="UtilitySoundfile.html#UtilityAnalysis">Prev</a> </td>
+          <th width="60%" align="center">Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="cvanal.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="UtilityAtsa"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">atsa</span>
+        </h2>
+        <p>atsa — 
+      Performs ATS analysis on a soundfile.
+      <a id="IndexAtsa" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981722736"></a>
+        <h2>Description</h2>
+        <p>
+	    ATS analysis for use with the Csound <a class="link" href="SpectralATS.html" title="ATS Spectral Processing"><em class="citetitle">ATS Resynthesis</em></a> opcodes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981720640"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>csound -U atsa</strong></span> [flags] infilename outfilename</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981718256"></a>
+        <h2>Initialization</h2>
+        <p>
+      The following flags can be set for atsa (The default values are
+  stated in parenthesis):
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>-b start (0.000000 seconds)</td>
+          </tr>
+          <tr>
+            <td>-e duration (0.000000 seconds or end)</td>
+          </tr>
+          <tr>
+            <td>-l lowest frequency (20.000000 Hertz)</td>
+          </tr>
+          <tr>
+            <td>-H highest frequency (20000.000000 Hertz)</td>
+          </tr>
+          <tr>
+            <td>-d frequency deviation (0.100000 of partial freq.)</td>
+          </tr>
+          <tr>
+            <td>-c window cycles (4 cycles)</td>
+          </tr>
+          <tr>
+            <td>-w window type (type: 1) (Options: 0=BLACKMAN, 1=BLACKMAN_H, 2=HAMMING, 3=VONHANN)</td>
+          </tr>
+          <tr>
+            <td>-h hop size (0.250000 of window size)</td>
+          </tr>
+          <tr>
+            <td>-m lowest magnitude (-60.000000)</td>
+          </tr>
+          <tr>
+            <td>-t track length (3 frames)</td>
+          </tr>
+          <tr>
+            <td>-s min. segment length (3 frames)</td>
+          </tr>
+          <tr>
+            <td>-g min. gap length (3 frames)</td>
+          </tr>
+          <tr>
+            <td>-T SMR threshold (30.000000 dB SPL)</td>
+          </tr>
+          <tr>
+            <td>-S min. segment SMR (60.000000 dB SPL)</td>
+          </tr>
+          <tr>
+            <td>-P last peak contribution (0.000000 of last peak's parameters)</td>
+          </tr>
+          <tr>
+            <td>-M SMR contribution (0.500000)</td>
+          </tr>
+          <tr>
+            <td>-F File Type (type: 4) (Options: 1=amp.and freq. only,
+  2=amp.,freq. and phase, 3=amp.,freq. and residual,
+  4=amp.,freq.,phase, and residual)</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981708912"></a>
+        <h2>Parameters</h2>
+        <p>ATS analysis was devised by Juan Pampin. For complete
+    information on ATS visit: <a class="ulink" href="http://www-ccrma.stanford.edu/~juan/ATS.html" target="_top">http://www-ccrma.stanford.edu/~juan/ATS.html</a>.
+    </p>
+        <p>Analysis parameters must be carefully tuned for the Analysis
+    Algorithm (ATSA) to properly capture the nature of the signal to
+    be analyzed. As there are a significant number of them, ATSH
+    offers the possibility of Saving/Loading them in a Binary File
+    carrying the extension "*.apf". The extension is not mandatory,
+    but recommended. A brief explanation of each Analysis Parameters
+    follows:
+    </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>Start (secs.): the starting time of the analysis in seconds.</p>
+            </li>
+            <li class="listitem">
+              <p>Duration (secs.): the duration time of the analysis in
+    seconds. A zero means the whole duration of the input sound file.</p>
+            </li>
+            <li class="listitem">
+              <p>Lowest Frequency (Hz.): this parameter will partially
+    determine the size of the Analysis Window to be used. To compute
+    the size of the Analysis Window, the period of the Lowest
+    Frequency in samples (SR / LF) is multiplied by the number of
+    cycles of it the user wants to fit in the Analysis Window (see
+    parameter 6). This value is rounded to the next power of two to
+    determine the size of the FFT for the analysis. The remaining
+    samples are zero-padded. If the signal is a single, harmonic
+    sound, then the value of the Lowest Frequency should be its
+    fundamental frequency or a sub-harmonic of it. If it is not
+    harmonic, then its lowest significant frequency component may be a
+    good starting value.</p>
+            </li>
+            <li class="listitem">
+              <p>Highest Frequency (Hz.): highest frequency to be taken
+    into account for Peak Detection. Once it is determined that no
+    relevant information is found beyond a certain frequency, the
+    analysis may be faster and more accurate setting the Highest
+    Frequency parameter to that value.</p>
+            </li>
+            <li class="listitem">
+              <p>Frequency Deviation (Ratio): frequency deviation
+    allowed for each peak in the Peak Continuation Algorithm, as a
+    ratio of the frequency involved. For instance, considering a peak
+    at 440 Hz and a Deviation of .1 will produce that the Peak
+    Continuation Algorithm will only try to find candidates for its
+    continuation between 396 and 484 Hz (10% above and below the
+    frequency of the peak). A small value is likely to produce more
+    trajectories whilst a large value will reduce them, but at the
+    cost of rendering information difficult to be further processed.</p>
+            </li>
+            <li class="listitem">
+              <p>Number of Cycles of Lowest Frequency to fit in
+    Analysis Window: this will also partially determine the size of
+    the Fourier Analysis Window to be used. See Parameter 3. For
+    single harmonic signals, it is supposed to be more than one
+    (typically 4).</p>
+            </li>
+            <li class="listitem">
+              <p>Hop Size (Ratio): size of the gap between one Analysis
+    Window and the next expressed as a ratio of the Window Size. For
+    instance, a Hop Size value of .25 will "jump" by 512 samples
+    (Windows will overlap for a 75% of their size). This parameter
+    will also determine the size of the analysis frames
+    obtained. Signals that change their spectra very fast (such as
+    Speech sounds) may need a high frame rate in order to properly
+    track their changes.</p>
+            </li>
+            <li class="listitem">
+              <p>Amplitude Threshold (dB): the highest amplitude value
+    to be taken into account for Peak Detection.</p>
+            </li>
+            <li class="listitem">
+              <p>Window Type: the shape of the smoothing function to be
+    used for the Fourier Analysis. There are four choices available at
+    present: Blackman, Blackman-Harris, Von Hann, and Hanning. Precise
+    specifications about them are easily found on D.S.P. bibliography.</p>
+            </li>
+            <li class="listitem">
+              <p>Track Length (Frames): The Peak Continuation Algorithm
+    will "look-back" by Length frames in order to do its job better,
+    preventing frequency trajectories from curving too much and
+    loosing stability. However, a large value for this parameter will
+    slow down the analysis significantly.</p>
+            </li>
+            <li class="listitem">
+              <p>Minimal Segment Length (Frames): once the analysis is
+    done, the spectral data can be further "cleaned" up during
+    post-processing. Trajectories shorter than this value are
+    suppressed if their average SMR is below Minimal Segment SMR (see
+    parameters 16 and 14). This might help to avoid non-relevant
+    sudden changes while keeping a high frame rate, reducing also the
+    number of intermittent sinusoids during synthesis.</p>
+            </li>
+            <li class="listitem">
+              <p>Minimal Gap Length (Frames): as parameter 11, this one
+    is also used to clean up the data during post-processing. In this
+    case, gaps (zero amplitude values, i.e. theoretical "silence")
+    longer than Length frames are filled up with amplitude/frequency
+    values obtained by linear interpolation of the adjacent active
+    frames. This parameter prevents sudden interruptions of stable
+    trajectories while keeping a high frame rate.</p>
+            </li>
+            <li class="listitem">
+              <p>SMR Threshold (dB SPL): also a post-processing
+    parameter, the SMR Threshold is used to eliminate partials with
+    low averages.</p>
+            </li>
+            <li class="listitem">
+              <p>Minimal Segment SMR (dB SPL): this parameter is used
+    in combination with parameter 11. Short segments with SMR average
+    below this value will be removed during post-processing.</p>
+            </li>
+            <li class="listitem">
+              <p>Last Peak Contribution (0 to 1): as explained in
+    Parameter 10, the Peak Continuation Algorithm "looks-back" several
+    number of frames to do its job better. This parameter will help to
+    weight the contribution of the first precedent peak over the
+    others. A zero value means that all precedent peaks (to the size
+    of Parameter 10) are equally taken in account.</p>
+            </li>
+            <li class="listitem">
+              <p>SMR Contribution (0 to 1): In addition to the
+    proximity in frequency of the peaks, the ATS Peak Continuation
+    Algorithm may use psycho-acoustic information (the
+    Signal-to-Mask-Ratio, or SMR) to improve the perceptual
+    results. This parameter indicates how much the SMR information is
+    used during tracking. For instance, a value of .5 makes the Peak
+    Continuation Algorithm to use a 50% of SMR information and a 50%
+    of Frequency Proximity information to decide which is the best
+    candidate to continue a sinusoidal track.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981690304"></a>
+        <h2>Examples</h2>
+        <p>
+      The following command:
+
+        </p>
+        <pre class="programlisting">
+          <span class="emphasis"><em>atsa</em></span> -b0.1 -e1 -l100 -H10000 -w2 audiofile.wav audiofile.ats</pre>
+        <p>
+
+      Generates the ATS analysis file 'audiofile.ats' from the
+    original 'audiofile.wav' file. It begins analysis from second 0.1
+    of the file and the analysis is performed for 1 second
+    thereafter. The lowest frequency stored is 100 Hz and the highest
+    is 10kHz. A Hamming window is used for each analysis frame.
+
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="UtilitySoundfile.html#UtilityAnalysis">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilitySoundfile.html#UtilityAnalysis">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="cvanal.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL) </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> cvanal</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

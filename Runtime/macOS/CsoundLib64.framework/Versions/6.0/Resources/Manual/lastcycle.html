@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lastcycle</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="greaterequal.html" title="&gt;=" />
+    <link rel="next" href="lessthan.html" title="&lt;" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lastcycle</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="greaterequal.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lessthan.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lastcycle"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLastcycle" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lastcycle</span>
+        </h2>
+        <p>lastcycle — 
+      Indicates whether an event is in its last performance cycle.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127204112"></a>
+        <h2>Description</h2>
+        <p>
+      Provides a way of knowing if an event is in its last performance cycle. Whether an event has a finite duration (p3 &gt; 0)
+      or a note is extended via a time extending opcode (like <span class="quote">“<span class="quote">linsegr</span>”</span> or <span class="quote">“<span class="quote">xtratim</span>”</span>), this opcode returns 1
+      if the event is currently at its last k-cycle. The only sitatuation where <span class="quote">“<span class="quote">lastcycle</span>”</span> does not detect that the event
+      will not run for another cycle is when the note is turned off by another event (using <span class="quote">“<span class="quote">turnoff2</span>”</span>) and is not given
+      the possibility of running through its release stage (using <span class="quote">“<span class="quote">turnoff2 instrnum, imode, 0</span>”</span>)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127200368"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kflag <span class="command"><strong>lastcycle</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127198432"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kflag</em></span> -- indicates whether the note is in its <span class="quote">“<span class="quote">last cycle</span>”</span>. (1 if this the last cycle, otherwise 0)
+    </p>
+        <p>
+      This opcode is useful for performing cleanup actions, signaling to other events that this event is finishing, etc. It works only at performance time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127195808"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the lastcycle opcode. It uses the file <a class="ulink" href="examples/lastcycle.csd" target="_top"><em class="citetitle">lastcycle.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276127194016"></a>
+          <p class="title">
+            <strong>Example 24. Example of the lastcycle opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276497915856"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    Silent  MIDI in</span>
+-odac
+-d
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  a<span class="n">env</span> <span class="nb">linsegr</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span>
+  a<span class="n">sig</span> <span class="o">=</span>  <span class="nb">oscili</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+  a<span class="n">sig</span> <span class="o">+=</span> <span class="nb">oscili</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1012</span><span class="p">)</span>
+  a<span class="n">sig</span> <span class="o">*=</span> a<span class="n">env</span>
+  <span class="k">if</span> <span class="n">lastcycle</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">then</span>
+    <span class="n">schedulek</span> <span class="nb">p1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span>
+  <span class="k">endif</span>
+  <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+  
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">0.5</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">3600</span> 
+
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127192256"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a>, 
+      <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a>, 
+      <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127188464"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2020</p>
+        <p>New in Csound version 6.14 (2020)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="greaterequal.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lessthan.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">&gt;= </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> &lt;</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

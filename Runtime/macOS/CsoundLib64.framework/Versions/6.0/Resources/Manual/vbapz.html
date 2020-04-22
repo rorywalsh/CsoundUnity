@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vbapz</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vbaplsinit.html" title="vbaplsinit" />
+    <link rel="next" href="vbapzmove.html" title="vbapzmove" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vbapz</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vbaplsinit.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vbapzmove.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vbapz"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVbapz" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vbapz</span>
+        </h2>
+        <p>vbapz — 
+      Writes a multi-channel audio signal to a ZAK array.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042240352"></a>
+        <h2>Description</h2>
+        <p>
+      Writes a multi-channel audio signal to a ZAK array.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042239120"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vbapz</strong></span> inumchnls, istartndx, asig, kazim [, kelev] [, kspread]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042237136"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>inumchnls</em></span> -- number of channels to write to the ZA array. Must be in the range 2 - 256.
+    </p>
+        <p>
+      <span class="emphasis"><em>istartndx</em></span> -- first index or position in the ZA array to use
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042234624"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- audio signal to be panned
+    </p>
+        <p>
+      <span class="emphasis"><em>kazim</em></span> -- azimuth angle of the virtual source
+    </p>
+        <p>
+      <span class="emphasis"><em>kelev</em></span> (optional) -- elevation angle of the virtual source
+    </p>
+        <p>
+      <span class="emphasis"><em>kspread</em></span> (optional) -- spreading of the virtual source (range 0 - 100).  If value is zero, conventional amplitude panning is used. When <span class="emphasis"><em>kspread</em></span> is increased, the number of loudspeakers used in panning increases. If value is 100, the sound is applied to all loudspeakers.
+    </p>
+        <p>
+      The opcode <span class="emphasis"><em>vbapz</em></span> is the multiple channel analog of the opcodes like <a class="link" href="vbap4.html" title="vbap4"><em class="citetitle">vbap4</em></a>, working on <span class="emphasis"><em>inumchnls</em></span> and using a ZAK array for output.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>Please note that all <span class="emphasis"><em>vbap</em></span> panning opcodes require the <span class="emphasis"><em>vbap</em></span> system to be initialized using <a class="link" href="vbaplsinit.html" title="vbaplsinit"><em class="citetitle">vbaplsinit</em></a>.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042225104"></a>
+        <h2>Examples</h2>
+        <p>
+      See the entry for <a class="link" href="vbap8.html" title="vbap8"><em class="citetitle">vbap8</em></a> for an example of usage of the <span class="emphasis"><em>vbap</em></span> opcodes.
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042221264"></a>
+        <h2>Reference</h2>
+        <p>
+      Ville Pulkki: <span class="quote">“<span class="quote">Virtual Sound Source Positioning Using Vector Base Amplitude Panning</span>”</span> <span class="emphasis"><em>Journal of the Audio Engineering Society</em></span>, 1997 June, Vol. 45/6, p. 456.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042219120"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vbap16.html" title="vbap16"><em class="citetitle">vbap16</em></a>,
+      <a class="link" href="vbap16move.html" title="vbap16move"><em class="citetitle">vbap16move</em></a>,
+      <a class="link" href="vbap4.html" title="vbap4"><em class="citetitle">vbap4</em></a>,
+      <a class="link" href="vbap4move.html" title="vbap4move"><em class="citetitle">vbap4move</em></a>,
+      <a class="link" href="vbap8.html" title="vbap8"><em class="citetitle">vbap8</em></a>,
+      <a class="link" href="vbap8move.html" title="vbap8move"><em class="citetitle">vbap8move</em></a>,
+      <a class="link" href="vbaplsinit.html" title="vbaplsinit"><em class="citetitle">vbaplsinit</em></a>,
+      <a class="link" href="vbapzmove.html" title="vbapzmove"><em class="citetitle">vbapzmove</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276042211072"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>May 2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound Version 4.07. Input parameters accept k-rate since Csund 5.09.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vbaplsinit.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vbapzmove.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vbaplsinit </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vbapzmove</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

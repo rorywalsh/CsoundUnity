@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fmbell</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fmb3.html" title="fmb3" />
+    <link rel="next" href="fmin.html" title="fmin" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fmbell</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fmb3.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fmin.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="fmbell"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFmbell" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fmbell</span>
+        </h2>
+        <p>fmbell — 
+      Uses FM synthesis to create a tublar bell sound.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104006112"></a>
+        <h2>Description</h2>
+        <p>
+      Uses FM synthesis to create a tublar bell sound. It comes from a family of FM sounds, all using 4 basic oscillators and various architectures, as used in the TX81Z synthesizer.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104004544"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>fmbell</strong></span> kamp, kfreq, kc1, kc2, kvdepth, kvrate[, ifn1, ifn2, ifn3, \
+      ifn4, ivfn, isus]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104002288"></a>
+        <h2>Initialization</h2>
+        <p>
+      All these opcodes take 5 tables for initialization. The first 4
+      are the basic inputs and the last is the low frequency
+      oscillator (LFO) used for vibrato. These all default to a
+      siewave table.
+    </p>
+        <p>
+      The initial waves should be:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p><span class="emphasis"><em>ifn1</em></span> -- sine wave</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>ifn2</em></span> -- sine wave</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>ifn3</em></span> -- sine wave</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>ifn4</em></span> -- sine wave</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      The optional argument <span class="emphasis"><em>isus</em></span> controls how long the
+      sound lasts, or how quickly it decays.  It defaults to 4.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103995744"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- Amplitude of note.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- Frequency of note played.
+    </p>
+        <p>
+      <span class="emphasis"><em>kc1, kc2</em></span> -- Controls for the synthesizer:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p><span class="emphasis"><em>kc1</em></span> -- Mod index 1</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>kc2</em></span> -- Crossfade of two outputs</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>Algorithm</em></span> -- 5</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>kvdepth</em></span> -- Vibrator depth
+    </p>
+        <p>
+      <span class="emphasis"><em>kvrate</em></span> -- Vibrator rate
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103987856"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the fmbell opcode. It uses the file <a class="ulink" href="examples/fmbell.csd" target="_top"><em class="citetitle">fmbell.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276103986048"></a>
+          <p class="title">
+            <strong>Example 333. Example of the fmbell opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276471814848"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o fmbell.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>  
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">amp</span> <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">freq</span> <span class="o">=</span> <span class="mi">880</span>
+k<span class="n">c1</span> <span class="o">=</span> <span class="nb">p5</span>
+k<span class="n">c2</span> <span class="o">=</span> <span class="nb">p6</span>
+k<span class="n">vdepth</span> <span class="o">=</span> <span class="mf">0.005</span>
+k<span class="n">vrate</span> <span class="o">=</span> <span class="mi">6</span>
+
+a<span class="n">sig</span> <span class="nb">fmbell</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> k<span class="n">c1</span><span class="p">,</span> k<span class="n">c2</span><span class="p">,</span> k<span class="n">vdepth</span><span class="p">,</span> k<span class="n">vrate</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+k<span class="n">amp</span> <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">freq</span> <span class="o">=</span> <span class="mi">880</span>
+k<span class="n">c1</span> <span class="o">=</span> <span class="nb">p5</span>
+k<span class="n">c2</span> <span class="o">=</span> <span class="nb">p6</span>
+k<span class="n">vdepth</span> <span class="o">=</span> <span class="mf">0.005</span>
+k<span class="n">vrate</span> <span class="o">=</span> <span class="mi">6</span>
+
+a<span class="n">sig</span> <span class="nb">fmbell</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> k<span class="n">c1</span><span class="p">,</span> k<span class="n">c2</span><span class="p">,</span> k<span class="n">vdepth</span><span class="p">,</span> k<span class="n">vrate</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p7</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">32768</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mf">.2</span>  <span class="mi">5</span> <span class="mi">5</span> 
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">4</span> <span class="mf">.3</span> <span class="mf">.5</span> <span class="mi">1</span>
+<span class="nb">s</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">12</span> <span class="mf">.2</span>  <span class="mi">5</span> <span class="mi">5</span> <span class="mi">16</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">12</span> <span class="mf">.3</span> <span class="mf">.5</span> <span class="mi">1</span> <span class="mi">12</span>
+
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103982016"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="fmb3.html" title="fmb3"><em class="citetitle">fmb3</em></a>,
+      <a class="link" href="fmmetal.html" title="fmmetal"><em class="citetitle">fmmetal</em></a>,
+      <a class="link" href="fmpercfl.html" title="fmpercfl"><em class="citetitle">fmpercfl</em></a>,
+      <a class="link" href="fmrhode.html" title="fmrhode"><em class="citetitle">fmrhode</em></a>,
+      <a class="link" href="fmwurlie.html" title="fmwurlie"><em class="citetitle">fmwurlie</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103976384"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch (after Perry Cook)</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p>Optional argument new in 5.16</p>
+        <p>More optional argument new in 6.0</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fmb3.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fmin.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fmb3 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fmin</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

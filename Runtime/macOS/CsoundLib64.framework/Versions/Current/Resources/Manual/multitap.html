@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>multitap</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mton.html" title="mton" />
+    <link rel="next" href="mute.html" title="mute" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">multitap</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mton.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="mute.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="multitap"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMultitap" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">multitap</span>
+        </h2>
+        <p>multitap — 
+      Multitap delay line implementation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078492656"></a>
+        <h2>Description</h2>
+        <p>
+      Multitap delay line implementation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078491440"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>multitap</strong></span> asig [, itime1, igain1] [, itime2, igain2] [...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078489312"></a>
+        <h2>Initialization</h2>
+        <p>
+      The arguments <span class="emphasis"><em>itime</em></span> and <span class="emphasis"><em>igain</em></span> set the position and gain of each tap.
+    </p>
+        <p>
+      The delay line is fed by <span class="emphasis"><em>asig</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078486400"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the multitap opcode. It uses the file <a class="ulink" href="examples/multitap.csd" target="_top"><em class="citetitle">multitap.csd</em></a>
+      </p>
+        <div class="example">
+          <a id="idm276078484624"></a>
+          <p class="title">
+            <strong>Example 601. Example of the multitap opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276446968752"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o multitap.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+ga<span class="n">1</span> <span class="nb">init</span> <span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">sig</span> <span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+   
+ga<span class="n">1</span>  <span class="o">=</span> ga<span class="n">1</span><span class="o">+</span>a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+a<span class="n">sig</span> <span class="nb">multitap</span> ga<span class="n">1</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">.2</span>
+     <span class="nb">outs</span>     a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+	
+ga<span class="n">1</span>  <span class="o">=</span> <span class="mi">0</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mf">.5</span> <span class="mf">.2</span>	<span class="c1">; short sound</span>
+<span class="nb">i</span> <span class="mi">2</span>  <span class="mi">0</span>  <span class="mi">3</span>	<span class="c1">; echoes</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+     This results in two delays, one with length of 1.2 and gain of .5, and one with length of 1.4 and gain of .2.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078482752"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge</td>
+          </tr>
+          <tr>
+            <td>1996</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mton.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="mute.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mton </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> mute</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

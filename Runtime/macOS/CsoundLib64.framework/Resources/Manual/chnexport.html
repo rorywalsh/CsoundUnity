@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>chnexport</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="chnclear.html" title="chnclear" />
+    <link rel="next" href="chnget.html" title="chnget" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">chnexport</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="chnclear.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="chnget.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="chnexport"></a>
+      <div class="titlepage"></div>
+      <a id="Indexchnexport" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">chnexport</span>
+        </h2>
+        <p>chnexport — 
+      Export a global variable as a channel of the bus.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121388144"></a>
+        <h2>Description</h2>
+        <p>
+      Export a global variable as a channel of the bus; the channel
+      should not already exist, otherwise an init error occurs.
+      This opcode is normally called from the orchestra header, and allows
+      the host application to read or write orchestra variables directly,
+      without having to use
+      <a class="link" href="chnget.html" title="chnget"><em class="citetitle">chnget</em></a> or
+      <a class="link" href="chnset.html" title="chnset"><em class="citetitle">chnset</em></a> to copy data.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121384880"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">gival <span class="command"><strong>chnexport</strong></span> Sname, imode[, itype, idflt, imin, imax]</pre>
+        <pre class="synopsis">gkval <span class="command"><strong>chnexport</strong></span> Sname, imode[, itype, idflt, imin, imax]</pre>
+        <pre class="synopsis">gaval <span class="command"><strong>chnexport</strong></span> Sname, imode</pre>
+        <pre class="synopsis">gSval <span class="command"><strong>chnexport</strong></span> Sname, imode</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121378848"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imode</em></span> -- sum of at least one of 1 for input and
+      2 for output.
+    </p>
+        <p>
+      <span class="emphasis"><em>itype</em></span> (optional, defaults to 0) -- channel subtype
+      for control channels only. Possible values are:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+            0: default/unspecified (<span class="emphasis"><em>idflt</em></span>, <span class="emphasis"><em>imin</em></span>,
+            and <span class="emphasis"><em>imax</em></span> are ignored)
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            1: integer values only
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            2: linear scale
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            3: exponential scale
+          </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>idflt</em></span> (optional, defaults to 0) -- default value,
+      for control channels with non-zero <span class="emphasis"><em>itype</em></span> only.
+      Must be greater than or equal to <span class="emphasis"><em>imin</em></span>, and less than
+      or equal to <span class="emphasis"><em>imax</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>imin</em></span> (optional, defaults to 0) -- minimum value,
+      for control channels with non-zero <span class="emphasis"><em>itype</em></span> only.
+      Must be non-zero for exponential scale (<span class="emphasis"><em>itype</em></span> = 3).
+    </p>
+        <p>
+      <span class="emphasis"><em>imax</em></span> (optional, defaults to 0) -- maximum value,
+      for control channels with non-zero <span class="emphasis"><em>itype</em></span> only.
+      Must be greater than <span class="emphasis"><em>imin</em></span>. In the case of exponential
+      scale, it should also match the sign of <span class="emphasis"><em>imin</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121365216"></a>
+        <h2>Notes</h2>
+        <p>
+      The channel parameters (<span class="emphasis"><em>imode</em></span>, <span class="emphasis"><em>itype</em></span>,
+      <span class="emphasis"><em>idflt</em></span>, <span class="emphasis"><em>imin</em></span>, and <span class="emphasis"><em>imax</em></span>)
+      are only hints for the host application or external software accessing the bus
+      through the API, and do not actually restrict reading from or writing
+      to the channel in any way.
+    </p>
+        <p>
+      While the global variable is used as output argument, <span class="emphasis"><em>chnexport</em></span>
+      does not actually change it, and always runs at i-time only. If the variable
+      is not previously declared, it is created by Csound with an initial
+      value of zero or empty string.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121360288"></a>
+        <h2>Example</h2>
+        <p>
+      The example shows the software bus being used as an asynchronous
+      control signal to select a filter cutoff.  It assumes that an
+      external program that has access to the API is feeding the values.
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+        <span class="ohdr">sr</span> <span class="op">=</span> 44100
+        <span class="ohdr">kr</span> <span class="op">=</span> 100
+        <span class="ohdr">ksmps</span> <span class="op">=</span> 1
+
+        gkc <span class="opc">init</span> 1000   <span class="comment">; set default value</span>
+        gkc <span class="opc">chnexport</span> "cutoff", 1, 3, <span class="opc">i</span>(gkc), 500, 2000
+
+        <span class="oblock">instr</span>   1
+           a1   <span class="opc">oscil</span>     p4, p5, 100
+           a2   <span class="opc">lowpass2</span>  a1, gkc, 200
+                <span class="opc">out</span>       a2
+        <span class="oblock">endin</span>
+      </pre>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121348224"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="chnclear.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="chnget.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">chnclear </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> chnget</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

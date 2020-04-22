@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>trigger</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="trhighest.html" title="trhighest" />
+    <link rel="next" href="trigseq.html" title="trigseq" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">trigger</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="trhighest.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="trigseq.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="trigger"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTrigger" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">trigger</span>
+        </h2>
+        <p>trigger — 
+      Informs when a krate signal crosses a threshold.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045159408"></a>
+        <h2>Description</h2>
+        <p>
+      Informs when a krate signal crosses a threshold.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045158096"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout <span class="command"><strong>trigger</strong></span> ksig, kthreshold, kmode</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045155984"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ksig</em></span> -- input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>kthreshold</em></span> -- trigger threshold
+    </p>
+        <p>
+      <span class="emphasis"><em>kmode</em></span> -- can be 0 , 1 or 2
+    </p>
+        <p>
+      Normally <span class="emphasis"><em>trigger</em></span> outputs zeroes: only each time <span class="emphasis"><em>ksig</em></span> crosses <span class="emphasis"><em>kthreshold</em></span> <span class="emphasis"><em>trigger</em></span> outputs a 1. There are three modes of using <span class="emphasis"><em>ktrig</em></span>:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p><span class="emphasis"><em>kmode</em></span> = 0 - (down-up) <span class="emphasis"><em>ktrig</em></span> outputs a 1 when current value of <span class="emphasis"><em>ksig</em></span> is higher than <span class="emphasis"><em>kthreshold,</em></span> while old value of <span class="emphasis"><em>ksig</em></span> was equal to or lower than <span class="emphasis"><em>kthreshold</em></span>.</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>kmode</em></span> = 1 - (up-down) <span class="emphasis"><em>ktrig</em></span> outputs a 1 when current value of <span class="emphasis"><em>ksig</em></span> is lower than <span class="emphasis"><em>kthreshold</em></span> while old value of <span class="emphasis"><em>ksig</em></span> was equal or higher than <span class="emphasis"><em>kthreshold</em></span>.</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>kmode</em></span> = 2  - (both) <span class="emphasis"><em>ktrig</em></span> outputs a 1 in both the two previous cases.</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045142512"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the trigger opcode. It uses the file <a class="ulink" href="examples/trigger.csd" target="_top"><em class="citetitle">trigger.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276045140704"></a>
+          <p class="title">
+            <strong>Example 1048. Example of the trigger opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276412071984"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o trigger.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">mtr</span> <span class="nb">lfo</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>			<span class="c1">;triangle wave</span>
+k<span class="n">mode</span> <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">tr</span>  <span class="nb">trigger</span> k<span class="n">mtr</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> k<span class="n">mode</span>
+     <span class="nb">printk2</span>  k<span class="n">tr</span>
+     <span class="nb">schedkwhen</span> k<span class="n">tr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.3</span>
+
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>                                            
+
+a<span class="n">env</span> <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span><span class="nb">p3</span><span class="o">*</span><span class="mf">.1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">p3</span><span class="o">*</span><span class="mf">.3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">p3</span><span class="o">*</span><span class="mf">.6</span><span class="p">,</span><span class="mi">0</span>	<span class="c1">;envelope</span>
+a<span class="n">1</span>   <span class="nb">poscil</span> <span class="mf">.3</span><span class="o">*</span>a<span class="n">env</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine </span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">0</span>		<span class="c1">;down-up</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">3</span> <span class="mi">2</span>		<span class="c1">;down-up &amp; up=down</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045136704"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.49</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="trhighest.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="trigseq.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">trhighest </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> trigseq</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

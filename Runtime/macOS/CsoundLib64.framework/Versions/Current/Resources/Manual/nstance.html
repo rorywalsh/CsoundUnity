@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>nstance</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="nsamp.html" title="nsamp" />
+    <link rel="next" href="ntom.html" title="ntom" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">nstance</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="nsamp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ntom.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="nstance"></a>
+      <div class="titlepage"></div>
+      <a id="IndexNstance" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">nstance</span>
+        </h2>
+        <p>nstance — 
+      Schedules a new instrument instance, storing the instance handle in a variable.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077502704"></a>
+        <h2>Description</h2>
+        <p>
+       Schedules a new instrument nstance, returning a handle that can be used later to
+refer directly to the running nstance. This opcode is similar to schedule, but has the added
+facility of retrieving the nstance handle.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077501296"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">iHandle <span class="command"><strong>nstance</strong></span> insnum, iwhen, idur [, ip4] [, ip5] [...]</pre>
+        <pre class="synopsis">iHandle <span class="command"><strong>nstance</strong></span> "insname", iwhen, idur [, ip4] [, ip5] [...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077497776"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iHandle</em></span> -- this variable will contain a handle to the event instance. It can be used, for example, to
+stop the given instrument instance via the turnoff opcode. Note that the instance handle is only valid once the instrument is initialised.
+    </p>
+        <p>
+      <span class="emphasis"><em>insnum</em></span> -- instrument number. Equivalent to p1 in a score <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statement</em></a>. <span class="emphasis"><em>insnum</em></span> must be a number greater than the number of the calling instrument.
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">insname</span>”</span></em></span> -- A string (in double-quotes) representing a named instrument.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwhen</em></span> -- start time of the new event. Equivalent to p2 in a score <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statement</em></a>. <span class="emphasis"><em>iwhen</em></span> must be nonnegative. If <span class="emphasis"><em>iwhen</em></span> is zero, <span class="emphasis"><em>insum</em></span> must be greater than or equal to the p1 of the current instrument.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur</em></span> -- duration of event. Equivalent to p3 in a score <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statement</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em>ip4, ip5, ...</em></span> -- Equivalent to p4, p5, etc., in a score <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statement</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077486368"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>nstance</em></span> adds a new score event. The arguments, including options, are the same as in a score. The <span class="emphasis"><em>iwhen</em></span> time (p2) is measured from the time of this event. 
+    </p>
+        <p>
+      If the duration is zero or negative the new event is of MIDI type, and inherits the release sub-event from the scheduling instruction.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p> Note that the <span class="emphasis"><em>nstance</em></span> opcode can't accept string p-fields. If you need to pass strings when instantiating an instrument, use the <a class="link" href="scoreline.html" title="scoreline"><em class="citetitle">scoreline</em></a> or <a class="link" href="scoreline_i.html" title="scoreline_i"><em class="citetitle">scoreline_i</em></a> opcode.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077480640"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the nstance opcode. It uses the file <a class="ulink" href="examples/nstance.csd" target="_top"><em class="citetitle">nstance.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276077478848"></a>
+          <p class="title">
+            <strong>Example 623. Example of the nstance opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276445896512"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o nstance.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1 - oscillator with a high note.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Play Instrument #2 at the same time.</span>
+  i<span class="n">Handle</span> <span class="nb">nstance</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span>
+
+  <span class="c1">; Play a high note.</span>
+  a<span class="n">1</span> <span class="nb">oscils</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">880</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="c1">; Instrument #2 - oscillator with a low note.</span>
+<span class="kd">instr</span> <span class="nf">2</span>
+  <span class="c1">; Play a low note.</span>
+  a<span class="n">1</span> <span class="nb">oscils</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Play Instrument #1 for half a second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">0.5</span>
+<span class="c1">; Play Instrument #1 for half a second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mf">0.5</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077474864"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="schedwhen.html" title="schedwhen"><em class="citetitle">schedwhen</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077472832"></a>
+        <h2>See also</h2>
+        <p><a class="link" href="event.html" title="event"><em class="citetitle">event</em></a>,
+    <a class="link" href="event_i.html" title="event_i"><em class="citetitle">event_i</em></a>,
+    <a class="link" href="schedwhen.html" title="schedwhen"><em class="citetitle">schedwhen</em></a>,
+    <a class="link" href="schedkwhen.html" title="schedkwhen"><em class="citetitle">schedkwhen</em></a>,
+    <a class="link" href="schedkwhennamed.html" title="schedkwhennamed"><em class="citetitle">schedkwhennamed</em></a>,
+    <a class="link" href="scoreline.html" title="scoreline"><em class="citetitle">scoreline</em></a>,
+    <a class="link" href="scoreline_i.html" title="scoreline_i"><em class="citetitle">scoreline_i</em></a></p>
+        <p> More information on this opcode: <a class="ulink" href="http://www.csoundjournal.com/issue15/phrase_loops.html" target="_top"><em class="citetitle">http://www.csoundjournal.com/issue15/phrase_loops.html</em></a>  , written by Jim Aikin </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077464448"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>November 2013</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="nsamp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ntom.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">nsamp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ntom</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

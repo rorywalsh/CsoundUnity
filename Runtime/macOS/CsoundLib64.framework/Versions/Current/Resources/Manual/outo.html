@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>outo</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="outletv.html" title="outletv" />
+    <link rel="next" href="outq1.html" title="outq1" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">outo</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="outletv.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="outq1.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="outo"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOuto" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">outo</span>
+        </h2>
+        <p>outo — 
+      Writes 8-channel audio data to an external device or stream.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074079024"></a>
+        <h2>Description</h2>
+        <p>
+      Writes 8-channel audio data to an external device or stream.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074077776"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>outo</strong></span> asig1, asig2, asig3, asig4, asig5, asig6, asig7, asig8</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074075792"></a>
+        <h2>Performance</h2>
+        <p>
+      Sends 8-channel audio samples to an accumulating output buffer (created at the beginning of performance) which serves to collect the output of all active instruments before the sound is written to disk. There can be any number of these output units in an instrument.
+    </p>
+        <p>
+      The type (mono, stereo, quad, hex, or oct) should agree with <a class="link" href="nchnls.html" title="nchnls"><em class="citetitle">nchnls</em></a>. But as of version 3.50, Csound will attempt to change an incorrect opcode to agree with <span class="emphasis"><em>nchnls</em></span> statement.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074072480"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="out.html" title="out"><em class="citetitle">out</em></a>,
+      <a class="link" href="outh.html" title="outh"><em class="citetitle">outh</em></a>,
+      <a class="link" href="outq.html" title="outq"><em class="citetitle">outq</em></a>,
+      <a class="link" href="outq1.html" title="outq1"><em class="citetitle">outq1</em></a>,
+      <a class="link" href="outq2.html" title="outq2"><em class="citetitle">outq2</em></a>,
+      <a class="link" href="outq3.html" title="outq3"><em class="citetitle">outq3</em></a>,
+      <a class="link" href="outq4.html" title="outq4"><em class="citetitle">outq4</em></a>,
+      <a class="link" href="outs.html" title="outs"><em class="citetitle">outs</em></a>,
+      <a class="link" href="outs1.html" title="outs1"><em class="citetitle">outs1</em></a>,
+      <a class="link" href="outs2.html" title="outs2"><em class="citetitle">outs2</em></a>,
+      <a class="link" href="soundout.html" title="soundout"><em class="citetitle">soundout</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074061680"></a>
+        <h2>Credits</h2>
+        <p>Author: John ffitch</p>
+      </div>
+      <p>New after 3.30</p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="outletv.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="outq1.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">outletv </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> outq1</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

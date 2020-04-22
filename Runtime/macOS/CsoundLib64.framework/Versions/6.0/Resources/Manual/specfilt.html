@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>specfilt</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="specdisp.html" title="specdisp" />
+    <link rel="next" href="spechist.html" title="spechist" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">specfilt</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="specdisp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="spechist.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="specfilt"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpecfilt" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">specfilt</span>
+        </h2>
+        <p>specfilt — 
+      Filters each channel of an input spectrum.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071036112"></a>
+        <h2>Description</h2>
+        <p>
+      Filters each channel of an input spectrum.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071034880"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">wsig <span class="command"><strong>specfilt</strong></span> wsigin, ifhtim</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071032800"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifhtim</em></span> --  half-time constant.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071031200"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>wsigin</em></span> --  the input spectrum.
+    </p>
+        <p>
+      Filters each channel of an input spectrum. At each new frame of <span class="emphasis"><em>wsigin</em></span>, each magnitude value is injected into a 1st-order lowpass recursive filter, whose half-time constant has been initially set by sampling the ftable <span class="emphasis"><em>ifhtim</em></span> across the (logarithmic) frequency space of the input spectrum. This unit effectively applies a <span class="emphasis"><em>persistence</em></span> factor to the data occurring in each spectral channel, and is useful for simulating the <span class="emphasis"><em>energy integration</em></span> that occurs during auditory perception. It may also be used as a time-attenuated running <span class="emphasis"><em>histogram</em></span> of the spectral distribution.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071026608"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  wsig2    <span class="opc">specdiff</span>    wsig1         <span class="comment">; sense onsets</span>
+  wsig3    <span class="opc">specfilt</span>    wsig2, 2      <span class="comment">; absorb slowly</span>
+           <span class="opc">specdisp</span>    wsig2, 0.1    <span class="comment">; &amp; display both spectra</span>
+           <span class="opc">specdisp</span>    wsig3, 0.1</pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071019824"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="specaddm.html" title="specaddm"><em class="citetitle">specaddm</em></a>,
+      <a class="link" href="specdiff.html" title="specdiff"><em class="citetitle">specdiff</em></a>,
+      <a class="link" href="spechist.html" title="spechist"><em class="citetitle">spechist</em></a>,
+      <a class="link" href="specscal.html" title="specscal"><em class="citetitle">specscal</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="specdisp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="spechist.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">specdisp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> spechist</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

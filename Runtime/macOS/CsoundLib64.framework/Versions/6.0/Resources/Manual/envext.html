@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>envext</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilityOther.html" title="Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR, MAKECSD, MIXER, SCALE, MKDB)" />
+    <link rel="prev" href="csb64enc.html" title="csb64enc" />
+    <link rel="next" href="extractor.html" title="extractor" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">envext</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="csb64enc.html">Prev</a> </td>
+          <th width="60%" align="center">Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR,
+  MAKECSD, MIXER, SCALE, MKDB)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="extractor.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="envext"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">envext</span>
+        </h2>
+        <p>envext — 
+      Extracts the envelope of a file to a text file.
+      <a id="IndexEnvext" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979444672"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>envext</strong></span> [-flags] soundfile</pre>
+        <pre class="synopsis">csound -U <span class="command"><strong>envext</strong></span> [-flags] soundfile</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979441408"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>soundfile</em></span> - Name of the input soundfile.
+    </p>
+        <p>
+      The following flags are available for envext (The default values are
+      stated in parenthesis):
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td><span class="emphasis"><em>-o fnam</em></span> Name of output filename (newenv)</td>
+          </tr>
+          <tr>
+            <td><span class="emphasis"><em>-w</em></span> size (in seconds) of analysis window (0.25)</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>
+      The <span class="emphasis"><em>envext</em></span> utility generates a text file containing time and amplitude pairs by finding the absolute peak within each window.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979436336"></a>
+        <h2>Example</h2>
+        <p>
+      Using the command (while in the manual directory):
+      </p>
+        <pre class="screen">csound -U envext examples/mary.wav</pre>
+        <p>
+      will produce the a text file containing the following:
+</p>
+        <div class="literallayout">
+          <p><br />
+  0.000   0.000<br />
+  0.000   0.000<br />
+  0.250   0.000<br />
+  0.500   0.000<br />
+  0.750   0.000<br />
+  1.249   0.170<br />
+  1.499   0.269<br />
+  1.530   0.307<br />
+  1.872   0.263<br />
+  2.056   0.304<br />
+  2.294   0.241<br />
+  2.570   0.216<br />
+  2.761   0.178<br />
+  3.077   0.011<br />
+  3.251   0.001<br />
+  3.500   0.000<br />
+</p>
+        </div>
+        <p>
+      Which shows the time for the peak amplitude within each measured window.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979433120"></a>
+        <h2>Credits</h2>
+        <p>Author: John ffitch</p>
+        <p>1995</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="csb64enc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilityOther.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="extractor.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">csb64enc </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> extractor</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

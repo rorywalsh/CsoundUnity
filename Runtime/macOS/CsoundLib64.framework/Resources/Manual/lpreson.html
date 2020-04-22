@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lpreson</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="lpread.html" title="lpread" />
+    <link rel="next" href="lpshold.html" title="lpshold" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lpreson</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lpread.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lpshold.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lpreson"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLpreson" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lpreson</span>
+        </h2>
+        <p>lpreson — 
+      Resynthesises a signal from the data passed internally by a previous lpread.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082863104"></a>
+        <h2>Description</h2>
+        <p>
+      Resynthesises a signal from the data passed internally by a previous <span class="emphasis"><em>lpread</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082861440"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>lpreson</strong></span> asig</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082859360"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- an audio driving function for resynthesis.
+    </p>
+        <p>
+      <span class="emphasis"><em>lpreson</em></span> receives values internally produced by a leading <span class="emphasis"><em>lpread</em></span>.<span class="emphasis"><em>lpread</em></span> gets its values from the control file according to the input value <span class="emphasis"><em>ktimpnt</em></span> (in seconds). If <span class="emphasis"><em>ktimpnt</em></span> proceeds at the analysis rate, time-normal synthesis will result; proceeding at a faster, slower, or variable rate will result in time-warped synthesis. At each k-period, <span class="emphasis"><em>lpread</em></span> interpolates between adjacent frames to more accurately determine the parameter values (presented as output) and the filter coefficient settings (passed internally to a subsequent <span class="emphasis"><em>lpreson</em></span>).
+    </p>
+        <p>
+      The error signal <span class="emphasis"><em>kerr</em></span> (between 0 and 1) derived during predictive analysis reflects the deterministic/random nature of the analyzed source. This will emerge low for pitched (periodic) material and higher for noisy material. The transition from voiced to unvoiced speech, for example, produces an error signal value of about .3. During synthesis, the error signal value can be used to determine the nature of the  <span class="emphasis"><em>lpreson</em></span> driving function: for example, by arbitrating between pitched and non-pitched input, or even by determining a mix of the two. In normal speech resynthesis, the pitched input to <span class="emphasis"><em>lpreson</em></span> is a wideband periodic signal or pulse train derived from a unit such as <a class="link" href="buzz.html" title="buzz"><em class="citetitle">buzz</em></a>, and the nonpitched source is usually derived from <a class="link" href="rand.html" title="rand"><em class="citetitle">rand</em></a>. However, any audio signal can be used as the driving function, the only assumption of the analysis being that it has a flat response.
+    </p>
+        <p>
+      <a class="link" href="lpfreson.html" title="lpfreson"><em class="citetitle">lpfreson</em></a> is a formant shifted <span class="emphasis"><em>lpreson</em></span>, in which <span class="emphasis"><em>kfrqratio</em></span> is the (cps) ratio of shifted to original formant positions. This permits synthesis in which the source object changes its apparent acoustic size. <a class="link" href="lpfreson.html" title="lpfreson"><em class="citetitle">lpfreson</em></a> with <span class="emphasis"><em>kfrqratio</em></span> = 1 is equivalent to <span class="emphasis"><em>lpreson</em></span>.
+    </p>
+        <p>
+      Generally, <span class="emphasis"><em>lpreson</em></span> provides a means whereby the time-varying content and spectral shaping of a composite audio signal can be controlled by the dynamic spectral content of another. There can be any number of <span class="emphasis"><em>lpread/lpreson</em></span> (or <span class="emphasis"><em>lpfreson</em></span>) pairs in an instrument or in an orchestra; they can read from the same or different control files independently.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082843824"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the lpreson opcode. It uses the file <a class="ulink" href="examples/lpreson.csd" target="_top"><em class="citetitle">lpreson.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276082842032"></a>
+          <p class="title">
+            <strong>Example 522. Example of the lpreson opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276453743824"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o lpreson.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">; works with or without -a option when analyzing "fox.wav" from the manual</span>
+<span class="c1">;both options sound a little different</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">len</span>  <span class="nb">filelen</span> <span class="s">"fox.wav"</span>	<span class="c1">; length of soundfile</span>
+<span class="nb">prints</span> <span class="s">"fox.wav = %f seconds</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span>i<span class="n">len</span>
+
+k<span class="n">time</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p4</span>
+k<span class="n">rmsr</span><span class="p">,</span>k<span class="n">rmso</span><span class="p">,</span>k<span class="n">err</span><span class="p">,</span>k<span class="n">cps</span> <span class="nb">lpread</span> k<span class="n">time</span><span class="p">,</span><span class="s">"fox_poles.lpc"</span>
+
+k<span class="n">rmso</span> <span class="o">=</span> k<span class="n">rmso</span><span class="o">*</span><span class="mf">.00001</span>			<span class="c1">; low volume</span>
+a<span class="n">sig</span>  <span class="nb">buzz</span> k<span class="n">rmso</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="vg">sr</span><span class="o">/</span><span class="mi">2</span><span class="o">/</span>k<span class="n">cps</span><span class="p">),</span> <span class="mi">1</span> <span class="c1">; max harmonics without aliasing</span>
+a<span class="n">out</span>  <span class="nb">lpreson</span> a<span class="n">sig</span>
+a<span class="n">sig</span>  <span class="nb">clip</span> a<span class="n">out</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>			<span class="c1">; prevents distortion</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.8</span> <span class="mi">1</span>	<span class="c1">; first words only</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mf">2.8</span> <span class="mf">2.8</span>	<span class="c1">; whole sentence</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+      The audio file <span class="quote">“<span class="quote">fox.wav</span>”</span> is 2.8 seconds long. So <span class="emphasis"><em>filelen</em></span>'s output should be a line like this:
+      </p>
+        <pre class="screen">
+fox.wav = 2.756667 seconds
+      </pre>
+        <p>
+    </p>
+        <p>
+      Here is another example of the lpreson opcode. It uses the file <a class="ulink" href="examples/lpreson-2.csd" target="_top"><em class="citetitle">lpreson-2.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276082835456"></a>
+          <p class="title">
+            <strong>Example 523. Another example of the lpreson opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276453965056"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o lpreson-2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">; works with or without -a option when analyzing "fox.wav" from the manual</span>
+<span class="c1">;both options sound a little different</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">len</span>   <span class="nb">filelen</span> <span class="s">"fox.wav"</span>	<span class="c1">;length of soundfile 1</span>
+<span class="nb">prints</span> <span class="s">"fox.wav = %f seconds</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span>i<span class="n">len</span>
+
+k<span class="n">time</span>  <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">len</span>
+k<span class="n">rmsr</span><span class="p">,</span>k<span class="n">rmso</span><span class="p">,</span>k<span class="n">err</span><span class="p">,</span>k<span class="n">cps</span> <span class="nb">lpread</span> k<span class="n">time</span><span class="p">,</span><span class="s">"fox_nopoles.lpc"</span>
+a<span class="n">sig</span>   <span class="nb">diskin2</span>	<span class="s">"flute.aiff"</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">out</span>   <span class="nb">lpreson</span> a<span class="n">sig</span>
+a<span class="n">res</span>   <span class="nb">balance</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">sig</span>
+       <span class="nb">outs</span> a<span class="n">res</span><span class="p">,</span> a<span class="n">res</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.8</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082831536"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="lpfreson.html" title="lpfreson"><em class="citetitle">lpfreson</em></a>,
+      <a class="link" href="lpread.html" title="lpread"><em class="citetitle">lpread</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lpread.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lpshold.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lpread </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> lpshold</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

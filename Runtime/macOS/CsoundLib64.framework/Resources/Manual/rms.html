@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>rms</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="rireturn.html" title="rireturn" />
+    <link rel="next" href="rnd.html" title="rnd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">rms</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="rireturn.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="rnd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="rms"></a>
+      <div class="titlepage"></div>
+      <a id="IndexRms" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">rms</span>
+        </h2>
+        <p>rms — 
+      Determines the root-mean-square amplitude of an audio signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061251088"></a>
+        <h2>Description</h2>
+        <p>
+      Determines the root-mean-square amplitude of an audio signal. It low-pass filters the actual value, to average in the manner of a VU meter.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061249776"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>rms</strong></span> asig [, ihp] [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061247696"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihp</em></span> (optional, default=10) -- half-power point (in Hz) of a special internal low-pass filter. The default value is 10.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of internal data space (see <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>). The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061244256"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- input audio signal
+    </p>
+        <p>
+      <span class="emphasis"><em>kres</em></span> -- low-pass filtered rms value of the input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>rms</em></span> output values <span class="emphasis"><em>kres</em></span> will trace the root-mean-square value of the audio input <span class="emphasis"><em>asig</em></span>. This unit is not a signal modifier, but functions rather as a signal power-gauge. It uses an internal low-pass filter to make the response smoother. <span class="emphasis"><em>ihp</em></span> can be used to control this smoothing. The higher the value, the "snappier" the measurement.
+    </p>
+        <p>
+      This opcode can also be used as an evelope follower.
+    </p>
+        <p>
+      The <span class="emphasis"><em>kres</em></span> output from this opcode is given in amplitude and depends on <a class="link" href="Zerodbfs.html" title="0dbfs"><em class="citetitle">0dbfs</em></a>. If you want the output in decibels, you can use <a class="link" href="dbamp.html" title="dbamp"><em class="citetitle">dbamp</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061236384"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+arms <span class="opc">rms</span>    asig <span class="comment">; get rms value of signal asig</span>
+        </pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      Here is an example of the rms opcode. It uses the file <a class="ulink" href="examples/rms.csd" target="_top"><em class="citetitle">rms.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276061231920"></a>
+          <p class="title">
+            <strong>Example 857. Example of the rms opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276427321744"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d  -m0   <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o rms.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">;Example by Andres Cabrera 2007</span>
+
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">FLpanel</span> <span class="s">"rms"</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span>
+    gk<span class="n">rmstext</span><span class="p">,</span> gi<span class="n">hrmstext</span> <span class="nb">FLtext</span> <span class="s">"Rms"</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">50</span>
+    gk<span class="n">ihp</span><span class="p">,</span> gi<span class="n">handle</span> <span class="nb">FLtext</span> <span class="s">"ihp"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">50</span>
+    gk<span class="n">rmsslider</span><span class="p">,</span> gi<span class="n">hrmsslider</span> <span class="nb">FLslider</span> <span class="s">""</span><span class="p">,</span> <span class="o">-</span><span class="mi">60</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">380</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span>
+
+<span class="nb">FLpanelEnd</span>
+<span class="nb">FLrun</span>
+
+
+<span class="nb">FLsetVal_i</span> <span class="mi">5</span><span class="p">,</span> gi<span class="n">handle</span>
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  a<span class="n">1</span> <span class="nb">inch</span> <span class="mi">1</span>   
+
+<span class="nl">label</span><span class="p">:</span>
+  k<span class="n">val</span> <span class="nb">rms</span> a<span class="n">1</span><span class="p">,</span> <span class="nb">i</span><span class="p">(</span>gk<span class="n">ihp</span><span class="p">)</span>  <span class="c1">;measures rms of input channel 1</span>
+<span class="nb">rireturn</span>
+
+  k<span class="n">val</span> <span class="o">=</span> <span class="nb">dbamp</span><span class="p">(</span>k<span class="n">val</span><span class="p">)</span> <span class="c1">; convert to db full scale</span>
+  <span class="nb">printk</span> <span class="mf">0.5</span><span class="p">,</span> k<span class="n">val</span>
+  <span class="nb">FLsetVal</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">val</span><span class="p">,</span> gi<span class="n">hrmsslider</span>   <span class="c1">;update the slider and text values</span>
+  <span class="nb">FLsetVal</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">val</span><span class="p">,</span> gi<span class="n">hrmstext</span>
+  k<span class="n">newihp</span> <span class="nb">changed</span> gk<span class="n">ihp</span>   <span class="c1">; reinit when ihp text has changed</span>
+  <span class="k">if</span> <span class="p">(</span>k<span class="n">newihp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">then</span>
+    <span class="nb">reinit</span> <span class="n">label</span>  <span class="c1">;needed because ihp is an i-rate parameter</span>
+  <span class="k">endif</span>
+<span class="kd">endin</span>
+
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for one minute</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">60</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061227936"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="balance.html" title="balance"><em class="citetitle">balance</em></a>,
+      <a class="link" href="gain.html" title="gain"><em class="citetitle">gain</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="rireturn.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="rnd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">rireturn </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> rnd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

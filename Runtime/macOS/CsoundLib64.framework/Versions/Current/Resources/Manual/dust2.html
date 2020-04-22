@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>dust2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="dust.html" title="dust" />
+    <link rel="next" href="else.html" title="else" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">dust2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="dust.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="else.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="dust2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDust2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">dust2</span>
+        </h2>
+        <p>dust2 — 
+      Random impulses.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115040784"></a>
+        <h2>Description</h2>
+        <p>
+      Generates random impulses from -1 to 1.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115039488"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>dust2</strong></span> kamp, kdensity</pre>
+        <pre class="synopsis">kres <span class="command"><strong>dust2</strong></span> kamp, kdensity</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115036096"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude.
+    </p>
+        <p>
+      <span class="emphasis"><em>kdensity</em></span> -- average number of impulses per second.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115033568"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the dust2 opcode. It uses the file <a class="ulink" href="examples/dust2.csd" target="_top"><em class="citetitle">dust2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276115031760"></a>
+          <p class="title">
+            <strong>Example 242. Example of the dust2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276481056544"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o oscil.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">dens</span> <span class="nb">expon</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">20000</span>
+a<span class="n">out</span>  <span class="nb">dust2</span> <span class="mf">0.5</span><span class="p">,</span> k<span class="n">dens</span>
+<span class="nb">outs</span>  a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115027744"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="dust.html" title="dust"><em class="citetitle">dust</em></a>
+      <a class="link" href="gausstrig.html" title="gausstrig"><em class="citetitle">gausstrig</em></a>
+      <a class="link" href="mpulse.html" title="mpulse"><em class="citetitle">mpulse</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115023968"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Based on James McCartney's Dust2 (SuperCollider)</td>
+          </tr>
+          <tr>
+            <td>Author: Tito Latini</td>
+          </tr>
+          <tr>
+            <td>January 2012</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.16</p>
+        <p>k-rate version fixed to documentation and SuperCollider,
+    version 6.09</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="dust.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="else.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">dust </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> else</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

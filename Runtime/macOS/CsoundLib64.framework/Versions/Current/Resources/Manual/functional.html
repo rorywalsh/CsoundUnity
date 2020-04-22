@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Function Syntax in Csound6</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="prev" href="Orchtab.html" title="Vectors and Arrays" />
+    <link rel="next" href="udpserver.html" title="UDP Server" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Function Syntax in Csound6</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="Orchtab.html">Prev</a> </td>
+          <th width="60%" align="center">Syntax of the Orchestra</th>
+          <td width="20%" align="right"> <a accesskey="n" href="udpserver.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="functional"></a>Function Syntax in Csound6</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Csound 6 has introduced a new alternative syntax for orchestra code. This is initially an experimental feature, which has some limitations,
+as explained below. It will also allow the introduction of some non-backwards-compatible language features.
+  </p>
+      <h3><a id="idm276136871504"></a>Overview</h3>
+      <p>
+   The main aspect of the new syntax is that some opcodes can be called as functions, and inlined in orchestra code. The
+general form of this is the expression:
+  </p>
+      <div class="literallayout">
+        <p><br />
+   var* = op(exprlist*)<br />
+  </p>
+      </div>
+      <p>
+   where * indicates optional, var is a single variable in one of Csound6 types, and exprlist is a comma separated list
+   of expressions (or a single expression or variable). These expressions can be placed anywhere inside instrument or
+   opcode blocks. I-time operations can also be placed outside instrument blocks. The functional syntax can be intermixed with 
+   standard Csound code.
+    </p>
+      <p>
+ Here are some examples of these expressions: 
+ </p>
+      <div class="literallayout">
+        <p><br />
+<br />
+   a1 = oscil(p4,p5)<br />
+   out(vco2(p4*linen(1,0.1,p3,0.1),p5)<br />
+   outs(oscili(in(),p5), in())<br />
+<br />
+  </p>
+      </div>
+      <h3><a id="idm276136867488"></a>Limitations</h3>
+      <p>
+    The main limitation is that only opcodes with single outputs (or no outputs) are allowed. In addition, opcodes with
+multiple optional outputs will not be parsed successfully in this form. An alternative to allow for these
+is to wrap them in user-defined opcodes, or just to intermix standard Csound syntax with this new style.
+  </p>
+      <p>
+To resolve opcode ambiguities, we have introduced type annotations, in the form of op:type(exprlist). For instance
+the code:
+  </p>
+      <p>
+  </p>
+      <div class="literallayout">
+        <p><br />
+<br />
+   a1 = oscili(oscili:k(p4,p5), 440)<br />
+<br />
+  </p>
+      </div>
+      <p>
+  </p>
+      <p>
+will choose a control-rate opcode to modulate the amplitude of the audio carrier, rather than an audio rate one. There will
+be cases where the type annotation will be required, when the input arguments cannot be used to determine the correct type
+of opcode to be applied.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="Orchtab.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OrchTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="udpserver.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Vectors and Arrays </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> UDP Server</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

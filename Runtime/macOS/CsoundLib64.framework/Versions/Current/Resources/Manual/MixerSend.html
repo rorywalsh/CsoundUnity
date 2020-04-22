@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>MixerSend</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="MixerGetLevel.html" title="MixerGetLevel" />
+    <link rel="next" href="MixerReceive.html" title="MixerReceive" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">MixerSend</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="MixerGetLevel.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="MixerReceive.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="MixerSend"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMixerSend" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">MixerSend</span>
+        </h2>
+        <p>MixerSend — 
+      Mixes an arate signal into a channel of a buss.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079698928"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>MixerSend</strong></span> asignal, isend, ibuss, ichannel</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079696960"></a>
+        <h2>Description</h2>
+        <p>Mixes an arate signal into a channel of a buss.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079695728"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>isend</em></span> -- The number of the send, for example the number of the instrument sending the signal. 
+The gain of the send is controlled by the <a class="link" href="MixerSetLevel.html" title="MixerSetLevel"><em class="citetitle">MixerSetLevel</em></a> opcode. 
+The reason that the sends are numbered is to enable different levels for different sends to be set independently 
+of the actual level of the signals.</p>
+        <p><span class="emphasis"><em>ibuss</em></span> -- The number of the buss, for example the number of the instrument receiving the signal.</p>
+        <p><span class="emphasis"><em>ichannel</em></span> -- The number of the channel. Each buss has <code class="literal">nchnls</code> channels.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079691008"></a>
+        <h2>Performance</h2>
+        <p><span class="emphasis"><em>asignal</em></span> -- The signal that will be mixed into the indicated channel of the buss.</p>
+        <p>
+Use of the mixer requires that instruments setting gains have smaller numbers than instruments sending signals, 
+and that instruments sending signals have smaller numbers than instruments receiving those signals. 
+However, an instrument may have any number of sends or receives. After the final signal is received, 
+<a class="link" href="MixerClear.html" title="MixerClear"><em class="citetitle">MixerClear</em></a> must be invoked to reset the busses to 0 before the next kperiod.
+</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079687840"></a>
+        <h2>Examples</h2>
+        <pre class="programlisting">
+<span class="oblock">instr</span> 100 <span class="comment">; Fluidsynth output</span>
+<span class="comment">; INITIALIZATION</span>
+<span class="comment">; Normalize so iamplitude for p5 of 80 == ampdb(80).</span>
+iamplitude 		<span class="op">=</span> 			<span class="opc">ampdb</span>(p5) <span class="op">*</span> 2.0
+<span class="comment">; AUDIO</span>
+aleft, aright 		<span class="opc">fluidAllOut</span>		giFluidsynth
+asig1 			<span class="op">=</span> 			aleft <span class="op">*</span> iamplitude
+asig2 			<span class="op">=</span> 			aright <span class="op">*</span> iamplitude
+			<span class="comment">; To the chorus.</span>
+			<span class="opc">MixerSend</span>		asig1, 100, 200, 0
+			<span class="opc">MixerSend</span>		asig2, 100, 200, 1
+			<span class="comment">; To the reverb.</span>
+			<span class="opc">MixerSend</span>		asig1, 100, 210, 0
+			<span class="opc">MixerSend</span>		asig2, 100, 210, 1
+			<span class="comment">; To the output.</span>
+			<span class="opc">MixerSend</span>		asig1, 100, 220, 0
+			<span class="opc">MixerSend</span>		asig2, 100, 220, 1
+<span class="oblock">endin</span></pre>
+        <p>
+      Here is a complete example of the MixerSend opcode. It uses the file <a class="ulink" href="examples/Mixer.csd" target="_top"><em class="citetitle">Mixer.csd</em></a>
+      </p>
+        <div class="example">
+          <a id="idm276079670608"></a>
+          <p class="title">
+            <strong>Example 583. Complete example of the MixerSend opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276448614752"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac       <span class="c1">;   -iadc    ;;;RT audio out</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o Mixer.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span>	<span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">att</span>	<span class="nb">expon</span> <span class="mf">0.01</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">;create an attack</span>
+a<span class="n">out</span>	<span class="nb">poscil</span> <span class="mf">.7</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span><span class="mi">1</span>
+	<span class="nb">MixerSetLevel</span>	<span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> k<span class="n">att</span>	<span class="c1">;impose attack on the gain level</span>
+	<span class="nb">MixerSend</span> a<span class="n">out</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span>		<span class="c1">;send to channel 0</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+a<span class="n">out</span>	<span class="nb">vco2</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">110</span>			<span class="c1">;saw wave</span>
+	<span class="nb">MixerSetLevel</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">.25</span>		<span class="c1">;set level to .25 of vco2</span>
+	<span class="nb">MixerSend</span> a<span class="n">out</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">;send to channel 1</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">3</span>	<span class="c1">;mix instr.1 and 2 with reverb</span>
+	
+k<span class="n">gain1</span>	<span class="nb">MixerGetLevel</span>	<span class="mi">1</span><span class="p">,</span><span class="mi">3</span>		<span class="c1">;get level form buss 3</span>
+k<span class="n">gain2</span>	<span class="nb">MixerGetLevel</span>	<span class="mi">2</span><span class="p">,</span><span class="mi">3</span>		<span class="c1">;get level form buss 3</span>
+a<span class="n">1</span>	<span class="nb">MixerReceive</span>	<span class="mi">3</span><span class="p">,</span><span class="mi">0</span>		<span class="c1">;receive channel 0</span>
+a<span class="n">2</span>	<span class="nb">MixerReceive</span>	<span class="mi">3</span><span class="p">,</span><span class="mi">1</span>		<span class="c1">;receive channel 1</span>
+a<span class="n">out</span>	<span class="o">=</span> a<span class="n">1</span><span class="o">*</span>k<span class="n">gain1</span><span class="o">+</span>a<span class="n">2</span><span class="o">*</span>k<span class="n">gain2</span>		<span class="c1">;mix them</span>
+a<span class="n">outL</span><span class="p">,</span> a<span class="n">outR</span> <span class="nb">reverbsc</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span><span class="p">,</span>  <span class="mf">0.85</span><span class="p">,</span> <span class="mi">12000</span>	<span class="c1">;add a nice reverb</span>
+	<span class="nb">outs</span>  a<span class="n">outL</span><span class="p">,</span> a<span class="n">outR</span>
+	<span class="nb">MixerClear</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">8</span>	<span class="c1">;reverb stays on for 8 sec.</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079668848"></a>
+        <h2>Credits</h2>
+        <p>Michael Gogins (gogins at pipeline dot com).</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="MixerGetLevel.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="MixerReceive.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">MixerGetLevel </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> MixerReceive</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

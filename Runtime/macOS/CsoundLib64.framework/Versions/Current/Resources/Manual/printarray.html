@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>printarray</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="prints.html" title="prints" />
+    <link rel="next" href="product.html" title="product" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">printarray</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="prints.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="product.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="printarray"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPrintarray" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">printarray</span>
+        </h2>
+        <p>printarray — 
+      Print the contents of an array
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068481312"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in emugens.</p>
+        <p>
+      Prints the contents of an array
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068479680"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>printarray</strong></span> ixs[] [, Smft, Slabel ]</pre>
+        <pre class="synopsis"><span class="command"><strong>printarray</strong></span> kxs[] [, ktrig, Sfmt, Slabel ]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068476128"></a>
+        <h2>Initialization</h2>
+        <p>
+	  <span class="emphasis"><em>Sfmt</em></span> - If given, it is passed to printf for
+      each element of the array. Otherwise a default format is used
+	</p>
+        <p>
+      <span class="emphasis"><em>Slabel</em></span> - If given, it is printed before the
+      contents of the array, to easily identify the data
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068473664"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> - The array will be printed whenever 
+      this value changes from 0 to possitive. Can be used together 
+      with metro to print at a given time interval. A value of -1 
+      indicates to print at each k-cycle (default = 1)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068471456"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the printarray opcode. It uses the file <a class="ulink" href="examples/printarray.csd" target="_top"><em class="citetitle">printarray.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276068468656"></a>
+          <p class="title">
+            <strong>Example 740. Example of the printarray opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276435096400"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+
+--nosound
+
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; test i-time, 1D</span>
+  i<span class="n">values</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span>
+  <span class="n">printarray</span> i<span class="n">values</span>                      <span class="c1">; default fmt, no label</span>
+  <span class="n">printarray</span> i<span class="n">values</span><span class="p">,</span> <span class="s">"%.2f"</span>              <span class="c1">; with given fmt</span>
+  <span class="n">printarray</span> i<span class="n">values</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">"ivalues = "</span>    <span class="c1">; uses default fmt</span>
+
+  <span class="c1">; test i-time, long array</span>
+  i<span class="n">long</span><span class="p">[]</span> <span class="nb">genarray</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.01</span>
+  <span class="n">printarray</span> i<span class="n">long</span>
+  <span class="n">printarray</span> i<span class="n">long</span><span class="p">,</span> <span class="s">"%.2f"</span><span class="p">,</span> <span class="s">"long="</span>
+
+  <span class="c1">; 2D</span>
+  i<span class="n">values2</span><span class="p">[][]</span> <span class="nb">init</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">4</span>
+  i<span class="n">values2</span> <span class="nb">fillarray</span> <span class="mi">0</span><span class="p">,</span>   <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> \
+                     <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> \
+                     <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> \
+                     <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> \
+                     <span class="mi">40</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> \
+                     <span class="mi">50</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">53</span><span class="p">,</span> \
+                     <span class="mi">60</span><span class="p">,</span> <span class="mi">61</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> \
+                     <span class="mi">70</span><span class="p">,</span> <span class="mi">71</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">73</span><span class="p">,</span> \
+                     <span class="mi">80</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">82</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span> \
+                     <span class="mi">90</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">92</span><span class="p">,</span> <span class="mi">93</span><span class="p">,</span> \
+                    <span class="mi">100</span><span class="p">,</span><span class="mi">101</span><span class="p">,</span><span class="mi">102</span><span class="p">,</span><span class="mi">103</span>
+  <span class="n">printarray</span> i<span class="n">values2</span><span class="p">,</span> <span class="s">"%.2f"</span>
+  <span class="n">printarray</span> i<span class="n">values2</span><span class="p">,</span> <span class="s">"%.1f"</span><span class="p">,</span> <span class="s">"ivalues2="</span>
+  <span class="nb">turnoff</span> 
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+  <span class="c1">; k-time, 1D, print every cycle</span>
+  k<span class="n">xs</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span>
+  <span class="n">printarray</span> k<span class="n">xs</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">"instr 2"</span>
+  k<span class="n">xs</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">3</span>
+  k<span class="n">xs</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span>
+  <span class="n">printarray</span> k<span class="n">xs</span><span class="p">,</span> <span class="nb">metro</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span> <span class="s">"%.0f"</span><span class="p">,</span> <span class="s">"kxs 1D="</span>
+  k<span class="n">xs</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">if</span> k<span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1000</span> <span class="k">then</span>
+    <span class="nb">turnoff</span>
+  <span class="k">endif</span>
+  <span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">4</span>
+  <span class="c1">; k-time, 2D, print with a trigger</span>
+  k<span class="n">xs</span><span class="p">[][]</span> <span class="nb">init</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span>
+  k<span class="n">xs</span> <span class="nb">fillarray</span>   <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span> \
+                 <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> \
+                 <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span>
+  k<span class="n">trig</span> <span class="nb">metro</span> <span class="mi">20</span>
+  <span class="n">printarray</span> k<span class="n">xs</span><span class="p">,</span> k<span class="n">trig</span><span class="p">,</span> <span class="s">""</span><span class="p">,</span> <span class="s">"kxs="</span>
+  k<span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> k<span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="k">if</span> k<span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1000</span> <span class="k">then</span>
+    <span class="nb">turnoff</span>
+  <span class="k">endif</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">5</span>
+  <span class="c1">; test %d: it should work like printf("%d", (int)myfloat)</span>
+  <span class="c1">; this should print "0 1 2 3 4"</span>
+  k<span class="n">xs</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.3</span><span class="p">,</span> <span class="mi">4</span>
+  <span class="n">printarray</span> k<span class="n">xs</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"</span><span class="si">%d</span><span class="s">"</span>
+  <span class="nb">turnoff</span> 
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">0.01</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mf">0.05</span>
+<span class="nb">i</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">4</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">5</span> <span class="mi">0</span> <span class="mf">0.1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068466944"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="ftprint.html" title="ftprint"><em class="citetitle">ftprint</em></a>,
+	  <a class="link" href="metro.html" title="metro"><em class="citetitle">metro</em></a>
+      <a class="link" href="printf.html" title="printf"><em class="citetitle">printf</em></a>
+      
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068462848"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2018</p>
+        <p>New plugin in version 6.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="prints.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="product.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">prints </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> product</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

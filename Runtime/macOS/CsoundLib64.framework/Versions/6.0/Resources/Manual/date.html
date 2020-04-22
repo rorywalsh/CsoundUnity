@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>date</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="dam.html" title="dam" />
+    <link rel="next" href="dates.html" title="dates" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">date</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="dam.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="dates.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="date"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDate" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">date</span>
+        </h2>
+        <p>date — 
+      Returns the number seconds since a base date.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117835584"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in cs_date.</p>
+        <p>
+      Returns the number seconds since a base date, using the
+      operating system's clock.  The base is 1 January 1970 for Csound
+      using doubles, and 1 January 2010 for versions using floats.
+      On operating systemms with sufficient resolution the date
+      includes fractional seconds.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117833376"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ir[, inano] <span class="command"><strong>date</strong></span></pre>
+        <pre class="synopsis">kr[, knano] <span class="command"><strong>date</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117830272"></a>
+        <h2>Initialization and Performance</h2>
+        <p>
+      <span class="emphasis"><em>ir</em></span> -- value at i-time, of the system clock
+      in seconds since the start of the epoch.
+    </p>
+        <p>
+      <span class="emphasis"><em>kr</em></span> -- value at k-time, of the system clock
+      in seconds since the start of the epoch.
+    </p>
+        <p>
+      <span class="emphasis"><em>inano</em></span> -- value at i-time of the nanoseconds
+      since last second tick.
+    </p>
+        <p>
+      <span class="emphasis"><em>knano</em></span> -- value at k-time of the nanoseconds
+      since last second tick.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117825680"></a>
+        <p>
+      Note that the base date was originally 1970 but since verson
+      5.14 it has been changed as single precission floating point
+      numbers are insufficient to indicate changes.
+    </p>
+        <p>
+      The optional answer and resolution including fractions of a
+      second introduced in version 6.07.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117824016"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the date opcode. It uses the file <a class="ulink" href="examples/date.csd" target="_top"><em class="citetitle">date.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276117822224"></a>
+          <p class="title">
+            <strong>Example 186. Example of the date opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276484515648"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o date.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+      i<span class="n">i</span><span class="p">,</span>i<span class="n">j</span> <span class="nb">date</span>
+      <span class="nb">print</span> i<span class="n">i</span>
+      <span class="nb">print</span> i<span class="n">j</span>
+      S<span class="n">a</span> <span class="nb">dates</span> i<span class="n">i</span>
+      <span class="nb">prints</span> S<span class="n">a</span>
+      S<span class="n">s</span> <span class="nb">dates</span> <span class="o">-</span><span class="mi">1</span>
+      <span class="nb">prints</span> S<span class="n">s</span>
+      S<span class="n">t</span> <span class="nb">dates</span> <span class="mi">1</span>
+      <span class="nb">prints</span> S<span class="n">t</span> 
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like this:
+      </p>
+        <pre class="screen">
+instr 1:  ii = 1447337826.778
+instr 1:  ij = 778279830.000
+Thu Nov 12 14:17:07 2015
+Thu Nov 12 14:17:06 2015
+Thu Jan  1 01:00:01 1970
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117819456"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="dates.html" title="dates"><em class="citetitle">dates</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276117817408"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>December 2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.05</p>
+        <p>Changed in Csound version 5.14</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="dam.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="dates.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">dam </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> dates</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

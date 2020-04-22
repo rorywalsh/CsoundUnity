@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Strings</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartOpcodesOverview.html" title="Part II. Opcodes Overview" />
+    <link rel="prev" href="arraysfft.html" title="Array-based spectral opcodes" />
+    <link rel="next" href="stringconvert.html" title="String Conversion Opcodes" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Strings</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="arraysfft.html">Prev</a> </td>
+          <th width="60%" align="center">Part II. Opcodes Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="stringconvert.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="StringsTop"></a>Strings</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    String variables are variables with a name starting with S or gS (for a local or global string variable, respectively). These variables can be used as input argument to any opcode that expects a quoted string constant, and can be manipulated at initialization or performance time with the opcodes listed below.
+  </p>
+      <p>
+    It is also possible to use string p-fields. The string p-field can be used by many orchestra opcodes
+    directly, or it can be copied to a string variable first:
+
+    </p>
+      <pre class="programlisting">
+a1    <span class="opc">diskin2</span> p5, 1</pre>
+      <p>
+
+    </p>
+      <pre class="programlisting">
+Sname <span class="opc">strget</span>  p5
+a1    <span class="opc">diskin2</span> Sname, 1</pre>
+      <p>
+
+  </p>
+      <p>
+    Strings within Csound can be expressed using traditional double
+    quotes ("  "), and also using {{ }}. The second method is useful
+    to allow ';' and '$' characters within the string without having
+    to used ASCII codes.
+  </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note: Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>String variables and related opcodes are not available in Csound versions older than 5.00.</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p>
+    Strings can also be linked to a number using <a class="link" href="strset.html" title="strset"><em class="citetitle">strset</em></a> and <a class="link" href="strget.html" title="strget"><em class="citetitle">strget</em></a>.
+  </p>
+      <p>
+    Csound 5 also has improvements in parsing string constants. It is possible
+    to specify a multi-line string by enclosing it within {{ and }} instead of
+    the usual double quote characters, and the following escape sequences are
+    automatically converted:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p><span class="emphasis"><em>\a</em></span> alert bell</p>
+          </li>
+          <li class="listitem">
+            <p><span class="emphasis"><em>\b</em></span> backspace</p>
+          </li>
+          <li class="listitem">
+            <p><span class="emphasis"><em>\n</em></span> new line</p>
+          </li>
+          <li class="listitem">
+            <p><span class="emphasis"><em>\r</em></span> carriage return</p>
+          </li>
+          <li class="listitem">
+            <p><span class="emphasis"><em>\t</em></span> tab</p>
+          </li>
+          <li class="listitem">
+            <p><span class="emphasis"><em>\\</em></span> a single '\' character</p>
+          </li>
+          <li class="listitem">
+            <p><span class="emphasis"><em>\nnn</em></span> the character of which the ASCII code (in octal) is nnn</p>
+          </li>
+        </ul>
+      </div>
+      <p>
+    </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note: Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>
+        If the user does not want an escaped sequence to be automatically converted, she has to escape it
+        with an additional '\' character so that Csound knows it does not have to interpret the escaped sequence.
+        For example the string <code class="code">"Not escaped\nline return"</code> will be converted to
+        </p>
+              <pre class="programlisting">
+        "Not escaped
+         line return"
+        </pre>
+              <p>
+        before being used, while the string <code class="code">"Escaped\\nline return"</code> will be converted to
+        </p>
+              <pre class="programlisting">
+        "Escaped\nline return"
+        </pre>
+              <p>
+        before being used.
+      </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p>
+    
+    It can be useful together with the <a class="link" href="system.html" title="system"><em class="citetitle">system</em></a> opcode:
+    </p>
+      <pre class="programlisting">
+<span class="oblock">instr</span> 1
+ <span class="comment">; csound5 lets you make a string with line returns inside double brackets</span>
+    <span class="opc">system</span> {{     ps
+            date
+            cd ~/Desktop
+            pwd
+            ls -l
+            whois csounds.com
+        }}
+<span class="oblock">endin</span></pre>
+      <p>
+    And the <a class="link" href="py.html" title="Python Opcodes"><em class="citetitle">python opcodes</em></a>, among others:
+    </p>
+      <pre class="programlisting">
+<span class="opc">pyruni</span> {{
+import random
+
+pool = [(1 + i/10.0) ** 1.2 for i in range(100)]
+
+def get_number_from_pool(n, p):
+    if random.random() &lt; p:
+        i = int(random.random() * len(pool))
+        pool[i] = n
+    return random.choice(pool)
+}}</pre>
+      <p>
+  </p>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="stringmanipulate"></a>String Manipulation Opcodes</h2>
+            </div>
+          </div>
+        </div>
+        <p>These opcodes perform operations on string variables (note: most of the opcodes run at init time only, and have a version with a "k" suffix that runs at both init and performance time; exceptions to this rule include puts and strget):</p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+        <a class="link" href="strcpy.html" title="strcpy"><em class="citetitle">strcpy</em></a> and <a class="link" href="strcpyk.html" title="strcpyk"><em class="citetitle">strcpyk</em></a> - Assigns to a string variable.</p>
+            </li>
+            <li class="listitem">
+              <p>
+        <a class="link" href="strcat.html" title="strcat"><em class="citetitle">strcat</em></a> and <a class="link" href="strcatk.html" title="strcatk"><em class="citetitle">strcatk</em></a> - Concatenates strings, and stores the result in a variable.</p>
+            </li>
+            <li class="listitem">
+              <p>
+        <a class="link" href="strcmp.html" title="strcmp"><em class="citetitle">strcmp</em></a> and <a class="link" href="strcmpk.html" title="strcmpk"><em class="citetitle">strcmpk</em></a> - Compares strings.</p>
+            </li>
+            <li class="listitem">
+              <p>
+        <a class="link" href="strget.html" title="strget"><em class="citetitle">strget</em></a> - Assigns to a string variable, from strset table at the specified index, or string score p-field.</p>
+            </li>
+            <li class="listitem">
+              <p>
+        <a class="link" href="strlen.html" title="strlen"><em class="citetitle">strlen</em></a> and <a class="link" href="strlenk.html" title="strlenk"><em class="citetitle">strlenk</em></a> - Returns the length of a string.</p>
+            </li>
+            <li class="listitem">
+              <p>
+      <a class="link" href="sprintf.html" title="sprintf"><em class="citetitle">sprintf</em></a> - printf-style formatted output conversion, storing the result in a string variable.</p>
+            </li>
+            <li class="listitem">
+              <p>
+      <a class="link" href="sprintfk.html" title="sprintfk"><em class="citetitle">sprintfk</em></a> - printf-style formatted output conversion, storing the result in a string variable at k-rate.</p>
+            </li>
+            <li class="listitem">
+              <p>
+      <a class="link" href="puts.html" title="puts"><em class="citetitle">puts</em></a> - Prints a string constant or variable.</p>
+            </li>
+            <li class="listitem">
+              <p>
+        <a class="link" href="strindex.html" title="strindex"><em class="citetitle">strindex</em></a> and <a class="link" href="strindexk.html" title="strindexk"><em class="citetitle">strindexk</em></a> - Returns the first occurence of a string in another string.</p>
+            </li>
+            <li class="listitem">
+              <p>
+        <a class="link" href="strrindex.html" title="strrindex"><em class="citetitle">strrindex</em></a> and <a class="link" href="strrindexk.html" title="strrindexk"><em class="citetitle">strrindexk</em></a> - Returns the last occurence of a string in another string.</p>
+            </li>
+            <li class="listitem">
+              <p>
+        <a class="link" href="strsub.html" title="strsub"><em class="citetitle">strsub</em></a> and <a class="link" href="strsubk.html" title="strsubk"><em class="citetitle">strsubk</em></a> - Returns a substring of the input string.</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="arraysfft.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartOpcodesOverview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="stringconvert.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Array-based spectral opcodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> String Conversion Opcodes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

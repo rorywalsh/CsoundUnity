@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fmvoice</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fmrhode.html" title="fmrhode" />
+    <link rel="next" href="fmwurlie.html" title="fmwurlie" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fmvoice</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fmrhode.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fmwurlie.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="fmvoice"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFmvoice" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fmvoice</span>
+        </h2>
+        <p>fmvoice — 
+      FM Singing Voice Synthesis
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103596864"></a>
+        <h2>Description</h2>
+        <p>
+      FM Singing Voice Synthesis
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103595600"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>fmvoice</strong></span> kamp, kfreq, kvowel, ktilt, kvibamt, kvibrate[, ifn1, \
+      ifn2, ifn3, ifn4, ivibfn]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103593328"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn1, ifn2, ifn3,ifn3, ivibfn</em></span> -- Tables,
+      usually of sinewaves.  The last is for vibrato
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103591584"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- Amplitude of note.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- Frequency of note played.
+    </p>
+        <p>
+      <span class="emphasis"><em>kvowel</em></span> -- the vowel being sung, in the range 0-64
+    </p>
+        <p>
+      <span class="emphasis"><em>ktilt</em></span> -- the spectral tilt of the sound in the range 0 to 99
+    </p>
+        <p>
+      <span class="emphasis"><em>kvibamt</em></span> -- Depth of vibrato
+    </p>
+        <p>
+      <span class="emphasis"><em>kvibrate</em></span> -- Rate of vibrato
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103585488"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the fmvoice opcode. It uses the file <a class="ulink" href="examples/fmvoice.csd" target="_top"><em class="citetitle">fmvoice.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276103583680"></a>
+          <p class="title">
+            <strong>Example 339. Example of the fmvoice opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276471408352"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o fmvoice.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>  
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">freq</span> <span class="o">=</span> <span class="mi">110</span>
+k<span class="n">vowel</span> <span class="o">=</span> <span class="nb">p4</span>	<span class="c1">; p4 = vowel (0 - 64)</span>
+k<span class="n">tilt</span>  <span class="o">=</span> <span class="nb">p5</span>
+k<span class="n">vibamt</span> <span class="o">=</span> <span class="mf">0.005</span>
+k<span class="n">vibrate</span> <span class="o">=</span> <span class="mi">6</span>
+
+a<span class="n">sig</span> <span class="nb">fmvoice</span> <span class="mf">.5</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> k<span class="n">vowel</span><span class="p">,</span> k<span class="n">tilt</span><span class="p">,</span> k<span class="n">vibamt</span><span class="p">,</span> k<span class="n">vibrate</span>
+<span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;  sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span>  <span class="mi">0</span>	<span class="c1">; tilt=0</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">7</span> <span class="mi">1</span> <span class="mi">12</span> <span class="o">.</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">1</span>  <span class="mi">90</span>	<span class="c1">; tilt=90</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">11</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">12</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">13</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">14</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">15</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">16</span> <span class="mi">1</span> <span class="o">&gt;</span>  <span class="o">.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">17</span> <span class="mi">1</span> <span class="mi">12</span> <span class="o">.</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276103579648"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch (after Perry Cook)</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fmrhode.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fmwurlie.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fmrhode </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fmwurlie</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

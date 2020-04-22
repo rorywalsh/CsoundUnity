@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pow</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="poscil.html" title="poscil" />
+    <link rel="next" href="powershape.html" title="powershape" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pow</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="poscil.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="powershape.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pow"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPow" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pow</span>
+        </h2>
+        <p>pow — 
+      Computes one argument to the power of another argument.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071978768"></a>
+        <h2>Description</h2>
+        <p>
+      Computes <span class="emphasis"><em>xarg</em></span> to the power of <span class="emphasis"><em>kpow</em></span> (or <span class="emphasis"><em>ipow</em></span>) and scales the result by <span class="emphasis"><em>inorm</em></span>.
+    </p>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071975472"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>pow</strong></span> aarg, kpow [, inorm]</pre>
+        <pre class="synopsis">ires <span class="command"><strong>pow</strong></span> iarg, ipow [, inorm]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>pow</strong></span> karg, kpow [, inorm]</pre>
+        <pre class="synopsis">ires[] <span class="command"><strong>pow</strong></span> iarg[], ipow[] </pre>
+        <pre class="synopsis">kres[] <span class="command"><strong>pow</strong></span> karg[], kpow[]</pre>
+        <pre class="synopsis">ires[] <span class="command"><strong>pow</strong></span> iarg[], ipow </pre>
+        <pre class="synopsis">kres[] <span class="command"><strong>pow</strong></span> karg[], kpow </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071965536"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>inorm</em></span> (optional, default=1) -- The number to divide the result (default to 1). This is especially useful if you are doing powers of a- or k- signals where samples out of range are extremely common!
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071963552"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>aarg</em></span>, <span class="emphasis"><em>iarg</em></span>, <span class="emphasis"><em>karg</em></span> -- the base.
+    </p>
+        <p>
+      <span class="emphasis"><em>ipow</em></span>, <span class="emphasis"><em>kpow</em></span> -- the exponent.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Use <span class="emphasis"><em>ˆ</em></span> with caution in arithmetical statements, as the precedence may not be correct. New in Csound version 3.493.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071958432"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pow opcode. It uses the file <a class="ulink" href="examples/pow.csd" target="_top"><em class="citetitle">pow.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276071956640"></a>
+          <p class="title">
+            <strong>Example 728. Example of the pow opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276436110864"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">;-o pow.wav        ; output to audio file</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+    
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; Lo-Fi sound</span>
+
+k<span class="n">pow</span>	  <span class="o">=</span> <span class="mi">10</span>						<span class="c1">;exponent</span>
+k<span class="n">base</span>	  <span class="nb">line</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">1.4</span>				<span class="c1">;vary the base</span>
+k<span class="n">Quantize</span> <span class="nb">pow</span> k<span class="n">base</span><span class="p">,</span> k<span class="n">pow</span>
+k<span class="n">Quantize</span> <span class="o">=</span> k<span class="n">Quantize</span><span class="o">*</span><span class="mf">0.5</span>				<span class="c1">;half the number of steps for each side of a bipolar signal</span>
+<span class="nb">printk2</span>	  k<span class="n">Quantize</span>
+a<span class="n">sig</span>	  <span class="nb">diskin2</span> <span class="s">"fox.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>			<span class="c1">;loop the fox</span>
+a<span class="n">sig</span>	  <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>a<span class="n">sig</span> <span class="o">*</span> k<span class="n">Quantize</span><span class="p">)</span> <span class="o">/</span> k<span class="n">Quantize</span>		<span class="c1">;quantize and scale audio signal</span>
+    	  <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>  
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mf">19.2</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+      Its output should include lines like these:
+      </p>
+        <pre class="screen">
+ i1     0.50000
+ i1     0.50007
+ i1     0.50014
+.......
+ i1    14.45986
+ i1    14.46130
+</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071951712"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge</td>
+          </tr>
+          <tr>
+            <td>1995</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="poscil.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="powershape.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">poscil </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> powershape</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

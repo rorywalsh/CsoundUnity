@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>JackoAudioOut</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="JackoAudioInConnect.html" title="JackoAudioInConnect" />
+    <link rel="next" href="JackoAudioOutConnect.html" title="JackoAudioOutConnect" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">JackoAudioOut</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="JackoAudioInConnect.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="JackoAudioOutConnect.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="JackoAudioOut"></a>
+      <div class="titlepage"></div>
+      <a id="IndexJackoAudioOut" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">JackoAudioOut</span>
+        </h2>
+        <p>JackoAudioOut — 
+      Sends an audio signal to a Jack port.
+     </p>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">plugin: Requires jacko plugin</td>
+          </tr>
+        </table>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112362544"></a>
+        <h2>Description</h2>
+        <p>
+      Sends an audio signal to an internal Jack audio 
+      output port, and in turn to its connected external 
+      Jack audio input port.
+    </p>
+        <p>
+      Note that it is possible to send audio out via Jack
+      to the system audio interface, while at the same time 
+      rendering to a regular Csound output soundfile.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112360640"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>JackoAudioOut </strong></span> ScsoundPortName, asignal</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112358688"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ScsoundPortName</em></span> -- The short name ("portname") 
+      of the internal Jack audio output port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112357024"></a>
+        <h2>Performance</h2>
+        <p> 
+      <span class="emphasis"><em>asignal</em></span> -- Audio to be sent to the external Jack audio 
+      input port to which CsoundPortName is connected.
+    </p>
+        <p> 
+      Audio from multiple instances of the opcode sending
+      to the same Jack port is summed before sending.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112354800"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="JackoInit.html" title="JackoInit"><em class="citetitle">JackoInfo</em></a>, 
+      <a class="link" href="JackoInfo.html" title="JackoInfo"><em class="citetitle">JackoInfo</em></a>, 
+      <a class="link" href="JackoFreewheel.html" title="JackoFreewheel"><em class="citetitle">JackoFreewheel</em></a>, 
+      <a class="link" href="JackoAudioInConnect.html" title="JackoAudioInConnect"><em class="citetitle">JackoAudioOutConnect</em></a>, 
+      <a class="link" href="JackoMidiInConnect.html" title="JackoMidiInConnect"><em class="citetitle">JackoMidiInConnect</em></a>, 
+      <a class="link" href="JackoMidiOutConnect.html" title="JackoMidiOutConnect"><em class="citetitle">JackoMidiOutConnect</em></a>, 
+      <a class="link" href="JackoOn.html" title="JackoOn"><em class="citetitle">JackoOn</em></a>, 
+      <a class="link" href="JackoAudioIn.html" title="JackoAudioIn"><em class="citetitle">JackoAudioIn</em></a>, 
+      <a class="link" href="JackoMidiOut.html" title="JackoMidiOut"><em class="citetitle">JackoMidiOut</em></a>, 
+      <a class="link" href="JackoMidiOut.html" title="JackoMidiOut"><em class="citetitle">JackoMidiOut</em></a>, 
+      <a class="link" href="JackoTransport.html" title="JackoTransport"><em class="citetitle">JackoTransport</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112343808"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2010</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="JackoAudioInConnect.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="JackoAudioOutConnect.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">JackoAudioInConnect </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> JackoAudioOutConnect</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

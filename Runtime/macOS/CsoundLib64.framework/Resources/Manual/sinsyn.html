@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>sinsyn</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sininv.html" title="sininv" />
+    <link rel="next" href="sleighbells.html" title="sleighbells" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">sinsyn</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sininv.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sleighbells.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="sinsyn"></a>
+      <div class="titlepage"></div>
+      <a id="Indexsinsyn" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">sinsyn</span>
+        </h2>
+        <p>sinsyn — 
+      Streaming partial track additive synthesis with cubic phase interpolation 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056030208"></a>
+        <h2>Description</h2>
+        <p>
+  The <span class="emphasis"><em>sinsyn</em></span> opcode takes an input containg a TRACKS pv streaming signal (as generated,
+  for instance by the <span class="emphasis"><em>partials</em></span> opcode). It resynthesises the signal using linear amplitude and cubic phase
+  interpolation to drive a bank of interpolating oscillators with amplitude scaling control. <span class="emphasis"><em>sinsyn</em></span> 
+  attempts to preserve the phase of the partials in the original signal and in so doing it does not allow for
+  pitch or timescale modifications of the signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056027360"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>sinsyn</strong></span> fin, kscal, kmaxtracks, ifn</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056025264"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- output audio rate signal
+    </p>
+        <p>
+      <span class="emphasis"><em>fin</em></span> -- input pv stream in TRACKS format
+    </p>
+        <p>
+      <span class="emphasis"><em>kscal</em></span> -- amplitude scaling
+    </p>
+        <p>
+      <span class="emphasis"><em>kmaxtracks</em></span> -- max number of tracks in sinsynthesis. Limiting this will cause
+	    a non-linear filtering effect, by discarding newer and higher-frequency tracks (tracks are ordered
+	    by start time and ascending frequency, respectively)
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- function table containing one cycle of a sinusoid (sine or cosine).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056020144"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the sinsyn opcode. It uses the file <a class="ulink" href="examples/sinsyn.csd" target="_top"><em class="citetitle">sinsyn.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276056018352"></a>
+          <p class="title">
+            <strong>Example 918. Example of the sinsyn opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276423238016"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o sinsyn.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">mxtr</span> <span class="nb">init</span> <span class="nb">p4</span>
+a<span class="n">in</span>   <span class="nb">diskin2</span> <span class="s">"fox.wav"</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">fs1</span><span class="p">,</span><span class="n">fsi2</span> <span class="nb">pvsifd</span> a<span class="n">in</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span><span class="mi">1</span>	<span class="c1">; ifd analysis</span>
+<span class="n">fst</span>   <span class="nb">partials</span> <span class="n">fs1</span><span class="p">,</span> <span class="n">fsi2</span><span class="p">,</span> <span class="mf">.03</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">500</span> <span class="c1">; partial tracking</span>
+a<span class="n">out</span>  <span class="nb">sinsyn</span> <span class="n">fst</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> k<span class="n">mxtr</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; scale amplitude down</span>
+      <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.7</span> <span class="mi">15</span>	<span class="c1">;filtering effect by using low number of tracks</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">2.7</span> <span class="mi">500</span>	<span class="c1">;maximum number of tracks</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>The example above shows partial tracking of an ifd-analysis signal and cubic-phase additive resynthesis.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056013872"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>June 2005 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>November 2004.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sininv.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sleighbells.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sininv </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> sleighbells</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Ordinary Statements</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="prev" href="OrchIblock.html" title="Instrument and Opcode Block Statements" />
+    <link rel="next" href="OrchKvar.html" title="Types, Constants and Variables" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Ordinary Statements</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="OrchIblock.html">Prev</a> </td>
+          <th width="60%" align="center">Syntax of the Orchestra</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OrchKvar.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="OrchStatemnt"></a>Ordinary Statements</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    An <span class="emphasis"><em>ordinary statement</em></span> runs at either init time or performance time or both. Operations which produce a result formally run at the rate of that result (that is, at init time for i-rate results; at performance time for k- and a-rate results), with the sole exception of the <span class="emphasis"><em>init</em></span> opcode. Most generators and modifiers, however, produce signals that depend not only on the instantaneous value of their arguments but also on some preserved internal state. These performance-time units therefore have an implicit init-time component to set up that state. The run time of an operation which produces no result is apparent in the opcode. 
+  </p>
+      <p>
+    Arguments are values that are sent to an operation. Most arguments will accept arithmetic expressions composed of constants, variables, reserved symbols, value converters, arithmetic operations, and conditional values.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="OrchIblock.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OrchTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OrchKvar.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Instrument and Opcode Block Statements </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Types, Constants and Variables</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

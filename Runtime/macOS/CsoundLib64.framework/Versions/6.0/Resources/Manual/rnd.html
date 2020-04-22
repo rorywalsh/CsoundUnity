@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>rnd</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="rms.html" title="rms" />
+    <link rel="next" href="rnd31.html" title="rnd31" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">rnd</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="rms.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="rnd31.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="rnd"></a>
+      <div class="titlepage"></div>
+      <a id="IndexRnd" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">rnd</span>
+        </h2>
+        <p>rnd — 
+      Returns a random number in a unipolar range at the rate given by the input argument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061189776"></a>
+        <h2>Description</h2>
+        <p>
+      Returns a random number in a unipolar range at the rate given by the input argument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061188384"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>rnd</strong></span>(x) (init- or control-rate only)</pre>
+        <p>
+      Where the argument within the parentheses may be an expression. These value converters sample a global random sequence, but do not reference <span class="emphasis"><em>seed</em></span>. The result can be a term in a further expression.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061185328"></a>
+        <h2>Performance</h2>
+        <p>
+      Returns a random number in the unipolar range 0 to <span class="emphasis"><em>x</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061183680"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the rnd opcode. It uses the file <a class="ulink" href="examples/rnd.csd" target="_top"><em class="citetitle">rnd.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276061181888"></a>
+          <p class="title">
+            <strong>Example 858. Example of the rnd opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276428438432"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o rnd.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Andres Cabrera 2010</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+	<span class="c1">; Generate a random number from 0 to 10.</span>
+	i<span class="n">rand</span> <span class="o">=</span> <span class="nb">rnd</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+	<span class="nb">print</span> i<span class="n">rand</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+	k<span class="n">limit</span> <span class="nb">init</span> <span class="mi">10</span>
+	k<span class="n">rand</span> <span class="o">=</span> <span class="nb">rnd</span><span class="p">(</span>k<span class="n">limit</span><span class="p">)</span>
+	<span class="nb">printk</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">rand</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>  <span class="c1">; Generate 1 number</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>  <span class="c1">; Generate another number</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>  <span class="c1">; yet another number</span>
+
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">1</span>  <span class="c1">; 1 second prints 9 values (kr = 10)</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should be:
+      </p>
+        <pre class="screen">SECTION 1:
+new alloc for instr 1:
+instr 1:  irand = 9.735
+new alloc for instr 1:
+instr 1:  irand = 1.394
+new alloc for instr 1:
+instr 1:  irand = 7.695
+midi channel 1 now using instr 1
+B  0.000 ..  2.000 T  2.000 TT  2.000 M:  0.00000
+new alloc for instr 2:
+ i   2 time     2.10000:     5.25005
+ i   2 time     2.20000:     6.22665
+ i   2 time     2.30000:     9.69511
+ i   2 time     2.40000:     7.16822
+ i   2 time     2.50000:     9.45134
+ i   2 time     2.60000:     1.34123
+ i   2 time     2.70000:     2.09879
+ i   2 time     2.80000:     2.36001
+ i   2 time     2.90000:     0.03553</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061176272"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="birnd.html" title="birnd"><em class="citetitle">birnd</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061174224"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Barry L. Vercoe</td>
+          </tr>
+          <tr>
+            <td>MIT</td>
+          </tr>
+          <tr>
+            <td>Cambridge, Massachussetts</td>
+          </tr>
+          <tr>
+            <td>1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="rms.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="rnd31.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">rms </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> rnd31</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Command Line Parameter File (.csound6rc)</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="CommandTop.html" title="The Csound Command" />
+    <link rel="prev" href="CommandUnifileExample.html" title="Example" />
+    <link rel="next" href="CommandPreproc.html" title="Score File Preprocessing" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Command Line Parameter File (.csound6rc)</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CommandUnifileExample.html">Prev</a> </td>
+          <th width="60%" align="center">The Csound Command</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CommandPreproc.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="CommandUnifileParFile"></a>Command Line Parameter File (.csound6rc)</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    If the file <span class="emphasis"><em>.csound6rc</em></span> exists, it will be used to set the command line parameters. These can be overridden. Csound 5.00 and newer versions read this file from the HOME directory first (or the full path file name defined by the CSOUND6RC <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">environment variable</em></a>), and then the current directory. If both exist, options in the .csound6rc in the current directory will have higher precedence. It uses the same form as a <span class="emphasis"><em>.csd</em></span> file, but no tags are needed. Lines beginning with <span class="emphasis"><em>#</em></span> or <span class="emphasis"><em>;</em></span> are treated as comments.
+  </p>
+      <p>
+    A <span class="emphasis"><em>.csound6rc</em></span> file can contain something like this:
+  </p>
+      <div class="literallayout">
+        <p><br />
+-+rtaudio=portaudio -odac2 -iadc2 -+rtmidi=winmme -M1 -Q1 -m0<br />
+  </p>
+      </div>
+      <p>
+    In this case, csound will generate real-time output and take realtime input from device 2, using the portaudio driver interface. It will input and output realtime MIDI on interface 1. It will print very few messages (-m0). These options will be used by default when other options are not given inside the &lt;CsOptions&gt; of the .csd file or the command line (See <a class="link" href="CommandTop.html#CommandOrder" title="Order of Precedence"><em class="citetitle">Order of precendence</em></a>).
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CommandUnifileExample.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="CommandTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CommandPreproc.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Example </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Score File Preprocessing</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

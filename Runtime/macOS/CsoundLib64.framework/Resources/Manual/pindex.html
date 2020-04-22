@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pindex</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="phs.html" title="phs" />
+    <link rel="next" href="pinker.html" title="pinker" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pindex</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="phs.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pinker.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pindex"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPindex" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pindex</span>
+        </h2>
+        <p>pindex — 
+      Returns the value of a specified pfield.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070394176"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>pindex</em></span> returns the value of a specified pfield.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070392496"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ivalue <span class="command"><strong>pindex</strong></span> ipfieldIndex</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070390400"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ipfieldIndex</em></span> - pfield number to query.
+    </p>
+        <p>
+      <span class="emphasis"><em>ivalue</em></span> - value of the pfield.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070387472"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pindex opcode. It uses the file <a class="ulink" href="examples/pindex.csd" target="_top"><em class="citetitle">pindex.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276070385664"></a>
+          <p class="title">
+            <strong>Example 709. Example of the pindex opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276438450864"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in   No messages  MIDI in</span>
+-odac           -iadc    <span class="c1">; -d         -M0  ;;;RT audio I/O with MIDI in</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">;-o pindex.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;Example by Anthony Kozar Dec 2006</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    i<span class="n">num</span>    <span class="nb">pcount</span>
+    i<span class="n">ndex</span>   <span class="nb">init</span> <span class="mi">1</span>
+    <span class="nl">loop1</span><span class="p">:</span>
+        i<span class="n">value</span> <span class="nb">pindex</span> i<span class="n">ndex</span>
+        <span class="nb">printf_i</span> <span class="s">"p</span><span class="si">%d</span><span class="s"> = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">ndex</span><span class="p">,</span> i<span class="n">value</span>
+        i<span class="n">ndex</span>   <span class="o">=</span> i<span class="n">ndex</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">if</span>  <span class="p">(</span>i<span class="n">ndex</span> <span class="o">&lt;=</span> i<span class="n">num</span><span class="p">)</span> <span class="k">igoto</span> <span class="nl">loop1</span>
+    <span class="nb">print</span> i<span class="n">num</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">3</span> <span class="mi">40</span> <span class="mi">50</span>         <span class="c1">; has 5 pfields</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">1</span> <span class="mi">2</span> <span class="mi">80</span>            <span class="c1">; has 5 due to carry</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">2</span> <span class="mi">1</span> <span class="mi">40</span> <span class="mi">50</span> <span class="mi">60</span> <span class="mi">70</span>   <span class="c1">; has 7</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      The example will produce the following output:
+      </p>
+        <pre class="screen">
+new alloc for instr 1:
+WARNING: instr 1 uses 3 p-fields but is given 5
+p1 = 1.000000
+p2 = 0.000000
+p3 = 3.000000
+p4 = 40.000000
+p5 = 50.000000
+instr 1:  inum = 5.000
+B  0.000 ..  1.000 T  1.000 TT  1.000 M:      0.0
+new alloc for instr 1:
+WARNING: instr 1 uses 3 p-fields but is given 5
+p1 = 1.000000
+p2 = 1.000000
+p3 = 2.000000
+p4 = 80.000000
+p5 = 50.000000
+instr 1:  inum = 5.000
+B  1.000 ..  2.000 T  2.000 TT  2.000 M:      0.0
+new alloc for instr 1:
+WARNING: instr 1 uses 3 p-fields but is given 7
+p1 = 1.000000
+p2 = 2.000000
+p3 = 1.000000
+p4 = 40.000000
+p5 = 50.000000
+p6 = 60.000000
+p7 = 70.000000
+instr 1:  inum = 7.000
+      </pre>
+        <p>
+      The warnings can be ignored, because the pfields are used indirectly through pindex instead of explicitly through p4, p5, etc.
+    </p>
+        <p>
+      Here is another example of the pindex opcode. It uses the file <a class="ulink" href="examples/pindex-2.csd" target="_top"><em class="citetitle">pindex-2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276070378640"></a>
+          <p class="title">
+            <strong>Example 710. Second example of the pindex opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276438073696"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pindex-2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; This UDO returns a pfield value but returns 0 if it does not exist.</span>
+<span class="kd">opcode</span>  <span class="nf">mypvalue</span><span class="p">,</span> <span class="kt">i</span><span class="p">,</span> <span class="kt">i</span>
+	i<span class="n">ndex</span>  <span class="nb">xin</span>
+	i<span class="n">num</span>   <span class="nb">pcount</span>
+	<span class="k">if</span>	  <span class="p">(</span>i<span class="n">ndex</span> <span class="o">&gt;</span> i<span class="n">num</span><span class="p">)</span>  <span class="k">then</span>
+		i<span class="n">out</span> <span class="o">=</span> <span class="mf">0.0</span>
+	<span class="k">else</span>
+		i<span class="n">out</span> <span class="nb">pindex</span> i<span class="n">ndex</span>
+	<span class="k">endif</span>
+	
+	<span class="nb">xout</span>	i<span class="n">out</span>
+<span class="kd">endop</span>
+	
+<span class="c1">; Envelope UDO that reads parameters from a flexible number of pfields</span>
+<span class="c1">; Syntax:   kenv  flexlinseg  ipstart</span>
+<span class="c1">;           ipstart is the first pfield of the envelope</span>
+<span class="c1">;               parameters.  Reads remaining pfields (up to 21 of them).</span>
+<span class="c1">;           kenv is the output envelope.</span>
+
+<span class="kd">opcode</span>  <span class="nf">flexlinseg</span><span class="p">,</span> <span class="kt">k</span><span class="p">,</span> <span class="kt">i</span>
+	i<span class="n">pstart</span> <span class="nb">xin</span>
+	
+	i<span class="n">ep1</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span>
+	i<span class="n">ep2</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">1</span>
+	i<span class="n">ep3</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">2</span>
+	i<span class="n">ep4</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">3</span>
+	i<span class="n">ep5</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">4</span>
+	i<span class="n">ep6</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">5</span>
+	i<span class="n">ep7</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">6</span>
+	i<span class="n">ep8</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">7</span>
+	i<span class="n">ep9</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">8</span>
+	i<span class="n">epa</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">9</span>
+	i<span class="n">epb</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">10</span>
+	i<span class="n">epc</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">11</span>
+	i<span class="n">epd</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">12</span>
+	i<span class="n">epe</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">13</span>
+	i<span class="n">epf</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">14</span>
+	i<span class="n">epg</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">15</span>
+	i<span class="n">eph</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">16</span>
+	i<span class="n">epi</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">17</span>
+	i<span class="n">epj</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">18</span>
+	i<span class="n">epk</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">19</span>
+	i<span class="n">epl</span>   <span class="nf">mypvalue</span>	i<span class="n">pstart</span> <span class="o">+</span> <span class="mi">20</span>
+
+	k<span class="n">env</span>   <span class="nb">linseg</span>	 i<span class="n">ep1</span><span class="p">,</span> i<span class="n">ep2</span><span class="p">,</span> i<span class="n">ep3</span><span class="p">,</span> i<span class="n">ep4</span><span class="p">,</span> i<span class="n">ep5</span><span class="p">,</span> i<span class="n">ep6</span><span class="p">,</span> i<span class="n">ep7</span><span class="p">,</span> i<span class="n">ep8</span><span class="p">,</span> \
+	                   i<span class="n">ep9</span><span class="p">,</span> i<span class="n">epa</span><span class="p">,</span> i<span class="n">epb</span><span class="p">,</span> i<span class="n">epc</span><span class="p">,</span> i<span class="n">epd</span><span class="p">,</span> i<span class="n">epe</span><span class="p">,</span> i<span class="n">epf</span><span class="p">,</span> i<span class="n">epg</span><span class="p">,</span> \
+	                   i<span class="n">eph</span><span class="p">,</span> i<span class="n">epi</span><span class="p">,</span> i<span class="n">epj</span><span class="p">,</span> i<span class="n">epk</span><span class="p">,</span> i<span class="n">epl</span>	
+	<span class="nb">xout</span>   k<span class="n">env</span>
+<span class="kd">endop</span>
+	
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">; This instrument only requires 3 pfields but can accept up to 24.</span>
+<span class="c1">; (You will still get warnings about more than 3).	</span>
+k<span class="n">env</span> <span class="nf">flexlinseg</span>  <span class="mi">4</span>		<span class="c1">; envelope params start at p4</span>
+a<span class="n">out</span> <span class="nb">oscili</span> k<span class="n">env</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">2</span>  <span class="mf">0.0</span> <span class="mf">1.0</span> <span class="mf">1.0</span> <span class="mf">1.0</span> <span class="mf">0.0</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">2</span> <span class="mi">2</span>  <span class="mf">0.0</span> <span class="mf">0.1</span> <span class="mf">1.0</span> <span class="mf">1.0</span> <span class="mf">1.0</span> <span class="mf">0.1</span> <span class="mf">0.0</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">4</span> <span class="mi">2</span>  <span class="mf">0.0</span> <span class="mf">0.5</span> <span class="mf">0.0</span>	  			<span class="c1">; one problem is that "missing" pfields carry</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">6</span> <span class="mi">2</span>  <span class="mf">0.0</span> <span class="mf">0.5</span> <span class="mf">0.0</span> <span class="o">!</span>	  			<span class="c1">; now we can fix this problem with !</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">8</span> <span class="mi">10</span>  <span class="mf">0.0</span>  <span class="mf">3.0</span> <span class="mf">1.0</span>  <span class="mf">0.3</span> <span class="mf">0.1</span>  <span class="mf">0.3</span> <span class="mf">1.0</span>  <span class="mf">0.3</span> <span class="mf">0.1</span>  <span class="mf">0.3</span> <span class="mf">1.0</span>  <span class="mf">0.3</span> <span class="mf">0.1</span>  <span class="mf">0.8</span> <span class="mf">0.9</span>  <span class="mf">5.0</span> <span class="mf">0.0</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      The example will produce the following output:
+      </p>
+        <pre class="screen">
+WARNING: instr 1 uses 3 p-fields but is given 8
+B  0.000 ..  2.000 T  2.000 TT  2.000 M:  0.49966  0.49966
+WARNING: instr 1 uses 3 p-fields but is given 10
+B  2.000 ..  4.000 T  4.000 TT  4.000 M:  0.50000  0.50000
+WARNING: instr 1 uses 3 p-fields but is given 10
+B  4.000 ..  6.000 T  6.000 TT  6.000 M:  0.49943  0.49943
+WARNING: instr 1 uses 3 p-fields but is given 6
+B  6.000 ..  8.000 T  8.000 TT  8.000 M:  0.00000  0.00000
+WARNING: instr 1 uses 3 p-fields but is given 20
+B  8.000 .. 18.000 T 18.000 TT 18.000 M:  0.49994  0.49994
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070375808"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pcount.html" title="pcount"><em class="citetitle">pcount</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070373760"></a>
+        <h2>Credits</h2>
+        <p>Example by: Anthony Kozar</p>
+        <p>Dec. 2006</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="phs.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pinker.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">phs </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pinker</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

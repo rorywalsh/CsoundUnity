@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pitch</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pinkish.html" title="pinkish" />
+    <link rel="next" href="pitchamdf.html" title="pitchamdf" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pitch</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pinkish.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pitchamdf.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pitch"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPitch" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pitch</span>
+        </h2>
+        <p>pitch — 
+      Tracks the pitch of a signal.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070222800"></a>
+        <h2>Description</h2>
+        <p>
+      Using the same techniques as <a class="link" href="spectrum.html" title="spectrum"><em class="citetitle">spectrum</em></a> and <a class="link" href="specptrk.html" title="specptrk"><em class="citetitle">specptrk</em></a>, pitch tracks the pitch of the signal in octave point decimal form, and amplitude in dB.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070219632"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">koct, kamp <span class="command"><strong>pitch</strong></span> asig, iupdte, ilo, ihi, idbthresh [, ifrqs] [, iconf] \
+      [, istrt] [, iocts] [, iq] [, inptls] [, irolloff] [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070217280"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iupdte</em></span> -- length of period, in seconds, that outputs are updated
+    </p>
+        <p>
+      <span class="emphasis"><em>ilo</em></span>, <span class="emphasis"><em>ihi</em></span> -- range in which pitch is detected, expressed in octave point decimal
+    </p>
+        <p>
+      <span class="emphasis"><em>idbthresh</em></span> -- amplitude, expressed in decibels, necessary for the pitch to be detected.  Once started it continues until it is 6 dB down.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifrqs</em></span> (optional) -- number of divisons of an octave. Default is 12 and is limited to 120.
+    </p>
+        <p>
+      <span class="emphasis"><em>iconf</em></span> (optional) -- the number of conformations needed for an octave jump.  Default is 10. 
+    </p>
+        <p>
+      <span class="emphasis"><em>istrt</em></span> (optional) -- starting pitch for tracker. Default value is (<span class="emphasis"><em>ilo</em></span> + <span class="emphasis"><em>ihi</em></span>)/2.
+    </p>
+        <p>
+      <span class="emphasis"><em>iocts</em></span> (optional) -- number of octave decimations in spectrum. Default is 6.
+    </p>
+        <p>
+      <span class="emphasis"><em>iq</em></span> (optional) -- Q of analysis filters. Default is 10.
+    </p>
+        <p>
+      <span class="emphasis"><em>inptls</em></span> (optional) -- number of harmonics, used in matching. Computation time increases with the number of harmonics. Default is 4.
+    </p>
+        <p>
+      <span class="emphasis"><em>irolloff</em></span> (optional) -- amplitude rolloff for the set of filters expressed as fraction per octave. Values must be positive. Default is 0.6.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional) -- if non-zero, skips initialization. Default is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070204496"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>koct</em></span> -- The pitch output, given in the octave point decimal format.
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- The amplitude output.
+    </p>
+        <p>
+      <span class="emphasis"><em>pitch</em></span> analyzes the input signal, <span class="emphasis"><em>asig</em></span>, to give a pitch/amplitude pair of outputs, for the strongest frequency in the signal. The value is updated every <span class="emphasis"><em>iupdte</em></span> seconds.
+    </p>
+        <p>
+      The number of partials and rolloff fraction can effect the pitch tracking, so some experimentation may be necessary. Suggested values are 4 or 5 harmonics, with rolloff 0.6, up to 10 or 12 harmonics with rolloff 0.75 for complex timbres, with a weak fundamental.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070199152"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pitch opcode. It uses the file <a class="ulink" href="examples/pitch.csd" target="_top"><em class="citetitle">pitch.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276070197344"></a>
+          <p class="title">
+            <strong>Example 713. Example of the pitch opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276437481088"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pitch.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;clean audio</span>
+
+a<span class="n">sig</span> <span class="nb">soundin</span> <span class="nb">p4</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">;use pitch</span>
+
+i<span class="n">updte</span> <span class="o">=</span> <span class="mf">0.001</span>	<span class="c1">;high definition</span>
+i<span class="n">lo</span> <span class="o">=</span> <span class="mi">6</span>
+i<span class="n">hi</span> <span class="o">=</span> <span class="mi">10</span>
+i<span class="n">dbthresh</span> <span class="o">=</span> <span class="mi">10</span>
+i<span class="n">frqs</span> <span class="o">=</span> <span class="mi">12</span>
+i<span class="n">conf</span> <span class="o">=</span> <span class="mi">10</span>
+i<span class="n">strt</span> <span class="o">=</span> <span class="mi">8</span>
+
+a<span class="n">sig</span> <span class="nb">soundin</span> <span class="nb">p4</span>
+k<span class="n">oct</span><span class="p">,</span> k<span class="n">amp</span> <span class="nb">pitch</span> a<span class="n">sig</span><span class="p">,</span> i<span class="n">updte</span><span class="p">,</span> i<span class="n">lo</span><span class="p">,</span> i<span class="n">hi</span><span class="p">,</span> i<span class="n">dbthresh</span><span class="p">,</span> i<span class="n">frqs</span><span class="p">,</span> i<span class="n">conf</span><span class="p">,</span> i<span class="n">strt</span>
+k<span class="n">amp</span> <span class="o">=</span> k<span class="n">amp</span><span class="o">*</span><span class="mf">.00005</span>		<span class="c1">;lower volume</span>
+k<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpsoct</span><span class="p">(</span>k<span class="n">oct</span><span class="p">)</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">;re-synthesize with sawtooth</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">0.5</span> <span class="mf">0.3</span> <span class="mf">0.25</span> <span class="mf">0.2</span> <span class="mf">0.167</span> <span class="mf">0.14</span> <span class="mf">0.125</span> <span class="mf">.111</span>   <span class="c1">;sawtooth</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">3</span> <span class="s">"fox.wav"</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span>  <span class="mi">3</span> <span class="s">"fox.wav"</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span>  <span class="mi">3</span> <span class="s">"mary.wav"</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">9</span>  <span class="mi">3</span> <span class="s">"mary.wav"</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">12</span> <span class="mi">3</span> <span class="s">"beats.wav"</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">15</span> <span class="mi">3</span> <span class="s">"beats.wav"</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070193312"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>April 1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.54</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pinkish.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pitchamdf.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pinkish </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pitchamdf</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

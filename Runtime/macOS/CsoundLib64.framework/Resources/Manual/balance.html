@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>balance</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="babo.html" title="babo" />
+    <link rel="next" href="balance2.html" title="balance2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">balance</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="babo.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="balance2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="balance"></a>
+      <div class="titlepage"></div>
+      <a id="IndexBalance" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">balance</span>
+        </h2>
+        <p>balance — 
+      Adjust one audio signal according to the values of another.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124170832"></a>
+        <h2>Description</h2>
+        <p>
+      The rms power of asig can be interrogated, set, or adjusted to match that of a comparator signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124169424"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>balance</strong></span> asig, acomp [, ihp] [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124167312"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihp</em></span> (optional) -- half-power point (in Hz) of a special internal low-pass filter. The default value is 10.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of internal data space (see <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>). The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124163680"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- input audio signal
+    </p>
+        <p>
+      <span class="emphasis"><em>acomp</em></span> -- the comparator signal
+    </p>
+        <p>
+      <span class="emphasis"><em>balance</em></span> outputs a version of <span class="emphasis"><em>asig</em></span>, amplitude-modified so that its rms power is equal to that of a comparator signal <span class="emphasis"><em>acomp</em></span>. Thus a signal that has suffered loss of power (eg., in passing through a filter bank) can be restored by matching it with, for instance, its own source. It should be noted that <a class="link" href="gain.html" title="gain"><em class="citetitle">gain</em></a> and <span class="emphasis"><em>balance</em></span> provide amplitude modification only - output signals are not altered in any other respect.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124157760"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the balance opcode. It uses the file <a class="ulink" href="examples/balance.csd" target="_top"><em class="citetitle">balance.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276124155952"></a>
+          <p class="title">
+            <strong>Example 79. Example of the balance opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276493742672"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o balance.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">; Generate a band-limited pulse train.</span>
+a<span class="n">src</span> <span class="nb">buzz</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="vg">sr</span><span class="o">/</span><span class="mi">440</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="c1">; Send the source signal through 2 filters.</span>
+a<span class="n">1</span> <span class="nb">reson</span> a<span class="n">src</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span>       
+a<span class="n">2</span> <span class="nb">reson</span> a<span class="n">1</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">500</span>
+
+<span class="c1">; Balance the filtered signal with the source.</span>
+a<span class="n">fin</span> <span class="nb">balance</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">src</span>
+     <span class="nb">outs</span> a<span class="n">fin</span><span class="p">,</span> a<span class="n">fin</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124151920"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="balance2.html" title="balance2"><em class="citetitle">balance2</em></a>,
+      <a class="link" href="gain.html" title="gain"><em class="citetitle">gain</em></a>,
+      <a class="link" href="rms.html" title="rms"><em class="citetitle">rms</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="babo.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="balance2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">babo </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> balance2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

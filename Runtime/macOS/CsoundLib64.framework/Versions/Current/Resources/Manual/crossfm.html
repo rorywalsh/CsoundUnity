@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>crossfm</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="cross2.html" title="cross2" />
+    <link rel="next" href="crunch.html" title="crunch" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">crossfm</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cross2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="crunch.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="crossfm"></a>
+      <div class="titlepage"></div>
+      <a id="Indexcrossfm" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">crossfm</span>
+        </h2>
+        <p>crossfm — 
+      Two mutually frequency and/or phase modulated oscillators.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118453616"></a>
+        <h2>Description</h2>
+        <p>
+      Two oscillators, mutually frequency and/or phase modulated by each other.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118452352"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>crossfm</strong></span> xfrq1, xfrq2, xndx1, xndx2, kcps, ifn1, ifn2 [, iphs1] [, iphs2]</pre>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>crossfmi</strong></span> xfrq1, xfrq2, xndx1, xndx2, kcps, ifn1, ifn2 [, iphs1] [, iphs2]</pre>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>crosspm</strong></span> xfrq1, xfrq2, xndx1, xndx2, kcps, ifn1, ifn2 [, iphs1] [, iphs2]</pre>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>crosspmi</strong></span> xfrq1, xfrq2, xndx1, xndx2, kcps, ifn1, ifn2 [, iphs1] [, iphs2]</pre>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>crossfmpm</strong></span> xfrq1, xfrq2, xndx1, xndx2, kcps, ifn1, ifn2 [, iphs1] [, iphs2]</pre>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>crossfmpmi</strong></span> xfrq1, xfrq2, xndx1, xndx2, kcps, ifn1, ifn2 [, iphs1] [, iphs2]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118443408"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn1</em></span> -- function table number for oscillator #1.
+      Requires a wrap-around guard point.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn2</em></span> -- function table number for oscillator #2.
+      Requires a wrap-around guard point.
+    </p>
+        <p>
+      <span class="emphasis"><em>iphs1</em></span> (optional, default=0) -- initial phase of waveform
+      in table <span class="emphasis"><em>ifn1</em></span>, expressed as a fraction of a cycle (0 to 1).
+      A negative value will cause phase initialization to be skipped.
+    </p>
+        <p>
+      <span class="emphasis"><em>iphs2</em></span> (optional, default=0) -- initial phase of waveform
+      in table <span class="emphasis"><em>ifn2</em></span>, expressed as a fraction of a cycle (0 to 1).
+      A negative value will cause phase initialization to be skipped.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118438080"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xfrq1</em></span> -- a factor that, when multipled by the
+      <span class="emphasis"><em>kcps</em></span> parameter, gives the frequency of oscillator #1.
+    </p>
+        <p>
+      <span class="emphasis"><em>xfrq2</em></span> -- a factor that, when multipled by the
+      <span class="emphasis"><em>kcps</em></span> parameter, gives the frequency of oscillator #2.
+    </p>
+        <p>
+      <span class="emphasis"><em>xndx1</em></span> -- the index of the modulation of oscillator #2
+      by oscillator #1.
+    </p>
+        <p>
+      <span class="emphasis"><em>xndx2</em></span> -- the index of the modulation of oscillator #1
+      by oscillator #2.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> -- a common denominator, in cycles per second,
+      for both oscillators frequencies.
+    </p>
+        <p>
+      <span class="emphasis"><em>crossfm</em></span> implements a crossed frequency modulation
+      algorithm. The audio-rate output of oscillator #1 is used to modulate the
+      frequency input of oscillator #2 while the audio-rate output of oscillator #2
+      is used to modulate the frequency input of oscillator #1. This double feedback
+      structure produces a rich set of sounds with some chaotic behaviour.
+      <span class="emphasis"><em>crossfmi</em></span> behaves like <span class="emphasis"><em>crossfm</em></span>
+      except that linear interpolation is used for table lookup.
+    </p>
+        <p>
+      <span class="emphasis"><em>crosspm</em></span> and <span class="emphasis"><em>crosspmi</em></span> implement
+      cross phase modulation between two oscillators.
+    </p>
+        <p>
+      <span class="emphasis"><em>crossfmpm</em></span> and <span class="emphasis"><em>crossfmpmi</em></span>
+      implement cross frequency/phase modulation between two oscillators.
+      Oscillator #1 is frequency-modulated by oscillator #2 while oscillator #2
+      is phase-modulated by oscillator #1.
+    </p>
+        <p>
+      You can read my <a class="ulink" href="http://www.csoundjournal.com/issue12/crossfm.html" target="_top"><em class="citetitle">paper</em></a>
+      in the Csound Journal for more information.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Those opcodes may produce very rich spectra, especially with high
+        modulation indexes, and in some cases foldover aliases may occur if the
+        sampling rate is not high enough. Moreover the audio output may vary in
+        function of the sampling rate, due to the non-linearity of the algorithm.
+        In Csound, two other opcodes have this characteristic:
+        <span class="emphasis"><em>planet</em></span> and <span class="emphasis"><em>chuap</em></span>. 
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118423648"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the crossfm opcode. It uses the file
+      <a class="ulink" href="examples/crossfm.csd" target="_top"><em class="citetitle">crossfm.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276118421856"></a>
+          <p class="title">
+            <strong>Example 178. Example of the crossfm opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276485101488"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsOptions&gt;</span>
+  -d -o dac
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span>        <span class="o">=</span>         <span class="mi">96000</span>
+<span class="vg">ksmps</span>     <span class="o">=</span>         <span class="mi">10</span>
+<span class="vg">nchnls</span>    <span class="o">=</span>         <span class="mi">2</span>
+<span class="vg">0dbfs</span>     <span class="o">=</span>         <span class="mi">1</span>
+
+<span class="nb">FLpanel</span> <span class="s">"crossfmForm"</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+  gk<span class="n">frq1</span><span class="p">,</span> i<span class="n">hfrq1</span> <span class="nb">FLcount</span> <span class="s">"Freq #1"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+  gk<span class="n">frq2</span><span class="p">,</span> i<span class="n">hfrq2</span> <span class="nb">FLcount</span> <span class="s">"Freq #2"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+  gk<span class="n">ndx1</span><span class="p">,</span> gk<span class="n">ndx2</span><span class="p">,</span> i<span class="n">hndx1</span><span class="p">,</span> i<span class="n">hndx2</span> <span class="nb">FLjoy</span> <span class="s">"Indexes"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">50</span>
+  
+  <span class="nb">FLsetVal_i</span> <span class="mf">164.5</span><span class="p">,</span> i<span class="n">hfrq1</span>
+  <span class="nb">FLsetVal_i</span> <span class="mf">263.712</span><span class="p">,</span> i<span class="n">hfrq2</span>
+  <span class="nb">FLsetVal_i</span> <span class="mf">1.5</span><span class="p">,</span> i<span class="n">hndx1</span>
+  <span class="nb">FLsetVal_i</span> <span class="mi">3</span><span class="p">,</span> i<span class="n">hndx2</span>
+<span class="nb">FLpanelEnd</span>
+<span class="nb">FLrun</span>
+
+<span class="nb">maxalloc</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
+
+          <span class="kd">instr</span> <span class="nf">1</span>
+k<span class="n">amp</span>      <span class="nb">linen</span>     <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.5</span> 
+a<span class="n">1</span><span class="p">,</span>a<span class="n">2</span>     <span class="nb">crossfm</span>   gk<span class="n">frq1</span><span class="p">,</span> gk<span class="n">frq2</span><span class="p">,</span> gk<span class="n">ndx1</span><span class="p">,</span> gk<span class="n">ndx2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+          <span class="nb">outs</span>      a<span class="n">1</span><span class="o">*</span>k<span class="n">amp</span><span class="p">,</span> a<span class="n">2</span><span class="o">*</span>k<span class="n">amp</span>
+          <span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">0</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">60</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      In this example, an FLTK GUI is used to control in real-time the oscillators
+      frequency with two <span class="emphasis"><em>Flcount</em></span> widgets and the cross
+      modulation indexes with one <span class="emphasis"><em>FLjoy</em></span> widget. It uses a
+      sampling rate of 96000Hz.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118418688"></a>
+        <h2>See Also</h2>
+        <p> More information on this opcode: <a class="ulink" href="http://www.csoundjournal.com/issue12/crossfm.html" target="_top"><em class="citetitle">http://www.csoundjournal.com/issue12/crossfm.html</em></a> , written by François Pinot  </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276118416544"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: François Pinot</td>
+          </tr>
+          <tr>
+            <td>2005-2009</td>
+          </tr>
+        </table>
+        <p>
+      </p>
+        <p>New in version 5.12</p>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cross2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="crunch.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cross2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> crunch</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

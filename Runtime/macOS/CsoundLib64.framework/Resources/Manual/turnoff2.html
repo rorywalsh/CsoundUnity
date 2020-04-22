@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>turnoff2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="turnoff.html" title="turnoff" />
+    <link rel="next" href="turnon.html" title="turnon" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">turnoff2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="turnoff.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="turnon.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="turnoff2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTurnoff2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">turnoff2</span>
+        </h2>
+        <p>turnoff2 — 
+      Turn off instance(s) of other instruments at performance time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044716416"></a>
+        <h2>Description</h2>
+        <p>
+      Turn off instance(s) of other instruments at performance time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044715168"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>turnoff2</strong></span> kinsno, kmode, krelease
+    </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044713216"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kinsno</em></span>
+      -- instrument to be turned off (can be fractional) if zero or
+      negative, no instrument is turned off
+    </p>
+        <p>
+      <span class="emphasis"><em>kmode</em></span>
+      -- sum of the following values:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+            		0, 1, or 2: turn off all instances (0), oldest only
+            		(1), or newest only (2)
+            	</p>
+            </li>
+            <li class="listitem">
+              <p>
+            		4: only turn off notes with exactly matching
+            		(fractional) instrument number, rather than ignoring
+            		fractional part
+            	</p>
+            </li>
+            <li class="listitem">
+              <p>
+            		8: only turn off notes with indefinite duration (p3
+            		&lt; 0 or MIDI)
+            	</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+
+
+    </p>
+        <p>
+      <span class="emphasis"><em>krelease</em></span>
+      -- if non-zero, the turned off instances are allowed to release,
+      otherwise are deactivated immediately (possibly resulting in
+      clicks)
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+      As a rule of thumb, you should turn off instruments with a higher instrument number than the one where turnoff is called, as doing otherwise might cause initialization issues.
+    </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044705840"></a>
+        <h2>Examples</h2>
+        <p>
+      The following example uses the turnoff2 opcode, s written by Lou
+      Cohen..
+
+      </p>
+        <div class="example">
+          <a id="idm276044704832"></a>
+          <p class="title">
+            <strong>Example 1058. Example of the turnoff2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276411579520"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o sin.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>        <span class="o">=</span>          <span class="mi">48000</span>    <span class="c1">;samples per second for sound</span>
+<span class="vg">kr</span>        <span class="o">=</span>        <span class="mi">4800</span>
+<span class="vg">nchnls</span>    <span class="o">=</span>        <span class="mi">1</span>
+<span class="vg">0dbfs</span>    <span class="o">=</span>        <span class="mi">32767</span>
+
+gi<span class="n">sine</span>    <span class="nb">ftgen</span>    <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">131073</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>                <span class="c1">;single sine tone</span>
+
+<span class="c1">;-----------------------------------------</span>
+<span class="kd">instr</span> <span class="nf">2</span> <span class="c1">;start</span>
+    k<span class="n">trigger</span>        <span class="nb">init</span>        <span class="mi">0</span>
+    <span class="k">if</span> <span class="p">(</span>k<span class="n">trigger</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
+        k<span class="n">Multiple</span>    <span class="o">=</span>    <span class="mf">1.1</span>
+        k<span class="n">Hz</span>            <span class="o">=</span>    <span class="mi">440</span>
+        k<span class="n">Amp</span>            <span class="o">=</span>    <span class="p">(</span><span class="vg">0dbfs</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span>
+<span class="c1">;startup four instances of instrument 200</span>
+        <span class="nb">event</span>    <span class="s">"i"</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> k<span class="n">Amp</span><span class="p">,</span> k<span class="n">Hz</span>
+        k<span class="n">Amp</span>    <span class="o">=</span>    k<span class="n">Amp</span> <span class="o">*</span> <span class="mf">0.75</span>
+        k<span class="n">Hz</span>    <span class="o">=</span>    k<span class="n">Hz</span> <span class="o">*</span> k<span class="n">Multiple</span>
+
+        <span class="nb">event</span>    <span class="s">"i"</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> k<span class="n">Amp</span><span class="p">,</span> k<span class="n">Hz</span>
+        k<span class="n">Amp</span>    <span class="o">=</span>    k<span class="n">Amp</span> <span class="o">*</span> <span class="mf">0.75</span>
+        k<span class="n">Hz</span>    <span class="o">=</span>    k<span class="n">Hz</span> <span class="o">*</span> k<span class="n">Multiple</span>
+
+        <span class="nb">event</span>    <span class="s">"i"</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> k<span class="n">Amp</span><span class="p">,</span> k<span class="n">Hz</span>
+        k<span class="n">Amp</span>    <span class="o">=</span>    k<span class="n">Amp</span> <span class="o">*</span> <span class="mf">0.75</span>
+        k<span class="n">Hz</span>    <span class="o">=</span>    k<span class="n">Hz</span> <span class="o">*</span> k<span class="n">Multiple</span>
+
+        <span class="nb">event</span>    <span class="s">"i"</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> k<span class="n">Amp</span><span class="p">,</span> k<span class="n">Hz</span>
+        k<span class="n">Amp</span>    <span class="o">=</span>    k<span class="n">Amp</span> <span class="o">*</span> <span class="mf">0.75</span>
+        k<span class="n">Hz</span>    <span class="o">=</span>    k<span class="n">Hz</span> <span class="o">*</span> k<span class="n">Multiple</span>
+        k<span class="n">trigger</span>        <span class="o">=</span>    <span class="mi">1</span>
+    <span class="k">endif</span>
+<span class="kd">endin</span>
+<span class="c1">;---------------------------------------------</span>
+<span class="kd">instr</span> <span class="nf">3</span> <span class="c1">;after 10 seconds, turn off the instruments</span>
+    k<span class="n">trigger</span> <span class="nb">init</span> <span class="mi">1</span>
+   <span class="k">if</span> <span class="p">(</span>k<span class="n">trigger</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="k">then</span>
+        <span class="nb">turnoff2</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>    <span class="c1">;turn off must recently started instrument instance</span>
+        k<span class="n">active</span> <span class="nb">active</span> <span class="mi">200</span>    <span class="c1">;find out how many are still active</span>
+        <span class="nb">printk2</span> k<span class="n">active</span>       <span class="c1">;print mainly to show progress</span>
+
+        <span class="nb">turnoff2</span>    <span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>    <span class="c1">;turn off all the rest of the instruments</span>
+        k<span class="n">active</span>    <span class="nb">active</span> <span class="mi">200</span>    <span class="c1">;find out how many are still active</span>
+        <span class="nb">printk2</span>    k<span class="n">active</span><span class="p">,</span> <span class="mi">10</span>    <span class="c1">;print to show progress</span>
+<span class="k">endif</span>
+<span class="kd">endin</span>
+<span class="c1">;----------------------------------------------------</span>
+<span class="kd">instr</span> <span class="nf">200</span> <span class="c1">;play the tone</span>
+k<span class="n">Env</span>    <span class="nb">linen</span>    <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.1</span>
+a<span class="n">r</span>      <span class="nb">oscil</span>    k<span class="n">Env</span><span class="o">*</span><span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="nb">out</span>      a<span class="n">r</span>
+        <span class="nb">print</span>    <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mf">0.1</span> 
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">10</span> <span class="mf">0.1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044700848"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="turnoff.html" title="turnoff"><em class="citetitle">turnoff</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044698816"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound 5.00</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="turnoff.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="turnon.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">turnoff </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> turnon</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

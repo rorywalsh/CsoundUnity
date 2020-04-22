@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>K35_lpf</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="k35_hpf.html" title="K35_hpf" />
+    <link rel="next" href="kgoto.html" title="kgoto" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">K35_lpf</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="k35_hpf.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="kgoto.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="k35_lpf"></a>
+      <div class="titlepage"></div>
+      <a id="IndexK35_lpf" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">K35_lpf</span>
+        </h2>
+        <p>K35_lpf — 
+      Zero-delay feedback implementation of Korg35 resonant low-pass filter. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087473184"></a>
+        <h2>Description</h2>
+        <p>
+      Zero-delay feedback implementation of Korg35 resonant low-pass filter. This filter design is found in the Korg MS10, early MS20, and Monotron series. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087471840"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>K35_lpf</strong></span> ain, xcf, xQ [, inlp, isaturation, istor]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087469728"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>istor</em></span> --initial disposition of internal data space.
+      Since filtering incorporates a feedback loop of previous output, the
+      initial status of the storage space used is significant.  A zero value
+      will clear the space; a non-zero value will allow previous information to
+      remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087467824"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>ain</em></span> -- input signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>xcf</em></span> -- filter cutoff frequency (i-, k-, or a-rate).
+    </p>
+        <p>
+      <span class="emphasis"><em>xQ</em></span> -- filter Q value (i-, k-, or a-rate). Range 1.0-10.0 (clamped by opcode). Self-oscillation occurs at 10.0.
+    </p>
+        <p>
+      <span class="emphasis"><em>knlp</em></span> (optional, default=0) -- Non-linear processing method. 0 = no processing, 1 = non-linear processing. Method 1 uses tanh(ksaturation * input). Enabling NLP may increase the overall output of filter above unity and should be compensated for outside of the filter. 
+    </p>
+        <p>
+      <span class="emphasis"><em>ksaturation</em></span> (optional, default=1) -- saturation amount to use for non-linear processing. Values &gt; 1 increase the steepness of the NLP curve.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087461712"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the K35_lpf opcode. It uses the file <a class="ulink" href="examples/k35.csd" target="_top"><em class="citetitle">k35.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276087459920"></a>
+          <p class="title">
+            <strong>Example 466. Example of the K35_lpf opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276458110288"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="c1">; ==============================================</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>	<span class="o">=</span>	<span class="mi">48000</span>
+<span class="vg">ksmps</span>	<span class="o">=</span>	<span class="mi">1</span>
+<span class="vg">nchnls</span>	<span class="o">=</span>	<span class="mi">2</span>
+<span class="vg">0dbfs</span>	<span class="o">=</span>	<span class="mi">1</span>
+
+<span class="c1">;; test instruments to demo filter cutoff sweep with high resonance</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	
+
+a<span class="n">sig</span> <span class="o">=</span> <span class="nb">vco2</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">cps2pch</span><span class="p">(</span><span class="mf">6.00</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+a<span class="n">sig</span> <span class="o">=</span> <span class="n">K35_lpf</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> <span class="nb">expseg</span><span class="p">:</span><span class="nb">a</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="mf">9.9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+a<span class="n">sig</span> <span class="o">*=</span> <span class="mf">0.25</span>
+a<span class="n">sig</span>  <span class="o">=</span> <span class="nb">limit</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+<span class="nb">outc</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span><span class="p">)</span>
+
+<span class="kd">endin</span>
+
+
+<span class="kd">instr</span> <span class="nf">2</span>	
+
+a<span class="n">sig</span> <span class="o">=</span> <span class="nb">vco2</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">cps2pch</span><span class="p">(</span><span class="mf">6.00</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+a<span class="n">sig</span> <span class="o">=</span> <span class="n">K35_lpf</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> <span class="nb">expseg</span><span class="p">:</span><span class="nb">k</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="mf">9.9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+a<span class="n">sig</span> <span class="o">*=</span> <span class="mf">0.25</span>
+a<span class="n">sig</span>  <span class="o">=</span> <span class="nb">limit</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+<span class="nb">outc</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span><span class="p">)</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">3</span>	
+
+a<span class="n">sig</span> <span class="o">=</span> <span class="nb">vco2</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">cps2pch</span><span class="p">(</span><span class="mf">6.00</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+a<span class="n">sig</span> <span class="o">=</span> <span class="n">K35_hpf</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> <span class="nb">expseg</span><span class="p">:</span><span class="nb">a</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="mf">9.9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+a<span class="n">sig</span> <span class="o">*=</span> <span class="mf">0.25</span>
+a<span class="n">sig</span>  <span class="o">=</span> <span class="nb">limit</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+<span class="nb">outc</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span><span class="p">)</span>
+
+<span class="kd">endin</span>
+
+
+<span class="kd">instr</span> <span class="nf">4</span>	
+
+a<span class="n">sig</span> <span class="o">=</span> <span class="nb">vco2</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">cps2pch</span><span class="p">(</span><span class="mf">6.00</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+a<span class="n">sig</span> <span class="o">=</span> <span class="n">K35_hpf</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> <span class="nb">expseg</span><span class="p">:</span><span class="nb">k</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="mf">9.9</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+a<span class="n">sig</span> <span class="o">*=</span> <span class="mf">0.25</span>
+a<span class="n">sig</span>  <span class="o">=</span> <span class="nb">limit</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+<span class="nb">outc</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span><span class="p">)</span>
+
+<span class="kd">endin</span>
+
+<span class="c1">;; beat instruments</span>
+
+<span class="kd">instr</span> <span class="nf">ms20_drum</span>
+
+  i<span class="n">pch</span> <span class="o">=</span> <span class="nb">cps2pch</span><span class="p">(</span><span class="nb">p4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+  i<span class="n">amp</span> <span class="o">=</span> <span class="nb">ampdbfs</span><span class="p">(</span><span class="nb">p5</span><span class="p">)</span>
+  a<span class="n">env</span> <span class="o">=</span> <span class="nb">expseg</span><span class="p">:</span><span class="nb">a</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> i<span class="n">pch</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">.05</span><span class="p">,</span> i<span class="n">pch</span><span class="p">)</span>
+
+  a<span class="n">sig</span> <span class="o">=</span> <span class="nb">rand</span><span class="p">:</span><span class="nb">a</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+  a<span class="n">sig</span> <span class="o">=</span> <span class="n">K35_hpf</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+  a<span class="n">sig</span> <span class="o">=</span> <span class="n">K35_lpf</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> a<span class="n">env</span><span class="p">,</span> <span class="mf">9.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+  a<span class="n">sig</span> <span class="o">=</span> <span class="nb">tanh</span><span class="p">(</span>a<span class="n">sig</span> <span class="o">*</span> <span class="mi">16</span><span class="p">)</span>
+
+  a<span class="n">sig</span> <span class="o">*=</span> <span class="nb">expon</span><span class="p">(</span>i<span class="n">amp</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">)</span>
+
+  <span class="nb">outc</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span><span class="p">)</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">ms20_bass</span> 
+  i<span class="n">pch</span> <span class="o">=</span> <span class="nb">cps2pch</span><span class="p">(</span><span class="nb">p4</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+  i<span class="n">amp</span> <span class="o">=</span> <span class="nb">ampdbfs</span><span class="p">(</span><span class="nb">p5</span><span class="p">)</span>
+  a<span class="n">env</span> <span class="o">=</span> <span class="nb">expseg</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> i<span class="n">pch</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">.05</span><span class="p">,</span> i<span class="n">pch</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+
+  a<span class="n">sig</span> <span class="o">=</span> <span class="nb">vco2</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> i<span class="n">pch</span><span class="p">)</span>
+  a<span class="n">sig</span> <span class="o">=</span> <span class="n">K35_hpf</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> i<span class="n">pch</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+  a<span class="n">sig</span> <span class="o">=</span> <span class="n">K35_lpf</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> a<span class="n">env</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+  a<span class="n">sig</span> <span class="o">*=</span> <span class="nb">expon</span><span class="p">:</span><span class="nb">a</span><span class="p">(</span>i<span class="n">amp</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span>
+
+  <span class="nb">outc</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span><span class="p">)</span>
+<span class="kd">endin</span>
+
+<span class="c1">;; perf code</span>
+
+gk<span class="n">tempo</span> <span class="nb">init</span> <span class="mi">122</span>
+
+<span class="kd">opcode</span> <span class="nf">beat_dur</span><span class="p">,</span><span class="kt">i</span><span class="p">,</span><span class="kt">0</span>
+  <span class="nb">xout</span> <span class="mi">60</span> <span class="o">/</span> <span class="nb">i</span><span class="p">(</span>gk<span class="n">tempo</span><span class="p">)</span> 
+<span class="kd">endop</span>
+
+<span class="kd">instr</span> <span class="nf">bass_player</span>
+  i<span class="n">dur</span> <span class="o">=</span> <span class="nf">beat_dur</span><span class="p">()</span> <span class="o">/</span> <span class="nb">int</span><span class="p">(</span><span class="nb">random</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span> 
+  i<span class="n">pch</span> <span class="o">=</span> <span class="mf">6.00</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="nb">random</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="nb">random</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span> <span class="o">/</span> <span class="mi">100</span>
+
+  <span class="nb">schedule</span><span class="p">(</span><span class="s">"ms20_bass"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">dur</span><span class="p">,</span> i<span class="n">pch</span><span class="p">,</span> <span class="o">-</span><span class="mi">11</span><span class="p">)</span> 
+
+  <span class="k">if</span><span class="p">(</span><span class="nb">p2</span> <span class="o">&lt;</span> <span class="mf">37.5</span><span class="p">)</span> <span class="k">then</span>
+    <span class="nb">schedule</span><span class="p">(</span><span class="s">"bass_player"</span><span class="p">,</span> i<span class="n">dur</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+  <span class="k">endif</span>
+  <span class="nb">turnoff</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">beat_player</span> 
+  i<span class="n">step_total</span> <span class="o">=</span> <span class="nb">p4</span> 
+  i<span class="n">step</span> <span class="o">=</span> i<span class="n">step_total</span> <span class="o">%</span> <span class="mi">16</span>
+
+  <span class="k">if</span><span class="p">(</span>i<span class="n">step</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
+    i<span class="n">pch</span> <span class="o">=</span> <span class="p">((</span>i<span class="n">step_total</span> <span class="o">%</span> <span class="mi">128</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">112</span><span class="p">)</span> <span class="p">?</span> <span class="mf">4.00</span> <span class="p">:</span> <span class="mf">8.00</span>
+    i<span class="n">amp</span> <span class="o">=</span> <span class="p">(</span>i<span class="n">step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>  <span class="p">?</span> <span class="o">-</span><span class="mi">9</span> <span class="p">:</span> <span class="o">-</span><span class="mi">12</span>
+    <span class="nb">schedule</span><span class="p">(</span><span class="s">"ms20_drum"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> i<span class="n">pch</span><span class="p">,</span> i<span class="n">amp</span><span class="p">)</span>
+  <span class="k">endif</span>
+
+  <span class="nb">schedule</span><span class="p">(</span><span class="s">"ms20_drum"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">14.00</span><span class="p">,</span> 
+           <span class="p">(</span>i<span class="n">step</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">?</span> <span class="o">-</span><span class="mi">12</span> <span class="p">:</span> <span class="o">-</span><span class="mi">18</span><span class="p">)</span>
+
+  <span class="k">if</span><span class="p">(</span><span class="nb">p2</span> <span class="o">&lt;</span> <span class="mf">37.5</span><span class="p">)</span> <span class="k">then</span>
+    <span class="nb">schedule</span><span class="p">(</span><span class="s">"beat_player"</span><span class="p">,</span> <span class="nf">beat_dur</span><span class="p">()</span> <span class="o">/</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> i<span class="n">step_total</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="k">endif</span>
+  <span class="nb">turnoff</span>
+<span class="kd">endin</span>
+
+<span class="c1">;; start play of beats</span>
+
+<span class="kd">instr</span> <span class="nf">start_beats</span>
+  <span class="nb">schedule</span><span class="p">(</span><span class="s">"beat_player"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="nb">schedule</span><span class="p">(</span><span class="s">"bass_player"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="c1">; ==============================================</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mf">5.0</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">5</span> <span class="mf">5.0</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">10</span> <span class="mf">5.0</span>
+<span class="nb">i</span><span class="mi">4</span> <span class="mi">15</span> <span class="mf">5.0</span>
+
+<span class="nb">i</span> <span class="s">"start_beats"</span> <span class="mi">22</span> <span class="mf">0.5</span> <span class="mi">0</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087458176"></a>
+        <h2>References</h2>
+        <p> This filter is based on the work of Will Pirkle that employs Vadim
+      Zavalishin's work with bilinear tranforms to create topology-preserving
+      transform (TPT) implementations of analog filters.</p>
+        <p>
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>
+            Pirkle, Will. Designing Software Synthesizer Plug-ins in C++: For 
+            RackAFX, VST3, and Audio Units. CRC Press, 2014.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Pirkle, Will. AN-5: Virtual Analog (VA) Korg35 Lowpass Filter v3.5. 2013.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+          Zavalishin, Vadim. "The Art of VA filter design." Native Instruments, 2012.
+          </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087452768"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Steven Yi</td>
+          </tr>
+          <tr>
+            <td>April 2017</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound 6.09.0</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="k35_hpf.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="kgoto.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">K35_hpf </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> kgoto</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

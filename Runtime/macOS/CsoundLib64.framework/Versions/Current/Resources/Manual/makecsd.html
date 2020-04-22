@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>makecsd</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilityOther.html" title="Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR, MAKECSD, MIXER, SCALE, MKDB)" />
+    <link rel="prev" href="extractor.html" title="extractor" />
+    <link rel="next" href="mixer.html" title="mixer" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">makecsd</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="extractor.html">Prev</a> </td>
+          <th width="60%" align="center">Other Csound Utilities (CS, CSB64ENC, ENVEXT, EXTRACTOR,
+  MAKECSD, MIXER, SCALE, MKDB)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="mixer.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="makecsd"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">makecsd</span>
+        </h2>
+        <p>makecsd — 
+      Creates a CSD file from the specified input files.
+      <a id="IndexMakecsd" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979348736"></a>
+        <h2>Description</h2>
+        <p>
+    	Creates a CSD file from the specified input files. The first
+    	input file that has a .orc extension (case is not significant)
+    	is put to the &lt;CsInstruments&gt; section, and the first input
+    	file that has a .sco extension becomes &lt;CsScore&gt;. Any
+    	remaining files are Base64 encoded and added as &lt;CsFileB&gt;
+    	tags. An empty &lt;CsOptions&gt; section is always added.
+    </p>
+        <p>
+
+    Some text filtering is performed on the orchestra and score file:
+
+    </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+    			newlines are converted to the native format of the
+    			system on which makecsd is being run.
+    		</p>
+            </li>
+            <li class="listitem">
+              <p>
+    			blank lines are removed from the beginning and end of
+    			files.
+    		</p>
+            </li>
+            <li class="listitem">
+              <p>
+    			any trailing whitespace is removed from the end of
+    			lines.
+    		</p>
+            </li>
+            <li class="listitem">
+              <p>
+    			optionally, tabs can be expanded to spaces with an user
+    			specified tabstop size.
+    		</p>
+            </li>
+            <li class="listitem">
+              <p>
+    			optionally, a MIDI file can be included.
+    		</p>
+            </li>
+            <li class="listitem">
+              <p>
+    			optionally, a Licence can be specified as
+                        either a file or a common one.
+    		</p>
+            </li>
+            <li class="listitem">
+              <p>
+    			if required a score processor can be specified
+                        for the &lt;CsScore&gt; section.
+    		</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979339840"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>makecsd</strong></span> [OPTIONS ... ] infile1 [ infile2 [ ... ]]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979337872"></a>
+        <h2>Initialization</h2>
+        <p>
+      Flags:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+        		- <span class="emphasis"><em>t n</em></span>
+        		= expand tabs to spaces using tabstop size n (default:
+        		disabled). This applies only to the orchestra and score
+        		file.
+        	</p>
+            </li>
+            <li class="listitem">
+              <p>
+        		- <span class="emphasis"><em>w n</em></span>
+        		= set Base64 line width to n (default: 72). Note: the
+            orchestra and score are not wrapped.
+        	</p>
+            </li>
+            <li class="listitem">
+              <p>
+        		- <span class="emphasis"><em>o fname</em></span>
+        		= output file name (default: stdout)
+        	</p>
+            </li>
+            <li class="listitem">
+              <p>
+        		- <span class="emphasis"><em>m fname</em></span>
+        		= specify a MIDI file to include (default: none)
+        	</p>
+            </li>
+            <li class="listitem">
+              <p>
+        		- <span class="emphasis"><em>b progname</em></span>
+        		= specify the program to process the score (default: none)
+        	</p>
+            </li>
+            <li class="listitem">
+              <p>
+        		- <span class="emphasis"><em>L fname</em></span>
+        		= file name containing the licence text (default: none)
+        	</p>
+            </li>
+            <li class="listitem">
+              <p>
+        		- <span class="emphasis"><em>l integer</em></span>
+        		= specify a standard licence (default: none).
+                        The ones available are:
+                        </p>
+              <div class="itemizedlist">
+                <ul class="itemizedlist" style="list-style-type: circle; ">
+                  <li class="listitem"> 0: All rights reserved</li>
+                  <li class="listitem"> 1: CC BY-NC-ND</li>
+                  <li class="listitem"> 2: CC BY-NC-SA</li>
+                  <li class="listitem"> 3: CC BY-NC</li>
+                  <li class="listitem"> 4: CC BY-ND</li>
+                  <li class="listitem"> 5: CC BY-SA</li>
+                  <li class="listitem"> 6: CC BY</li>
+                  <li class="listitem"> 7: Licenced under BSD</li>
+                </ul>
+              </div>
+              <p>
+        	</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979323616"></a>
+        <h2>Examples</h2>
+        <p>
+
+</p>
+        <pre class="programlisting">
+    <span class="emphasis"><em>makecsd</em></span> -t 6 -w 78 -o file.csd file.mid file.orc file.sco sample.aif</pre>
+        <p>
+
+
+  		This creates a CSD from file.orc and file.sco (tabs are
+  		expanded to spaces assuming a tabstop size of 6 characters),
+  		and file.mid and sample.aif are added as &lt;CsFileB&gt; tags
+  		containing Base64 encoded data with a line width of 78
+  		characters. The output file is file.csd.
+  	</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275979321008"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+        <p>Jan 2003</p>
+        <p>Author: John ffitch</p>
+        <p>Feb 2011</p>
+        <p>Options for MIDI, score processing and licence new in version 5.14</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="extractor.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilityOther.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="mixer.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">extractor </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> mixer</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

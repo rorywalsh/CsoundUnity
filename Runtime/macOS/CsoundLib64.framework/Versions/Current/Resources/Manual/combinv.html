@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>combinv</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="comb.html" title="comb" />
+    <link rel="next" href="compilecsd.html" title="compilecsd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">combinv</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="comb.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="compilecsd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="combinv"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCombinv" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">combinv</span>
+        </h2>
+        <p>combinv — 
+      Reverberates an input signal with a <span class="quote">“<span class="quote">colored</span>”</span> frequency response.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120261760"></a>
+        <h2>Description</h2>
+        <p>
+      Reverberates an input signal with a <span class="quote">“<span class="quote">colored</span>”</span>
+      frequency response with a FIR filter.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120260016"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>combinv</strong></span> asig, krvt, ilpt [, iskip] [, insmps]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120257888"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ilpt</em></span> -- loop time in seconds, which
+      determines the <span class="quote">“<span class="quote">echo density</span>”</span> of the
+      reverberation. This in turn characterizes the
+      <span class="quote">“<span class="quote">color</span>”</span> of the <span class="emphasis"><em>combinv</em></span> filter
+      whose frequency response curve will contain
+      <span class="emphasis"><em>ilpt</em></span> * <span class="emphasis"><em>sr</em></span>/2 peaks
+      spaced evenly between 0 and <span class="emphasis"><em>sr</em></span>/2 (the
+      Nyquist frequency). Loop time can be as large as available
+      memory will permit. The space required for an
+      <span class="emphasis"><em>n</em></span> second loop is
+      <span class="emphasis"><em>n</em></span>*<span class="emphasis"><em>sr</em></span> floating or
+      double numbers (usually 4 or 8 bytes). Delay space is allocated
+      and returned as in <a class="link" href="delay.html" title="delay"><em class="citetitle">delay</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of delay-loop data space (cf. <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>). The default value is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>insmps</em></span> (optional, default=0) -- delay amount, as a number of samples.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120248288"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>krvt</em></span> -- the reverberation time (defined as the time in seconds for a signal to decay to 1/1000, or 60dB down from its original amplitude).
+    </p>
+        <p>
+      This filter reiterates input with an echo density determined by
+      loop time <span class="emphasis"><em>ilpt</em></span>. The attenuation rate is
+      independent and is determined by <span class="emphasis"><em>krvt</em></span>, the
+      reverberation time (defined as the time in seconds for a signal
+      to decay to 1/1000, or 60dB down from its original amplitude).  Affect from a combinv filter will appear only after <span class="emphasis"><em>ilpt</em></span> seconds.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120243904"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the combinv opcode. It uses the file <a class="ulink" href="examples/combinv.csd" target="_top"><em class="citetitle">combinv.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276120242096"></a>
+          <p class="title">
+            <strong>Example 144. Example of the combinv opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276488850880"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o comb.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> 
+
+k<span class="n">cps</span>    <span class="nb">expon</span> <span class="nb">p5</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p4</span>
+a<span class="n">sig</span>	<span class="nb">oscil3</span> <span class="mf">0.3</span><span class="p">,</span> k<span class="n">cps</span>
+k<span class="n">rvt</span> <span class="o">=</span>  <span class="mf">3.5</span>
+i<span class="n">lpt</span> <span class="o">=</span>  <span class="mf">0.1</span>
+a<span class="n">left</span>	<span class="nb">combinv</span> a<span class="n">sig</span><span class="p">,</span> k<span class="n">rvt</span><span class="p">,</span> i<span class="n">lpt</span>
+	<span class="nb">outs</span>   a<span class="n">left</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">20</span> <span class="mi">2000</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120238064"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="alpass.html" title="alpass"><em class="citetitle">alpass</em></a>,
+      <a class="link" href="comb.html" title="comb"><em class="citetitle">comb</em></a>
+      <a class="link" href="reverb.html" title="reverb"><em class="citetitle">reverb</em></a>,
+      <a class="link" href="valpass.html" title="valpass"><em class="citetitle">valpass</em></a>,
+      <a class="link" href="vcomb.html" title="vcomb"><em class="citetitle">vcomb</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120232464"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>October 2012</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="comb.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="compilecsd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">comb </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> compilecsd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pconvolve</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pchtom.html" title="pchtom" />
+    <link rel="next" href="pcount.html" title="pcount" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pconvolve</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pchtom.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pcount.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pconvolve"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPconvolve" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pconvolve</span>
+        </h2>
+        <p>convolve — 
+      Convolution based on a uniformly partitioned overlap-save algorithm
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073609392"></a>
+        <h2>Description</h2>
+        <p>
+      Convolution based on a uniformly partitioned overlap-save algorithm. Compared to the <a class="link" href="convolve.html" title="convolve"><em class="citetitle">convolve</em></a> opcode, <span class="emphasis"><em>pconvolve</em></span> has these benefits:
+    </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>small delay</p>
+            </li>
+            <li class="listitem">
+              <p>possible to run in real-time for shorter impulse files</p>
+            </li>
+            <li class="listitem">
+              <p>no pre-process analysis pass</p>
+            </li>
+            <li class="listitem">
+              <p>can often render faster than <span class="emphasis"><em>convolve</em></span></p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073602992"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar1 [, ar2] [, ar3] [, ar4] <span class="command"><strong>pconvolve</strong></span> ain, ifilcod [, ipartitionsize, ichannel]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073600864"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilcod</em></span>
+      -- integer or character-string denoting an impulse response soundfile. Multichannel files are supported, the file must have the same sample-rate as the orc. [Note: <span class="emphasis"><em>cvanal</em></span> files cannot be used!]  Keep in mind that longer files require more calculation time [and probably larger partition sizes and more latency].  At current processor speeds, files longer than a few seconds may not render in real-time.
+    </p>
+        <p>
+      <span class="emphasis"><em>ipartitionsize</em></span>
+      (optional, defaults to the output buffersize [-b]) -- the size in samples of each partition of the impulse file.  This is the parameter that needs tweaking for best performance depending on the impulse file size. Generally, a small size means smaller latency but more computation time. If you specify a value that is not a power-of-2 the opcode will find the next power-of-2 greater and use that as the actual partition size.
+    </p>
+        <p>
+      <span class="emphasis"><em>ichannel</em></span>
+      (optional) -- which channel to use from the impulse response data
+      file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073596368"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span> -- input audio signal.
+    </p>
+        <p>
+      The overall latency of the opcode can be calculated as such [assuming <span class="emphasis"><em>ipartitionsize</em></span> is a power of 2]
+    </p>
+        <pre class="programlisting">
+    ilatency = (ksmps &lt; ipartitionsize ? ipartitionsize + ksmps : ipartitionsize)/sr</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073593040"></a>
+        <h2>Examples</h2>
+        <p>
+      Instrument 1 shows an example of real-time convolution.
+    </p>
+        <p>
+    Instrument 2 shows how to do file-based convolution with a 'look ahead' method to remove all delay.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: NOTE">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">NOTE</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+	You can download impulse response files from noisevault.com
+	or replace the filenames with your own impulse files.
+	</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      Here is an example of the pconvolve opcode. It uses the file <a class="ulink" href="examples/pconvolve.csd" target="_top"><em class="citetitle">pconvolve.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276073588992"></a>
+          <p class="title">
+            <strong>Example 695. Example of the pconvolve opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276439065552"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+-iadc    <span class="c1">;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pconvolve.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span>   <span class="nf">1</span>
+
+k<span class="n">mix</span> <span class="o">=</span> <span class="mf">.5</span>	<span class="c1">; Wet/dry mix. Vary as desired.</span>
+k<span class="n">vol</span>  <span class="o">=</span> <span class="mf">.05</span><span class="o">*</span>k<span class="n">mix</span>	<span class="c1">; Overall volume level of reverb. May need to adjust</span>
+		<span class="c1">; when wet/dry mix is changed, to avoid clipping.</span>
+                     			
+<span class="c1">; do some safety checking to make sure we the parameters a good</span>
+k<span class="n">mix</span> <span class="o">=</span> <span class="p">(</span>k<span class="n">mix</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> k<span class="n">mix</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">?</span> <span class="mf">.5</span> <span class="p">:</span> k<span class="n">mix</span><span class="p">)</span>
+k<span class="n">vol</span>  <span class="o">=</span> <span class="p">(</span>k<span class="n">vol</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">?</span> <span class="mi">0</span> <span class="p">:</span> <span class="mf">.5</span><span class="o">*</span>k<span class="n">vol</span><span class="o">*</span>k<span class="n">mix</span><span class="p">)</span>
+
+<span class="c1">; size of each convolution partion -- for best performance, this parameter needs to be tweaked</span>
+i<span class="n">partitionsize</span> <span class="o">=</span> <span class="nb">p4</span>
+
+<span class="c1">; calculate latency of pconvolve opcode</span>
+i<span class="n">del</span> <span class="o">=</span> <span class="p">(</span><span class="vg">ksmps</span> <span class="o">&lt;</span> i<span class="n">partitionsize</span> <span class="p">?</span> i<span class="n">partitionsize</span> <span class="o">+</span> <span class="vg">ksmps</span> <span class="p">:</span> i<span class="n">partitionsize</span><span class="p">)</span><span class="o">/</span><span class="vg">sr</span>
+<span class="nb">prints</span> <span class="s">"Convolving with a latency of %f seconds</span><span class="se">%n</span><span class="s">"</span><span class="p">,</span> i<span class="n">del</span>
+
+<span class="c1">; actual processing</span>
+a<span class="n">l</span><span class="p">,</span> a<span class="n">r</span> <span class="nb">ins</span>	<span class="c1">;get live input</span>
+a<span class="n">wetl</span><span class="p">,</span> a<span class="n">wetr</span> <span class="nb">pconvolve</span> k<span class="n">vol</span><span class="o">*</span><span class="p">(</span>a<span class="n">l</span><span class="o">+</span>a<span class="n">r</span><span class="p">),</span> <span class="s">"kickroll.wav"</span><span class="p">,</span> i<span class="n">partitionsize</span>
+<span class="c1">; Delay dry signal, to align it with the convoled sig</span>
+a<span class="n">dryl</span> <span class="nb">delay</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span>k<span class="n">mix</span><span class="p">)</span><span class="o">*</span>a<span class="n">l</span><span class="p">,</span> i<span class="n">del</span>
+a<span class="n">dryr</span> <span class="nb">delay</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span>k<span class="n">mix</span><span class="p">)</span><span class="o">*</span>a<span class="n">l</span><span class="p">,</span> i<span class="n">del</span>
+      <span class="nb">outs</span> a<span class="n">dryl</span><span class="o">+</span>a<span class="n">wetl</span><span class="p">,</span> a<span class="n">dryr</span><span class="o">+</span>a<span class="n">wetr</span>
+
+<span class="kd">endin</span>
+    
+<span class="kd">instr</span> <span class="nf">2</span>
+
+i<span class="n">mix</span> <span class="o">=</span> <span class="mf">0.5</span>          	<span class="c1">; Wet/dry mix. Vary as desired.</span>
+i<span class="n">vol</span> <span class="o">=</span> <span class="mf">.05</span><span class="o">*</span>i<span class="n">mix</span>     	<span class="c1">; Overall volume level of reverb. May need to adjust</span>
+                	<span class="c1">; when wet/dry mix is changed, to avoid clipping.</span>
+i<span class="n">partitionsize</span> <span class="o">=</span> <span class="mi">1024</span>	<span class="c1">; size of each convolution partion</span>
+i<span class="n">del</span> <span class="o">=</span> <span class="p">(</span><span class="vg">ksmps</span> <span class="o">&lt;</span> i<span class="n">partitionsize</span> <span class="p">?</span> i<span class="n">partitionsize</span> <span class="o">+</span> <span class="vg">ksmps</span> <span class="p">:</span> i<span class="n">partitionsize</span><span class="p">)</span><span class="o">/</span><span class="vg">sr</span>   <span class="c1">; latency of pconvolve opcode</span>
+
+k<span class="n">count</span>	<span class="nb">init</span>	i<span class="n">del</span><span class="o">*</span><span class="vg">kr</span>
+<span class="c1">; since we are using a soundin [instead of ins] we can</span>
+<span class="c1">; do a kind of "look ahead" by looping during one k-pass</span>
+<span class="c1">; without output, creating zero-latency</span>
+<span class="nl">loop</span><span class="p">:</span>
+    a<span class="n">sig</span> <span class="nb">soundin</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">0</span>
+    a<span class="n">wetl</span><span class="p">,</span> a<span class="n">wetr</span> <span class="nb">pconvolve</span> i<span class="n">vol</span><span class="o">*</span><span class="p">(</span>a<span class="n">sig</span><span class="p">),</span><span class="s">"rv_stereo.wav"</span><span class="p">,</span> i<span class="n">partitionsize</span>
+    a<span class="n">dry</span> <span class="nb">delay</span>	<span class="p">(</span><span class="mi">1</span><span class="o">-</span>i<span class="n">mix</span><span class="p">)</span><span class="o">*</span>a<span class="n">sig</span><span class="p">,</span>i<span class="n">del</span>  <span class="c1">; Delay dry signal, to align it with</span>
+    k<span class="n">count</span> <span class="o">=</span> k<span class="n">count</span> <span class="o">-</span> <span class="mi">1</span>
+ <span class="k">if</span> k<span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">kgoto</span> <span class="nl">loop</span>
+    <span class="nb">outs</span> a<span class="n">wetl</span><span class="o">+</span>a<span class="n">dry</span><span class="p">,</span> a<span class="n">wetr</span><span class="o">+</span>a<span class="n">dry</span>
+		
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">20</span> <span class="mi">1024</span>		<span class="c1">;play live for 20 seconds</span>
+
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">20</span> <span class="mi">5</span> <span class="s">"fox.wav"</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">25</span> <span class="mi">5</span> <span class="s">"flute.aiff"</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073584992"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="convolve.html" title="convolve"><em class="citetitle">convolve</em></a>, <a class="link" href="dconv.html" title="dconv"><em class="citetitle">dconv</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073582080"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Matt Ingalls</td>
+          </tr>
+          <tr>
+            <td>2004</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pchtom.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pcount.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pchtom </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pcount</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>specscal</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="specptrk.html" title="specptrk" />
+    <link rel="next" href="specsum.html" title="specsum" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">specscal</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="specptrk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="specsum.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="specscal"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpecscal" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">specscal</span>
+        </h2>
+        <p>specscal — 
+      Scales an input spectral datablock with spectral envelopes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053596208"></a>
+        <h2>Description</h2>
+        <p>
+      Scales an input spectral datablock with spectral envelopes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053594960"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">wsig <span class="command"><strong>specscal</strong></span> wsigin, ifscale, ifthresh</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053592864"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifscale</em></span> -- scale function table. A function table containing values by which a value's magnitude is rescaled.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifthresh</em></span> -- threshold function table. If <span class="emphasis"><em>ifthresh</em></span> is non-zero, each magnitude is reduced by its corresponding table-value (to not less than zero)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053589840"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>wsig</em></span> -- the output spectrum
+    </p>
+        <p>
+      <span class="emphasis"><em>wsigin</em></span> -- the input spectra
+    </p>
+        <p>
+      Scales an input spectral datablock with spectral envelopes. Function tables <span class="emphasis"><em>ifthresh</em></span> and <span class="emphasis"><em>ifscale</em></span> are initially sampled across the (logarithmic) frequency space of the input spectrum; then each time a new input spectrum is sensed the sampled values are used to scale each of its magnitude channels as follows: if <span class="emphasis"><em>ifthresh</em></span> is non-zero, each magnitude is reduced by its corresponding table-value (to not less than zero); then each magnitude is rescaled by the corresponding <span class="emphasis"><em>ifscale</em></span> value, and the resulting spectrum written to <span class="emphasis"><em>wsig</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053584480"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  wsig2    <span class="opc">specdiff</span>    wsig1         <span class="comment">; sense onsets</span>
+  wsig3    <span class="opc">specfilt</span>    wsig2, 2      <span class="comment">; absorb slowly</span>
+           <span class="opc">specdisp</span>    wsig2, 0.1    <span class="comment">; &amp; display both spectra</span>
+           <span class="opc">specdisp</span>    wsig3, 0.1</pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053577696"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="specaddm.html" title="specaddm"><em class="citetitle">specaddm</em></a>,
+      <a class="link" href="specdiff.html" title="specdiff"><em class="citetitle">specdiff</em></a>,
+      <a class="link" href="specfilt.html" title="specfilt"><em class="citetitle">specfilt</em></a>,
+      <a class="link" href="spechist.html" title="spechist"><em class="citetitle">spechist</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="specptrk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="specsum.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">specptrk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> specsum</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

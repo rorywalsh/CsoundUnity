@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Score Statements and GEN Routines</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartReference.html" title="Part III. Reference" />
+    <link rel="prev" href="zkwm.html" title="zkwm" />
+    <link rel="next" href="a.html" title="a Statement (or Advance Statement)" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Score Statements and GEN Routines</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="zkwm.html">Prev</a> </td>
+          <th width="60%" align="center">Part III. Reference</th>
+          <td width="20%" align="right"> <a accesskey="n" href="a.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="ScoregensTop"></a>Score Statements and GEN Routines</h2>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="ScoreStatementsRef"></a>Score Statements</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+    The statements used in scores are:
+    </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+          <a class="link" href="a.html" title="a Statement (or Advance Statement)"><em class="citetitle">a</em></a> - Advance score time by a specified amount
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="b.html" title="b Statement"><em class="citetitle">b</em></a> - Resets the clock
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+        <a class="link" href="C.html" title="C Statement"><em class="citetitle">C</em></a> - Control
+        automatic carry of p-args
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="d.html" title="d Statement (De Note Statement)"><em class="citetitle">d</em></a> - Deletes
+          an infinite instrument
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="e.html" title="e Statement"><em class="citetitle">e</em></a> - Marks the end of the last section of the score
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f</em></a> - Causes a <a class="link" href="ScoreGenRef.html" title="GEN Routines"><em class="citetitle">GEN subroutine</em></a> to place values in a stored function table
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i</em></a> - Makes an instrument active at a specific time and for a certain duration
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="m.html" title="m Statement (Mark Statement)"><em class="citetitle">m</em></a> - Sets a named mark in the score
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="n.html" title="n Statement"><em class="citetitle">n</em></a> - Repeats a marked section
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="q.html" title="q Statement"><em class="citetitle">q</em></a> - Used to quiet an instrument
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="r.html" title="r Statement (Repeat Statement)"><em class="citetitle">r</em></a> - Starts a repeated section
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="s.html" title="s Statement"><em class="citetitle">s</em></a> - Marks the end of a section
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="t.html" title="t Statement (Tempo Statement)"><em class="citetitle">t</em></a> - Sets the tempo
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="v.html" title="v Statement"><em class="citetitle">v</em></a> - Provides for locally variable time warping of score events
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="x.html" title="x Statement"><em class="citetitle">x</em></a> - Skip the rest of the current section
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="y.html" title="y Statement (or Seed Statement)"><em class="citetitle">y</em></a> - Set seed
+          for random numbers, either from p1 or, if omitted, the clock
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="leftbrace.html" title="{ Statement"><em class="citetitle">{</em></a> - Begins a non-sectional, nestable loop
+        </p>
+            </li>
+            <li class="listitem">
+              <p>
+          <a class="link" href="rightbrace.html" title="} Statement"><em class="citetitle">}</em></a> - Ends a non-sectional, nestable loop
+      </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+  </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="zkwm.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartReference.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="a.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">zkwm </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> a Statement (or Advance Statement)</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

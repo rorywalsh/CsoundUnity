@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>space</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="soundin.html" title="soundin" />
+    <link rel="next" href="spat3d.html" title="spat3d" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">space</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="soundin.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="spat3d.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="space"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpace" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">space</span>
+        </h2>
+        <p>space — 
+      Distributes an input signal among 4 channels using cartesian coordinates.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054321168"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>space</em></span> takes an input signal and distributes it among 4 channels using Cartesian xy coordinates to calculate the balance of the outputs. The xy coordinates can be defined in a separate text file and accessed through a Function statement in the score using <a class="link" href="GEN28.html" title="GEN28"><em class="citetitle">Gen28</em></a>, or they can be specified using the optional <span class="emphasis"><em>kx, ky</em></span> arguments. The advantages to the former are:
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>A graphic user interface can be used to draw and edit the trajectory through the Cartesian plane</p>
+            </li>
+            <li class="listitem">
+              <p>The file format is in the form time1 X1 Y1 time2 X2 Y2 time3 X3 Y3 allowing the user to define a time-tagged trajectory</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>space</em></span> then allows the user to specify a time pointer (much as is used for <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>, <a class="link" href="lpread.html" title="lpread"><em class="citetitle">lpread</em></a> and some other units) to have detailed control over the final speed of movement.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054312640"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1, a2, a3, a4  <span class="command"><strong>space</strong></span> asig, ifn, ktime, kreverbsend, kx, ky</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054310512"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- number of the stored function created using <a class="link" href="GEN28.html" title="GEN28"><em class="citetitle">Gen28</em></a>. This function generator reads a text file which contains sets of three values representing the xy coordinates and a time-tag for when the signal should be placed at that location. The file should look like:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  0       -1       1<br />
+  1        1       1<br />
+  2        4       4<br />
+  2.1     -4      -4<br />
+  3       10     -10<br />
+  5      -40       0<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      If that file were named <span class="quote">“<span class="quote">move</span>”</span> then the <span class="emphasis"><em>Gen28</em></span> call in the score would like:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  f1 0 0 28 "move"<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>Gen28</em></span> takes 0 as the size and automatically allocates memory. It creates values to 10 milliseconds of resolution. So in this case there will be 500 values created by interpolating X1 to X2 to X3 and so on, and Y1 to Y2 to Y3 and so on, over the appropriate number of values that are stored in the function table. In the above example, the sound will begin in the left front, over 1 second it will move to the right front, over another second it move further into the distance but still in the right front, then in just 1/10th of a second it moves to the left rear, a bit distant. Finally over the last .9 seconds the sound will move to the right rear, moderately distant, and it comes to rest between the two left channels (due west!), quite distant. Since the values in the table are accessed through the use of a time-pointer in the <span class="emphasis"><em>space</em></span> unit, the actual timing can be made to follow the file's timing exactly or it can be made to go faster or slower through the same trajectory. If you have access to the GUI that allows one to draw and edit the files, there is no need to create the text files manually. But as long as the file is ASCII and in the format shown above, it doesn't matter how it is made!
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Important">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Important</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        If <span class="emphasis"><em>ifn</em></span> is 0, then <span class="emphasis"><em>space</em></span> will take its values for the xy coordinates from <span class="emphasis"><em>kx</em></span> and <span class="emphasis"><em>ky</em></span>.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054299376"></a>
+        <h2>Performance</h2>
+        <p>
+      The configuration of the xy coordinates in space places the signal in the following way:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>a1 is -1, 1</p>
+            </li>
+            <li class="listitem">
+              <p>a2 is 1, 1</p>
+            </li>
+            <li class="listitem">
+              <p>a3 is -1, -1</p>
+            </li>
+            <li class="listitem">
+              <p>a4 is 1, -1</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      This assumes a loudspeaker set up as a1 is left front, a2 is right front, a3 is left back, a4 is right back. Values greater than 1 will result in sounds being attenuated, as if in the distance. <span class="emphasis"><em>space</em></span> considers the speakers to be at a distance of 1; smaller values of xy can be used, but <span class="emphasis"><em>space</em></span> will not amplify the signal in this case. It will, however balance the signal so that it can sound as if it were within the 4 speaker space. x=0, y=1, will place the signal equally balanced between left and right front channels, x=y=0 will place the signal equally in all 4 channels, and so on. Although there must be 4 output signals from <span class="emphasis"><em>space</em></span>, it can be used in a 2 channel orchestra. If the xy's are kept so that y&gt;=1, it should work well to do panning and fixed localization in a stereo field.
+    </p>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- input audio signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>ktime</em></span> -- index into the table containing the xy coordinates. If used like:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  ktime           <span class="emphasis"><em>line</em></span>  0, 5, 5<br />
+  a1, a2, a3, a4  <span class="emphasis"><em>space</em></span> asig, 1, ktime, ...<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      with the file <span class="quote">“<span class="quote">move</span>”</span> described above, the speed of the signal's movement will be exactly as described in that file. However:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  ktime           <span class="emphasis"><em>line</em></span>  0, 10, 5<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      the signal will move at half the speed specified. Or in the case of:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  ktime           <span class="emphasis"><em>line</em></span>  5, 15, 0<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      the signal will move in the reverse direction as specified and 3 times slower! Finally:
+      </p>
+        <div class="literallayout">
+          <p><br />
+  ktime           <span class="emphasis"><em>line</em></span>  2, 10, 3<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      will cause the signal to move only from the place specified in line 3 of the text file to the place specified in line 5 of the text file, and it will take 10 seconds to do it.
+    </p>
+        <p>
+      <span class="emphasis"><em>kreverbsend</em></span> -- the percentage of the direct signal that will be factored along with the distance as derived from the xy coordinates to calculate signal amounts that can be sent to reverb units such as <span class="emphasis"><em>reverb</em></span>, or <span class="emphasis"><em>reverb2</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>kx, ky</em></span> -- when <span class="emphasis"><em>ifn</em></span> is 0, <span class="emphasis"><em>space</em></span> and <span class="emphasis"><em>spdist</em></span> will use these values as the xy coordinates to localize the signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054278048"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the space opcode. It uses the file <a class="ulink" href="examples/space_quad.csd" target="_top"><em class="citetitle">space_quad.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276054276256"></a>
+          <p class="title">
+            <strong>Example 927. Example of the space opcode.</strong>
+          </p>
+          <div class="example-contents"><p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p><div class="refsect1"><a id="idm276422457936"></a><pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o space_quad.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">4</span>
+  
+ga<span class="n">1</span>	<span class="nb">init</span>	<span class="mi">0</span>
+ga<span class="n">2</span>	<span class="nb">init</span>	<span class="mi">0</span>
+ga<span class="n">3</span>	<span class="nb">init</span>	<span class="mi">0</span>
+ga<span class="n">4</span>	<span class="nb">init</span>	<span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;uses GEN28 file "move", as found in /manual/examples</span>
+
+k<span class="n">x</span>    <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">y</span>    <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">time</span> <span class="nb">line</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span>				<span class="c1">;same time as in table 1 (="move")</span>
+a<span class="n">sig</span>  <span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">;sound source is looped</span>
+a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span> <span class="nb">space</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">time</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span>	<span class="c1">;use table 1 = GEN28</span>
+a<span class="n">r1</span><span class="p">,</span> a<span class="n">r2</span><span class="p">,</span> a<span class="n">r3</span><span class="p">,</span> a<span class="n">r4</span> <span class="nb">spsend</span>			<span class="c1">;send to reverb</span>
+
+ga<span class="n">1</span>  <span class="o">=</span> ga<span class="n">1</span><span class="o">+</span>a<span class="n">r1</span>
+ga<span class="n">2</span>  <span class="o">=</span> ga<span class="n">2</span><span class="o">+</span>a<span class="n">r2</span>
+ga<span class="n">3</span>  <span class="o">=</span> ga<span class="n">3</span><span class="o">+</span>a<span class="n">r3</span>
+ga<span class="n">4</span>  <span class="o">=</span> ga<span class="n">4</span><span class="o">+</span>a<span class="n">r4</span>
+     <span class="nb">outq</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">99</span> <span class="c1">; reverb instrument</span>
+
+a<span class="n">1</span> <span class="nb">reverb2</span> ga<span class="n">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+a<span class="n">2</span> <span class="nb">reverb2</span> ga<span class="n">2</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+a<span class="n">3</span> <span class="nb">reverb2</span> ga<span class="n">3</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+a<span class="n">4</span> <span class="nb">reverb2</span> ga<span class="n">4</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+   <span class="nb">outq</span>	a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span>
+
+ga<span class="n">1</span><span class="o">=</span><span class="mi">0</span>	
+ga<span class="n">2</span><span class="o">=</span><span class="mi">0</span>
+ga<span class="n">3</span><span class="o">=</span><span class="mi">0</span>
+ga<span class="n">4</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">28</span> <span class="s">"move"</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>		<span class="c1">;same time as ktime</span>
+<span class="nb">i</span> <span class="mi">99</span> <span class="mi">0</span> <span class="mi">10</span>	<span class="c1">;keep reverb active</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre></div>
+
+      In the above example, the signal, <span class="emphasis"><em>asig</em></span>, is moved according to the data in Function #1 indexed by <span class="emphasis"><em>ktime</em></span>. <span class="emphasis"><em>space</em></span> sends the appropriate amount of the signal internally to <span class="emphasis"><em>spsend</em></span>. The outputs of the <span class="emphasis"><em>spsend</em></span> are added to global accumulators in a common Csound style and the global signals are used as inputs to the reverb units in a separate instrument.
+
+      </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      <span class="emphasis"><em>space</em></span> can be useful for quad and stereo panning as well as fixed placed of sounds anywhere between two loudspeakers. Below is an example of the fixed placement of sounds in a stereo field using xy values from the score instead of a function table. It uses the file <a class="ulink" href="examples/space_stereo.csd" target="_top"><em class="citetitle">space_stereo.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276054268288"></a>
+          <p class="title">
+            <strong>Example 928. Second example of the space opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276422559520"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o space_stereo.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+  
+ga<span class="n">1</span> <span class="nb">init</span> <span class="mi">0</span>
+ga<span class="n">2</span> <span class="nb">init</span> <span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">x</span>   <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">y</span>   <span class="o">=</span> <span class="nb">p5</span>
+a<span class="n">sig</span> <span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span> <span class="nb">space</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span>	<span class="c1">;take position values from p4, p5</span>
+a<span class="n">r1</span><span class="p">,</span> a<span class="n">r2</span><span class="p">,</span> a<span class="n">r3</span><span class="p">,</span> a<span class="n">r4</span> <span class="nb">spsend</span>			<span class="c1">;send to reverb</span>
+
+ga<span class="n">1</span> <span class="o">=</span> ga<span class="n">1</span><span class="o">+</span>a<span class="n">r1</span>
+ga<span class="n">2</span> <span class="o">=</span> ga<span class="n">2</span><span class="o">+</span>a<span class="n">r2</span>
+    <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">99</span> <span class="c1">; reverb instrument</span>
+
+a<span class="n">1</span> <span class="nb">reverb2</span> ga<span class="n">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+a<span class="n">2</span> <span class="nb">reverb2</span> ga<span class="n">2</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">.5</span>
+   <span class="nb">outs</span>	a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>
+
+ga<span class="n">1</span><span class="o">=</span><span class="mi">0</span>
+ga<span class="n">2</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;place the sound in the left speaker and near</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span>
+<span class="c1">;place the sound in the right speaker and far</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">45</span> <span class="mi">45</span>
+<span class="c1">;place the sound equally between left and right and in the middle ground distance</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">12</span>
+
+<span class="nb">i</span> <span class="mi">99</span> <span class="mi">0</span> <span class="mi">7</span>	<span class="c1">;keep reverb active</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      <a class="link" href="spdist.html" title="spdist"><em class="citetitle">spdist</em></a> demonstrates an example of a simple intuitive use of the distance values to simulate Doppler shift.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054265232"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="spdist.html" title="spdist"><em class="citetitle">spdist</em></a>,
+      <a class="link" href="spsend.html" title="spsend"><em class="citetitle">spsend</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054262320"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, WA USA</td>
+          </tr>
+          <tr>
+            <td>1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.48</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="soundin.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="spat3d.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">soundin </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> spat3d</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

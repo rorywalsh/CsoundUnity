@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>bformenc</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="DeprecatedTop.html" title="Deprecated Orchestra Opcodes and GEN Routines" />
+    <link rel="prev" href="bformdec.html" title="bformdec" />
+    <link rel="next" href="clock.html" title="clock" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">bformenc</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="bformdec.html">Prev</a> </td>
+          <th width="60%" align="center">Deprecated Orchestra Opcodes and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="clock.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="bformenc"></a>
+      <div class="titlepage"></div>
+      <a id="IndexBformenc" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">bformenc</span>
+        </h2>
+        <p>bformenc — 
+      Deprecated. Codes a signal into the ambisonic B format.
+     </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275984804992"></a>
+        <h2>Description</h2>
+        <p>
+      Codes a signal into the ambisonic B format. Note that this opcode is
+      deprecated as it is inaccurate, and is replaced by the much
+      better
+      opcode <a class="link" href="bformenc1.html" title="bformenc1"><em class="citetitle">bformenc1</em></a>
+      which replicates all the important features; also note that the
+      gain arguments are not available in <span class="emphasis"><em>bformenc1</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275984802240"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aw, ax, ay, az <span class="command"><strong>bformenc</strong></span> asig, kalpha, kbeta, kord0, kord1</pre>
+        <pre class="synopsis">aw, ax, ay, az, ar, as, at, au, av <span class="command"><strong>bformenc</strong></span> asig, kalpha, kbeta, \
+      kord0, kord1 , kord2</pre>
+        <pre class="synopsis">aw, ax, ay, az, ar, as, at, au, av, ak, al, am, an, ao, ap, aq <span class="command"><strong>bformenc</strong></span> \
+      asig, kalpha, kbeta, kord0, kord1, kord2, kord3</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275984796928"></a>
+        <h2>Performance</h2>
+        <p>
+	<span class="emphasis"><em>aw, ax, ay, ... </em></span>
+	-- output cells of the B format.
+	</p>
+        <p>
+	<span class="emphasis"><em>asig</em></span> -- input signal.
+	</p>
+        <p>
+	<span class="emphasis"><em>kalpha</em></span> –- azimuth angle in degrees (clockwise).
+	</p>
+        <p>
+	<span class="emphasis"><em>kbeta</em></span> -- altitude angle in degrees.
+        </p>
+        <p>
+	<span class="emphasis"><em>kord0</em></span> -- linear gain of the zero order B format.
+	</p>
+        <p>
+	<span class="emphasis"><em>kord1</em></span> -- linear gain of the first order B format.
+	</p>
+        <p>
+	<span class="emphasis"><em>kord2</em></span> -- linear gain of the second order B format.
+	</p>
+        <p>
+	<span class="emphasis"><em>kord3</em></span> -- linear gain of the third order B format.
+	</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275984789440"></a>
+        <h2>Example</h2>
+        <p>
+      Here is an example of the bformenc opcode. It uses the file <a class="ulink" href="examples/bformenc.csd" target="_top"><em class="citetitle">bformenc.csd</em></a>.
+
+    </p>
+        <div class="example">
+          <a id="idm275984787728"></a>
+          <p class="title">
+            <strong>Example 1248. Example of the bformenc opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276392757008"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+<span class="c1">;-odac           -iadc     -d     ;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+ -o bformenc.wav -W <span class="c1">;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="c1">;bformenc is deprecated, please use bformenc1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+        <span class="c1">; generate pink noise</span>
+        a<span class="n">noise</span> <span class="nb">pinkish</span> <span class="mi">1000</span>
+        
+        <span class="c1">; two full turns</span>
+        k<span class="n">alpha</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">720</span>
+        k<span class="n">beta</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="c1">; fade ambisonic order from 2nd to 0th during second turn</span>
+        k<span class="n">ord0</span> <span class="o">=</span> <span class="mi">1</span>
+        k<span class="n">ord1</span> <span class="nb">linseg</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>
+        k<span class="n">ord2</span> <span class="nb">linseg</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>
+        
+        <span class="c1">; generate B format</span>
+        a<span class="n">w</span><span class="p">,</span> a<span class="n">x</span><span class="p">,</span> a<span class="n">y</span><span class="p">,</span> a<span class="n">z</span><span class="p">,</span> a<span class="n">r</span><span class="p">,</span> a<span class="n">s</span><span class="p">,</span> a<span class="n">t</span><span class="p">,</span> a<span class="n">u</span><span class="p">,</span> a<span class="n">v</span> <span class="nb">bformenc</span> a<span class="n">noise</span><span class="p">,</span> k<span class="n">alpha</span><span class="p">,</span> k<span class="n">beta</span><span class="p">,</span> k<span class="n">ord0</span><span class="p">,</span> k<span class="n">ord1</span><span class="p">,</span> k<span class="n">ord2</span>
+        
+        <span class="c1">; decode B format for 8 channel circle loudspeaker setup</span>
+        a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span><span class="p">,</span> a<span class="n">5</span><span class="p">,</span> a<span class="n">6</span><span class="p">,</span> a<span class="n">7</span><span class="p">,</span> a<span class="n">8</span> <span class="nb">bformdec</span> <span class="mi">4</span><span class="p">,</span> a<span class="n">w</span><span class="p">,</span> a<span class="n">x</span><span class="p">,</span> a<span class="n">y</span><span class="p">,</span> a<span class="n">z</span><span class="p">,</span> a<span class="n">r</span><span class="p">,</span> a<span class="n">s</span><span class="p">,</span> a<span class="n">t</span><span class="p">,</span> a<span class="n">u</span><span class="p">,</span> a<span class="n">v</span>
+        
+        <span class="c1">; write audio out</span>
+        <span class="nb">outo</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">,</span> a<span class="n">3</span><span class="p">,</span> a<span class="n">4</span><span class="p">,</span> a<span class="n">5</span><span class="p">,</span> a<span class="n">6</span><span class="p">,</span> a<span class="n">7</span><span class="p">,</span> a<span class="n">8</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for 20 seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">20</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275984783744"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Samuel Groner</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.07. Deprecated in 5.09.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="bformdec.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="DeprecatedTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="clock.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">bformdec </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> clock</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

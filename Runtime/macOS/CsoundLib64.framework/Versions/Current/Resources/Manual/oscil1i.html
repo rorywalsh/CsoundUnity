@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>oscil1i</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="oscil1.html" title="oscil1" />
+    <link rel="next" href="oscil3.html" title="oscil3" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">oscil1i</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="oscil1.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="oscil3.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="oscil1i"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOscil1i" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">oscil1i</span>
+        </h2>
+        <p>oscil1i — 
+      Accesses table values by incremental sampling with linear interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076244656"></a>
+        <h2>Description</h2>
+        <p>
+      Accesses table values by incremental sampling with linear interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076243392"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>oscil1i</strong></span> idel, kamp, idur [, ifn]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076241296"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idel</em></span> -- delay in seconds before <span class="emphasis"><em>oscil1i</em></span> incremental sampling begins.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur</em></span> -- duration in seconds to sample
+      through the <span class="emphasis"><em>oscil1i</em></span> table just once. A
+      negative value will make the table be read from the end to the beginning.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- (optional) function table
+      number. <span class="emphasis"><em>oscil1i</em></span> requires the extended guard
+      point.  The default value is -1 indicating a sine wave.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076236576"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude factor
+    </p>
+        <p>
+      <span class="emphasis"><em>oscil1i</em></span> is an interpolating unit in which the fractional part of index is used to interpolate between adjacent table entries. The smoothness gained by interpolation is at some small cost in execution time (see also <a class="link" href="oscili.html" title="oscili"><em class="citetitle">oscili</em></a>, etc.), but the interpolating and non-interpolating units are otherwise interchangeable. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076233008"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the oscil1i opcode. It uses the file <a class="ulink" href="examples/oscil1i.csd" target="_top"><em class="citetitle">oscil1i.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276076231216"></a>
+          <p class="title">
+            <strong>Example 637. Example of the oscil1i opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276444550528"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o oscil1i.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span>     <span class="nf">1</span>   
+
+i<span class="n">panfn</span> <span class="o">=</span> <span class="nb">p4</span>
+a<span class="n">sig</span>   <span class="nb">vco2</span> <span class="mf">.3</span><span class="p">,</span> <span class="mi">220</span>
+k<span class="n">pan</span>   <span class="nb">oscil1i</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">panfn</span>	<span class="c1">;create panning &amp;</span>
+k<span class="n">left</span>  <span class="o">=</span> <span class="nb">sqrt</span><span class="p">(</span>k<span class="n">pan</span><span class="p">)</span>		<span class="c1">;start right away</span>
+k<span class="n">right</span> <span class="o">=</span> <span class="nb">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span>k<span class="n">pan</span><span class="p">)</span>     
+       <span class="nb">outs</span> k<span class="n">left</span><span class="o">*</span>a<span class="n">sig</span><span class="p">,</span> k<span class="n">right</span><span class="o">*</span>a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>                                                                                  
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">3</span> <span class="o">-</span><span class="mi">7</span> <span class="mf">.5</span>  <span class="mi">3</span>  <span class="mf">.5</span>		<span class="c1">;remain in center (.5 CONSTANT)                                                                          </span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">129</span> <span class="mi">7</span>  <span class="mi">1</span> <span class="mi">129</span> <span class="mi">0</span> 		<span class="c1">;left--&gt;right                                                                                                     </span>
+<span class="nb">f</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">129</span> <span class="mi">7</span> <span class="mf">.5</span>  <span class="mi">32</span> <span class="mi">1</span> <span class="mi">64</span> <span class="mi">0</span> <span class="mi">33</span> <span class="mf">.5</span> <span class="c1">;center--&gt;left--&gt;right--&gt;center    </span>
+
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">2</span>  <span class="mi">1</span>			<span class="c1">;use table 1</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">3</span>  <span class="mi">2</span>  <span class="mi">2</span>			<span class="c1">;use table 2</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">6</span>  <span class="mi">2</span>  <span class="mi">3</span>			<span class="c1">;use table 3</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076227232"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a>,
+      <a class="link" href="tablei.html" title="tablei"><em class="citetitle">tablei</em></a>,
+      <a class="link" href="table3.html" title="table3"><em class="citetitle">table3</em></a>,
+      <a class="link" href="oscil1.html" title="oscil1"><em class="citetitle">oscil1</em></a>,
+      <a class="link" href="osciln.html" title="osciln"><em class="citetitle">osciln</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="oscil1.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="oscil3.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">oscil1 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> oscil3</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

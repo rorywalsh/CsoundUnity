@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>outch</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="outc.html" title="outc" />
+    <link rel="next" href="outh.html" title="outh" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">outch</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="outc.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="outh.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="outch"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOutch" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">outch</span>
+        </h2>
+        <p>outch — 
+      Writes multi-channel audio data, with user-controllable channels, to an external device or stream.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075126736"></a>
+        <h2>Description</h2>
+        <p>
+      Writes multi-channel audio data, with user-controllable channels, to an external device or stream.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075125456"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>outch</strong></span> kchan1, asig1 [, kchan2] [, asig2] [...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075123488"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>outch</em></span> outputs <span class="emphasis"><em>asig1</em></span> on the channel determined by <span class="emphasis"><em>kchan1</em></span>, <span class="emphasis"><em>asig2</em></span> on the channel determined by <span class="emphasis"><em>kchan2</em></span>, etc.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The highest number for <span class="emphasis"><em>kchanX</em></span> available for use with <span class="emphasis"><em>outch</em></span> depends on <a class="link" href="nchnls.html" title="nchnls"><em class="citetitle">nchnls</em></a>. If <span class="emphasis"><em>kchanX</em></span> is greater than <span class="emphasis"><em>nchnls</em></span>, <span class="emphasis"><em>asigX</em></span> will be silent. Note that <span class="emphasis"><em>outch</em></span> will give a warning but not an error in this case.
+     </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075115952"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the outch opcode. It uses the file <a class="ulink" href="examples/outch.csd" target="_top"><em class="citetitle">outch.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276075114160"></a>
+          <p class="title">
+            <strong>Example 651. Example of the outch opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276443346720"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o outch.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">sig</span> <span class="nb">vco2</span> <span class="mf">.05</span><span class="p">,</span> <span class="mi">100</span>	<span class="c1">; sawtooth waveform at low volume</span>
+
+k<span class="n">cut</span> <span class="nb">line</span> <span class="mi">100</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">30</span>	<span class="c1">; Vary cutoff frequency</span>
+k<span class="n">resonance</span> <span class="o">=</span> <span class="mf">.7</span>
+i<span class="n">numlayer</span> <span class="o">=</span> <span class="mi">3</span>
+a<span class="n">sig</span> <span class="nb">lowresx</span> a<span class="n">sig</span><span class="p">,</span> k<span class="n">cut</span><span class="p">,</span> k<span class="n">resonance</span><span class="p">,</span> i<span class="n">numlayer</span>
+
+k<span class="n">lfo</span> <span class="nb">lfo</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">4</span>	
+k<span class="n">lfo</span> <span class="o">=</span> k<span class="n">lfo</span><span class="o">+</span><span class="mi">1</span>		<span class="c1">; offset of 1</span>
+<span class="nb">printks</span> <span class="s">"signal is sent to channel </span><span class="si">%d</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> k<span class="n">lfo</span>
+      <span class="nb">outch</span> k<span class="n">lfo</span><span class="p">,</span>a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">30</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+            </p>
+        <pre class="screen">
+signal is sent to channel 5
+signal is sent to channel 4
+signal is sent to channel 3
+signal is sent to channel 2
+signal is sent to channel 1
+signal is sent to channel 5
+........
+      </pre>
+        <p>
+    </p>
+        <p>
+      Here is another example of the outch opcode. It uses the file <a class="ulink" href="examples/outch.csd" target="_top"><em class="citetitle">outch-2.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276075108352"></a>
+          <p class="title">
+            <strong>Example 652. Another example of the outch opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276443016480"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o outch-2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">seed</span>     <span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">;random movements between 4 speakers with outch</span>
+
+i<span class="n">chn1</span>     <span class="nb">random</span>    <span class="mi">1</span><span class="p">,</span> <span class="mf">4.999</span> <span class="c1">;channel to start</span>
+i<span class="n">chn2</span>     <span class="nb">random</span>    <span class="mi">1</span><span class="p">,</span> <span class="mf">4.999</span> <span class="c1">;channel to end</span>
+          <span class="nb">prints</span>    <span class="s">"Moving from speaker </span><span class="si">%d</span><span class="s"> to speaker </span><span class="si">%d</span><span class="se">%n</span><span class="s">"</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span>i<span class="n">chn1</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span>i<span class="n">chn2</span><span class="p">)</span>
+a<span class="n">samp</span>     <span class="nb">soundin</span>   <span class="s">"fox.wav"</span>
+k<span class="n">mov</span>      <span class="nb">linseg</span>    <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>    <span class="nb">pan2</span>      a<span class="n">samp</span><span class="p">,</span> k<span class="n">mov</span>
+          <span class="nb">outch</span>     <span class="nb">int</span><span class="p">(</span>i<span class="n">chn1</span><span class="p">),</span> a<span class="n">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span>i<span class="n">chn2</span><span class="p">),</span> a<span class="n">2</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">r</span> <span class="mi">5</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075106672"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="out32.html" title="out32"><em class="citetitle">out32</em></a>,
+      <a class="link" href="outc.html" title="outc"><em class="citetitle">outc</em></a>,
+      <a class="link" href="outx.html" title="outx"><em class="citetitle">outx</em></a>,
+      <a class="link" href="outz.html" title="outz"><em class="citetitle">outz</em></a>
+    </p>
+        <p> More information on this opcode: <a class="ulink" href="http://www.csoundjournal.com/issue16/audiorouting.html" target="_top"><em class="citetitle">http://www.csoundjournal.com/issue16/audiorouting.html</em></a>  , written by Andreas Russo </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075100672"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>May 2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound Version 4.07</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="outc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="outh.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">outc </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> outh</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

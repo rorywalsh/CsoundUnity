@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fareylen</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="faustplay.html" title="faustplay" />
+    <link rel="next" href="fareyleni.html" title="fareyleni" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fareylen</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="faustplay.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fareyleni.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="fareylen"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFareylen" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fareylen</span>
+        </h2>
+        <p>fareylen — 
+      returns the length of a Farey Sequence.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111680544"></a>
+        <h2>Description</h2>
+        <p>
+This opcode can be used in conjunction with <a class="link" href="GENfarey.html" title="GENfarey"><em class="citetitle">GENfarey</em></a>.
+It calculates the length of Farey Sequence F<sub>n</sub>. Its length is given by:
+|F<sub>n</sub>| = 1 + SUM over n phi(m) 
+where phi(m) is Euler's totient function, which gives the number of integers ≤ m that are coprime to m.
+    </p>
+        <p>
+      Some values for the length of F<sub>n</sub> given n:
+      </p>
+        <div class="informaltable">
+          <table class="informaltable" border="1">
+            <colgroup>
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>n</th>
+                <th>F<sub>n</sub></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>5</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>7</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>11</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>13</td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>19</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>23</td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>29</td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>33</td>
+              </tr>
+              <tr>
+                <td>11</td>
+                <td>43</td>
+              </tr>
+              <tr>
+                <td>12</td>
+                <td>47</td>
+              </tr>
+              <tr>
+                <td>13</td>
+                <td>59</td>
+              </tr>
+              <tr>
+                <td>14</td>
+                <td>65</td>
+              </tr>
+              <tr>
+                <td>15</td>
+                <td>73</td>
+              </tr>
+              <tr>
+                <td>16</td>
+                <td>81</td>
+              </tr>
+              <tr>
+                <td>17</td>
+                <td>97</td>
+              </tr>
+              <tr>
+                <td>18</td>
+                <td>103</td>
+              </tr>
+              <tr>
+                <td>19</td>
+                <td>121</td>
+              </tr>
+              <tr>
+                <td>20</td>
+                <td>129</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111649152"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kfl <span class="command"><strong>fareylen</strong></span> kfn</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111647056"></a>
+        <h2>Performance</h2>
+        <p>
+      The length of the identified Farey sequence is returned.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfn</em></span> -- Integer identifying the sequence.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111644848"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Georg Boenn </td>
+          </tr>
+          <tr>
+            <td>University of Glamorgan, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.13</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="faustplay.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fareyleni.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">faustplay </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fareyleni</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

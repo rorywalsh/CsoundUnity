@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>i Statement (Instrument or Note Statement)</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="f.html" title="f Statement (or Function Table Statement)" />
+    <link rel="next" href="m.html" title="m Statement (Mark Statement)" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">i Statement (Instrument or Note Statement)</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="f.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="m.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="i"></a>
+      <div class="titlepage"></div>
+      <a id="IndexIStatement" class="indexterm"></a>
+      <a id="IndexInstrumentStatement" class="indexterm"></a>
+      <a id="IndexNoteStatement" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">i Statement (Instrument or Note Statement)</span>
+        </h2>
+        <p>i — 
+      Makes an instrument active at a specific time and for a certain duration.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013625808"></a>
+        <h2>Description</h2>
+        <p>
+      This statement calls for an instrument to be made active at a specific time and for a certain duration. The parameter field values are passed to that instrument prior to its initialization, and remain valid throughout its Performance.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013624384"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>i</strong></span>  p1  p2  p3  p4  ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013622480"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>p1</em></span> -- Instrument number, usually a
+      non-negative integer. An optional fractional part can provide an
+      additional tag for specifying ties between particular notes of
+      consecutive clusters. A negative p1 (including tag) can be used
+      to turn off a particular <span class="quote">“<span class="quote">held</span>”</span> note.  In the case
+      of a named instrument it can be negated by having a `-' as the first
+      character of the string.
+    </p>
+        <p>
+      <span class="emphasis"><em>p2</em></span> -- Starting time in arbitrary units called beats.
+    </p>
+        <p>
+      <span class="emphasis"><em>p3</em></span> -- Duration time in beats (usually positive). A negative value will initiate a  held note (see also <a class="link" href="ihold.html" title="ihold"><em class="citetitle">ihold</em></a>). A negative value can also be used for 'always on' instruments like reverberation. These notes are not terminated by <a class="link" href="s.html" title="s Statement"><em class="citetitle">s statements</em></a> A zero value will invoke an initialization pass without performance (see also <a class="link" href="instr.html" title="instr"><em class="citetitle">instr</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>p4 ...</em></span> -- Parameters whose significance is determined by the instrument.      
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013614720"></a>
+        <h2>Performance</h2>
+        <p>
+      Beats are evaluated as seconds, unless there is a <a class="link" href="t.html" title="t Statement (Tempo Statement)"><em class="citetitle">t statement</em></a> in this score section or a <a class="link" href="CommandFlags.html#FlagsMinusLowerT"><em class="citetitle">-t flag</em></a> in the command-line.
+    </p>
+        <p>
+      Starting or action times are relative to the beginning of a section ( see <a class="link" href="s.html" title="s Statement"><em class="citetitle">s statement</em></a>), which is assigned time 0.
+    </p>
+        <p>
+      Note statements within a section may be placed in any order. Before being sent to an orchestra, unordered score statements must first be processed by Sorter, which will reorder them by ascending p2 value. Notes with the same p2 value will be ordered by ascending p1; if the same p1, then by ascending p3.
+    </p>
+        <p>
+      Notes may be stacked, i.e., a single instrument can perform any number of notes simultaneously. (The necessary copies of the instrument's data space will be allocated dynamically by the orchestra loader.) Each note will normally turn off when its p3 duration has expired, or on receipt of a MIDI noteoff signal. An instrument can modify its own duration either by changing its p3 value during note initialization, or by prolonging itself through the action of a <a class="link" href="linenr.html" title="linenr"><em class="citetitle">linenr</em></a> or <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> unit.
+    </p>
+        <p>
+     An instrument may be turned on and left to perform indefinitely either by giving it a negative p3 or by including an <span class="emphasis"><em>ihold</em></span> in its i-time code. If a held note is active, an <span class="emphasis"><em>i statement</em></span> <span class="emphasis"><em>with matching p1</em></span> will not cause a new allocation but will take over the data space of the held note. The new pfields (including p3) will now be in effect, and an i-time pass will be executed in which the units can either be newly initialized or allowed to continue as required for a tied note (see <a class="link" href="tigoto.html" title="tigoto"><em class="citetitle">tigoto</em></a>). A held note may be succeeded either by another held note or by a note of finite duration. A held note will continue to perform across section endings (see <a class="link" href="s.html" title="s Statement"><em class="citetitle">s statement</em></a>). It is halted only by <a class="link" href="turnoff.html" title="turnoff"><em class="citetitle">turnoff</em></a> or by an <span class="emphasis"><em>i statement</em></span> with negative matching p1 or by an <a class="link" href="e.html" title="e Statement"><em class="citetitle">e statement</em></a>.
+    </p>
+        <p>
+      It is possible to have multiple instances (usually, but not necessarily, notes of different pitches) of the same instrument, held simultaneously, via negative p3 values. The instrument can then be fed new parameters from the score. This is useful for avoiding long hard-coded <span class="emphasis"><em>linseg</em></span>s, and can be accomplished by adding a decimal part to the instrument number.
+    </p>
+        <p>
+      For example, to hold three copies of instrument 10 in a simple chord:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">i</span>10.1    0    -1    7.00
+<span class="stamnt">i</span>10.2    0    -1    7.04
+<span class="stamnt">i</span>10.3    0    -1    7.07</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      Subsequent <span class="emphasis"><em>i</em></span> statements can refer to the same sounding note instances, and if the instrument definition is done properly, the new p-fields can be used to alter the character of the notes in progress.  For example, to bend the previous chord up an octave and release it:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">i</span>10.1    1    1    8.00
+<span class="stamnt">i</span>10.2    1    1    8.04
+<span class="stamnt">i</span>10.3    1    1    8.07</pre>
+        </div>
+        <p>
+    </p>
+        <div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Tip">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Tip]" src="images/tip.png" />
+              </td>
+              <th align="left">Tip</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>When turning off notes, bear in mind that i 1.1 == i 1.10 and i 1.1 != i 1.01. The maximum number of decimal places that can be used depends on the precision Csound was compiled with.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      The instrument definition has to take this into account, however, especially if clicks are to be avoided (see the example below).
+    </p>
+        <p>
+      Note that the decimal instrument number notation cannot be used in conjunction with real-time MIDI. In this case, the instrument would be monophonic while a note was held.
+    </p>
+        <p>
+      Notes being tied to previous instances of the same instrument, should skip most initialization by means of <a class="link" href="tigoto.html" title="tigoto"><em class="citetitle">tigoto</em></a>, except for the values entered in score. For example, all table reading opcodes in the instrument, should usually be skipped, as they store their phase internally. If this is suddenly changed, there will be audible clicks in the output. 
+    </p>
+        <p>
+      Note that many opcodes (such as <span class="emphasis"><em>delay</em></span> and <span class="emphasis"><em>reverb</em></span>) are prepared for optional initialization. To use this feature, the <a class="link" href="tival.html" title="tival"><em class="citetitle">tival opcode</em></a> is suitable. Therefore, they need not be hidden by a <span class="emphasis"><em>tigoto</em></span> jump.
+    </p>
+        <p>
+      Beginning with Csound version 3.53, strings are recognized in  p-fields for opcodes that accept them (<span class="emphasis"><em>convolve, adsyn, diskin,</em></span> etc.).  There may be only one string per score line.
+    </p>
+        <p>
+      You can also turnoff notes from the score by using a negative
+      number for the instrument (p1). This is equivalent to using
+      the <a class="link" href="turnoff2.html" title="turnoff2"><em class="citetitle">turnoff2</em></a>
+      opcode. When a note is turned off from the score, it is allowed
+      to release
+      (if <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a>
+      or opcodes with release section
+      like <a class="link" href="linenr.html" title="linenr"><em class="citetitle">linenr</em></a>
+      are used) and only notes with the same fractional part are
+      turned off. Also, only the last instance of the instrument will
+      be turned off, so there have to be as many negative instrument
+      numbers as positive ones for all notes to be turned off.
+
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">i</span> 1.1    1    300    8.00
+<span class="stamnt">i</span> 1.2    1    300    8.04
+<span class="stamnt">i</span> 1.3    1    -300    8.07
+<span class="stamnt">i</span> 1.3    1    -300    8.09
+
+<span class="comment">; notice that p-fields after p2 will be ignored if </span>
+<span class="comment">; instrument number is negative</span>
+<span class="stamnt">i</span> -1.1    3    1    4.00
+<span class="stamnt">i</span> -1.2    4    51    4.04
+<span class="stamnt">i</span> -1.3    5    1    4.07
+<span class="stamnt">i</span> -1.3    6    10    4.09
+	</pre>
+        </div>
+        <p>
+    </p>
+        <div class="refsect2">
+          <a id="idm276013573344"></a>
+          <h3>Special Considerations</h3>
+          <p>
+        The maximum instrument number used to be 200. This has been changed to be limited by memory only (currently there is an internal soft limit of 200; this is automatically extended as required).
+      </p>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013571808"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the i statement. It uses the file <a class="ulink" href="examples/i_statement.csd" target="_top"><em class="citetitle">i_statement.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276013570032"></a>
+          <p class="title">
+            <strong>Example 1185. Example of the i statement.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276399930784"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o i_statement.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">10</span>
+        
+  i<span class="n">cps</span>     <span class="nb">init</span>      <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>                  <span class="c1">; Get target pitch from score event</span>
+  i<span class="n">portime</span> <span class="nb">init</span>      <span class="nb">abs</span><span class="p">(</span><span class="nb">p3</span><span class="p">)</span><span class="o">/</span><span class="mi">7</span>                   <span class="c1">; Portamento time dep on note length</span>
+  i<span class="n">amp0</span>    <span class="nb">init</span>      <span class="nb">p5</span>                          <span class="c1">; Set default amps</span>
+  i<span class="n">amp1</span>    <span class="nb">init</span>      <span class="nb">p5</span>
+  i<span class="n">amp2</span>    <span class="nb">init</span>      <span class="nb">p5</span>
+      
+  i<span class="n">tie</span>     <span class="nb">tival</span>                                 <span class="c1">; Check if this note is tied,</span>
+  <span class="k">if</span> i<span class="n">tie</span>  <span class="o">==</span>  <span class="mi">1</span>     <span class="k">igoto</span> <span class="nl">nofadein</span>              <span class="c1">; if not fade in</span>
+  i<span class="n">amp0</span>    <span class="nb">init</span>      <span class="mi">0</span>
+
+<span class="nl">nofadein</span><span class="p">:</span>
+  <span class="k">if</span> <span class="nb">p3</span>    <span class="o">&lt;</span> <span class="mi">0</span>       <span class="k">igoto</span> <span class="nl">nofadeout</span>             <span class="c1">; Check if this note is held, if not fade out</span>
+  i<span class="n">amp2</span>    <span class="nb">init</span>      <span class="mi">0</span>    
+
+<span class="nl">nofadeout</span><span class="p">:</span>
+  <span class="c1">; Now do amp from the set values:</span>
+  k<span class="n">amp</span>     <span class="nb">linseg</span>    i<span class="n">amp0</span><span class="p">,</span> <span class="mf">.03</span><span class="p">,</span> i<span class="n">amp1</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">p3</span><span class="p">)</span><span class="o">-</span><span class="mf">.03</span><span class="p">,</span> i<span class="n">amp2</span>
+        
+  <span class="c1">; Skip rest of initialization on tied note:</span>
+           <span class="k">tigoto</span>    <span class="nl">tieskip</span>
+
+  k<span class="n">cps</span>     <span class="nb">init</span>      i<span class="n">cps</span>                        <span class="c1">; Init pitch for untied note</span>
+  k<span class="n">cps</span>     <span class="nb">port</span>      i<span class="n">cps</span><span class="p">,</span> i<span class="n">portime</span><span class="p">,</span> i<span class="n">cps</span>        <span class="c1">; Drift towards target pitch</span>
+
+  k<span class="n">pw</span>      <span class="nb">oscil</span>     <span class="mf">.4</span><span class="p">,</span> <span class="nb">rnd</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">rnd</span><span class="p">(</span><span class="mf">.7</span><span class="p">)</span>      <span class="c1">; A simple triangle-saw oscil</span>
+  a<span class="n">r</span>       <span class="nb">vco</span>       k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> k<span class="n">pw</span><span class="o">+</span><span class="mf">.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span>i<span class="n">cps</span>
+        
+  <span class="c1">; (Used in testing - one may set ipch to cpspch(p4+2)</span>
+  <span class="c1">;       and view output spectrum)</span>
+  <span class="c1">;       ar oscil kamp, kcps, 1</span>
+
+          <span class="nb">outs</span>        a<span class="n">r</span><span class="p">,</span> a<span class="n">r</span>
+
+<span class="nl">tieskip</span><span class="p">:</span>                                        <span class="c1">; Skip some initialization on tied note</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span>   <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>            <span class="c1">; Sine</span>
+
+<span class="nb">i</span><span class="mf">10.1</span>    <span class="mi">0</span>    <span class="o">-</span><span class="mi">1</span>    <span class="mf">7.00</span>    <span class="mf">.15</span>
+<span class="nb">i</span><span class="mf">10.2</span>    <span class="mi">0</span>    <span class="o">-</span><span class="mi">1</span>    <span class="mf">7.04</span>
+<span class="nb">i</span><span class="mf">10.3</span>    <span class="mi">0</span>    <span class="o">-</span><span class="mi">1</span>    <span class="mf">7.07</span>
+<span class="nb">i</span><span class="mf">10.1</span>    <span class="mi">1</span>    <span class="o">-</span><span class="mi">1</span>    <span class="mf">8.00</span>  
+<span class="nb">i</span><span class="mf">10.2</span>    <span class="mi">1</span>    <span class="o">-</span><span class="mi">1</span>    <span class="mf">8.04</span>
+<span class="nb">i</span><span class="mf">10.3</span>    <span class="mi">1</span>    <span class="o">-</span><span class="mi">1</span>    <span class="mf">8.07</span>
+<span class="nb">i</span><span class="mf">10.1</span>    <span class="mi">2</span>     <span class="mi">1</span>    <span class="mf">7.11</span>  
+<span class="nb">i</span><span class="mf">10.2</span>    <span class="mi">2</span>     <span class="mi">1</span>    <span class="mf">8.04</span>  
+<span class="nb">i</span><span class="mf">10.3</span>    <span class="mi">2</span>     <span class="mi">1</span>    <span class="mf">8.07</span>
+  <span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276013568272"></a>
+        <h2>Credits</h2>
+        <p>
+      Additional text (Csound Version 4.07) explaining tied notes, edited by Rasmus Ekman from a note by David Kirsh, posted to the Csound mailing list. Example instrument by Rasmus Ekman.
+    </p>
+        <p>
+      Updated August 2002 thanks to a note from Rasmus Ekman. There is no longer a hard limit of 200 instruments.
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="f.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="m.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">f Statement (or Function Table Statement) </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> m Statement (Mark Statement)</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

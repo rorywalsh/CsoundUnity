@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>wiisend</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="wiirange.html" title="wiirange" />
+    <link rel="next" href="window.html" title="window" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">wiisend</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="wiirange.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="window.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="wiisend"></a>
+      <div class="titlepage"></div>
+      <a id="Indexwiisend" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">wiisend</span>
+        </h2>
+        <p>wiisend — 
+      Sends data to one of a number of external Nintendo Wiimote controllers.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035961968"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in wiimote.</p>
+        <p>
+      Sends data to one of a number of external Nintendo Wiimote controllers.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035960288"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>wiisend</strong></span> kcontrol, kvalue[, knum]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035958192"></a>
+        <h2>Initialization</h2>
+        <p>
+      This opcode must be used in conjuction with
+      a running <span class="emphasis"><em>wiiconnect</em></span> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035956528"></a>
+        <h2>Performance</h2>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+       Please note that these opcodes are currently only supported on
+       Linux.
+     </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+     <span class="emphasis"><em>kcontrol</em></span> -- the code for which control to write.
+   </p>
+        <p>
+     <span class="emphasis"><em>kvalue</em></span> -- the value to write to the control.
+   </p>
+        <p>
+     <span class="emphasis"><em>knum</em></span> -- the number of the which Wiimote to
+     access, which defaults to the first one (zero).
+   </p>
+        <p>
+     On each access a particular data item of the Wiimote is written.
+     The currently implemented controls are given below, together with
+     the macro name defined in the file <span class="emphasis"><em>wii_mac</em></span>:
+   </p>
+        <p>
+     3 (WII_RUMBLE): starts or stops the Wiimote rumbling, depending
+     on the value of <span class="emphasis"><em>kvalue</em></span> (0 to stop, 1 to start).
+   </p>
+        <p>
+     4 (WII_SET_LEDS): set the four LED lights on the Wiimote to the
+     binary representation of <span class="emphasis"><em>kvalue</em></span>.
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035949520"></a>
+        <h2>Examples</h2>
+        <p>
+      See the example for <a class="link" href="wiiconnect.html" title="wiiconnect"><em class="citetitle">wiiconnect</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035947440"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="wiiconnect.html" title="wiiconnect"><em class="citetitle">wiiconnect</em></a>,
+      <a class="link" href="wiidata.html" title="wiidata"><em class="citetitle">wiidata</em></a>,
+      <a class="link" href="wiirange.html" title="wiirange"><em class="citetitle">wiirange</em></a>,
+     </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035943632"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>Codemist Ltd</td>
+          </tr>
+          <tr>
+            <td>2009</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.11</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="wiirange.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="window.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">wiirange </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> window</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

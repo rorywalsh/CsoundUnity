@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tabplay</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tabmorphi.html" title="tabmorphi" />
+    <link rel="next" href="tabrec.html" title="tabrec" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tabplay</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tabmorphi.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tabrec.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tabplay"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTabPlay" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tabplay</span>
+        </h2>
+        <p>tabplay — 
+      Playing-back control signals.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047081440"></a>
+        <h2>Description</h2>
+        <p>
+      Plays-back control-rate signals on trigger-temporization basis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047080192"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>tabplay</strong></span>  ktrig, knumtics, kfn, kout1 [,kout2,..., koutN]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047077808"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> -- starts playing when non-zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>knumtics</em></span> -- stop recording or reset playing
+    pointer to zero when the number of tics defined by this argument
+    is reached.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfn</em></span> -- table where k-rate signals are recorded.
+    </p>
+        <p>
+      <span class="emphasis"><em>kout1,...,koutN</em></span> -- playback output signals.
+    </p>
+        <p>
+      The <span class="emphasis"><em>tabplay</em></span> and <a class="link" href="tabrec.html" title="tabrec"><em class="citetitle">tabrec</em></a>
+      opcodes allow to record/playback control signals on
+      trigger-temporization basis.
+    </p>
+        <p>
+      <span class="emphasis"><em>tabplay</em></span> plays back a group of k-rate
+      signals, previously recorded by tabrec into a table. Each time
+      ktrig argument is triggered, an internal counter is increased of
+      one unit. After knumtics trigger impluses are received by ktrig
+      argument, the internal counter is zeroed and playback is
+      restarted from the beginning, in looping style.
+   </p>
+        <p>
+     These opcodes can be used like a  sort of ``middle-term'' memory
+     that ``remembers'' generated signals. Such memory can be used to
+     supply generative music with a coherent iterative compositional structure.
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047070112"></a>
+        <h2>Examples</h2>
+        <p>For an examle of use see the example in the <a class="link" href="tabrec.html" title="tabrec"><em class="citetitle">tabrec</em></a>
+    opcode.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047068016"></a>
+        <h2>See Also</h2>
+        <p>
+          <a class="link" href="tabrec.html" title="tabrec">
+            <em class="citetitle">tabrec</em>
+          </a>
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047066240"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tabmorphi.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tabrec.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tabmorphi </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tabrec</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

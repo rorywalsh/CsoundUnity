@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>resonr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="resonk.html" title="resonk" />
+    <link rel="next" href="resonx.html" title="resonx" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">resonr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="resonk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="resonx.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="resonr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexResonr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">resonr</span>
+        </h2>
+        <p>resonr — 
+      A bandpass filter with variable frequency response.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061887104"></a>
+        <h2>Description</h2>
+        <p>
+      Implementations of a second-order, two-pole two-zero bandpass filter with variable frequency response.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061885680"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>resonr</strong></span> asig, xcf, xbw [, iscl] [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061883552"></a>
+        <h2>Initialization</h2>
+        <p>
+      The optional initialization variables for <span class="emphasis"><em>resonr</em></span> are identical to the i-time variables for <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em>iscl</em></span> (optional, default=0) -- coded scaling factor for resonators. A value of 1 signifies a peak response factor of 1, i.e.  all frequencies other than <span class="emphasis"><em>kcf</em></span> are attenuated in accordance with the (normalized) response curve. A value of 2 raises the response factor so that its overall RMS value equals 1. This intended equalization of input and output power assumes all frequencies are physically present; hence it is most applicable to white noise. A zero value signifies no scaling of the signal, leaving that to some later adjustment (see <a class="link" href="balance.html" title="balance"><em class="citetitle">balance</em></a>). The default value is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of internal data space. Since filtering incorporates a feedback loop of previous output, the initial status of the storage space used is significant. A zero value will clear the space; a non-zero value will allow previous information to remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061876864"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- input signal to be filtered
+    </p>
+        <p>
+      <span class="emphasis"><em>xcf</em></span> -- cutoff or resonant frequency of the filter, measured in Hz
+    </p>
+        <p>
+      <span class="emphasis"><em>xbw</em></span> -- bandwidth of the filter (the Hz difference between the upper and lower half-power points)
+    </p>
+        <p>
+      <span class="emphasis"><em>resonr</em></span> and <span class="emphasis"><em>resonz</em></span> are variations of the classic two-pole bandpass resonator (<a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>). Both filters have two zeroes in their transfer functions, in addition to the two poles. <span class="emphasis"><em>resonz</em></span> has its zeroes located at z = 1 and z = -1. <span class="emphasis"><em>resonr</em></span> has its zeroes located at +sqrt(<span class="emphasis"><em>R</em></span>) and -sqrt(<span class="emphasis"><em>R</em></span>), where <span class="emphasis"><em>R</em></span> is the radius of the poles in the complex z-plane. The addition of zeroes to <span class="emphasis"><em>resonr</em></span> and <span class="emphasis"><em>resonz</em></span> results in the improved selectivity of the magnitude response of these filters at cutoff frequencies close to 0, at the expense of less selectivity of frequencies above the cutoff peak.
+    </p>
+        <p>
+      <span class="emphasis"><em>resonr</em></span> and <span class="emphasis"><em>resonz</em></span> are very close to constant-gain as the center frequency is swept, resulting in a more efficient control of the magnitude response than with traditional two-pole resonators such as <span class="emphasis"><em>reson</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>resonr</em></span> and <span class="emphasis"><em>resonz</em></span> produce a sound that is considerably different from <span class="emphasis"><em>reson</em></span>, especially for lower center frequencies; trial and error is the best way of determining which resonator is best suited for a particular application.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061863856"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the resonr and resonz opcodes. It uses the file <a class="ulink" href="examples/resonr.csd" target="_top"><em class="citetitle">resonr.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276061862048"></a>
+          <p class="title">
+            <strong>Example 843. Example of the resonr and resonz opcodes.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276468730064"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o resonr.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/* Written by Sean Costello */</span>
+ <span class="c1">; Orchestra file for resonant filter sweep of a sawtooth-like waveform. </span>
+  <span class="c1">; The outputs of reson, resonr, and resonz are scaled by coefficients</span>
+  <span class="c1">; specified in the score, so that each filter can be heard on its own</span>
+  <span class="c1">; from the same instrument.</span>
+
+  <span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+  <span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+  <span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+  <span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+  
+<span class="kd">instr</span> <span class="nf">1</span>
+  
+  i<span class="n">dur</span>     <span class="o">=</span>        <span class="nb">p3</span>
+  i<span class="n">begfreq</span> <span class="o">=</span>        <span class="nb">p4</span>                              <span class="c1">; beginning of sweep frequency</span>
+  i<span class="n">endfreq</span> <span class="o">=</span>        <span class="nb">p5</span>                              <span class="c1">; ending of sweep frequency</span>
+  i<span class="n">bw</span>      <span class="o">=</span>        <span class="nb">p6</span>                              <span class="c1">; bandwidth of filters in Hz</span>
+  i<span class="n">freq</span>    <span class="o">=</span>        <span class="nb">p7</span>                              <span class="c1">; frequency of gbuzz that is to be filtered</span>
+  i<span class="n">amp</span>     <span class="o">=</span>        <span class="nb">p8</span>                              <span class="c1">; amplitude to scale output by</span>
+  i<span class="n">res</span>     <span class="o">=</span>        <span class="nb">p9</span>                              <span class="c1">; coefficient to scale amount of reson in output</span>
+  i<span class="n">resr</span>    <span class="o">=</span>        <span class="nb">p10</span>                             <span class="c1">; coefficient to scale amount of resonr in output</span>
+  i<span class="n">resz</span>    <span class="o">=</span>        <span class="nb">p11</span>                             <span class="c1">; coefficient to scale amount of resonz in output</span>
+  
+ <span class="c1">; Frequency envelope for reson cutoff</span>
+  k<span class="n">freq</span>    <span class="nb">linseg</span> i<span class="n">begfreq</span><span class="p">,</span> i<span class="n">dur</span> <span class="o">*</span> <span class="mf">.5</span><span class="p">,</span> i<span class="n">endfreq</span><span class="p">,</span> i<span class="n">dur</span> <span class="o">*</span> <span class="mf">.5</span><span class="p">,</span> i<span class="n">begfreq</span>
+  
+ <span class="c1">; Amplitude envelope to prevent clicking</span>
+  k<span class="n">env</span>     <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">dur</span> <span class="o">-</span> <span class="mf">.2</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mi">0</span>
+  
+ <span class="c1">; Number of harmonics for gbuzz scaled to avoid aliasing</span>
+  i<span class="n">harms</span>   <span class="o">=</span>        <span class="p">(</span><span class="vg">sr</span><span class="o">*</span><span class="mf">.4</span><span class="p">)</span><span class="o">/</span>i<span class="n">freq</span>
+  
+  a<span class="n">sig</span>     <span class="nb">gbuzz</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">freq</span><span class="p">,</span> i<span class="n">harms</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.9</span><span class="p">,</span> <span class="mi">1</span>      <span class="c1">; "Sawtooth" waveform</span>
+  a<span class="n">in</span>      <span class="o">=</span>        k<span class="n">env</span> <span class="o">*</span> a<span class="n">sig</span>                     <span class="c1">; output scaled by amp envelope</span>
+  a<span class="n">res</span>     <span class="nb">reson</span> a<span class="n">in</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> i<span class="n">bw</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">resr</span>    <span class="nb">resonr</span> a<span class="n">in</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> i<span class="n">bw</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">resz</span>    <span class="nb">resonz</span> a<span class="n">in</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> i<span class="n">bw</span><span class="p">,</span> <span class="mi">1</span>
+  
+           <span class="nb">out</span> a<span class="n">res</span> <span class="o">*</span> i<span class="n">res</span> <span class="o">+</span> a<span class="n">resr</span> <span class="o">*</span> i<span class="n">resr</span> <span class="o">+</span> a<span class="n">resz</span> <span class="o">*</span> i<span class="n">resz</span>
+  
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="cm">/* Written by Sean Costello */</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">9</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mf">.25</span>                               <span class="c1">; cosine table for gbuzz generator</span>
+  
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">3000</span> <span class="mi">200</span> <span class="mi">100</span> <span class="mi">4000</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span>                <span class="c1">; reson  output with bw = 200</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">10</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">3000</span> <span class="mi">200</span> <span class="mi">100</span> <span class="mi">4000</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span>                <span class="c1">; resonr output with bw = 200</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">20</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">3000</span> <span class="mi">200</span> <span class="mi">100</span> <span class="mi">4000</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span>                <span class="c1">; resonz output with bw = 200</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">30</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">3000</span>  <span class="mi">50</span> <span class="mi">200</span> <span class="mi">8000</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span>                <span class="c1">; reson  output with bw = 50</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">40</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">3000</span>  <span class="mi">50</span> <span class="mi">200</span> <span class="mi">8000</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span>                <span class="c1">; resonr output with bw = 50</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">50</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">3000</span>  <span class="mi">50</span> <span class="mi">200</span> <span class="mi">8000</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span>                <span class="c1">; resonz output with bw = 50</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061858000"></a>
+        <h2>Technical History</h2>
+        <p>
+      <span class="emphasis"><em>resonr</em></span> and <span class="emphasis"><em>resonz</em></span> were originally described in an article by Julius O. Smith and James B. Angell.<sup>1</sup> Smith and Angell recommended the <span class="emphasis"><em>resonz</em></span> form (zeros at +1 and -1) when computational efficiency was the main concern, as it has one less multiply per sample, while <span class="emphasis"><em>resonr</em></span> (zeroes at + and - the square root of the pole radius R) was recommended for situations when a perfectly constant-gain center peak was required.
+    </p>
+        <p>
+      Ken Steiglitz, in a later article <sup>2</sup>, demonstrated that <span class="emphasis"><em>resonz</em></span> had constant gain at the true peak of the filter, as opposed to <span class="emphasis"><em>resonr</em></span>, which displayed constant gain at the pole angle. Steiglitz also recommended <span class="emphasis"><em>resonz</em></span> for its sharper notches in the gain curve at zero and Nyquist frequency. Steiglitz's recent book <sup>3</sup> features a thorough technical discussion of <span class="emphasis"><em>reson</em></span> and <span class="emphasis"><em>resonz</em></span>, while Dodge and Jerse's textbook <sup>4</sup> illustrates the differences in the response curves of <span class="emphasis"><em>reson</em></span> and <span class="emphasis"><em>resonz</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061849312"></a>
+        <h2>References</h2>
+        <p>
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>
+            Smith, Julius O. and Angell, James B., "A Constant-Gain Resonator Tuned by a Single Coefficient," <span class="emphasis"><em>Computer Music Journal</em></span>, vol. 6, no. 4, pp. 36-39, Winter 1982.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Steiglitz, Ken, "A Note on Constant-Gain Digital Resonators," <span class="emphasis"><em>Computer Music Journal</em></span>, vol. 18, no. 4, pp. 8-10, Winter 1994.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Ken Steiglitz, <span class="emphasis"><em>A Digital Signal Processing Primer, with Applications to Digital Audio and Computer Music</em></span>. Addison-Wesley Publishing Company, Menlo Park, CA, 1996.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Dodge, Charles and Jerse, Thomas A., <span class="emphasis"><em>Computer Music: Synthesis, Composition, and Performance</em></span>. New York: Schirmer Books, 1997, 2nd edition, pp. 211-214.
+          </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061841216"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="resonz.html" title="resonz"><em class="citetitle">resonz</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276061839168"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Sean Costello</td>
+          </tr>
+          <tr>
+            <td>Seattle, Washington</td>
+          </tr>
+          <tr>
+            <td>1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.55</p>
+        <p>Audio rate parameters introduced in version 6.02</p>
+        <p>November 2013.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="resonk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="resonx.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">resonk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> resonx</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

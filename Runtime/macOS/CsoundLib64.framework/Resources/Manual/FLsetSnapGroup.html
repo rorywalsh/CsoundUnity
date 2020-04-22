@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLsetSnapGroup</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLsetsnap.html" title="FLsetsnap" />
+    <link rel="next" href="FLsetText.html" title="FLsetText" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLsetSnapGroup</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLsetsnap.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLsetText.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLsetSnapGroup"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLsetSnapGroup" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLsetSnapGroup</span>
+        </h2>
+        <p>FLsetSnapGroup — 
+      Determines the snapshot group for FL valuators.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107515136"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLsetSnapGroup</em></span> determines the snapshot group of valuators declared after it.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107513488"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>FLsetSnapGroup</strong></span> igroup</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107511552"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>igroup</em></span> -- (optional) an integer number referring to a snapshot-related group of widget. It allows to get/set, or to load/save the state of a subset of valuators.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The <span class="emphasis"><em>igroup</em></span> parameter has not been yet fully implemented in the current version of csound. Please do not rely on it yet.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107508496"></a>
+        <h2>Performance</h2>
+        <p>
+      For purposes of snapshot saving, widgets can be grouped, so that snapshots affect only a defined group of widgets. The opcode <span class="emphasis"><em>FLsetSnapGroup</em></span> is used to specify the group for all widgets declared after it, until the next <span class="emphasis"><em>FLsetSnapGroup</em></span> statement.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLsetSnapGroup</em></span> determines the snapshot group of a declared valuator. To make a valuator belong to a stated group, you have to place <span class="emphasis"><em>FLsetSnapGroup</em></span> just before the declaration of the widget itself. The group stated by <span class="emphasis"><em>FLsetSnapGroup</em></span> lasts for all valuators declared after it, until a new <span class="emphasis"><em>FLsetSnapGroup</em></span> statement with a different group is encountered. If no <span class="emphasis"><em>FLsetSnapGroup</em></span> statement are present in an orchestra, the default group for all widgets will be group zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107503456"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLgetsnap.html" title="FLgetsnap"><em class="citetitle">FLgetsnap</em></a>,
+      <a class="link" href="FLsetsnap.html" title="FLsetsnap"><em class="citetitle">FLsetsnap</em></a>,
+      <a class="link" href="FLloadsnap.html" title="FLloadsnap"><em class="citetitle">FLloadsnap</em></a>,
+      <a class="link" href="FLsavesnap.html" title="FLsavesnap"><em class="citetitle">FLsavesnap</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107498784"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLsetsnap.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLsetText.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLsetsnap </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLsetText</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

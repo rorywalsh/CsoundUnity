@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN07</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN06.html" title="GEN06" />
+    <link rel="next" href="GEN08.html" title="GEN08" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN07</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN06.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN08.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN07"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN07" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN07</span>
+        </h2>
+        <p>GEN07 — 
+      Constructs functions from segments of straight lines.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989467808"></a>
+        <h2>Description</h2>
+        <p>
+      Constructs functions from segments of straight lines.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989466480"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span>  #    time    size   7   a   n1   b   n2   c  ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989464496"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size </em></span> -- number of points in the table. Must be a power of 2 or power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>a, b, c,</em></span> etc. -- ordinate values, in odd-numbered pfields p5, p7, p9, . . .
+    </p>
+        <p>
+      <span class="emphasis"><em>n1, n2</em></span>, etc. -- length of segment (no. of storage locations), in even-numbered pfields. Cannot be negative, but a zero is meaningful for specifying discontinuous waveforms (e.g. in the example below). The sum <span class="emphasis"><em>n1</em></span> + <span class="emphasis"><em>n2</em></span> + .... will normally equal <span class="emphasis"><em>size</em></span> for fully specified functions. If the sum is smaller, the function locations not included will be set to zero; if the sum is greater, only the first <span class="emphasis"><em>size</em></span> locations will be stored.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>
+              If p4 is positive, functions are post-normalized (rescaled to a maximum absolute value of 1 after generation). A negative p4 will cause rescaling to be skipped.
+            </p>
+                    </li>
+                    <li class="listitem">
+                      <p>
+              Discrete-point linear interpolation implies an increase or decrease along a segment by equal differences between adjacent locations; exponential interpolation implies that the progression is by equal ratio. In both forms the interpolation from <span class="emphasis"><em>a</em></span> to <span class="emphasis"><em>b</em></span> is such as to assume that the value <span class="emphasis"><em>b</em></span> will be attained in the n + 1th location. For discontinuous functions, and for the segment encompassing the end location, this value will not actually be reached, although it may eventually appear as a result of final scaling.
+            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989452672"></a>
+        <h2>Examples</h2>
+        <p>
+	    Here is an example of the GEN07 routine. It uses the files <a class="ulink" href="examples/gen07.csd" target="_top"><em class="citetitle">gen07.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275989450864"></a>
+          <p class="title">
+            <strong>Example 1203. An example of the GEN07 routine.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276399254912"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen07.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;use GEN07 to alter frequency</span>
+
+i<span class="n">fn</span>  <span class="o">=</span> <span class="nb">p4</span>						<span class="c1">;use different GEN07 tables</span>
+k<span class="n">cps</span> <span class="nb">init</span> <span class="mi">10</span><span class="o">/</span><span class="nb">p3</span>						<span class="c1">;index ftable 10 times over the duration of entire note</span>
+k<span class="n">ndx</span> <span class="nb">phasor</span> k<span class="n">cps</span>
+i<span class="n">xmode</span> <span class="o">=</span> <span class="mi">1</span>						<span class="c1">;normalize index data</span>
+k<span class="n">frq</span> <span class="nb">tablei</span> k<span class="n">ndx</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">xmode</span>
+k<span class="n">frq</span> <span class="o">=</span> k<span class="n">frq</span><span class="o">*</span><span class="mi">1000</span>					<span class="c1">;scale</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> <span class="mf">.8</span><span class="p">,</span> <span class="mi">1220</span><span class="o">+</span>k<span class="n">frq</span><span class="p">,</span> <span class="mi">1</span>				<span class="c1">;add to frequency</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+  
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>				<span class="c1">;sine wave</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">7</span> <span class="mi">0</span> <span class="mi">512</span> <span class="mi">1</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">512</span> <span class="mi">0</span>		<span class="c1">;sawtooth up and down</span>
+<span class="nb">f</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">7</span> <span class="mi">1</span> <span class="mi">512</span> <span class="mi">1</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">512</span> <span class="o">-</span><span class="mi">1</span>	<span class="c1">;square</span>
+<span class="nb">f</span> <span class="mi">4</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">7</span> <span class="mi">1</span> <span class="mi">1024</span> <span class="o">-</span><span class="mi">1</span> 			<span class="c1">;saw down</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mi">3</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="mi">4</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+        <span class="phrase">These are the diagrams of the waveforms of the GEN07 routines, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen07_1.png" alt="f 2 0 1024 7 0 512 1 0 -1 512 0 - sawtooth up and down, starting and ending at 0" />
+          <div class="caption">
+            <p>f 2 0 1024 7 0 512 1 0 -1 512 0 - sawtooth up and down, starting and ending at 0</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen07_2.png" alt="f 3 0 1024 7 1 512 1 0 -1 512 -1 - a square from positive to negative" />
+          <div class="caption">
+            <p>f 3 0 1024 7 1 512 1 0 -1 512 -1 - a square from positive to negative</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen07_3.png" alt="f 4 0 1024 7 1 1024 -1 - sawtooth down, a straight line from positive to negative" />
+          <div class="caption">
+            <p>f 4 0 1024 7 1 1024 -1 - sawtooth down, a straight line from positive to negative</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989438384"></a>
+        <h2>See Also</h2>
+        <p>
+       <a class="link" href="GEN05.html" title="GEN05"><em class="citetitle">GEN05</em></a>,
+       <a class="link" href="GEN06.html" title="GEN06"><em class="citetitle">GEN06</em></a>, and
+       <a class="link" href="GEN08.html" title="GEN08"><em class="citetitle">GEN08</em></a>
+     </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN06.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN08.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN06 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN08</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

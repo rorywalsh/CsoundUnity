@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Syntax of the Orchestra</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartOverview.html" title="Part I. Overview" />
+    <link rel="prev" href="Configuring.html" title="Configuring" />
+    <link rel="next" href="OrchIblock.html" title="Instrument and Opcode Block Statements" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Syntax of the Orchestra</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="Configuring.html">Prev</a> </td>
+          <th width="60%" align="center">Part I. Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OrchIblock.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="OrchTop"></a>Syntax of the Orchestra</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    The Csound orchestra (.orc) or the <span class="emphasis"><em>&lt;CsInstruments&gt;</em></span> section of a csd file, contains:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>A <a class="link" href="OrchTop.html#OrchHeader" title="Orchestra Header Statements"><em class="citetitle">header section</em></a>, which specifies global options for instrument performance</p>
+          </li>
+          <li class="listitem">
+            <p>A list of <a class="link" href="OrchUDO.html" title="User Defined Opcodes (UDO)"><em class="citetitle">User defined opcodes</em></a> and <a class="link" href="OrchIblock.html" title="Instrument and Opcode Block Statements"><em class="citetitle">instrument blocks</em></a> containing UDO and instrument definitions.</p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    The orchestra header, instrument blocks, and UDOs contain <span class="emphasis"><em>Orchestra statements</em></span>. An <span class="emphasis"><em>orchestra statement</em></span> in Csound has the format:
+
+    </p>
+      <pre class="synopsis">
+      label:   <span class="returnvalue">result</span> <code class="function">opcode</code> <em class="parameter"><code>argument1</code></em>, <em class="parameter"><code>argument2</code></em>, <em class="parameter"><code>...</code></em> ;comments
+    </pre>
+      <p>
+  </p>
+      <p>
+    The label is optional and identifies the basic statement that follows as the potential target of a go-to operation (see <a class="link" href="ControlPgmctl.html" title="Program Flow Control"><em class="citetitle">Program Flow Control</em></a>). A label has no effect on the statement per se.
+  </p>
+      <p>
+    Depending on their function, some opcodes produce no output, so they have no result value. Others take no arguments and only produce a result.
+  </p>
+      <p>
+    Every orchestra statement must be on a single line, however long lines can be wrapped to a new line using the '\' character. This character indicates that the next line is part of the current one, this way you can split a line for easier reading, like this:
+    </p>
+      <pre class="programlisting">
+a2  <span class="opc">oscbnk</span> kcps, 1.0, kfmd1, 0.0, 40, 203, 0.1, 0.2, kamfr, kamfr2, 148,  \
+           0, 0, 0, 0, 0, 0, -1,                                          \
+           kfnum, 3, 4</pre>
+      <p>
+  </p>
+      <p>
+     Comments are optional and are for the purpose of letting the user
+     document his orchestra code. Comments begin with a semicolon (;)
+     or // and extend to the end of the line. Comments can optionally be in C-style, spanning multiple lines like this:
+     </p>
+      <pre class="programlisting">
+<span class="comment">/* Anything in here --------
+   is a comment which can span
+   several lines ---------  */</span></pre>
+      <p>
+  </p>
+      <p>
+    The remainder (result, opcode, and arguments) form the basic statement. This also is optional, i.e. a line may have only a label or comment or be entirely blank. If present, the basic statement must be complete on one line, and is terminated by a carriage return and line feed.
+  </p>
+      <p>
+    The opcode determines the operation to be performed; it usually takes some number of input values (or arguments, with a maximum value of about 800); and it usually has a result field variable to which it sends output values at some fixed rate. There are four possible rates:
+    </p>
+      <div class="orderedlist">
+        <ol class="orderedlist" type="1">
+          <li class="listitem">
+            <p>once only, at orchestra setup time (effectively a permanent assignment)</p>
+          </li>
+          <li class="listitem">
+            <p>once at the beginning of each note (at initialization (init) time: i-rate)</p>
+          </li>
+          <li class="listitem">
+            <p>once every performance-time control loop (perf-time control rate, or k-rate)</p>
+          </li>
+          <li class="listitem">
+            <p>once each sound sample of every control loop (perf-time audio rate, or a-rate)</p>
+          </li>
+        </ol>
+      </div>
+      <p>
+  </p>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="OrchHeader"></a>Orchestra Header Statements</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+    The <span class="emphasis"><em>Orchestra Header</em></span> contains global information that applies to all instruments and defines aspects of Csound output. It is sometimes referred to as <span class="emphasis"><em>instr 0</em></span>, because it behaves as an instrument, but without k- or a-rate processing (i.e. only opcodes and instructions that work at i-rate are allowed). 
+  </p>
+        <p>
+    An <span class="emphasis"><em>orchestra header statement</em></span> operates once only, at orchestra setup time. It is most commonly an assignment of some value to a <span class="emphasis"><em>global reserved symbol</em></span> , e.g. sr = 20000. All orchestra header statements belong to a pseudo instrument 0, an <span class="emphasis"><em>init</em></span> pass of which is run prior to all other instruments at score time 0. Any <span class="emphasis"><em>ordinary statement</em></span> can serve as an orchestra header statement, eg. gifreq = cpspch(8.09) provided it is an init-time only operation. Statements that are normally placed in an orchestra header are:
+    </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+                <a class="link" href="Zerodbfs.html" title="0dbfs">
+                  <em class="citetitle">0dbfs</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="A4.html" title="A4">
+                  <em class="citetitle">A4</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="ctrlinit.html" title="ctrlinit">
+                  <em class="citetitle">ctrlinit</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="ftgen.html" title="ftgen">
+                  <em class="citetitle">ftgen</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="kr.html" title="kr">
+                  <em class="citetitle">kr</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="ksmps.html" title="ksmps">
+                  <em class="citetitle">ksmps</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="massign.html" title="massign">
+                  <em class="citetitle">massign</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="nchnls.html" title="nchnls">
+                  <em class="citetitle">nchnls</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="pgmassign.html" title="pgmassign">
+                  <em class="citetitle">pgmassign</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="pset.html" title="pset">
+                  <em class="citetitle">pset</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="seed.html" title="seed">
+                  <em class="citetitle">seed</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="sr.html" title="sr">
+                  <em class="citetitle">sr</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="strset.html" title="strset">
+                  <em class="citetitle">strset</em>
+                </a>
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    For example, a Csound header may look like:
+    </p>
+        <pre class="programlisting">
+xx<span class="ohdr">sr</span> = 44100
+<span class="ohdr">kr</span> = 4410
+<span class="ohdr">ksmps</span> = 10
+<span class="ohdr">nchnls</span> = 2
+<span class="ohdr">0dbfs</span> = 1
+
+<span class="ohdr">massign</span> 1, 10</pre>
+        <p>
+  </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="Configuring.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartOverview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OrchIblock.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Configuring </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Instrument and Opcode Block Statements</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

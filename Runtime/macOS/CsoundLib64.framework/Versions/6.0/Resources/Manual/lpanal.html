@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lpanal</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilitySoundfile.html#UtilityAnalysis" title="Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL)" />
+    <link rel="prev" href="hetro.html" title="hetro" />
+    <link rel="next" href="pvanal.html" title="pvanal" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lpanal</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="hetro.html">Prev</a> </td>
+          <th width="60%" align="center">Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvanal.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lpanal"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lpanal</span>
+        </h2>
+        <p>lpanal — 
+      Performs both linear predictive and pitch-tracking analysis on a soundfile.
+      <a id="IndexLpanal" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275985150576"></a>
+        <h2>Description</h2>
+        <p>
+	    Linear predictive analysis for the Csound <a class="link" href="SpectralLpcresyn.html" title="Linear Predictive Coding (LPC) Resynthesis"><em class="citetitle">Linear Predictive Coding (LPC) Resynthesis</em></a> opcodes. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275985148368"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>csound -U lpanal</strong></span> [flags] infilename outfilename</pre>
+        <pre class="synopsis"><span class="command"><strong>lpanal</strong></span> [flags] infilename outfilename</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275985145264"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>lpanal</em></span> performs both lpc and pitch-tracking analysis on a soundfile to produce a time-ordered sequence of <span class="emphasis"><em>frames</em></span> of control information suitable for Csound resynthesis. Analysis is conditioned by the control flags below. A space is optional between the flag and its value.
+    </p>
+        <p>
+      <span class="emphasis"><em>-a</em></span> -- [alternate storage] asks lpanal to write a file with filter poles values rather than the usual filter coefficient files. When <span class="emphasis"><em>lpread</em></span> / <span class="emphasis"><em>lpreson</em></span> are used with pole files, automatic stabilization is performed and the filter should not get wild. (This is the default in the Windows GUI) - Changed by Marc Resibois.
+    </p>
+        <p>
+      <span class="emphasis"><em>-s srate</em></span> -- sampling rate of the audio input file. This will over-ride the srate of the soundfile header, which otherwise applies. If neither is present, the default is 10000.
+    </p>
+        <p>
+      <span class="emphasis"><em>-c channel</em></span> -- channel number sought. The default is 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>-b begin</em></span> -- beginning time (in seconds) of the audio segment to be analyzed. The default is 0.0
+    </p>
+        <p>
+      <span class="emphasis"><em>-d duration</em></span> -- duration (in seconds) of the audio segment to be analyzed. The default of 0.0 means to the end of the file.
+    </p>
+        <p>
+      <span class="emphasis"><em>-p npoles</em></span> -- number of poles for analysis. The default is 34, the maximum 50.
+    </p>
+        <p>
+      <span class="emphasis"><em>-h hopsize</em></span> -- hop size (in samples) between frames of analysis. This determines the number of frames per second (srate / hopsize) in the output control file. The analysis framesize is hopsize * 2 samples. The default is 200, the maximum 500.
+    </p>
+        <p>
+      <span class="emphasis"><em>-C string</em></span> -- text for the comments field of the lpfile header. The default is the null string.
+    </p>
+        <p>
+      <span class="emphasis"><em>-P mincps</em></span> -- lowest frequency (in Hz) of pitch tracking. -P0 means no pitch tracking.
+    </p>
+        <p>
+      <span class="emphasis"><em>-Q maxcps</em></span> -- highest frequency (in Hz) of pitch tracking. The narrower the pitch range, the more accurate the pitch estimate. The defaults are -P70, -Q200.
+    </p>
+        <p>
+      <span class="emphasis"><em>-v verbosity</em></span> -- level of terminal information during analysis. 
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 = none</p>
+            </li>
+            <li class="listitem">
+              <p>1 = verbose</p>
+            </li>
+            <li class="listitem">
+              <p>2 = debug</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+      The default is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>-X</em></span> -- write machine independent format
+      analysis file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275985129248"></a>
+        <h2>Examples</h2>
+        <p>
+
+        </p>
+        <pre class="programlisting">
+<span class="emphasis"><em>lpanal</em></span> -a -p26 -d2.5 -P100 -Q400 audiofile.test lpfil22</pre>
+        <p>
+
+
+      will analyze the first 2.5 seconds of file "audiofile.test", producing srate/200 frames per second, each containing 26-pole filter coefficients and a pitch estimate between 100 and 400 Hertz. Stabilized (<span class="emphasis"><em>-a</em></span>) output will be placed in "lpfil22" in the current directory.
+    </p>
+        <div class="refsect2">
+          <a id="idm275985125392"></a>
+          <h3>File Format </h3>
+          <p>
+        Output is a file comprised of an identifiable header plus a set of frames of floating point analysis data. Each frame contains four values of pitch and gain information, followed by <span class="emphasis"><em>npoles</em></span> filter coefficients. The file is readable by Csound's <a class="link" href="lpread.html" title="lpread"><em class="citetitle">lpread</em></a>.
+      </p>
+          <p>
+        <span class="emphasis"><em>lpanal</em></span> is an extensive modification of Paul Lanksy's lpc analysis programs.
+      </p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="hetro.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilitySoundfile.html#UtilityAnalysis">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvanal.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">hetro </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvanal</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

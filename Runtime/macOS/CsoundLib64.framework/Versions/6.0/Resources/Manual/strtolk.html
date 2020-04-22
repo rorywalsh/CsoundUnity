@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>strtolk</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="strtol.html" title="strtol" />
+    <link rel="next" href="strupper.html" title="strupper" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">strtolk</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="strtol.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="strupper.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="strtolk"></a>
+      <div class="titlepage"></div>
+      <a id="Indexstrtolk" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">strtolk</span>
+        </h2>
+        <p>strtolk — 
+      Converts a string to a signed integer (k-rate).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049869024"></a>
+        <h2>Description</h2>
+        <p> Convert a string to a signed integer value at i- or k-rate. It is also possible to pass an strset index or a string p-field from the score instead of a string
+    argument. If the string cannot be parsed as an integer number, an init or perf error occurs and the instrument is deactivated.
+    
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>If a k-rate index variable is used, it should be
+        valid at i-time as well.
+        </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049866288"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kr <span class="command"><strong>strtolk</strong></span> Sstr</pre>
+        <pre class="synopsis">kr <span class="command"><strong>strtolk</strong></span> kndx</pre>
+        <p> strtolk can parse numbers in decimal, octal (prefixed by 0), and
+    hexadecimal (with a prefix of 0x) format.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049862448"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kr</em></span> -- Value of string as signed integer.
+    </p>
+        <p>
+      <span class="emphasis"><em>Sstr</em></span> -- String to convert.
+    </p>
+        <p>
+      <span class="emphasis"><em>indx</em></span> -- index of string set by strset
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049858928"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="strtol.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="strupper.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">strtol </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> strupper</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

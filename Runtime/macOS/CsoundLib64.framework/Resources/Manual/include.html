@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>#include</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="define.html" title="#define" />
+    <link rel="next" href="undef.html" title="#undef" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">#include</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="define.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="undef.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="include"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMultiFileOrch" class="indexterm"></a>
+      <a id="IndexIncludeOrch" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">#include</span>
+        </h2>
+        <p>#include — 
+      Includes an external file for processing.
+                </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127825232"></a>
+        <h2>Description</h2>
+        <p>
+      Includes an external file for processing.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127823936"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>#include</strong></span> <span class="quote">“<span class="quote">filename</span>”</span></pre>
+        <pre class="synopsis"><span class="command"><strong>#includestr</strong></span> <span class="quote">“<span class="quote">filename</span>”</span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127820320"></a>
+        <h2>Performance</h2>
+        <p>#includestr is similar to #include except that the file
+    name must be delimited by a double quote character and the file
+    name is subjected to macro expansion.
+    </p>
+        <p>
+      It is sometimes convenient to have the orchestra arranged in a
+      number of files, for example with each instrument in a separate
+      file.  This style is supported by the
+      <span class="emphasis"><em>#include</em></span> facility which is part of the
+      macro system.  A line containing the text 
+
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="omacro">#include</span> "filename"</pre>
+        </div>
+        <p>
+
+      where the character " can be replaced by any suitable
+      character in #include (but not in #includestr).  For
+      most uses the double quote symbol will probably be the most
+      convenient. The file name can include a full path.
+    </p>
+        <p>
+      This takes input from the named file until it ends, when input
+      reverts to the previous input. 
+      <span class="emphasis"><em>Note: </em></span>Csound versions prior to 4.19 had a limit of 20 on the depth of included files and macros.
+    </p>
+        <p>
+      Another suggested use of <span class="emphasis"><em>#include</em></span> would be to define a set of macros which are part of the composer's style.
+    </p>
+        <p>
+      An extreme form would be to have each instrument defines as a macro, with the instrument number as a parameter.  Then an entire orchestra could be constructed from a number of <span class="emphasis"><em>#include</em></span> statements followed by macro calls.
+
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="omacro">#include</span> "clarinet"
+<span class="omacro">#include</span> "flute"
+<span class="omacro">#include</span> "bassoon"
+$CLARINET(1)
+$FLUTE(2)
+$BASSOON(3)</pre>
+        </div>
+        <p>
+
+      It must be stressed that these changes are at the textual level and so take no cognizance of any meaning.
+    </p>
+        <p>
+      If the version of Csound is built with the CURL library the
+      filename in an <span class="emphasis"><em>#include</em></span> statement can
+      be an URL, recognised by including the substring "://" in the
+      name.  This will include text via protocols such as http, https,
+      and ftp.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127807680"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the include opcode. It uses the file <a class="ulink" href="examples/include.csd" target="_top"><em class="citetitle">include.csd</em></a>, and <a class="ulink" href="examples/table1.inc" target="_top"><em class="citetitle">table1.inc</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276127805152"></a>
+          <p class="title">
+            <strong>Example 15. Example of the include opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+<span class="cm">/* table1.inc */</span>
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="n">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="cm">/* table1.inc */</span>
+</pre>
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276498299840"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o include.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1 - a basic oscillator.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  k<span class="n">amp</span> <span class="o">=</span> <span class="mi">10000</span>
+  k<span class="n">cps</span> <span class="o">=</span> <span class="mi">440</span>
+  i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+
+  a<span class="n">1</span> <span class="nb">oscil</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> i<span class="n">fn</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Include the file for Table #1.</span>
+<span class="err">#</span><span class="nb">i</span><span class="cp">nclude</span> <span class="s">"table1.inc"</span>
+
+<span class="c1">; Play Instrument #1 for 2 seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127800512"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath/Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>April 1998</td>
+          </tr>
+        </table>
+        <p>
+      </p>
+        <p> #includestr new in version 6.12</p>
+        <p>
+    </p>
+        <p>Example written by Kevin Conder.</p>
+        <p>New in Csound version 3.48</p>
+        <p>URLs available from Csound 6.02</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="define.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="undef.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">#define </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> #undef</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ntom</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="nstance.html" title="nstance" />
+    <link rel="next" href="ntof.html" title="ntof" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ntom</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="nstance.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ntof.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ntom"></a>
+      <div class="titlepage"></div>
+      <a id="IndexNtom" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ntom</span>
+        </h2>
+        <p>ntom — 
+      Convert note name to midi note number
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077412208"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in emugens.</p>
+        <p>
+      Convert note name to midi note number. It allows note name to
+      include microtones or a deviation in cents. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077410496"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kmidi <span class="command"><strong>ntom</strong></span> Snote</pre>
+        <pre class="synopsis">imidi <span class="command"><strong>ntom</strong></span> Snote</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077406624"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>Snote</em></span> -- Note name
+    </p>
+        <p>
+      <span class="emphasis"><em>kmidi</em></span> -- Midi note number
+    </p>
+        <p>
+      Example of note names:
+
+
+	  </p>
+        <pre class="programlisting">
+		midi    note name
+		-------------------
+		60      4C
+		60.4    4C+40
+		60.5    4C+
+		60.9    4Db-10
+		61      4C#
+		61.5    4D-
+	  </pre>
+        <p>
+
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        4C is the central C in the piano
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077401952"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the ntom opcode. It uses the file <a class="ulink" href="examples/mton-ntom.csd" target="_top"><em class="citetitle">mton-ntom.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276077399168"></a>
+          <p class="title">
+            <strong>Example 624. Example of the ftom opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276445715648"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+--nosound
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    S<span class="n">4</span> <span class="n">mton</span> <span class="n">ntom</span><span class="p">(</span><span class="s">"7D+63"</span><span class="p">)</span>
+    <span class="nb">puts</span> S<span class="n">4</span><span class="p">,</span> <span class="mi">1</span>
+
+    S<span class="n">1</span>  <span class="n">mton</span> <span class="mi">60</span>
+    <span class="nb">printf_i</span> <span class="s">"midi 60 = %s </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> S<span class="n">1</span>
+    
+    S<span class="n">2</span> <span class="n">mton</span> <span class="n">ftom</span><span class="p">(</span><span class="mi">442</span><span class="p">)</span>
+    <span class="nb">printf_i</span> <span class="s">"442 Hz = %s </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> S<span class="n">2</span>
+    
+    S<span class="n">3</span> <span class="o">=</span> <span class="n">mton</span><span class="p">(</span><span class="mf">48.25</span><span class="p">)</span>
+    <span class="nb">printf_i</span> <span class="s">"midi 48.25 = %s </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> S<span class="n">3</span>
+    
+    k<span class="n">1</span> <span class="o">=</span> <span class="n">ntom</span><span class="p">(</span><span class="s">"4C"</span><span class="p">)</span>
+    <span class="nb">printf_i</span> <span class="s">"4C = midi %f </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">1</span>
+    
+    i<span class="n">2</span>  <span class="n">ntom</span> <span class="s">"4E"</span>
+    <span class="nb">printf_i</span> <span class="s">"4E = %f </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">2</span>
+    
+    S<span class="n">5</span> <span class="o">=</span> <span class="n">mton</span><span class="p">(</span><span class="n">ntom</span><span class="p">(</span><span class="s">"4G+"</span><span class="p">))</span>
+    <span class="nb">printf_i</span> <span class="s">"roundtrip 4G+: %s </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> S<span class="n">5</span>
+    
+    <span class="nb">turnoff</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+    <span class="c1">; test i-time and k-time execution</span>
+    k<span class="n">1</span> <span class="o">=</span> <span class="n">ntom</span><span class="p">(</span><span class="s">"4Eb-31"</span><span class="p">)</span>
+    <span class="nb">printf</span> <span class="s">"4Eb-31 = %f </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">1</span>
+
+    i<span class="n">0</span>  <span class="n">ntom</span> <span class="s">"4C+"</span>
+    <span class="nb">printf_i</span> <span class="s">"4C+ = %f </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">0</span>
+
+    i<span class="n">1</span> <span class="o">=</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4A"</span><span class="p">)</span>
+    <span class="nb">printf_i</span> <span class="s">"4A = %f </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">1</span>
+    <span class="nb">turnoff</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077397424"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="cpsmidinn.html" title="cpsmidinn"><em class="citetitle">cpsmidinn</em></a>, 
+      <a class="link" href="mtof.html" title="mtof"><em class="citetitle">mtof</em></a>,
+      <a class="link" href="ftom.html" title="ftom"><em class="citetitle">ftom</em></a>,
+      <a class="link" href="mton.html" title="mton"><em class="citetitle">mton</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077392416"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2017</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="nstance.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ntof.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">nstance </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ntof</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

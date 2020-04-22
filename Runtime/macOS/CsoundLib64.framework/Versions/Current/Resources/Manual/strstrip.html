@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>strstrip</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="strset.html" title="strset" />
+    <link rel="next" href="strsub.html" title="strsub" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">strstrip</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="strset.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="strsub.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="strstrip"></a>
+      <div class="titlepage"></div>
+      <a id="IndexStrstrip" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">strstrip</span>
+        </h2>
+        <p>strstrip — 
+      Strip whitespace from string 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070936512"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in emugens.</p>
+        <p>
+      Strip whitespace from string. Whitespace can be removed from left, right or both sides. Works at init-time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070934800"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">Sout <span class="command"><strong>strstrip</strong></span> Sin [, Smode]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070932288"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="strong"><strong>Sin</strong></span> -- Input string
+    </p>
+        <p>
+      <span class="strong"><strong>Smode</strong></span> -- If not given, whitespace is stripped from both sides. If "l", strip whitespace from left side. If "r", strip whitespace from right side.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070929248"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the strstrip opcode. It uses the file <a class="ulink" href="examples/strstrip.csd" target="_top"><em class="citetitle">strstrip.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276070926496"></a>
+          <p class="title">
+            <strong>Example 981. Example of the strstrip opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276505102576"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+--nosound
+
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/* strstrip: strip whitespace from string
+
+ Sout strstrip Sin [, Smode]
+
+ Args
+   Sin - string to strip whitespace from
+   Smode - if not given, whitespace is stripped from left and right edges
+           "l" - strip whitespace from left edge only
+           "r" - strip whitespace from right edge only
+ */</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  S<span class="n">out</span> <span class="o">=</span> <span class="n">strstrip</span><span class="p">(</span><span class="s">"  </span><span class="se">\t\n</span><span class="s">  foo bar   </span><span class="se">\t\n</span><span class="s">"</span><span class="p">)</span>
+  <span class="c1">; Sout = strstrip("  center   ", "l")</span>
+  <span class="c1">; Sout = strstrip("  center   ", "r")</span>
+    
+  <span class="nb">prints</span> <span class="s">"string: '%s'</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> S<span class="n">out</span>
+  <span class="nb">turnoff</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070924800"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="strcat.html" title="strcat"><em class="citetitle">strcat</em></a>, 
+      <a class="link" href="strsub.html" title="strsub"><em class="citetitle">strsub</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070921568"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2020</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="strset.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="strsub.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">strset </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> strsub</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

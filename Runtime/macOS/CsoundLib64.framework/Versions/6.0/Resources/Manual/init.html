@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>init</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="inh.html" title="inh" />
+    <link rel="next" href="initc14.html" title="initc14" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">init</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="inh.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="initc14.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="init"></a>
+      <div class="titlepage"></div>
+      <a id="IndexInit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">init</span>
+        </h2>
+        <p>init — 
+       Puts the value of the i-time expression into a k-, a-rate or t- variable.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097872720"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>init</strong></span> iarg</pre>
+        <pre class="synopsis">ires <span class="command"><strong>init</strong></span> iarg</pre>
+        <pre class="synopsis">kres <span class="command"><strong>init</strong></span> iarg</pre>
+        <pre class="synopsis">ares, ...  <span class="command"><strong>init</strong></span> iarg, ...</pre>
+        <pre class="synopsis">ires, ... <span class="command"><strong>init</strong></span> iarg, ...</pre>
+        <pre class="synopsis">kres, ... <span class="command"><strong>init</strong></span> iarg, ...</pre>
+        <pre class="synopsis">tab <span class="command"><strong>init</strong></span> isize[, ival]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097862864"></a>
+        <h2>Description</h2>
+        <p> 
+      Put the value of the i-time expression into a k- or a-rate variable.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097861600"></a>
+        <h2>Initialization</h2>
+        <p>
+      Puts the value of the i-time expression
+      <span class="emphasis"><em>iarg</em></span> into a k-, a-rate or t- variable, i.e.,
+      initialize the result. Note that <span class="strong"><strong>init</strong></span> provides the only case of an
+      init-time statement being permitted to write into a perf-time
+      (k- or a-rate) result cell; the statement has no effect at
+      perf-time.
+    </p>
+        <p>
+      Since version 5.13 it is possible to initialise upto 24
+      variables of the same class in one statement.  If there are more
+      output variables than input expressions then the last one is
+      repeated.  It is an error to have more inputs than outputs.
+    </p>
+        <p>
+      The t-variable form was introduced in 5.14 and allocated space
+      for a vector or the given size, initialised to the given value
+      (default value is zero).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097857824"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the init opcode. It uses the file <a class="ulink" href="examples/init.csd" target="_top"><em class="citetitle">init.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276097856048"></a>
+          <p class="title">
+            <strong>Example 443. Example of the init opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276460535104"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-n  <span class="c1">;no sound output</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span> 
+
+<span class="vg">sr</span>     <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span>  <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">;shows what init does</span>
+        k<span class="n">init</span> <span class="nb">init</span> <span class="mi">0</span> 
+        k<span class="n">init</span> <span class="o">=</span> k<span class="n">init</span> <span class="o">+</span> <span class="mi">1</span> 
+        <span class="nb">printk</span> <span class="mf">.1</span><span class="p">,</span> k<span class="n">init</span> 
+<span class="kd">endin</span> 
+
+<span class="kd">instr</span> <span class="nf">2</span> <span class="c1">;shows what an assignment does</span>
+        k<span class="n">noinit</span> <span class="o">=</span> <span class="mi">0</span> 
+        k<span class="n">noinit</span> <span class="o">=</span> k<span class="n">noinit</span> <span class="o">+</span> <span class="mi">1</span> 
+        <span class="nb">printk</span> <span class="mf">.1</span><span class="p">,</span> k<span class="n">noinit</span> 
+<span class="kd">endin</span> 
+<span class="nt">&lt;/CsInstruments&gt;</span> 
+<span class="nt">&lt;CsScore&gt;</span> 
+<span class="c1">;play one second each</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> 
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">2</span> <span class="mi">1</span> 
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span> 
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+            Its output should include lines like these:
+      </p>
+        <pre class="screen">
+ i   1 time     0.00073:     1.00000
+ i   1 time     0.10014:   138.00000
+ i   1 time     0.20027:   276.00000
+ i   1 time     0.30041:   414.00000
+ i   1 time     0.40054:   552.00000
+ i   1 time     0.50068:   690.00000
+ i   1 time     0.60009:   827.00000
+ i   1 time     0.70023:   965.00000
+ i   1 time     0.80036:  1103.00000
+ i   1 time     0.90050:  1241.00000
+
+ i   2 time     2.00054:     1.00000
+ i   2 time     2.09995:     1.00000
+ i   2 time     2.20009:     1.00000
+ i   2 time     2.30023:     1.00000
+ i   2 time     2.40036:     1.00000
+ i   2 time     2.50050:     1.00000
+ i   2 time     2.59991:     1.00000
+ i   2 time     2.70005:     1.00000
+ i   2 time     2.80018:     1.00000
+ i   2 time     2.90032:     1.00000
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097850624"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="assign.html" title="="><em class="citetitle">=</em></a>,
+      <a class="link" href="divz.html" title="divz"><em class="citetitle">divz</em></a>,
+      <a class="link" href="tival.html" title="tival"><em class="citetitle">tival</em></a>
+    </p>
+        <p> Other information on this opcode can be found in the Floss Manuals: <a class="ulink" href="http://write.flossmanuals.net/csound/a-initialization-and-performance-pass" target="_top"><em class="citetitle">http://write.flossmanuals.net/csound/a-initialization-and-performance-pass</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097845552"></a>
+        <h2>Credits</h2>
+        <p>
+      Init first appeared in the original Csound, but the extension to
+      multiple values is by
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, and Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>February 2010</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Multiple form new in version 5.13; t-variable form new in 5.14.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="inh.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="initc14.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">inh </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> initc14</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

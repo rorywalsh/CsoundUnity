@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLhvsBox</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLhide.html" title="FLhide" />
+    <link rel="next" href="FLhvsBoxSetValue.html" title="FLhvsBoxSetValue" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLhvsBox</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLhide.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLhvsBoxSetValue.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLhvsBox"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLhvsBox" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLhvsBox</span>
+        </h2>
+        <p>FLhvsBox — 
+      Displays a box with a grid useful for visualizing two-dimensional Hyper Vectorial Synthesis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109960256"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLhvsBox</em></span> displays a box with a grid useful for visualizing two-dimensional Hyper Vectorial Synthesis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109958576"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ihandle <span class="command"><strong>FLhvsBox</strong></span> inumlinesX, inumlinesY, iwidth, iheight, ix, iy</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109956448"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> – an integer number used a univocally-defined handle for identifying a specific HVS box (see below).
+    </p>
+        <p>
+      <span class="emphasis"><em>inumlinesX, inumlinesY</em></span> - number of vertical and horizontal lines delimiting the HVS squared areas
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth, iheight</em></span> - width and height of the HVS box
+    </p>
+        <p>
+      <span class="emphasis"><em>ix, iy</em></span> - the position of the HVS box
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109952096"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>FLhvsBox</em></span> is a widget able to visualize current position of the HVS cursor in an HVS box (i.e. a squared area containing a grid). The number of  horizontal and vertical lines of the grid can be defined with the <span class="emphasis"><em>inumlinesX, inumlinesY</em></span> arguments. This opcode has to be declared inside an <a class="link" href="FLpanel.html" title="FLpanel"><em class="citetitle">FLpanel</em></a> - <a class="link" href="FLpanelEnd.html" title="FLpanelEnd"><em class="citetitle">FLpanelEnd</em></a> block. See the entry for <a class="link" href="hvs2.html" title="hvs2"><em class="citetitle">hvs2</em></a> for an example of usage of <span class="emphasis"><em>FLhvsBox</em></span>.
+    </p>
+        <p>
+      <a class="link" href="FLhvsBoxSetValue.html" title="FLhvsBoxSetValue"><em class="citetitle">FLhvsBoxSetValue</em></a> is used to set the cursor position of an <span class="emphasis"><em>FLhvsBox</em></span> widget.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109943136"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="hvs2.html" title="hvs2"><em class="citetitle">hvs2</em></a>,
+      <a class="link" href="FLhvsBoxSetValue.html" title="FLhvsBoxSetValue"><em class="citetitle">FLhvsBoxSetValue</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109939504"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLhide.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLhvsBoxSetValue.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLhide </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLhvsBoxSetValue</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

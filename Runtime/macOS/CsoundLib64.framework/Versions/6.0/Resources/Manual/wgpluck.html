@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>wgpluck</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="wgflute.html" title="wgflute" />
+    <link rel="next" href="wgpluck2.html" title="wgpluck2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">wgpluck</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="wgflute.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="wgpluck2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="wgpluck"></a>
+      <div class="titlepage"></div>
+      <a id="IndexWgpluck" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">wgpluck</span>
+        </h2>
+        <p>wgpluck — 
+      A high fidelity simulation of a plucked string.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043304464"></a>
+        <h2>Description</h2>
+        <p>
+      A high fidelity simulation of a plucked string, using interpolating delay-lines.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043303200"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>wgpluck</strong></span> icps, iamp, kpick, iplk, idamp, ifilt, axcite</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043301088"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>icps</em></span> -- frequency of plucked string
+    </p>
+        <p>
+      <span class="emphasis"><em>iamp</em></span> -- amplitude of string pluck
+    </p>
+        <p>
+      <span class="emphasis"><em>iplk</em></span> -- point along the string, where it is plucked, in the range of 0 to 1. 0 = no pluck
+    </p>
+        <p>
+      <span class="emphasis"><em>idamp</em></span> -- damping of the note. This controls the overall decay of the string. The greater the value of <span class="emphasis"><em>idamp</em></span>, the faster the decay. Negative values will cause an increase in output over time.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifilt</em></span> -- control the attenuation of the filter at the bridge. Higher values cause the higher harmonics to decay faster.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043295456"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kpick</em></span> -- proportion of the way along the point to sample the output.
+    </p>
+        <p>
+      <span class="emphasis"><em>axcite</em></span> -- a signal which excites the string.
+    </p>
+        <p>
+      A string of frequency <span class="emphasis"><em>icps</em></span> is plucked with
+      amplitude <span class="emphasis"><em>iamp</em></span> at
+      point <span class="emphasis"><em>iplk</em></span>. The decay of the virtual string
+      is controlled by <span class="emphasis"><em>idamp</em></span>
+      and <span class="emphasis"><em>ifilt</em></span> which simulate the bridge. The
+      oscillation is sampled at the point <span class="emphasis"><em>kpick</em></span>,
+      and excited by the signal <span class="emphasis"><em>axcite</em></span>. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043289456"></a>
+        <h2>Examples</h2>
+        <p>
+      The following example produces a moderately long note with
+      rapidly decaying upper partials. It uses the
+      file <a class="ulink" href="examples/wgpluck.csd" target="_top"><em class="citetitle">wgpluck.csd</em></a>. 
+
+      </p>
+        <div class="example">
+          <a id="idm276043287600"></a>
+          <p class="title">
+            <strong>Example 1141. An example of the wgpluck opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the
+          sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time
+          Audio</em></a>
+          and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line
+          Flags</em></a> for more information on using
+          command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276403613552"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o wgpluck.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  i<span class="n">cps</span> <span class="o">=</span> <span class="mi">220</span>
+  i<span class="n">amp</span> <span class="o">=</span> <span class="mi">20000</span>
+  k<span class="n">pick</span> <span class="o">=</span> <span class="mf">0.5</span>
+  i<span class="n">plk</span> <span class="o">=</span> <span class="mi">0</span>
+  i<span class="n">damp</span> <span class="o">=</span> <span class="mi">10</span>
+  i<span class="n">filt</span> <span class="o">=</span> <span class="mi">1000</span>
+
+  a<span class="n">xcite</span> <span class="nb">oscil</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">pluck</span> <span class="nb">wgpluck</span> i<span class="n">cps</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> k<span class="n">pick</span><span class="p">,</span> i<span class="n">plk</span><span class="p">,</span> i<span class="n">damp</span><span class="p">,</span> i<span class="n">filt</span><span class="p">,</span> a<span class="n">xcite</span>
+
+  <span class="nb">out</span> a<span class="n">pluck</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Play Instrument #1 for two seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      The following example produces a shorter, brighter note. It uses the file
+      <a class="ulink" href="examples/wgpluck_brighter.csd" target="_top"><em class="citetitle">wgpluck_brighter.csd</em></a>. 
+
+      </p>
+        <div class="example">
+          <a id="idm276043282544"></a>
+          <p class="title">
+            <strong>Example 1142. An example of the wgpluck opcode with a shorter, brighter note.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276403841776"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o wgpluck_brighter.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  i<span class="n">cps</span> <span class="o">=</span> <span class="mi">220</span>
+  i<span class="n">amp</span> <span class="o">=</span> <span class="mi">20000</span>
+  k<span class="n">pick</span> <span class="o">=</span> <span class="mf">0.5</span>
+  i<span class="n">plk</span> <span class="o">=</span> <span class="mi">0</span>
+  i<span class="n">damp</span> <span class="o">=</span> <span class="mi">30</span>
+  i<span class="n">filt</span> <span class="o">=</span> <span class="mi">10</span>
+
+  a<span class="n">xcite</span> <span class="nb">oscil</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">pluck</span> <span class="nb">wgpluck</span> i<span class="n">cps</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> k<span class="n">pick</span><span class="p">,</span> i<span class="n">plk</span><span class="p">,</span> i<span class="n">damp</span><span class="p">,</span> i<span class="n">filt</span><span class="p">,</span> a<span class="n">xcite</span>
+
+  <span class="nb">out</span> a<span class="n">pluck</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Play Instrument #1 for two seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043280832"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Michael A. Casey</td>
+          </tr>
+          <tr>
+            <td>M.I.T.</td>
+          </tr>
+          <tr>
+            <td>Cambridge, Mass.</td>
+          </tr>
+          <tr>
+            <td>1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="wgflute.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="wgpluck2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">wgflute </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> wgpluck2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

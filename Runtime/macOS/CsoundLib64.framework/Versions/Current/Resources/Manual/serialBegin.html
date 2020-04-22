@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>serialBegin</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sensekey.html" title="sensekey" />
+    <link rel="next" href="serialEnd.html" title="serialEnd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">serialBegin</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sensekey.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="serialEnd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="serialBegin"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSerialBegin" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">serialBegin</span>
+        </h2>
+        <p>serialBegin — 
+      Open a serial port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058170576"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in serial.</p>
+        <p>
+      Open a serial port for arduino.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058168944"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">iPort <span class="command"><strong>serialBegin</strong></span> SPortName [, ibaudRate]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058166848"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>SPortName</em></span> -- port name number
+    </p>
+        <p>
+      <span class="emphasis"><em>ibaudrate</em></span> -- serial speed, defaulting to
+      9600 bps.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058164400"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the serialBegin opcode. It uses the file <a class="ulink" href="examples/serialBegin.csd" target="_top"><em class="citetitle">serialBegin.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276058162608"></a>
+          <p class="title">
+            <strong>Example 890. Example of the serialBegin opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276425149712"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-n  <span class="c1">;;;no output</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o serialBegin.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>  <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">500</span> <span class="c1">; the default krate can be too fast for the arduino to handle</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">Port</span> <span class="nb">serialBegin</span> <span class="s">"/dev/cu.usbmodemfa131"</span><span class="p">,</span> <span class="mi">9600</span>			<span class="c1">;connect to the arduino with baudrate = 9600</span>
+
+k<span class="n">Gain</span> <span class="nb">init</span> <span class="mi">16</span>							<span class="c1">;read our knob value</span>
+k<span class="n">Val</span> <span class="nb">serialRead</span> i<span class="n">Port</span>
+<span class="k">if</span> <span class="p">(</span>k<span class="n">Val</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">then</span>
+    k<span class="n">Gain</span> <span class="o">=</span> k<span class="n">Val</span><span class="o">/</span><span class="mi">128</span>
+<span class="k">endif</span>
+
+a<span class="n">Sig</span> <span class="nb">in</span>								<span class="c1">;get our audio input and get its rms</span>
+k<span class="n">Rms</span> <span class="nb">rms</span> a<span class="n">Sig</span><span class="o">*</span>k<span class="n">Gain</span>
+
+k<span class="n">Rms</span> <span class="o">=</span> k<span class="n">Rms</span><span class="o">*</span>k<span class="n">Rms</span><span class="o">*</span><span class="mi">255</span>						<span class="c1">;scale the rms to a good value for the LED and send it out</span>
+<span class="nb">serialWrite</span> i<span class="n">Port</span><span class="p">,</span> <span class="p">(</span>k<span class="n">Rms</span> <span class="o">&lt;</span> <span class="mi">255</span> <span class="p">?</span> k<span class="n">Rms</span> <span class="p">:</span> <span class="mi">255</span><span class="p">)</span>			<span class="c1">;must be in range: 0-255</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">200</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+        This is the matching Arduino code :
+      </p>
+        <pre class="screen">
+void setup() {
+  // enable serial communication
+  Serial.begin(9600);
+
+  // declare pin 9 to be an output:
+  pinMode(9, OUTPUT);
+}
+
+void loop() {
+  // only do something if we received something (this should be at csound's k-rate)
+  if (Serial.available()) {
+    // set the brightness of LED (connected to pin 9) to our input value
+    int brightness = Serial.read();
+    analogWrite(9, brightness);
+
+    // while we are here, get our knob value and send it to csound
+    int sensorValue = analogRead(A0);
+    Serial.write(sensorValue/4); // scale to 1-byte range (0-255)
+  }     
+}
+.....</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058157312"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="serialEnd.html" title="serialEnd"><em class="citetitle"></em>serialEnd</a>,
+      <a class="link" href="serialWrite_i.html" title="serialWrite_i"><em class="citetitle"></em>serialWrite_i</a>,
+      <a class="link" href="serialWrite.html" title="serialWrite"><em class="citetitle"></em>serialWrite</a>,
+      <a class="link" href="serialRead.html" title="serialRead"><em class="citetitle"></em>serialRead</a>,
+      <a class="link" href="serialPrint.html" title="serialPrint"><em class="citetitle"></em>serialPrint</a>,
+      <a class="link" href="serialFlush.html" title="serialFlush"><em class="citetitle"></em>serialFlush</a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058150240"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Matt Ingalls</td>
+          </tr>
+          <tr>
+            <td>2011</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.14</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sensekey.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="serialEnd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sensekey </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> serialEnd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

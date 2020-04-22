@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN17</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN16.html" title="GEN16" />
+    <link rel="next" href="GEN18.html" title="GEN18" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN17</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN16.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN18.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN17"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN17" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN17</span>
+        </h2>
+        <p>GEN17 — 
+      Creates a step function from given x-y pairs.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989027776"></a>
+        <h2>Description</h2>
+        <p>
+      This subroutine creates a step function from given x-y pairs.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989026544"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 17 x1 a x2 b x3 c  ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989024608"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size</em></span> -- number of points in the table. Must be a power of 2 or a power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>). The normal value is power-of-2 plus 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>x1, x2, x3,</em></span> etc. -- x-ordinate values, in ascending order, 0 first.
+    </p>
+        <p>
+      <span class="emphasis"><em>a, b, c,</em></span> etc. -- y-values at those x-ordinates, held until the next x-ordinate.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        This subroutine creates a step function of x-y pairs whose y-values are held to the right. The right-most y-value is then held to the end of the table. The function is useful for mapping one set of data values onto another, such as MIDI note numbers onto sampled sound ftable numbers ( see <a class="link" href="loscil.html" title="loscil"><em class="citetitle">loscil</em></a>).
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989017984"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">f</span>  1  0  128  -17   0  1   12  2   24  3   36  4   48  5  60  6   72  7   84  8</pre>
+        </div>
+        <p>
+
+      This describes a step function with 8 successively increasing levels, each 12 locations wide except the last which extends its value to the end of the table. Rescaling is inhibited. Indexing into this table with a MIDI note-number would retrieve a different value every octave up to the eighth, above which the value returned would remain the same.
+    </p>
+        <p>
+	    Here is a complete example of the GEN17 routine. It uses the files <a class="ulink" href="examples/gen17.csd" target="_top"><em class="citetitle">gen17.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275989013728"></a>
+          <p class="title">
+            <strong>Example 1213. An example of the GEN17 routine.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276396957712"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  -M0 -+rtmidi=virtual    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen17.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+
+ <span class="kd">instr</span> <span class="nf">1</span>
+ 
+i<span class="n">note</span>  <span class="nb">cpsmidi</span>	 
+i<span class="n">veloc</span> <span class="nb">ampmidi</span> <span class="mf">.5</span>
+i<span class="n">ctl</span>   <span class="nb">midictrl</span> <span class="mi">5</span>				<span class="c1">;move slider of controller 5 to change ftable</span>
+i<span class="n">tab</span>   <span class="nb">table</span> i<span class="n">ctl</span><span class="p">,</span> <span class="mi">2</span>
+a<span class="n">out</span>   <span class="nb">poscil</span> i<span class="n">veloc</span><span class="p">,</span> i<span class="n">note</span><span class="p">,</span> i<span class="n">tab</span>
+       <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>	 
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">8193</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">128</span> <span class="o">-</span><span class="mi">17</span> <span class="mi">0</span> <span class="mi">10</span> <span class="mi">32</span> <span class="mi">20</span> <span class="mi">64</span> <span class="mi">30</span> <span class="mi">96</span> <span class="mi">40</span>			<span class="c1">;inhibit rescaling</span>
+
+<span class="nb">f</span> <span class="mi">10</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>                                       <span class="c1">; Sine</span>
+<span class="nb">f</span> <span class="mi">20</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">0.5</span> <span class="mf">0.3</span> <span class="mf">0.25</span> <span class="mf">0.2</span> <span class="mf">0.167</span> <span class="mf">0.14</span> <span class="mf">0.125</span> <span class="mf">.111</span><span class="c1">; Sawtooth</span>
+<span class="nb">f</span> <span class="mi">30</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">0</span>   <span class="mf">0.3</span> <span class="mi">0</span>    <span class="mf">0.2</span> <span class="mi">0</span>     <span class="mf">0.14</span> <span class="mi">0</span>     <span class="mf">.111</span><span class="c1">; Square</span>
+<span class="nb">f</span> <span class="mi">40</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">1</span>   <span class="mi">1</span>   <span class="mi">1</span>    <span class="mf">0.7</span> <span class="mf">0.5</span>   <span class="mf">0.3</span>  <span class="mf">0.1</span>       <span class="c1">; Pulse</span>
+
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">30</span>	<span class="c1">;run for 30 seconds</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+        <span class="phrase">This is the diagram of the waveform of the GEN17 routine, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen17.png" alt="f 2 0 128 -17 0 10 32 20 64 30 96 40 - a step function with 4 equal levels, each 32 locations wide except the last which extends its value to the end of the table" />
+          <div class="caption">
+            <p>f 2 0 128 -17 0 10 32 20 64 30 96 40 - a step function with 4 equal levels, each 32 locations wide except the last which extends its value to the end of the table</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989007712"></a>
+        <h2>See Also</h2>
+        <p>
+       <a class="link" href="GEN02.html" title="GEN02"><em class="citetitle">GEN02</em></a>
+     </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN16.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN18.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN16 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN18</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

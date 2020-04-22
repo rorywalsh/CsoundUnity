@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>k</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="jspline.html" title="jspline" />
+    <link rel="next" href="k35_hpf.html" title="K35_hpf" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">k</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="jspline.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="k35_hpf.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="opk"></a>
+      <div class="titlepage"></div>
+      <a id="IndexK" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">k</span>
+        </h2>
+        <p>k — 
+      Converts a i-rate parameter to an k-rate value.
+      Or converts an a-rate value to a k-rate value by down-sampling.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087565904"></a>
+        <h2>Description</h2>
+        <p>
+    	Converts an i-rate value to control rate, for example to be used
+    	with <a class="link" href="rnd.html" title="rnd"><em class="citetitle">rnd()</em></a> and
+      <a class="link" href="birnd.html" title="birnd"><em class="citetitle">birnd()</em></a> to generate random numbers at k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087562880"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>k</strong></span>(x) (i-rate args only)</pre>
+        <pre class="synopsis"><span class="command"><strong>k</strong></span>(x) (a-rate args only)</pre>
+        <p>
+      where the argument within the parentheses may be an
+      expression. Value converters perform arithmetic translation from
+      units of one kind to units of another. The result can then be a
+      term in a further expression. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087559152"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="opi.html" title="i"><em class="citetitle">i</em></a>
+      <a class="link" href="opa.html" title="a"><em class="citetitle">a</em></a>
+    </p>
+        <p> More information on this opcode: <a class="ulink" href="http://www.csoundjournal.com/issue10/CsoundRates.html" target="_top"><em class="citetitle">http://www.csoundjournal.com/issue10/CsoundRates.html</em></a>  , written by Andrés Cabrera </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087554944"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+        <p>New in version Csound 5.00</p>
+        <p>Author: John ffitch</p>
+        <p>arate to krate new in version Csound 6.00</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="jspline.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="k35_hpf.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">jspline </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> K35_hpf</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

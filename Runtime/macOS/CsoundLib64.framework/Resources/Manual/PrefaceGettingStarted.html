@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Getting Started with Csound</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PrefaceTop.html" title="Preface" />
+    <link rel="prev" href="PrefaceCopy.html" title="Copyright Notice" />
+    <link rel="next" href="PrefaceWhatsNew.html" title="What's new in Csound 6.14.0" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Getting Started with Csound</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="PrefaceCopy.html">Prev</a> </td>
+          <th width="60%" align="center">Preface</th>
+          <td width="20%" align="right"> <a accesskey="n" href="PrefaceWhatsNew.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="PrefaceGettingStarted"></a>Getting Started with Csound</h2>
+          </div>
+        </div>
+      </div>
+      <h3><a id="idm276152757072"></a>Downloading</h3>
+      <p>
+    In case you don't already have Csound (or have an older version) download the appropriate Csound version for your platform from the <a class="ulink" href="http://csound.github.io/download.html" target="_top"><em class="citetitle">Github Csound Download Page</em></a>. Installers for Windows have '.exe' extension and for Mac '.dmg'. If the installer's filename ends in '-d' it means the installer has been built with <span class="emphasis"><em>double</em></span> precision (64-bit) which provides higher quality output than the ordinary <span class="emphasis"><em>float</em></span> precision (32-bit). The float versions provide quicker output, which may be important if you're using Csound in a real-time setting. You can also download the sources and build them, but this requires more expertise (See the section <a class="link" href="BuildingCsound.html" title="Building Csound"><em class="citetitle">Building Csound</em></a>).
+  </p>
+      <p>
+    It may also be useful to download the most recent version of this manual, which you will also find there.
+  </p>
+      <h3><a id="idm276152752928"></a>Running</h3>
+      <p>
+    Csound can be run in different ways. Since Csound is a command line program (DOS in Windows terms), just clicking on the csound executable will have no effect. Csound must be called either from the computer's command line or from a front end. To use Csound from the command line, you must open a <span class="emphasis"><em>Terminal</em></span> (Command Prompt or DOS Prompt on Windows, or Terminal on MacOS). Using Csound from the command line can be difficult if you've never used a terminal, so you may want to try to use one of the front ends, either QuteCsound, which is included with the latest distributions, or another front end. A <a class="link" href="OviewFrontEnds.html" title="Front Ends"><em class="citetitle">front end</em></a> is a window-based (not necessarily Windows-based) program that assists running Csound. Most front ends include text editors with which you can edit csound files, and many include other useful features.
+  </p>
+      <p>
+    Whether being run from a front end or being executed from the command line, Csound needs two things:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">A Csound file ('.csd' or possibly an '.orc' and a '.sco' file)</li>
+          <li class="listitem">A list of command line flags (or configuration options) that configure execution. They determine things like output filename and format, whether real-time audio and MIDI are enabled, which audio output to use for real-time audio, the buffer size, the types of messages printed, etc. These options can be included in the '.csd' file itself, so for the examples included in this manual <span class="emphasis"><em>you shouldn't need to worry about them</em></span>. Front end programs often have dialog boxes in which the command line flags can be set. The complete and very long list of available command flags can be found <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">here</em></a>, but you might want to have a look there later...</li>
+        </ul>
+      </div>
+      <p>
+    See the section <a class="link" href="Configuring.html" title="Configuring"><em class="citetitle">Configuring</em></a> if Csound is giving you trouble.
+  </p>
+      <p>
+    This documentation includes many '.csd' files which you can try out, and which should work directly from the command line or from any front end. A simple example is <a class="ulink" href="examples/oscil.csd" target="_top"><em class="citetitle">oscil.csd</em></a>, which can be found in the <span class="emphasis"><em>examples</em></span> folder of this documentation. Your front end should allow you to load the file, and the front end should have a 'play' or 'render' button that will allow you to hear the file. If you want to experiment with the file, you're well advised to use the front end's 'Save As..." command to copy it to some other directory on your hard drive, such as a 'csound scores' directory that you create.
+  </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note: Note for MacCsound users">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note for MacCsound users</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>You might need to remove all the lines from the command options slot in order for the manual examples to work.</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p>
+    You can also try the manual examples from the command line. To do this, navigate to the examples directory of the manual using something like this on Windows (assuming the manual is located at c:\Program Files\Csound\manual\):
+    </p>
+      <pre class="screen">
+cd "c:\Program Files\Csound\doc\manual\examples"</pre>
+      <p>
+    or something like:
+    </p>
+      <pre class="screen">
+cd /manualdirectory/manual/examples</pre>
+      <p>
+    for the Mac or linux Terminal. Then type:
+    </p>
+      <pre class="screen">
+csound oscil.csd</pre>
+      <p>
+  </p>
+      <p>
+    The example files are configured to run in real time by default, so with this command you should hear a two-second sine wave.
+  </p>
+      <h3><a id="idm276152738928"></a>Writing your own .csd files</h3>
+      <p>A <span class="emphasis"><em>.csd</em></span> file looks like this (this file is <a class="ulink" href="examples/oscils.csd" target="_top"><em class="citetitle">oscils.csd</em></a>):</p>
+      <div class="refsect1">
+        <a id="idm276507878912"></a>
+        <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o oscils.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">flg</span> <span class="o">=</span> <span class="nb">p4</span>
+a<span class="n">sig</span> <span class="nb">oscils</span> <span class="mf">.7</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">flg</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">0</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">2</span>	<span class="c1">;double precision</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+      </div>
+      <p>
+    Csound's <a class="link" href="CommandUnifile.html" title="Unified File Format for Orchestras and Scores"><em class="citetitle">.csd</em></a> files have three main sections between the <span class="emphasis"><em>&lt;CsSynthesizer&gt;</em></span> and <span class="emphasis"><em>&lt;/CsSynthesizer&gt;</em></span> tags:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem"><span class="emphasis"><em>CsOptions</em></span> - Includes the <a class="link" href="CommandFlagsCategory.html" title="Command-line Flags (by Category)"><em class="citetitle">Command Line flags</em></a> specific to this particular file. These options can also be set using the <a class="link" href="CommandUnifileParFile.html" title="Command Line Parameter File (.csound6rc)"><em class="citetitle">.csound6rc</em></a> file, which you can edit in a text editor, or directly in the <a class="link" href="CommandDesc.html" title="Description of the command syntax"><em class="citetitle">command line</em></a>. Some front ends also provide ways to specify global or local options.
+        </li>
+          <li class="listitem">
+          <span class="emphasis"><em>CsInstruments</em></span> - Contains the instruments or processes available in the file. Instruments are defined using the <a class="link" href="instr.html" title="instr"><em class="citetitle">instr</em></a> and <a class="link" href="endin.html" title="endin"><em class="citetitle">endin</em></a> opcodes. The <span class="emphasis"><em>CsInstruments</em></span> section also contains the <a class="link" href="OrchTop.html#OrchHeader" title="Orchestra Header Statements"><em class="citetitle">Orchestra Header</em></a>, which defines things like <a class="link" href="sr.html" title="sr"><em class="citetitle">sample rate</em></a>, the <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">number of  samples in a control period</em></a>, and the <a class="link" href="nchnls.html" title="nchnls"><em class="citetitle">number of output channels</em></a>.
+        </li>
+          <li class="listitem">
+          <span class="emphasis"><em>CsScore</em></span> - Contains the 'notes' to be played, and optionally the definition of f-tables. Notes are created using the <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statement</em></a>, and f-tables are created using the <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>. Several other <a class="link" href="ScoreStatements.html" title="Score Statements"><em class="citetitle">score statements</em></a> are available.
+        </li>
+        </ul>
+      </div>
+      <p>
+    Anything after a semicolon (;) until the end of the line is a comment, and is ignored by Csound.
+  </p>
+      <p>
+    You can write .csd files in any plain text editor, such as Notepad or Textedit. If you use a word processor (not recommended), be sure to save the file as plain text (not rich text). Many <a class="link" href="OviewFrontEnds.html" title="Front Ends"><em class="citetitle">front ends</em></a> include advanced editing capabilities, such as syntax highlighting and auto-completion of code.
+  </p>
+      <p>You can find an in-depth tutorial on getting started with Csound written by Michael Gogins <a class="ulink" href="http://michael-gogins.com/archives/tutorial.pdf" target="_top">here</a>.</p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="PrefaceCopy.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PrefaceTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="PrefaceWhatsNew.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Copyright Notice </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> What's new in Csound 6.14.0</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

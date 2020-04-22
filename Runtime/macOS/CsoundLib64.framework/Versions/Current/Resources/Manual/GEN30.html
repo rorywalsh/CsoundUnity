@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN30</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN28.html" title="GEN28" />
+    <link rel="next" href="GEN31.html" title="GEN31" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN30</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN28.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN31.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN30"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN30" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN30</span>
+        </h2>
+        <p>GEN30 — 
+      Generates harmonic partials by analyzing an existing table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988320640"></a>
+        <h2>Description</h2>
+        <p>
+      Extracts a range of harmonic partials from an existing waveform.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988319392"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size  30  src  minh maxh [ref_sr] [interp]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988317424"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>src</em></span> -- source ftable
+    </p>
+        <p>
+      <span class="emphasis"><em>minh</em></span> -- lowest harmonic number
+    </p>
+        <p>
+      <span class="emphasis"><em>maxh</em></span> -- highest harmonic number
+    </p>
+        <p>
+      <span class="emphasis"><em>ref_sr</em></span> (optional) -- maxh is scaled by (sr / ref_sr). The default value of ref_sr is sr. If <span class="emphasis"><em>ref_sr</em></span> is zero or negative, it is now ignored.
+    </p>
+        <p>
+      <span class="emphasis"><em>interp</em></span> (optional) -- if non-zero, allows changing the amplitude of the lowest and highest harmonic partial depending on the fractional part of <span class="emphasis"><em>minh</em></span> and <span class="emphasis"><em>maxh</em></span>. For example, if <span class="emphasis"><em>maxh</em></span> is 11.3 then the 12th harmonic partial is added with 0.3 amplitude. This parameter is zero by default.
+    </p>
+        <p>
+      <span class="emphasis"><em>GEN30</em></span> does not support tables with an extended guard point (ie. table size = power of two + 1). Although such tables will work both for input and output, when reading source table(s), the guard point is ignored, and when writing the output table, guard point is simply copied from the first sample (table index = 0). 
+    </p>
+        <p>
+      The reason of this limitation is that <span class="emphasis"><em>GEN30</em></span> uses FFT, which requires power of two table size.  <a class="link" href="GEN32.html" title="GEN32"><em class="citetitle">GEN32</em></a> allows using linear interpolation for resampling and phase shifting, which makes it possible to use any table size (however, for partials calculated with FFT, the power of two limitation still exists).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988307472"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the GEN30 routine. It uses the files <a class="ulink" href="examples/gen30.csd" target="_top"><em class="citetitle">gen30.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275988305680"></a>
+          <p class="title">
+            <strong>Example 1223. Example of the GEN30 routine.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276398798528"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen30.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">;a simplified example of Istvan Varga</span>
+<span class="vg">sr</span> <span class="o">=</span>  <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span>  <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span>  <span class="mi">2</span>
+<span class="vg">0dbfs</span>   <span class="o">=</span> <span class="mi">1</span>
+
+i<span class="n">saw</span>	<span class="nb">ftgen</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">16384</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">16384</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>						<span class="c1">;sawtooth wave </span>
+i<span class="n">FM</span>	<span class="nb">ftgen</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span>	\
+			     <span class="mi">0</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">0</span>			<span class="c1">;FM waveform</span>
+i<span class="n">AM</span>	<span class="nb">ftgen</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mf">0.01</span>						<span class="c1">;AM waveform</span>
+i<span class="n">EQ</span>	<span class="nb">ftgen</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1</span>						<span class="c1">;FM to EQ</span>
+i<span class="n">sine</span>	<span class="nb">ftgen</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>								<span class="c1">;sine wave</span>
+
+<span class="cm">/* generate bandlimited sawtooth waves */</span>
+i<span class="n">0</span>	<span class="o">=</span>  <span class="mi">0</span>
+<span class="nl">loop1</span><span class="p">:</span>
+i<span class="n">maxh</span>	<span class="o">=</span>  <span class="vg">sr</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">440.0</span> <span class="o">*</span> <span class="nb">exp</span><span class="p">(</span><span class="nb">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>i<span class="n">0</span> <span class="o">-</span> <span class="mi">69</span><span class="p">)</span> <span class="o">/</span> <span class="mi">12</span><span class="p">))</span>
+i<span class="n">_</span>	<span class="nb">ftgen</span> i<span class="n">0</span> <span class="o">+</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">maxh</span>					<span class="c1">;use gen 30</span>
+i<span class="n">0</span>	<span class="o">=</span>  i<span class="n">0</span> <span class="o">+</span> <span class="mi">1</span>
+	<span class="k">if</span> <span class="p">(</span>i<span class="n">0</span> <span class="o">&lt;</span> <span class="mf">127.5</span><span class="p">)</span> <span class="k">igoto</span> <span class="nl">loop1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">cps</span>	<span class="o">=</span>  <span class="mf">440.0</span> <span class="o">*</span> <span class="nb">exp</span><span class="p">(</span><span class="nb">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">p4</span> <span class="o">-</span> <span class="mi">69</span><span class="p">)</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span>					<span class="c1">;note frequency</span>
+k<span class="n">lpmaxf</span>	<span class="nb">limit</span> <span class="nb">p5</span> <span class="o">*</span> k<span class="n">cps</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mf">12000.0</span>						<span class="c1">;lowpass max. frequency</span>
+
+k<span class="n">fmd1</span>	<span class="o">=</span>  <span class="mf">0.03</span> <span class="o">*</span> k<span class="n">cps</span>									<span class="c1">;FM depth in Hz</span>
+k<span class="n">amfr</span>	<span class="o">=</span>  k<span class="n">cps</span> <span class="o">*</span> <span class="mf">0.02</span>									<span class="c1">;AM frequency</span>
+k<span class="n">amfr2</span>	<span class="o">=</span>  k<span class="n">cps</span> <span class="o">*</span> <span class="mf">0.1</span>
+
+k<span class="n">fnum</span>	<span class="o">=</span>  <span class="p">(</span><span class="mi">10</span> <span class="o">+</span> <span class="mi">69</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="mi">12</span> <span class="o">*</span> <span class="nb">log</span><span class="p">(</span>k<span class="n">cps</span> <span class="o">/</span> <span class="mf">440.0</span><span class="p">)</span> <span class="o">/</span> <span class="nb">log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">))</span>				<span class="c1">;table number</span>
+a<span class="n">env</span>	<span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.75</span><span class="p">,</span> <span class="mi">0</span>						<span class="c1">;amp. envelope</span>
+
+a<span class="n">sig</span>	<span class="nb">oscbnk</span> k<span class="n">cps</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> k<span class="n">fmd1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">144</span><span class="p">,</span>	      \
+		<span class="mf">0.0</span><span class="p">,</span> k<span class="n">lpmaxf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> k<span class="n">fnum</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span>
+a<span class="n">sig</span>	<span class="o">=</span> a<span class="n">sig</span> <span class="o">*</span> a<span class="n">env</span><span class="o">*</span><span class="mf">.03</span>
+<span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">s</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mi">41</span> <span class="mi">10</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mi">60</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mi">65</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mi">69</span>
+<span class="nb">s</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mi">41</span> <span class="mi">64</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mi">60</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mi">65</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mi">69</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988301696"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+        <p>New in version 4.16</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN28.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN31.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN28 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN31</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

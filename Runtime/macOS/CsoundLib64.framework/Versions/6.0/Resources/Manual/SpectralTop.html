@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Spectral Processing</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartOpcodesOverview.html" title="Part II. Opcodes Overview" />
+    <link rel="prev" href="MidiSlidrbk.html" title="Slider Banks" />
+    <link rel="next" href="SpectralLpcresyn.html" title="Linear Predictive Coding (LPC) Resynthesis" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Spectral Processing</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="MidiSlidrbk.html">Prev</a> </td>
+          <th width="60%" align="center">Part II. Opcodes Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="SpectralLpcresyn.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="SpectralTop"></a>Spectral Processing</h2>
+          </div>
+        </div>
+      </div>
+      <p> See the section <a class="link" href="SiggenTop.html#SiggenAdditive" title="Additive Synthesis/Resynthesis"><em class="citetitle">Additive Synthesis/Resynthesis</em></a> for the basic resynthesis opcodes.
+</p>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="SiggenStft"></a>Short-time Fourier Transform (STFT) Resynthesis</h2>
+            </div>
+          </div>
+        </div>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Use of PVOC-EX files with the old Csound pvoc opcodes">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Use of PVOC-EX files with the old Csound pvoc opcodes</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+      All the original pvoc opcodes can now read a PVOC-EX file, as well as the native non-portable file format. As the PVOC-EX file uses a double-size analysis window, users may find that this gives a useful improvement in quality, for some sounds and processes, despite the fact that the resynthesis does not use the same window size.
+    </p>
+                <p>
+      Apart from the window size parameter, the main difference between the original .pv format and PVOC-EX is in the amplitude range of analysis frames. While rescaling is applied, so that no significant difference in output level is experienced, whichever file format is used, some slight loss of amplitude can still arise, as the double window usage itself modifies frame amplitudes, of which the resynthesis code is unaware. Note that all the original pvoc opcodes expect a mono analysis file, and multi-channel PVOC-EX files will accordingly be rejected.
+    </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    Opcodes the implement STFT resynthesis are:
+    </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+                <a class="link" href="mincer.html" title="mincer">
+                  <em class="citetitle">mincer</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="temposcal.html" title="temposcal">
+                  <em class="citetitle">temposcal</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="tableseg.html" title="tableseg">
+                  <em class="citetitle">tableseg</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="pvadd.html" title="pvadd">
+                  <em class="citetitle">pvadd</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="pvbufread.html" title="pvbufread">
+                  <em class="citetitle">pvbufread</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="pvcross.html" title="pvcross">
+                  <em class="citetitle">pvcross</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="pvinterp.html" title="pvinterp">
+                  <em class="citetitle">pvinterp</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="pvoc.html" title="pvoc">
+                  <em class="citetitle">pvoc</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="pvread.html" title="pvread">
+                  <em class="citetitle">pvread</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="tableseg.html" title="tableseg">
+                  <em class="citetitle">tableseg</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="tablexseg.html" title="tablexseg">
+                  <em class="citetitle">tablexseg</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="vpvoc.html" title="vpvoc">
+                  <em class="citetitle">vpvoc</em>
+                </a>
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+  </p>
+        <p>Use the utility <a class="link" href="pvanal.html" title="pvanal"><em class="citetitle">PVANAL</em></a> to generate pv analysis files.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="MidiSlidrbk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartOpcodesOverview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="SpectralLpcresyn.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Slider Banks </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Linear Predictive Coding (LPC) Resynthesis</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

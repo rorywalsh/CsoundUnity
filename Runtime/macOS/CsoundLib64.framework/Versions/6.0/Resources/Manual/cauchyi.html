@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>cauchyi</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="cauchy.html" title="cauchy" />
+    <link rel="next" href="ceil.html" title="ceil" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">cauchyi</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cauchy.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ceil.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="cauchyi"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCauchyiXClass" class="indexterm"></a>
+      <a id="IndexCauchyi" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">cauchyi</span>
+        </h2>
+        <p>cauchyi — 
+      Cauchy distribution random number generator with
+      interpolation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122197440"></a>
+        <h2>Description</h2>
+        <p>
+      Cauchy distribution random number generator with controlled
+      interpolation between values. This is an x-class noise
+      generator.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122196112"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>cauchyi</strong></span> klambda, xamp, xcps</pre>
+        <pre class="synopsis">ires <span class="command"><strong>cauchyi</strong></span> klambda, xamp, xcps</pre>
+        <pre class="synopsis">kres <span class="command"><strong>cauchyi</strong></span> klambda, xamp, xcps</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122191392"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kalpha</em></span> -- controls the spread from zero (big <span class="emphasis"><em>kalpha</em></span> = big spread). Outputs both positive and negative numbers.
+    </p>
+        <p>
+      For more detailed explanation of these distributions, see:
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>C. Dodge - T.A. Jerse 1985. Computer music. Schirmer books. pp.265 - 286</p>
+            </li>
+            <li class="listitem">
+              <p>D. Lorrain. A panoply of stochastic cannons. In C. Roads, ed. 1989. Music machine . Cambridge, Massachusetts: MIT press, pp. 351 - 379.</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>xamp</em></span> -- range over which random numbers are distributed.
+    </p>
+        <p>
+      <span class="emphasis"><em>xcps</em></span> -- the frequency which new random
+      numbers are generated. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122184496"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the cauchyi opcode. It uses the file <a class="ulink" href="examples/cauchyi.csd" target="_top"><em class="citetitle">cauchyi.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276122182704"></a>
+          <p class="title">
+            <strong>Example 112. Example of the cauchyi opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276489894000"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o exprand.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+k<span class="n">lambda</span>	<span class="nb">cauchyi</span>	<span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span>
+	<span class="nb">printk2</span> k<span class="n">lambda</span>		<span class="c1">; look</span>
+a<span class="n">out</span>	<span class="nb">oscili</span>	<span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">lambda</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; &amp; listen</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine wave</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122178720"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="cauchy.html" title="cauchy"><em class="citetitle">cauchy</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122176688"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>Bath</td>
+          </tr>
+          <tr>
+            <td>May 2011</td>
+          </tr>
+          <tr>
+            <td>New in version 5.14</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cauchy.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ceil.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cauchy </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ceil</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

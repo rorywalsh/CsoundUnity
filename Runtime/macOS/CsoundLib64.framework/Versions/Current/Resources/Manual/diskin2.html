@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>diskin2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="diskin.html" title="diskin" />
+    <link rel="next" href="dispfft.html" title="dispfft" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">diskin2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="diskin.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="dispfft.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="diskin2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDiskin2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">diskin2</span>
+        </h2>
+        <p>diskin2 — 
+      Reads audio data from a file, and can alter its pitch using one of several
+      available interpolation types, as well as convert the sample rate to match
+      the orchestra sr setting.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116095904"></a>
+        <h2>Description</h2>
+        <p>
+	Reads audio data from a file, and can alter its pitch using
+	one of several available interpolation types, as well as
+	convert the sample rate to match the orchestra sr
+	setting. <span class="emphasis"><em>diskin2</em></span> can also read
+	multichannel files with any number of channels in the range 1
+	to 24 in versions before 5.14, and 40 after.
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116094000"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1[, a2[, ... aN]] <span class="command"><strong>diskin2</strong></span> ifilcod[, kpitch[, iskiptim \
+      [, iwrap[, iformat[, iwsize[, ibufsize[, iskipinit]]]]]]]</pre>
+        <pre class="synopsis">ar1[] <span class="command"><strong>diskin2</strong></span> ifilcod[, kpitch[, iskiptim \
+      [, iwrap[, iformat[, iwsize[, ibufsize[, iskipinit]]]]]]]</pre>
+        <p> (in the array output version, the number of output channels does not have an upper limit.)</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116089968"></a>
+        <h2>Initialization</h2>
+        <p>
+	<span class="emphasis"><em>ifilcod</em></span>
+	-- integer or character-string denoting the source soundfile
+	name. An integer denotes the file soundin.ifilcod; a character-string
+   	(in double quotes, spaces permitted) gives the filename itself,
+   	optionally a full pathname. If not a full path, the named file is
+   	sought first in the current directory, then in those given by the
+   	environment variable <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SSDIR</em></a> (if defined) then by <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SFDIR</em></a>. See also
+    <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>.
+   	Note: files longer than 2<sup>31</sup>-1 sample frames may not be played correctly
+   	on 32-bit platforms; this means a maximum length about 3 hours with a
+   	sample rate of 192000 Hz.
+   	</p>
+        <p>
+   	<span class="emphasis"><em>iskiptim</em></span>
+   	(optional, defaults to zero) -- time in seconds of input sound to
+   	be skipped, assuming <span class="emphasis"><em>kpitch</em></span>=1. Can be negative, to add
+    -<span class="emphasis"><em>iskiptim</em></span>/<span class="emphasis"><em>kpitch</em></span>
+   	seconds of delay instead of skipping sound.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>If <span class="emphasis"><em>iwrap</em></span> is not 0 (locations are wrapped),
+    <span class="emphasis"><em>iskiptim</em></span> will not delay the sound if a negative value is used.
+    Instead, the negative value will be "wrapped" from the end of the file.
+    </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+   	</p>
+        <p>
+	<span class="emphasis"><em>iwrap</em></span>
+	(optional, defaults to zero) -- if set to any non-zero value, read
+   	locations that are negative or are beyond the end of the file are wrapped
+   	to the duration of the sound file instead of assuming zero samples.
+   	Useful for playing a file in a loop.
+
+   	</p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+   	If <span class="emphasis"><em>iwrap</em></span> is enabled, the file length should not be shorter than
+   	the interpolation window size (see below), otherwise there may be clicks
+   	in the sound output.
+   	</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+
+   	</p>
+        <p>
+   	<span class="emphasis"><em>iformat</em></span>
+   	(optional, defaults to zero) -- sets raw and sample format for raw (headerless)
+   	files. This parameter must be zero if the file has a header.
+   	Allowed values for raw files are are:
+
+	</p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1: 16-bit short integers</p>
+            </li>
+            <li class="listitem">
+              <p>2: 8-bit signed char (high-order 8 bits of a 16-bit integer)</p>
+            </li>
+            <li class="listitem">
+              <p>3: 8-bit A-law bytes</p>
+            </li>
+            <li class="listitem">
+              <p>4: 8-bit U-law bytes</p>
+            </li>
+            <li class="listitem">
+              <p>5: 16-bit short integers</p>
+            </li>
+            <li class="listitem">
+              <p>6: 32-bit long integers</p>
+            </li>
+            <li class="listitem">
+              <p>7: 32-bit floats</p>
+            </li>
+            <li class="listitem">
+              <p>8: 8-bit unsigned int</p>
+            </li>
+            <li class="listitem">
+              <p>9: 24-bit int</p>
+            </li>
+            <li class="listitem">
+              <p>10: 64-bit doubles</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+	</p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>This list is not the same as in <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a></p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+	<span class="emphasis"><em>iwsize</em></span>
+	(optional, defaults to zero) -- interpolation window size, in samples.
+   	Can be one of the following:
+
+   	</p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1: round to nearest sample (no interpolation, for <span class="emphasis"><em>kpitch</em></span>=1)</p>
+            </li>
+            <li class="listitem">
+              <p>2: linear interpolation</p>
+            </li>
+            <li class="listitem">
+              <p>4: cubic interpolation</p>
+            </li>
+            <li class="listitem">
+              <p>&gt;= 8: <span class="emphasis"><em>iwsize</em></span> point sinc interpolation with anti-aliasing (slow)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+	Zero or negative values select the default, which is cubic interpolation.
+
+  	</p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>If interpolation is used, <span class="emphasis"><em>kpitch</em></span> is automatically scaled by the
+	ratio of the sample rate of the sound file and the orchestra, so that
+    the file will always be played at the original pitch if <span class="emphasis"><em>kpitch</em></span> is 1.
+    However, the sample rate conversion is disabled if <span class="emphasis"><em>iwsize</em></span> is 1.
+    </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+
+    </p>
+        <p>
+	<span class="emphasis"><em>ibufsize</em></span>
+	(optional, defaults to 0) -- buffer size in mono samples (not sample
+        frames). This is only the suggested value, the actual setting will be
+        rounded so that the number of sample frames is an integer power of two
+        and is in the range 128 (or <span class="emphasis"><em>iwsize</em></span> if greater than 128) to 1048576.
+        The default, which is 4096, and is enabled by zero or negative values,
+        should be suitable for most uses, but for non-realtime mixing of many
+        large sound files, a high buffer setting is recommended to improve the
+        efficiency of disk reads. For real time audio output, reading the files
+        from a fast RAM file system (on platforms where this option is
+        available) with a small buffer size may be preferred.
+    </p>
+        <p>
+        <span class="emphasis"><em>iskipinit</em></span>
+        (optional, defaults to 0) -- skip initialization if set to any
+        non-zero value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116055696"></a>
+        <h2>Performance</h2>
+        <p>
+	<span class="emphasis"><em>a1 ... a24</em></span>
+	-- output signals, in the range -0dbfs to 0dbfs. Any samples
+    before the beginning (i.e. negative location) and after the end of
+    the file are assumed to be zero, unless <span class="emphasis"><em>iwrap</em></span> is non-zero.
+    The number of output arguments must be the same as the number of sound
+    file channels - which can be determined with the
+    <a class="link" href="filenchnls.html" title="filenchnls"><em class="citetitle">filenchnls</em></a> opcode,
+    otherwise an init error will occur.
+</p>
+        <p>
+	<span class="emphasis"><em>ar1[]</em></span>
+         --- output signals, in a-rate array of size N, where N is the number of
+             channels in the file. Arrays are automatically allocated to the correct
+             size.
+	</p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>It is more efficient to read a single file with many channels,
+   	than many files with only a single channel, especially with high <span class="emphasis"><em>iwsize</em></span>
+	settings.
+	</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+	<span class="emphasis"><em>kpitch</em></span>
+	-- transpose the pitch of input sound by this factor (e.g. 0.5 means
+    one octave lower, 2 is one octave higher, and 1 is the original
+    pitch, which is the default value).
+    Fractional and negative values are allowed (the latter results in
+    playing the file backwards, however, in this case the skip time parameter
+    should be set to some positive value, e.g. the length of the file, or
+    <span class="emphasis"><em>iwrap</em></span> should be non-zero, otherwise nothing would be played).
+    If interpolation is enabled, and the sample rate of the file differs
+    from the orchestra sample rate, the transpose ratio is automatically
+    adjusted to make sure that <span class="emphasis"><em>kpitch</em></span>=1 plays at the original pitch.
+    Using a high <span class="emphasis"><em>iwsize</em></span> setting (40 or more) can significantly improve
+    sound quality when transposing up, although at the expense of high
+    CPU usage.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116046864"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the diskin2 opcode. It uses the file <a class="ulink" href="examples/diskin2.csd" target="_top"><em class="citetitle">diskin2.csd</em></a>, <a class="ulink" href="examples/beats.wav" target="_top"><em class="citetitle">beats.wav</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276116044288"></a>
+          <p class="title">
+            <strong>Example 220. Example of the diskin2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276482706992"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o diskin2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>     <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span>  <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">trans</span> <span class="nb">linseg</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span>
+a<span class="n">1</span>     <span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> k<span class="n">trans</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">32</span>
+       <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">15</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116040304"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="in.html" title="in"><em class="citetitle">in</em></a>,
+      <a class="link" href="inh.html" title="inh"><em class="citetitle">inh</em></a>,
+      <a class="link" href="ino.html" title="ino"><em class="citetitle">ino</em></a>,
+      <a class="link" href="inq.html" title="inq"><em class="citetitle">inq</em></a>,
+      <a class="link" href="ins.html" title="ins"><em class="citetitle">ins</em></a>,
+      <a class="link" href="soundin.html" title="soundin"><em class="citetitle">soundin</em></a> and
+      <a class="link" href="diskin.html" title="diskin"><em class="citetitle">diskin</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116033152"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.00</p>
+        <p>kpitch optional in version 6.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="diskin.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="dispfft.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">diskin </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> dispfft</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

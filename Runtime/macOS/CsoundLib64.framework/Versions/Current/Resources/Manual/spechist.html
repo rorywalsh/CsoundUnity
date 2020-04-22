@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>spechist</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="specfilt.html" title="specfilt" />
+    <link rel="next" href="specptrk.html" title="specptrk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">spechist</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="specfilt.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="specptrk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="spechist"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpechist" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">spechist</span>
+        </h2>
+        <p>spechist — 
+      Accumulates the values of successive spectral frames.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058522960"></a>
+        <h2>Description</h2>
+        <p>
+      Accumulates the values of successive spectral frames.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058521712"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">wsig <span class="command"><strong>spechist</strong></span> wsigin</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058519632"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>wsigin</em></span> -- the input spectra.
+    </p>
+        <p>
+      Accumulates the values of successive spectral frames. At each new frame of <span class="emphasis"><em>wsigin</em></span>, the accumulations-to-date in each magnitude track are written to the output spectrum. This unit thus provides a running <span class="emphasis"><em>histogram</em></span> of spectral distribution.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058516592"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  wsig2    <span class="opc">specdiff</span>    wsig1         <span class="comment">; sense onsets</span>
+  wsig3    <span class="opc">specfilt</span>    wsig2, 2      <span class="comment">; absorb slowly</span>
+           <span class="opc">specdisp</span>    wsig2, 0.1    <span class="comment">; &amp; display both spectra</span>
+           <span class="opc">specdisp</span>    wsig3, 0.1</pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058509808"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="specaddm.html" title="specaddm"><em class="citetitle">specaddm</em></a>,
+      <a class="link" href="specdiff.html" title="specdiff"><em class="citetitle">specdiff</em></a>,
+      <a class="link" href="specfilt.html" title="specfilt"><em class="citetitle">specfilt</em></a>,
+      <a class="link" href="specscal.html" title="specscal"><em class="citetitle">specscal</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="specfilt.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="specptrk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">specfilt </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> specptrk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

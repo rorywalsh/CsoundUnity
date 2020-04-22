@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ftgentmp</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ftgenonce.html" title="ftgenonce" />
+    <link rel="next" href="ftlen.html" title="ftlen" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ftgentmp</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ftgenonce.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ftlen.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ftgentmp"></a>
+      <div class="titlepage"></div>
+      <a id="Indexftgentmp" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ftgentmp</span>
+        </h2>
+        <p>ftgentmp — 
+       Generate a score function table from within the orchestra, which is deleted at the end of the note.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102047440"></a>
+        <h2>Description</h2>
+        <p>
+      Generate a score function table from within the orchestra,
+    which is optionally deleted at the end of the note.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102046144"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ifno <span class="command"><strong>ftgentmp</strong></span> ip1, ip2dummy, isize, igen, iarga, iargb, ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102044032"></a>
+        <h2>Initialization</h2>
+        <p>
+    <span class="emphasis"><em>ifno</em></span> --  either a requested or automatically
+    assigned table number above 100.
+    </p>
+        <p>
+    <span class="emphasis"><em>ip1</em></span> -- the number of the table to be
+    generated or 0 if the number is to be assigned, in which case the
+    table is deleted at the end of the note activation.
+    </p>
+        <p>
+
+    <span class="emphasis"><em>ip2dummy</em></span> -- ignored.
+    </p>
+        <p>
+      <span class="emphasis"><em>isize</em></span> -- table size. Corresponds to p3 of the score <span class="emphasis"><em>f statement</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>igen</em></span> -- function table <span class="emphasis"><em>GEN</em></span> routine. Corresponds to p4 of the score <span class="emphasis"><em>f statement</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>iarga, iargb, ...</em></span> -- function table arguments. Correspond to p5 through p<span class="emphasis"><em>n</em></span> of the score <span class="emphasis"><em>f statement</em></span>.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>Csound was originally designed to support tables with power of two sizes only. Though this has changed in recent versions (you can use any size by using a negative number), many opcodes will not accept them.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102034640"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the ftgentmp opcode. It uses the file <a class="ulink" href="examples/ftgentmp.csd" target="_top"><em class="citetitle">ftgentmp.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276102032848"></a>
+          <p class="title">
+            <strong>Example 372. Example of the ftgentmp opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276468031648"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">fno</span>  <span class="nb">ftgentmp</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+<span class="nb">print</span> i<span class="n">fno</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+<span class="nb">print</span> <span class="nb">ftlen</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">101</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mi">10</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">7</span> <span class="mi">1</span> <span class="mi">102</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">12</span> <span class="mi">1</span> <span class="mi">101</span> 
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">17</span> <span class="mi">1</span> <span class="mi">102</span> 
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+      The output of this csd shows that the tables are destroyed after the instrument instances that created them terminates, causing an init error if the tables are queried.
+</p>
+        <pre class="screen">
+SECTION 1:
+new alloc for instr 1:
+ftable 101:
+instr 1:  ifno = 101.000
+B  0.000 ..  2.000 T  2.000 TT  2.000 M:  0.00000  0.00000
+new alloc for instr 2:
+instr 2:  #i0 = 512.000
+B  2.000 ..  5.000 T  5.001 TT  5.001 M:  0.00000  0.00000
+new alloc for instr 1:
+ftable 102:
+instr 1:  ifno = 102.000
+B  5.000 ..  7.000 T  7.001 TT  7.001 M:  0.00000  0.00000
+instr 2:  #i0 = 512.000
+B  7.000 .. 12.000 T 11.999 TT 11.999 M:  0.00000  0.00000
+INIT ERROR in instr 2: Invalid ftable no. 101.000000
+#i0     ftlen.i p4
+instr 2:  #i0 = -1.000
+         B 12.000 - note deleted.  i2 had 1 init errors
+B 12.000 .. 17.000 T 17.000 TT 17.000 M:  0.00000  0.00000
+INIT ERROR in instr 2: Invalid ftable no. 102.000000
+#i0     ftlen.i p4
+instr 2:  #i0 = -1.000
+         B 17.000 - note deleted.  i2 had 1 init errors
+</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276102027296"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Authors: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ftgenonce.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ftlen.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ftgenonce </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ftlen</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>randi</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="randh.html" title="randh" />
+    <link rel="next" href="random.html" title="random" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">randi</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="randh.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="random.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="randi"></a>
+      <div class="titlepage"></div>
+      <a id="IndexRandi" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">randi</span>
+        </h2>
+        <p>rand — 
+      Generates a controlled random number series with interpolation between each new number.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063188144"></a>
+        <h2>Description</h2>
+        <p>
+      Generates a controlled random number series with interpolation between each new number.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063186752"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>randi</strong></span> xamp, xcps [, iseed] [, isize] [, ioffset]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>randi</strong></span> kamp, kcps [, iseed] [, isize] [, ioffset]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063183280"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iseed</em></span> (optional, default=0.5) -- seed value for the recursive pseudo-random formula. A value between 0 and +1 will produce an initial output of <span class="emphasis"><em>kamp * iseed.</em></span> A negative value will cause seed re-initialization to be skipped. A value greater than 1 will seed from system time, this is the best option to generate a different random sequence for each run.
+    </p>
+        <p>
+      <span class="emphasis"><em>isize</em></span> (optional, default=0) -- if zero, a 16 bit number is generated. If non-zero, a 31-bit random number is generated. Default is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>ioffset</em></span> (optional, default=0) -- a base value added to the random result. New in Csound version 4.03.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063178656"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp, xamp</em></span> -- range over which random numbers are distributed.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps, xcps</em></span> -- the frequency which new random numbers are generated.
+    </p>
+        <p>
+      The internal pseudo-random formula produces values which are uniformly distributed over the range <span class="emphasis"><em>kamp</em></span> to <span class="emphasis"><em>-kamp</em></span>. <span class="emphasis"><em>rand</em></span> will thus generate uniform white noise with an R.M.S value of <span class="emphasis"><em>kamp / root 2</em></span>.
+    </p>
+        <p>
+      The remaining units produce band-limited noise: the <span class="emphasis"><em>kcps</em></span> and <span class="emphasis"><em>xcps</em></span> parameters permit the user to specify that new random numbers are to be generated at a rate less than the sampling or control frequencies. <span class="emphasis"><em>randi</em></span> will produce straight-line interpolation between each new number and the next.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063171808"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the randi opcode. It uses the file <a class="ulink" href="examples/randi.csd" target="_top"><em class="citetitle">randi.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276063170000"></a>
+          <p class="title">
+            <strong>Example 822. Example of the randi opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276429936640"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o randi.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;same values every time</span>
+
+k<span class="n">rnd</span> <span class="nb">randi</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span>
+     <span class="nb">printk</span> <span class="mf">.5</span><span class="p">,</span> k<span class="n">rnd</span>			<span class="c1">; look </span>
+a<span class="n">out</span> <span class="nb">oscili</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">rnd</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; &amp; listen</span>
+     <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">;different values every time</span>
+
+k<span class="n">rnd</span> <span class="nb">randi</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span>			<span class="c1">; seed from system clock</span>
+     <span class="nb">printk</span> <span class="mf">.5</span><span class="p">,</span> k<span class="n">rnd</span>			<span class="c1">; look </span>
+a<span class="n">out</span> <span class="nb">oscili</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">rnd</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; &amp; listen</span>
+     <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine wave.</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">1</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+     </p>
+        <p>
+      The example will produce the following output:
+      </p>
+        <pre class="screen">
+ i   1 time     0.00067:    50.00000
+ i   1 time     0.50000:   -75.81672
+ i   1 time     1.00000:    95.93833
+
+WARNING: Seeding from current time 1482746120
+
+ i   2 time     2.00067:   -17.94434
+ i   2 time     2.50000:   -14.11875
+ i   2 time     3.00000:   -72.41545
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063164224"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="rand.html" title="rand"><em class="citetitle">rand</em></a>,
+      <a class="link" href="randh.html" title="randh"><em class="citetitle">randh</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="randh.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="random.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">randh </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> random</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Mac OSX</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="Using.html" title="Using Csound" />
+    <link rel="prev" href="RealTimeLinux.html" title="Realtime I/O on Linux" />
+    <link rel="next" href="RealTimeWindows.html" title="Windows" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Mac OSX</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="RealTimeLinux.html">Prev</a> </td>
+          <th width="60%" align="center">Using Csound</th>
+          <td width="20%" align="right"> <a accesskey="n" href="RealTimeWindows.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="RealTimeMac"></a>Mac OSX</h2>
+          </div>
+        </div>
+      </div>
+      <h3><a id="idm276137674816"></a>Real-time Audio</h3>
+      <p>
+    OSX users can use either the  <span class="emphasis"><em>PortAudio</em></span>
+    (default),<span class="emphasis"><em>auhal</em></span>(or coreaudio), or the
+    <span class="emphasis"><em>Jack</em></span> realtime audio modules. The auhal module
+    is a native OSX module which provides good latency, but it might
+    not work with some external hardware. The Jack module can be used
+    for interconnecting with other applications, but you will need to
+    install the JackOSX software in order to use it. To activate a
+    realtime module, you can use the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusPlusRtaudio"><em class="citetitle">-+rtaudio</em></a>
+    flag with value of <span class="emphasis"><em>portaudio</em></span>,
+    <span class="emphasis"><em>auhal</em></span>, or <span class="emphasis"><em>jack</em></span>. The default value is <span class="emphasis"><em>portaudio</em></span>, which is activated by default without specifying it.
+  </p>
+      <p>
+    You also need to specify the sound device you want to use, and
+    specify that you want to generate real-time audio ouput instead of
+    soundfile to disk output. To do this, you must use the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerOdac"><em class="citetitle">-odac</em></a>
+    or <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerOdac"><em class="citetitle">-o
+    dac</em></a> flag, which tells csound to output to the
+    Digital-to-Analog converters instead of a file. By adding a number
+    after the flag (e.g. -odac2), you can choose the device number you
+    want. To find out available devices in your system, you can use a
+    large out of range number (e.g. -odac99), and Csound will report
+    an error, and list available devices. This numbering convention
+    works for portaudio and auhal, but for Jack, you will need to
+    pass the name of the desired output device after a colon (e.g. -odac:system:playback_).
+  </p>
+      <p>
+    Enabling realtime audio input is done using <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerIadc"><em class="citetitle">-iadc</em></a>,
+    which makes csound listen to the realtime audio inputs. You can
+    again select the device by its number (or name), and check for available devices using an out of range number. Note that for input you use 'adc' instead of 'dac'. Make sure you have the appropriate input selected in your soundcard's control panel.
+  </p>
+      <h3><a id="idm276137665104"></a>Real-time MIDI</h3>
+      <p>
+    To enable Real-time MIDI on OSX, you can use the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperM"><em class="citetitle">-M</em></a> flag for MIDI input and the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperQ"><em class="citetitle">-Q</em></a> flag for MIDI output. You might need to specify the device number after the flag (e.g. -M2), and again, you can find the available devices by giving an out of range number.
+  </p>
+      <p>
+    Csound will use PortMidi as the default MIDI module, but there's also a native coremidi module, which can be activated with the flag:
+  </p>
+      <div class="literallayout">
+        <p><br />
+    -+rtmidi=cmidi<br />
+  </p>
+      </div>
+      <p>
+    The coremidi module corrently only supports MIDI input.
+  </p>
+      <p>
+    A typical set of flags to enable Real-time Audio and MIDI I/O can look like:
+  </p>
+      <div class="literallayout">
+        <p><br />
+    -+rtmidi=cmidi -M1 -+rtaudio=auhal-odac3 -iadc3<br />
+  </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="RealTimeLinux.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="Using.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="RealTimeWindows.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Realtime I/O on Linux </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Windows</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

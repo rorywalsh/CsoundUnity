@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Loris Opcodes</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="SpectralTop.html" title="Spectral Processing" />
+    <link rel="prev" href="SpectralATS.html" title="ATS Spectral Processing" />
+    <link rel="next" href="arraysfft.html" title="Array-based spectral opcodes" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Loris Opcodes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="SpectralATS.html">Prev</a> </td>
+          <th width="60%" align="center">Spectral Processing</th>
+          <td width="20%" align="right"> <a accesskey="n" href="arraysfft.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="loris"></a>Loris Opcodes</h2>
+          </div>
+        </div>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>These opcodes are an optional component of Csound5. You can check if they are installed by using the command 'csound -z' which lists all available opcodes.</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <p>The Loris family of opcodes wraps:
+    <a class="link" href="lorisread.html" title="lorisread"><em class="citetitle">lorisread</em></a>
+    which imports a set of bandwidth-enhanced partials from a SDIF-format data file, applying control-rate frequency, amplitude, and bandwidth scaling envelopes, and stores the modified partials in memory;
+    <a class="link" href="lorismorph.html" title="lorismorph"><em class="citetitle">lorismorph</em></a>,
+    which morphs two stored sets of bandwidth-enhanced partials and stores a new set of partials representing the morphed sound. The morph is performed by linearly interpolating the parameter envelopes (frequency, amplitude, and bandwidth, or noisiness) of the bandwidth-enhanced partials according to control-rate frequency, amplitude, and bandwidth morphing functions, and 
+    <a class="link" href="lorisplay.html" title="lorisplay"><em class="citetitle">lorisplay</em></a>,
+    which renders a stored set of bandwidth-enhanced partials using the method of Bandwidth-Enhanced Additive Synthesis implemented in the Loris software, applying control-rate frequency, amplitude, and bandwidth scaling envelopes.
+</p>
+      <p>For more information about sound morphing and manipulation using
+Loris and the Reassigned Bandwidth-Enhanced Additive Model, visit the
+Loris web site at <a class="ulink" href="http://www.cerlsoundgroup.org/Loris" target="_top">www.cerlsoundgroup.org/Loris</a>.</p>
+      <h3><a id="idm276129127408"></a>Examples</h3>
+      <div class="example">
+        <a id="idm276129127008"></a>
+        <p class="title">
+          <strong>Example 6. Play the partials wihtout modification</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting">
+<span class="comment">; 
+; Play the partials in clarinet.sdif 
+; from 0 to 3 sec with 1 ms fadetime 
+; and no frequency , amplitude, or 
+; bandwidth modification.
+;</span>
+<span class="oblock">instr 1</span>
+    ktime    <span class="opc">linseg</span>      0, p3, 3.0    <span class="comment">; linear time function from 0 to 3 seconds</span>
+             <span class="opc">lorisread</span>   ktime, "clarinet.sdif", 1, 1, 1, 1, .001
+    asig     <span class="opc">lorisplay</span>   1, 1, 1, 1
+             <span class="opc">out</span>         asig
+<span class="oblock">endin</span></pre>
+        </div>
+      </div>
+      <br class="example-break" />
+      <div class="example">
+        <a id="idm276129120336"></a>
+        <p class="title">
+          <strong>Example 7. Add tuning and vibrato</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting">
+<span class="comment">; Play the partials in clarinet.sdif 
+; from 0 to 3 sec with 1 ms fadetime 
+; adding tuning and vibrato, increasing the 
+; "breathiness" (noisiness) and overall
+; amplitude, and adding a highpass filter.
+;</span>
+<span class="oblock">instr 2</span>
+    ktime    <span class="opc">linseg</span>      0, p3, 3.0    <span class="comment">; linear time function from 0 to 3 seconds</span>
+
+    <span class="comment">; compute frequency scale for tuning</span>
+    <span class="comment">; (original pitch was G#4)</span>
+    ifscale  <span class="op">=</span>           <span class="opc">cpspch</span>(p4)<span class="op">/</span><span class="opc">cpspch</span>(8.08)
+
+    <span class="comment">; make a vibrato envelope</span>
+    kvenv    <span class="opc">linseg</span>      0, p3/6, 0, p3/6, .02, p3/3, .02, p3/6, 0, p3/6, 0
+    kvib     <span class="opc">oscil</span>       kvenv, 4, 1   <span class="comment">; table 1, sinusoid</span>
+
+    kbwenv   <span class="opc">linseg</span>      1, p3<span class="op">/</span>6, 1, p3<span class="op">/</span>6, 2, 2<span class="op">*</span>p3<span class="op">/</span>3, 2
+             <span class="opc">lorisread</span>   ktime, "clarinet.sdif", 1, 1, 1, 1, .001
+    a1       <span class="opc">lorisplay</span>   1, ifscale<span class="op">+</span>kvib, 2, kbwenv  
+    a2       <span class="opc">atone</span>       a1, 1000      <span class="comment">; highpass filter, cutoff 1000 Hz</span>
+             <span class="opc">out</span>         a2
+<span class="oblock">endin</span></pre>
+        </div>
+      </div>
+      <br class="example-break" />
+      <p>The instrument in the first example synthesizes a clarinet tone from
+beginning to end using partials derived from reassigned
+bandwidth-enhanced analysis of a three-second clarinet tone, stored in
+a file, <code class="filename">clarinet.sdif</code>. The instrument in Example 2 adds tuning and
+vibrato to the clarinet tone synthesized by instr 1, boosts its
+amplitde and noisiness, and applies a highpass filter to the
+result. The following score can be used to test both of the
+instruments described above.</p>
+      <pre class="programlisting">
+    <span class="comment">; make sinusoid in table 1</span>
+    <span class="stamnt">f</span> 1 0 4096 10 1
+
+    <span class="comment">; play instr 1</span>
+    <span class="comment">;     strt   dur</span>
+    <span class="stamnt">i</span> 1    0      3
+    <span class="stamnt">i</span> 1    +      1
+    <span class="stamnt">i</span> 1    +      6
+    <span class="stamnt">s</span>
+	
+    <span class="comment">; play instr 2</span>
+    <span class="comment">;     strt   dur   ptch</span>
+    <span class="stamnt">i</span> 2     1     3    8.08
+    <span class="stamnt">i</span> 2     3.5   1    8.04
+    <span class="stamnt">i</span> 2     4     6    8.00
+    <span class="stamnt">i</span> 2     4     6    8.07
+
+    <span class="stamnt">e</span></pre>
+      <div class="example">
+        <a id="idm276129090512"></a>
+        <p class="title">
+          <strong>Example 8. Morph partials</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting">
+<span class="comment">; Morph the partials in clarinet.sdif into the
+; partials in flute.sdif over the duration of
+; the sustained portion of the two tones (from
+; .2 to 2.0 seconds in the clarinet, and from
+; .5 to 2.1 seconds in the flute). The onset
+; and decay portions in the morphed sound are
+; specified by parameters p4 and p5, respectively.
+; The morphing time is the time between the
+; onset and the decay. The clarinet partials are
+; shfited in pitch to match the pitch of the flute
+; tone (D above middle C). 
+;</span>
+<span class="oblock">instr</span> 1
+    ionset   <span class="op">=</span>           p4
+    idecay   <span class="op">=</span>           p5
+    itmorph  <span class="op">=</span>           p3 <span class="op">-</span> (ionset <span class="op">+</span> idecay)
+    ipshift  <span class="op">=</span>           <span class="opc">cpspch</span>(8.02)<span class="op">/</span><span class="opc">cpspch</span>(8.08)
+    
+      <span class="comment">; clarinet time function, morph from .2 to 2.0 seconds</span>
+    ktcl     <span class="opc">linseg</span>      0, ionset, .2, itmorph, 2.0, idecay, 2.1
+      <span class="comment">; flute time function, morph from .5 to 2.1 seconds</span>
+    ktfl     <span class="opc">linseg</span>      0, ionset, .5, itmorph, 2.1, idecay, 2.3
+    kmurph   <span class="opc">linseg</span>      0, ionset, 0, itmorph, 1, idecay, 1
+             <span class="opc">lorisread</span>   ktcl, "clarinet.sdif", 1, ipshift, 2, 1, .001
+             <span class="opc">lorisread</span>   ktfl, "flute.sdif", 2, 1, 1, 1, .001
+             <span class="opc">lorismorph</span>  1, 2, 3, kmurph, kmurph, kmurph
+    asig     <span class="opc">lorisplay</span>   3, 1, 1, 1
+             <span class="opc">out</span>         asig
+<span class="oblock">endin</span></pre>
+        </div>
+      </div>
+      <br class="example-break" />
+      <div class="example">
+        <a id="idm276129074432"></a>
+        <p class="title">
+          <strong>Example 9. More morphing</strong>
+        </p>
+        <div class="example-contents">
+          <pre class="programlisting">
+<span class="comment">; Morph the partials in trombone.sdif into the
+; partials in meow.sdif. The start and end times
+; for the morph are specified by parameters p4 
+; and p5, respectively. The morph occurs over the
+; second of four pitches in each of the sounds, 
+; from .75 to 1.2 seconds in the flutter-tongued
+; trombone tone, and from 1.7 to 2.2 seconds in 
+; the cat's meow. Different morphing functions are
+; used for the frequency and amplitude envelopes,
+; so that the partial amplitudes make a faster  
+; transition from trombone to cat than the frequencies. 
+; (The bandwidth envelopes use the same morphing 
+; function as the amplitudes.) 
+;</span>
+<span class="oblock">instr</span> 2
+    ionset   <span class="op">=</span>           p4
+    imorph   <span class="op">=</span>           p5 <span class="op">-</span> p4
+    irelease <span class="op">=</span>           p3 <span class="op">-</span> p5
+        
+    kttbn    <span class="opc">linseg</span>      0, ionset, .75, imorph, 1.2, irelease, 2.4
+    ktmeow   <span class="opc">linseg</span>      0, ionset, 1.7, imorph, 2.2, irelease, 3.4
+    
+    kmfreq   <span class="opc">linseg</span>      0, ionset, 0, .75*imorph, .25, .25*imorph, 1, irelease, 1
+    kmamp    <span class="opc">linseg</span>      0, ionset, 0, .75*imorph, .9, .25*imorph, 1, irelease, 1
+    
+             <span class="opc">lorisread</span>   kttbn, "trombone.sdif", 1, 1, 1, 1, .001
+             <span class="opc">lorisread</span>   ktmeow, "meow.sdif", 2, 1, 1, 1, .001
+             <span class="opc">lorismorph</span>  1, 2, 3, kmfreq, kmamp, kmamp
+    asig     <span class="opc">lorisplay</span>   3, 1, 1, 1
+             <span class="opc">out</span>         asig
+<span class="oblock">endin</span></pre>
+        </div>
+      </div>
+      <br class="example-break" />
+      <p>The instrument in the first morphing example performs a sound morph
+between a clarinet tone and a flute tone using reassigned
+bandwidth-enhanced partials stored in <code class="filename">clarinet.sdif</code> and
+<code class="filename">flute.sdif</code>.</p>
+      <p>The morph is performed over the sustain portions of the tones,
+2. seconds to 2.0 seconds in the case of the clarinet tone and .5
+seconds to 2.1 seconds in the case of the flute tone. The time index
+functions, ktcl and ktfl, align the onset and decay portions of the
+tones with the specified onset and decay times for the morphed sound,
+specified by parameters p4 and p5, respectively. The onset in the
+morphed sounds is purely clarinet partial data, and the decay is
+purely flute data. The clarinet partials are shifted in pitch to match
+the pitch of the flute tone (D above middle C).</p>
+      <p>The instrument in the second morphing example performs a sound morph
+between a flutter-tongued trombone tone and a cat's meow using
+reassigned bandwidth-enhanced partials stored in <code class="filename">trombone.sdif</code> and
+<code class="filename">meow.sdif</code>. The data in these SDIF files have been channelized and
+distilled to establish correspondences between partials.</p>
+      <p>The two sets of partials are imported and stored in memory
+locations labeled 1 and 2, respectively. Both of the original sounds
+have four notes, and the morph is performed over the second note in
+each sound (from .75 to 1.2 seconds in the flutter-tongued trombone
+tone, and from 1.7 to 2.2 seconds in the cat's meow). The different
+time index functions, kttbn and ktmeow, align those segments of the
+source and target partial sets with the specified morph start, morph
+end, and overall duration parameters. Two different morphing functions
+are used, so that the partial ammplitudes and bandwidth coefficients
+morph quickly from the trombone values to the cat's-meow values, and
+the frequencies make a more gradual transition. The morphed partials
+are stored in a memory location labeled 3 and rendered by the
+subsequent lorisplay instruction. They could also have been used as a
+source for another morph in a three-way morphing instrument. The
+following score can be used to test both of the instruments described
+above.</p>
+      <pre class="programlisting">
+    <span class="comment">; play instr 1</span>
+    <span class="comment">;     strt   dur   onset   decay</span>
+    <span class="stamnt">i</span> 1    0      3     .25     .15
+    <span class="stamnt">i</span> 1    +      1     .10     .10
+    <span class="stamnt">i</span> 1    +      6    1.      1.
+    <span class="stamnt">s</span>
+
+    <span class="comment">; play instr 2</span>
+    <span class="comment">;     strt   dur  morph_start   morph_end</span>
+    <span class="stamnt">i</span> 2    0      4     .75           2.75
+
+    <span class="stamnt">e</span></pre>
+      <h3><a id="idm276129048992"></a>Credits</h3>
+      <p>This implementation of the Loris unit generators was written by Kelly
+Fitz (<a class="ulink" href="mailto:loris@cerlsoundgroup.org" target="_top">loris@cerlsoundgroup.org</a>).</p>
+      <p>It is patterned after a prototype implementation of the <span class="emphasis"><em>lorisplay</em></span> unit generator written by Corbin Champion, and based on the method of Bandwidth-Enhanced Additive Synthesis and on the sound morphing algorithms implemented in the Loris library for sound modeling and manipulation. The opcodes were further adapted as a plugin for Csound 5 by Michael Gogins.</p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="SpectralATS.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="SpectralTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="arraysfft.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ATS Spectral Processing </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Array-based spectral opcodes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

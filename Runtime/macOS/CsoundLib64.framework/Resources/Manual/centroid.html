@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>centroid</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="cent.html" title="cent" />
+    <link rel="next" href="ceps.html" title="ceps" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">centroid</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cent.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ceps.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="centroid"></a>
+      <div class="titlepage"></div>
+      <a id="IndexCentroid" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">centroid</span>
+        </h2>
+        <p>centroid — 
+      Calculate the spectral centroid of a signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276147625984"></a>
+        <h2>Description</h2>
+        <p>
+      Calculate the spectral centroid of an audio signal on a given trigger.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276147624720"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kcent <span class="command"><strong>centroid</strong></span> asig, ktrig, ifftsize</pre>
+      </div>
+      <div class="refsect1"><a id="idm276147622624"></a><h2>Initialization</h2><span class="emphasis"><em>ifftsize</em></span>  -- fftsize. Non pow-of-two values are converted to the next pow-of-two not smaller than ifftsize. 
+  </div>
+      <div class="refsect1">
+        <a id="idm276147621328"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kcent</em></span> -- the spectral centroid in Hz
+    </p>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- an input audio signal
+    </p>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> -- 1 to calculate a new centroid, 0 to skip the process (and output previous value).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276147618016"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the centroid opcode. It uses the file <a class="ulink" href="examples/centroid.csd" target="_top"><em class="citetitle">centroid.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276147616224"></a>
+          <p class="title">
+            <strong>Example 116. Example of the centroid opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276489730752"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o centroid.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">Sine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">16384</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">trig</span> <span class="nb">init</span> <span class="mi">1</span>				<span class="c1">;calculate centroid</span>
+a<span class="n">1</span>   <span class="nb">oscil3</span> <span class="mf">0.5</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> gi<span class="n">Sine</span>		<span class="c1">;of the sine wave</span>
+k<span class="n">1</span>   <span class="nb">centroid</span> a<span class="n">1</span><span class="p">,</span> k<span class="n">trig</span><span class="p">,</span> <span class="mi">16384</span>
+a<span class="n">sig</span> <span class="nb">oscil3</span> <span class="mf">0.5</span><span class="p">,</span> k<span class="n">1</span><span class="p">,</span> gi<span class="n">Sine</span>
+     <span class="nb">printk2</span> k<span class="n">1</span>				<span class="c1">;print &amp; compare:</span>
+     <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">sig</span>			<span class="c1">;left = original, right = centroid signal</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">20</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mi">200</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mi">2000</span>
+<span class="nb">e</span>     
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276147612240"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvscent.html" title="pvscent"><em class="citetitle">pvscent</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276147610208"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: V Lazzarini;</td>
+          </tr>
+          <tr>
+            <td>August 2012</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cent.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ceps.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cent </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ceps</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN01</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="ScoreGenRef.html" title="GEN Routines" />
+    <link rel="next" href="GEN02.html" title="GEN02" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN01</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ScoreGenRef.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN02.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN01"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN01" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN01</span>
+        </h2>
+        <p>GEN01 — 
+      Transfers data from a soundfile into a function table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989948832"></a>
+        <h2>Description</h2>
+        <p>
+      This subroutine transfers data from a soundfile into a function table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989947472"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span>#  time  size  1  filcod  skiptime  format  channel</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989945488"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>size</em></span> -- number of points in the table. Ordinarily a power of 2 or a power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>); the maximum tablesize is 16777216 (2<sup>24</sup>) points. The allocation of table memory can be <span class="emphasis"><em>deferred</em></span> by setting this parameter to 0; the size allocated is then the number of points in the file (probably not a power-of-2), and the table is not usable by normal oscillators, but it is usable by a <a class="link" href="loscil.html" title="loscil"><em class="citetitle">loscil</em></a> unit. The soundfile can also be mono or stereo.
+    </p>
+        <p>
+      <span class="emphasis"><em>filcod</em></span> -- integer or character-string denoting the source soundfile name. An integer denotes the file <span class="emphasis"><em>soundin</em></span>.<span class="emphasis"><em>filcod</em></span> ; a character-string (in double quotes, spaces permitted) gives the filename itself, optionally a full pathname. If not a full path, the file is sought first in the current directory, then in that given by the environment variable <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SSDIR</em></a> (if defined) then by <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SFDIR</em></a>. See also <a class="link" href="soundin.html" title="soundin"><em class="citetitle">soundin</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em>skiptime</em></span> -- begin reading at <span class="emphasis"><em>skiptime</em></span> seconds into the file.
+    </p>
+        <p>
+      <span class="emphasis"><em>channel</em></span> -- channel number to read in. 0 denotes read all channels.
+    </p>
+        <p>
+   <span class="emphasis"><em>format</em></span> -- if positive it is ignored, but if
+      negative specifies the audio format of a raw file.
+        </p>
+        <div class="literallayout">
+          <p><br />
+        -1 - 8-bit signed character<br />
+        -2 - 8-bit A-law bytes<br />
+        -3 - 8-bit U-law bytes<br />
+        -4 - 16-bit short integers<br />
+        -5 - 32-bit long integers<br />
+        -6 - 32-bit floats<br />
+        -7 - 8-bit unsigned character<br />
+        -8 - 24-bit integers<br />
+        -9 - 64-bit doubles</p>
+        </div>
+        <p>
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>This list is not the same as in <a class="link" href="diskin.html" title="diskin"><em class="citetitle">diskin2</em></a></p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      If <span class="emphasis"><em>format</em></span> = 0 the sample format is taken
+      from the soundfile header.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>
+              Reading stops at end-of-file or when the table is full. Table locations not filled will contain zeros.
+            </p>
+                    </li>
+                    <li class="listitem">
+                      <p>
+              If p4 is positive, the table will be post-normalised (rescaled to a maximum absolute value of 1 after generation). A negative p4 will cause rescaling to be skipped.
+            </p>
+                    </li>
+                    <li class="listitem">
+                      <p>
+              GEN01 also works with WAV and OGG and a dozen and more other sound formats; these file formats depend on libsndfile, see <a class="ulink" href="http://www.mega-nerd.com/libsndfile/" target="_top"><em class="citetitle">http://www.mega-nerd.com/libsndfile/</em></a>
+            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989923968"></a>
+        <h2>Examples</h2>
+        <p>
+	    Here is an example of the GEN01 routine. It uses the files <a class="ulink" href="examples/gen01.csd" target="_top"><em class="citetitle">gen01.csd</em></a> and several sound files.
+      </p>
+        <div class="example">
+          <a id="idm275989922112"></a>
+          <p class="title">
+            <strong>Example 1197. An example of the GEN01 routine.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276399141536"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span> 
+<span class="c1">; Select audio/midi flags here according to platform </span>
+-odac     <span class="c1">;;;realtime audio out </span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too </span>
+<span class="c1">; For Non-realtime ouput leave only the line below: </span>
+<span class="c1">; -o gen01.wav -W ;;; for file output any platform </span>
+<span class="nt">&lt;/CsOptions&gt;</span> 
+<span class="nt">&lt;CsInstruments&gt;</span> 
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;plays deferred and non-deferred sounds with loscil</span>
+
+i<span class="n">fn</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">bas</span> <span class="o">=</span> <span class="mi">1</span>
+
+a<span class="n">sig</span> <span class="nb">loscil</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">bas</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+    
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">;plays only non-deffered sound            </span>
+
+i<span class="n">snd</span>  <span class="o">=</span> <span class="nb">p4</span>
+a<span class="n">read</span> <span class="nb">line</span>   <span class="vg">sr</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">0</span>				<span class="c1">;play this backward</span>
+a<span class="n">sig</span>  <span class="nb">tablei</span> a<span class="n">read</span><span class="p">,</span> i<span class="n">snd</span>				<span class="c1">;use table 1</span>
+      <span class="nb">outs</span>   a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+        
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">131072</span> <span class="mi">1</span> <span class="s">"beats.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>			<span class="c1">;non-deferred sound</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span>    <span class="mi">0</span>   <span class="mi">1</span> <span class="s">"flute.aiff"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>			<span class="c1">;&amp; deferred sounds in </span>
+<span class="nb">f</span> <span class="mi">3</span> <span class="mi">0</span>    <span class="mi">0</span>   <span class="mi">1</span> <span class="s">"beats.ogg"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>			<span class="c1">;different formats					</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="mi">3</span>
+
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">4</span> <span class="mi">2</span> <span class="mi">1</span>	<span class="c1">;non-deffered sound for instr. 2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+        <span class="phrase">These are the diagrams of the waveforms of the GEN01 routines, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen01_1.png" alt="f 1 0 131072 1 &quot;beats.wav&quot; 0 0 0 - non-deferred sound" />
+          <div class="caption">
+            <p>f 1 0 131072 1 "beats.wav" 0 0 0 - non-deferred sound</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen01_2.png" alt="f 2 0 0 1 &quot;flute.aiff&quot; 0 0 0 - deferred sound" />
+          <div class="caption">
+            <p>f 2 0 0 1 "flute.aiff" 0 0 0 - deferred sound</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen01_3.png" alt="f 3 0 0 1 &quot;beats.ogg&quot; 0 0 0 - deferred sound" />
+          <div class="caption">
+            <p>f 3 0 0 1 "beats.ogg" 0 0 0 - deferred sound</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989909856"></a>
+        <h2>Credits</h2>
+        <p>September 2003. Thanks goes to Dr. Richard Boulanger for
+    pointing out the references to the AIFF file format.</p>
+        <p>Revised in v6.11 and v6.12 to clarify status of headers and raw files,
+    and to add three more sample formats.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ScoreGenRef.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN02.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN Routines </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN02</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

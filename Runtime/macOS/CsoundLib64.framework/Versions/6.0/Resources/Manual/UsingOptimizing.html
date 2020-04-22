@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Optimizing Audio I/O Latency</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="Using.html" title="Using Csound" />
+    <link rel="prev" href="RealTimeJack.html" title="Realtime I/O with JACK Connection Kit" />
+    <link rel="next" href="Configuring.html" title="Configuring" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Optimizing Audio I/O Latency</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="RealTimeJack.html">Prev</a> </td>
+          <th width="60%" align="center">Using Csound</th>
+          <td width="20%" align="right"> <a accesskey="n" href="Configuring.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="UsingOptimizing"></a>Optimizing Audio I/O Latency</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    To achieve the lowest latency possible without audio break ups, a combination of variables needs to be tweaked. The final values will be platform and system dependent, and will also depend on the complexity of the audio calculations performed. You need to adjust <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a> in the orchestra, as well as the software (<a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a>) and harware buffer (<a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a>) sizes.
+  </p>
+      <p>
+    Usually the simplest solution is the following:
+  </p>
+      <div class="orderedlist">
+        <ol class="orderedlist" type="1">
+          <li class="listitem">
+            <p>Set <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a> to a value with a good tradeoff between quality and performance, without adjusting <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a> at all.</p>
+          </li>
+          <li class="listitem">
+            <p>Set <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> to a negative power of two of this value.</p>
+            <p>
+          To get the optimal values, start with something you think is going to be too low, ie -1, and then continue "upwards", -2, -4 and so on, until you stop getting x-runs (glitches). The real value of <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> will be the absolute value of <span class="emphasis"><em>-b * ksmps</em></span>.
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          Reduce the hardware buffer (<a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a>). Bring it down from the default (1024 on Linux, 4096 on Mac OS X, 16384 on Windows), halving it each time, until you start to get x-runs (glitches) again. Then take it back up again until performance is continuous.
+        </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+      This process assumes you have a 16-bit soundcard. If you have a 24-bit
+      soundcard, then
+      <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a>
+      should be 3/2, or 3 times
+      <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a>,
+      rather than 2 or 4 times. Csound works with 32-bit floats, or 64-bit
+      doubles whereas most soundcards are 16 or 24-bit integer.
+      <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> is
+      the internal buffer, so it's dealing with the 32 or 64-bit side of things,
+      whereas <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a>
+      is the hardware buffer, so it's dealing with the 16 or 24-bit side. The
+      csound default for floats is <span class="emphasis"><em>-B = 4 * -b</em></span>. This is a
+      sane value for a 16 bit card. You can usually get away with
+      <span class="emphasis"><em>-B = 2 * -b</em></span>, but this is the absolute minimum. For
+      example, if you set <span class="emphasis"><em>-b1024 -B2048</em></span>, csound will tell
+      you that:
+      </p>
+      <pre class="screen">audio buffered in 1024 sample-frame blocks
+      writing 4096-byte blocks to dac</pre>
+      <p>
+    </p>
+      <p>
+      4096 bytes is 32768 bits. 32768/32 = 1024, our sample-frame size, 1024 * 32/16 = 2048, our buffer size. Were we to reduce the value of <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a>, we would need to reduce the value of <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> by a corresponding amount in order to continue to write 16-bit integers to dac. The minimum size of <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> is <span class="emphasis"><em>(-B * bitrate)/32</em></span>. That is to say that the minimum ratio of <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> to <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a> should be:
+      </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">16-bit: 1:2</li>
+          <li class="listitem">24-bit: 2:3</li>
+          <li class="listitem">32-bit: 1:1</li>
+        </ul>
+      </div>
+      <p>
+    </p>
+      <p>
+      While there is no theoretical maximum ratio, it makes no sense to have a very high ratio here, as the software buffer has to fill the hardware buffer before returning. If the ratio is high, it will take a long time, defeating the purpose of setting a small value for <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a>.
+    </p>
+      <p>
+      The value of <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> is something that will need to be varied depending on the complexity of the instrument you're working with, but because it's intimately related to the value of ksmps, it's better to synchronise it with <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a> and go from there. One way to do it is to decide how long the release on your envelopes might need to be at maximum (for desired effect), set the release on all envelopes to maximum, give yourself a generous value for <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a>,  and then play. If it breaks up, double ksmps, repeat until smooth, then bring the value of <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a> down as far as possible.
+    </p>
+      <p>
+      The value of <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperB"><em class="citetitle">-B</em></a> is primarily determined by operating system and soundcard. Figure out (using above method) how low you can go, and use that value (or one higher for safety). If you
+      have problems you'll know that it's probably because of an inappropriate value for ksmps, too low a value for <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerB"><em class="citetitle">-b</em></a>, or denormals (see <a class="link" href="denorm.html" title="denorm"><em class="citetitle">denorm</em></a>).
+    </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="RealTimeJack.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="Using.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="Configuring.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Realtime I/O with JACK Connection Kit </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Configuring</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

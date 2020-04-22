@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>specdisp</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="specdiff.html" title="specdiff" />
+    <link rel="next" href="specfilt.html" title="specfilt" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">specdisp</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="specdiff.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="specfilt.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="specdisp"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpecdisp" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">specdisp</span>
+        </h2>
+        <p>specdisp — 
+      Displays the magnitude values of the spectrum.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053762928"></a>
+        <h2>Description</h2>
+        <p>
+      Displays the magnitude values of the spectrum.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053761696"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>specdisp</strong></span> wsig, iprd [, iwtflg]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053759744"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iprd</em></span> -- the period, in seconds, of each new display.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwtflg</em></span> (optional, default=0) -- wait flag. If non-zero, hold each display until released by the user. The default value is 0 (no wait).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053757184"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>wsig</em></span> -- the input spectrum.
+    </p>
+        <p>
+      Displays the magnitude values of spectrum <span class="emphasis"><em>wsig</em></span> every <span class="emphasis"><em>iprd</em></span> seconds (rounded to some integral number of <span class="emphasis"><em>wsig</em></span>'s originating <span class="emphasis"><em>iprd</em></span>).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053753440"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  ksum     <span class="opc">specsum</span>   wsig, 1              <span class="comment">; sum the spec bins, and ksmooth</span>
+           <span class="octrl">if</span> ksum <span class="op">&lt;</span> 2000 <span class="octrl">kgoto</span> <span class="olabel">zero</span>      <span class="comment">; if sufficient amplitude</span>
+  koct     <span class="opc">specptrk</span>  wsig                 <span class="comment">;    pitch-track the signal</span>
+           <span class="octrl">kgoto</span>     <span class="olabel">contin</span>
+<span class="olabel">zero:</span> 
+  koct     <span class="op">=</span>         0                    <span class="comment">; else output zero</span>
+<span class="olabel">contin:</span></pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053741632"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="specsum.html" title="specsum"><em class="citetitle">specsum</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="specdiff.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="specfilt.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">specdiff </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> specfilt</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

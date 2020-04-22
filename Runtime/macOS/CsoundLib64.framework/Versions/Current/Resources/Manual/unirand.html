@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>unirand</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tvconv.html" title="tvconv" />
+    <link rel="next" href="until.html" title="until" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">unirand</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tvconv.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="until.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="unirand"></a>
+      <div class="titlepage"></div>
+      <a id="IndexUnirandXClass" class="indexterm"></a>
+      <a id="IndexUnirand" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">unirand</span>
+        </h2>
+        <p>unirand — 
+      Uniform distribution random number generator (positive values only).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044557104"></a>
+        <h2>Description</h2>
+        <p>
+      Uniform distribution random number generator (positive values only). This is an x-class noise generator.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044555680"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>unirand</strong></span> krange</pre>
+        <pre class="synopsis">ires <span class="command"><strong>unirand</strong></span> krange</pre>
+        <pre class="synopsis">kres <span class="command"><strong>unirand</strong></span> krange</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044550960"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>krange</em></span> -- the range of the random numbers (0 - <span class="emphasis"><em>krange</em></span>).
+    </p>
+        <p>
+      For more detailed explanation of these distributions, see:
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>C. Dodge - T.A. Jerse 1985. Computer music. Schirmer books. pp.265 - 286</p>
+            </li>
+            <li class="listitem">
+              <p>D. Lorrain. A panoply of stochastic cannons. In C. Roads, ed. 1989. Music machine . Cambridge, Massachusetts: MIT press, pp. 351 - 379.</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044545712"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the unirand opcode. It uses the file <a class="ulink" href="examples/unirand.csd" target="_top"><em class="citetitle">unirand.csd</em></a>.
+            </p>
+        <div class="example">
+          <a id="idm276044543904"></a>
+          <p class="title">
+            <strong>Example 1060. Example of the unirand opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276410874192"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o unirand.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>  	<span class="c1">; every run time same values</span>
+
+k<span class="n">tri</span>	<span class="nb">unirand</span> <span class="mi">100</span>
+	<span class="nb">printk</span> <span class="mf">.2</span><span class="p">,</span> k<span class="n">tri</span>			<span class="c1">; look </span>
+a<span class="n">out</span>	<span class="nb">oscili</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">tri</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; &amp; listen</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>		<span class="c1">; every run time different values</span>
+
+	<span class="nb">seed</span> <span class="mi">0</span>
+k<span class="n">tri</span>	<span class="nb">unirand</span> <span class="mi">100</span>
+	<span class="nb">printk</span> <span class="mf">.2</span><span class="p">,</span> k<span class="n">tri</span>			<span class="c1">; look </span>
+a<span class="n">out</span>	<span class="nb">oscili</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">tri</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; &amp; listen</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine wave</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />     
+      Its output should include lines like these:
+      </p>
+        <pre class="screen">
+ i   1 time     0.00067:    81.47237
+ i   1 time     0.20067:    41.72671
+ i   1 time     0.40067:     5.96189
+ i   1 time     0.60067:    91.59912
+ i   1 time     0.80067:    85.07127
+ i   1 time     1.00000:    92.50948
+ i   1 time     1.20067:    98.79347
+ i   1 time     1.40067:    98.91449
+ i   1 time     1.60067:    50.37808
+ i   1 time     1.80000:    72.02497
+ i   1 time     2.00000:    52.94362
+
+WARNING: Seeding from current time 4007444022
+
+ i   2 time     3.00067:    91.86294
+ i   2 time     3.20067:    94.68759
+ i   2 time     3.40067:     1.05825
+ i   2 time     3.60000:    78.57628
+ i   2 time     3.80067:    27.67408
+ i   2 time     4.00000:    76.46347
+ i   2 time     4.20000:    77.10071
+ i   2 time     4.40067:    34.28921
+ i   2 time     4.60067:    37.72286
+ i   2 time     4.80067:    54.96646
+ i   2 time     5.00000:    11.67566
+B  3.000 ..  5.000 T  5.000 TT  5.000 M:  0.80000  0.80000
+Score finished in csoundPerform().
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044539168"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="seed.html" title="seed"><em class="citetitle">seed</em></a>,
+      <a class="link" href="betarand.html" title="betarand"><em class="citetitle">betarand</em></a>,
+      <a class="link" href="bexprnd.html" title="bexprnd"><em class="citetitle">bexprnd</em></a>,
+      <a class="link" href="cauchy.html" title="cauchy"><em class="citetitle">cauchy</em></a>,
+      <a class="link" href="exprand.html" title="exprand"><em class="citetitle">exprand</em></a>,
+      <a class="link" href="gauss.html" title="gauss"><em class="citetitle">gauss</em></a>,
+      <a class="link" href="linrand.html" title="linrand"><em class="citetitle">linrand</em></a>,
+      <a class="link" href="pcauchy.html" title="pcauchy"><em class="citetitle">pcauchy</em></a>,
+      <a class="link" href="poisson.html" title="poisson"><em class="citetitle">poisson</em></a>,
+      <a class="link" href="trirand.html" title="trirand"><em class="citetitle">trirand</em></a>,
+      <a class="link" href="weibull.html" title="weibull"><em class="citetitle">weibull</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044528160"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge</td>
+          </tr>
+          <tr>
+            <td>1995</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tvconv.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="until.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tvconv </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> until</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

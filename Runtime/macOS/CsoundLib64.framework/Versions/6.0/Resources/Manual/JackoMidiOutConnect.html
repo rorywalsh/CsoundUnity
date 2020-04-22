@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>JackoMidiOutConnect</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="JackoMidiInConnect.html" title="JackoMidiInConnect" />
+    <link rel="next" href="JackoMidiOut.html" title="JackoMidiOut" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">JackoMidiOutConnect</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="JackoMidiInConnect.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="JackoMidiOut.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="JackoMidiOutConnect"></a>
+      <div class="titlepage"></div>
+      <a id="IndexJackoMidiOutConnect" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">JackoMidiOutConnect</span>
+        </h2>
+        <p>JackoMidiOutConnect — 
+      Creates a MIDI connection from Csound to a Jack port.
+     </p>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">plugin: Requires jacko plugin</td>
+          </tr>
+        </table>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088090384"></a>
+        <h2>Description</h2>
+        <p>
+      In the orchestra header, creates a connection 
+      from a Jack MIDI output port inside this instance 
+      of Csound to an external Jack MIDI input port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088089040"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>JackoMidiOutConnect </strong></span>ScsoundPortName, SexternalPortName</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088087056"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ScsoundPortName</em></span> -- The short name ("portname") 
+      of the internal Jack MIDI output port.
+    </p>
+        <p>
+      <span class="emphasis"><em>SexternalPortName</em></span> -- The full name ("clientname:portname") 
+      of an external Jack MIDI input port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088084496"></a>
+        <h2>Performance</h2>
+        <p>
+      The actual MIDI data must be written with the JackoMidiOut 
+      or JackoNoteOut opcodes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088083216"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="JackoInit.html" title="JackoInit"><em class="citetitle">JackoInfo</em></a>
+      <a class="link" href="JackoInfo.html" title="JackoInfo"><em class="citetitle">JackoInfo</em></a>
+      <a class="link" href="JackoFreewheel.html" title="JackoFreewheel"><em class="citetitle">JackoFreewheel</em></a>
+      <a class="link" href="JackoAudioInConnect.html" title="JackoAudioInConnect"><em class="citetitle">JackoAudioOutConnect</em></a>
+      <a class="link" href="JackoAudioOutConnect.html" title="JackoAudioOutConnect"><em class="citetitle">JackoMidiInConnect</em></a>
+      <a class="link" href="JackoMidiInConnect.html" title="JackoMidiInConnect"><em class="citetitle">JackoMidiOutConnect</em></a>
+      <a class="link" href="JackoOn.html" title="JackoOn"><em class="citetitle">JackoOn</em></a>
+      <a class="link" href="JackoAudioIn.html" title="JackoAudioIn"><em class="citetitle">JackoAudioIn</em></a>
+      <a class="link" href="JackoAudioOut.html" title="JackoAudioOut"><em class="citetitle">JackoAudioOut</em></a>
+      <a class="link" href="JackoMidiOut.html" title="JackoMidiOut"><em class="citetitle">JackoMidiOut</em></a>
+      <a class="link" href="JackoNoteOut.html" title="JackoNoteOut"><em class="citetitle">JackoNoteOut</em></a>
+      <a class="link" href="JackoTransport.html" title="JackoTransport"><em class="citetitle">JackoTransport</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088071536"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2010</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="JackoMidiInConnect.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="JackoMidiOut.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">JackoMidiInConnect </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> JackoMidiOut</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

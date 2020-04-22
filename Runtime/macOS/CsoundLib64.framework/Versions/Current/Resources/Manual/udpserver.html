@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>UDP Server</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="prev" href="functional.html" title="Function Syntax in Csound6" />
+    <link rel="next" href="ScoreTop.html" title="The Standard Numeric Score" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">UDP Server</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="functional.html">Prev</a> </td>
+          <th width="60%" align="center">Syntax of the Orchestra</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ScoreTop.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="udpserver"></a>UDP Server</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Csound 6 includes a fully-functional UDP server, which can accept a range of commands and/or
+    orchestra.
+  </p>
+      <h3><a id="idm276136852512"></a>Overview</h3>
+      <p>
+      The UDP server can be started with the following option:
+  </p>
+      <div class="literallayout">
+        <p><br />
+   --port=N<br />
+  </p>
+      </div>
+      <p>
+   where N indicates a port number to listen to UDP messages. Csound does not necessarily need to be
+   given a CSD or orchestra, although it is also possible to do so.
+    </p>
+      <h3><a id="idm276136850272"></a>Commands</h3>
+      <p>
+      Commands take the form of an opcode followed by one or more
+      arguments. The following commands are accepted by the server:
+  </p>
+      <div class="literallayout">
+        <p><br />
+   &amp;[line event]<br />
+  </p>
+      </div>
+      <p>
+  Sends in a line event [live event]. Multiple events can be send on multiple
+  lines. Use this command for single or multiple events that do
+  not need preprocessing.
+</p>
+      <div class="literallayout">
+        <p><br />
+   $[score]<br />
+  </p>
+      </div>
+      <p>
+  Sends in a score [score], to which most preprocessing (except for tempo) can
+  be applied. Use this option for larger blocks of score events.
+</p>
+      <div class="literallayout">
+        <p><br />
+   @[channel_name] [value]<br />
+  </p>
+      </div>
+      <p>
+  Set a control channel [channel_name] with the value [value].
+  Example:   if the csd contains the line ' chn_k "freq", 440' then send '@freq 330' sets "freq" to 330.
+
+</p>
+      <div class="literallayout">
+        <p><br />
+   %[channel_name] [string]<br />
+  </p>
+      </div>
+      <p>
+  Set a string channel [channel_name] with the string [string].
+  </p>
+      <div class="literallayout">
+        <p><br />
+   :@[channel_name] [address] [port]<br />
+  </p>
+      </div>
+      <p>
+  Request the value of the control channel [channel_name] to be
+  sent as a string via UDP to address [address] port [port]. The
+  string will contain the channel name followed by two colons (::)
+  and its current value.
+</p>
+      <div class="literallayout">
+        <p><br />
+   :%[channel_name] [address] [port]<br />
+  </p>
+      </div>
+      <p>
+  Request the contents of the string channel [channel_name] to be
+  sent as a string via UDP to address [address] port [port]. The
+  string will contain the channel name followed by two colons (::)
+  and its current contents.
+</p>
+      <h3><a id="idm276136840560"></a>Orchestra code</h3>
+      <p>
+In addition to the above commands, the UDP server also accepts a
+string containing orchestra code, which is compiled immediately.
+The orchestra string is not prefixed with any special command
+opcode. This string should be sent in a single UDP message.
+For example: scoreline_i "i 2 0 1 550 60"
+</p>
+      <p>
+  If the orchestra code length exceeds the number of characters that
+  are possible in a single message, it can be broken in separate
+  messages. For this to work, the whole orchestra code needs to
+  enclosed in brackets ({ }). The open brackets ({) starts the server
+  taking the code in and the close brackets (}) sends the code for
+ compilation. This way the code can be sent in multiple messages.
+</p>
+      <h3><a id="idm276136838672"></a>Closing the server</h3>
+      <p>
+The server (and Csound) can be closed with one of the following
+commands:
+</p>
+      <div class="literallayout">
+        <p><br />
+    ##close##<br />
+  </p>
+      </div>
+      <p>
+or
+</p>
+      <div class="literallayout">
+        <p><br />
+   !!close!!<br />
+  </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="functional.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OrchTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ScoreTop.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Function Syntax in Csound6 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> The Standard Numeric Score</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

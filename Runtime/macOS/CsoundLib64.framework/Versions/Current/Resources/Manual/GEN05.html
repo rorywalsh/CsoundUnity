@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN05</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN04.html" title="GEN04" />
+    <link rel="next" href="GEN06.html" title="GEN06" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN05</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN04.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN06.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN05"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN05" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN05</span>
+        </h2>
+        <p>GEN05 — 
+      Constructs functions from segments of exponential curves.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989616432"></a>
+        <h2>Description</h2>
+        <p>
+      Constructs functions from segments of exponential curves.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989615104"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 5 a n1 b n2 c ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989613152"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size </em></span> -- number of points in the table. Must be a power of 2 or power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>a, b, c,</em></span> etc. -- ordinate values, in odd-numbered pfields p5, p7, p9, . . . These must be nonzero and must be alike in sign.
+    </p>
+        <p>
+      <span class="emphasis"><em>n1, n2</em></span>, etc. -- length of segment (no. of
+      storage locations), in even-numbered pfields. Cannot be
+      negative, but a zero is meaningful for specifying discontinuous
+      waveforms. The sum <span class="emphasis"><em>n1</em></span> +
+      <span class="emphasis"><em>n2</em></span> + .... will normally equal
+      <span class="emphasis"><em>size</em></span> for fully specified functions. If the
+      sum is smaller, the function locations not included will be set
+      to zero; if the sum is greater, only the first
+      <span class="emphasis"><em>size</em></span> locations will be stored.  Note that
+      the values are rounded to integers before use.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>
+              If p4 is positive, functions are post-normalized (rescaled to a maximum absolute value of 1 after generation). A negative p4 will cause rescaling to be skipped.
+            </p>
+                    </li>
+                    <li class="listitem">
+                      <p>
+              Discrete-point linear interpolation implies an increase or decrease along a segment by equal differences between adjacent locations; exponential interpolation implies that the progression is by equal ratio. In both forms the interpolation from <span class="emphasis"><em>a</em></span> to <span class="emphasis"><em>b</em></span> is such as to assume that the value <span class="emphasis"><em>b</em></span> will be attained in the n + 1th location. For discontinuous functions, and for the segment encompassing the end location, this value will not actually be reached, although it may eventually appear as a result of final scaling.
+            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989600896"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a simple example of the GEN05 routine. It uses the files <a class="ulink" href="examples/gen05.csd" target="_top"><em class="citetitle">gen05.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275989599088"></a>
+          <p class="title">
+            <strong>Example 1201. An example of the GEN05 routine.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276399140224"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen05.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">fn</span> <span class="o">=</span> <span class="nb">p4</span>					<span class="c1">;choose different tables for GEN05</span>
+k<span class="n">cps</span> <span class="nb">init</span> <span class="mi">1</span><span class="o">/</span><span class="nb">p3</span>					<span class="c1">;index over the length of  entire note</span>
+k<span class="n">ndx</span> <span class="nb">phasor</span> k<span class="n">cps</span>
+i<span class="n">xmode</span> <span class="o">=</span> <span class="mi">1</span>					<span class="c1">;normalize index data</span>
+k<span class="n">amp</span> <span class="nb">tablei</span> k<span class="n">ndx</span><span class="p">,</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">xmode</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> k<span class="n">amp</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine wave</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">129</span> <span class="mi">5</span>    <span class="mi">1</span>   <span class="mi">100</span> <span class="mf">0.0001</span> <span class="mi">29</span> 		<span class="c1">;short attack</span>
+<span class="nb">f</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">129</span> <span class="mi">5</span> <span class="mf">0.00001</span> <span class="mi">87</span>    <span class="mi">1</span>   <span class="mi">22</span> <span class="mf">.5</span> <span class="mi">20</span> <span class="mf">0.0001</span> 	<span class="c1">;long attack</span>
+
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">3</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+        <span class="phrase">These are the diagrams of the waveforms of the GEN05 routines, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen05_1.png" alt="f 2 0 129 5 1 100 0.0001 29 - waveform that goes over 100 points from 1 to 0.0001, stay there for 29 points" />
+          <div class="caption">
+            <p>f 2 0 129 5 1 100 0.0001 29 - waveform that goes over 100 points from 1 to 0.0001, stay there for 29 points</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen05_2.png" alt="f 3 0 129 5 0.00001 87 1 22 .5 20 0.0001 - waveform that goes from 0.00001 to 1 in 87 points, then from 1 to .5 in 22 points and then from .5 to 0.0001 in 20 points" />
+          <div class="caption">
+            <p>f 3 0 129 5 0.00001 87 1 22 .5 20 0.0001 - waveform that goes from 0.00001 to 1 in 87 points, then from 1 to .5 in 22 points and then from .5 to 0.0001 in 20 points</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989589664"></a>
+        <h2>See Also</h2>
+        <p>
+       <a class="link" href="GEN06.html" title="GEN06"><em class="citetitle">GEN06</em></a>,
+       <a class="link" href="GEN07.html" title="GEN07"><em class="citetitle">GEN07</em></a>, and
+       <a class="link" href="GEN08.html" title="GEN08"><em class="citetitle">GEN08</em></a>
+     </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN04.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN06.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN04 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN06</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

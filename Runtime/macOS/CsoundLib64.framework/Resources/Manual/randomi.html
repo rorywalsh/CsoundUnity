@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>randomi</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="randomh.html" title="randomh" />
+    <link rel="next" href="rbjeq.html" title="rbjeq" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">randomi</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="randomh.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="rbjeq.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="randomi"></a>
+      <div class="titlepage"></div>
+      <a id="IndexRandomi" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">randomi</span>
+        </h2>
+        <p>randomi — 
+      Generates a user-controlled random number series with interpolation between each new number.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062989392"></a>
+        <h2>Description</h2>
+        <p>
+      Generates a user-controlled random number series with interpolation between each new number.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062988112"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>randomi</strong></span> kmin, kmax, xcps [,imode] [,ifirstval]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>randomi</strong></span> kmin, kmax, kcps [,imode] [,ifirstval]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062984672"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imode</em></span> (optional, default=0) -- first interpolation cycle mode (see below)
+    </p>
+        <p>
+      <span class="emphasis"><em>ifirstval</em></span> (optional, default=0) -- first output value
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062982176"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kmin</em></span> -- minimum range limit
+    </p>
+        <p>
+      <span class="emphasis"><em>kmax</em></span> -- maximum range limit
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps, xcps</em></span> -- rate of random break-point generation
+    </p>
+        <p>
+      The <span class="emphasis"><em>randomi</em></span> opcode is similar to <a class="link" href="randi.html" title="randi"><em class="citetitle">randi</em></a> but allows the user to set arbitrary minimum and maximum values.
+    </p>
+        <p>
+      When <span class="emphasis"><em>imode</em></span> = 0 (the default), the <span class="emphasis"><em>kmin</em></span>
+      argument value is outputted during <span class="emphasis"><em>1/kcps</em></span> (resp.
+      <span class="emphasis"><em>1/xcps</em></span>) seconds at the beginning of the note, before
+      the first random number is generated. Then the normal interpolation process
+      takes place, first between <span class="emphasis"><em>kmin</em></span> and the first random
+      number generated, and then between successive generated random numbers,
+      each interpolation cycle having a duration of <span class="emphasis"><em>1/kcps</em></span>
+      (resp. <span class="emphasis"><em>1/xcps</em></span>) seconds.
+    </p>
+        <p>
+      When <span class="emphasis"><em>imode</em></span> = 1, a random number is generated at
+      initialization and interpolation begins immediately between the
+      <span class="emphasis"><em>kmin</em></span> argument value and that random number.
+    </p>
+        <p>
+      When <span class="emphasis"><em>imode</em></span> = 2, a random number is generated at
+      initialization and interpolation begins immediately between the
+      <span class="emphasis"><em>ifirstval</em></span> argument value and that random number.
+    </p>
+        <p>
+      When <span class="emphasis"><em>imode</em></span> = 3, two random numbers are generated
+      at initialization as breakpoints for the first interpolation cycle.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062969808"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the randomi opcode. It uses the file <a class="ulink" href="examples/randomi.csd" target="_top"><em class="citetitle">randomi.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276062968016"></a>
+          <p class="title">
+            <strong>Example 825. Example of the randomi opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276430010800"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o randomi.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+     <span class="nb">seed</span> <span class="mi">0</span>
+     
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Choose a random frequency between 220 and 440.</span>
+  <span class="c1">; Generate new random numbers at 10 Hz.</span>
+  k<span class="n">min</span>    <span class="nb">init</span> <span class="mi">220</span>
+  k<span class="n">max</span>    <span class="nb">init</span> <span class="mi">440</span>
+  k<span class="n">cps</span>    <span class="nb">init</span> <span class="mi">10</span>
+  i<span class="n">mode</span>   <span class="o">=</span>    <span class="nb">p4</span>
+  i<span class="n">fstval</span> <span class="o">=</span>    <span class="nb">p5</span>
+  
+     <span class="nb">printf_i</span> <span class="s">"</span><span class="se">\n</span><span class="s">Mode: </span><span class="si">%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">mode</span>
+  k<span class="n">1</span> <span class="nb">randomi</span> k<span class="n">min</span><span class="p">,</span> k<span class="n">max</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> i<span class="n">mode</span><span class="p">,</span> i<span class="n">fstval</span>
+     <span class="nb">printks</span> <span class="s">"k1 = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> k<span class="n">1</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for one second.</span>
+<span class="c1">; each time with a different mode.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">330</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">1</span> <span class="mi">3</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like this:
+      </p>
+        <pre class="screen">
+Mode: 0
+k1 = 220.000000
+k1 = 220.000000
+k1 = 220.146093
+k1 = 246.827703
+k1 = 395.595775
+    ...
+
+Mode: 1
+k1 = 220.000000
+k1 = 224.325329
+k1 = 274.370074
+k1 = 343.216049
+k1 = 414.324347
+    ...
+
+Mode: 2
+k1 = 330.000000
+k1 = 292.628171
+k1 = 334.519777
+k1 = 290.610602
+k1 = 394.905366
+    ...
+
+Mode: 3
+k1 = 360.727674
+k1 = 431.680412
+k1 = 380.625254
+k1 = 289.267139
+k1 = 303.038109
+    ...</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062962560"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="randi.html" title="randi"><em class="citetitle">randi</em></a>,
+      <a class="link" href="random.html" title="random"><em class="citetitle">random</em></a>,
+      <a class="link" href="randomh.html" title="randomh"><em class="citetitle">randomh</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062958768"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>Arguments <span class="emphasis"><em>imode</em></span> and <span class="emphasis"><em>ifirstval</em></span>
+    added by François Pinot, Jan. 2011, after a discussion with Peiman Khosravi on
+    the csnd list.</p>
+        <p>Example written by Kevin Conder, adapted for new args by François Pinot.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="randomh.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="rbjeq.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">randomh </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> rbjeq</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

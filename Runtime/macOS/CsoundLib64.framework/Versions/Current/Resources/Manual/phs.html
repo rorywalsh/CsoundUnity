@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>phs</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="phasorbnk.html" title="phasorbnk" />
+    <link rel="next" href="pindex.html" title="pindex" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">phs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="phasorbnk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pindex.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="phs"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPhs" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">phs</span>
+        </h2>
+        <p>phs — 
+    Obtains the phases of a complex-number array
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070439824"></a>
+        <h2>Description</h2>
+        <p>
+      This opcode returns the phases of a complex-number array, as a real-valued array with half the size of its input plus one. The reason for the extra point is to keep the array size equivalent to the output of the mags opcode (which is often used alongside this one).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070438384"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout[] <span class="command"><strong>phs</strong></span> kin[]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070436320"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kout[]</em></span> -- output array containing the phases. It will be created if it does not exist.
+         </p>
+        <p>
+      <span class="emphasis"><em>kin[]</em></span> -- input array containing the complex-valued real-imaginary input.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070433792"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the phs opcode. It uses the file <a class="ulink" href="examples/phs.csd" target="_top"><em class="citetitle">phs.csd</em></a>.</p>
+        <div class="example">
+          <a id="idm276070431904"></a>
+          <p class="title">
+            <strong>Example 708. Example of the phs opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276438970704"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-d -o dac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="cm">/* ksmps needs to be an integer div of
+   hopsize */</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="vg">0dbfs</span><span class="o">=</span><span class="mi">1</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+
+<span class="kd">opcode</span> <span class="nf">PVA</span><span class="p">,</span><span class="kt">k[]k[]k</span><span class="p">,</span><span class="kt">aii</span>
+ a<span class="n">sig</span><span class="p">,</span>i<span class="n">size</span><span class="p">,</span>i<span class="n">hop</span> <span class="nb">xin</span>
+ i<span class="n">olaps</span> <span class="nb">init</span> i<span class="n">size</span><span class="o">/</span>i<span class="n">hop</span>
+ k<span class="n">cnt</span> <span class="nb">init</span> <span class="mi">0</span>
+ k<span class="n">row</span> <span class="nb">init</span> <span class="mi">1</span>
+ k<span class="n">In</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">size</span>
+ k<span class="n">Olph</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">size</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+ i<span class="n">fac</span> <span class="o">=</span> <span class="p">(</span><span class="vg">sr</span><span class="o">/</span><span class="p">(</span>i<span class="n">hop</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="cp">$M_PI</span><span class="p">))</span>
+ i<span class="n">scal</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="cp">$M_PI</span><span class="o">*</span>i<span class="n">hop</span><span class="o">/</span>i<span class="n">size</span><span class="p">)</span>
+ k<span class="n">fl</span> <span class="o">=</span> <span class="mi">0</span>
+ k<span class="n">In</span> <span class="nb">shiftin</span> a<span class="n">sig</span>
+ <span class="k">if</span> k<span class="n">cnt</span> <span class="o">==</span> i<span class="n">hop</span> <span class="k">then</span>
+   k<span class="n">Win</span><span class="p">[]</span> <span class="nb">window</span> k<span class="n">In</span><span class="p">,</span>k<span class="n">row</span><span class="o">*</span>i<span class="n">hop</span>
+   k<span class="n">Spec</span><span class="p">[]</span> <span class="nb">rfft</span> k<span class="n">Win</span>
+   k<span class="n">Mags</span><span class="p">[]</span> <span class="nb">mags</span> k<span class="n">Spec</span>
+   k<span class="n">Pha</span><span class="p">[]</span> <span class="nb">phs</span> k<span class="n">Spec</span>
+   k<span class="n">Delta</span><span class="p">[]</span> <span class="o">=</span> k<span class="n">Pha</span> <span class="o">-</span> k<span class="n">Olph</span>
+   k<span class="n">Olph</span> <span class="o">=</span> k<span class="n">Pha</span>
+   k<span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+   k<span class="n">Delta</span> <span class="nb">unwrap</span> k<span class="n">Delta</span>
+   <span class="k">while</span> k<span class="n">k</span> <span class="o">&lt;</span> i<span class="n">size</span><span class="o">/</span><span class="mi">2</span> <span class="k">do</span>
+    k<span class="n">Pha</span><span class="p">[</span>k<span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>k<span class="n">Delta</span><span class="p">[</span>k<span class="n">k</span><span class="p">]</span> <span class="o">+</span> k<span class="n">k</span><span class="o">*</span>i<span class="n">scal</span><span class="p">)</span><span class="o">*</span>i<span class="n">fac</span>
+    k<span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+   <span class="k">od</span>   
+   k<span class="n">row</span> <span class="o">=</span> <span class="p">(</span>k<span class="n">row</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span>i<span class="n">olaps</span>
+   k<span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+   k<span class="n">fl</span> <span class="o">=</span> <span class="mi">1</span>
+ <span class="k">endif</span>
+ <span class="nb">xout</span> k<span class="n">Mags</span><span class="p">,</span>k<span class="n">Pha</span><span class="p">,</span>k<span class="n">fl</span>
+ k<span class="n">cnt</span> <span class="o">+=</span> <span class="vg">ksmps</span>
+<span class="kd">endop</span>
+
+<span class="kd">opcode</span> <span class="nf">PVS</span><span class="p">,</span><span class="kt">a</span><span class="p">,</span><span class="kt">k[]k[]kii</span>
+ k<span class="n">Mags</span><span class="p">[],</span>k<span class="n">Fr</span><span class="p">[],</span>k<span class="n">fl</span><span class="p">,</span>i<span class="n">size</span><span class="p">,</span>i<span class="n">hop</span> <span class="nb">xin</span>
+ i<span class="n">olaps</span> <span class="nb">init</span> i<span class="n">size</span><span class="o">/</span>i<span class="n">hop</span>
+ i<span class="n">fac</span> <span class="o">=</span> i<span class="n">hop</span><span class="o">*</span><span class="mi">2</span><span class="o">*</span><span class="cp">$M_PI</span><span class="o">/</span><span class="vg">sr</span><span class="c1">;</span>
+ i<span class="n">scal</span> <span class="o">=</span> <span class="vg">sr</span><span class="o">/</span>i<span class="n">size</span>
+ k<span class="n">row</span> <span class="nb">init</span> <span class="mi">0</span>
+ k<span class="n">Ola</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">size</span>
+ k<span class="n">Out</span><span class="p">[][]</span> <span class="nb">init</span> i<span class="n">olaps</span><span class="p">,</span>i<span class="n">size</span>
+ k<span class="n">Phs</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">size</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span>
+ <span class="k">if</span> k<span class="n">fl</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">then</span>
+  k<span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> k<span class="n">k</span> <span class="o">&lt;</span> i<span class="n">size</span><span class="o">/</span><span class="mi">2</span> <span class="k">do</span>
+    k<span class="n">Fr</span><span class="p">[</span>k<span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>k<span class="n">Fr</span><span class="p">[</span>k<span class="n">k</span><span class="p">]</span> <span class="o">-</span> k<span class="n">k</span><span class="o">*</span>i<span class="n">scal</span><span class="p">)</span><span class="o">*</span>i<span class="n">fac</span>
+    k<span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">od</span>
+  k<span class="n">Phs</span> <span class="o">=</span> k<span class="n">Fr</span> <span class="o">+</span> k<span class="n">Phs</span>
+  k<span class="n">Spec</span><span class="p">[]</span> <span class="nb">pol2rect</span> k<span class="n">Mags</span><span class="p">,</span>k<span class="n">Phs</span>
+  k<span class="n">Row</span><span class="p">[]</span> <span class="nb">rifft</span> k<span class="n">Spec</span>
+  k<span class="n">Win</span><span class="p">[]</span> <span class="nb">window</span> k<span class="n">Row</span><span class="p">,</span> k<span class="n">row</span><span class="o">*</span>i<span class="n">hop</span>
+  k<span class="n">Out</span> <span class="nb">setrow</span> k<span class="n">Win</span><span class="p">,</span> k<span class="n">row</span>
+  k<span class="n">Ola</span> <span class="o">=</span> <span class="mi">0</span>
+  k<span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">until</span> k<span class="n">k</span> <span class="o">==</span> i<span class="n">olaps</span> <span class="k">do</span>
+   k<span class="n">Row</span> <span class="nb">getrow</span> k<span class="n">Out</span><span class="p">,</span> k<span class="n">k</span>
+   k<span class="n">Ola</span> <span class="o">=</span> k<span class="n">Ola</span> <span class="o">+</span> k<span class="n">Row</span>
+   k<span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">od</span>
+  k<span class="n">row</span> <span class="o">=</span> <span class="p">(</span>k<span class="n">row</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span>i<span class="n">olaps</span>
+ <span class="k">endif</span>
+ <span class="nb">xout</span> <span class="nb">shiftout</span><span class="p">(</span>k<span class="n">Ola</span><span class="p">)</span><span class="o">/</span>i<span class="n">olaps</span>
+<span class="kd">endop</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+ i<span class="n">hopsize</span> <span class="o">=</span> <span class="mi">256</span>  <span class="c1">; hopsize</span>
+ i<span class="n">fftsize</span> <span class="o">=</span> <span class="mi">2048</span> <span class="c1">; FFT size </span>
+ k<span class="n">FreqsOut</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">fftsize</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span> <span class="c1">; synthesis freqs</span>
+ k<span class="n">MagsOut</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">fftsize</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span> <span class="c1">; synthesis mags</span>
+
+ a<span class="n">1</span> <span class="nb">diskin2</span> <span class="s">"fox.wav"</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span> 
+ 
+ k<span class="n">Mags</span><span class="p">[],</span>k<span class="n">Freqs</span><span class="p">[],</span>k<span class="n">flg</span> <span class="nf">PVA</span> a<span class="n">1</span><span class="p">,</span>i<span class="n">fftsize</span><span class="p">,</span>i<span class="n">hopsize</span>
+ 
+ <span class="k">if</span> k<span class="n">flg</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">then</span>
+ k<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+   k<span class="n">MagsOut</span> <span class="o">=</span> <span class="mi">0</span>
+  k<span class="n">FreqsOut</span> <span class="o">=</span> <span class="mi">0</span>
+  i<span class="n">scal</span> <span class="o">=</span> <span class="mf">1.5</span>
+ <span class="k">until</span> k<span class="n">i</span> <span class="o">==</span> i<span class="n">fftsize</span><span class="o">/</span><span class="mi">2</span> <span class="k">do</span>
+   <span class="k">if</span> k<span class="n">i</span><span class="o">*</span>i<span class="n">scal</span> <span class="o">&lt;</span> i<span class="n">fftsize</span><span class="o">/</span><span class="mi">2</span> <span class="k">then</span>
+     k<span class="n">FreqsOut</span><span class="p">[</span>k<span class="n">i</span><span class="o">*</span>i<span class="n">scal</span><span class="p">]</span> <span class="o">=</span> k<span class="n">Freqs</span><span class="p">[</span>k<span class="n">i</span><span class="p">]</span><span class="o">*</span>i<span class="n">scal</span>
+     k<span class="n">MagsOut</span><span class="p">[</span>k<span class="n">i</span><span class="o">*</span>i<span class="n">scal</span><span class="p">]</span> <span class="o">=</span> k<span class="n">Mags</span><span class="p">[</span>k<span class="n">i</span><span class="p">]</span>
+   <span class="k">endif</span>
+    k<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">od</span>
+ <span class="k">endif</span>
+ 
+ a<span class="n">2</span> <span class="nf">PVS</span> k<span class="n">MagsOut</span><span class="p">,</span>k<span class="n">FreqsOut</span><span class="p">,</span>k<span class="n">flg</span><span class="p">,</span>i<span class="n">fftsize</span><span class="p">,</span>i<span class="n">hopsize</span>
+ 
+ a<span class="n">1</span> <span class="nb">delay</span> a<span class="n">1</span><span class="p">,</span> <span class="p">(</span>i<span class="n">fftsize</span><span class="o">+</span>i<span class="n">hopsize</span><span class="p">)</span><span class="o">/</span><span class="vg">sr</span>
+    <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <br class="example-break" />
+      </div>
+      <div class="refsect1">
+        <a id="idm276070428048"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vectorial.html" title="Vectorial Opcodes"><em class="citetitle"></em>Vectorial opcodes</a>,
+      <a class="link" href="arrayOpcodes.html" title="Array Opcodes"><em class="citetitle"></em>array opcodes</a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070425120"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>NUI Maynooth</td>
+          </tr>
+          <tr>
+            <td>2014</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.04</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="phasorbnk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pindex.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">phasorbnk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pindex</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

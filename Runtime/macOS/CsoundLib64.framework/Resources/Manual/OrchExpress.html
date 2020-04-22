@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Expressions</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="prev" href="OrchKvar.html" title="Types, Constants and Variables" />
+    <link rel="next" href="OrchDirFiles.html" title="Directories and Files" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Expressions</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="OrchKvar.html">Prev</a> </td>
+          <th width="60%" align="center">Syntax of the Orchestra</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OrchDirFiles.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="OrchExpress"></a>Expressions</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Expressions may be composed to any depth. Each part of an expression is evaluated at its own proper rate. For instance, if the terms within a sub-expression all change at the control rate or slower, the sub-expression will be evaluated only at the control rate; that result might then be used in an audio-rate evaluation. For example, in
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+k1 <span class="op">+</span> <span class="opc">abs</span>(<span class="opc">int</span>(p5) <span class="op">+</span> <span class="opc">frac</span>(p5) <span class="op">*</span> 100<span class="op">/</span>12 + <span class="opc">sqrt</span>(k1))</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    the 100/12 would be evaluated at orch init, the p5 expressions evaluated at note i-time, and the remainder of the expression evaluated every k-period. The whole might occur in a unit generator argument position, or be part of an assignment statement.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="OrchKvar.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OrchTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OrchDirFiles.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Types, Constants and Variables </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Directories and Files</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

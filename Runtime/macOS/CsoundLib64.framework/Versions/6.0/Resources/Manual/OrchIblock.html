@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Instrument and Opcode Block Statements</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="prev" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="next" href="OrchStatemnt.html" title="Ordinary Statements" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Instrument and Opcode Block Statements</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="OrchTop.html">Prev</a> </td>
+          <th width="60%" align="center">Syntax of the Orchestra</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OrchStatemnt.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="OrchIblock"></a>Instrument and Opcode Block Statements</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    An instrument block is comprised of <span class="emphasis"><em>ordinary statements</em></span> that set values, control the logical flow, or invoke the various signal processing subroutines that lead to audio output. Statements that define an instrument block are:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="instr.html" title="instr">
+                <em class="citetitle">instr</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="endin.html" title="endin">
+                <em class="citetitle">endin</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+    An instrument block looks like this:
+    </p>
+      <pre class="programlisting">
+    <span class="oblock">instr</span> 1   <span class="comment">;A simple sine wave oscillator</span>
+aout  <span class="opc">oscils</span>  10000, 440, 0
+out   <span class="opc">aout</span>
+    <span class="oblock">endin</span></pre>
+      <p>
+  </p>
+      <p>
+    Statements that define a user defined opcode (UDO) block are
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="opcode.html" title="opcode">
+                <em class="citetitle">opcode</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="endop.html" title="endop">
+                <em class="citetitle">endop</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+    See the <a class="link" href="OrchUDO.html" title="User Defined Opcodes (UDO)"><em class="citetitle">UDO</em></a> section for more information.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="OrchTop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OrchTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OrchStatemnt.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Syntax of the Orchestra </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Ordinary Statements</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

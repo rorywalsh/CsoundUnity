@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>linenr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="linen.html" title="linen" />
+    <link rel="next" href="lineto.html" title="lineto" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">linenr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="linen.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lineto.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="linenr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLinenr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">linenr</span>
+        </h2>
+        <p>linenr — 
+      The <span class="emphasis"><em>linen</em></span> opcode extended with a final release segment.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105608416"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>linenr</em></span> -- same as <a class="link" href="linen.html" title="linen"><em class="citetitle">linen</em></a> except that the final segment is entered only on sensing a MIDI note release. The note is then extended by the decay time.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105605824"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>linenr</strong></span> xamp, irise, idec, iatdec</pre>
+        <pre class="synopsis">kres <span class="command"><strong>linenr</strong></span> kamp, irise, idec, iatdec</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105602416"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>irise</em></span> -- rise time in seconds. A zero or negative value signifies no rise modification.
+    </p>
+        <p>
+      <span class="emphasis"><em>idec</em></span> -- decay time in seconds. Zero means no decay. An <span class="emphasis"><em>idec</em></span> &gt; <span class="emphasis"><em>idur</em></span> will cause a truncated decay.
+    </p>
+        <p>
+      <span class="emphasis"><em>iatdec</em></span> -- attenuation factor by which the closing steady state value is reduced exponentially over the decay period. This value must be positive and is normally of the order of .01. A large or excessively small value is apt to produce a cutoff which is audible. A zero or negative value is illegal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105597952"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp, xamp</em></span> -- input amplitude signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>linenr</em></span> is unique within Csound in containing a <span class="emphasis"><em>note-off sensor</em></span> and <span class="emphasis"><em>release time extender</em></span>. When it senses either a score event termination or a MIDI noteoff, it will immediately extend the performance time of the current instrument by <span class="emphasis"><em>idec</em></span> seconds, then execute an exponential decay towards the factor <span class="emphasis"><em>iatdec</em></span>. For two or more units in an instrument, extension is by the greatest <span class="emphasis"><em>idec</em></span>.
+    </p>
+        <p>
+      You can use other pre-made envelopes which start a release segment upon receiving a note off message, like <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a> and <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>, or you can construct more complex envelopes using <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> and <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a>. Note that you don't need to use <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> if you are using <span class="emphasis"><em>linenr</em></span>, since the time is extended automatically.
+    </p>
+        <p>
+      These <span class="quote">“<span class="quote">r</span>”</span> units can also be modified by MIDI noteoff velocities (see veloffs).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105586816"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the linenr opcode. It uses the file <a class="ulink" href="examples/linenr.csd" target="_top"><em class="citetitle">linenr.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276105585024"></a>
+          <p class="title">
+            <strong>Example 474. Example of the linenr opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276457383328"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc       -M0 <span class="c1">;;;RT audio I/O with MIDI in</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Example by Jonathan Murphy and Charles Gran 2007</span>
+  <span class="vg">sr</span>	    <span class="o">=</span>  <span class="mi">44100</span>
+  <span class="vg">ksmps</span>	    <span class="o">=</span>  <span class="mi">10</span>
+  <span class="vg">nchnls</span>    <span class="o">=</span>  <span class="mi">2</span>
+
+        <span class="c1">; new, and important. Make sure that midi note events are only</span>
+        <span class="c1">; received by instruments that actually need them.</span>
+
+	<span class="c1">; turn default midi routing off</span>
+	<span class="nb">massign</span>		<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+	<span class="c1">; route note events on channel 1 to instr 1</span>
+	<span class="nb">massign</span>		<span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="c1">; Define your midi controllers</span>
+<span class="cp">#define</span> <span class="cp">C1</span> <span class="p">#</span><span class="cp">21</span><span class="p">#</span>
+<span class="cp">#define</span> <span class="cp">C2</span> <span class="p">#</span><span class="cp">22</span><span class="p">#</span>
+<span class="cp">#define</span> <span class="cp">C3</span> <span class="p">#</span><span class="cp">23</span><span class="p">#</span>
+
+<span class="c1">; Initialize MIDI controllers</span>
+	    <span class="nb">initc7</span>    <span class="mi">1</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mf">0.5</span> 		  <span class="c1">;delay send</span>
+	    <span class="nb">initc7</span>    <span class="mi">1</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mf">0.5</span>		  <span class="c1">;delay: time to zero</span>
+	    <span class="nb">initc7</span>    <span class="mi">1</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mf">0.5</span> 		  <span class="c1">;delay: rate </span>
+
+  ga<span class="n">osc</span>	    <span class="nb">init</span>      <span class="mi">0</span>
+
+<span class="c1">; Define an opcode to "smooth" the MIDI controller signal</span>
+    <span class="kd">opcode</span> <span class="nf">smooth</span><span class="p">,</span> <span class="kt">k</span><span class="p">,</span> <span class="kt">k</span>
+  k<span class="n">in</span>       <span class="nb">xin</span>
+  k<span class="n">port</span>	    <span class="nb">linseg</span>    <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span>
+  k<span class="n">in</span>       <span class="nb">portk</span>     k<span class="n">in</span><span class="p">,</span> k<span class="n">port</span>
+            <span class="nb">xout</span>      k<span class="n">in</span>
+    <span class="kd">endop</span>
+
+<span class="kd">instr</span>   <span class="nf">1</span>  
+ <span class="c1">; Generate a sine wave at the frequency of the MIDI note that triggered the intrument</span>
+  i<span class="n">fqc</span>	    <span class="nb">cpsmidi</span>
+  i<span class="n">amp</span>	    <span class="nb">ampmidi</span>   <span class="mi">10000</span>
+  a<span class="n">env</span>	    <span class="nb">linenr</span>    i<span class="n">amp</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mf">.01</span> 	  <span class="c1">;envelope</span>
+  a<span class="n">1</span>	    <span class="nb">oscil</span>     a<span class="n">env</span><span class="p">,</span> i<span class="n">fqc</span><span class="p">,</span> <span class="mi">1</span>
+<span class="c1">; All sound goes to the global variable gaosc</span>
+  ga<span class="n">osc</span>	    <span class="o">=</span>  ga<span class="n">osc</span> <span class="o">+</span> a<span class="n">1</span>
+    <span class="kd">endin</span>
+
+    <span class="kd">instr</span>     <span class="nf">198</span> <span class="c1">; ECHO</span>
+  k<span class="n">cmbsnd</span>   <span class="nb">ctrl7</span>     <span class="mi">1</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> 		  <span class="c1">;delay send</span>
+  k<span class="n">time</span>	    <span class="nb">ctrl7</span>     <span class="mi">1</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">6</span> 		  <span class="c1">;time loop fades out</span>
+  k<span class="n">loop</span>	    <span class="nb">ctrl7</span>     <span class="mi">1</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">1</span> 		  <span class="c1">;loop speed</span>
+<span class="c1">; Receive MIDI controller values and then smooth them</span>
+  k<span class="n">cmbsnd</span>   <span class="nf">smooth</span>    k<span class="n">cmbsnd</span>
+  k<span class="n">time</span>	    <span class="nf">smooth</span>    k<span class="n">time</span>
+  k<span class="n">loop</span>	    <span class="nf">smooth</span>    k<span class="n">loop</span>
+
+  i<span class="n">maxlpt</span>   <span class="o">=</span>  <span class="mi">1</span> 				  <span class="c1">;max loop time</span>
+<span class="c1">; Create a variable reverberation (delay) of the gaosc signal</span>
+  a<span class="n">comb</span>	    <span class="nb">vcomb</span>     ga<span class="n">osc</span><span class="p">,</span> k<span class="n">time</span><span class="p">,</span> k<span class="n">loop</span><span class="p">,</span> i<span class="n">maxlpt</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">out</span>	    <span class="o">=</span>  <span class="p">(</span>a<span class="n">comb</span> <span class="o">*</span> k<span class="n">cmbsnd</span><span class="p">)</span> <span class="o">+</span> ga<span class="n">osc</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> k<span class="n">cmbsnd</span><span class="p">)</span>
+	    <span class="nb">outs</span>      a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+  ga<span class="n">osc</span>	    <span class="o">=</span>  <span class="mi">0</span>
+    <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">198</span> <span class="mi">0</span> <span class="mi">10000</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105581040"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>,
+      <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>,
+      <a class="link" href="envlpxr.html" title="envlpxr"><em class="citetitle">envlpxr</em></a>,
+      <a class="link" href="mxadsr.html" title="mxadsr"><em class="citetitle">mxadsr</em></a>,
+      <a class="link" href="madsr.html" title="madsr"><em class="citetitle">madsr</em></a>,
+      <a class="link" href="envlpx.html" title="envlpx"><em class="citetitle">envlpx</em></a>,
+      <a class="link" href="linen.html" title="linen"><em class="citetitle">linen</em></a>,
+      <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="linen.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lineto.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">linen </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> lineto</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

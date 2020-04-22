@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pyexec Opcodes</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pyeval.html" title="pyeval Opcodes" />
+    <link rel="next" href="pyinit.html" title="pyinit Opcodes" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pyexec Opcodes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pyeval.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pyinit.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pyexec"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPyExec" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pyexec Opcodes</span>
+        </h2>
+        <p>pyexec — Execute a script from a file at k-time or i-time (i suffix).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063664336"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>pyexec</strong></span> "filename"</pre>
+        <pre class="synopsis"><span class="command"><strong>pyexeci</strong></span> "filename"</pre>
+        <pre class="synopsis"><span class="command"><strong>pylexec</strong></span> "filename"</pre>
+        <pre class="synopsis"><span class="command"><strong>pylexeci</strong></span> "filename"</pre>
+        <pre class="synopsis"><span class="command"><strong>pyexect</strong></span> ktrigger, "filename"</pre>
+        <pre class="synopsis"><span class="command"><strong>plyexect</strong></span> ktrigger, "filename"</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063656608"></a>
+        <h2>Description</h2>
+        <p>Execute a script from a file at k-time or i-time (i
+      suffix).</p>
+        <p>This is not the same as calling the script with the <code class="literal">system()</code>
+      call, since the code is executed by the embedded interpreter.</p>
+        <p>The code contained in the specified file is executed in the
+      global environment for opcodes pyexec and pyexeci and in the private
+      environment for the opcodes pylexec and pylexeci.</p>
+        <p>These opcodes perform no message passing. However, since the
+      statement has access to the main namespace and the private namespace,
+      it can interact with objects previously created in that
+      environment.</p>
+        <p>The "local" version of the <span class="emphasis"><em>pyexec</em></span> opcodes are useful when the
+      code ran by different instances of an instrument should not
+      interact.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063652080"></a>
+        <h2>Example of the pyexec Opcode Group</h2>
+        <div class="example">
+          <a id="idm276063651392"></a>
+          <p class="title">
+            <strong>Example 808. Orchestra (pyexec.orc)</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+<span class="ohdr">sr</span>=44100
+<span class="ohdr">kr</span>=4410
+<span class="ohdr">ksmps</span>=10
+<span class="ohdr">nchnls</span>=1
+
+<span class="comment">;If you're not running CsoundAC you need the following line</span>
+<span class="comment">;to initialize the python interpreter</span>
+<span class="comment">;pyinit</span>
+
+        <span class="opc">pyruni</span> "import random"
+
+        <span class="opc">pyexeci</span> "pyexec1.py"
+
+<span class="oblock">instr</span> 1
+
+        <span class="opc">pyexec</span>          "pyexec2.py"
+
+        <span class="opc">pylexeci</span>        "pyexec3.py"
+        <span class="opc">pylexec</span>         "pyexec4.py"
+
+<span class="oblock">endin</span></pre>
+          </div>
+        </div>
+        <br class="example-break" />
+        <div class="example">
+          <a id="idm276063640928"></a>
+          <p class="title">
+            <strong>Example 809. Score (pyexec.sco)</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+<span class="stamnt">i</span>1 0 0.01
+<span class="stamnt">i</span>1 0 0.01</pre>
+          </div>
+        </div>
+        <br class="example-break" />
+        <div class="example">
+          <a id="idm276063638224"></a>
+          <p class="title">
+            <strong>Example 810. The pyexec1.py Script</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+import time, os
+
+print
+print "Welcome to Csound!"
+
+try:
+    s = ', %s?' % os.getenv('USER')
+except:
+    s = '?'
+
+print 'What sound do you want to hear today%s' % s
+answer = raw_input()</pre>
+          </div>
+        </div>
+        <br class="example-break" />
+        <div class="example">
+          <a id="idm276063636608"></a>
+          <p class="title">
+            <strong>Example 811. The pyexec2.py script</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+print 'your answer is "%s"' % answer</pre>
+          </div>
+        </div>
+        <br class="example-break" />
+        <div class="example">
+          <a id="idm276063635136"></a>
+          <p class="title">
+            <strong>Example 812. The pyexec3.py script</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+message = 'a private random number: %f' % random.random()</pre>
+          </div>
+        </div>
+        <br class="example-break" />
+        <div class="example">
+          <a id="idm276063633648"></a>
+          <p class="title">
+            <strong>Example 813. The pyexec4.py script</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+print message</pre>
+          </div>
+        </div>
+        <br class="example-break" />
+        <p>If I run this example on my machine I get something like:</p>
+        <pre class="screen">
+Using ../../csound.xmg
+Csound Version 4.19 (Mar 23 2002)
+Embedded Python interpreter version 2.2
+orchname:  pyexec.orc
+scorename: pyexec.sco
+sorting score ...
+        ... done
+orch compiler:
+11 lines read
+        instr   1       
+Csound Version 4.19 (Mar 23 2002)
+displays suppressed
+
+Welcome to Csound!
+What sound do you want to hear today, maurizio?</pre>
+        <p>then I answer</p>
+        <pre class="screen">
+a sound</pre>
+        <p>then Csound continues with the normal performance</p>
+        <pre class="screen">
+your answer is "a sound"
+a private random number: 0.884006
+new alloc for instr 1:
+your answer is "a sound"
+a private random number: 0.884006
+your answer is "a sound"
+a private random number: 0.889868
+your answer is "a sound"
+a private random number: 0.884006
+your answer is "a sound"
+a private random number: 0.889868
+your answer is "a sound"
+a private random number: 0.884006
+your answer is "a sound"
+...</pre>
+        <p>In the same instrument a message is created in the private
+namespace and printed, appearing different for each instance.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063627248"></a>
+        <h2>Credits</h2>
+        <p>Copyright (c) 2002 by Maurizio Umberto Puxeddu. All rights
+      reserved. Portions copyright (c) 2004 and 2005 by Michael Gogins. This
+      document has been updated Sunday 25 July 2004 and 1 February 2005 by
+      Michael Gogins.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pyeval.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pyinit.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pyeval Opcodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pyinit Opcodes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

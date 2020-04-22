@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>midglobal</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mfb.html" title="mfb" />
+    <link rel="next" href="midiarp.html" title="midiarp" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">midglobal</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mfb.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="midiarp.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="midglobal"></a>
+      <div class="titlepage"></div>
+      <a id="Indexmidglobal" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">midglobal</span>
+        </h2>
+        <p>midglobal — 
+      An opcode which can be used to implement a remote midi orchestra. This opcode will broadcast the midi events to all the machines involved in the remote concert.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081459792"></a>
+        <h2>Description</h2>
+        <p>
+      With the <a class="link" href="midremot.html" title="midremot"><em class="citetitle">midremot</em></a> and <span class="emphasis"><em>midglobal</em></span> opcodes you are able to perform instruments on remote machines and control them from a master machine. The remote opcodes are implemented using the master/client model. All the machines involved contain the same orchestra but only the master machine contains the information of the midi score. During the performance the master machine sends the midi events to the clients. The midglobal opcode sends the events to all the machines involved in the remote concert. These machines are determined by the <a class="link" href="midremot.html" title="midremot"><em class="citetitle">midremot</em></a> definitions made above the <span class="emphasis"><em>midglobal</em></span> command. To send events to only one machine use <a class="link" href="midremot.html" title="midremot"><em class="citetitle">midremot</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081454560"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>midglobal</strong></span> isource, instrnum [,instrnum...] </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081452592"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>isource</em></span>
+      -- a string that is the intended host computer (e.g. 192.168.0.100). This is the source host which generates the events of the given instrument(s) and sends it to all the machines involved in the remote concert.
+    </p>
+        <p>
+      <span class="emphasis"><em>instrnum</em></span>
+      -- a list of instrument numbers which will be played on the destination machines
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081449520"></a>
+        <h2>Examples</h2>
+        <p>
+      See the entry for <a class="link" href="midremot.html" title="midremot"><em class="citetitle">midremot</em></a> for an example of usage.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081447456"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="insglobal.html" title="insglobal"><em class="citetitle">insglobal</em></a>, <a class="link" href="insremot.html" title="insremot"><em class="citetitle">insremot</em></a>, <a class="link" href="midremot.html" title="midremot"><em class="citetitle">midremot</em></a>, <a class="link" href="remoteport.html" title="remoteport"><em class="citetitle">remoteport</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081442864"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Simon Schampijer</td>
+          </tr>
+          <tr>
+            <td>2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>
+      New in version 5.03
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mfb.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="midiarp.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mfb </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> midiarp</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

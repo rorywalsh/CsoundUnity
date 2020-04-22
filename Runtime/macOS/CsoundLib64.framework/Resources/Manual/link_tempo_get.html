@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>link_tempo_get</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="link_peers.html" title="link_peers" />
+    <link rel="next" href="link_tempo_set.html" title="link_tempo_set" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">link_tempo_get</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="link_peers.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="link_tempo_set.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="link_tempo_get"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLinkTempoGet" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">link_tempo_get</span>
+        </h2>
+        <p>link_tempo_get — 
+        Returns the current tempo of the global network Ableton Link session.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086362672"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in ableton_link_opcodes.</p>
+        <p>
+        Returns the current tempo of the global network Ableton Link session.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086360976"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">k_bpm <span class="command"><strong>link_tempo_get</strong></span> i_peer</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086358400"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>i_peer</em></span> -- The Ableton Link peer object.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086356608"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>k_bpm</em></span> --The current tempo of the global network Ableton Link session.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086354560"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the link_tempo_get opcode. It uses the file <a class="ulink" href="examples/ableton_link.csd" target="_top"><em class="citetitle">ableton_link.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276086351744"></a>
+          <p class="title">
+            <strong>Example 483. Example of the link_tempo_get opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276456603568"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsLicense&gt;</span>
+Run the Ableton Link "LinkHut" example application, or some other 
+Ableton Link peer, while you run this CSD to see what happens.
+<span class="nt">&lt;/CsLicense&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-m0 -d -odac 
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="nb">alwayson</span> <span class="s">"LinkMonitor"</span>
+
+gi<span class="n">_peer</span> <span class="n">link_create</span> <span class="mi">72</span>
+gk<span class="n">_beat</span> <span class="nb">init</span> <span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">Beep</span>
+a<span class="n">signal</span> <span class="nb">oscils</span> <span class="mi">20000</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">0</span>
+<span class="nb">outs</span> a<span class="n">signal</span><span class="p">,</span> a<span class="n">signal</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">TempoChange</span>
+<span class="n">link_tempo_set</span> gi<span class="n">_peer</span><span class="p">,</span> <span class="mi">80</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">LinkEnable</span>
+i<span class="n">_enabled</span> <span class="o">=</span> <span class="nb">p4</span>
+<span class="n">link_enable</span> gi<span class="n">_peer</span><span class="p">,</span> i<span class="n">_enabled</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">LinkMonitor</span>
+i<span class="n">_kperiod_seconds</span> <span class="o">=</span> <span class="vg">ksmps</span> <span class="o">/</span> <span class="vg">sr</span>
+<span class="nb">printf_i</span> <span class="s">"kperiod: %9.6f seconds.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">_kperiod_seconds</span>
+<span class="nb">printf_i</span> <span class="s">"gi_peer: %g</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> gi<span class="n">_peer</span>
+<span class="n">link_enable</span> gi<span class="n">_peer</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">_trigger</span><span class="p">,</span> gk<span class="n">_beat</span><span class="p">,</span> k<span class="n">_phase</span><span class="p">,</span> k<span class="n">_time</span> <span class="n">link_metro</span> gi<span class="n">_peer</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">_peers</span> <span class="n">link_peers</span> gi<span class="n">_peer</span>
+k<span class="n">_tempo</span> <span class="n">link_tempo_get</span> gi<span class="n">_peer</span>
+k<span class="n">_enabled</span> <span class="n">link_is_enabled</span> gi<span class="n">_peer</span>
+k<span class="n">_hz</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="k">if</span> <span class="nb">floor</span><span class="p">(</span>gk<span class="n">_beat</span> <span class="o">%</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">then</span>
+k<span class="n">_hz</span> <span class="o">=</span> <span class="mi">3000</span>
+<span class="k">else</span>
+k<span class="n">_hz</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="k">endif</span>
+<span class="nb">schedkwhen</span> k<span class="n">_trigger</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"Beep"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> k<span class="n">_hz</span>
+<span class="nb">printf</span> <span class="s">"LinkMonitor: gi_peer: %g k_enabled: %9.4f k_trigger: %9.4f beat: %9.4f k_phase: %9.4f time: %9.4f tempo: %9.4f peers: </span><span class="si">%3d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">_trigger</span><span class="p">,</span> gi<span class="n">_peer</span><span class="p">,</span> k<span class="n">_enabled</span><span class="p">,</span> k<span class="n">_trigger</span><span class="p">,</span> gk<span class="n">_beat</span><span class="p">,</span> k<span class="n">_phase</span><span class="p">,</span> k<span class="n">_time</span><span class="p">,</span> k<span class="n">_tempo</span><span class="p">,</span> k<span class="n">_peers</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">360</span>
+<span class="nb">i</span> <span class="s">"TempoChange"</span> <span class="mi">10</span> <span class="mi">80</span>
+<span class="nb">i</span> <span class="s">"LinkEnable"</span>  <span class="mi">20</span> <span class="mi">1</span> <span class="mi">0</span>
+<span class="nb">i</span> <span class="s">"LinkEnable"</span>  <span class="mi">30</span> <span class="mi">1</span> <span class="mi">1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086350016"></a>
+        <h2>See Also</h2>
+        <p>
+        </p>
+        <p>See the section <a class="link" href="OSCNetwork.html#AbletonLink" title="Ableton Link Opcodes"><em class="citetitle">Ableton Link Opcodes</em></a> for more information.</p>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276086347184"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2017</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="link_peers.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="link_tempo_set.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">link_peers </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> link_tempo_set</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

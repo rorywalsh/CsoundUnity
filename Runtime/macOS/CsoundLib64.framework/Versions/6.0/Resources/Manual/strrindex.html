@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>strrindex</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="strlowerk.html" title="strlowerk" />
+    <link rel="next" href="strrindexk.html" title="strrindexk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">strrindex</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="strlowerk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="strrindexk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="strrindex"></a>
+      <div class="titlepage"></div>
+      <a id="Indexstrrindex" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">strrindex</span>
+        </h2>
+        <p>strrindex — 
+      Return the position of the last occurence of a string in another string
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051104400"></a>
+        <h2>Description</h2>
+        <p>
+      Return the position of the last occurence of S2 in S1, or -1 if not
+      found. If S2 is empty, the length of S1 is returned. strrindex runs
+      at init time only.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051103056"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ipos <span class="command"><strong>strrindex</strong></span> S1, S2</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051101008"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the strrindex opcode. It uses the file <a class="ulink" href="examples/strrindex.csd" target="_top"><em class="citetitle">strrindex.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276051099216"></a>
+          <p class="title">
+            <strong>Example 979. Example of the strrindex opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276505095440"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-n    <span class="c1">;;;no sound output</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;example by Joachim Heintz</span>
+
+  <span class="kd">opcode</span> <span class="nf">FilNam</span><span class="p">,</span> <span class="kt">S</span><span class="p">,</span> <span class="kt">S</span>
+<span class="c1">;returns the name of a file path</span>
+S<span class="n">path</span>  <span class="nb">xin</span>
+i<span class="n">pos</span>   <span class="nb">strrindex</span> S<span class="n">path</span><span class="p">,</span> <span class="s">"/"</span>	<span class="c1">;look for the rightmost '/'</span>
+S<span class="n">nam</span>   <span class="nb">strsub</span>    S<span class="n">path</span><span class="p">,</span> i<span class="n">pos</span><span class="o">+</span><span class="mi">1</span>	<span class="c1">;extract the substring </span>
+       <span class="nb">xout</span>      S<span class="n">nam</span>
+  <span class="kd">endop</span>
+  
+<span class="kd">instr</span> <span class="nf">name</span>
+       <span class="nb">prints</span>    <span class="s">"Printing name:</span><span class="se">\n</span><span class="s">"</span>
+S<span class="n">nam</span>   <span class="nf">FilNam</span>    <span class="s">"/my/dir/my/file.WAV"</span>
+       <span class="nb">puts</span>      S<span class="n">nam</span><span class="p">,</span> <span class="mi">1</span>  
+
+<span class="kd">endin</span> 
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="s">"name"</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051095216"></a>
+        <h2>See also</h2>
+        <p>
+          <a class="link" href="strrindexk.html" title="strrindexk">
+            <em class="citetitle">strrindexk</em>
+          </a>
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051093440"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.02</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="strlowerk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="strrindexk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">strlowerk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> strrindexk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

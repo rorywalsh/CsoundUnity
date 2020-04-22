@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>phasorbnk</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="phasor.html" title="phasor" />
+    <link rel="next" href="phs.html" title="phs" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">phasorbnk</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="phasor.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="phs.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="phasorbnk"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPhasorbnk" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">phasorbnk</span>
+        </h2>
+        <p>phasorbnk — 
+      Produce an arbitrary number of normalized moving phase values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070497072"></a>
+        <h2>Description</h2>
+        <p>
+      Produce an arbitrary number of normalized moving phase values, accessable by an index.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070495792"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>phasorbnk</strong></span> xcps, kndx, icnt [, iphs]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>phasorbnk</strong></span> kcps, kndx, icnt [, iphs]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070492384"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>icnt</em></span> -- maximum number of phasors to be used.
+    </p>
+        <p>
+      <span class="emphasis"><em>iphs</em></span> -- initial phase, expressed as a fraction of a cycle (0 to 1). If -1 initialization is skipped. If <span class="emphasis"><em>iphas</em></span>&gt;1 each phasor will be initialized with a random value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070489344"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kndx</em></span> -- index value to access individual phasors
+    </p>
+        <p>
+      For each independent phasor, an internal phase is successively accumulated in accordance with the <span class="emphasis"><em>kcps</em></span> or <span class="emphasis"><em>xcps</em></span> frequency to produce a moving phase value, normalized to lie in the range 0 &lt;= phs &lt; 1. Each individual phasor is accessed by index <span class="emphasis"><em>kndx</em></span>.
+    </p>
+        <p>
+      This phasor bank can be used inside a k-rate loop to generate multiple independent voices, or together with the <a class="link" href="adsynt.html" title="adsynt"><em class="citetitle">adsynt</em></a> opcode to change parameters in the tables used by <span class="emphasis"><em>adsynt</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070483968"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the phasorbnk opcode. It uses the file <a class="ulink" href="examples/phasorbnk.csd" target="_top"><em class="citetitle">phasorbnk.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276070482176"></a>
+          <p class="title">
+            <strong>Example 707. Example of the phasorbnk opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276438453024"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o phasorbnk.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Generate a sinewave table.</span>
+gi<span class="n">wave</span> <span class="nb">ftgen</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span> 
+
+<span class="c1">; Instrument #1</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Generate 10 voices.</span>
+  i<span class="n">cnt</span> <span class="o">=</span> <span class="mi">10</span> 
+  <span class="c1">; Empty the output buffer.</span>
+  a<span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span> 
+  <span class="c1">; Reset the loop index.</span>
+  k<span class="n">index</span> <span class="o">=</span> <span class="mi">0</span> 
+
+<span class="c1">; This loop is executed every k-cycle.</span>
+<span class="nl">loop</span><span class="p">:</span> 
+  <span class="c1">; Generate non-harmonic partials.</span>
+  k<span class="n">cps</span> <span class="o">=</span> <span class="p">(</span>k<span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="o">+</span><span class="mi">30</span> 
+  <span class="c1">; Get the phase for each voice.</span>
+  a<span class="n">phas</span> <span class="nb">phasorbnk</span> k<span class="n">cps</span><span class="p">,</span> k<span class="n">index</span><span class="p">,</span> i<span class="n">cnt</span> 
+  <span class="c1">; Read the wave from the table.</span>
+  a<span class="n">sig</span> <span class="nb">table</span> a<span class="n">phas</span><span class="p">,</span> gi<span class="n">wave</span><span class="p">,</span> <span class="mi">1</span> 
+  <span class="c1">; Accumulate the audio output.</span>
+  a<span class="n">sum</span> <span class="o">=</span> a<span class="n">sum</span> <span class="o">+</span> a<span class="n">sig</span> 
+
+  <span class="c1">; Increment the index.</span>
+  k<span class="n">index</span> <span class="o">=</span> k<span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
+
+  <span class="c1">; Perform the loop until the index (kindex) reaches </span>
+  <span class="c1">; the counter value (icnt).</span>
+  <span class="k">if</span> <span class="p">(</span>k<span class="n">index</span> <span class="o">&lt;</span> i<span class="n">cnt</span><span class="p">)</span> <span class="k">kgoto</span> <span class="nl">loop</span> 
+
+  <span class="nb">out</span> a<span class="n">sum</span><span class="o">*</span><span class="mi">3000</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for two seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Generate multiple voices with independent partials. This example is better with <span class="emphasis"><em>adsynt</em></span>. See also the example under <a class="link" href="adsynt.html" title="adsynt"><em class="citetitle">adsynt</em></a>, for k-rate use of <span class="emphasis"><em>phasorbnk</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070476336"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Peter Neubäcker</td>
+          </tr>
+          <tr>
+            <td>Munich, Germany</td>
+          </tr>
+          <tr>
+            <td>August 1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.58</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="phasor.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="phs.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">phasor </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> phs</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

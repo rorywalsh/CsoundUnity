@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLrun</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLroller.html" title="FLroller" />
+    <link rel="next" href="FLsavesnap.html" title="FLsavesnap" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLrun</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLroller.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLsavesnap.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLrun"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLrun" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLrun</span>
+        </h2>
+        <p>FLrun — 
+      Starts the FLTK widget thread.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109018352"></a>
+        <h2>Description</h2>
+        <p>
+      Starts the FLTK widget thread.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109017136"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">
+          <span class="command">
+            <strong>FLrun</strong>
+          </span>
+        </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109015344"></a>
+        <h2>Performance</h2>
+        <p>
+      This opcode must be located at the end of all widget declarations. It has no arguments, and its purpose is to start the thread related to widgets. Widgets would not operate if <span class="emphasis"><em>FLrun</em></span> is missing.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109013552"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLgetsnap.html" title="FLgetsnap"><em class="citetitle">FLgetsnap</em></a>,
+      <a class="link" href="FLloadsnap.html" title="FLloadsnap"><em class="citetitle">FLloadsnap</em></a>,
+      <a class="link" href="FLsavesnap.html" title="FLsavesnap"><em class="citetitle">FLsavesnap</em></a>,
+      <a class="link" href="FLsetsnap.html" title="FLsetsnap"><em class="citetitle">FLsetsnap</em></a>,
+      <a class="link" href="FLupdate.html" title="FLupdate"><em class="citetitle">FLupdate</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276109008000"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLroller.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLsavesnap.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLroller </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLsavesnap</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

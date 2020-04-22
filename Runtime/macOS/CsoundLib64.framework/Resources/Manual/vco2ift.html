@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vco2ift</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vco2ft.html" title="vco2ft" />
+    <link rel="next" href="vco2init.html" title="vco2init" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vco2ift</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vco2ft.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vco2init.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vco2ift"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVco2ift" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vco2ift</span>
+        </h2>
+        <p>vco2ift — 
+      Returns a table number at i-time for a given oscillator frequency and wavform.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041741344"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>vco2ift</em></span> is the same as <a class="link" href="vco2ft.html" title="vco2ft"><em class="citetitle">vco2ft</em></a>, but works at i-time. It is suitable for use with opcodes that expect an i-rate table number (for example, <a class="link" href="oscili.html" title="oscili"><em class="citetitle">oscili</em></a>).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041737888"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ifn <span class="command"><strong>vco2ift</strong></span> icps, iwave [, inyx]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041735792"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- the ftable number.
+    </p>
+        <p>
+      <span class="emphasis"><em>icps</em></span> --  frequency in Hz. Zero and negative values are allowed. However, if the absolute value exceeds <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a>/2 (or <span class="emphasis"><em>sr</em></span> * <span class="emphasis"><em>inyx</em></span>), the selected table will contain silence.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwave</em></span> -- the waveform for which table number is to be selected. Allowed values are:
+        </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0: sawtooth</p>
+            </li>
+            <li class="listitem">
+              <p>1: 4 * x * (1 - x)   (integrated sawtooth)</p>
+            </li>
+            <li class="listitem">
+              <p>2: pulse (not normalized)</p>
+            </li>
+            <li class="listitem">
+              <p>3: square wave</p>
+            </li>
+            <li class="listitem">
+              <p>4: triangle</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      Additionally, negative <span class="emphasis"><em>iwave</em></span> values select user defined waveforms (see also <a class="link" href="vco2init.html" title="vco2init"><em class="citetitle">vco2init</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>inyx</em></span> (optional, default=0.5) -- bandwidth of the generated waveform, as percentage (0 to 1) of the sample rate. The expected range is 0 to 0.5 (i.e. up to <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a>/2), other values are limited to the allowed range.
+    </p>
+        <p>
+      Setting <span class="emphasis"><em>inyx</em></span> to 0.25 (<span class="emphasis"><em>sr</em></span>/4), or 0.3333 (<span class="emphasis"><em>sr</em></span>/3) can produce a <span class="quote">“<span class="quote">fatter</span>”</span> sound in some cases, although it is more likely to reduce quality.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041721936"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vco2ift opcode. It uses the file <a class="ulink" href="examples/vco2ift.csd" target="_top"><em class="citetitle">vco2ift.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276041720144"></a>
+          <p class="title">
+            <strong>Example 1087. Example of the vco2ift opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276409976032"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o vco2ift.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; user defined waveform -2: fixed table size (64), number of partials</span>
+<span class="c1">; multiplier is 1.4</span>
+i<span class="n">tmp</span>    <span class="nb">ftgen</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mi">1</span>
+i<span class="n">ft</span>     <span class="nb">vco2init</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">2</span>
+
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">cps</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">fn</span>  <span class="nb">vco2ift</span> i<span class="n">cps</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span>	<span class="c1">;with user defined waveform</span>
+<span class="nb">print</span> i<span class="n">fn</span>
+a<span class="n">sig</span> <span class="nb">oscili</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> i<span class="n">fn</span>		<span class="c1">; (-2), and sr/2 bandwidth</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">20</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">2000</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span> <span class="mi">2</span> <span class="mi">20000</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+      Its output should include a line like these:
+      </p>
+        <pre class="screen">
+instr 1:  ifn = 22.000
+instr 1:  ifn = 8.000
+instr 1:  ifn = 3.000
+      </pre>
+        <p>
+    </p>
+        <p>
+      See the example for the <a class="link" href="vco2.html" title="vco2"><em class="citetitle">vco2</em></a> opcode too.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041714080"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vco2ft.html" title="vco2ft"><em class="citetitle">vco2ft</em></a>,
+      <a class="link" href="vco2init.html" title="vco2init"><em class="citetitle">vco2init</em></a>, and
+      <a class="link" href="vco2.html" title="vco2"><em class="citetitle">vco2</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041710272"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vco2ft.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vco2init.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vco2ft </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vco2init</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

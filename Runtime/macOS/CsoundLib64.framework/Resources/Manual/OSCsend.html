@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>OSCsend</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="OSCraw.html" title="OSCraw" />
+    <link rel="next" href="out32.html" title="out32" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">OSCsend</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="OSCraw.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="out32.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="OSCsend"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOSCsend" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">OSCsend</span>
+        </h2>
+        <p>OSCsend — 
+      Sends data to other processes using the OSC protocol
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075335648"></a>
+        <h2>Description</h2>
+        <p>
+      Uses the OSC protocol to send message to other OSC listening processes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075334384"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>OSCsend</strong></span> kwhen, ihost, iport, idestination[, itype , xdata1, xdata2, ...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075332384"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihost</em></span>
+      -- a string that is the intended host computer domain name.  An
+    empty string is interpreted as the current computer.
+    </p>
+        <p>
+      <span class="emphasis"><em>iport</em></span>
+      -- the number of the port that is used for the communication.
+    </p>
+        <p>
+      <span class="emphasis"><em>idestination</em></span>
+      -- a string that is the destination address.  This takes the
+      form of a file name with directories.  Csound just passes this
+      string to the raw sending code and makes no interpretation.
+    </p>
+        <p>
+      <span class="emphasis"><em>itype</em></span>
+      -- a string that indicates the types of the optional arguments
+      that are read at k-rate.  The string can contain the characters
+      "abcdfilmstAG" which stand for audio, Boolean, character, double, float,
+      32-bit integer, 64-bit integer, MIDI, string, timestamp, k-rate
+      array and ftable. The OSC message may not have any types,
+      in which case, it will consist only of the destination address. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075327600"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kwhen</em></span> -- a message is sent whenever this
+    value changes.  A message will always be sent on the first call.
+    </p>
+        <p>
+      The data is taken from the k-values or a-value that follow the format
+    string.   In a similar way to a printf format, the characters in
+    order determine how the argument is interpreted.  Note that a time
+    stamp takes two arguments.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075325280"></a>
+        <h2>Example</h2>
+        <p>
+      The example shows a simple instrument, which when called, sends a group of 3 messages to a computer called "xenakis", on port 7770, to be read by a process that recognises /foo/bar as its address.
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+      <span class="oblock">instr</span>   1
+          <span class="opc">OSCsend</span>     1, "xenakis.cs.bath.ac.uk",7770, "/foo/bar", "sis", "FOO", 42, "bar"
+      <span class="oblock">endin</span></pre>
+        </div>
+        <p>
+      See the entry for <a class="link" href="OSClisten.html" title="OSClisten"><em class="citetitle">OSClisten</em></a>, for
+      an example of send/ receive usage using OSC.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075319648"></a>
+        <h2>See Also</h2>
+        <p>
+        <a class="link" href="OSClisten.html" title="OSClisten"><em class="citetitle">OSClisten</em></a>,
+        <a class="link" href="OSCinit.html" title="OSCinit"><em class="citetitle">OSCinit</em></a>
+      </p>
+        <p> More information on this opcode: <a class="ulink" href="http://www.youtube.com/watch?v=JX1C3TqP_9Y" target="_top"><em class="citetitle">http://www.youtube.com/watch?v=JX1C3TqP_9Y</em></a>  , made by Andrés Cabrera </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075315408"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Data types a, A and G were added in 6.07; they send data via
+    blobs and are only really useful to other Csound instances or
+    custom listeners.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="OSCraw.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="out32.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">OSCraw </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> out32</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

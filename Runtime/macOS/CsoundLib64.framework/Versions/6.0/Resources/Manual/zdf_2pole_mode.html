@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>zdf_2pole_mode</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="zdf_2pole.html" title="zdf_2pole" />
+    <link rel="next" href="zdf_ladder.html" title="zdf_ladder" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">zdf_2pole_mode</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="zdf_2pole.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="zdf_ladder.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="zdf_2pole_mode"></a>
+      <div class="titlepage"></div>
+      <a id="IndexZdf_2pole_mode" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">zdf_2pole_mode</span>
+        </h2>
+        <p>zdf_2pole_mode — 
+      Zero-delay feedback implementation of 2 pole filter with multimode output. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276034547104"></a>
+        <h2>Description</h2>
+        <p>
+      Zero-delay feedback implementation of a 2 pole (12 dB/oct) filter. Offers low-pass,
+      band-pass, and high-pass output.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276034545792"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">alp, abp, ahp <span class="command"><strong>zdf_2pole_mode</strong></span> ain, xcf, Q [, istor]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276034543728"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>istor</em></span> --initial disposition of internal data space.
+      Since filtering incorporates a feedback loop of previous output, the
+      initial status of the storage space used is significant.  A zero value
+      will clear the space; a non-zero value will allow previous information to
+      remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276034541824"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>alp</em></span> -- low-pass output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>abp</em></span> -- band-pass output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>ahp</em></span> -- high-pass output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>ain</em></span> -- input signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>xcf</em></span> -- filter cutoff frequency (i-, k-, or a-rate).
+    </p>
+        <p>
+      <span class="emphasis"><em>Q</em></span> -- filter Q value (i-, k-, or a-rate). Range 0.5-25.0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276034536096"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the zdf_2pole_mode opcode. It uses the file <a class="ulink" href="examples/zdf_2pole_mode.csd" target="_top"><em class="citetitle">zdf_2pole_mode.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276034534288"></a>
+          <p class="title">
+            <strong>Example 1170. Example of the zdf_2pole_mode opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276402125552"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-o dac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>	<span class="o">=</span> <span class="mi">44100</span>	
+<span class="vg">ksmps</span>	<span class="o">=</span>	<span class="mi">1</span>
+<span class="vg">nchnls</span>	<span class="o">=</span>	<span class="mi">2</span>
+<span class="vg">0dbfs</span>	<span class="o">=</span>	<span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	
+  a<span class="n">sig</span> <span class="o">=</span> <span class="nb">random</span><span class="p">:</span><span class="nb">a</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> 
+  a<span class="n">sigs</span><span class="p">[]</span> <span class="nb">init</span> <span class="mi">3</span>
+  a<span class="n">sigs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> a<span class="n">sigs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> a<span class="n">sigs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">zdf_2pole_mode</span> a<span class="n">sig</span><span class="p">,</span> <span class="nb">line</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">10000</span><span class="p">),</span> <span class="mi">4</span> 
+
+  a<span class="n">sig</span> <span class="o">=</span> a<span class="n">sigs</span><span class="p">[</span><span class="nb">p4</span><span class="p">]</span>
+  <span class="nb">outc</span><span class="p">(</span>a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span><span class="p">)</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	
+  a<span class="n">sig</span> <span class="o">=</span> <span class="nb">vco2</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">220</span><span class="p">)</span> 
+  a<span class="n">sigs</span><span class="p">[]</span> <span class="nb">init</span> <span class="mi">3</span>
+  a<span class="n">sigs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> a<span class="n">sigs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> a<span class="n">sigs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">zdf_2pole_mode</span> a<span class="n">sig</span><span class="p">,</span> <span class="nb">line</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">10000</span><span class="p">),</span> <span class="mi">4</span> 
+  <span class="nb">outc</span><span class="p">(</span>a<span class="n">sigs</span><span class="p">[</span><span class="nb">p4</span><span class="p">],</span> a<span class="n">sigs</span><span class="p">[</span><span class="nb">p4</span><span class="p">])</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span> <span class="mi">0</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">5</span> <span class="mi">4</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">10</span> <span class="mi">4</span> <span class="mi">2</span>
+
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">15</span> <span class="mi">4</span> <span class="mi">0</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">20</span> <span class="mi">4</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">25</span> <span class="mi">4</span> <span class="mi">2</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276034532512"></a>
+        <h2>References</h2>
+        <p> This filter is based on the work of Will Pirkle that employs Vadim
+      Zavalishin's work with bilinear tranforms to create topology-preserving
+      transform (TPT) implementations of analog filters.</p>
+        <p>
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>
+            Pirkle, Will. Designing Software Synthesizer Plug-ins in C++: For 
+            RackAFX, VST3, and Audio Units. CRC Press, 2014.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Pirkle, Will. AN-4: Virtual Analog (VA) Filter Implementation. 2013.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+          Zavalishin, Vadim. "The Art of VA filter design." Native Instruments, 2012.
+          </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276034527120"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Steven Yi</td>
+          </tr>
+          <tr>
+            <td>April 2017</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound 6.09.0</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="zdf_2pole.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="zdf_ladder.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">zdf_2pole </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> zdf_ladder</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

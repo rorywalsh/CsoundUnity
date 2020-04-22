@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fluidInfo</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fluidEngine.html" title="fluidEngine" />
+    <link rel="next" href="fluidLoad.html" title="fluidLoad" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fluidInfo</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fluidEngine.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fluidLoad.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="fluidInfo"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFluidInfo" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fluidInfo</span>
+        </h2>
+        <p>fluidInfo — 
+       Retrieves program information from currently loaded soundfont. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104917456"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">SPrograms[] <span class="command"><strong>fluidInfo</strong></span> ienginenum</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104915376"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in fluidOpcodes.</p>
+        <p>Iterates through the current soundfont for program information. Information is passed to a string array. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104913680"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>SPrograms[]</em></span> -- String array of program information</p>
+        <p><span class="emphasis"><em>ienginenum </em></span> -- engine number assigned from
+      fluidEngine</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104911472"></a>
+        <h2>Performance</h2>
+        <p>fluidInfo runts at itime only.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104910272"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the fluidInfo opcode. It uses the file <a class="ulink" href="examples/fluidInfo.csd" target="_top"><em class="citetitle">fluidInfo.csd</em></a> and <a class="ulink" href="examples/sf_GMbank.sf2" target="_top"><em class="citetitle">sf_GMbank.sf2</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276104907680"></a>
+          <p class="title">
+            <strong>Example 321. Example of the fluidInfo opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276473044768"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out and realtime midi in</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">engine</span> <span class="nb">fluidEngine</span>
+i<span class="n">sfnum</span>	 <span class="nb">fluidLoad</span> <span class="s">"sf_GMbank.sf2"</span><span class="p">,</span> gi<span class="n">engine</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">Cnt</span> <span class="nb">init</span> <span class="mi">0</span>
+S<span class="n">SoundFontPrograms</span><span class="p">[]</span> <span class="nb">fluidInfo</span> gi<span class="n">engine</span>
+i<span class="n">NumberOfPrograms</span> <span class="nb">lenarray</span> S<span class="n">SoundFontPrograms</span>
+
+<span class="k">until</span> i<span class="n">Cnt</span><span class="o">&gt;=</span>i<span class="n">NumberOfPrograms</span> <span class="k">do</span>
+	<span class="nb">printf_i</span> <span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> S<span class="n">SoundFontPrograms</span><span class="p">[</span>i<span class="n">Cnt</span><span class="p">]</span>
+	i<span class="n">Cnt</span> <span class="o">=</span> i<span class="n">Cnt</span><span class="o">+</span><span class="mi">1</span>
+<span class="k">od</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104903680"></a>
+        <h2>See Also</h2>
+        <p>
+    <a class="link" href="fluidEngine.html" title="fluidEngine"><em class="citetitle">fluidEngine</em></a>, 
+    <a class="link" href="fluidLoad.html" title="fluidLoad"><em class="citetitle">fluidLoad</em></a>,
+    <a class="link" href="fluidNote.html" title="fluidNote"><em class="citetitle">fluidNote</em></a>
+    </p>
+        <p> More information on soundfonts is in the Floss Manuals: <a class="ulink" href="http://write.flossmanuals.net/csound/d-reading-midi-files" target="_top"><em class="citetitle">http://write.flossmanuals.net/csound/d-reading-midi-files</em></a></p>
+        <p> For other information on soundfonts look in the
+        Wikipedia: <a class="ulink" href="http://en.wikipedia.org/wiki/Soundfont" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Soundfont</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276104897536"></a>
+        <h2>Credits</h2>
+        <p>Rory Walsh, based on Steven Yi's fluidLoad opcode.
+    </p>
+        <p>New in Csound6.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fluidEngine.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fluidLoad.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fluidEngine </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fluidLoad</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

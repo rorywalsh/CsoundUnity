@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Directories and Files</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="prev" href="OrchExpress.html" title="Expressions" />
+    <link rel="next" href="OrchNomen.html" title="Nomenclature" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Directories and Files</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="OrchExpress.html">Prev</a> </td>
+          <th width="60%" align="center">Syntax of the Orchestra</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OrchNomen.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="OrchDirFiles"></a>Directories and Files</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    Many generators and the Csound command itself specify filenames to be read from or written to. These are optionally full pathnames, whose target directory is fully specified. When not a full path, filenames are sought in several directories in order, depending on their type and on the setting of certain environment variables. The latter are optional, but they can serve to partition and organize the directories so that source files can be shared rather than duplicated in several user directories. The environment variables can define directories for soundfiles <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SFDIR</em></a>, sound samples <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SSDIR</em></a>, sound analysis SADIR, and include files for orchestra and score files INCDIR.
+
+    <a id="IndexSFDIR" class="indexterm"></a>
+    <a id="IndexSSDIR" class="indexterm"></a>
+    <a id="IndexSADIR" class="indexterm"></a>
+    <a id="IndexINCDIR" class="indexterm"></a>
+    <a id="IndexMFDIR" class="indexterm"></a>
+  </p>
+      <p>
+    In Csound version 5.00 and later, these environment variables can specify
+    multiple directories as a ; separated list. If a file is found in more than
+    one location, the first one has the highest precedence.
+  </p>
+      <p>
+    The search order is:
+    </p>
+      <div class="orderedlist">
+        <ol class="orderedlist" type="1">
+          <li class="listitem">
+            <p>Soundfiles being written are placed in <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SFDIR</em></a> (if it exists), else the current directory.</p>
+          </li>
+          <li class="listitem">
+            <p>
+          Soundfiles for reading are sought in the current directory. If default
+          paths are not disabled, files will next be sought for relative to the
+          CSD/ORC/SCO file. Finally they will be sought in <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SSDIR</em></a> and then SFDIR.
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          Analysis control files for reading are sought in the current
+          directory. If default paths are not disabled, files will next be
+          sought for relative to the CSD/ORC/SCO file. Finally they will be
+          sought in SADIR.
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          MIDI files for reading are sought in the current directory. If default
+          paths are not disabled, files will next be sought for relative to the
+          CSD/ORC/SCO file. Finally they will be sought in MFDIR, <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SSDIR</em></a> and
+          <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SFDIR</em></a>.
+        </p>
+          </li>
+          <li class="listitem">
+            <p>
+          Files of code to be included in orchestra and score files (with
+          <a class="link" href="include.html" title="#include"><em class="citetitle">#include</em></a>) are
+          sought first in the current directory, then in the same directory as
+          the orchestra or score file (as appropriate), then finally INCDIR.
+        </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="OrchExpress.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OrchTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OrchNomen.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Expressions </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Nomenclature</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

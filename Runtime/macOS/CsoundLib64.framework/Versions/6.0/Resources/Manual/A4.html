@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>A4</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="Zerodbfs.html" title="0dbfs" />
+    <link rel="next" href="opbitshl.html" title="&lt;&lt;" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">A4</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="Zerodbfs.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="opbitshl.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="A4"></a>
+      <div class="titlepage"></div>
+      <a id="IndexA4" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">A4</span>
+        </h2>
+        <p>A4 — 
+      Sets the base frequency for pitch A4.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276126233664"></a>
+        <h2>Description</h2>
+        <p>
+      These statements are global value <a class="link" href="assign.html" title="="><em class="citetitle">assignments</em></a>, made
+      at the beginning of an orchestra, before any instrument block is
+      defined. Their function is to set certain <a class="link" href="OrchKvar.html#VariableTypes" title="Table 3. Types of Variables"><em class="citetitle">reserved symbol
+      variables</em></a> that are required for
+      performance. Once set, these reserved symbols can be used in
+      expressions anywhere in the orchestra. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276126230320"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>A4</strong></span> = iarg</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276126228416"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>A4</em></span>  = (optional) -- set reference frequency
+      for pitch A4 to <span class="emphasis"><em>iarg</em></span> Hertz. The default value is 440.
+    </p>
+        <p>
+      In addition, any <a class="link" href="OrchKvar.html#GlobalVariables"><em class="citetitle">global variable</em></a> can be initialized by an <span class="emphasis"><em>init-time assignment</em></span> anywhere before the first <a class="link" href="instr.html" title="instr"><em class="citetitle">instr statement</em></a>.  All of the above assignments are run as instrument 0 (i-pass only) at the start of real performance.
+    </p>
+        <p>
+      Beginning with Csound version 6.08, <span class="emphasis"><em>A4</em></span> may
+      be used.  It affects the behaviour of the opcodes
+      <span class="emphasis"><em>cpspch</em></span>, <span class="emphasis"><em>cpsoct</em></span>,
+      <span class="emphasis"><em>cps2pch</em></span>, <span class="emphasis"><em>cpsxpch</em></span> and
+      <span class="emphasis"><em>cpsmidinn</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276126220592"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a>,
+      <a class="link" href="kr.html" title="kr"><em class="citetitle">kr</em></a>,
+      <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a>,
+      <a class="link" href="nchnls.html" title="nchnls"><em class="citetitle">nchnls</em></a>,
+      <a class="link" href="nchnls_i.html" title="nchnls_i"><em class="citetitle">nchnls_i</em></a>,
+      <a class="link" href="Zerodbfs.html" title="0dbfs"><em class="citetitle">0dbfs</em></a>,
+      <a class="link" href="cpspch.html" title="cpspch"><em class="citetitle">cpspch</em></a>,
+      <a class="link" href="cpsoct.html" title="cpsoct"><em class="citetitle">cpsoct</em></a>,
+      <a class="link" href="cpsmidinn.html" title="cpsmidinn"><em class="citetitle">cpsmidinn</em></a>,
+      <a class="link" href="cps2pch.html" title="cps2pch"><em class="citetitle">cps2pch</em></a>,
+      <a class="link" href="cpsxpch.html" title="cpsxpch"><em class="citetitle">cpsxpch</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276126209712"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Authors: John ffitch</td>
+          </tr>
+          <tr>
+            <td>September 2016</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound Version 6.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="Zerodbfs.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="opbitshl.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">0dbfs </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> &lt;&lt;</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>cvanal</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilitySoundfile.html#UtilityAnalysis" title="Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL)" />
+    <link rel="prev" href="UtilityAtsa.html" title="atsa" />
+    <link rel="next" href="hetro.html" title="hetro" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">cvanal</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="UtilityAtsa.html">Prev</a> </td>
+          <th width="60%" align="center">Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="hetro.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="cvanal"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">cvanal</span>
+        </h2>
+        <p>cvanal — 
+      Converts a soundfile into a single Fourier transform frame.
+      <a id="IndexCvanal" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275985204864"></a>
+        <h2>Description</h2>
+        <p>
+      Impulse Response Fourier Analysis for <a class="link" href="convolve.html" title="convolve"><em class="citetitle">convolve</em></a> operator
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275985202768"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>csound -U cvanal</strong></span> [flags] infilename outfilename</pre>
+        <pre class="synopsis"><span class="command"><strong>cvanal</strong></span> [flags] infilename outfilename</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275985199632"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>cvanal</em></span> -- converts a soundfile into a single Fourier transform frame. The output file can be used by the <span class="emphasis"><em>convolve</em></span> operator to perform Fast Convolution between an input signal and the original impulse response. Analysis is conditioned by the flags below. A space is optional between the flag and its argument.
+    </p>
+        <p>
+      <span class="emphasis"><em>-s rate</em></span> -- sampling rate of the audio input file. This will over-ride the srate of the soundfile header, which otherwise applies. If neither is present, the default is 10000.
+    </p>
+        <p>
+      <span class="emphasis"><em>-c channel</em></span> -- channel number sought. If omitted, the default is to process all channels. If a value is given, only the selected channel will be processed.
+    </p>
+        <p>
+      <span class="emphasis"><em>-b begin</em></span> -- beginning time (in seconds) of the audio segment to be analyzed. The default is 0.0
+    </p>
+        <p>
+      <span class="emphasis"><em>-d duration</em></span> -- duration (in seconds) of the audio segment to be analyzed. The default of 0.0 means to the end of the file.
+    </p>
+        <p>
+      <span class="emphasis"><em>-X</em></span> -- write machine independent format
+      analysis file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275985192784"></a>
+        <h2>Examples</h2>
+        <p>
+
+        </p>
+        <pre class="programlisting"><span class="emphasis"><em>cvanal</em></span> asound cvfile</pre>
+        <p>
+
+
+      will analyze the soundfile "asound" to produce the file "cvfile" for the use with <a class="link" href="convolve.html" title="convolve"><em class="citetitle">convolve</em></a>.
+    </p>
+        <p>
+      To use data that is not already contained in a soundfile, a soundfile converter that accepts text files may be used to create a standard audio file, e.g., the .DAT format for SOX. This is useful for implementing FIR filters.
+    </p>
+        <div class="refsect2">
+          <a id="idm275985188528"></a>
+          <h3>Files</h3>
+          <p>
+        The output file has a special <span class="emphasis"><em>convolve</em></span> header, containing details of the source audio file. The analysis data is stored as <span class="quote">“<span class="quote">float</span>”</span>, in rectangular (real/imaginary) form.
+      </p>
+          <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+            <table border="0" summary="Note: Note">
+              <tr>
+                <td rowspan="2" align="center" valign="top" width="25">
+                  <img alt="[Note]" src="images/note.png" />
+                </td>
+                <th align="left">Note</th>
+              </tr>
+              <tr>
+                <td align="left" valign="top">
+                  <p>
+          The analysis file is <span class="emphasis"><em>not</em></span> system independent! Ensure that the original impulse recording/data is retained. If/when required, the analysis file can be recreated.
+        </p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275985184480"></a>
+        <h2>Credits</h2>
+        <p>Author: Greg Sullivan</p>
+        <p>Based on algorithm given in <span class="emphasis"><em>Elements Of Computer Music</em></span>, by F. Richard Moore.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="UtilityAtsa.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilitySoundfile.html#UtilityAnalysis">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="hetro.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">atsa </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> hetro</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

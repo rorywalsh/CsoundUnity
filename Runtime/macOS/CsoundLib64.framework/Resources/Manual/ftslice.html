@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ftslice</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ftsavek.html" title="ftsavek" />
+    <link rel="next" href="ftsr.html" title="ftsr" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ftslice</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ftsavek.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ftsr.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ftslice"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFtslice" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ftslice</span>
+        </h2>
+        <p>ftslice — 
+      Copy a slice from an f-table to another f-table
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112622336"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in emugens.</p>
+        <p>
+      The <span class="emphasis"><em>ftslice</em></span> opcode takes an f-table and
+      copies a slice to a second f-table (similar to tab2array, but
+      between tables)
+	</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112620208"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>ftslice</strong></span> ifnsource, ifndest [, kstart, kend, kstep ]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112617744"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifnsource</em></span> -- The table number to copy data from
+    </p>
+        <p>
+      <span class="emphasis"><em>ifndest</em></span> -- The table number to copy data to
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112615296"></a>
+        <h2>Performance</h2>
+        <p>
+	  <span class="emphasis"><em>kstart</em></span> -- The index to start copying from. <span class="emphasis"><em>Defaults to 0</em></span>
+	</p>
+        <p>
+	  <span class="emphasis"><em>kend</em></span> -- The end index to stop copying.
+      This is NOT inclusive. 0 means copy to the end of the table. <span class="emphasis"><em>Defaults to end of table</em></span>
+	</p>
+        <p>
+	  <span class="emphasis"><em>kstep</em></span> -- How many elements to skip. <span class="emphasis"><em>Defaults to 1</em></span>
+	</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112610464"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the ftslice opcode. It uses the file <a class="ulink" href="examples/ftslice.csd" target="_top"><em class="citetitle">ftslice.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276112607664"></a>
+          <p class="title">
+            <strong>Example 380. Example of the ftslice opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276492173904"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Example file ftslice</span>
+
+<span class="cm">/*
+
+ftslice: 
+
+Copy slice from source table to destination table
+
+Syntax:
+
+ftslice ifnsource, ifndest, kstart=0, kend=0, kstep=1
+
+ifnsource: source table
+ifndest: destination table
+kstart: the index to start copying from
+kend: the end index to stop copying. This is NOT inclusive. 0=end of table
+kstep: how many elements to skip
+
+See also: tablecopy, tableicopy, tab2array
+*/</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  i<span class="n">fn</span>   <span class="nb">ftgentmp</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">13</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span>
+  i<span class="n">dest</span> <span class="nb">ftgentmp</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">11</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>  <span class="mi">0</span>   <span class="c1">; empty table of size 11</span>
+
+  <span class="c1">; copy only even elements</span>
+  <span class="n">ftslice</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">dest</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span>
+  <span class="n">ftprint</span> i<span class="n">dest</span>
+
+  <span class="c1">; copy too many elements - only the elements which fit in the dest table</span>
+  <span class="c1">; are copyed</span>
+
+  <span class="n">ftslice</span> i<span class="n">fn</span><span class="p">,</span> i<span class="n">dest</span>
+  <span class="n">ftprint</span> i<span class="n">dest</span>  
+
+  <span class="nb">turnoff</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>   <span class="mf">0.1</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112605968"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="slicearray.html" title="slicearray"><em class="citetitle">slicearray</em></a>,
+      <a class="link" href="copyf2array.html" title="copyf2array"><em class="citetitle">copyf2array</em></a>,
+	  <a class="link" href="tab2array.html" title="tab2array"><em class="citetitle">tab2array</em></a>,
+      <a class="link" href="tablecopy.html" title="tablecopy"><em class="citetitle">tablecopy</em></a>,
+      <a class="link" href="tableicopy.html" title="tableicopy"><em class="citetitle">tableicopy</em></a>,
+      <a class="link" href="ftprint.html" title="ftprint"><em class="citetitle">ftprint</em></a>
+	</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276112599216"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2018</p>
+        <p>New plugin in version 6.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ftsavek.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ftsr.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ftsavek </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ftsr</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

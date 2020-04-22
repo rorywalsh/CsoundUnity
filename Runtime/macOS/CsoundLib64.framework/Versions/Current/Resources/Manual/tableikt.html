@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tableikt</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tableigpw.html" title="tableigpw" />
+    <link rel="next" href="tableimix.html" title="tableimix" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tableikt</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tableigpw.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tableimix.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tableikt"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTableikt" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tableikt</span>
+        </h2>
+        <p>tableikt — 
+      Provides k-rate control over table numbers.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048650592"></a>
+        <h2>Description</h2>
+        <p>
+      k-rate control over table numbers. Function tables are read with linear interpolation.
+    </p>
+        <p>
+      The standard Csound opcode <a class="link" href="tablei.html" title="tablei"><em class="citetitle">tablei</em></a>, when producing a k- or a-rate result, can only use an init-time variable to select the table number. <span class="emphasis"><em>tableikt</em></span> accepts k-rate control as well as i-time. In all other respects they are similar to the original opcodes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048647392"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>tableikt</strong></span> xndx, kfn [, ixmode] [, ixoff] [, iwrap]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>tableikt</strong></span> kndx, kfn [, ixmode] [, ixoff] [, iwrap]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048643952"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ixmode</em></span> -- if 0, <span class="emphasis"><em>xndx</em></span> and <span class="emphasis"><em>ixoff</em></span> ranges match the length of the table. if non-zero <span class="emphasis"><em>xndx</em></span> and <span class="emphasis"><em>ixoff</em></span> have a 0 to 1 range. Default is 0
+    </p>
+        <p>
+      <span class="emphasis"><em>ixoff</em></span> -- if 0, total index is controlled directly by <span class="emphasis"><em>xndx,</em></span> ie. the indexing starts from the start of the table. If non-zero, start indexing from somewhere else in the table. Value must be positive and less than the table length (<span class="emphasis"><em>ixmode</em></span> = 0) or less than 1 (<span class="emphasis"><em>ixmode</em></span> not equal to 0). Default is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwrap</em></span> -- if <span class="emphasis"><em>iwrap</em></span> = 0, <span class="emphasis"><em>Limit mode</em></span>: when total index is below 0, then final index is 0.Total index above table length results in a final  index of the table length - high out of range total indexes stick at the upper limit of the table. If <span class="emphasis"><em>iwrap</em></span> not equal to 0, <span class="emphasis"><em>Wrap mode</em></span>: total index is wrapped  modulo the table length so that all total indexes map into the table. For instance, in a table of length 8, <span class="emphasis"><em>xndx</em></span> = 5 and <span class="emphasis"><em>ixoff</em></span> = 6 gives a total index of 11, which wraps to a final  index of 3. Default is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048634608"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kndx</em></span> -- Index into table, either a positive number range matching the table length (<span class="emphasis"><em>ixmode</em></span> = 0) or a 0 to 1 range (<span class="emphasis"><em>ixmode</em></span> not equal to 0).
+    </p>
+        <p>
+      <span class="emphasis"><em>xndx</em></span> -- matching the table length (<span class="emphasis"><em>ixmode</em></span> = 0) or a 0 to 1 range (<span class="emphasis"><em>ixmode</em></span> not equal to 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>kfn</em></span> -- Table number. Must be &gt;= 1. Floats are rounded down to an integer.  If a table number does not point to a valid table, or the table has not yet been loaded (<a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>) then an error will result and the instrument will be de-activated.
+    </p>
+        <div class="caution" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Caution: Caution with k-rate table numbers">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Caution]" src="images/caution.png" />
+              </td>
+              <th align="left">Caution with k-rate table numbers</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        At k-rate, if a table number of &lt; 1 is given, or the table number points to a non-existent table, or to one which has a length of 0 (it is to be loaded from a file later) then an error will result and the instrument will be deactivated. <span class="emphasis"><em>kfn</em></span> must be initialized at the appropriate rate using <a class="link" href="init.html" title="init"><em class="citetitle">init</em></a>. Attempting to load an i-rate value into <span class="emphasis"><em>kfn</em></span> will result in an error.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048624720"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tableikt opcode. It uses the file <a class="ulink" href="examples/tableikt.csd" target="_top"><em class="citetitle">tableikt.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276048622928"></a>
+          <p class="title">
+            <strong>Example 1000. Example of the tableikt opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276415833840"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tableikt.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">lowfn</span>	<span class="o">=</span> <span class="nb">p4</span>					<span class="c1">;lowest ftable wave</span>
+i<span class="n">highfn</span>	<span class="o">=</span> <span class="nb">p5</span>					<span class="c1">;highest ftable wave</span>
+
+k<span class="n">swpenv</span>	<span class="nb">line</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">0</span>				<span class="c1">;sweep envelope, calculate current table pair and interpolation amount</span>
+i<span class="n">numtables</span> <span class="o">=</span> i<span class="n">highfn</span> <span class="o">-</span> i<span class="n">lowfn</span>			<span class="c1">;1 less than number of tables</span>
+k<span class="n">fn1</span>	<span class="o">=</span> <span class="nb">int</span><span class="p">(</span>k<span class="n">swpenv</span><span class="o">*</span>i<span class="n">numtables</span><span class="p">)</span> <span class="o">+</span> i<span class="n">lowfn</span>
+        <span class="nb">printks</span> <span class="s">"play table no: </span><span class="si">%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">fn1</span>
+k<span class="n">fn2</span>	<span class="o">=</span> k<span class="n">fn1</span> <span class="o">+</span> <span class="mi">1</span>
+k<span class="n">interp</span>	<span class="o">=</span> <span class="nb">frac</span><span class="p">(</span>k<span class="n">swpenv</span><span class="o">*</span>i<span class="n">numtables</span><span class="p">)</span>		
+i<span class="n">xmode</span>  <span class="o">=</span> <span class="mi">1</span>					<span class="c1">;read tables with phasor</span>
+a<span class="n">phase</span>	<span class="nb">phasor</span>	<span class="mi">40</span>	
+a<span class="n">sig</span>	<span class="nb">tableikt</span> a<span class="n">phase</span><span class="p">,</span> k<span class="n">fn1</span><span class="p">,</span> i<span class="n">xmode</span>		<span class="c1">;normalized index</span>
+   <span class="k">if</span> k<span class="n">swpenv</span> <span class="o">==</span> <span class="mf">1.0</span> <span class="k">kgoto</span> <span class="nl">skipfn2</span>		<span class="c1">;if kfn1 is last table, there is no kfn2</span>
+	a<span class="n">sig2</span>	<span class="nb">tableikt</span> a<span class="n">phase</span><span class="p">,</span> k<span class="n">fn2</span><span class="p">,</span> i<span class="n">xmode</span>
+   <span class="nl">skipfn2</span><span class="p">:</span>
+   a<span class="n">mix</span>	<span class="nb">ntrpol</span>	a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig2</span><span class="p">,</span> k<span class="n">interp</span>		<span class="c1">;interpolate between tables and output</span>
+	<span class="nb">outs</span>	a<span class="n">mix</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> a<span class="n">mix</span><span class="o">*</span><span class="mf">.5</span>
+	
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span>  <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>  
+<span class="nb">f</span> <span class="mi">2</span>  <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">.5</span>  
+<span class="nb">f</span> <span class="mi">3</span>  <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">1</span> <span class="s">"fox.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>				<span class="c1">;a sample</span>
+<span class="nb">f</span> <span class="mi">4</span>  <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">.5</span> <span class="mf">.3</span> <span class="mf">.25</span> <span class="mf">.2</span> <span class="mf">.16</span> <span class="mf">.14</span> <span class="mf">.125</span> <span class="mf">.111</span>	<span class="c1">;sawtooth </span>
+<span class="nb">f</span> <span class="mi">5</span>  <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">.4</span> <span class="mf">.3</span> <span class="mf">.25</span> <span class="mf">.2</span>
+<span class="nb">f</span> <span class="mi">6</span>  <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">.3</span> <span class="mf">.3</span> <span class="mf">.25</span> <span class="mf">.2</span> <span class="mf">.16</span> 
+<span class="nb">f</span> <span class="mi">7</span>  <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>  <span class="mi">1</span>  <span class="mi">1</span>  <span class="mi">1</span>  <span class="mf">.7</span> <span class="mf">.5</span>  <span class="mf">.3</span>  <span class="mf">.1</span>		<span class="c1">;pulse</span>
+<span class="nb">f</span> <span class="mi">8</span>  <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">1</span> <span class="s">"beats.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>			<span class="c1">;a sample</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">8</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+      Its output should include lines like these:
+      </p>
+        <pre class="screen">
+play table no: 8
+play table no: 7
+play table no: 6
+.....
+play table no: 2
+play table no: 1</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048618160"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="tablekt.html" title="tablekt"><em class="citetitle">tablekt</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048616128"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Robin Whittle</td>
+          </tr>
+          <tr>
+            <td>Australia</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tableigpw.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tableimix.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tableigpw </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tableimix</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

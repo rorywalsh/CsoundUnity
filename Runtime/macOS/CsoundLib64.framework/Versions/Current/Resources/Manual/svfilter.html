@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>svfilter</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sumarray.html" title="sumarray" />
+    <link rel="next" href="syncgrain.html" title="syncgrain" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">svfilter</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sumarray.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="syncgrain.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="svfilter"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSvfilter" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">svfilter</span>
+        </h2>
+        <p>svfilter — 
+      A resonant second order filter, with simultaneous lowpass, highpass and bandpass outputs.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049586016"></a>
+        <h2>Description</h2>
+        <p>
+      Implementation of a resonant second order filter, with simultaneous lowpass, highpass and bandpass outputs.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049584720"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">alow, ahigh, aband <span class="command"><strong>svfilter</strong></span>  asig, kcf, kq [, iscl] [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049582592"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iscl</em></span> -- coded scaling factor, similar to
+      that in <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>. A non-zero
+      value signifies a peak response factor of 1, i.e. all
+      frequencies other than <span class="emphasis"><em>kcf</em></span> are attenuated
+      in accordance with the (normalized) response curve. A zero value
+      signifies no scaling of the signal, leaving that to some later
+      adjustment (see <a class="link" href="balance.html" title="balance"><em class="citetitle">balance</em></a>). The
+      default value is 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial
+      disposition of internal data space. Since filtering incorporates
+      a feedback loop of previous output, the initial status of the
+      storage space used is significant. A zero value will clear the
+      space; a non-zero value will allow previous information to
+      remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049577328"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>svfilter</em></span> is a second order state-variable filter, with k-rate controls for cutoff frequency and Q.  As Q is increased, a resonant peak forms around the cutoff frequency. <span class="emphasis"><em>svfilter</em></span> has simultaneous lowpass, highpass, and bandpass filter outputs; by mixing the outputs together, a variety of frequency responses can be generated. The state-variable filter, or "multimode" filter was a common feature in early analog synthesizers, due to the wide variety of sounds available from the interaction between cutoff, resonance, and output mix ratios. <span class="emphasis"><em>svfilter</em></span> is well suited to the emulation of "analog" sounds, as well as other applications where resonant filters are called for.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcf</em></span> -- Cutoff or resonant frequency of the filter, measured in Hz.
+    </p>
+        <p>
+      <span class="emphasis"><em>kq</em></span> -- Q of the filter, which is defined (for bandpass filters) as bandwidth/cutoff. <span class="emphasis"><em>kq</em></span> should be in a range between 1 and 500. As <span class="emphasis"><em>kq</em></span> is increased, the resonance of the filter increases, which corresponds to an increase in the magnitude and "sharpness" of the resonant peak. When using <span class="emphasis"><em>svfilter</em></span> without any scaling of the signal (where <span class="emphasis"><em>iscl</em></span> is either absent or 0), the volume of the resonant peak increases as Q increases. For high values of Q, it is recommended that <span class="emphasis"><em>iscl</em></span> be set to a non-zero value, or that an external scaling function such as <a class="link" href="balance.html" title="balance"><em class="citetitle">balance</em></a> is used.
+    </p>
+        <p>
+      <span class="emphasis"><em>svfilter</em></span> is based upon an algorithm in Hal Chamberlin's <span class="emphasis"><em>Musical Applications of Microprocessor</em></span>s (Hayden Books, 1985).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049568048"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the svfilter opcode. It uses the file <a class="ulink" href="examples/svfilter.csd" target="_top"><em class="citetitle">svfilter.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276049566256"></a>
+          <p class="title">
+            <strong>Example 987. Example of the svfilter opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276433618800"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o svfilter.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Orchestra file for resonant filter sweep of a sawtooth-like waveform. </span>
+<span class="c1">; The seperate outputs of the filter are scaled by values from the score,</span>
+<span class="c1">; and are mixed together.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">2205</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+  
+<span class="kd">instr</span> <span class="nf">1</span>
+  
+  i<span class="n">dur</span>     <span class="o">=</span> <span class="nb">p3</span>
+  i<span class="n">freq</span>    <span class="o">=</span> <span class="nb">p4</span>
+  i<span class="n">amp</span>     <span class="o">=</span> <span class="nb">p5</span>
+  i<span class="n">lowamp</span>  <span class="o">=</span> <span class="nb">p6</span>              <span class="c1">; determines amount of lowpass output in signal</span>
+  i<span class="n">highamp</span> <span class="o">=</span> <span class="nb">p7</span>              <span class="c1">; determines amount of highpass output in signal</span>
+  i<span class="n">bandamp</span> <span class="o">=</span> <span class="nb">p8</span>              <span class="c1">; determines amount of bandpass output in signal</span>
+  i<span class="n">q</span>       <span class="o">=</span> <span class="nb">p9</span>              <span class="c1">; value of q</span>
+  
+  i<span class="n">harms</span>   <span class="o">=</span>        <span class="p">(</span><span class="vg">sr</span><span class="o">*</span><span class="mf">.4</span><span class="p">)</span> <span class="o">/</span> i<span class="n">freq</span>
+  
+  a<span class="n">sig</span>    <span class="nb">gbuzz</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">freq</span><span class="p">,</span> i<span class="n">harms</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.9</span><span class="p">,</span> <span class="mi">1</span>             <span class="c1">; Sawtooth-like waveform</span>
+  k<span class="n">freq</span>   <span class="nb">linseg</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">dur</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">4000</span><span class="p">,</span> i<span class="n">dur</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span>     <span class="c1">; Envelope to control filter cutoff</span>
+  
+  a<span class="n">low</span><span class="p">,</span> a<span class="n">high</span><span class="p">,</span> a<span class="n">band</span>   <span class="nb">svfilter</span> a<span class="n">sig</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> i<span class="n">q</span>
+  
+  a<span class="n">out1</span>   <span class="o">=</span>         a<span class="n">low</span> <span class="o">*</span> i<span class="n">lowamp</span>
+  a<span class="n">out2</span>   <span class="o">=</span>         a<span class="n">high</span> <span class="o">*</span> i<span class="n">highamp</span>
+  a<span class="n">out3</span>   <span class="o">=</span>         a<span class="n">band</span> <span class="o">*</span> i<span class="n">bandamp</span>
+  a<span class="n">sum</span>    <span class="o">=</span>         a<span class="n">out1</span> <span class="o">+</span> a<span class="n">out2</span> <span class="o">+</span> a<span class="n">out3</span>
+  k<span class="n">env</span>    <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">dur</span> <span class="o">-</span><span class="mf">.2</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mi">0</span>     <span class="c1">; Simple amplitude envelope</span>
+          <span class="nb">out</span> a<span class="n">sum</span> <span class="o">*</span> k<span class="n">env</span>
+  
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">9</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mf">.25</span>
+  
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">5</span> <span class="mi">100</span> <span class="mi">1000</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span>  <span class="mi">5</span>  <span class="c1">; lowpass sweep</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">5</span> <span class="mi">5</span> <span class="mi">200</span> <span class="mi">1000</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">30</span>  <span class="c1">; lowpass sweep, octave higher, higher q</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">10</span> <span class="mi">5</span> <span class="mi">100</span> <span class="mi">1000</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">5</span>  <span class="c1">; highpass sweep</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">15</span> <span class="mi">5</span> <span class="mi">200</span> <span class="mi">1000</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">30</span>  <span class="c1">; highpass sweep, octave higher, higher q</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">20</span> <span class="mi">5</span> <span class="mi">100</span> <span class="mi">1000</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span>  <span class="mi">5</span>  <span class="c1">; bandpass sweep</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">25</span> <span class="mi">5</span> <span class="mi">200</span> <span class="mi">1000</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">30</span>  <span class="c1">; bandpass sweep, octave higher, higher q</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">30</span> <span class="mi">5</span> <span class="mi">200</span> <span class="mi">2000</span> <span class="mf">.4</span> <span class="mf">.6</span>  <span class="mi">0</span>  <span class="c1">; notch sweep - notch formed by combining highpass and lowpass outputs</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276049562272"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Sean Costello</td>
+          </tr>
+          <tr>
+            <td>Seattle, Washington</td>
+          </tr>
+          <tr>
+            <td>1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.55</p>
+        <p>iskip new in version 6.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sumarray.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="syncgrain.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sumarray </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> syncgrain</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

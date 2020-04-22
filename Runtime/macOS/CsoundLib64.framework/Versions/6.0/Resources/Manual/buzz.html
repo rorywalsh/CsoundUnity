@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>buzz</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="button.html" title="button" />
+    <link rel="next" href="c2r.html" title="c2r" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">buzz</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="button.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="c2r.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="buzz"></a>
+      <div class="titlepage"></div>
+      <a id="IndexBuzz" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">buzz</span>
+        </h2>
+        <p>buzz — 
+      Output is a set of harmonically related sine partials.                                  
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122472816"></a>
+        <h2>Description</h2>
+        <p>
+      Output is a set of harmonically related sine partials.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122471488"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>buzz</strong></span> xamp, xcps, knh, ifn [, iphs]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122469376"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- table number of a stored function containing a sine wave. A large table of at least 8192 points is recommended.
+    </p>
+        <p>
+      <span class="emphasis"><em>iphs</em></span> (optional, default=0) -- initial phase of the fundamental frequency, expressed as a fraction of a cycle (0 to 1). A negative value will cause phase initialization to be skipped. The default value is zero
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122466320"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xamp</em></span> -- amplitude
+    </p>
+        <p>
+      <span class="emphasis"><em>xcps</em></span> -- frequency in cycles per second
+    </p>
+        <p>
+      The <span class="emphasis"><em>buzz</em></span> units generate an additive set of harmonically related cosine partials of fundamental frequency <span class="emphasis"><em>xcps</em></span>, and whose amplitudes are scaled so their summation peak equals <span class="emphasis"><em>xamp</em></span>. The selection and strength of partials is determined by the following control parameters:
+    </p>
+        <p>
+      <span class="emphasis"><em>knh</em></span> -- total number of harmonics requested. New in Csound version 3.57, <span class="emphasis"><em>knh</em></span> defaults to one. If <span class="emphasis"><em>knh</em></span> is negative, the absolute value is used.
+    </p>
+        <p>
+      <span class="emphasis"><em>buzz</em></span> and <a class="link" href="gbuzz.html" title="gbuzz"><em class="citetitle">gbuzz</em></a> are useful as complex sound sources in subtractive synthesis. <span class="emphasis"><em>buzz</em></span> is a special case of the more general <span class="emphasis"><em>gbuzz</em></span> in which <span class="emphasis"><em>klh</em></span> = <span class="emphasis"><em>kmul</em></span> = 1; it thus produces a set of <span class="emphasis"><em>knh</em></span> equal-strength harmonic partials, beginning with the fundamental. (This is a band-limited pulse train; if the partials extend to the Nyquist, i.e. <span class="emphasis"><em>knh</em></span> = int (sr / 2 / fundamental freq.), the result is a real pulse train of amplitude <span class="emphasis"><em>xamp</em></span>.) 
+    </p>
+        <p>
+      Although <span class="emphasis"><em>knh</em></span> may be varied during performance, its internal value is necessarily integer and may cause <span class="quote">“<span class="quote">pops</span>”</span> due to discontinuities in the output. <span class="emphasis"><em>buzz</em></span> can be amplitude- and/or frequency-modulated by either control or audio signals.
+    </p>
+        <p>
+      N.B. This unit has its analog in <a class="link" href="GEN11.html" title="GEN11"><em class="citetitle">GEN11</em></a>, in which the same set of cosines can be stored in a function table for sampling by an oscillator. Although computationally more efficient, the stored pulse train has a fixed spectral content, not a time-varying one as above.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122451248"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the buzz opcode. It uses the file <a class="ulink" href="examples/buzz.csd" target="_top"><em class="citetitle">buzz.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276122449456"></a>
+          <p class="title">
+            <strong>Example 108. Example of the buzz opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276490071392"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o buzz.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">cps</span> <span class="o">=</span> <span class="mi">110</span>
+i<span class="n">fn</span>  <span class="o">=</span> <span class="mi">1</span>
+
+k<span class="n">nh</span>	<span class="nb">line</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span>
+a<span class="n">sig</span>	<span class="nb">buzz</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> k<span class="n">nh</span><span class="p">,</span> i<span class="n">fn</span>
+	<span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">;sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">20</span> <span class="mi">20</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="mi">3</span> <span class="mi">3</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122445424"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="gbuzz.html" title="gbuzz"><em class="citetitle">gbuzz</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276122443376"></a>
+        <h2>Credits</h2>
+        <p>September 2003. Thanks to Kanata Motohashi for correcting the mentions of the <span class="emphasis"><em>kmul</em></span> parameter.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="button.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="c2r.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">button </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> c2r</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>p5gdata</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="p5gconnect.html" title="p5gconnect" />
+    <link rel="next" href="p.html" title="p" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">p5gdata</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="p5gconnect.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="p.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="p5gdata"></a>
+      <div class="titlepage"></div>
+      <a id="Indexp5gdata" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">p5gdata</span>
+        </h2>
+        <p>p5gdata — 
+      Reads data fields from an external P5 Glove.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073899264"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in p5g.</p>
+        <p>
+       Reads data fields from a P5 Glove controller.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073897616"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>p5gdata</strong></span> kcontrol</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073895536"></a>
+        <h2>Initialization</h2>
+        <p>
+      This opcode must be used in conjuction with
+      a running <span class="emphasis"><em>p5gconnect</em></span> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073893872"></a>
+        <h2>Performance</h2>
+        <p>
+     <span class="emphasis"><em>kcontrol</em></span> -- the code for which control to read
+   </p>
+        <p>
+     On each access a particular data item of the P5 glove is read.
+     The currently implemented controls are given below, together with
+     the macro name defined in the file <span class="emphasis"><em>p5g_mac</em></span>:
+   </p>
+        <p>
+     0 (P5G_BUTTONS): returns a bit pattern for all buttons that were pressed.
+   </p>
+        <p>
+1 (P5G_BUTTON_A): returns 1 if the button has just been pressed, or 0 otherwise.
+   </p>
+        <p>
+2 (P5G_BUTTON_B): as above.
+   </p>
+        <p>
+4 (P5G_BUTTON_C): as above.
+   </p>
+        <p>
+8 (P5G_JUSTPUSH):  returns a bit pattern for all buttons that have just been pressed.
+   </p>
+        <p>
+9 (P5G_JUSTPU_A):  returns 1 if the A button has just been pressed.
+   </p>
+        <p>
+10 (P5G_JUSTPU_B): as above.
+   </p>
+        <p>
+12 (P5G_JUSTPU_C):    as above.
+   </p>
+        <p>
+16 (P5G_RELEASED):  returns a bit pattern for all buttons that have just been released. 
+   </p>
+        <p>
+17 (P5G_RELSED_A): returns 1 if the A button has just been released.  
+   </p>
+        <p>
+18 (P5G_RELSED_B):   as above.
+   </p>
+        <p>
+20 (P5G_RELSED_C):   as above.
+   </p>
+        <p>
+32 (P5G_FINGER_INDEX): returns the clench value of the index finger.
+   </p>
+        <p>
+33 (P5G_FINGER_MIDDLE):  as above.
+   </p>
+        <p>
+34 (P5G_FINGER_RING):  as above.
+   </p>
+        <p>
+35 (P5G_FINGER_PINKY):  as above with little finger.
+   </p>
+        <p>
+36 (P5G_FINGER_THUMB):  as above.
+   </p>
+        <p>
+37 (P5G_DELTA_X):  The X position of the glove.  
+   </p>
+        <p>
+38 (P5G_DELTA_Y):  The Y position of the glove.   
+   </p>
+        <p>
+39 (P5G_DELTA_Z):   The Z position of the glove.  
+   </p>
+        <p>
+40 (P5G_DELTA_XR):  The X axis change (angle). 
+   </p>
+        <p>
+41 (P5G_DELTA_YR):  as above.  
+   </p>
+        <p>
+42 (P5G_DELTA_ZR):  as above.  
+   </p>
+        <p>
+43 (P5G_ANGLES):  The general angle   
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073880528"></a>
+        <h2>Examples</h2>
+        <p>
+      See the example for <a class="link" href="p5gconnect.html" title="p5gconnect"><em class="citetitle">p5gconnect</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073878448"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="p5gconnect.html" title="p5gconnect"><em class="citetitle">p5gconnect</em></a>,
+     </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073876400"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>Codemist Ltd</td>
+          </tr>
+          <tr>
+            <td>2009</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="p5gconnect.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="p.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">p5gconnect </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> p</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

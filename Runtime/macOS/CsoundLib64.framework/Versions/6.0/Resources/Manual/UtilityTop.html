@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>The Utility Programs</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartReference.html" title="Part III. Reference" />
+    <link rel="prev" href="GEN22.html" title="GEN22" />
+    <link rel="next" href="UtilitySoundfile.html" title="Soundfile Formats." />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">The Utility Programs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN22.html">Prev</a> </td>
+          <th width="60%" align="center">Part III. Reference</th>
+          <td width="20%" align="right"> <a accesskey="n" href="UtilitySoundfile.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="UtilityTop"></a>The Utility Programs</h2>
+          </div>
+          <div>
+            <div class="author">
+              <h3 class="author"><span class="firstname">Dan</span> <span class="surname">Ellis</span></h3>
+              <div class="affiliation">
+                <span class="orgname">MIT Media Lab<br /></span>
+                <div class="address">
+                  <p><br />
+          <span class="city">Cambridge</span><br />
+          <span class="state">Massachussetts</span><br />
+        </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p>
+    The Csound Utilities are <span class="emphasis"><em>soundfile preprocessing</em></span> programs that return information on a soundfile or create some analyzed version of it for use by certain Csound generators. Though different in goals, they share a common soundfile access mechanism and are describable as a set. The Soundfile Utility programs can be invoked in two equivalent forms:
+    </p>
+      <div class="cmdsynopsis">
+        <p><code class="command">csound</code>  [<em class="replaceable"><code>-U utilname</code></em>] [<code class="option">flags</code>] [<em class="replaceable"><code>filenames</code></em>]</p>
+      </div>
+      <p>
+
+    </p>
+      <div class="cmdsynopsis">
+        <p><code class="command">utilname</code>  [<code class="option">flags</code>] [<em class="replaceable"><code>filenames</code></em>]</p>
+      </div>
+      <p>
+  </p>
+      <p>
+    In the first, the utility is invoked as part of the Csound executable, while in the second it is called as a standalone program. The second is smaller by about 200K, but the two forms are identical in function. The first is convenient in not requiring the maintenance and use of several independent programs - one program does all. When using this form, a <a class="link" href="CommandFlags.html#FlagsMinusUpperU"><em class="citetitle">-U flag</em></a> detected in the command line will cause all subsequent flags and names to be interpreted as per the named utility; i.e. Csound generation will not occur, and the program will terminate at the end of utility processing.
+  </p>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="UtilityDir"></a>Directories.</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+      Filenames are of two kinds, source soundfiles and resultant analysis files. Each has a hierarchical naming convention, influenced by the directory from which the Utility is invoked. Source soundfiles with a full pathname (begins with dot (.), slash (/), or for ThinkC includes a colon (:)), will be sought only in the directory named. Soundfiles without a path will be sought first in the current directory, then in the directory named by the <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SSDIR</em></a> environment variable (if defined), then in the directory named by <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SFDIR</em></a>. An unsuccessful search will return a "cannot open" error.
+    </p>
+        <p>
+      Resultant analysis files are written into the current directory, or to the named directory if a path is included. It is tidy to keep analysis files separate from sound files, usually in a separate directory known to the SADIR variable. Analysis is conveniently run from within the SADIR directory. When an analysis file is later invoked by a Csound generator it is sought first in the current directory, then in the directory defined by SADIR.
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN22.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartReference.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="UtilitySoundfile.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN22 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Soundfile Formats.</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

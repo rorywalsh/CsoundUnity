@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>outkpat</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="outkc.html" title="outkc" />
+    <link rel="next" href="outkpb.html" title="outkpb" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">outkpat</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="outkc.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="outkpb.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="outkpat"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOutkpat" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">outkpat</span>
+        </h2>
+        <p>outkpat — 
+      Sends polyphonic MIDI aftertouch messages at k-rate.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074351152"></a>
+        <h2>Description</h2>
+        <p>
+      Sends polyphonic MIDI aftertouch messages at k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074349904"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>outkpat</strong></span> kchn, knotenum, kvalue, kmin, kmax</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074347936"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kchn</em></span> -- MIDI channel number (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>knotenum</em></span> -- MIDI note number (used in polyphonic aftertouch messages)
+    </p>
+        <p>
+      <span class="emphasis"><em>kvalue</em></span> -- floating point value
+    </p>
+        <p>
+      <span class="emphasis"><em>kmin</em></span> -- minimum floating point value (converted in MIDI integer value 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>kmax</em></span> -- maximum floating point value (converted in MIDI integer value 127 (7 bit))
+    </p>
+        <p>
+     <span class="emphasis"><em>outkpat</em></span> (k-rate polyphonic aftertouch output) sends polyphonic aftertouch messages. It works only with MIDI instruments which recognize them. It can drive a different value of a parameter for each note currently active. 
+    </p>
+        <p>
+      It can scale the k-value floating-point argument according to the <span class="emphasis"><em>kmin</em></span> and <span class="emphasis"><em>kmax</em></span> values. For example: set <span class="emphasis"><em>kmin</em></span> = 1.0 and <span class="emphasis"><em>kmax</em></span> = 2.0.
+When the <span class="emphasis"><em>kvalue</em></span> argument receives a 2.0 value, the opcode will send a 127 value to the MIDI OUT device. When the <span class="emphasis"><em>kvalue</em></span> argument receives a 1.0 value, it will send a 0 value. k-rate opcodes send a message each time the MIDI converted value of argument <span class="emphasis"><em>kvalue</em></span> changes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074338256"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="outiat.html" title="outiat"><em class="citetitle">outiat</em></a>,
+      <a class="link" href="outic14.html" title="outic14"><em class="citetitle">outic14</em></a>,
+      <a class="link" href="outic.html" title="outic"><em class="citetitle">outic</em></a>,
+      <a class="link" href="outipat.html" title="outipat"><em class="citetitle">outipat</em></a>,
+      <a class="link" href="outipb.html" title="outipb"><em class="citetitle">outipb</em></a>,
+      <a class="link" href="outipc.html" title="outipc"><em class="citetitle">outipc</em></a>,
+      <a class="link" href="outkat.html" title="outkat"><em class="citetitle">outkat</em></a>,
+      <a class="link" href="outkc14.html" title="outkc14"><em class="citetitle">outkc14</em></a>,
+      <a class="link" href="outkc.html" title="outkc"><em class="citetitle">outkc</em></a>,
+      <a class="link" href="outkpb.html" title="outkpb"><em class="citetitle">outkpb</em></a>,
+      <a class="link" href="outkpc.html" title="outkpc"><em class="citetitle">outkpc</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074327424"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel and controller number ranges.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="outkc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="outkpb.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">outkc </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> outkpb</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

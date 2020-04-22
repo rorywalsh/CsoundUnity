@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>weibull</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="websocket.html" title="websocket" />
+    <link rel="next" href="wgbow.html" title="wgbow" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">weibull</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="websocket.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="wgbow.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="weibull"></a>
+      <div class="titlepage"></div>
+      <a id="IndexWeibullXClass" class="indexterm"></a>
+      <a id="IndexWeibull" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">weibull</span>
+        </h2>
+        <p>weibull — 
+      Weibull distribution random number generator (positive values only).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036641584"></a>
+        <h2>Description</h2>
+        <p>
+      Weibull distribution random number generator (positive values only). This is an x-class noise generator
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036640160"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>weibull</strong></span> ksigma, ktau</pre>
+        <pre class="synopsis">ires <span class="command"><strong>weibull</strong></span> ksigma, ktau</pre>
+        <pre class="synopsis">kres <span class="command"><strong>weibull</strong></span> ksigma, ktau</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036635440"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ksigma</em></span> -- scales the spread of the distribution.
+    </p>
+        <p>
+      <span class="emphasis"><em>ktau</em></span> -- if greater than one, numbers near <span class="emphasis"><em>ksigma</em></span> are favored. If smaller than one, small values are favored. If t equals 1, the distribution is exponential. Outputs only positive numbers.
+    </p>
+        <p>
+      For more detailed explanation of these distributions, see:
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>C. Dodge - T.A. Jerse 1985. Computer music. Schirmer books. pp.265 - 286</p>
+            </li>
+            <li class="listitem">
+              <p>D. Lorrain. A panoply of stochastic cannons. In C. Roads, ed. 1989. Music machine . Cambridge, Massachusetts: MIT press, pp. 351 - 379.</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036629008"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the weibull opcode. It uses the file <a class="ulink" href="examples/weibull.csd" target="_top"><em class="citetitle">weibull.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276036627200"></a>
+          <p class="title">
+            <strong>Example 1135. Example of the weibull opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276404215696"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o weibull.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>  	<span class="c1">; every run time same values</span>
+
+k<span class="n">tri</span>	<span class="nb">weibull</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span>
+	<span class="nb">printk</span> <span class="mf">.2</span><span class="p">,</span> k<span class="n">tri</span>			<span class="c1">; look </span>
+a<span class="n">out</span>	<span class="nb">oscili</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">tri</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; &amp; listen</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>		<span class="c1">; every run time different values</span>
+
+	<span class="nb">seed</span> <span class="mi">0</span>
+k<span class="n">tri</span>	<span class="nb">weibull</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span>
+	<span class="nb">printk</span> <span class="mf">.2</span><span class="p">,</span> k<span class="n">tri</span>			<span class="c1">; look </span>
+a<span class="n">out</span>	<span class="nb">oscili</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">tri</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; &amp; listen</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">3</span>		<span class="c1">; every run time different values</span>
+
+	<span class="nb">seed</span> <span class="mi">0</span>
+k<span class="n">tri</span>	<span class="nb">weibull</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span>			<span class="c1">; closer to ksigma..</span>
+	<span class="nb">printk</span> <span class="mf">.2</span><span class="p">,</span> k<span class="n">tri</span>			<span class="c1">; look </span>
+a<span class="n">out</span>	<span class="nb">oscili</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">tri</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">; &amp; listen</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine wave</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">3</span> <span class="mi">6</span> <span class="mi">2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include a line like these:
+      </p>
+        <pre class="screen">
+i   1 time     0.00073:   168.59070
+ i   1 time     0.20027:    98.72078
+ i   1 time     0.40054:    48.57351
+ i   1 time     0.60009:   171.46941
+ i   1 time     0.80036:    50.20434
+ i   1 time     1.00063:    50.84775
+ i   1 time     1.20018:    18.16301
+ i   1 time     1.40045:    44.41001
+ i   1 time     1.60000:     0.98506
+ i   1 time     1.80027:    36.19192
+
+WARNING: Seeding from current time 2444541554
+
+ i   2 time     3.00045:    20.81653
+ i   2 time     3.20000:   116.17060
+ i   2 time     3.40027:     9.23891
+ i   2 time     3.59982:    95.67111
+ i   2 time     3.80009:   296.52851
+ i   2 time     4.00036:    39.28636
+ i   2 time     4.19991:    13.54326
+ i   2 time     4.40018:    54.92388
+ i   2 time     4.59973:   268.05584
+ i   2 time     4.80000:    95.27069
+ i   2 time     5.00027:    91.62076
+
+WARNING: Seeding from current time 2447542341
+
+ i   3 time     6.00091:    94.40902
+ i   3 time     6.20045:   111.10193
+ i   3 time     6.40073:    99.38797
+ i   3 time     6.60027:    98.54267
+ i   3 time     6.80054:   106.53899
+ i   3 time     7.00082:   106.30752
+ i   3 time     7.20036:    88.75486
+ i   3 time     7.40063:   106.45703
+ i   3 time     7.60091:    84.59854
+ i   3 time     7.80045:   106.76515
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036622512"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="seed.html" title="seed"><em class="citetitle">seed</em></a>,
+      <a class="link" href="betarand.html" title="betarand"><em class="citetitle">betarand</em></a>,
+      <a class="link" href="bexprnd.html" title="bexprnd"><em class="citetitle">bexprnd</em></a>,
+      <a class="link" href="cauchy.html" title="cauchy"><em class="citetitle">cauchy</em></a>,
+      <a class="link" href="exprand.html" title="exprand"><em class="citetitle">exprand</em></a>,
+      <a class="link" href="gauss.html" title="gauss"><em class="citetitle">gauss</em></a>,
+      <a class="link" href="linrand.html" title="linrand"><em class="citetitle">linrand</em></a>,
+      <a class="link" href="pcauchy.html" title="pcauchy"><em class="citetitle">pcauchy</em></a>,
+      <a class="link" href="poisson.html" title="poisson"><em class="citetitle">poisson</em></a>,
+      <a class="link" href="trirand.html" title="trirand"><em class="citetitle">trirand</em></a>,
+      <a class="link" href="unirand.html" title="unirand"><em class="citetitle">unirand</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036611504"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge</td>
+          </tr>
+          <tr>
+            <td>1995</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="websocket.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="wgbow.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">websocket </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> wgbow</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

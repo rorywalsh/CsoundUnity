@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>hdf5read</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="harmon2.html" title="harmon2" />
+    <link rel="next" href="hdf5write.html" title="hdf5write" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">hdf5read</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="harmon2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="hdf5write.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="hdf5read"></a>
+      <div class="titlepage"></div>
+      <a id="IndexHdf5read" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">hdf5read</span>
+        </h2>
+        <p>hdf5read — 
+      Read signals and arrays from an hdf5 file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099942496"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in hdf5ops.</p>
+        <p>
+      <span class="emphasis"><em>hdf5read</em></span> reads <span class="emphasis"><em>N</em></span> signals and arrays from a specified hdf5 file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099940048"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">xout1[, xout2, xout3, ..., xoutN] <span class="command"><strong>hdf5read</strong></span> ifilename, ivariablename1[, ivariablename2, ivariablename3, ..., ivariablenameN]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099937856"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilename</em></span> -- the hdf5 file's name (in double-quotes).
+    </p>
+        <p>
+      <span class="emphasis"><em>ivariablename1[, ivariablename2, ivariablename3, ..., ivariablenameN]</em></span> -- the names of the datasets (in double-quotes) to be read from the hdf5 file, if the dataset name is suffixed with an asterisk, e.g. "mydataset*", the entire dataset is copied to the array regardless of array type. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099935152"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>xout1,... xoutN</em></span> -- The specified types of variables that the hdf5 datasets are to be read  as. Datasets with a rank larger than 1 must be read as arrays, i-rate signals must also be read as i-rate signals. Other than these restrictions datasets may be read as any type of array or signal. When reading has reached the end of a dataset it no longer outputs any new values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099933216"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a simple example of the hdf5read opcode. It uses the file <a class="ulink" href="examples/hdf5read.csd" target="_top"><em class="citetitle">hdf5read.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276099931424"></a>
+          <p class="title">
+            <strong>Example 411. Example of the hdf5read opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276465385568"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+
+<span class="kd">instr</span> <span class="nf">hdf5read</span>
+
+    a<span class="n">Array</span><span class="p">[],</span> a<span class="n">Var</span><span class="p">,</span> k<span class="n">Var</span> <span class="nb">hdf5read</span> <span class="s">"example.h5"</span><span class="p">,</span> <span class="s">"aArray"</span><span class="p">,</span> <span class="s">"aVar"</span><span class="p">,</span> <span class="s">"kVar"</span> <span class="c1">; Open hdf5 file and read variables</span>
+
+    a<span class="n">Left</span> <span class="o">=</span> <span class="p">(</span>a<span class="n">Array</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> a<span class="n">Array</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> a<span class="n">Var</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span> <span class="c1">; Add audio signals together for stereo out</span>
+    a<span class="n">Right</span> <span class="o">=</span> <span class="p">(</span>a<span class="n">Array</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> a<span class="n">Array</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> a<span class="n">Var</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span>
+
+    <span class="nb">outs</span> a<span class="n">Left</span> <span class="o">*</span> k<span class="n">Var</span><span class="p">,</span> a<span class="n">Right</span> <span class="o">*</span> k<span class="n">Var</span> <span class="c1">; Multiply audio signals by k-rate signal</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="s">"hdf5read"</span> <span class="mi">0</span> <span class="mi">1</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099927440"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="hdf5write.html" title="hdf5write"><em class="citetitle">hdf5write</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099925408"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Edward Costello;</td>
+          </tr>
+          <tr>
+            <td>NUIM, 2014</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="harmon2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="hdf5write.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">harmon2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> hdf5write</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

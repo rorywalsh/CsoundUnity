@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>wgflute</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="wgclar.html" title="wgclar" />
+    <link rel="next" href="wgpluck.html" title="wgpluck" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">wgflute</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="wgclar.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="wgpluck.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="wgflute"></a>
+      <div class="titlepage"></div>
+      <a id="IndexWgflute" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">wgflute</span>
+        </h2>
+        <p>wgflute — 
+      Creates a tone similar to a flute.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276039361808"></a>
+        <h2>Description</h2>
+        <p>
+      Audio output is a tone similar to a flute, using a physical model developed from Perry Cook, but re-coded for Csound.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276039360112"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>wgflute</strong></span> kamp, kfreq, kjet, iatt,
+    idetk, kngain, kvibf, kvamp [, ifn] [, iminfreq] [, ijetrf] [, iendrf]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276039357920"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iatt</em></span> -- time in seconds to reach full blowing pressure. 0.1 seems to correspond to reasonable playing.
+    </p>
+        <p>
+      <span class="emphasis"><em>idetk</em></span> -- time in seconds taken to stop blowing. 0.1 is a smooth ending
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> (optional) -- table of shape of vibrato, defaults
+      to the usual sine table.
+    </p>
+        <p>
+      <span class="emphasis"><em>iminfreq</em></span> (optional) -- lowest frequency at which the instrument will play. If it is omitted it is taken to be the same as the initial kfreq. If <span class="emphasis"><em>iminfreq</em></span> is negative, initialization will be skipped.
+    </p>
+        <p>
+      <span class="emphasis"><em>ijetrf</em></span> (optional, default=0.5) -- amount of reflection in the breath jet that powers the flute. Default value is 0.5.
+    </p>
+        <p>
+      <span class="emphasis"><em>iendrf</em></span> (optional, default=0.5) -- reflection coefficient of the breath jet. Default value is 0.5. Both <span class="emphasis"><em>ijetrf</em></span> and <span class="emphasis"><em>iendrf</em></span> are used in the calculation of the pressure differential.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036332352"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- Amplitude of note.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- Frequency of note played. While it can be varied in performance, I have not tried it.
+    </p>
+        <p>
+      <span class="emphasis"><em>kjet</em></span> -- a parameter controlling the air jet. Values should be positive, and about 0.3. The useful range is approximately 0.08 to 0.56.
+    </p>
+        <p>
+      <span class="emphasis"><em>kngain</em></span> -- amplitude of the noise component, about 0 to 0.5
+    </p>
+        <p>
+      <span class="emphasis"><em>kvibf</em></span> -- frequency of vibrato in Hertz. Suggested range is 0 to 12
+    </p>
+        <p>
+      <span class="emphasis"><em>kvamp</em></span> -- amplitude of the vibrato
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036325888"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the wgflute opcode. It uses the file <a class="ulink" href="examples/wgflute.csd" target="_top"><em class="citetitle">wgflute.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276036324080"></a>
+          <p class="title">
+            <strong>Example 1140. Example of the wgflute opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276403856976"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o wgflute.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">freq</span> <span class="o">=</span> <span class="mi">440</span>
+k<span class="n">jet</span> <span class="nb">init</span> <span class="nb">p4</span>			<span class="c1">;vary air jet</span>
+i<span class="n">att</span> <span class="o">=</span> <span class="mf">0.1</span>
+i<span class="n">detk</span> <span class="o">=</span> <span class="mf">0.1</span>
+k<span class="n">ngain</span> <span class="o">=</span> <span class="mf">0.15</span>
+k<span class="n">vibf</span> <span class="o">=</span> <span class="mf">5.925</span>
+k<span class="n">vamp</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+a<span class="n">sig</span> <span class="nb">wgflute</span> <span class="mf">.8</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> k<span class="n">jet</span><span class="p">,</span> i<span class="n">att</span><span class="p">,</span> i<span class="n">detk</span><span class="p">,</span> k<span class="n">ngain</span><span class="p">,</span> k<span class="n">vibf</span><span class="p">,</span> k<span class="n">vamp</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>		<span class="c1">;sine wave</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mf">0.02</span>			<span class="c1">;more air jet</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mf">0.32</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036320096"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch (after Perry Cook)</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p>ifn optional in 6.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="wgclar.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="wgpluck.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">wgclar </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> wgpluck</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

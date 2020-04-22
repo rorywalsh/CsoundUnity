@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pdclip</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pcount.html" title="pcount" />
+    <link rel="next" href="pdhalf.html" title="pdhalf" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pdclip</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pcount.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pdhalf.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pdclip"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPdclip" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pdclip</span>
+        </h2>
+        <p>pdclip — 
+      Performs linear clipping on an audio signal or a phasor.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073540192"></a>
+        <h2>Description</h2>
+        <p>
+      The <span class="emphasis"><em>pdclip</em></span> opcode allows a percentage of the input range of a signal to be clipped to fullscale. It is similar to simply multiplying the signal and limiting the range of the result, but <span class="emphasis"><em>pdclip</em></span> allows you to think about how much of the signal range is being distorted instead of the scalar factor and has a offset parameter for assymetric clipping of the signal range. <span class="emphasis"><em>pdclip</em></span> is also useful for remapping phasors for phase distortion synthesis.  
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073537344"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>pdclip</strong></span> ain, kWidth, kCenter [, ibipolar [, ifullscale]]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073535216"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ibipolar</em></span> -- an optional parameter specifying either unipolar (0) or bipolar (1) mode.  Defaults to unipolar mode.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifullscale</em></span> -- an optional parameter specifying the range of input and output values. The maximum will be <span class="emphasis"><em>ifullscale</em></span>. The minimum depends on the mode of operation: zero for unipolar or -<span class="emphasis"><em>ifullscale</em></span> for bipolar.  Defaults to 1.0 -- you should set this parameter to the maximum expected input value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073531664"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span> --  the input signal to be clipped.
+    </p>
+        <p>
+      <span class="emphasis"><em>aout</em></span> --  the output signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kWidth</em></span> --  the percentage of the signal range that is clipped (must be between 0 and 1).
+    </p>
+        <p>
+      <span class="emphasis"><em>kCenter</em></span> --  an offset for shifting the unclipped window of the signal higher or lower in the range (essentially a DC offset).   Values should be in the range [-1, 1] with a value of zero representing no shift (regardless of whether bipolar or unipolar mode is used).
+    </p>
+        <p>
+      The <span class="emphasis"><em>pdclip</em></span> opcode performs linear clipping on the input signal ain. <span class="emphasis"><em>kWidth</em></span> specifies the percentage of the signal range that is clipped. The rest of the input range is mapped linearly from zero to ifullscale in unipolar mode and from -ifullscale to ifullscale in bipolar mode.  When <span class="emphasis"><em>kCenter</em></span> is zero, equal amounts of the top and bottom of the signal range are clipped.  A negative value shifts the unclipped range more towards the bottom of the input range and a positive value shifts it more towards the top.  ibipolar should be 1 for bipolar operation and 0 for unipolar mode.  The default is unipolar mode (ibipolar = 0).  ifullscale sets the maximum amplitude of the input and output signals (defaults to 1.0).
+    </p>
+        <p>
+      This amounts to waveshaping the input with the following transfer function (normalized to ifullscale=1.0 in bipolar mode):
+    </p>
+        <p>
+      </p>
+        <div class="literallayout">
+          <p><br />
+        1|   _______      x-axis is input range, y-axis is output<br />
+         |  /       <br />
+         | /              width of clipped region is 2*kWidth<br />
+-1       |/        1      width of unclipped region is 2*(1 - kWidth)<br />
+--------------------      kCenter shifts the unclipped region<br />
+        /|                 left or right (up to kWidth)<br />
+       / |<br />
+      /  |<br />
+------   |-1<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      Bipolar mode can be used for direct, linear distortion of an audio signal.  Alternatively, unipolar mode is useful for modifying the output of a phasor before it is used to index a function table, effectively making this a phase distortion technique.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073522176"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pdhalf.html" title="pdhalf"><em class="citetitle">pdhalf</em></a>, 
+      <a class="link" href="pdhalfy.html" title="pdhalfy"><em class="citetitle">pdhalfy</em></a>,
+      <a class="link" href="limit.html" title="limit"><em class="citetitle">limit</em></a>,
+      <a class="link" href="clip.html" title="clip"><em class="citetitle">clip</em></a>,
+      <a class="link" href="distort1.html" title="distort1"><em class="citetitle">distort1</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073516624"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pdclip opcode. It uses the file <a class="ulink" href="examples/pdclip.csd" target="_top"><em class="citetitle">pdclip.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276073514832"></a>
+          <p class="title">
+            <strong>Example 697. Example of the pdclip opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276438994304"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o abs.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; test instrument for pdclip opcode</span>
+<span class="kd">instr</span> <span class="nf">3</span>
+
+	i<span class="n">dur</span>		<span class="o">=</span> <span class="nb">p3</span>
+	i<span class="n">amp</span>		<span class="o">=</span> <span class="nb">p4</span>
+	i<span class="n">freq</span>		<span class="o">=</span> <span class="nb">p5</span>
+	i<span class="n">fn</span>			<span class="o">=</span> <span class="nb">p6</span>
+	
+	k<span class="n">env</span>		<span class="nb">linseg</span>		<span class="mi">0</span><span class="p">,</span> <span class="mf">.05</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> i<span class="n">dur</span> <span class="o">-</span> <span class="mf">.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">.05</span><span class="p">,</span> <span class="mi">0</span>
+	a<span class="n">osc</span>		<span class="nb">oscil</span>		<span class="mf">1.0</span><span class="p">,</span> i<span class="n">freq</span><span class="p">,</span> i<span class="n">fn</span>
+	
+	k<span class="n">mod</span>		<span class="nb">expseg</span>		<span class="mf">0.00001</span><span class="p">,</span> i<span class="n">dur</span><span class="p">,</span> <span class="mf">1.0</span>
+	a<span class="n">out</span>		<span class="nb">pdclip</span>		a<span class="n">osc</span><span class="p">,</span> k<span class="n">mod</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span>
+	
+				<span class="nb">out</span>			k<span class="n">env</span><span class="o">*</span>a<span class="n">out</span><span class="o">*</span>i<span class="n">amp</span>		
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16385</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">16385</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mf">.5</span> <span class="mf">.3333</span> <span class="mf">.25</span> <span class="mf">.5</span>
+
+<span class="c1">; pdclipped sine wave</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">15000</span> <span class="mi">440</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">3</span> <span class="mi">15000</span> <span class="mi">330</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">3</span> <span class="mi">15000</span> <span class="mi">220</span> <span class="mi">1</span>
+<span class="nb">s</span>
+
+<span class="c1">; pdclipped composite wave</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">15000</span> <span class="mi">440</span> <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">3</span> <span class="mi">15000</span> <span class="mi">330</span> <span class="mi">2</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">3</span> <span class="mi">15000</span> <span class="mi">220</span> <span class="mi">2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276073510848"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Anthony Kozar</td>
+          </tr>
+          <tr>
+            <td>January 2008</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pcount.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pdhalf.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pcount </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pdhalf</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

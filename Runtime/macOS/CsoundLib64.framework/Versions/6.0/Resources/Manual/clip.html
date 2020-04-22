@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>clip</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="clfilt.html" title="clfilt" />
+    <link rel="next" href="clockoff.html" title="clockoff" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">clip</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="clfilt.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="clockoff.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="clip"></a>
+      <div class="titlepage"></div>
+      <a id="IndexClip" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">clip</span>
+        </h2>
+        <p>clip — 
+      Clips a signal to a predefined limit.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120703840"></a>
+        <h2>Description</h2>
+        <p>
+      Clips an a-rate signal to a predefined limit, in a <span class="quote">“<span class="quote">soft</span>”</span> manner, using one of three methods.
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120702160"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>clip</strong></span> asig, imeth, ilimit [, iarg]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120700064"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imeth</em></span> -- selects the clipping method. The default is 0. The methods are:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 = Bram de Jong method (default)</p>
+            </li>
+            <li class="listitem">
+              <p>1 = sine clipping</p>
+            </li>
+            <li class="listitem">
+              <p>2 = tanh clipping</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ilimit</em></span> -- limiting value
+    </p>
+        <p>
+      <span class="emphasis"><em>iarg</em></span> (optional, default=0.5) -- when <span class="emphasis"><em>imeth</em></span> = 0, indicates the point at which clipping starts, in the range 0 - 1. Not used when <span class="emphasis"><em>imeth</em></span> = 1 or <span class="emphasis"><em>imeth</em></span> = 2. Default is 0.5.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120692624"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- a-rate input signal
+    </p>
+        <p>
+      The Bram de Jong method (<span class="emphasis"><em>imeth</em></span> = 0) applies the algorithm (denoting <span class="emphasis"><em>ilimit</em></span> as <span class="emphasis"><em>limit</em></span> and <span class="emphasis"><em>iarg</em></span> as <span class="emphasis"><em>a</em></span>):
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+|<span class="emphasis"><em>x</em></span>| &gt;= 0 and |<span class="emphasis"><em>x</em></span>| &lt;= (<span class="emphasis"><em>limit*a</em></span>):  f(<span class="emphasis"><em>x</em></span>) = f(<span class="emphasis"><em>x</em></span>)
+|<span class="emphasis"><em>x</em></span>| &gt; (<span class="emphasis"><em>limit*a</em></span>) and |<span class="emphasis"><em>x</em></span>| &lt;= <span class="emphasis"><em>limit</em></span>:  f(<span class="emphasis"><em>x</em></span>) = sign(<span class="emphasis"><em>x</em></span>) * (<span class="emphasis"><em>limit*a</em></span>+(<span class="emphasis"><em>x-limit*a</em></span>)/(1+((<span class="emphasis"><em>x-limit*a</em></span>)/(<span class="emphasis"><em>limit</em></span>*(1-<span class="emphasis"><em>a</em></span>)))<sup>2</sup>))
+|<span class="emphasis"><em>x</em></span>| &gt; <span class="emphasis"><em>limit</em></span>:  f(<span class="emphasis"><em>x</em></span>) = sign(<span class="emphasis"><em>x</em></span>) * (<span class="emphasis"><em>limit</em></span>*(<span class="emphasis"><em>1+a</em></span>))/2</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      The second method (<span class="emphasis"><em>imeth</em></span> = 1) is the sine clip:
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+|<span class="emphasis"><em>x</em></span>| &lt; <span class="emphasis"><em>limit</em></span>:  f(<span class="emphasis"><em>x</em></span>) = <span class="emphasis"><em>limit</em></span> * sin(π*<span class="emphasis"><em>x</em></span>/(2*<span class="emphasis"><em>limit</em></span>)),   |<span class="emphasis"><em>x</em></span>| &gt;= <span class="emphasis"><em>limit</em></span>:  f(<span class="emphasis"><em>x</em></span>) = <span class="emphasis"><em>limit</em></span> * sign(<span class="emphasis"><em>x</em></span>)</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      The third method (<span class="emphasis"><em>imeth = 2</em></span>) is the tanh clip:
+    </p>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+|<span class="emphasis"><em>x</em></span>| &lt; <span class="emphasis"><em>limit</em></span>:  f(<span class="emphasis"><em>x</em></span>) = <span class="emphasis"><em>limit</em></span> * tanh(<span class="emphasis"><em>x/limit</em></span>)/tanh(1),   |<span class="emphasis"><em>x</em></span>| &gt;= <span class="emphasis"><em>limit</em></span>:  f(<span class="emphasis"><em>x</em></span>) = <span class="emphasis"><em>limit</em></span> * sign(<span class="emphasis"><em>x</em></span>)</pre>
+        </div>
+        <p>
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Method 1 appears to be non-functional at release of Csound version 4.07.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120662816"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the clip opcode. It uses the file <a class="ulink" href="examples/clip.csd" target="_top"><em class="citetitle">clip.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276120661040"></a>
+          <p class="title">
+            <strong>Example 137. Example of the clip opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276487900224"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o clip.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; white noise</span>
+
+a<span class="n">rnd</span> <span class="nb">rand</span> <span class="mi">1</span>	<span class="c1">; full amlitude</span>
+<span class="c1">; Clip the noisy waveform's amplitude to 0.5</span>
+a<span class="n">1</span> <span class="nb">clip</span> a<span class="n">rnd</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mf">0.5</span>
+   <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">; white noise</span>
+
+a<span class="n">rnd</span> <span class="nb">rand</span> <span class="mi">1</span>	<span class="c1">; full amlitude</span>
+<span class="c1">; Clip the noisy waveform's amplitude to 0.1</span>
+a<span class="n">1</span> <span class="nb">clip</span> a<span class="n">rnd</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mf">0.1</span>
+   <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for one second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="c1">; Play Instrument #2 for one second.</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="nb">s</span> <span class="mi">3</span>
+<span class="c1">; Play Instrument #1 for one second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span>
+<span class="c1">; Play Instrument #2 for one second.</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span>
+<span class="nb">s</span> <span class="mi">3</span>
+<span class="c1">; Play Instrument #1 for one second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span>
+<span class="c1">; Play Instrument #2 for one second.</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120657056"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>August, 2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 4.07</p>
+        <p>September 2009: Thanks to a note from Paolo Dell'Osso, corrected the formula.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="clfilt.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="clockoff.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">clfilt </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> clockoff</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

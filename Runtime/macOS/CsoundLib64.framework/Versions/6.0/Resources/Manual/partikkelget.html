@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>partikkelget</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="partikkel.html" title="partikkel" />
+    <link rel="next" href="partikkelset.html" title="partikkelset" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">partikkelget</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="partikkel.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="partikkelset.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="partikkelget"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPartikkelget" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">partikkelget</span>
+        </h2>
+        <p>partikkelget —  Get mask index for a specific mask parameter of a running <span class="emphasis"><em>partikkel</em></span> instance.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071713920"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>partikkelget</em></span> is an opcode for outputting <a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a> mask index for a specific parameter. 
+      Used together with <span class="emphasis"><em>partikkelset</em></span>, it can be used to synchronize partikkel masking between several running instances of the <span class="emphasis"><em> partikkel</em></span> opcode. 
+      It can also be used to control other processes based on the internal mask index, for example to create more complex masking patterns than is available with the regular grain masking system.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071710288"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kindex <span class="command"><strong>partikkelget</strong></span> kparameterindex, iopcode_id</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071708192"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iopcode_id</em></span> -- the opcode id, linking an
+      instance of <a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a> to an instance of <span class="emphasis"><em>partikkelsync</em></span>. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071705248"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kmaskindex</em></span> -- mask index output. 
+      Outputs the current mask index for the parameter specified with <span class="emphasis"><em>kparameterindex</em></span> in the partikkel instance identified with <span class="emphasis"><em>iopcode_id</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>kparameterindex</em></span> -- mask parameter. 
+      Selection of the masking parameter for which to output the current mask index. The different parameters are identified as:
+        </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0: gain mask</p>
+            </li>
+            <li class="listitem">
+              <p>1: pitch sweep start mask</p>
+            </li>
+            <li class="listitem">
+              <p>2: pitch sweep end mask</p>
+            </li>
+            <li class="listitem">
+              <p>3: fm modulation index mask</p>
+            </li>
+            <li class="listitem">
+              <p>4: channel mask</p>
+            </li>
+            <li class="listitem">
+              <p>5: waveform mix mask</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071698160"></a>
+        <h2>Example</h2>
+        <p>
+      Here is an example of the partikkelget and partikkelset opcodes. It uses the file <a class="ulink" href="examples/partikkelgetset.csd" target="_top"><em class="citetitle">partikkelgetset.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276071696336"></a>
+          <p class="title">
+            <strong>Example 683. Example of manipulating the internal mask index of partikkel, based on the value of other mask indices in the same partikkel instance.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276441790064"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out  </span>
+-odac           <span class="c1">;;;RT audio </span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+ -o partikkel-getset.wav -W <span class="c1">;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">nchnls</span> 	<span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>	<span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">Sine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">65536</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+gi<span class="n">Cosine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">90</span>
+gi<span class="n">SigmoRise</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8193</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="mi">1</span>
+gi<span class="n">SigmoFall</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8193</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="c1">; freqstart masking table, simple ascending semitones pattern</span>
+i<span class="n">wavfreqstarttab</span> <span class="nb">ftgentmp</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span>  
+    <span class="nb">semitone</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+    <span class="nb">semitone</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">7</span><span class="p">),</span>
+    <span class="nb">semitone</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+
+i<span class="n">wavfreqendtab</span> <span class="nb">ftgentmp</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> 
+    <span class="nb">semitone</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+    <span class="nb">semitone</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">6</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">7</span><span class="p">),</span>
+    <span class="nb">semitone</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="nb">semitone</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+
+<span class="c1">; channel masking table, simple panning back and forth</span>
+i<span class="n">channelmasks</span> <span class="nb">ftgentmp</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span>
+
+<span class="c1">; init unused arate signals</span>
+a<span class="n">wavfm</span> <span class="o">=</span> <span class="mi">0</span>
+a<span class="n">samplepos1</span>	<span class="o">=</span> <span class="mi">0</span>
+a<span class="n">sync</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1">; system</span>
+i<span class="n">d</span> <span class="o">=</span> <span class="mi">1</span>
+
+a<span class="n">1</span><span class="p">,</span>a<span class="n">2</span> <span class="nb">partikkel</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> a<span class="n">sync</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> gi<span class="n">SigmoRise</span><span class="p">,</span> gi<span class="n">SigmoFall</span><span class="p">,</span> 
+    <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="nb">ampdbfs</span><span class="p">(</span><span class="o">-</span><span class="mi">9</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>i<span class="n">wavfreqstarttab</span><span class="p">,</span> i<span class="n">wavfreqendtab</span><span class="p">,</span> a<span class="n">wavfm</span><span class="p">,</span> 
+    <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> gi<span class="n">Cosine</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">channelmasks</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> 
+    gi<span class="n">Sine</span><span class="p">,</span> gi<span class="n">Sine</span><span class="p">,</span> gi<span class="n">Sine</span><span class="p">,</span> gi<span class="n">Sine</span><span class="p">,</span> 
+    <span class="o">-</span><span class="mi">1</span><span class="p">,</span> a<span class="n">samplepos1</span><span class="p">,</span> a<span class="n">samplepos1</span><span class="p">,</span> a<span class="n">samplepos1</span><span class="p">,</span> a<span class="n">samplepos1</span><span class="p">,</span> 
+    <span class="mi">440</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> i<span class="n">d</span>
+
+<span class="nb">outch</span> <span class="mi">1</span><span class="p">,</span> a<span class="n">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> a<span class="n">2</span>
+
+<span class="c1">; using partikkelget and partikkelset to make the channelmask and freqmask indices </span>
+<span class="c1">; interact to create a more complex pattern</span>
+k<span class="n">fqmask</span> <span class="nb">partikkelget</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">d</span>
+k<span class="n">chmask</span> <span class="nb">partikkelget</span> <span class="mi">4</span><span class="p">,</span> i<span class="n">d</span>
+k<span class="n">count1</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">count2</span> <span class="nb">init</span> <span class="mi">0</span>
+<span class="k">if</span> k<span class="n">chmask</span> <span class="o">&gt;</span> <span class="p">(</span>k<span class="n">fqmask</span><span class="o">+</span>k<span class="n">chmask</span><span class="p">)</span><span class="o">%</span><span class="mi">11</span>  <span class="k">then</span>
+<span class="nb">partikkelset</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">count1</span><span class="p">,</span> i<span class="n">d</span>
+<span class="nb">partikkelset</span> <span class="mi">2</span><span class="p">,</span> k<span class="n">count1</span><span class="p">,</span> i<span class="n">d</span>
+k<span class="n">count1</span> <span class="o">=</span> <span class="p">(</span>k<span class="n">count1</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="mi">7</span>
+<span class="k">elseif</span> k<span class="n">fqmask</span> <span class="o">&gt;</span> <span class="p">(</span>k<span class="n">fqmask</span><span class="o">*</span>k<span class="n">chmask</span><span class="p">)</span><span class="o">%</span><span class="mi">7</span>  <span class="k">then</span>
+<span class="nb">partikkelset</span> <span class="mi">4</span><span class="p">,</span> k<span class="n">count2</span><span class="p">,</span> i<span class="n">d</span>
+k<span class="n">count2</span> <span class="o">=</span> <span class="p">(</span>k<span class="n">count2</span><span class="o">+</span>k<span class="n">count1</span><span class="p">)</span><span class="o">%</span><span class="mi">6</span>
+<span class="k">endif</span>
+        
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">30</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071692224"></a>
+        <h2>See Also</h2>
+        <p><a class="link" href="partikkel.html" title="partikkel"><em class="citetitle">partikkel</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071690320"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Thom Johansen</td>
+          </tr>
+          <tr>
+            <td>Author: Øyvind Brandtsegg</td>
+          </tr>
+          <tr>
+            <td>May 2017</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.09</p>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="partikkel.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="partikkelset.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">partikkel </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> partikkelset</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

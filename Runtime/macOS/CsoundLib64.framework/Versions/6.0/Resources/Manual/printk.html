@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>printk</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="printk2.html" title="printk2" />
+    <link rel="next" href="printks.html" title="printks" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">printk</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="printk2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="printks.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="printk"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPrintk" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">printk</span>
+        </h2>
+        <p>printk — 
+      Prints one k-rate value at specified intervals.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069347360"></a>
+        <h2>Description</h2>
+        <p>
+      Prints one k-rate value at specified intervals.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069346128"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>printk</strong></span> itime, kval [, ispace] [, inamed]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069344160"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>itime</em></span> -- time in seconds between printings.
+    </p>
+        <p>
+      <span class="emphasis"><em>ispace</em></span> (optional, default=0) -- number of spaces to insert before printing. (default: 0, max: 130)
+    </p>
+        <p>
+      <span class="emphasis"><em>inamed</em></span> (optional, default=0) -- if non zero
+      print the name of the <span class="emphasis"><em>kvar</em></span> as well as the value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069340352"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kval</em></span> -- The k-rate values to be printed. 
+    </p>
+        <p>
+      <span class="emphasis"><em>printk</em></span> prints one k-rate value on every k-cycle, every second or at intervals specified. First the instrument number is printed, then the absolute time in seconds, then a specified number of spaces, then the <span class="emphasis"><em>kval</em></span> value. The variable number of spaces enables different values to be spaced out across the screen - so they are easier to view.
+    </p>
+        <p>
+      This opcode can be run on every k-cycle it is run in the instrument. To every accomplish this, set <span class="emphasis"><em>itime</em></span> to 0.
+    </p>
+        <p>
+      When <span class="emphasis"><em>itime</em></span> is not 0, the opcode print on the first k-cycle it is called, and subsequently when every <span class="emphasis"><em>itime</em></span> period has elapsed. The time cycles start from the time the opcode is initialized - typically the initialization of the instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069334848"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the printk opcode. It uses the file <a class="ulink" href="examples/printk.csd" target="_top"><em class="citetitle">printk.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276069333056"></a>
+          <p class="title">
+            <strong>Example 736. Example of the printk opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276435182928"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o printk.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Change a value linearly from 0 to 100,</span>
+  <span class="c1">; over the period defined by p3.</span>
+  k<span class="n">val</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">100</span>
+
+  <span class="c1">; Print the value of kval, once per second.</span>
+  <span class="nb">printk</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">val</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for 5 seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like this:
+      </p>
+        <pre class="screen">
+ i   1 time     0.00002:     0.00000
+ i   1 time     1.00002:    20.01084
+ i   1 time     2.00002:    40.02999
+ i   1 time     3.00002:    60.04914
+ i   1 time     4.00002:    79.93327</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069328192"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="printk2.html" title="printk2"><em class="citetitle">printk2</em></a> and
+      <a class="link" href="printks.html" title="printks"><em class="citetitle">printks</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069325280"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Robin Whittle</td>
+          </tr>
+          <tr>
+            <td>Australia</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>named option new in 6.11</p>
+        <p>Example written by Kevin Conder.</p>
+        <p>Thanks goes to Luis Jure for pointing out a mistake with the <span class="emphasis"><em>itime</em></span> parameter.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="printk2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="printks.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">printk2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> printks</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

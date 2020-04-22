@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>rspline</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="round.html" title="round" />
+    <link rel="next" href="rtclock.html" title="rtclock" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">rspline</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="round.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="rtclock.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="rspline"></a>
+      <div class="titlepage"></div>
+      <a id="IndexRspline" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">rspline</span>
+        </h2>
+        <p>rspline — 
+      Generate random spline curves.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276060984320"></a>
+        <h2>Description</h2>
+        <p>
+      Generate random spline curves.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276060983104"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>rspline</strong></span> xrangeMin, xrangeMax, kcpsMin, kcpsMax</pre>
+        <pre class="synopsis">kres <span class="command"><strong>rspline</strong></span> krangeMin, krangeMax, kcpsMin, kcpsMax</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276060979664"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kres, ares</em></span> -- Output signal
+    </p>
+        <p>
+      <span class="emphasis"><em>xrangeMin, xrangeMax</em></span> -- Range of values of random-generated points
+    </p>
+        <p>
+      <span class="emphasis"><em>kcpsMin, kcpsMax</em></span> -- Range of point-generation rate. Min and max limits are expressed in cps.
+    </p>
+        <p>
+      <span class="emphasis"><em>rspline</em></span> (random-spline-curve generator) is similar to <a class="link" href="jspline.html" title="jspline"><em class="citetitle">jspline</em></a> but output range is defined by means of two limit values. Also in this case, real output range could be a bit greater of range values, because of interpolating curves beetween each pair of random-points.
+    </p>
+        <p>
+      At present time generated curves are quite smooth when <span class="emphasis"><em>cpsMin</em></span> is not too different from <span class="emphasis"><em>cpsMax</em></span>. When <span class="emphasis"><em>cpsMin-cpsMax</em></span> interval is big, some little discontinuity could occurr, but it should not be a problem, in most cases. Maybe the algorithm will be improved in next versions.
+    </p>
+        <p>
+      These opcodes are often better than <a class="link" href="jitter.html" title="jitter"><em class="citetitle">jitter</em></a> when user wants to <span class="quote">“<span class="quote">naturalize</span>”</span> or <span class="quote">“<span class="quote">analogize</span>”</span> digital sounds. They could be used also in algorithmic composition, to generate smooth random melodic lines when used together with <a class="link" href="samphold.html" title="samphold"><em class="citetitle">samphold</em></a> opcode.
+    </p>
+        <p>
+      Note that the result is quite different from the one obtained by filtering white noise, and they allow the user to obtain a much more precise control.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276060968432"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the rspline opcode. It uses the file <a class="ulink" href="examples/rspline.csd" target="_top"><em class="citetitle">rspline.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276060966640"></a>
+          <p class="title">
+            <strong>Example 864. Example of the rspline opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276426872544"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o jspline.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">rangeMin</span> <span class="nb">init</span> <span class="nb">p4</span>
+k<span class="n">rangeMax</span> <span class="nb">init</span> <span class="nb">p5</span>
+k<span class="n">cpsmin</span> <span class="nb">init</span> <span class="mi">2</span>
+k<span class="n">cpsmax</span> <span class="nb">init</span> <span class="mi">3</span>
+
+k<span class="n">sp</span>  <span class="nb">rspline</span> k<span class="n">rangeMin</span><span class="p">,</span> k<span class="n">rangeMax</span><span class="p">,</span> k<span class="n">cpsmin</span><span class="p">,</span> k<span class="n">cpsmax</span>
+a<span class="n">out</span> <span class="nb">pluck</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="o">+</span>k<span class="n">sp</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">out</span> <span class="nb">dcblock</span> a<span class="n">out</span>	<span class="c1">;remove DC</span>
+     <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mi">10</span>  <span class="mi">2</span>  <span class="mi">5</span>	<span class="c1">;a bit jitter</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">8</span>  <span class="mi">10</span> <span class="mi">10</span> <span class="mi">20</span>	<span class="c1">;some more</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">16</span> <span class="mi">10</span> <span class="mi">20</span> <span class="mi">50</span>	<span class="c1">;lots more</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276060962656"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.15</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="round.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="rtclock.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">round </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> rtclock</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

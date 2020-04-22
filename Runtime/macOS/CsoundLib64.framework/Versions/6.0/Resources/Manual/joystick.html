@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>joystick</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="jitter2.html" title="jitter2" />
+    <link rel="next" href="jspline.html" title="jspline" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">joystick</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="jitter2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="jspline.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="joystick"></a>
+      <div class="titlepage"></div>
+      <a id="Indexjoystick" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">joystick</span>
+        </h2>
+        <p>joystick — 
+      Reads data from a joystick controller.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087690304"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in joystick.</p>
+        <p>
+       Reads data from a Linux joystick controller
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087688656"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>joystick</strong></span> kdevice ktab</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087686576"></a>
+        <h2>Performance</h2>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+       Please note that this opcode is currently only supported on
+       Linux.
+     </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+     <span class="emphasis"><em>kdevice</em></span> -- the index of the joystick device, either /dev/js<span class="emphasis"><em>N</em></span> or
+            /dev/input/js<span class="emphasis"><em>N</em></span>.
+   </p>
+        <p>
+     <span class="emphasis"><em>ktab</em></span> -- A table to hold input results,
+     should be at least enough elements to store one value for each
+     stick axis and one for each button + 2.  The first two elements
+     of the table are initialized with the number of axes and the
+     number of buttons, respectively, when a joystick is opened. If a
+     joystick is unplugged during performance, the opcode will
+     repeatedly attempt to reopen the device with a delay between
+     attempts.
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087682016"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the joystick opcode. It uses the file <a class="ulink" href="examples/joystick.csd" target="_top"><em class="citetitle">joystick.csd</em></a>.
+    </p>
+        <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+        <p>
+    </p>
+        <div class="refsect1">
+          <a id="idm276459346576"></a>
+          <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o joystick.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="c1">;0dbfs  = 1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">; gives information about your joystick in real time</span>
+  
+k<span class="n">mask</span>    <span class="n">joystick</span>   <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">idx</span>     <span class="o">=</span>  <span class="mi">2</span>
+k<span class="n">axes</span>    <span class="nb">tab</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="c1">; number of axes has been stored in position 0</span>
+k<span class="n">buttons</span> <span class="nb">tab</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="c1">; number of buttons has been stored in position 1</span>
+         <span class="nb">printf</span> <span class="s">"this joystick has </span><span class="si">%d</span><span class="s"> axes, </span><span class="si">%d</span><span class="s"> buttons</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">idx</span><span class="p">,</span> k<span class="n">axes</span><span class="p">,</span> k<span class="n">buttons</span>
+k<span class="n">uniq</span>    <span class="nb">init</span> <span class="mi">0</span>
+
+<span class="nl">reportaxis</span><span class="p">:</span> <span class="c1">; first we see if we have any x/y input</span>
+	k<span class="n">check</span>    <span class="o">=</span>  k<span class="n">mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span>k<span class="n">idx</span><span class="p">)</span>
+	<span class="k">if</span> k<span class="n">check</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">kgoto</span> <span class="nl">nexta</span>
+	k<span class="n">res</span>      <span class="nb">tab</span>       k<span class="n">idx</span><span class="p">,</span> <span class="mi">1</span>
+	k<span class="n">uniq</span>     <span class="o">=</span>  k<span class="n">uniq</span> <span class="o">+</span> <span class="mi">1</span> <span class="c1">; to be sure to make the printf print</span>
+		  <span class="nb">printf</span>    <span class="s">"axis </span><span class="si">%d</span><span class="s">, value </span><span class="si">%6d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">uniq</span><span class="p">,</span> k<span class="n">idx</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> k<span class="n">res</span>
+<span class="nl">nexta</span><span class="p">:</span>
+	k<span class="n">idx</span>      <span class="o">=</span>  k<span class="n">idx</span><span class="o">+</span><span class="mi">1</span>
+	<span class="k">if</span> k<span class="n">idx</span> <span class="o">&lt;</span> <span class="p">(</span>k<span class="n">axes</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="k">kgoto</span> <span class="nl">reportaxis</span>
+
+<span class="nl">reportbutton</span><span class="p">:</span> <span class="c1">; now we check for any buttons pressed</span>
+	k<span class="n">check</span>    <span class="o">=</span>  k<span class="n">mask</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="o">&lt;&lt;</span>k<span class="n">idx</span>
+	<span class="k">if</span> k<span class="n">check</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">kgoto</span> <span class="nl">nextb</span>
+	k<span class="n">res</span>      <span class="nb">tab</span>       k<span class="n">idx</span><span class="p">,</span> <span class="mi">1</span> <span class="c1">; a button has been pressed, get from table</span>
+		  <span class="nb">printf</span>    <span class="s">"button </span><span class="si">%d</span><span class="s">, pushed</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">idx</span><span class="o">*</span>k<span class="n">res</span><span class="p">,</span> <span class="p">(</span>k<span class="n">idx</span><span class="o">-</span><span class="p">(</span>k<span class="n">axes</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span>
+		  <span class="nb">printf</span>    <span class="s">"button </span><span class="si">%d</span><span class="s">, released</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">idx</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span>k<span class="n">res</span><span class="p">),</span> <span class="p">(</span>k<span class="n">idx</span><span class="o">-</span><span class="p">(</span>k<span class="n">axes</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="nl">nextb</span><span class="p">:</span>
+	k<span class="n">idx</span>      <span class="o">=</span>  k<span class="n">idx</span><span class="o">+</span><span class="mi">1</span>
+	<span class="k">if</span> k<span class="n">idx</span> <span class="o">&lt;</span> <span class="p">(</span>k<span class="n">axes</span><span class="o">+</span>k<span class="n">buttons</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="k">kgoto</span> <span class="nl">reportbutton</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">32</span>    <span class="mi">7</span>     <span class="mi">0</span>     <span class="mi">7</span>     <span class="mi">0</span>         <span class="c1">; will hold the joystick data</span>
+
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">60000</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+        </div>
+        <p>
+      Here is another example of the joystick opcode. It uses the file <a class="ulink" href="examples/joystick-2.csd" target="_top"><em class="citetitle">joystick-2.csd</em></a>.
+    </p>
+        <div class="refsect1">
+          <a id="idm276459195104"></a>
+          <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o joystick-2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="c1">;0dbfs  = 1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">mask</span>   <span class="n">joystick</span>   <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">axes</span>    <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">buttons</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">x0</span>      <span class="nb">init</span> <span class="mi">0</span> <span class="c1">; first two entries are # of axes and # of buttons, </span>
+k<span class="n">y0</span>      <span class="nb">init</span> <span class="mi">0</span> <span class="c1">; then axes, then buttons                           </span>
+         <span class="nb">vtabk</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">axes</span><span class="p">,</span> k<span class="n">buttons</span><span class="p">,</span> k<span class="n">x0</span><span class="p">,</span> k<span class="n">y0</span>
+k<span class="n">idx</span>     <span class="o">=</span>  <span class="mi">2</span><span class="o">+</span>k<span class="n">axes</span> 
+                       
+<span class="nl">buttons</span><span class="p">:</span>
+  k<span class="n">check</span> <span class="o">=</span>  k<span class="n">mask</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="o">&lt;&lt;</span>k<span class="n">idx</span>   <span class="c1">; if the button was just now pressed and...</span>
+  k<span class="n">res</span>   <span class="nb">tab</span>       k<span class="n">idx</span><span class="p">,</span> <span class="mi">1</span>    <span class="c1">; if button value is one, start a note</span>
+         <span class="nb">schedkwhen</span>  k<span class="n">res</span><span class="o">*</span>k<span class="n">check</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">60000</span><span class="p">,</span> k<span class="n">idx</span><span class="p">,</span> k<span class="n">x0</span><span class="p">,</span> k<span class="n">y0</span>
+  k<span class="n">idx</span>   <span class="o">=</span>  k<span class="n">idx</span><span class="o">+</span><span class="mi">1</span>
+<span class="k">if</span> k<span class="n">idx</span> <span class="o">&lt;</span> <span class="p">(</span>k<span class="n">axes</span><span class="o">+</span>k<span class="n">buttons</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="k">kgoto</span> <span class="nl">buttons</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span> <span class="c1">; play a tone until the button is released</span>
+
+k<span class="n">stop</span>   <span class="nb">tab</span>  <span class="nb">p4</span><span class="p">,</span> <span class="mi">1</span> <span class="c1">; when this button is released, we fade out</span>
+i<span class="n">hz</span>     <span class="nb">init</span> <span class="nb">cpsoct</span><span class="p">(((</span><span class="nb">p5</span><span class="o">+</span><span class="mi">32767</span><span class="p">)</span><span class="o">/</span><span class="mi">9362</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">)</span> <span class="c1">; ~ 30 hz to 4khz</span>
+<span class="nb">print</span> i<span class="n">hz</span>
+i<span class="n">to</span>     <span class="nb">init</span> <span class="nb">ampdb</span><span class="p">(((</span><span class="nb">p6</span><span class="o">+</span><span class="mi">32767</span><span class="p">)</span><span class="o">/</span><span class="mi">2184</span><span class="p">)</span><span class="o">+</span><span class="mi">60</span><span class="p">)</span> <span class="c1">; ~ 60 - 90 db</span>
+k<span class="n">env</span>    <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">delta</span>  <span class="nb">init</span> i<span class="n">to</span><span class="o">/</span><span class="p">(</span><span class="vg">kr</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">if</span> k<span class="n">stop</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">kgoto</span> <span class="nl">output</span>
+<span class="k">if</span> k<span class="n">delta</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">kgoto</span> <span class="nl">output</span>
+k<span class="n">delta</span>    <span class="o">=</span>  k<span class="n">delta</span><span class="o">*-</span><span class="mi">1</span>
+
+<span class="nl">output</span><span class="p">:</span>
+  k<span class="n">env</span> <span class="o">=</span>  k<span class="n">env</span><span class="o">+</span>k<span class="n">delta</span>
+  k<span class="n">env</span> <span class="nb">limit</span> k<span class="n">env</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">to</span>
+  a<span class="n">out</span> <span class="nb">oscils</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">hz</span><span class="p">,</span> <span class="mi">0</span>
+  a<span class="n">out</span> <span class="o">=</span>  k<span class="n">env</span><span class="o">*</span>a<span class="n">out</span>
+       <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="k">if</span> k<span class="n">env</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">kgoto</span> <span class="nl">noexit</span>
+<span class="k">if</span> k<span class="n">delta</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">kgoto</span> <span class="nl">noexit</span>
+<span class="nb">turnoff</span>
+<span class="nl">noexit</span><span class="p">:</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">32</span>    <span class="mi">7</span>     <span class="mi">0</span>     <span class="mi">7</span>     <span class="mi">0</span>         <span class="c1">; will hold the joystick data</span>
+
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">60000</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087675168"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Justin Glenn Smith</td>
+          </tr>
+          <tr>
+            <td>2010</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.17.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="jitter2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="jspline.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">jitter2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> jspline</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

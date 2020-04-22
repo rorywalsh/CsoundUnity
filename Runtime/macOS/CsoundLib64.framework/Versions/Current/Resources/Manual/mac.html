@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mac</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="lpslot.html" title="lpslot" />
+    <link rel="next" href="maca.html" title="maca" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mac</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lpslot.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="maca.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mac"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMac" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mac</span>
+        </h2>
+        <p>mac — 
+      Multiplies and accumulates a- and k-rate signals.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082630960"></a>
+        <h2>Description</h2>
+        <p>
+      Multiplies and accumulates a- and k-rate signals.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082629744"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>mac</strong></span> ksig1, asig1 [, ksig2] [, asig2] [, ksig3] [, asig3] [...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082627632"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ksig1, etc.</em></span> -- k-rate input signals
+    </p>
+        <p>
+      <span class="emphasis"><em>asig1, etc.</em></span> -- a-rate input signals
+    </p>
+        <p>
+      <span class="emphasis"><em>mac</em></span> multiplies and accumulates a- and k-rate signals. It is equivalent to:
+      </p>
+        <div class="literallayout">
+          <p><br />
+        ares = asig1*ksig1 + asig2*ksig2 + asig3*ksig3 + ...<br />
+      </p>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082623424"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the mac opcode. It uses the file <a class="ulink" href="examples/mac.csd" target="_top"><em class="citetitle">mac.csd</em></a>. It is written for *NIX systems, and will generate errors on Windows.
+      </p>
+        <div class="example">
+          <a id="idm276082621584"></a>
+          <p class="title">
+            <strong>Example 525. Example of the mac opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276453743088"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o mac.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;4 band equalizer</span>
+
+k<span class="n">low</span> <span class="o">=</span>	<span class="nb">p4</span>	<span class="c1">;low gain1</span>
+k<span class="n">lmid</span> <span class="o">=</span>	<span class="nb">p5</span>	<span class="c1">;low gain2      </span>
+k<span class="n">midh</span> <span class="o">=</span> <span class="nb">p6</span>	<span class="c1">;high gain1</span>
+k<span class="n">high</span> <span class="o">=</span>	<span class="nb">p7</span>	<span class="c1">;high gain2</span>
+i<span class="n">fn</span>  <span class="o">=</span>  <span class="nb">p8</span>	<span class="c1">;table</span>
+
+i<span class="n">lc1</span> <span class="nb">table</span> <span class="mi">0</span><span class="p">,</span> i<span class="n">fn</span>	<span class="c1">;low freqency range</span>
+i<span class="n">lc2</span> <span class="nb">table</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">fn</span>	<span class="c1">;low-mid</span>
+i<span class="n">hc1</span> <span class="nb">table</span> <span class="mi">2</span><span class="p">,</span> i<span class="n">fn</span>	<span class="c1">;mid-high</span>
+i<span class="n">hc2</span> <span class="nb">table</span> <span class="mi">3</span><span class="p">,</span> i<span class="n">fn</span>	<span class="c1">;high</span>
+
+a<span class="n">sig</span>	<span class="nb">diskin2</span>	 <span class="s">"fox.wav"</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">low1</span>	<span class="nb">butterlp</span> a<span class="n">sig</span><span class="p">,</span> i<span class="n">lc1</span>		<span class="c1">;lowpass 1</span>
+a<span class="n">lmid</span>	<span class="nb">butterlp</span> a<span class="n">sig</span><span class="p">,</span> i<span class="n">lc2</span>	      	<span class="c1">;lowpass 2</span>
+a<span class="n">midh</span> 	<span class="nb">butterhp</span> a<span class="n">sig</span><span class="p">,</span> i<span class="n">hc1</span>	       	<span class="c1">;highpass 1</span>
+a<span class="n">high</span>	<span class="nb">butterhp</span> a<span class="n">sig</span><span class="p">,</span> i<span class="n">hc2</span>		<span class="c1">;highpass 2</span>
+a<span class="n">out</span>	<span class="nb">mac</span>	 k<span class="n">low</span><span class="p">,</span> a<span class="n">low1</span><span class="p">,</span> k<span class="n">lmid</span><span class="p">,</span> a<span class="n">lmid</span><span class="p">,</span> k<span class="n">midh</span><span class="p">,</span> a<span class="n">midh</span><span class="p">,</span> k<span class="n">high</span><span class="p">,</span> a<span class="n">high</span>
+        <span class="nb">outs</span>	 a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span>  <span class="mi">4</span> <span class="o">-</span><span class="mi">2</span> <span class="mi">150</span> <span class="mi">300</span> <span class="mi">600</span>  <span class="mi">5000</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span>  <span class="mi">4</span> <span class="o">-</span><span class="mi">2</span> <span class="mi">75</span>  <span class="mi">500</span> <span class="mi">1000</span> <span class="mi">10000</span>
+<span class="nb">f</span><span class="mi">3</span> <span class="mi">0</span>  <span class="mi">4</span> <span class="o">-</span><span class="mi">2</span> <span class="mi">200</span> <span class="mi">700</span> <span class="mi">1500</span> <span class="mi">3000</span>
+
+<span class="c1">;          low lowmid midhigh high table		</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span>  <span class="mf">2.8</span>  <span class="mi">2</span>    <span class="mi">1</span>      <span class="mi">1</span>      <span class="mi">1</span>     <span class="mi">1</span>  
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span>  <span class="mf">2.8</span>  <span class="mi">2</span>    <span class="mi">3</span>      <span class="mi">1</span>      <span class="mi">1</span>     <span class="mi">2</span> 
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span>  <span class="mf">2.8</span>  <span class="mi">2</span>    <span class="mi">1</span>      <span class="mi">2</span>      <span class="mi">3</span>     <span class="mi">3</span> 
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082617600"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="maca.html" title="maca"><em class="citetitle">maca</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082615568"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist, Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+          <tr>
+            <td>May 1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.54</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lpslot.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="maca.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lpslot </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> maca</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

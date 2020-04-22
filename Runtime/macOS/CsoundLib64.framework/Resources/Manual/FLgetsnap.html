@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLgetsnap</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLexecButton.html" title="FLexecButton" />
+    <link rel="next" href="FLgroup.html" title="FLgroup" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLgetsnap</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLexecButton.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLgroup.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLgetsnap"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLgetsnap" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLgetsnap</span>
+        </h2>
+        <p>FLgetsnap — 
+      Retrieves a previously stored FLTK snapshot.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110083872"></a>
+        <h2>Description</h2>
+        <p>
+      Retrieves a previously stored snapshot (in memory), i.e. sets all valuator to the corresponding values stored in that snaphot.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110082560"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">inumsnap <span class="command"><strong>FLgetsnap</strong></span> index [, igroup]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110080464"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>inumsnap</em></span> -- current number of snapshots.
+    </p>
+        <p>
+      <span class="emphasis"><em>index</em></span> -- a number referring unequivocally to a snapshot. Several snapshots can be stored in the same bank.
+    </p>
+        <p>
+      <span class="emphasis"><em>igroup</em></span> -- (optional) an integer number referring to a snapshot-related group of widget. It allows to get/set, or to load/save the state of a subset of valuators. Default value is zero that refers to the first group. The group number is determined by the opcode <a class="link" href="FLsetSnapGroup.html" title="FLsetSnapGroup"><em class="citetitle">FLsetSnapGroup</em></a>.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The <span class="emphasis"><em>igroup</em></span> parameter has not been yet fully implemented in the current version of csound. Please do not rely on it yet.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110074720"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>FLgetsnap</em></span> retrieves a previously stored snapshot (in memory), i.e.  sets all valuator to the corresponding values stored in that snapshot. The <span class="emphasis"><em>index</em></span> argument unequivocally must refer to an already existing snapshot.  If the <span class="emphasis"><em>index</em></span> argument refers to an empty snapshot or to a snapshot that doesn't exist, no action is done. <span class="emphasis"><em>FLsetsnap</em></span> outputs the current number of snapshots (<span class="emphasis"><em>inumsnap</em></span> argument).
+    </p>
+        <p>
+      For purposes of snapshot saving, widgets can be grouped, so that snapshots affect only a defined group of widgets. The opcode <a class="link" href="FLsetSnapGroup.html" title="FLsetSnapGroup"><em class="citetitle">FLsetSnapGroup</em></a> is used to specify the group for all widgets declared after it, until the next <a class="link" href="FLsetSnapGroup.html" title="FLsetSnapGroup"><em class="citetitle">FLsetSnapGroup</em></a> statement.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110068768"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLloadsnap.html" title="FLloadsnap"><em class="citetitle">FLloadsnap</em></a>,
+      <a class="link" href="FLrun.html" title="FLrun"><em class="citetitle">FLrun</em></a>,
+      <a class="link" href="FLsavesnap.html" title="FLsavesnap"><em class="citetitle">FLsavesnap</em></a>,
+      <a class="link" href="FLsetsnap.html" title="FLsetsnap"><em class="citetitle">FLsetsnap</em></a>,
+      <a class="link" href="FLsetSnapGroup.html" title="FLsetSnapGroup"><em class="citetitle">FLsetSnapGroup</em></a>,
+      <a class="link" href="FLupdate.html" title="FLupdate"><em class="citetitle">FLupdate</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110062336"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLexecButton.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLgroup.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLexecButton </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLgroup</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

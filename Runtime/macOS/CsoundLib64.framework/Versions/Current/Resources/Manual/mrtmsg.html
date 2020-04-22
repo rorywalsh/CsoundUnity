@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mrtmsg</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mpulse.html" title="mpulse" />
+    <link rel="next" href="mtof.html" title="mtof" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mrtmsg</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mpulse.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="mtof.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mrtmsg"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMrtmsg" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mrtmsg</span>
+        </h2>
+        <p>mrtmsg — 
+      Send system real-time messages to the MIDI OUT port.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078645520"></a>
+        <h2>Description</h2>
+        <p>
+      Send system real-time messages to the MIDI OUT port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078644272"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>mrtmsg</strong></span> imsgtype</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078642336"></a>
+        <h2>Initialization</h2>
+        <p>
+     <span class="emphasis"><em>imsgtype</em></span> -- type of real-time message:
+     </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 sends a START message (0xFA);</p>
+            </li>
+            <li class="listitem">
+              <p>2 sends a CONTINUE message (0xFB);</p>
+            </li>
+            <li class="listitem">
+              <p>0 sends a STOP message (0xFC);</p>
+            </li>
+            <li class="listitem">
+              <p>-1 sends a SYSTEM RESET message (0xFF);</p>
+            </li>
+            <li class="listitem">
+              <p>-2 sends an ACTIVE SENSING message (0xFE)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078637568"></a>
+        <h2>Performance</h2>
+        <p>
+      Sends a real-time message once, in init stage of current instrument. <span class="emphasis"><em>imsgtype</em></span> parameter is a flag to indicate the message type.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078635856"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="mclock.html" title="mclock"><em class="citetitle">mclock</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276078633824"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mpulse.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="mtof.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mpulse </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> mtof</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

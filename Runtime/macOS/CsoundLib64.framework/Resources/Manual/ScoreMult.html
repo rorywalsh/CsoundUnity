@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Multiple File Score</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoreTop.html" title="The Standard Numeric Score" />
+    <link rel="prev" href="ScoreMacros.html" title="Score Macros" />
+    <link rel="next" href="ScoreEval.html" title="Evaluation of Expressions" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Multiple File Score</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ScoreMacros.html">Prev</a> </td>
+          <th width="60%" align="center">The Standard Numeric Score</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ScoreEval.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="ScoreMult"></a>Multiple File Score</h2>
+          </div>
+        </div>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276139260432"></a>Description</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      Using the score in more than one file.
+    </p>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276139259216"></a>Syntax</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="synopsis"><span class="command"><strong>#include</strong></span> "filename"</pre>
+        <pre class="synopsis"><span class="command"><strong>#includestr</strong></span> "filename"</pre>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276139256096"></a>Performance</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      It is sometimes convenient to have the score in more than one file. This use is supported by the <span class="emphasis"><em>#include</em></span> facility which is part of the macro system.  A line containing the text
+
+      <a id="IndexIncludeScore" class="indexterm"></a>
+      <a id="IndexMultiFileScore" class="indexterm"></a>
+
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="emphasis"><em>#include</em></span> "filename"</pre>
+        </div>
+        <p>
+
+      where the character <span class="emphasis"><em>"</em></span> can be replaced
+      by any suitable character.  For most uses the double quote
+      symbol will probably be the most convenient. The file name can
+      include a full path. 
+    </p>
+        <p>
+      This takes input from the named file until it ends, when input
+      reverts to the previous input.  There is currently a limit of 20
+      on the depth of included files and macros. 
+    </p>
+        <p>
+      A suggested use of <span class="emphasis"><em>#include</em></span> would be to
+      define a set of macros which are part of the composer's style.
+      It could also be used to provide repeated sections. 
+
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">s</span>
+#include :section1:
+<span class="comment">;; Repeat that</span>
+<span class="stamnt">s</span>
+#include :section1:</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      Alternative methods of doing repeats, use the <a class="link" href="r.html" title="r Statement (Repeat Statement)"><em class="citetitle">r statement</em></a>, <a class="link" href="m.html" title="m Statement (Mark Statement)"><em class="citetitle">m statement</em></a>, and <a class="link" href="n.html" title="n Statement"><em class="citetitle">n statement</em></a>.
+    </p>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage"></div>
+        <p>
+      The form <span class="emphasis"><em>#includestr</em></span> is the same as #include
+      except the deliminator must be a double quote and the file name
+      may contain macro calls.
+    </p>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276139240656"></a>Credits</h3>
+            </div>
+          </div>
+        </div>
+        <p>Author: John ffitch</p>
+        <p>University of Bath/Codemist Ltd.</p>
+        <p>Bath, UK</p>
+        <p>April, 1998 (New in Csound version 3.48)</p>
+        <p>Thanks to Luis Jure for pointing out the incorrect syntax
+    in multiple file include statement.</p>
+        <p>#includestr new in version 6.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ScoreMacros.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoreTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ScoreEval.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Score Macros </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Evaluation of Expressions</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

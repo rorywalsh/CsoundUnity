@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>gendy</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="genarray_i.html" title="genarray_i" />
+    <link rel="next" href="gendyc.html" title="gendyc" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">gendy</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="genarray_i.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="gendyc.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="gendy"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGendy" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">gendy</span>
+        </h2>
+        <p>gendy — 
+      Dynamic stochastic approach to waveform synthesis conceived by Iannis Xenakis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100925696"></a>
+        <h2>Description</h2>
+        <p>
+      Implementation of the <span class="emphasis"><em>Génération Dynamique Stochastique</em></span>
+      (GENDYN), a dynamic stochastic approach to waveform synthesis conceived
+      by Iannis Xenakis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100923920"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>gendy</strong></span> kamp, kampdist, kdurdist, kadpar, kddpar, kminfreq, kmaxfreq, \
+           kampscl, kdurscl [, initcps] [, knum]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>gendy</strong></span> kamp, kampdist, kdurdist, kadpar, kddpar, kminfreq, kmaxfreq, \
+           kampscl, kdurscl [, initcps] [, knum]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100920320"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>initcps</em></span> (optional, default=12) -- max number of
+      control points.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100918672"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude.
+    </p>
+        <p>
+      <span class="emphasis"><em>kampdist</em></span> -- choice of probability
+      distribution for the next perturbation of the amplitude of a
+      control point. The valid distributions are:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 - LINEAR</p>
+            </li>
+            <li class="listitem">
+              <p>1 - CAUCHY</p>
+            </li>
+            <li class="listitem">
+              <p>2 - LOGIST</p>
+            </li>
+            <li class="listitem">
+              <p>3 - HYPERBCOS</p>
+            </li>
+            <li class="listitem">
+              <p>4 - ARCSINE</p>
+            </li>
+            <li class="listitem">
+              <p>5 - EXPON</p>
+            </li>
+            <li class="listitem">
+              <p>6 - SINUS (external k-rate signal)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+      If <span class="emphasis"><em>kampdist</em></span>=6, the user can use an external
+      k-rate signal through <span class="emphasis"><em>kadpar</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>kdurdist</em></span> -- choice of distribution for the
+              perturbation of the current inter control point
+              duration. See <span class="emphasis"><em>kampdist</em></span> for the valid distributions.
+      If <span class="emphasis"><em>kdurdist</em></span>=6, the user can use an external
+      k-rate signal through <span class="emphasis"><em>kddpar</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>kadpar</em></span> -- parameter for the <span class="emphasis"><em>kampdist</em></span>
+      distribution. Should be in the range of 0.0001 to 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>kddpar</em></span> -- parameter for the <span class="emphasis"><em>kdurdist</em></span>
+      distribution. Should be in the range of 0.0001 to 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>kminfreq</em></span> -- minimum allowed frequency of oscillation.
+    </p>
+        <p>
+      <span class="emphasis"><em>kmaxfreq</em></span> -- maximum allowed frequency of oscillation.
+    </p>
+        <p>
+      <span class="emphasis"><em>kampscl</em></span> -- multiplier for the
+      distribution's delta value for amplitude (1.0 is full range).
+    </p>
+        <p>
+      <span class="emphasis"><em>kdurscl</em></span> -- multiplier for the distribution's delta value for duration.
+    </p>
+        <p>
+      <span class="emphasis"><em>knum</em></span> (optional,
+      default=<span class="emphasis"><em>initcps</em></span>) -- current number of utilized control points.
+    </p>
+        <p>
+      The waveform is generated by <span class="emphasis"><em>knum</em></span> - 1
+      segments and is repeated in the time. The vertexes (control points)
+      are moved according to a stochastic action and they are limited
+      within the boundaries of a mirror formed by an amplitude barrier
+      and a time barrier.
+      </p>
+        <div class="mediaobject">
+          <img src="images/gendy.png" alt="[A repetition of the generated waveform with knum=12.]" />
+          <div class="caption">
+            <p>A repetition of the generated waveform with <span class="emphasis"><em>knum</em></span>=12.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100896512"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the gendy opcode. It uses the file
+      <a class="ulink" href="examples/gendy.csd" target="_top"><em class="citetitle">gendy.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276100894720"></a>
+          <p class="title">
+            <strong>Example 391. Example of the gendy opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276491398784"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o oscil.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">out</span> <span class="nb">gendy</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span>
+<span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is an example of the gendy opcode with some modulations. It uses the file
+      <a class="ulink" href="examples/gendy-2.csd" target="_top"><em class="citetitle">gendy-2.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276100889712"></a>
+          <p class="title">
+            <strong>Example 392. Example of the gendy opcode with some modulations.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276491812128"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o oscil.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">env</span> <span class="nb">expseg</span> <span class="mf">0.01</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.001</span>
+k<span class="n">osc</span> <span class="nb">oscil</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">3</span><span class="o">/</span><span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span>
+<span class="nb">seed</span> <span class="mi">20120123</span>
+k<span class="n">dis</span> <span class="nb">bexprnd</span> k<span class="n">osc</span>
+k<span class="n">num</span> <span class="nb">linseg</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.75</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.20</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">5</span>
+a<span class="n">sig</span> <span class="nb">gendy</span> <span class="mf">0.2</span><span class="p">,</span> k<span class="n">osc</span><span class="o">*</span><span class="mi">60</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> k<span class="n">dis</span><span class="p">,</span> <span class="mi">500</span><span class="o">*</span>k<span class="n">env</span><span class="p">,</span> <span class="mi">4800</span><span class="p">,</span> <span class="mf">0.23</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> k<span class="n">num</span>
+a<span class="n">flt</span> <span class="nb">resonz</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">1400</span><span class="p">,</span> <span class="mi">400</span>
+a<span class="n">out</span> <span class="nb">comb</span> k<span class="n">env</span><span class="o">*</span>a<span class="n">flt</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span>
+<span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">.8</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mf">.3</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mf">.1</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">20</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100885776"></a>
+        <h2>References</h2>
+        <p>
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>
+            Formalized Music (1992, Stuyvesant, NY: Pendragon Press),
+            pp. 246 - 254, 289 - 322.
+          </p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100882848"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="gendyc.html" title="gendyc"><em class="citetitle">gendyc</em></a>
+      <a class="link" href="gendyx.html" title="gendyx"><em class="citetitle">gendyx</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276100879952"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Based on Nick Collins's Gendy1 ugen (SuperCollider)</td>
+          </tr>
+          <tr>
+            <td>Author: Tito Latini</td>
+          </tr>
+          <tr>
+            <td>January 2012</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.16</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="genarray_i.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="gendyc.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">genarray_i </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> gendyc</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

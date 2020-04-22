@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>MIDI/Score Interoperability opcodes</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="MidiTop.html" title="Real-time MIDI Support" />
+    <link rel="prev" href="MidiOnoff.html" title="Note-on/Note-off Output" />
+    <link rel="next" href="MidiRealtime.html" title="System Realtime Messages" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">MIDI/Score Interoperability opcodes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="MidiOnoff.html">Prev</a> </td>
+          <th width="60%" align="center">Real-time MIDI Support</th>
+          <td width="20%" align="right"> <a accesskey="n" href="MidiRealtime.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="MidiInterop"></a>MIDI/Score Interoperability opcodes</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    The following opcodes can be used to design instruments that work interchangably for real-time MIDI and score events:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="midichannelaftertouch.html" title="midichannelaftertouch">
+                <em class="citetitle">midichannelaftertouch</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="midichn.html" title="midichn">
+                <em class="citetitle">midichn</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="midicontrolchange.html" title="midicontrolchange">
+                <em class="citetitle">midicontrolchange</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="mididefault.html" title="mididefault">
+                <em class="citetitle">mididefault</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="midinoteoff.html" title="midinoteoff">
+                <em class="citetitle">midinoteoff</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="midinoteoncps.html" title="midinoteoncps">
+                <em class="citetitle">midinoteoncps</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="midinoteonkey.html" title="midinoteonkey">
+                <em class="citetitle">midinoteonkey</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="midinoteonoct.html" title="midinoteonoct">
+                <em class="citetitle">midinoteonoct</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="midinoteonpch.html" title="midinoteonpch">
+                <em class="citetitle">midinoteonpch</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="midipitchbend.html" title="midipitchbend">
+                <em class="citetitle">midipitchbend</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="midipolyaftertouch.html" title="midipolyaftertouch">
+                <em class="citetitle">midipolyaftertouch</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p><a class="link" href="midiprogramchange.html" title="midiprogramchange"><em class="citetitle">midiprogramchange</em></a>.</p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note: Adapting a score-activated Csound instrument.">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Adapting a score-activated Csound instrument.</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>
+      To adapt an ordinary Csound instrument designed for score activation for score/MIDI interoperability:
+      </p>
+              <div class="itemizedlist">
+                <ul class="itemizedlist" style="list-style-type: disc; ">
+                  <li class="listitem">
+                    <p>Change all <a class="link" href="linen.html" title="linen"><em class="citetitle">linen</em></a>, <a class="link" href="linseg.html" title="linseg"><em class="citetitle">linseg</em></a>, and <a class="link" href="expseg.html" title="expseg"><em class="citetitle">expseg</em></a> opcodes to <a class="link" href="linenr.html" title="linenr"><em class="citetitle">linenr</em></a>, <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>, and <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>, respectively, except for a de-clicking or damping envelope. This will not materially change score-driven performance.</p>
+                  </li>
+                  <li class="listitem">
+                    <p>Add the following lines at the beginning of the instrument definition:
+            </p>
+                    <div class="informalexample">
+                      <pre class="programlisting">
+  <span class="comment">; Ensures that a MIDI-activated instrument</span>
+  <span class="comment">; will have a positive p3 field.</span>
+  <span class="opc">mididefault</span> 60, p3 
+  <span class="comment">; Puts MIDI key translated to cycles per</span>
+  <span class="comment">; second into p4, and MIDI velocity into p5</span>
+  <span class="opc">midinoteoncps</span> p4, p5</pre>
+                    </div>
+                    <p>
+            Obviously, <span class="emphasis"><em>midinoteoncps</em></span> could be changed to <span class="emphasis"><em>midinoteonoct</em></span> or any of the other options, and the choice of p-fields is arbitrary.</p>
+                  </li>
+                </ul>
+              </div>
+              <p>
+    </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note: MIDI Realtime Input/Ouput command line options">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">MIDI Realtime Input/Ouput command line options</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>New <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperM"><em class="citetitle">MIDI I/O
+    flags</em></a> in Csound 5.02, can replace most uses of these MIDI
+    interop opcodes, and make usage easier.</p>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="MidiOnoff.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="MidiTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="MidiRealtime.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Note-on/Note-off Output </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> System Realtime Messages</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

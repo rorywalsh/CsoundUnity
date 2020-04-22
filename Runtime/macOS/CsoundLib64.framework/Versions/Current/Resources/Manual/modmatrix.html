@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>modmatrix</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mode.html" title="mode" />
+    <link rel="next" href="monitor.html" title="monitor" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">modmatrix</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mode.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="monitor.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="modmatrix"></a>
+      <div class="titlepage"></div>
+      <a id="IndexModmatrix" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">modmatrix</span>
+        </h2>
+        <p>modmatrix — 
+      Modulation matrix opcode with optimizations for sparse matrices.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079411328"></a>
+        <h2>Description</h2>
+        <p>
+      The opcode can be used to let a large number of k-rate modulator
+      variables modulate a large number of k-rate parameter variables,
+      with arbitrary scaling of each modulator-to-parameter
+      connection.  Csound ftables are used to hold both the input
+      (parameter)  variables, the modulator variables, and the scaling
+      coefficients. Output variables are written to another Csound ftable.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079409728"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>modmatrix</strong></span> iresfn, isrcmodfn, isrcparmfn, imodscale, inum_mod, \\
+inum_parm, kupdate</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079407728"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iresfn</em></span> --  ftable number for the parameter output variables
+    </p>
+        <p>
+      <span class="emphasis"><em>isrcmodfn</em></span> -- ftable number for the modulation source variables
+    </p>
+        <p>
+      <span class="emphasis"><em>isrcparmfn</em></span> -- ftable number for the parameter input variables
+    </p>
+        <p>
+      <span class="emphasis"><em>imodscale</em></span> -- scaling/routing coefficient
+      matrix. This is also a csound ftable, used as a matrix of
+      inum_mod rows and inum_parm columns.
+    </p>
+        <p>
+      <span class="emphasis"><em>inum_mod</em></span> -- number of modulation variables
+    </p>
+        <p>
+      <span class="emphasis"><em>inum_parm</em></span> -- number of parmeter (input and
+      output) variables.
+    </p>
+        <p>
+    The arguments <span class="emphasis"><em>inum_mod</em></span>
+    and <span class="emphasis"><em>inum_parm</em></span> do not have to be set to
+    power-of-two values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079400496"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kupdate</em></span> -- flag to update the scaling
+      coefficients. When the flag is set to a nonzero value, the
+      scaling coefficients are read directly from the imodscale
+      ftable. When the flag is set to zero, the scaling coefficients
+      are scanned, and an optimized scaling matrix stored internally
+      in the opcode.
+    </p>
+        <p>
+      For each modulator in <span class="emphasis"><em>isrcmodfn</em></span>, scale it
+      with the coefficient (in <span class="emphasis"><em>imodscale</em></span>)
+      determining to what degree it should influence each
+      parameter. Then sum all modulators for each parameter and add
+      the resulting modulator value to the input parameter value read from
+      <span class="emphasis"><em>iscparmfn</em></span>. Finally, write the output
+      parameter values to table <span class="emphasis"><em>iresfn</em></span>.
+    </p>
+        <p>
+      The following tables give insight into the processing performed
+      by the modmatrix opcode, for a simplified example using 3
+      parameter and 2 modulators. Let’s call the parameters
+      "cps1", "cps2", and "cutoff", and
+      the modulators "lfo1" and "lfo2".
+    </p>
+        <p>
+      The input variables may at a given point in time have these
+      values:
+  </p>
+        <div class="table">
+          <a id="modmatrix-table1"></a>
+          <p class="title">
+            <strong>Table 12. </strong>
+          </p>
+          <div class="table-contents">
+            <table class="table" border="1">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th> </th>
+                  <th>cps1</th>
+                  <th>cps2</th>
+                  <th>cutoff</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="emphasis">
+                      <em>isrcparmfn</em>
+                    </span>
+                  </td>
+                  <td>400</td>
+                  <td>800</td>
+                  <td>3</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p><br class="table-break" />
+    </p>
+        <p>
+    </p>
+        <p>
+      ... while the modulator variables have these values:
+  </p>
+        <div class="table">
+          <a id="modmatrix-table2"></a>
+          <p class="title">
+            <strong>Table 13. </strong>
+          </p>
+          <div class="table-contents">
+            <table class="table" border="1">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th> </th>
+                  <th>lfo1</th>
+                  <th>lfo2</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="emphasis">
+                      <em>isrcmodfn</em>
+                    </span>
+                  </td>
+                  <td>0.5</td>
+                  <td>-0.2</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p><br class="table-break" />
+    </p>
+        <p>
+      The scaling/routing coefficients used:
+  </p>
+        <div class="table">
+          <a id="modmatrix-table3"></a>
+          <p class="title">
+            <strong>Table 14. </strong>
+          </p>
+          <div class="table-contents">
+            <table class="table" border="1">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>
+                    <span class="emphasis">
+                      <em>imodscale</em>
+                    </span>
+                  </th>
+                  <th>cps1</th>
+                  <th>cps2</th>
+                  <th>cutoff</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="emphasis">
+                      <em>lfo1</em>
+                    </span>
+                  </td>
+                  <td>40</td>
+                  <td>0</td>
+                  <td>-2</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="emphasis">
+                      <em>lfo2</em>
+                    </span>
+                  </td>
+                  <td>-50</td>
+                  <td>100</td>
+                  <td>3</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p><br class="table-break" />
+    </p>
+        <p>
+      ... and the resulting output values:
+  </p>
+        <div class="table">
+          <a id="modmatrix-table4"></a>
+          <p class="title">
+            <strong>Table 15. </strong>
+          </p>
+          <div class="table-contents">
+            <table class="table" border="1">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th> </th>
+                  <th>cps1</th>
+                  <th>cps2</th>
+                  <th>cutoff</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="emphasis">
+                      <em>iresfn</em>
+                    </span>
+                  </td>
+                  <td>430</td>
+                  <td>780</td>
+                  <td>1.4</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="emphasis">
+                      <em>lfo2</em>
+                    </span>
+                  </td>
+                  <td>-50</td>
+                  <td>100</td>
+                  <td>3</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p><br class="table-break" />
+    </p>
+        <p> 
+      The output value for "cps1" is calculated as
+      400+(0.5*40)+(-0.2*-50), similarly for "cps2"
+      800+(0.5*0)+(-0.2*100), and for cutoff: 3+(0.5*-2)+(-0.2*3) 
+    </p>
+        <p>
+      The imodscale ftable may be specified in the score like this:
+      </p>
+        <pre class="programlisting">f1  0  8  -2  200 0 2 50 300 -1.5</pre>
+        <p> 
+    </p>
+        <p>
+       Or more conveniently using <a class="link" href="ftgen.html" title="ftgen"><em class="citetitle">ftgen</em></a> in the orchestra:
+      </p>
+        <pre class="programlisting">gimodscale ftgen 0, 0, 8, -2, 200, 0, 2, 50, 300, -1.5</pre>
+        <p> 
+    </p>
+        <p>
+      Obviously, the parameter and modulator variables need not be
+      static values, and similarly, the scaling routing coefficient
+      table may be continuously rewritten using opcodes
+      like <a class="link" href="tablew.html" title="tablew"><em class="citetitle">tablew</em></a>. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079358144"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the modmatrix opcode. It uses the file <a class="ulink" href="examples/modmatrix.csd" target="_top"><em class="citetitle">modmatrix.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276079356352"></a>
+          <p class="title">
+            <strong>Example 587. Example of the modmatrix opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276448141712"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+<span class="c1">;-odac           -iadc    ;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+ -o modmatrix.wav -W <span class="c1">;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+	<span class="vg">sr</span>	<span class="o">=</span>	<span class="mi">44100</span>
+	<span class="vg">kr</span>	<span class="o">=</span>	<span class="mi">441</span>
+	<span class="vg">ksmps</span>	<span class="o">=</span>	<span class="mi">100</span>
+	<span class="vg">nchnls</span>	<span class="o">=</span>	<span class="mi">2</span>
+	<span class="vg">0dbfs</span>	<span class="o">=</span> 	<span class="mi">1</span>
+
+<span class="c1">; basic waveforms</span>
+gi<span class="n">Sine</span>	<span class="nb">ftgen</span>	<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">65537</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; sine wave</span>
+gi<span class="n">Saw</span> 	<span class="nb">ftgen</span>	<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4097</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>	<span class="c1">; saw (linear)</span>
+gi<span class="n">SoftSaw</span> <span class="nb">ftgen</span>	<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">65537</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> gi<span class="n">Saw</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span>	<span class="c1">; soft saw (only 10 first harmonics)</span>
+
+<span class="c1">; modmatrix tables</span>
+gi<span class="n">MaxNumParam</span>	<span class="o">=</span> <span class="mi">128</span>
+gi<span class="n">MaxNumMod</span>	<span class="o">=</span> <span class="mi">32</span>
+gi<span class="n">Param_In</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">MaxNumParam</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>	<span class="c1">; input parameters table</span>
+<span class="c1">; output parameters table (parameter values with added modulators)</span>
+gi<span class="n">Param_Out</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">MaxNumParam</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>	
+gi<span class="n">Modulators</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">MaxNumMod</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>	 <span class="c1">; modulators table</span>
+<span class="c1">; modulation scaling and routing (mod matrix) table, start with empty table</span>
+gi<span class="n">ModScale</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">MaxNumParam</span><span class="o">*</span>gi<span class="n">MaxNumMod</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>		
+
+<span class="c1">;********************************************</span>
+<span class="c1">; generate the modulator signals</span>
+<span class="c1">;********************************************</span>
+	<span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="c1">; LFO1, 1.5 Hz, normalized range (0.0 to 1.0)</span>
+k<span class="n">LFO1</span>	<span class="nb">oscil</span>	<span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> gi<span class="n">Sine</span>		<span class="c1">; generate LFO signal</span>
+k<span class="n">LFO1</span>	<span class="o">=</span> k<span class="n">LFO1</span><span class="o">+</span><span class="mf">0.5</span>				<span class="c1">; offset</span>
+
+<span class="c1">; LFO2, 0.4 Hz, normalized range (0.0 to 1.0)</span>
+k<span class="n">LFO2</span>	<span class="nb">oscil</span>	<span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> gi<span class="n">Sine</span>		<span class="c1">; generate LFO signal</span>
+k<span class="n">LFO2</span>	<span class="o">=</span> k<span class="n">LFO2</span><span class="o">+</span><span class="mf">0.5</span>				<span class="c1">; offset</span>
+
+
+<span class="c1">; write modulators to table</span>
+	<span class="nb">tablew</span>	k<span class="n">LFO1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">Modulators</span>
+	<span class="nb">tablew</span>	k<span class="n">LFO2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> gi<span class="n">Modulators</span>
+
+	<span class="kd">endin</span>
+
+<span class="c1">;********************************************</span>
+<span class="c1">; set parameter values</span>
+<span class="c1">;********************************************</span>
+	<span class="kd">instr</span> <span class="nf">2</span>
+
+<span class="c1">; Here we can set the parameter values</span>
+i<span class="n">cps1</span>	<span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">cps2</span>	<span class="o">=</span> <span class="nb">p5</span>
+i<span class="n">cutoff</span>	<span class="o">=</span> <span class="nb">p6</span>
+	
+<span class="c1">; write parameters to table</span>
+	<span class="nb">tableiw</span>	i<span class="n">cps1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">Param_In</span>
+	<span class="nb">tableiw</span>	i<span class="n">cps2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> gi<span class="n">Param_In</span>
+	<span class="nb">tableiw</span>	i<span class="n">cutoff</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> gi<span class="n">Param_In</span>
+
+	<span class="kd">endin</span>
+
+<span class="c1">;********************************************</span>
+<span class="c1">; mod matrix edit</span>
+<span class="c1">;********************************************</span>
+	<span class="kd">instr</span> <span class="nf">3</span>
+
+<span class="c1">; Here we can write to the modmatrix table by using tablew or tableiw</span>
+
+i<span class="n">Lfo1ToCps1</span>	<span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">Lfo1ToCps2</span>	<span class="o">=</span> <span class="nb">p5</span>
+i<span class="n">Lfo1ToCutoff</span>	<span class="o">=</span> <span class="nb">p6</span>
+i<span class="n">Lfo2ToCps1</span>	<span class="o">=</span> <span class="nb">p7</span>
+i<span class="n">Lfo2ToCps2</span>	<span class="o">=</span> <span class="nb">p8</span>
+i<span class="n">Lfo2ToCutoff</span>	<span class="o">=</span> <span class="nb">p9</span>
+
+	<span class="nb">tableiw</span>	i<span class="n">Lfo1ToCps1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">ModScale</span>
+	<span class="nb">tableiw</span>	i<span class="n">Lfo1ToCps2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> gi<span class="n">ModScale</span>
+	<span class="nb">tableiw</span>	i<span class="n">Lfo1ToCutoff</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> gi<span class="n">ModScale</span>
+	<span class="nb">tableiw</span>	i<span class="n">Lfo2ToCps1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> gi<span class="n">ModScale</span>
+	<span class="nb">tableiw</span>	i<span class="n">Lfo2ToCps2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> gi<span class="n">ModScale</span>
+	<span class="nb">tableiw</span>	i<span class="n">Lfo2ToCutoff</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> gi<span class="n">ModScale</span>
+	
+<span class="c1">; and set the update flag for modulator matrix </span>
+<span class="c1">; ***(must update to enable changes)</span>
+k<span class="n">trig</span>	<span class="nb">init</span> <span class="mi">1</span>
+	<span class="nb">chnset</span>	k<span class="n">trig</span><span class="p">,</span> <span class="s">"modulatorUpdateFlag"</span>
+k<span class="n">trig</span>	<span class="o">=</span> <span class="mi">0</span>
+
+	<span class="kd">endin</span>
+
+<span class="c1">;********************************************</span>
+<span class="c1">; mod matrix</span>
+<span class="c1">;********************************************</span>
+	<span class="kd">instr</span> <span class="nf">4</span>
+
+<span class="c1">; get the update flag</span>
+k<span class="n">update</span>	<span class="nb">chnget</span>	<span class="s">"modulatorUpdateFlag"</span>		
+
+<span class="c1">; run the mod matrix </span>
+i<span class="n">num_mod</span>	<span class="o">=</span> <span class="mi">2</span>
+i<span class="n">num_parm</span>	<span class="o">=</span> <span class="mi">3</span>
+	<span class="nb">modmatrix</span> gi<span class="n">Param_Out</span><span class="p">,</span> gi<span class="n">Modulators</span><span class="p">,</span> gi<span class="n">Param_In</span><span class="p">,</span> \
+	gi<span class="n">ModScale</span><span class="p">,</span> i<span class="n">num_mod</span><span class="p">,</span> i<span class="n">num_parm</span><span class="p">,</span> k<span class="n">update</span>
+
+<span class="c1">; and reset the update flag</span>
+	<span class="nb">chnset</span>	<span class="mi">0</span><span class="p">,</span> <span class="s">"modulatorUpdateFlag"</span>  <span class="c1">; reset the update flag</span>
+
+	<span class="kd">endin</span>
+
+<span class="c1">;********************************************</span>
+<span class="c1">; audio generator to test values</span>
+<span class="c1">;********************************************</span>
+	<span class="kd">instr</span> <span class="nf">5</span>
+
+<span class="c1">; basic parameters</span>
+	i<span class="n">amp</span>	<span class="o">=</span> <span class="nb">ampdbfs</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">; read modulated parameters from table</span>
+	k<span class="n">cps1</span>	<span class="nb">table</span>	<span class="mi">0</span><span class="p">,</span> gi<span class="n">Param_Out</span>
+	k<span class="n">cps2</span>	<span class="nb">table</span>	<span class="mi">1</span><span class="p">,</span> gi<span class="n">Param_Out</span>
+	k<span class="n">cutoff</span>	<span class="nb">table</span>	<span class="mi">2</span><span class="p">,</span> gi<span class="n">Param_Out</span>
+
+<span class="c1">; set filter parameters</span>
+	k<span class="n">CF_freq1</span>	<span class="o">=</span> k<span class="n">cps1</span><span class="o">*</span>k<span class="n">cutoff</span>
+	k<span class="n">CF_freq2</span>	<span class="o">=</span> k<span class="n">cps2</span><span class="o">*</span>k<span class="n">cutoff</span>
+	k<span class="n">Reso</span>		<span class="o">=</span> <span class="mf">0.7</span>
+	k<span class="n">Dist</span>		<span class="o">=</span> <span class="mf">0.3</span>
+
+<span class="c1">; oscillators and filters</span>
+	a<span class="n">1</span>	<span class="nb">oscili</span>	i<span class="n">amp</span><span class="p">,</span> k<span class="n">cps1</span><span class="p">,</span> gi<span class="n">SoftSaw</span>
+	a<span class="n">1</span>	<span class="nb">lpf18</span>	a<span class="n">1</span><span class="p">,</span> k<span class="n">CF_freq1</span><span class="p">,</span> k<span class="n">Reso</span><span class="p">,</span> k<span class="n">Dist</span>
+
+	a<span class="n">2</span>	<span class="nb">oscili</span>	i<span class="n">amp</span><span class="p">,</span> k<span class="n">cps2</span><span class="p">,</span> gi<span class="n">SoftSaw</span>
+	a<span class="n">2</span>	<span class="nb">lpf18</span>	a<span class="n">2</span><span class="p">,</span> k<span class="n">CF_freq2</span><span class="p">,</span> k<span class="n">Reso</span><span class="p">,</span> k<span class="n">Dist</span>
+	
+		<span class="nb">outs</span> 	a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>
+
+	<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">;********************************************</span>
+<span class="c1">; set initial parameters</span>
+<span class="c1">;	cps1	cps2	cutoff</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">1</span>	<span class="mi">400</span>	<span class="mi">800</span>	<span class="mi">3</span>
+
+<span class="c1">;********************************************</span>
+<span class="c1">; set modmatrix values</span>
+<span class="c1">;	lfo1ToCps1 lfo1ToCps2 lfo1ToCut lfo2ToCps1 lfo2ToCps2 lfo2ToCut</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">1</span> 	<span class="mi">40</span>         <span class="mi">0</span>          <span class="o">-</span><span class="mi">2</span>        <span class="o">-</span><span class="mi">50</span>        <span class="mi">100</span>        <span class="mi">3</span>
+
+<span class="c1">;********************************************</span>
+<span class="c1">; start "always on" instruments</span>
+<span class="err">#d</span><span class="nb">e</span><span class="cp">fine</span> <span class="cp">SCORELEN</span> <span class="o">#</span> <span class="mi">20</span> <span class="o">#</span>	 <span class="c1">; set length of score</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="cp">$SCORELEN</span>			<span class="c1">; start modulators</span>
+<span class="nb">i</span><span class="mi">4</span> <span class="mi">0</span> <span class="cp">$SCORELEN</span>			<span class="c1">; start mod matrix</span>
+<span class="nb">i</span><span class="mi">5</span> <span class="mi">0</span> <span class="cp">$SCORELEN</span>			<span class="c1">; start audio oscillator</span>
+
+<span class="nb">e</span>	
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079352352"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="linearalgebraopcodes.html" title="Linear Algebra Opcodes"><em class="citetitle">Linear Algebra
+      Opcodes</em></a>, 
+      <a class="link" href="vectorial.html" title="Vectorial Opcodes"><em class="citetitle">Vectorial
+      Opcodes</em></a>, 
+      <a class="link" href="tablew.html" title="tablew"><em class="citetitle">tablew</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079348480"></a>
+        <h2>Credits</h2>
+        <p>By:</p>
+        <p>Oeyvind Brandtsegg and Thom Johansen</p>
+        <p>New in version 5.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mode.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="monitor.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mode </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> monitor</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

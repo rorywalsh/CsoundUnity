@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Types, Constants and Variables</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="prev" href="OrchStatemnt.html" title="Ordinary Statements" />
+    <link rel="next" href="OrchExpress.html" title="Expressions" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Types, Constants and Variables</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="OrchStatemnt.html">Prev</a> </td>
+          <th width="60%" align="center">Syntax of the Orchestra</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OrchExpress.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="OrchKvar"></a>Types, Constants and Variables</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    <span class="emphasis"><em>Constants</em></span>
+    are floating point numbers, such as 1, 3.14159, or -73.45. They are
+    available continuously and do not change in value.
+  </p>
+      <p>
+    <span class="emphasis"><em>Variables</em></span> are named cells containing numbers. They are available continuously and may be updated at one of the four update rates (setup only, i-rate, k-rate, or a-rate). i- and k-rate variables are scalars (i.e. they take on only one value at any given time) and are primarily used to store and recall controlling data, that is, data that changes at the note rate (for i-rate variables) or at the control rate (for k-rate variables). i- and k-variables are therefore useful for storing note parameter values, pitches, durations, slow-moving frequencies, vibratos, etc. a-rate variables, on the other hand, are arrays or vectors of information. Though renewed on the same perf-time control pass as k-rate variables, these array cells represent a finer resolution of time by dividing the control period into sample periods (see <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a>). a-rate variables are used to store and recall data changing at the audio sampling rate (e.g. output signals of oscillators, filters, etc.).
+  </p>
+      <p>
+    Some types of variables can be thought of as signals. For example
+    a-rate and k-rate variables are signals that have a constant
+    update frequency (see <a class="link" href="kr.html" title="kr"><em class="citetitle">kr</em></a> and <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a>). This abstraction
+    is generally quite useful, but be aware that a-rate signals are
+    actually vectors which are processed at k-rate, i.e. Csound works
+    at k-rate internally but processes <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a> number samples for
+    each a-rate variable on every control pass.
+  </p>
+      <p>
+    There are other types of signals that require rates that don't
+    match <a class="link" href="kr.html" title="kr"><em class="citetitle">kr</em></a> or <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a>. f-rate and w-rate
+    signals are used for spectral processing and their rate is
+    determined by the window size and overlap factor.
+  </p>
+      <p>
+    A further distinction is that between local and global variables. <span class="emphasis"><em>local</em></span> variables are private to a particular instrument, and cannot be read from or written into by any other instrument. Their values are preserved, and they may carry information from pass to pass (e.g. from initialization time to performance time) within a single instrument. Local variable names begin with the letter <span class="emphasis"><em>p, i, k</em></span>, or <span class="emphasis"><em>a</em></span>. The same local variable name may appear in two or more different instrument blocks without conflict.
+  </p>
+      <p><a id="GlobalVariables"></a>
+    <span class="emphasis"><em>Global</em></span> variables are cells that are accessible by all instruments. The names are either like local names preceded by the letter <span class="emphasis"><em>g</em></span>, or are special reserved symbols. Global variables are used for broadcasting general values, for communicating between instruments (semaphores), or for sending sound from one instrument to another (e.g. mixing prior to reverberation).
+  </p>
+      <p>
+    Given these distinctions, there are nine forms of local and global variables:
+  </p>
+      <p>
+    </p>
+      <div class="table">
+        <a id="VariableTypes"></a>
+        <p class="title">
+          <strong>Table 3. Types of Variables</strong>
+        </p>
+        <div class="table-contents">
+          <table class="table" summary="Types of Variables" border="1">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>When Renewable</th>
+                <th>Local</th>
+                <th>Global</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>reserved symbols</td>
+                <td>permanent</td>
+                <td> -- </td>
+                <td>rsymbol</td>
+              </tr>
+              <tr>
+                <td>score pfields</td>
+                <td>i-time</td>
+                <td>p number</td>
+                <td> -- </td>
+              </tr>
+              <tr>
+                <td>init variables</td>
+                <td>i-time</td>
+                <td>i name</td>
+                <td>gi name </td>
+              </tr>
+              <tr>
+                <td>control signals</td>
+                <td>p-time, k-rate</td>
+                <td>k name</td>
+                <td>gk name</td>
+              </tr>
+              <tr>
+                <td>audio signals</td>
+                <td>p-time, k-rate (all audio samples in a k-pass)</td>
+                <td>a name</td>
+                <td>ga name</td>
+              </tr>
+              <tr>
+                <td>spectral data types</td>
+                <td>k-rate</td>
+                <td>w name</td>
+                <td> -- </td>
+              </tr>
+              <tr>
+                <td>streaming spectral data types</td>
+                <td>k-rate</td>
+                <td>f name</td>
+                <td>gf name</td>
+              </tr>
+              <tr>
+                <td>string variables</td>
+                <td>i-time and optionally k-rate</td>
+                <td>S name</td>
+                <td>gS name</td>
+              </tr>
+              <tr>
+                <td>vector variables</td>
+                <td>k-rate</td>
+                <td>t name</td>
+                <td class="auto-generated"> </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p><br class="table-break" />
+  </p>
+      <p>
+    Where <span class="emphasis"><em>rsymbol</em></span> is a special reserved symbol (e.g. <span class="emphasis"><em>sr, kr</em></span>), <span class="emphasis"><em>number</em></span> is a positive integer referring to a score pfield or sequence number, and <span class="emphasis"><em>name</em></span> is a string of letters, the underscore character, and/or digits with local or global meaning. As might be apparent, score parameters are local i-rate variables whose values are copied from the invoking score statement just prior to the init pass through an instrument, while MIDI controllers are variables which can be updated asynchronously from a MIDI file or MIDI device.
+  </p>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="OrchVarinit"></a>Variable Initialization</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      Opcodes that let one initialize variables are:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+                <a class="link" href="assign.html" title="=">
+                  <em class="citetitle">assign</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="divz.html" title="divz">
+                  <em class="citetitle">divz</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="init.html" title="init">
+                  <em class="citetitle">init</em>
+                </a>
+              </p>
+            </li>
+            <li class="listitem">
+              <p>
+                <a class="link" href="tival.html" title="tival">
+                  <em class="citetitle">tival</em>
+                </a>
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <div class="simplesect">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h4 class="title"><a id="Predefined Constants"></a>Predefined Math Constant Macros</h4>
+              </div>
+            </div>
+          </div>
+          <p>Csound defines several important math constants as <a class="link" href="OrchMacros.html" title="Macros"><em class="citetitle">Macros</em></a>. You can see the full list <a class="link" href="define.html#opcodesDefineMathConstMacros" title="Predefined Math Constant Macros"><em class="citetitle">here</em></a>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="OrchStatemnt.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OrchTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OrchExpress.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Ordinary Statements </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Expressions</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

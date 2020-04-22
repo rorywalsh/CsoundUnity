@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>specdiff</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="specaddm.html" title="specaddm" />
+    <link rel="next" href="specdisp.html" title="specdisp" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">specdiff</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="specaddm.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="specdisp.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="specdiff"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSpecdiff" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">specdiff</span>
+        </h2>
+        <p>specdiff — 
+      Finds the positive difference values between consecutive spectral frames.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071081840"></a>
+        <h2>Description</h2>
+        <p>
+      Finds the positive difference values between consecutive spectral frames.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071080576"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">wsig <span class="command"><strong>specdiff</strong></span> wsigin</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071078496"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>wsig</em></span> -- the output spectrum.
+    </p>
+        <p>
+      <span class="emphasis"><em>wsigin</em></span> -- the input spectra.
+    </p>
+        <p>
+      Finds the positive difference values between consecutive spectral frames. At each new frame of <span class="emphasis"><em>wsigin</em></span>, each magnitude value is compared with its predecessor, and the positive changes written to the output spectrum. This unit is useful as an energy onset detector.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071075008"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+  wsig2    <span class="opc">specdiff</span>    wsig1         <span class="comment">; sense onsets</span> 
+  wsig3    <span class="opc">specfilt</span>    wsig2, 2      <span class="comment">; absorb slowly</span>
+           <span class="opc">specdisp</span>    wsig2, 0.1    <span class="comment">; &amp; display both spectra</span>
+           <span class="opc">specdisp</span>    wsig3, 0.1</pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276071068224"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="specaddm.html" title="specaddm"><em class="citetitle">specaddm</em></a>,
+      <a class="link" href="specfilt.html" title="specfilt"><em class="citetitle">specfilt</em></a>,
+      <a class="link" href="spechist.html" title="spechist"><em class="citetitle">spechist</em></a>,
+      <a class="link" href="specscal.html" title="specscal"><em class="citetitle">specscal</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="specaddm.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="specdisp.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">specaddm </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> specdisp</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

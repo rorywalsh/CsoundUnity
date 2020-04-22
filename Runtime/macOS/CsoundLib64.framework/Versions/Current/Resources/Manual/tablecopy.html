@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tablecopy</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="table3.html" title="table3" />
+    <link rel="next" href="tablefilter.html" title="tablefilter" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tablecopy</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="table3.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tablefilter.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tablecopy"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTablecopy" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tablecopy</span>
+        </h2>
+        <p>tablecopy — 
+      Simple, fast table copy opcode.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048988576"></a>
+        <h2>Description</h2>
+        <p>
+      Simple, fast table copy opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048987360"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>tablecopy</strong></span> kdft, ksft</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048985424"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kdft</em></span> -- Destination function table.
+    </p>
+        <p>
+      <span class="emphasis"><em>ksft</em></span> -- Number of source function table.
+    </p>
+        <p>
+      <span class="emphasis"><em>tablecopy</em></span> -- Simple, fast table copy opcode. Takes the table length from the destination table, and reads from the start of the source table. For speed reasons, does not check the source length - just copies regardless - in <span class="quote">“<span class="quote">wrap</span>”</span> mode. This may read through the source table several times. A source table with length 1 will cause all values in the destination table to be written to its value.
+    </p>
+        <p>
+      <span class="emphasis"><em>tablecopy</em></span> cannot read or write the guardpoint. To read it use <a class="link" href="table.html" title="table"><em class="citetitle">table</em></a>, with <span class="emphasis"><em>ndx</em></span> = the table length. Likewise use table write to write it.
+    </p>
+        <p>
+      To write the guardpoint to the value in location 0, use <a class="link" href="tablegpw.html" title="tablegpw"><em class="citetitle">tablegpw</em></a>.
+    </p>
+        <p>
+      This is primarily to change function tables quickly in a real-time situation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048977408"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tablecopy opcode. It uses the file <a class="ulink" href="examples/tablecopy.csd" target="_top"><em class="citetitle">tablecopy.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276048975616"></a>
+          <p class="title">
+            <strong>Example 996. Example of the tablecopy opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276420912128"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tablecopy.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>  <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">;after an example from Jonathan Murphy </span>
+  
+gi<span class="n">len</span> <span class="o">=</span> <span class="mi">7</span>
+gi<span class="n">list</span>  <span class="nb">ftgen</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span>	<span class="c1">;only 6 elements, so 1 is doubled</span>
+gi<span class="n">tmp</span>   <span class="nb">ftgen</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>			<span class="c1">;empty table</span>
+gk<span class="n">max</span>   <span class="nb">init</span> gi<span class="n">len</span>
+
+<span class="nb">seed</span> <span class="mi">0</span>							<span class="c1">;each time different </span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">trig</span> <span class="nb">metro</span> <span class="mi">3</span>						<span class="c1">;trigger values</span>
+k<span class="n">rnd</span>  <span class="nb">random</span> <span class="mi">0</span><span class="p">,</span> gk<span class="n">max</span>
+
+<span class="k">if</span> <span class="p">(</span>k<span class="n">trig</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">then</span>
+  k<span class="n">val</span>    <span class="nb">table</span>  k<span class="n">rnd</span><span class="p">,</span> gi<span class="n">list</span>
+          <span class="nb">tablew</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">rnd</span><span class="p">,</span> gi<span class="n">list</span>
+  k<span class="n">read</span>   <span class="o">=</span> <span class="mi">0</span>
+  k<span class="n">write</span>  <span class="o">=</span> <span class="mi">0</span>
+<span class="nl">start</span><span class="p">:</span>
+  k<span class="n">new</span>    <span class="nb">table</span> k<span class="n">read</span><span class="p">,</span> gi<span class="n">list</span>
+<span class="k">if</span> <span class="p">(</span>k<span class="n">new</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
+          <span class="nb">tablew</span> k<span class="n">new</span><span class="p">,</span> k<span class="n">write</span><span class="p">,</span> gi<span class="n">tmp</span>
+  k<span class="n">write</span>    <span class="o">=</span>  k<span class="n">write</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="k">endif</span>
+  k<span class="n">read</span>   <span class="o">=</span> k<span class="n">read</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="k">if</span> <span class="p">(</span>k<span class="n">read</span> <span class="o">&lt;=</span> gi<span class="n">len</span><span class="p">)</span> <span class="k">kgoto</span> <span class="nl">start</span>
+          <span class="nb">tablecopy</span> gi<span class="n">list</span><span class="p">,</span> gi<span class="n">tmp</span>			<span class="c1">;fill with zeroes</span>
+  gk<span class="n">max</span>   <span class="o">=</span> gk<span class="n">max</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="k">endif</span>
+
+<span class="nb">printk2</span> k<span class="n">val</span>
+
+<span class="k">if</span> <span class="p">(</span>gk<span class="n">max</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
+          <span class="nb">event</span> <span class="s">"i"</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="vg">kr</span>				<span class="c1">;when ready, then stop</span>
+<span class="k">endif</span>
+
+a<span class="n">sig</span> <span class="nb">vco2</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">40</span><span class="o">*</span>k<span class="n">val</span>					<span class="c1">;sound generation</span>
+<span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+    
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+<span class="nb">exitnow</span>
+    
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+      Its output should include a lines like these:
+</p>
+        <pre class="screen">
+i1     5.00000
+i1     3.00000
+i1     2.00000
+i1     4.00000
+i1     7.00000
+i1     6.00000
+i1     7.00000</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048970816"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="tablegpw.html" title="tablegpw"><em class="citetitle">tablegpw</em></a>,
+      <a class="link" href="tablemix.html" title="tablemix"><em class="citetitle">tablemix</em></a>,
+      <a class="link" href="tableicopy.html" title="tableicopy"><em class="citetitle">tableicopy</em></a>,
+      <a class="link" href="tableigpw.html" title="tableigpw"><em class="citetitle">tableigpw</em></a>,
+      <a class="link" href="tableimix.html" title="tableimix"><em class="citetitle">tableimix</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048965264"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Robin Whittle</td>
+          </tr>
+          <tr>
+            <td>Australia</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="table3.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tablefilter.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">table3 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tablefilter</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

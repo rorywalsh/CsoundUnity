@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Example</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="CommandUnifile.html" title="Unified File Format for Orchestras and Scores" />
+    <link rel="prev" href="CommandUnifile.html" title="Unified File Format for Orchestras and Scores" />
+    <link rel="next" href="CommandUnifileParFile.html" title="Command Line Parameter File (.csound6rc)" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Example</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CommandUnifile.html">Prev</a> </td>
+          <th width="60%" align="center">Unified File Format for Orchestras and Scores</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CommandUnifileParFile.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a id="CommandUnifileExample"></a>Example</h3>
+          </div>
+        </div>
+      </div>
+      <p>
+          Below is a sample file, test.csd, which renders a .wav file at 44.1 kHz sample rate containing one second of a 1 kHz sine wave. Displays are suppressed. test.csd was created from two files, tone.orc and tone.sco, with the addition of command line flags.
+
+          </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="csdtag">&lt;CsoundSynthesizer&gt;</span>;
+  <span class="comment">; test.csd - a Csound structured data file</span>
+
+<span class="csdtag">&lt;CsOptions&gt;</span>
+  -W -d -o tone.wav
+<span class="csdtag">&lt;/CsOptions&gt;</span>
+
+<span class="csdtag">&lt;CsVersion&gt;</span>    <span class="comment">; optional section</span>
+  Before 4.10  <span class="comment">; these two statements check for</span>
+  After 4.08   <span class="comment">; Csound version 4.09</span>
+<span class="csdtag">&lt;/CsVersion&gt;</span>
+
+<span class="csdtag">&lt;CsInstruments&gt;</span>
+  <span class="comment">; originally tone.orc</span>
+  <span class="ohdr">sr</span> = 44100
+  <span class="ohdr">kr</span> = 4410
+  <span class="ohdr">ksmps</span> = 10
+  <span class="ohdr">nchnls</span> = 1
+  <span class="oblock">instr</span>   1
+      a1 <span class="opc">oscil</span> p4, p5, 1 <span class="comment">; simple oscillator</span>
+         <span class="opc">out</span> a1
+  <span class="oblock">endin</span>
+<span class="csdtag">&lt;/CsInstruments&gt;</span>
+
+<span class="csdtag">&lt;CsScore&gt;</span>
+  <span class="comment">; originally tone.sco</span>
+  <span class="stamnt">f</span>1 0 8192 10 1
+  <span class="stamnt">i</span>1 0 1 20000 1000 <span class="comment">; play one second of one kHz tone</span>
+  <span class="stamnt">e</span>
+<span class="csdtag">&lt;/CsScore&gt;</span>
+
+<span class="csdtag">&lt;/CsoundSynthesizer&gt;</span></pre>
+      </div>
+      <p>
+	</p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CommandUnifile.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="CommandUnifile.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CommandUnifileParFile.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Unified File Format for Orchestras and Scores </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Command Line Parameter File (.csound6rc)</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

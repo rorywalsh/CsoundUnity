@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vexp</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="veloc.html" title="veloc" />
+    <link rel="next" href="vexp_i.html" title="vexp_i" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vexp</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="veloc.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vexp_i.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vexp"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVexp" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vexp</span>
+        </h2>
+        <p>vexp — 
+      Performs power-of operations between a vector and a scalar
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040656352"></a>
+        <h2>Description</h2>
+        <p>
+      Performs power-of operations between a vector and a scalar
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040655104"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vexp</strong></span>  ifn, kval, kelements [, kdstoffset] [, kverbose]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040653120"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span>  - number of the table hosting the vectorial signal to be processed
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040651488"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kval</em></span> - scalar operand to be processed
+    </p>
+        <p>
+      <span class="emphasis"><em>kelements</em></span> - number of elements of the vector
+    </p>
+        <p>
+      <span class="emphasis"><em>kdstoffset</em></span> - index offset for the destination table (Optional, default = 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>kverbose</em></span> - Selects whether or not warnings are printed (Default=0)
+    </p>
+        <p>
+      <span class="emphasis"><em>vexp</em></span> rises <span class="emphasis"><em>kval</em></span> to each element contained in a vector from table <span class="emphasis"><em>ifn</em></span>,starting from table index <span class="emphasis"><em>kdstoffset</em></span>. This enables you to process a specific section of a table by specifying the offset and the number of elements to be processed. Offset is counted starting from 0, so if no offset is specified (or set to 0), the table will be modified from the beginning.
+    </p>
+        <p>
+      Note that this opcode runs at k-rate so the value of <span class="emphasis"><em>kval</em></span> is processed every control period. Use with care or you will end up with very large (or small) numbers (or use <a class="link" href="vexp_i.html" title="vexp_i"><em class="citetitle">vexp_i</em></a>).
+    </p>
+        <p>
+      These opcodes (<a class="link" href="vadd.html" title="vadd"><em class="citetitle">vadd</em></a>, <a class="link" href="vmult.html" title="vmult"><em class="citetitle">vmult</em></a>, <a class="link" href="vpow.html" title="vpow"><em class="citetitle">vpow</em></a> and <a class="link" href="vexp.html" title="vexp"><em class="citetitle">vexp</em></a>) perform numeric operations between a vectorial control signal (hosted by the table <span class="emphasis"><em>ifn</em></span>), and a scalar signal (<span class="emphasis"><em>kval</em></span>). Result is a new vector that overrides old values of <span class="emphasis"><em>ifn</em></span>. All these opcodes work at k-rate.
+    </p>
+        <p>
+      Negative values for <span class="emphasis"><em>kdstoffset</em></span> are valid. Elements from the vector that are outside the table, will be discarded, and they will not wrap around the table.
+    </p>
+        <p>
+      If the optional <span class="emphasis"><em>kverbose</em></span> argument is different to 0, the opcode will print warning messages every k-pass if table lengths are exceeded.
+    </p>
+        <p>
+      In all these opcodes, the resulting vectors are stored in <span class="emphasis"><em>ifn</em></span>, overriding the intial vectors. If you want to keep initial vector, use <a class="link" href="vcopy.html" title="vcopy"><em class="citetitle">vcopy</em></a> or <a class="link" href="vcopy_i.html" title="vcopy_i"><em class="citetitle">vcopy_i</em></a> to copy it in another table. All these operators are designed to be used together with other opcodes that operate with vectorial signals such as <a class="link" href="vcella.html" title="vcella"><em class="citetitle">vcella</em></a>, <a class="link" href="adsynt.html" title="adsynt"><em class="citetitle">adsynt</em></a>, <a class="link" href="adsynt2.html" title="adsynt2"><em class="citetitle">adsynt2</em></a>, etc.  They can also be useful in conjunction with the spectral opcodes <a class="link" href="pvsftw.html" title="pvsftw"><em class="citetitle">pvsftw</em></a> and <a class="link" href="pvsftr.html" title="pvsftr"><em class="citetitle">pvsftr</em></a>.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Please note that the <span class="emphasis"><em>elements</em></span> argument has changed in version 5.03 from i-rate to k-rate. This will change the opcode's behavior in the unusual cases where the i-rate variable <span class="emphasis"><em>ielements</em></span> is changed inside the instrument, for example in:
+        </p>
+                <pre class="programlisting">
+    <span class="oblock">instr</span> 1
+ielements  <span class="op">=</span>        10
+           <span class="opc">vadd</span>     1, 1, ielements
+ielements  <span class="op">=</span>        20
+           <span class="opc">vadd</span>     2, 1, ielements
+           <span class="opc">turnoff</span>
+    <span class="oblock">endin</span></pre>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040621920"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vexp opcode. It uses the file <a class="ulink" href="examples/vexp.csd" target="_top"><em class="citetitle">vexp.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276040620144"></a>
+          <p class="title">
+            <strong>Example 1101. Example of the vexp opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276407244480"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o cigoto.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">128</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+	<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">fn1</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">val</span> <span class="o">=</span> <span class="nb">p5</span>
+i<span class="n">elements</span> <span class="o">=</span> <span class="nb">p6</span>
+i<span class="n">dstoffset</span> <span class="o">=</span> <span class="nb">p7</span>
+k<span class="n">val</span> <span class="nb">init</span> <span class="mi">25</span>
+<span class="nb">vexp</span> i<span class="n">fn1</span><span class="p">,</span> i<span class="n">val</span><span class="p">,</span> i<span class="n">elements</span><span class="p">,</span> i<span class="n">dstoffset</span><span class="p">,</span> <span class="mi">1</span>
+	<span class="kd">endin</span>
+
+	<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">;Printtable</span>
+i<span class="n">table</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">size</span> <span class="o">=</span> <span class="nb">ftlen</span><span class="p">(</span>i<span class="n">table</span><span class="p">)</span>
+k<span class="n">count</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">val</span> <span class="nb">table</span> k<span class="n">count</span><span class="p">,</span> i<span class="n">table</span>
+<span class="nb">printk2</span> k<span class="n">val</span>
+
+<span class="k">if</span> <span class="p">(</span>k<span class="n">count</span> <span class="o">==</span> i<span class="n">size</span><span class="p">)</span> <span class="k">then</span>
+  <span class="nb">turnoff</span>
+<span class="k">endif</span>
+
+k<span class="n">count</span> <span class="o">=</span> k<span class="n">count</span> <span class="o">+</span> <span class="mi">1</span> 
+	<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16</span> <span class="o">-</span><span class="mi">7</span> <span class="mi">1</span> <span class="mi">16</span> <span class="mi">17</span>
+
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">0.0</span>	<span class="mf">0.2</span>	<span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">0.4</span>	<span class="mf">0.01</span>	<span class="mi">1</span>	<span class="mi">2</span>	<span class="mi">3</span>	<span class="mi">4</span>
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">0.8</span>	<span class="mf">0.2</span>	<span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">1.0</span>	<span class="mf">0.01</span>	<span class="mi">1</span>	<span class="mf">0.5</span>	<span class="mi">5</span>	<span class="o">-</span><span class="mi">3</span>
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">1.2</span>	<span class="mf">0.2</span>	<span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">1.4</span>	<span class="mf">0.01</span>	<span class="mi">1</span>	<span class="mf">1.5</span>	<span class="mi">10</span>	<span class="mi">12</span>
+<span class="nb">i</span><span class="mi">2</span>	<span class="mf">1.6</span>	<span class="mf">0.2</span>	<span class="mi">1</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040616160"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado. Optional arguments added by Andres Cabrera and Istvan Varga.</p>
+        <p>New in Csound 5 (Previously available only on CsoundAV)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="veloc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vexp_i.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">veloc </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vexp_i</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

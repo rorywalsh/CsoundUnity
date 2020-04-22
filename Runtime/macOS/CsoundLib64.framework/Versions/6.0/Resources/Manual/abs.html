@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>abs</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="opa.html" title="a" />
+    <link rel="next" href="active.html" title="active" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">abs</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="opa.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="active.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="abs"></a>
+      <div class="titlepage"></div>
+      <a id="IndexAbs" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">abs</span>
+        </h2>
+        <p>abs — 
+      Returns an absolute value.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125967344"></a>
+        <h2>Description</h2>
+        <p>
+      Returns the absolute value of <span class="emphasis"><em>x</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125965808"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>abs</strong></span>(x) (no rate
+    restriction)</pre>
+        <pre class="synopsis"><span class="command"><strong>abs</strong></span>(k/i[]) (k- or i-arrays )</pre>
+        <p>
+      where the argument within the parentheses may be an expression. Value converters perform arithmetic translation from units of one kind to units of another. The result can then be a term in a further expression.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125961968"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the abs opcode. It uses the file <a class="ulink" href="examples/abs.csd" target="_top"><em class="citetitle">abs.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276125960272"></a>
+          <p class="title">
+            <strong>Example 41. Example of the abs opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276496784064"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o abs.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">x</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">abs</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>i<span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span> i<span class="n">abs</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span><span class="mf">.15</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">13</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like:
+      </p>
+        <pre class="screen">
+instr 1:  iabs = 0.000
+instr 1:  iabs = 0.150
+instr 1:  iabs = 13.000
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125956000"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="exp.html" title="exp"><em class="citetitle">exp</em></a>,
+      <a class="link" href="frac.html" title="frac"><em class="citetitle">frac</em></a>,
+      <a class="link" href="int.html" title="int"><em class="citetitle">int</em></a>,
+      <a class="link" href="log.html" title="log"><em class="citetitle">log</em></a>,
+      <a class="link" href="log10.html" title="log10"><em class="citetitle">log10</em></a>,
+      <a class="link" href="opi.html" title="i"><em class="citetitle">i</em></a>,
+      <a class="link" href="sqrt.html" title="sqrt"><em class="citetitle">sqrt</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="opa.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="active.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">a </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> active</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

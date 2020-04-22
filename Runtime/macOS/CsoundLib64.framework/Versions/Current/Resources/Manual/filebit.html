@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>filebit</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ficlose.html" title="ficlose" />
+    <link rel="next" href="filelen.html" title="filelen" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">filebit</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ficlose.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="filelen.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="filebit"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFileBit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">filebit</span>
+        </h2>
+        <p>filebit — 
+      Returns the number of bits in each sample in a sound file.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111421440"></a>
+        <h2>Description</h2>
+        <p>
+      Returns the number of bits in each sample in a sound file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111420112"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ir <span class="command"><strong>filebit</strong></span> ifilcod [, iallowraw]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111418016"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilcod</em></span> -- sound file to be queried
+    </p>
+        <p>
+      <span class="emphasis"><em>iallowraw</em></span> -- (Optional) Allow raw sound files (default=1)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111415456"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>filebit</em></span> returns the number of bits in each
+      sample in the sound file <span class="emphasis"><em>ifilcod</em></span>.  In the
+      case of floating point samples the value -1 is returned for
+      floats and -2 for doubles.  For non-PCM formats the value is
+      negative, and based on libsndfile's format encoding.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111412896"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the filebit opcode. It uses the file <a class="ulink" href="examples/filebit.csd" target="_top"><em class="citetitle">filebit.csd</em></a>,
+and <a class="ulink" href="examples/mary.wav" target="_top"><em class="citetitle">mary.wav</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276111410288"></a>
+          <p class="title">
+            <strong>Example 276. Example of the filebit opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276478915728"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o filebit.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Print out the number of channels in the </span>
+  <span class="c1">; audio file "mary.wav".</span>
+  i<span class="n">bits</span> <span class="nb">filebit</span> <span class="s">"mary.wav"</span>
+  <span class="nb">print</span> i<span class="n">bits</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for 1 second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      The audio file <span class="quote">“<span class="quote">mary.wav</span>”</span> is in monoaural CD format, so <span class="emphasis"><em>filebit</em></span>'s output should include a line like this:
+      </p>
+        <pre class="screen">
+instr 1:  ibits = 16.000
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111404576"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="filelen.html" title="filelen"><em class="citetitle">filelen</em></a>,
+      <a class="link" href="filenchnls.html" title="filenchnls"><em class="citetitle">filenchnls</em></a>,
+      <a class="link" href="filepeak.html" title="filepeak"><em class="citetitle">filepeak</em></a>,
+      <a class="link" href="filesr.html" title="filesr"><em class="citetitle">filesr</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111399840"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>July 1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Example written by John ffitch.</p>
+        <p>New in Csound version 5.11</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ficlose.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="filelen.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ficlose </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> filelen</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

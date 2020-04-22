@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>prepiano</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="prealloc.html" title="prealloc" />
+    <link rel="next" href="print.html" title="print" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">prepiano</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="prealloc.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="print.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="prepiano"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPrepiano" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">prepiano</span>
+        </h2>
+        <p>prepiano — 
+      Creates a tone similar to a piano string prepared in a Cageian fashion.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069484144"></a>
+        <h2>Description</h2>
+        <p>
+      Audio output is a tone similar to a piano string, prepared with
+    a number of rubbers and rattles. The method uses a
+    physical model developed from solving the partial differential
+    equation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069482752"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>prepiano</strong></span> ifreq, iNS, iD, iK, \
+    iT30,iB, kbcl, kbcr, imass, ihvfreq, iinit, ipos, ivel, isfreq, \
+    isspread[, irattles, irubbers]</pre>
+        <pre class="synopsis">al,ar <span class="command"><strong>prepiano</strong></span> ifreq, iNS, iD, iK, \
+    iT30,iB, kbcl, kbcr, imass, ihvfreq, iinit, ipos, ivel, isfreq, \
+    isspread[, irattles, irubbers]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069479152"></a>
+        <h2>Initialization</h2>
+        <p>
+    <span class="emphasis"><em>ifreq</em></span> -- The base frequency of the string.
+    </p>
+        <p>
+    <span class="emphasis"><em>iNS</em></span> -- the number of strings involved.  In a
+    real piano 1, 2 or 3 strings are found in different frequency regions.
+    </p>
+        <p>
+    <span class="emphasis"><em>iD</em></span> -- the amount each string other that the
+    first is detuned from the main frequency, measured in cents.
+    </p>
+        <p>
+    <span class="emphasis"><em>iK</em></span> -- dimensionless stiffness parameter.
+    </p>
+        <p>
+    <span class="emphasis"><em>iT30</em></span> -- 30 db decay time in seconds.
+    </p>
+        <p>
+    <span class="emphasis"><em>ib</em></span> -- high-frequency loss parameter (keep this small).
+    </p>
+        <p>
+    <span class="emphasis"><em>imass</em></span> -- the mass of the piano hammer.
+    </p>
+        <p>
+    <span class="emphasis"><em>ihvfreq</em></span> -- the frequency of the natural
+    vibrations of the hammer.
+    </p>
+        <p>
+    <span class="emphasis"><em>iinit</em></span> -- the initial position of the hammer.
+    </p>
+        <p>
+    <span class="emphasis"><em>ipos</em></span> -- position along the string that the strike occurs.
+    </p>
+        <p>
+    <span class="emphasis"><em>ivel</em></span> -- normalized strike velocity.
+    </p>
+        <p>
+    <span class="emphasis"><em>isfreq</em></span> -- scanning frequency of the reading place.
+    </p>
+        <p>
+    <span class="emphasis"><em>isspread</em></span> -- scanning frequency spread.
+    </p>
+        <p>
+    <span class="emphasis"><em>irattles</em></span> -- table number giving locations of
+    any rattle(s).
+    </p>
+        <p>
+    <span class="emphasis"><em>irubbers</em></span> -- table number giving locations of
+    any rubbers(s).
+    </p>
+        <p>
+      The rattles and rubbers tables are collections of four values,
+      preceeded by a count.
+      In the case of a rattle the four are position, mass density
+      ratio of rattle/string,
+      frequency of rattle and vertical length of the rattle.  For the
+      rubber the fours are position, mass density ratio of
+      rubber/string, frequency of rubber and the loss parameter.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069464848"></a>
+        <h2>Performance</h2>
+        <p>
+      A note is played on a piano string, with the arguments as below.
+    </p>
+        <p>
+      <span class="emphasis"><em>kbcL</em></span> -- Boundary condition at left end of
+    string (1 is clamped, 2 pivoting and 3 free).
+    </p>
+        <p>
+      <span class="emphasis"><em>kbcR</em></span> -- Boundary condition at right end of
+    string (1 is clamped, 2 pivoting and 3 free).
+    </p>
+        <p>
+      Note that changing the boundary conditions during playing may
+  lead to glitches and is made available as an experiment.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069461312"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the prepiano opcode. It uses the file <a class="ulink" href="examples/prepiano.csd" target="_top"><em class="citetitle">prepiano.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276069459520"></a>
+          <p class="title">
+            <strong>Example 732. Example of the prepiano opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276435544640"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if real audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o prepiano.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">;;          fund NS detune stiffness decay loss (bndry) (hammer) scan prep</span>
+a<span class="n">a</span><span class="p">,</span>a<span class="n">b</span> <span class="nb">prepiano</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.002</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="nb">p5</span><span class="p">,</span> <span class="nb">p6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
+      <span class="nb">outs</span> a<span class="n">a</span><span class="o">*</span><span class="mf">.2</span><span class="p">,</span> a<span class="n">b</span><span class="o">*</span><span class="mf">.2</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mf">0.6</span> <span class="mi">10</span> <span class="mi">100</span> <span class="mf">0.001</span> <span class="c1">;; 1 rattle</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">8</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mf">0.7</span> <span class="mi">50</span> <span class="mi">500</span> <span class="mi">1000</span>  <span class="c1">;; 1 rubber</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mf">0.0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mf">0.09</span> <span class="mi">20</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">.</span>  <span class="o">-</span><span class="mi">1</span> <span class="mf">0.09</span> <span class="mi">40</span>        <span class="c1">;; 1 -&gt; skip initialisation</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">2</span> <span class="o">.</span>  <span class="o">-</span><span class="mi">1</span> <span class="mf">0.09</span> <span class="mi">60</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">3</span> <span class="o">.</span>  <span class="o">-</span><span class="mi">1</span> <span class="mf">0.09</span> <span class="mi">80</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">4</span> <span class="mf">1.8</span>  <span class="o">-</span><span class="mi">1</span> <span class="mf">0.09</span> <span class="mi">100</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069455536"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Stefan Bilbao </td>
+          </tr>
+          <tr>
+            <td>University of Edinburgh, UK</td>
+          </tr>
+          <tr>
+            <td>Author: John ffitch </td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.05</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="prealloc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="print.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">prealloc </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> print</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

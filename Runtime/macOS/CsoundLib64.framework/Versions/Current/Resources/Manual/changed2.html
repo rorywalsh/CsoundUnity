@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>changed2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="changed.html" title="changed" />
+    <link rel="next" href="chani.html" title="chani" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">changed2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="changed.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="chani.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="changed2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexChanged2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">changed2</span>
+        </h2>
+        <p>changed2 — 
+     k-rate signal change detector.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121800896"></a>
+        <h2>Description</h2>
+        <p>
+	This opcode outputs a trigger signal that informs when any one
+        of its k-rate arguments has changed, or a value in an array. Useful with valuator widgets or MIDI controllers.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121799360"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ktrig <span class="command"><strong>changed2</strong></span> kvar1 [, kvar2,..., kvarN]</pre>
+        <pre class="synopsis">ktrig <span class="command"><strong>changed2</strong></span> karr[]</pre>
+        <pre class="synopsis">ktrig <span class="command"><strong>changed2</strong></span> aarr[]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121794656"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> - Outputs a value of 1 when any of
+      the k-rate signals has changed, or any value in the array, otherwise outputs 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>kvar1 [, kvar2,..., kvarN]</em></span> - k-rate variables to watch for changes.
+    </p>
+        <p>
+      <span class="emphasis"><em>xarray</em></span> - any array type.
+    </p>
+        <p>
+      Unlike the opcode <span class="emphasis"><em>changed</em></span> this opcode will
+      never report the first cycle as a change.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121790096"></a>
+        <h2>Examples</h2>
+        <p>
+      Here are two examples of the changed2 opcode. They use the files
+      <a class="ulink" href="examples/changed2.csd" target="_top"><em class="citetitle">changed2.csd</em></a>
+      and <a class="ulink" href="examples/changed2a.csd" target="_top"><em class="citetitle">changed2a.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276121787408"></a>
+          <p class="title">
+            <strong>Example 122. Example of the changed2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276489728592"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o changed.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">sig</span>  <span class="nb">oscil</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">int</span>  <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>k<span class="n">sig</span><span class="p">)</span>
+k<span class="n">trig</span> <span class="n">changed2</span> k<span class="n">int</span>
+      <span class="nb">printk</span> <span class="mf">0.2</span><span class="p">,</span> k<span class="n">int</span>
+      <span class="nb">printk2</span> k<span class="n">trig</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">20</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+            Its output should include lines like:
+            </p>
+        <pre class="screen">
+ i   1 time     0.00267:     0.00000
+ i1     0.00000
+ i1     1.00000
+ i1     0.00000
+ i   1 time     0.20267:     1.00000
+ i   1 time     0.40267:     1.00000
+ i1     1.00000
+ i1     0.00000
+ i   1 time     0.60267:     1.00000
+ i   1 time     0.80267:     1.00000
+ i1     1.00000
+ i1     0.00000
+ i   1 time     1.00000:     0.00000
+ i1     1.00000
+ i1     0.00000
+ i   1 time     1.20267:    -1.00000
+ i   1 time     1.40267:    -1.00000
+ i1     1.00000
+ i1     0.00000
+ i   1 time     1.60267:    -1.00000
+ i   1 time     1.80000:    -1.00000
+ i1     1.00000
+ i1     0.00000
+ i   1 time     2.00000:    -0.00000
+ i1     1.00000
+ i1     0.00000
+ .........
+      </pre>
+        <p>
+    </p>
+        <div class="example">
+          <a id="idm276121785024"></a>
+          <p class="title">
+            <strong>Example 123. Example of the changed2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276489213776"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsOptions&gt;</span>
+-n
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+gk<span class="n">Array</span><span class="p">[][]</span> <span class="nb">init</span>   <span class="mi">2</span><span class="p">,</span><span class="mi">3</span>
+gk<span class="n">Array</span>     <span class="nb">fillarray</span>  <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+k<span class="n">1</span> <span class="n">changed2</span> gk<span class="n">Array</span>
+<span class="k">if</span> k<span class="n">1</span><span class="o">==</span><span class="mi">1</span> <span class="k">then</span>
+    <span class="nb">printks</span> <span class="s">"An element in the array changed"</span><span class="p">,</span> <span class="mi">0</span>
+<span class="k">endif</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span><span class="c1">; change value of channel 'step1'</span>
+    gk<span class="n">Array</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">100</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">4</span> <span class="mf">.1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <br class="example-break" />
+      </div>
+      <div class="refsect1">
+        <a id="idm276121783472"></a>
+        <h2>Credits</h2>
+        <p>Written by John ffitch.</p>
+        <p>Example written by Andrés Cabrera.</p>
+        <p>New in Csound 6.7</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="changed.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="chani.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">changed </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> chani</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

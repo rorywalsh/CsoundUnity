@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>chanctrl</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="cggoto.html" title="cggoto" />
+    <link rel="next" href="changed.html" title="changed" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">chanctrl</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cggoto.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="changed.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="chanctrl"></a>
+      <div class="titlepage"></div>
+      <a id="IndexChanctrl" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">chanctrl</span>
+        </h2>
+        <p>chanctrl — 
+      Get the current value of a MIDI channel controller.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121883408"></a>
+        <h2>Description</h2>
+        <p>
+      Get the current value of a controller and optionally map it onto specified range.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121882144"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ival <span class="command"><strong>chanctrl</strong></span> ichnl, ictlno [, ilow] [, ihigh]</pre>
+        <pre class="synopsis">kval <span class="command"><strong>chanctrl</strong></span> ichnl, ictlno [, ilow] [, ihigh]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121878704"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ichnl</em></span> -- the MIDI channel (1-16).
+    </p>
+        <p>
+      <span class="emphasis"><em>ictlno</em></span> -- the MIDI controller number (0-127).
+    </p>
+        <p>
+      <span class="emphasis"><em>ilow</em></span>, <span class="emphasis"><em>ihigh</em></span> -- low and high ranges for mapping
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121875024"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the chanctrl opcode. It uses the file <a class="ulink" href="examples/chanctrl.csd" target="_top"><em class="citetitle">chanctrl.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276121873232"></a>
+          <p class="title">
+            <strong>Example 120. Example of the chanctrl opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276489358944"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   No messages  MIDI in</span>
+-odac            -d         -M0  <span class="c1">;;;RT audio I/O with MIDI in</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o chanctrl.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; press your midi keyboard and move your midi controller to see result</span>
+
+i<span class="n">chnl</span>  <span class="o">=</span> <span class="mi">1</span>		<span class="c1">;MIDI note inputs on channel 1</span>
+i<span class="n">ctlno</span> <span class="o">=</span> <span class="mi">7</span>		<span class="c1">;use midi volume controller </span>
+k<span class="n">ch</span>  <span class="nb">chanctrl</span> i<span class="n">chnl</span><span class="p">,</span> <span class="mi">7</span>	<span class="c1">;to control amplitude of oscil</span>
+     <span class="nb">printk2</span>  k<span class="n">ch</span>
+
+a<span class="n">sig</span> <span class="nb">oscil</span> k<span class="n">ch</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">127</span><span class="p">),</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span>  a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;Dummy f-table to give time for real-time MIDI events</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">30</span>
+<span class="c1">;sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121869248"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Mike Berry</td>
+          </tr>
+          <tr>
+            <td>Mills College</td>
+          </tr>
+          <tr>
+            <td>May, 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel and controller number ranges.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cggoto.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="changed.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cggoto </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> changed</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>JackoAudioOutConnect</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="JackoAudioOut.html" title="JackoAudioOut" />
+    <link rel="next" href="JackoFreewheel.html" title="JackoFreewheel" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">JackoAudioOutConnect</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="JackoAudioOut.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="JackoFreewheel.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="JackoAudioOutConnect"></a>
+      <div class="titlepage"></div>
+      <a id="IndexJackoAudioOutConnect" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">JackoAudioOutConnect</span>
+        </h2>
+        <p>JackoAudioOutConnect — 
+      Creates an audio connection from Csound to a Jack port.
+     </p>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">plugin: Requires jacko plugin</td>
+          </tr>
+        </table>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105734416"></a>
+        <h2>Description</h2>
+        <p>
+      In the orchestra header, creates an audio connection 
+      from a Jack audio output port inside this instance 
+      of Csound to an external Jack audio input port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105733056"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>JackoAudioOutConnect </strong></span>ScsoundPortName, SexternalPortName</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105731072"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ScsoundPortName</em></span> -- The short name ("portname") 
+      of the internal Jack audio output port.
+    </p>
+        <p>
+      <span class="emphasis"><em>SexternalPortName</em></span> -- The full name ("clientname:portname") 
+      of an external Jack audio input port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105728512"></a>
+        <h2>Performance</h2>
+        <p>
+      The actual audio must be written with the JackoAudioOut 
+      opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105727248"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="JackoOpcodes.html" title="Jacko Opcodes"><em class="citetitle">The Jacko Opcodes</em></a>, 
+      <a class="link" href="JackoInit.html" title="JackoInit"><em class="citetitle">JackoInfo</em></a>, 
+      <a class="link" href="JackoInfo.html" title="JackoInfo"><em class="citetitle">JackoInfo</em></a>, 
+      <a class="link" href="JackoFreewheel.html" title="JackoFreewheel"><em class="citetitle">JackoFreewheel</em></a>, 
+      <a class="link" href="JackoAudioInConnect.html" title="JackoAudioInConnect"><em class="citetitle">JackoAudioOutConnect</em></a>, 
+      <a class="link" href="JackoMidiInConnect.html" title="JackoMidiInConnect"><em class="citetitle">JackoMidiInConnect</em></a>, 
+      <a class="link" href="JackoMidiOutConnect.html" title="JackoMidiOutConnect"><em class="citetitle">JackoMidiOutConnect</em></a>, 
+      <a class="link" href="JackoOn.html" title="JackoOn"><em class="citetitle">JackoOn</em></a>, 
+      <a class="link" href="JackoAudioIn.html" title="JackoAudioIn"><em class="citetitle">JackoAudioIn</em></a>, 
+      <a class="link" href="JackoAudioOut.html" title="JackoAudioOut"><em class="citetitle">JackoAudioOut</em></a>, 
+      <a class="link" href="JackoMidiOut.html" title="JackoMidiOut"><em class="citetitle">JackoMidiOut</em></a>, 
+      <a class="link" href="JackoNoteOut.html" title="JackoNoteOut"><em class="citetitle">JackoNoteOut</em></a>, 
+      <a class="link" href="JackoTransport.html" title="JackoTransport"><em class="citetitle">JackoTransport</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105714368"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2010</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="JackoAudioOut.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="JackoFreewheel.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">JackoAudioOut </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> JackoFreewheel</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

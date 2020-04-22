@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>slider8table</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="slider8f.html" title="slider8f" />
+    <link rel="next" href="slider8tablef.html" title="slider8tablef" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">slider8table</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="slider8f.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="slider8tablef.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="slider8table"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSlider8table" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">slider8table</span>
+        </h2>
+        <p>slider8table — 
+      Stores a bank of 8 different MIDI control messages to a table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054946944"></a>
+        <h2>Description</h2>
+        <p>
+      Stores a bank of 8 different MIDI control messages to a table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054945696"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kflag <span class="command"><strong>slider8table</strong></span> ichan, ioutTable, ioffset, ictlnum1, imin1, imax1, \
+      init1, ifn1,..., ictlnum8, imin8, imax8, init8, ifn8</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054943504"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>i1 ... i8</em></span> -- output values
+    </p>
+        <p>
+      <span class="emphasis"><em>ichan</em></span> -- MIDI channel (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>ioutTable</em></span> -- number of the table that will contain the output
+    </p>
+        <p>
+      <span class="emphasis"><em>ioffset</em></span> -- output table offset. A zero means that the output of the first slider will affect the first table element. A 10 means that the output of the first slider will affect the 11th table element.
+    </p>
+        <p>
+      <span class="emphasis"><em>ictlnum1 ... ictlnum8</em></span> -- MIDI control number (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>imin1 ... imin8</em></span> -- minimum values for each controller
+    </p>
+        <p>
+      <span class="emphasis"><em>imax1 ... imax8</em></span> -- maximum values for each controller
+    </p>
+        <p>
+      <span class="emphasis"><em>init1 ... init8</em></span> -- initial value for each controller
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn1 ... ifn8</em></span> -- function table for conversion for each controller
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054935056"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kflag</em></span> -- a flag that informs if any control-change message in the bank has been received. In this case <span class="emphasis"><em>kflag</em></span> is set to 1. Otherwise is set to zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>slider8table</em></span> handles a bank of MIDI controllers, useful when using MIDI mixer such as Kawai MM-16 or others for changing whatever sound parameter in real-time. The raw MIDI control messages at the input port are converted to agree with <span class="emphasis"><em>iminN</em></span> and <span class="emphasis"><em>imaxN</em></span>,  and an initial value can be set. Also, an optional non-interpolated function table with a custom translation curve is allowed, useful for enabling exponential response curves.
+    </p>
+        <p>
+      When no function table translation is required, set the <span class="emphasis"><em>ifnN</em></span> value to 0, else set <span class="emphasis"><em>ifnN</em></span> to a valid function table number.  When table translation is enabled (i.e. setting <span class="emphasis"><em>ifnN</em></span> value to a non-zero number referring to an already allocated function table), <span class="emphasis"><em>initN</em></span> value should be set equal to <span class="emphasis"><em>iminN</em></span> or <span class="emphasis"><em>imaxN</em></span> value, else the initial output value will not be the same as specified in <span class="emphasis"><em>initN</em></span> argument.
+    </p>
+        <p>
+      <span class="emphasis"><em>slider8table</em></span> allows a bank of 8 different MIDI control message numbers.
+    </p>
+        <p>
+      As the input and output arguments are many, you can split the line using '\' (backslash) character (new in 3.47 version) to improve the readability. Using these opcodes is considerably more efficient than using the separate ones (<a class="link" href="ctrl7.html" title="ctrl7"><em class="citetitle">ctrl7</em></a> and <a class="link" href="tonek.html" title="tonek"><em class="citetitle">tonek</em></a>) when more controllers are required.
+    </p>
+        <p>
+      <span class="emphasis"><em>slider8table</em></span> is very similar to  <a class="link" href="slider8.html" title="slider8"><em class="citetitle">slider8</em></a> and <span class="emphasis"><em>sliderN</em></span> family of opcodes (see their manual for more information). The actual difference is that the output is not stored to k-rate variables, but to a table, denoted by the <span class="emphasis"><em>ioutTable</em></span> argument. It is possible to define a starting index in order to use the same table for more than one slider bank (or other purposes).
+    </p>
+        <p>
+      It is possible to use this opcode together with <a class="link" href="FLslidBnk2Setk.html" title="FLslidBnk2Setk"><em class="citetitle">FLslidBnk2Setk</em></a> and <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a>, so you can synchronize the position of the MIDI values to the position of the FLTK valuator widgets of <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a>. Notice that you have to specify the same min/max values as well the linear/exponential responses in both <span class="emphasis"><em>sliderNtable(f)</em></span> and <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a>. The exception is when using table-indexed response instead of a lin/exp response. In this case, in order to achieve a useful result, the table-indexed response and actual min/max values must be set only in <a class="link" href="FLslidBnk2.html" title="FLslidBnk2"><em class="citetitle">FLslidBnk2</em></a>, whereas, in <span class="emphasis"><em>sliderNtable(f)</em></span>, you have to set a linear response and a minimum of zero and a maximum of one in all sliders.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054915024"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="slider16table.html" title="slider16table"><em class="citetitle">slider16table</em></a>,
+      <a class="link" href="slider16tablef.html" title="slider16tablef"><em class="citetitle">slider16tablef</em></a>,
+      <a class="link" href="slider32table.html" title="slider32table"><em class="citetitle">slider32table</em></a>,
+      <a class="link" href="slider32tablef.html" title="slider32tablef"><em class="citetitle">slider32tablef</em></a>,
+      <a class="link" href="slider64table.html" title="slider64table"><em class="citetitle">slider64table</em></a>,
+      <a class="link" href="slider64tablef.html" title="slider64tablef"><em class="citetitle">slider64tablef</em></a>,
+      <a class="link" href="slider8tablef.html" title="slider8tablef"><em class="citetitle">slider8tabletablef</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054907680"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="slider8f.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="slider8tablef.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">slider8f </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> slider8tablef</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

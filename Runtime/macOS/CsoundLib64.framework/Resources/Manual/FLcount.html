@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLcount</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLcolor2.html" title="FLcolor2" />
+    <link rel="next" href="FLexecButton.html" title="FLexecButton" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLcount</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLcolor2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLexecButton.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLcount"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLcount" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLcount</span>
+        </h2>
+        <p>FLcount — 
+      A FLTK widget opcode that creates a counter.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110243664"></a>
+        <h2>Description</h2>
+        <p>
+      Allows the user to increase/decrease a value with mouse clicks on a corresponding arrow button.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110242256"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout, ihandle <span class="command"><strong>FLcount</strong></span> "label", imin, imax, istep1, istep2, itype, \
+      iwidth, iheight, ix, iy, iopcode [, kp1] [, kp2] [, kp3] [...] [, kpN]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110239776"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> -- a handle value (an integer number) that unequivocally references a corresponding widget. Used by further opcodes that changes some valuator's properties. It is automatically set by the corresponding valuator.
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">label</span>”</span></em></span> -- a double-quoted string containing some user-provided text, placed near the corresponding widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>imin</em></span> -- minimum value of output range
+    </p>
+        <p>
+      <span class="emphasis"><em>imax</em></span> -- maximum value of output range
+    </p>
+        <p>
+      <span class="emphasis"><em>istep1</em></span> -- a floating-point number indicating the increment of valuator value corresponding to of each mouse click. <span class="emphasis"><em>istep1</em></span> is for fine adjustments.
+    </p>
+        <p>
+      <span class="emphasis"><em>istep2</em></span> -- a floating-point number indicating the increment of valuator value corresponding to of each mouse click. <span class="emphasis"><em>istep2</em></span> is for coarse adjustments.
+    </p>
+        <p>
+      <span class="emphasis"><em>itype</em></span> -- an integer number denoting the appearance of the valuator.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iopcode</em></span> -- score opcode type. You have to provide the ascii code of the letter corresponding to the score opcode. At present time only <span class="quote">“<span class="quote">i</span>”</span> (ascii code 105) score statements are supported. A zero value refers to a default value of <span class="quote">“<span class="quote">i</span>”</span>. So both 0 and 105 activates the <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i</em></a> opcode. A value of -1 disables this opcode feature.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110224400"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kout</em></span> -- output value
+    </p>
+        <p>
+      <span class="emphasis"><em>kp1</em></span>, <span class="emphasis"><em>kp2</em></span>, ..., <span class="emphasis"><em>kpN</em></span> -- arguments of the activated instruments.
+    </p>
+        <p>
+      <span class="emphasis"><em>FLcount</em></span> allows the user to increase/decrease a value with mouse clicks on corresponding arrow buttons:
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/flcount.png" alt="FLcount." />
+          <div class="caption">
+            <p>FLcount.</p>
+          </div>
+        </div>
+        <p>
+    </p>
+        <p>
+      There are two kind of arrow buttons, for larger and smaller steps. Notice that <span class="emphasis"><em>FLcount</em></span> not only outputs a value and a handle, but can also activate (schedule) an instrument provided by the user each time a button is pressed.  P-fields of the activated instrument are <span class="emphasis"><em>kp1</em></span> (instrument number), <span class="emphasis"><em>kp2</em></span> (action time), <span class="emphasis"><em>kp3</em></span> (duration) and so on with user p-fields. If the <span class="emphasis"><em>iopcode</em></span> argument is set to a negative number, no instrument is activated. So this feature is optional.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110214000"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLcount opcode. It uses the file <a class="ulink" href="examples/FLcount.csd" target="_top"><em class="citetitle">FLcount.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276110212192"></a>
+          <p class="title">
+            <strong>Example 295. Example of the FLcount opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276500478464"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o FLcount.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Demonstration of the flcount opcode</span>
+<span class="c1">; clicking on the single arrow buttons</span>
+<span class="c1">; increments the oscillator in semitone steps</span>
+<span class="c1">; clicking on the double arrow buttons </span>
+<span class="c1">; increments the oscillator in octave steps</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">441</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">FLpanel</span> <span class="s">"Counter"</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span>
+    <span class="c1">; Minimum value output by counter</span>
+    i<span class="n">min</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="c1">; Maximum value output by counter</span>
+    i<span class="n">max</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="c1">; Single arrow step size (semitones)</span>
+    i<span class="n">step1</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">12</span>
+    <span class="c1">; Double arrow step size (octave)</span>
+    i<span class="n">step2</span> <span class="o">=</span> <span class="mi">1</span> 
+    <span class="c1">; Counter type (1=double arrow counter)</span>
+    i<span class="n">type</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1">; Width of the counter in pixels</span>
+    i<span class="n">width</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="c1">; Height of the counter in pixels</span>
+    i<span class="n">height</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="c1">; Distance of the left edge of the counter</span>
+    <span class="c1">; from the left edge of the panel</span>
+    i<span class="n">x</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="c1">; Distance of the top edge of the counter</span>
+    <span class="c1">; from the top edge of the panel</span>
+    i<span class="n">y</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="c1">; Score event type (-1=ignored)</span>
+    i<span class="n">opcode</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    gk<span class="n">oct</span><span class="p">,</span> i<span class="n">handle</span> <span class="nb">FLcount</span> <span class="s">"pitch in oct format"</span><span class="p">,</span> i<span class="n">min</span><span class="p">,</span> i<span class="n">max</span><span class="p">,</span> i<span class="n">step1</span><span class="p">,</span> i<span class="n">step2</span><span class="p">,</span> i<span class="n">type</span><span class="p">,</span> i<span class="n">width</span><span class="p">,</span> i<span class="n">height</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span><span class="p">,</span> i<span class="n">opcode</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+<span class="c1">; End of panel contents</span>
+<span class="nb">FLpanelEnd</span>
+<span class="c1">; Run the widget thread!</span>
+<span class="nb">FLrun</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    i<span class="n">amp</span> <span class="o">=</span> <span class="mi">15000</span>
+    i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+    a<span class="n">sig</span> <span class="nb">oscili</span> i<span class="n">amp</span><span class="p">,</span> <span class="nb">cpsoct</span><span class="p">(</span>gk<span class="n">oct</span><span class="p">),</span> i<span class="n">fn</span>
+    <span class="nb">out</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Function table that defines a single cycle</span>
+<span class="c1">; of a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument 1 will play a note for 1 hour.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3600</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110208176"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLjoy.html" title="FLjoy"><em class="citetitle">FLjoy</em></a>,
+      <a class="link" href="FLknob.html" title="FLknob"><em class="citetitle">FLknob</em></a>,
+      <a class="link" href="FLroller.html" title="FLroller"><em class="citetitle">FLroller</em></a>,
+      <a class="link" href="FLslider.html" title="FLslider"><em class="citetitle">FLslider</em></a>,
+      <a class="link" href="FLtext.html" title="FLtext"><em class="citetitle">FLtext</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110202544"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+        <p>Example written by Iain McCurdy, edited by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLcolor2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLexecButton.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLcolor2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLexecButton</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

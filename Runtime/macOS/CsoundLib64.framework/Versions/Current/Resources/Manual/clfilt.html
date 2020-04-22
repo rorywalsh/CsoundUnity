@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>clfilt</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="clear.html" title="clear" />
+    <link rel="next" href="clip.html" title="clip" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">clfilt</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="clear.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="clip.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="clfilt"></a>
+      <div class="titlepage"></div>
+      <a id="IndexClfilt" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">clfilt</span>
+        </h2>
+        <p>clfilt — 
+      Implements low-pass and high-pass filters of different styles.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120763760"></a>
+        <h2>Description</h2>
+        <p>
+       Implements the classical standard analog filter types: low-pass and high-pass. They are implemented with the four classical kinds of filters: Butterworth, Chebyshev Type I, Chebyshev Type II, and Elliptical.  The number of poles may be any even number from 2 to 80.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120762016"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>clfilt</strong></span> asig, kfreq, itype, inpol [, ikind] [, ipbr] [, isba] [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120759856"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>itype</em></span> -- 0 for low-pass, 1 for high-pass.
+    </p>
+        <p>
+      <span class="emphasis"><em>inpol</em></span> -- The number of poles in the filter. It must be an even number from 2 to 80.
+    </p>
+        <p>
+      <span class="emphasis"><em>ikind</em></span> (optional) -- 0 for Butterworth, 1 for Chebyshev Type I, 2 for Chebyshev Type II, 3 for Elliptical. Defaults to 0 (Butterworth)
+    </p>
+        <p>
+      <span class="emphasis"><em>ipbr</em></span> (optional) -- The pass-band ripple in dB. Must be greater than 0. It is ignored by Butterworth and Chebyshev Type II. The default is 1 dB.
+    </p>
+        <p>
+      <span class="emphasis"><em>isba</em></span> (optional) -- The stop-band attenuation in dB. Must be less than 0. It is ignored by Butterworth and Chebyshev Type I. The default is -60 dB.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional) --  0 initializes all filter internal states to 0. 1 skips initialization. The default is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120752896"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- The input audio signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- The corner frequency for low-pass or high-pass.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120750304"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the clfilt opcode as a low-pass filter. It uses the file <a class="ulink" href="examples/clfilt_lowpass.csd" target="_top"><em class="citetitle">clfilt_lowpass.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276120748464"></a>
+          <p class="title">
+            <strong>Example 135. Example of the clfilt opcode as a low-pass filter.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276488868144"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o clfilt_lowpass.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; white noise</span>
+
+a<span class="n">sig</span> <span class="nb">rand</span> <span class="mf">0.5</span>
+<span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">; filtered noise </span>
+
+a<span class="n">sig</span> <span class="nb">rand</span> <span class="mf">0.9</span>
+<span class="c1">; Lowpass filter signal asig with a </span>
+<span class="c1">; 10-pole Butterworth at 500 Hz.</span>
+a<span class="n">1</span> <span class="nb">clfilt</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span>
+   <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is an example of the clfilt opcode as a high-pass filter. It uses the file <a class="ulink" href="examples/clfilt_highpass.csd" target="_top"><em class="citetitle">clfilt_highpass.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276120743344"></a>
+          <p class="title">
+            <strong>Example 136. Example of the clfilt opcode as a high-pass filter.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276488225200"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o clfilt_highpass.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; white noise</span>
+
+a<span class="n">sig</span> <span class="nb">rand</span> <span class="mf">0.6</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>	<span class="c1">;filtered noise</span>
+
+a<span class="n">sig</span> <span class="nb">rand</span> <span class="mf">0.7</span>
+<span class="c1">; Highpass filter signal asig with a 6-pole Chebyshev</span>
+<span class="c1">; Type I at 20 Hz with 3 dB of passband ripple.</span>
+a<span class="n">1</span> <span class="nb">clfilt</span> a<span class="n">sig</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span>
+   <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276120739360"></a>
+        <h2>Credits</h2>
+        <p>Author: Erik Spjut</p>
+        <p>New in version 4.20</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="clear.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="clip.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">clear </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> clip</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

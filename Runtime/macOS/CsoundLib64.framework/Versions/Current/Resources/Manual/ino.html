@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ino</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="inletv.html" title="inletv" />
+    <link rel="next" href="inq.html" title="inq" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">ino</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="inletv.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="inq.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="ino"></a>
+      <div class="titlepage"></div>
+      <a id="Indexino" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">ino</span>
+        </h2>
+        <p>ino — 
+      Reads eight-channel audio data from an external device or stream.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097344928"></a>
+        <h2>Description</h2>
+        <p>
+      Reads eight-channel audio data from an external device or stream.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        This opcode is designed to be used only with orchestras that have
+        nchnls_i=8. Doing so with orchestras with nchnls_i &gt; 8 will
+        cause incorrect audio input.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097342256"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar1, ar2, ar3, ar4, ar5, ar6, ar7, ar8 <span class="command"><strong>ino</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097340304"></a>
+        <h2>Performance</h2>
+        <p>
+      Reads eight-channel audio data from an external device or stream. If the command-line <a class="link" href="CommandFlags.html#FlagsMinusLowerI"><em class="citetitle">-i</em></a> flag is set, sound is read continuously from the audio input stream (e.g. <span class="emphasis"><em>stdin</em></span> or a soundfile) into an internal buffer. Any number of these opcodes can read freely from this buffer.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097337536"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="diskin.html" title="diskin"><em class="citetitle">diskin</em></a>,
+      <a class="link" href="in.html" title="in"><em class="citetitle">in</em></a>,
+      <a class="link" href="inch.html" title="inch"><em class="citetitle">inh</em></a>,
+      <a class="link" href="inh.html" title="inh"><em class="citetitle">inh</em></a>,
+      <a class="link" href="inq.html" title="inq"><em class="citetitle">inq</em></a>,
+      <a class="link" href="ins.html" title="ins"><em class="citetitle">ins</em></a>,
+      <a class="link" href="soundin.html" title="soundin"><em class="citetitle">soundin</em></a>
+     </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097330400"></a>
+        <h2>Credits</h2>
+        <p>Author: John ffitch</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="inletv.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="inq.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">inletv </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> inq</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

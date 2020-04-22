@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>opcode</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="olabuffer.html" title="olabuffer" />
+    <link rel="next" href="oscbnk.html" title="oscbnk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">opcode</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="olabuffer.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="oscbnk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="opcode"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOpcode" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">opcode</span>
+        </h2>
+        <p>opcode — 
+      Defines the start of user-defined opcode block.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076699584"></a>
+        <h2>Defining opcodes</h2>
+        <p>
+      The <span class="emphasis"><em>opcode</em></span> and <span class="emphasis"><em>endop</em></span> statements allow defining a new opcode that can be used the same way as any of the built-in Csound opcodes. These opcode blocks are very similar to instruments (and are, in fact, implemented as special instruments), but cannot be called as a normal instrument e.g. with the <a class="link" href="i.html" title="i Statement (Instrument or Note Statement)"><em class="citetitle">i statements</em></a>.
+    </p>
+        <p>
+      A user-defined opcode block must precede the instrument (or other opcode) from which it is used. But it is possible to call the opcode from itself. This allows recursion of any depth that is limited only by available memory. Additionally, there is an experimental feature that allows running the opcode definition at a higher control rate than the <a class="link" href="kr.html" title="kr"><em class="citetitle">kr</em></a> value specified in the orchestra header.
+    </p>
+        <p>
+      Similarly to instruments, the variables and labels of a user-defined opcode block are local and cannot be accessed from the caller instrument (and the opcode cannot access variables of the caller, either).
+    </p>
+        <p>
+      Some parameters are automatically copied at initialization, however:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>all p-fields up to and including the
+        highest-numbered one referenced in the calling
+        instrument</p>
+            </li>
+            <li class="listitem">
+              <p>extra time (see also <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a>, <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>, and related opcodes). This may affect the operation of <span class="emphasis"><em>linsegr</em></span>/<span class="emphasis"><em>expsegr</em></span>/<span class="emphasis"><em>linenr</em></span>/<span class="emphasis"><em>envlpxr</em></span> in the user-defined opcode block.</p>
+            </li>
+            <li class="listitem">
+              <p>MIDI parameters, if there are any.</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      Also, the release flag (see the <a class="link" href="release.html" title="release"><em class="citetitle">release</em></a> opcode) is copied at performance time.
+    </p>
+        <p>
+      Modifying the note duration in the opcode definition by assigning to
+      <span class="emphasis"><em>p3</em></span>, or using <a class="link" href="ihold.html" title="ihold"><em class="citetitle">ihold</em></a>,
+      <a class="link" href="turnoff.html" title="turnoff"><em class="citetitle">turnoff</em></a>,
+      <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a>,
+      <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>,
+      or similar opcodes will also affect the caller instrument.
+      Changes to MIDI controllers (for example with
+      <a class="link" href="ctrlinit.html" title="ctrlinit"><em class="citetitle">ctrlinit</em></a>) will
+      also apply to the instrument from which the opcode was called.
+    </p>
+        <p>
+      Use the <a class="link" href="setksmps.html" title="setksmps"><em class="citetitle">setksmps</em></a> opcode to set the local <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a> value.
+    </p>
+        <p>
+      The <a class="link" href="xin.html" title="xin"><em class="citetitle">xin</em></a> and <a class="link" href="xout.html" title="xout"><em class="citetitle">xout</em></a> opcodes copy variables to and from the opcode definition, allowing communication with the calling instrument.
+    </p>
+        <p>
+      The types of input and output variables are defined by the parameters <span class="emphasis"><em>intypes</em></span> and <span class="emphasis"><em>outtypes</em></span>.
+      </p>
+        <div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Tip">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Tip]" src="images/tip.png" />
+              </td>
+              <th align="left">Tip</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+          You can create UDOs which take no inputs or outputs by using 0 instead of a string.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Notes">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Notes</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p><span class="emphasis"><em>xin</em></span> and <span class="emphasis"><em>xout</em></span> should be called only once, and <span class="emphasis"><em>xin</em></span> should precede <span class="emphasis"><em>xout</em></span>, otherwise an init error and deactivation of the current instrument may occur.</p>
+                    </li>
+                    <li class="listitem">
+                      <p>These opcodes actually run only at i-time. Performance time copying is done by the user opcode call. This means that skipping <span class="emphasis"><em>xin</em></span> or <span class="emphasis"><em>xout</em></span> with <a class="link" href="kgoto.html" title="kgoto"><em class="citetitle">kgoto</em></a> has no effect, while skipping with <a class="link" href="igoto.html" title="igoto"><em class="citetitle">igoto</em></a> affects both init and performance time operation.</p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076668032"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>opcode</strong></span> name, outtypes, intypes</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076666080"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>name</em></span> -- name of the opcode. It may consist of any combination of letters, digits, and underscore but should not begin with a digit. If an opcode with the specified name already exists, it is redefined (a warning is printed in such cases). Some reserved words (like <span class="emphasis"><em>instr</em></span> and <span class="emphasis"><em>endin</em></span>) cannot be redefined.
+    </p>
+        <p>
+      <span class="emphasis"><em>intypes</em></span> -- list of input types, any combination of the characters: a, k, O, P, V, K, i, o, p, and j. A single 0 character can be used if there are no input arguments. Double quotes and delimiter characters (e.g. comma) are <span class="emphasis"><em>not</em></span> needed.
+    </p>
+        <p>
+      The meaning of the various <span class="emphasis"><em>intypes</em></span> is shown in the following table:
+
+      </p>
+        <div class="informaltable">
+          <table class="informaltable" border="1">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Variable Types Allowed</th>
+                <th>Updated At</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>a</td>
+                <td>a-rate variable</td>
+                <td>a-rate</td>
+                <td>a-rate</td>
+              </tr>
+              <tr>
+                <td>i</td>
+                <td>i-rate variable</td>
+                <td>i-rate</td>
+                <td>i-time</td>
+              </tr>
+              <tr>
+                <td>j</td>
+                <td>optional i-time, defaults to -1</td>
+                <td>i-rate, constant</td>
+                <td>i-time</td>
+              </tr>
+              <tr>
+                <td>k</td>
+                <td>k-rate variable</td>
+                <td>k- and i-rate, constant</td>
+                <td>k-rate</td>
+              </tr>
+              <tr>
+                <td>O</td>
+                <td>optional k-rate variable, defaults to 0</td>
+                <td>k- and i-rate, constant</td>
+                <td>k-rate</td>
+              </tr>
+              <tr>
+                <td>P</td>
+                <td>optional k-rate variable, defaults to 1</td>
+                <td>k- and i-rate, constant</td>
+                <td>k-rate</td>
+              </tr>
+              <tr>
+                <td>V</td>
+                <td>optional k-rate variable, defaults to 0.5</td>
+                <td>k- and i-rate, constant</td>
+                <td>k-rate</td>
+              </tr>
+              <tr>
+                <td>J</td>
+                <td>optional k-rate variable, defaults to -1</td>
+                <td>k- and i-rate, constant</td>
+                <td>k-rate</td>
+              </tr>
+              <tr>
+                <td>K</td>
+                <td>k-rate with initialization</td>
+                <td>k- and i-rate, constant</td>
+                <td>i-time and k-rate</td>
+              </tr>
+              <tr>
+                <td>o</td>
+                <td>optional i-time, defaults to 0</td>
+                <td>i-rate, constant</td>
+                <td>i-time</td>
+              </tr>
+              <tr>
+                <td>p</td>
+                <td>optional i-time, defaults to 1</td>
+                <td>i-rate, constant</td>
+                <td>i-time</td>
+              </tr>
+              <tr>
+                <td>S</td>
+                <td>string variable</td>
+                <td>i-rate string</td>
+                <td>i-time</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+    </p>
+        <p>
+      The maximum allowed number of input arguments is 256.
+    </p>
+        <p>
+      <span class="emphasis"><em>outtypes</em></span> -- list of output types. The format is the same as in the case of <span class="emphasis"><em>intypes</em></span>.
+    </p>
+        <p>
+      Here are the available <span class="emphasis"><em>outtypes</em></span>:
+
+      </p>
+        <div class="informaltable">
+          <table class="informaltable" border="1">
+            <colgroup>
+              <col />
+              <col />
+              <col />
+              <col />
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Variable Types Allowed</th>
+                <th>Updated At</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>a</td>
+                <td>a-rate variable</td>
+                <td>a-rate</td>
+                <td>a-rate</td>
+              </tr>
+              <tr>
+                <td>i</td>
+                <td>i-rate variable</td>
+                <td>i-rate</td>
+                <td>i-time</td>
+              </tr>
+              <tr>
+                <td>k</td>
+                <td>k-rate variable</td>
+                <td>k-rate</td>
+                <td>k-rate</td>
+              </tr>
+              <tr>
+                <td>K</td>
+                <td>k-rate with initialization</td>
+                <td>k-rate</td>
+                <td>i-time and k-rate</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+    </p>
+        <p>
+      The maximum allowed number of output arguments is 256.
+    </p>
+        <p>
+      <span class="emphasis"><em>iksmps</em></span> (optional, default=0) -- sets the local
+      <span class="emphasis"><em>ksmps</em></span> value. Must be a positive integer, and also
+      the <span class="emphasis"><em>ksmps</em></span> of the
+      calling instrument or opcode must be an integer multiple of this value.
+      For example, if <span class="emphasis"><em>ksmps</em></span> is 10 in the instrument from which
+      the opcode was called, the allowed values for <span class="emphasis"><em>iksmps</em></span>
+      are 1, 2, 5, and 10.
+    </p>
+        <p>
+      If <span class="emphasis"><em>iksmps</em></span> is set to zero, the
+      <span class="emphasis"><em>ksmps</em></span> of the caller instrument or opcode is used
+      (this is the default behavior).
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The local <span class="emphasis"><em>ksmps</em></span> is implemented by splitting up
+        a control period into smaller sub-kperiods and temporarily modifying
+        internal Csound global variables. This also requires converting the
+        rate of k-rate input and output arguments (input variables receive
+        the same value in all sub-kperiods, while outputs are written only
+        in the last one).
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: Warning about local ksmps">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning about local <span class="emphasis"><em>ksmps</em></span></th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        When the local <span class="emphasis"><em>ksmps</em></span> is not the same as the
+        orchestra level <span class="emphasis"><em>ksmps</em></span> value (as specified in the
+        orchestra header), global a-rate operations must not be used in the
+        user-defined opcode block.
+      </p>
+                <p>
+        These include:
+
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>any access to <span class="quote">“<span class="quote">ga</span>”</span> variables</p>
+                    </li>
+                    <li class="listitem">
+                      <p>a-rate zak opcodes (<a class="link" href="zar.html" title="zar"><em class="citetitle">zar</em></a>, <a class="link" href="zaw.html" title="zaw"><em class="citetitle">zaw</em></a>, etc.)</p>
+                    </li>
+                    <li class="listitem">
+                      <p><a class="link" href="tablera.html" title="tablera"><em class="citetitle">tablera</em></a> and <a class="link" href="tablewa.html" title="tablewa"><em class="citetitle">tablewa</em></a> (these two opcodes may in fact work, but caution is needed)</p>
+                    </li>
+                    <li class="listitem">
+                      <p>The <span class="emphasis"><em>in</em></span> and <span class="emphasis"><em>out</em></span> opcode family (these read from, and write to global a-rate buffers)</p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+                <p>
+        In general, the local <span class="emphasis"><em>ksmps</em></span> should be used with
+        care as it is an experimental feature, although it works correctly in
+        most cases.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      The <a class="link" href="setksmps.html" title="setksmps"><em class="citetitle">setksmps</em></a>
+      statement can be used to set the local <span class="emphasis"><em>ksmps</em></span> value
+      of the user-defined opcode block. It has one i-time parameter specifying
+      the new <span class="emphasis"><em>ksmps</em></span> value (which is left unchanged if zero
+      is used, see also the notes about <span class="emphasis"><em>iksmps</em></span> above).
+      <span class="emphasis"><em>setksmps</em></span> should be used before any other opcodes
+      (but allowed after <span class="emphasis"><em>xin</em></span>), otherwise unpredictable
+      results may occur.
+    </p>
+        <p>
+      The input parameters can be read with <span class="emphasis"><em>xin</em></span>, and the
+      output is written by <span class="emphasis"><em>xout</em></span> opcode. Only one instance
+      of these units should be used, as <span class="emphasis"><em>xout</em></span> overwrites
+      and does not accumulate the output. The number and type of arguments for
+      <span class="emphasis"><em>xin</em></span> and <span class="emphasis"><em>xout</em></span> must be the same
+      as in the declaration of the user-defined opcode block (see tables above).
+    </p>
+        <p>
+      The input and output arguments must agree with the definition both in
+      number (except if the optional i-time input is used) and type.
+      An optional i-time input parameter (<span class="emphasis"><em>iksmps</em></span>) is
+      automatically added to the <span class="emphasis"><em>intypes</em></span> list, and
+      (similarly to setksmps) sets the local <span class="emphasis"><em>ksmps</em></span> value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076591712"></a>
+        <h2>Performance</h2>
+        <p>
+      The syntax of a user-defined opcode block is as follows:
+
+      </p>
+        <pre class="programlisting">
+<span class="oblock">opcode</span>  <span class="command"><strong>name</strong></span>, outtypes, intypes
+xinarg1 [, xinarg2] [, xinarg3] ... [xinargN]  <span class="opc">xin</span>
+[<span class="opc">setksmps</span>  iksmps]
+... the rest of the instrument's code.
+<span class="opc">xout</span>  xoutarg1 [, xoutarg2] [, xoutarg3] ... [xoutargN]
+<span class="oblock">endop</span></pre>
+        <p>
+    </p>
+        <p>
+      The new opcode can then be used with the usual syntax:
+
+      </p>
+        <pre class="programlisting">
+  [xoutarg1] [, xoutarg2] ... [xoutargN] <span class="command"><strong>name</strong></span>  [xinarg1] [, xinarg2] ... [xinargN] [, iksmps]</pre>
+        <p>
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The opcode call is always executed both at initialization and
+        performance time, even if there are no a- or k-rate arguments.
+        If there are many user opcode calls that are known to have no
+        effect at performance time in an instrument, then it may save some
+        CPU time to jump over groups of such opcodes with
+        <a class="link" href="kgoto.html" title="kgoto"><em class="citetitle">kgoto</em></a>.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076581728"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of a user-defined opcode. It uses the file
+      <a class="ulink" href="examples/opcode_example.csd" target="_top"><em class="citetitle">opcode.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276076579936"></a>
+          <p class="title">
+            <strong>Example 634. Example of a user-defined opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time
+        Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line
+        Flags</em></a> for more information on using command
+        line flags.</p>
+            <div class="refsect1">
+              <a id="idm276445133440"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac    <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o opcode_example.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="cm">/* example opcode 1: simple oscillator */</span>
+
+        <span class="kd">opcode</span> <span class="nf">Oscillator</span><span class="p">,</span> <span class="kt">a</span><span class="p">,</span> <span class="kt">kk</span>
+
+k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span>      <span class="nb">xin</span>             <span class="c1">; read input parameters</span>
+a<span class="n">1</span>      <span class="nb">vco2</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span>         <span class="c1">; sawtooth oscillator</span>
+        <span class="nb">xout</span> a<span class="n">1</span>                 <span class="c1">; write output</span>
+
+        <span class="kd">endop</span>
+
+<span class="cm">/* example opcode 2: lowpass filter with local ksmps */</span>
+
+        <span class="kd">opcode</span> <span class="nf">Lowpass</span><span class="p">,</span> <span class="kt">a</span><span class="p">,</span> <span class="kt">akk</span>
+
+        <span class="nb">setksmps</span> <span class="mi">1</span>              <span class="c1">; need sr=kr</span>
+a<span class="n">in</span><span class="p">,</span> k<span class="n">a1</span><span class="p">,</span> k<span class="n">a2</span>   <span class="nb">xin</span>             <span class="c1">; read input parameters</span>
+a<span class="n">out</span>    <span class="nb">init</span> <span class="mi">0</span>                  <span class="c1">; initialize output</span>
+a<span class="n">out</span>    <span class="o">=</span>  a<span class="n">in</span><span class="o">*</span>k<span class="n">a1</span> <span class="o">+</span> a<span class="n">out</span><span class="o">*</span>k<span class="n">a2</span>   <span class="c1">; simple tone-like filter</span>
+        <span class="nb">xout</span> a<span class="n">out</span>               <span class="c1">; write output</span>
+
+        <span class="kd">endop</span>
+
+<span class="cm">/* example opcode 3: recursive call */</span>
+
+        <span class="kd">opcode</span> <span class="nf">RecursiveLowpass</span><span class="p">,</span> <span class="kt">a</span><span class="p">,</span> <span class="kt">akkpp</span>
+
+a<span class="n">in</span><span class="p">,</span> k<span class="n">a1</span><span class="p">,</span> k<span class="n">a2</span><span class="p">,</span> i<span class="n">dep</span><span class="p">,</span> i<span class="n">cnt</span>       <span class="nb">xin</span>     <span class="c1">; read input parameters</span>
+        <span class="k">if</span> <span class="p">(</span>i<span class="n">cnt</span> <span class="o">&gt;=</span> i<span class="n">dep</span><span class="p">)</span> <span class="k">goto</span> <span class="nl">skip1</span>    <span class="c1">; check if max depth reached</span>
+a<span class="n">in</span>     <span class="nf">RecursiveLowpass</span> a<span class="n">in</span><span class="p">,</span> k<span class="n">a1</span><span class="p">,</span> k<span class="n">a2</span><span class="p">,</span> i<span class="n">dep</span><span class="p">,</span> i<span class="n">cnt</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="nl">skip1</span><span class="p">:</span>
+a<span class="n">out</span>    <span class="nf">Lowpass</span> a<span class="n">in</span><span class="p">,</span> k<span class="n">a1</span><span class="p">,</span> k<span class="n">a2</span>           <span class="c1">; call filter</span>
+        <span class="nb">xout</span> a<span class="n">out</span>                       <span class="c1">; write output</span>
+
+        <span class="kd">endop</span>
+
+<span class="cm">/* example opcode 4: de-click envelope */</span>
+
+        <span class="kd">opcode</span> <span class="nf">DeClick</span><span class="p">,</span> <span class="kt">a</span><span class="p">,</span> <span class="kt">a</span>
+
+a<span class="n">in</span>     <span class="nb">xin</span>
+a<span class="n">env</span>    <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="nb">xout</span> a<span class="n">in</span> <span class="o">*</span> a<span class="n">env</span>         <span class="c1">; apply envelope and write output</span>
+
+        <span class="kd">endop</span>
+
+<span class="cm">/* instr 1 uses the example opcodes */</span>
+
+        <span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">amp</span>    <span class="o">=</span>  <span class="mf">.7</span>                <span class="c1">; amplitude</span>
+k<span class="n">cps</span>    <span class="nb">expon</span> <span class="mi">50</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">500</span>       <span class="c1">; pitch</span>
+a<span class="n">1</span>      <span class="nf">Oscillator</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span>                   <span class="c1">; call oscillator</span>
+k<span class="n">flt</span>    <span class="nb">linseg</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.8</span>  <span class="c1">; filter envelope</span>
+a<span class="n">1</span>      <span class="nf">RecursiveLowpass</span> a<span class="n">1</span><span class="p">,</span> k<span class="n">flt</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> k<span class="n">flt</span><span class="p">,</span> <span class="mi">10</span> <span class="c1">; 10th order lowpass</span>
+a<span class="n">1</span>      <span class="nf">DeClick</span> a<span class="n">1</span>
+        <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+
+        <span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span>
+<span class="nb">e</span><span class="mi">5</span>		<span class="c1">;extra second before quitting</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076575904"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="endop.html" title="endop"><em class="citetitle">endop</em></a>,
+      <a class="link" href="setksmps.html" title="setksmps"><em class="citetitle">setksmps</em></a>,
+      <a class="link" href="xin.html" title="xin"><em class="citetitle">xin</em></a>,
+      <a class="link" href="xout.html" title="xout"><em class="citetitle">xout</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276076571264"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga, 2002; based on code by Matt J. Ingalls</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="olabuffer.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="oscbnk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">olabuffer </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> oscbnk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

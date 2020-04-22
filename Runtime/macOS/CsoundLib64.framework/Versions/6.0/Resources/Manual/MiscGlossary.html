@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Glossary</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="prev" href="MiscSf2.html" title="Appendix G. SoundFont2 File Format" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Glossary</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="MiscSf2.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> </td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="glossary">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h1 class="title"><a id="MiscGlossary"></a>Glossary</h1>
+          </div>
+        </div>
+      </div>
+      <div class="glossdiv">
+        <h3 class="title">G</h3>
+        <dl>
+          <dt>
+            <a id="glossaryGuardPoint"></a>
+            <span class="glossterm">Guard Point</span>
+          </dt>
+          <dd class="glossdef">
+            <p>
+        A guard point is the last position on a function table.
+        If the length is, say 1024, the table will have 1024+1 (1025) points:
+        the extra point is the guard point.
+        </p>
+            <p>
+        In any case, for a 1024-point table,  the first point is index 0 and the
+        last 1023; index 1024 is not really used)
+        </p>
+            <p>
+        The reason for a guard-point is that some opcodes interpolate
+        to obtain a table value, in which case, when the table index is
+        say, 1023.5, we need the value of the 1024 pos in order to interpolate.
+        </p>
+            <p>
+        There are two ways of filling this point (writing the value that goes
+        in it):
+
+        </p>
+            <div class="orderedlist">
+              <ol class="orderedlist" type="1">
+                <li class="listitem">
+                  <p>
+                Default way: by copying the value of the 1st point in the table
+          </p>
+                </li>
+                <li class="listitem">
+                  <p>
+            Extended Guard-Point: extending the contour of the table (continuing to
+            calculate the table for one extra point)
+          </p>
+                </li>
+              </ol>
+            </div>
+            <p>
+
+
+        In general the first mode is used for wrap-around applications, such as
+        an oscillator (which loops continuously reading the table). The second
+        use is for one-shot readouts, such as envelopes, where the last point
+        needs to be interpolated correctly following the table contour (we are not
+        looping back to the beginning of the table)
+      </p>
+          </dd>
+        </dl>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="MiscSf2.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> </td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Appendix G. SoundFont2 File Format </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>JackoInit</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="JackoInfo.html" title="JackoInfo" />
+    <link rel="next" href="JackoMidiInConnect.html" title="JackoMidiInConnect" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">JackoInit</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="JackoInfo.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="JackoMidiInConnect.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="JackoInit"></a>
+      <div class="titlepage"></div>
+      <a id="IndexJackoInit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">JackoInit</span>
+        </h2>
+        <p>JackoInit — 
+      Initializes Csound as a Jack client.
+    </p>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">plugin: Requires jacko plugin</td>
+          </tr>
+        </table>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088211664"></a>
+        <h2>Description</h2>
+        <p>
+      Initializes this instance of Csound as a Jack client. 
+    </p>
+        <p> 
+      Csound's sr must be equal to the Jack daemon's 
+      frames per second.
+    </p>
+        <p> 
+      Csound's ksmps must be equal to the Jack daemon's 
+      frames per period.
+    </p>
+        <p> 
+      Frames per period must not only (a) be a power of 2,
+      but also (b) go evenly into the frames per second,
+      e.g. 128 frames per period goes into 48000 
+      frames per second 375 times, for a latency or 
+      MIDI time granularity of about 2.7 milliseconds
+      (as good as or better than the absolute best 
+      human performers). 
+    </p>
+        <p> 
+      The order of processing of all signals that pass 
+      from Jack input ports, through Csound processing, 
+      and to Jack output ports, must be properly
+      determined by sequence of instrument and 
+      opcode definition within Csound.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088208064"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>JackoInit </strong></span>ServerName, SclientName</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088206112"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>SclientName</em></span> -- The name of the Jack client; 
+      normally, should be "csound". 
+    </p>
+        <p>
+      <span class="emphasis"><em>ServerName</em></span> -- The name of the Jack daemon; 
+      normally, will be "default".
+    </p>
+        <p>
+      This opcode must be called once and only once in the 
+      orchestra header, and before any other Jack opcodes. 
+      If more than one instance of Csound is using the Jack
+      opcodes at the same time, then each instance of Csound 
+      must use a different client name.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088200944"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the JackoInit opcode. It uses the file <a class="ulink" href="examples/JackoInit.csd" target="_top"><em class="citetitle">JackoInit.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276088199152"></a>
+          <p class="title">
+            <strong>Example 460. Example of the JackoInit opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276460532944"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-n
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>  <span class="o">=</span> <span class="mi">48000</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="vg">nchnls</span>  <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>   <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="n">JackoInit</span> <span class="s">"default"</span><span class="p">,</span> <span class="s">"csound"</span>
+<span class="n">JackoInfo</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+ <span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088195152"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="JackoInfo.html" title="JackoInfo"><em class="citetitle">JackoInfo</em></a>, 
+      <a class="link" href="JackoFreewheel.html" title="JackoFreewheel"><em class="citetitle">JackoFreewheel</em></a>, 
+      <a class="link" href="JackoAudioInConnect.html" title="JackoAudioInConnect"><em class="citetitle">JackoAudioInConnect</em></a>, 
+      <a class="link" href="JackoAudioOutConnect.html" title="JackoAudioOutConnect"><em class="citetitle">JackoAudioOutConnect</em></a>, 
+      <a class="link" href="JackoMidiInConnect.html" title="JackoMidiInConnect"><em class="citetitle">JackoMidiInConnect</em></a>, 
+      <a class="link" href="JackoMidiOutConnect.html" title="JackoMidiOutConnect"><em class="citetitle">JackoMidiOutConnect</em></a>, 
+      <a class="link" href="JackoOn.html" title="JackoOn"><em class="citetitle">JackoOn</em></a>, 
+      <a class="link" href="JackoAudioIn.html" title="JackoAudioIn"><em class="citetitle">JackoAudioIn</em></a>, 
+      <a class="link" href="JackoAudioOut.html" title="JackoAudioOut"><em class="citetitle">JackoAudioOut</em></a>, 
+      <a class="link" href="JackoMidiOut.html" title="JackoMidiOut"><em class="citetitle">JackoMidiOut</em></a>, 
+      <a class="link" href="JackoNoteOut.html" title="JackoNoteOut"><em class="citetitle">JackoNoteOut</em></a>, 
+      <a class="link" href="JackoTransport.html" title="JackoTransport"><em class="citetitle">JackoTransport</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088183232"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2010</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="JackoInfo.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="JackoMidiInConnect.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">JackoInfo </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> JackoMidiInConnect</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

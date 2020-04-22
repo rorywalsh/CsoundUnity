@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>sndwarp</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sndloop.html" title="sndloop" />
+    <link rel="next" href="sndwarpst.html" title="sndwarpst" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">sndwarp</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sndloop.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sndwarpst.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="sndwarp"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSndwarp" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">sndwarp</span>
+        </h2>
+        <p>sndwarp — 
+      Reads a mono sound sample from a table and applies time-stretching and/or pitch modification.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054766144"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>sndwarp</em></span> reads sound samples from a table and applies time-stretching and/or pitch modification. Time and frequency modification are independent from one another. For example, a sound can be stretched in time while raising the pitch!
+    </p>
+        <p>
+      The window size and overlap arguments are important to the result and should be experimented with. In general they should be as small as possible. For example, start with <span class="emphasis"><em>iwsize</em></span>=<span class="emphasis"><em>sr</em></span>/10 and <span class="emphasis"><em>ioverlap</em></span>=15. Try <span class="emphasis"><em>irandw</em></span>=<span class="emphasis"><em>iwsize</em></span>*0.2. If you can get away with less overlaps, the program will be faster. But too few may cause an audible flutter in the amplitude. The algorithm reacts differently depending upon the input sound and there are no fixed rules for the best use in all circumstances. But with proper tuning, excellent results can be achieved.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054760816"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares [, ac] <span class="command"><strong>sndwarp</strong></span> xamp, xtimewarp, xresample, ifn1, ibeg, iwsize, \
+      irandw, ioverlap, ifn2, itimemode</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054758544"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn1</em></span> -- the number of the table holding the sound samples which will be subjected to the <span class="emphasis"><em>sndwarp</em></span> processing. <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a> is the appropriate function generator to use to store the sound samples from a pre-existing soundfile.
+    </p>
+        <p>
+      <span class="emphasis"><em>ibeg</em></span> -- the time in seconds to begin reading in the table (or soundfile). When <span class="emphasis"><em>itimemode</em></span> is non- zero, the value of <span class="emphasis"><em>xtimewarp</em></span> is offset by <span class="emphasis"><em>ibeg</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwsize</em></span> -- the window size in samples used in the time scaling algorithm.
+    </p>
+        <p>
+      <span class="emphasis"><em>irandw</em></span> -- the bandwidth of a random number generator. The random numbers will be added to <span class="emphasis"><em>iwsize</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>ioverlap</em></span> -- determines the density of overlapping windows.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn2</em></span> -- a function used to shape the window. It is usually used to create a ramp of some kind from zero at the beginning and back down to zero at the end of each window. Try using a half sine (i.e.: f1 0 16384 9 .5 1 0) which works quite well. Other shapes can also be used.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054748688"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ares</em></span> -- the single channel of output from the <span class="emphasis"><em>sndwarp</em></span> unit generator. <span class="emphasis"><em>sndwarp</em></span> assumes that the function table holding the sampled signal is a mono one. This simply means that <span class="emphasis"><em>sndwarp</em></span> will index the table by single-sample frame increments. The user must be aware then that if a stereo signal is used with <span class="emphasis"><em>sndwarp</em></span>, time and pitch will be altered accordingly.
+    </p>
+        <p>
+      <span class="emphasis"><em>ac</em></span> (optional) -- a single-layer (no overlaps), unwindowed versions of the time and/or pitch altered signal. They are supplied in order to be able to balance the amplitude of the signal output, which typically contains many overlapping and windowed versions of the signal, with a clean version of the time-scaled and pitch-shifted signal. The <span class="emphasis"><em>sndwarp</em></span> process can cause noticeable changes in amplitude, (up and down), due to a time differential between the overlaps when time-shifting is being done. When used with a <a class="link" href="balance.html" title="balance"><em class="citetitle">balance</em></a> unit, <span class="emphasis"><em>ac</em></span> can greatly enhance the quality of sound.
+    </p>
+        <p>
+      <span class="emphasis"><em>xamp</em></span> -- the value by which to scale the amplitude (see note on the use of this when using <span class="emphasis"><em>ac</em></span>).
+    </p>
+        <p>
+      <span class="emphasis"><em>xtimewarp</em></span> -- determines how the input signal will be stretched or shrunk in time. There are two ways to use this argument depending upon the value given for <span class="emphasis"><em>itimemode</em></span>. When the value of <span class="emphasis"><em>itimemode</em></span> is 0, <span class="emphasis"><em>xtimewarp</em></span> will scale the time of the sound. For example, a value of 2 will stretch the sound by 2 times. When <span class="emphasis"><em>itimemode</em></span> is any non-zero value then <span class="emphasis"><em>xtimewarp</em></span> is used as a time pointer in a similar way in which the time pointer works in <a class="link" href="lpread.html" title="lpread"><em class="citetitle">lpread</em></a> and <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>. An example below illustrates this. In both cases, the pitch will <span class="emphasis"><em>not</em></span> be altered by this process. Pitch shifting is done independently using <span class="emphasis"><em>xresample</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>xresample</em></span> -- the factor by which to change the pitch of the sound. For example, a value of 2 will produce a sound one octave higher than the original. The timing of the sound, however, will <span class="emphasis"><em>not</em></span> be altered.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054732976"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the sndwarp opcode. It uses the file <a class="ulink" href="examples/sndwarp.csd" target="_top"><em class="citetitle">sndwarp.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276054731168"></a>
+          <p class="title">
+            <strong>Example 922. Example of the sndwarp opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276422821776"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o sndwarp.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">timewarp</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">2.7</span>	<span class="c1">;length of "fox.wav"</span>
+k<span class="n">resample</span> <span class="nb">init</span> <span class="mi">1</span>		<span class="c1">;do not change pitch</span>
+i<span class="n">beg</span> <span class="o">=</span> <span class="mi">0</span>			<span class="c1">;start at beginning</span>
+i<span class="n">wsize</span> <span class="o">=</span> <span class="mi">4410</span>			<span class="c1">;window size in samples with</span>
+i<span class="n">randw</span> <span class="o">=</span> <span class="mi">882</span>			<span class="c1">;bandwidth of a random number generator</span>
+i<span class="n">timemode</span> <span class="o">=</span> <span class="mi">1</span>			<span class="c1">;ktimewarp is "time" pointer</span>
+i<span class="n">overlap</span> <span class="o">=</span> <span class="nb">p4</span>
+
+a<span class="n">sig</span> <span class="nb">sndwarp</span> <span class="mf">.5</span><span class="p">,</span> k<span class="n">timewarp</span><span class="p">,</span> k<span class="n">resample</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">beg</span><span class="p">,</span> i<span class="n">wsize</span><span class="p">,</span> i<span class="n">randw</span><span class="p">,</span> i<span class="n">overlap</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> i<span class="n">timemode</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">131072</span> <span class="mi">1</span> <span class="s">"fox.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>	<span class="c1">; audio file</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">9</span> <span class="mf">0.5</span> <span class="mi">1</span> <span class="mi">0</span>		<span class="c1">; half of a sine wave</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">7</span> <span class="mi">2</span>			<span class="c1">;different overlaps</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">7</span> <span class="mi">5</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">7</span> <span class="mi">15</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      The below example shows a slowing down or stretching of the sound stored in the stored table (<span class="emphasis"><em>ifn1</em></span>). Over the duration of the note, the stretching will grow from no change from the original to a sound which is ten times <span class="quote">“<span class="quote">slower</span>”</span> than the original. At the same time the overall pitch will move upward over the duration by an octave.
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+iwindfun <span class="op">=</span> 1
+isampfun <span class="op">=</span> 2
+ibeg <span class="op">=</span> 0
+iwindsize <span class="op">=</span> 2000
+iwindrand <span class="op">=</span> 400
+ioverlap <span class="op">=</span> 10
+awarp   <span class="opc">line</span>    1, p3, 1
+aresamp <span class="opc">line</span>    1, p3, 2
+kenv    <span class="opc">line</span>    1, p3, .1
+asig    <span class="opc">sndwarp</span> kenv, awarp, aresamp, isampfun, ibeg, iwindsize, iwindrand, ioverlap, iwindfun, 0</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      Now, here's an example using <span class="emphasis"><em>xtimewarp</em></span> as a time pointer and using stereo:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+itimemode     <span class="op">=</span>         1
+atime         <span class="opc">line</span>      0, p3, 10
+ar1, ar2      <span class="opc">sndwarpst</span> kenv, atime, aresamp, sampfun, ibeg, iwindsize, iwindrand, ioverlap, \
+                       iwindfun, itimemode</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      In the above, <span class="emphasis"><em>atime</em></span> advances the time pointer used in the <span class="emphasis"><em>sndwarpst</em></span> from 0 to 10 over the duration of the note. If p3 is 20 then the sound will be two times slower than the original. Of course you can use a more complex function than just a single straight line to control the time factor.
+    </p>
+        <p>
+      Now the same as above but using the <span class="emphasis"><em>balance</em></span> function with the optional outputs:
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+asig,acmp   <span class="opc">sndwarp</span> 1, awarp, aresamp, isampfun, ibeg, iwindsize, iwindrand, ioverlap, iwindfun, itimemode
+abal        <span class="opc">balance</span> asig, acmp
+  
+asig1,asig2,acmp1,acmp2 <span class="opc">sndwarpst</span> 1, atime, aresamp, sampfun, ibeg, iwindsize, iwindrand, ioverlap, \
+                                  iwindfun, itimemode
+abal1       <span class="opc">balance</span> asig1, acmp1
+abal2       <span class="opc">balance</span> asig2, acmp2</pre>
+        </div>
+        <p>
+    </p>
+        <p>
+      In the above two examples notice the use of the <span class="emphasis"><em>balance</em></span> unit. The output of <span class="emphasis"><em>balance</em></span> can then be scaled, enveloped, sent to an <span class="emphasis"><em>out</em></span> or <span class="emphasis"><em>outs</em></span>, and so on. Notice that the amplitude arguments to <span class="emphasis"><em>sndwarp</em></span> and <span class="emphasis"><em>sndwarpst</em></span> are <span class="quote">“<span class="quote">1</span>”</span> in these examples. By scaling the signal after the <span class="emphasis"><em>sndwarp</em></span> process, <span class="emphasis"><em>abal</em></span>, <span class="emphasis"><em>abal1</em></span>, and <span class="emphasis"><em>abal2</em></span> should contain signals that have nearly the same amplitude as the original input signal to the <span class="emphasis"><em>sndwarp</em></span> process. This makes it much easier to predict the levels and avoid samples out of range or sample values that are too small.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: More Advice">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">More Advice</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Only use the stereo version when you really need to be processing a stereo file. It is somewhat slower than the mono version and if you use the <span class="emphasis"><em>balance</em></span> function it is slower again. There is nothing wrong with using a mono <span class="emphasis"><em>sndwarp</em></span> in a stereo orchestra and sending the result to one or both channels of the stereo output!
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058732832"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="sndwarpst.html" title="sndwarpst"><em class="citetitle">sndwarpst</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058730784"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, WA USA</td>
+          </tr>
+          <tr>
+            <td>1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sndloop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sndwarpst.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sndloop </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> sndwarpst</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

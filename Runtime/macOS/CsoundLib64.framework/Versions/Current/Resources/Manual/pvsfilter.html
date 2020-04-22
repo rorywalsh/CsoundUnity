@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsfilter</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsdisp.html" title="pvsdisp" />
+    <link rel="next" href="pvsfread.html" title="pvsfread" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsfilter</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsdisp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsfread.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvsfilter"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvsfilter" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsfilter</span>
+        </h2>
+        <p>pvsfilter — 
+      Multiply amplitudes of a pvoc stream by those of a second
+pvoc stream, with dynamic scaling.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065069552"></a>
+        <h2>Description</h2>
+        <p>
+      Multiply amplitudes of a pvoc stream by those of a second
+pvoc stream, with dynamic scaling.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065068272"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsfilter</strong></span> fsigin, fsigfil, kdepth[, igain]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065066160"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>fsigin</em></span> -- input pv stream.
+    </p>
+        <p>
+      <span class="emphasis"><em>fsigfil</em></span> -- filtering pvoc stream.
+    </p>
+        <p>
+      <span class="emphasis"><em>kdepth</em></span> -- controls the depth of filtering
+    of fsigin by fsigfil .
+    </p>
+        <p>
+      <span class="emphasis"><em>igain</em></span> -- amplitude scaling (optional, defaults to 1).
+    </p>
+        <p>
+    Here the input pvoc stream amplitudes are modified by the
+    filtering stream, keeping its frequencies intact. As usual, both
+    signals have to be in the same format.
+  </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+      It is unsafe to use the same f-variable for both input and output of pvs opcodes. Using the same one might lead to undefined behavior on some opcodes. Use a different one on the left and right sides of the opcode.
+    </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065059632"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276065058720"></a>
+          <p class="title">
+            <strong>Example 774. Example</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+kfreq  <span class="opc">expon</span> 500, p3, 4000           <span class="comment">; 3-octave sweep</span>
+kdepth <span class="opc">linseg</span> 1, p3/2, 0.5, p3/2, 1  <span class="comment">; varying filter depth</span>
+
+asig  <span class="opc">in</span>                             <span class="comment">; input</span>
+afil  <span class="opc">oscili</span>  1, kfreq, 1            <span class="comment">; filter t-domain signal</span>
+
+fim   <span class="opc">pvsanal</span>  asig,1024,256,1024,0  <span class="comment">; pvoc analysis</span>
+fil   <span class="opc">pvsanal</span>  afil,1024,256,1024,0  
+fou   <span class="opc">pvsfilter</span> fim, fil, kdepth     <span class="comment">; filter signal</span>
+aout  <span class="opc">pvsynth</span>  fou                   <span class="comment">; pvoc synthesis</span>
+        </pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+    </p>
+        <p>
+     In the example above the filter curve will depend on the
+spectral envelope of afil; in the simple case of a sinusoid,
+it will be equivalent to a narrowband band-pass filter.</p>
+        <p>
+      Here is an example of the use of the <span class="emphasis"><em>pvsfilter</em></span> opcode. It uses the file <a class="ulink" href="examples/pvsfilter.csd" target="_top"><em class="citetitle">pvsfilter.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276065045184"></a>
+          <p class="title">
+            <strong>Example 775. Example of the <span class="emphasis"><em>pvsfilter</em></span> opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276432207712"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">;; example written by joachim heintz 2009</span>
+
+gi<span class="n">Sine</span>		<span class="nb">ftgen</span>		<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+gi<span class="n">Bell</span>		<span class="nb">ftgen</span>		<span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mf">.56</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.57</span><span class="p">,</span> <span class="mf">.67</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.92</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.93</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.19</span><span class="p">,</span> <span class="mf">2.67</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">1.67</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">1.46</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.74</span><span class="p">,</span> <span class="mf">1.33</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">1.33</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3.76</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">4.07</span><span class="p">,</span> <span class="mf">1.33</span><span class="p">,</span> <span class="mi">0</span><span class="c1">; bell-like (after Risset)</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">permut</span>	<span class="o">=</span>		<span class="nb">p4</span><span class="c1">; 1 = change order of soundfiles </span>
+i<span class="n">fftsize</span>	<span class="o">=</span>		<span class="mi">1024</span>
+i<span class="n">overlap</span>	<span class="o">=</span>		i<span class="n">fftsize</span> <span class="o">/</span> <span class="mi">4</span>
+i<span class="n">winsize</span>	<span class="o">=</span>		i<span class="n">fftsize</span>
+i<span class="n">winshape</span>	<span class="o">=</span>		<span class="mi">1</span><span class="c1">; von-Hann window</span>
+S<span class="n">file1</span>		<span class="o">=</span>		<span class="s">"fox.wav"</span>
+a<span class="n">in1</span>		<span class="nb">soundin</span>	S<span class="n">file1</span>
+k<span class="n">freq</span>		<span class="nb">randomi</span>	<span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">3</span>
+a<span class="n">in2</span>		<span class="nb">oscili</span>		<span class="mf">.2</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> gi<span class="n">Bell</span>
+<span class="c1">;ain2		oscili		.2, kfreq, giSine; try also this </span>
+<span class="n">fftin1</span>		<span class="nb">pvsanal</span>	a<span class="n">in1</span><span class="p">,</span> i<span class="n">fftsize</span><span class="p">,</span> i<span class="n">overlap</span><span class="p">,</span> i<span class="n">winsize</span><span class="p">,</span> i<span class="n">winshape</span><span class="c1">; fft-analysis of file 1</span>
+<span class="n">fftin2</span>		<span class="nb">pvsanal</span>	a<span class="n">in2</span><span class="p">,</span> i<span class="n">fftsize</span><span class="p">,</span> i<span class="n">overlap</span><span class="p">,</span> i<span class="n">winsize</span><span class="p">,</span> i<span class="n">winshape</span><span class="c1">; fft-analysis of file 2</span>
+<span class="k">if</span> i<span class="n">permut</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">then</span>
+<span class="n">fcross</span>		<span class="nb">pvsfilter</span>	<span class="n">fftin2</span><span class="p">,</span> <span class="n">fftin1</span><span class="p">,</span> <span class="mi">1</span>
+<span class="k">else</span>
+<span class="n">fcross</span>		<span class="nb">pvsfilter</span>	<span class="n">fftin1</span><span class="p">,</span> <span class="n">fftin2</span><span class="p">,</span> <span class="mi">1</span>
+<span class="k">endif</span>
+a<span class="n">out</span>		<span class="nb">pvsynth</span>	<span class="n">fcross</span>
+		<span class="nb">out</span>		a<span class="n">out</span> <span class="o">*</span> <span class="mi">20</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.757</span> <span class="mi">0</span><span class="c1">; frequencies from fox.wav, amplitudes multiplied by amplitudes of giBell</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mf">2.757</span> <span class="mi">1</span><span class="c1">; frequencies from giBell, amplitudes multiplied by amplitudes of fox.wav</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065040800"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvsanal.html" title="pvsanal"><em class="citetitle">pvsanal</em></a>,
+      <a class="link" href="pvsynth.html" title="pvsynth"><em class="citetitle">pvsynth</em></a>,
+      <a class="link" href="pvsadsyn.html" title="pvsadsyn"><em class="citetitle">pvsadsyn</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276065037008"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>November 2004 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>November 2004.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsdisp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsfread.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsdisp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsfread</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

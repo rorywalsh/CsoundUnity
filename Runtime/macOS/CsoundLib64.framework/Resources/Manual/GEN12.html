@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN12</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN11.html" title="GEN11" />
+    <link rel="next" href="GEN13.html" title="GEN13" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN12</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN11.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN13.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN12"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN12" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN12</span>
+        </h2>
+        <p>GEN12 — 
+      Generates the log of a modified Bessel function of the second kind.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989152080"></a>
+        <h2>Description</h2>
+        <p>
+      This generates the log of a modified Bessel function of the second kind, order 0, suitable for use in amplitude-modulated FM.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989150608"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 12 xint</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989148656"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size </em></span> -- number of points in the table. Must be a power of 2 or a power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>). The normal value is power-of-2 plus 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>xint</em></span> -- specifies the <span class="emphasis"><em>x</em></span> interval [0 to <span class="emphasis"><em>+xint</em></span>] over which the function is defined.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>
+              This subroutine draws the natural log of a modified Bessel function of the second kind, order 0 (commonly written as <span class="emphasis"><em>I</em></span> subscript 0), over the x-interval requested. The call should have rescaling inhibited.
+            </p>
+                    </li>
+                    <li class="listitem">
+                      <p>
+              The function is useful as an amplitude scaling factor in cycle-synchronous amplitude-modulated FM. (See Palamin &amp; Palamin, <span class="emphasis"><em>J. Audio Eng. Soc., 36/9</em></span>, Sept. 1988, pp.671-684.) The algorithm is interesting because it permits the normally symmetric FM spectrum to be made asymmetric around a frequency other than the carrier, and is thereby useful for formant positioning. By using a table lookup index of <span class="emphasis"><em>I</em></span>(r - 1/r), where <span class="emphasis"><em>I</em></span> is the FM modulation index and <span class="emphasis"><em>r</em></span> is an exponential parameter affecting partial strengths, the Palamin algorithm becomes relatively efficient, requiring only oscil's, table lookups, and a single <span class="emphasis"><em>exp</em></span> call.
+            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989137616"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the GEN12 generator. It uses the file <a class="ulink" href="examples/gen12.csd" target="_top"><em class="citetitle">gen12.csd</em></a>.
+           </p>
+        <div class="example">
+          <a id="idm275989135808"></a>
+          <p class="title">
+            <strong>Example 1208. Example of the GEN12 generator.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276398204752"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen12.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;example from the Csound Book, page 87</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">dur</span>    <span class="o">=</span>       <span class="nb">p3</span>
+i<span class="n">amp</span>    <span class="o">=</span>       <span class="nb">p4</span>
+i<span class="n">carfrq</span> <span class="o">=</span>       <span class="nb">p5</span>
+i<span class="n">modfrq</span> <span class="o">=</span>       <span class="nb">p6</span>          
+a<span class="n">env</span>    <span class="nb">expseg</span>  <span class="mf">.01</span><span class="p">,</span> i<span class="n">dur</span><span class="o">*</span><span class="mf">.1</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">dur</span><span class="o">*</span><span class="mf">.8</span><span class="p">,</span> i<span class="n">amp</span><span class="o">*</span><span class="mf">.75</span><span class="p">,</span> i<span class="n">dur</span><span class="o">*</span><span class="mf">.1</span><span class="p">,</span> <span class="mf">.01</span>
+i<span class="n">1</span>      <span class="o">=</span>       <span class="nb">p7</span><span class="o">*</span>i<span class="n">modfrq</span>			<span class="c1">;p7=modulation index start</span>
+i<span class="n">2</span>      <span class="o">=</span>       <span class="nb">p8</span><span class="o">*</span>i<span class="n">modfrq</span>			<span class="c1">;p8=modulation index end</span>
+a<span class="n">dev</span>    <span class="nb">line</span>    i<span class="n">1</span><span class="p">,</span> i<span class="n">dur</span><span class="p">,</span> i<span class="n">2</span>			<span class="c1">;modulation frequency</span>
+a<span class="n">index</span>  <span class="nb">line</span>    <span class="nb">p7</span><span class="p">,</span> i<span class="n">dur</span><span class="p">,</span> <span class="nb">p8</span>			<span class="c1">;modulation index</span>
+
+a<span class="n">r</span>      <span class="nb">linseg</span>  <span class="mi">1</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="nb">p9</span><span class="p">,</span> <span class="nb">p3</span><span class="o">-</span><span class="mf">.2</span><span class="p">,</span> <span class="nb">p10</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; r value envelope: p9-p10 =exp. partial strength parameter start and end</span>
+a<span class="n">mp1</span>    <span class="o">=</span>       <span class="p">(</span>a<span class="n">index</span><span class="o">*</span><span class="p">(</span>a<span class="n">r</span><span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span>a<span class="n">r</span><span class="p">)))</span><span class="o">/</span><span class="mi">2</span>
+a<span class="n">fmod</span>   <span class="nb">oscili</span>  a<span class="n">mp1</span><span class="p">,</span> i<span class="n">modfrq</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">;FM modulator (sine)</span>
+a<span class="n">tab</span>    <span class="o">=</span>       <span class="p">(</span>a<span class="n">index</span><span class="o">*</span><span class="p">(</span>a<span class="n">r</span><span class="o">-</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span>a<span class="n">r</span><span class="p">)))</span><span class="o">/</span><span class="mi">2</span>		<span class="c1">;index to table</span>
+a<span class="n">look</span>   <span class="nb">tablei</span>  a<span class="n">tab</span><span class="p">,</span> <span class="mi">37</span>			<span class="c1">;table lookup to GEN12</span>
+a<span class="n">amod</span>   <span class="nb">oscili</span>  a<span class="n">tab</span><span class="p">,</span> a<span class="n">dev</span><span class="p">,</span> <span class="mi">2</span>			<span class="c1">;am modulator (cosine)</span>
+a<span class="n">amod</span>   <span class="o">=</span>       <span class="p">(</span><span class="nb">exp</span><span class="p">(</span>a<span class="n">look</span><span class="o">+</span>a<span class="n">amod</span><span class="p">))</span><span class="o">*</span>a<span class="n">env</span>
+a<span class="n">car</span>    <span class="nb">oscili</span>  a<span class="n">amod</span><span class="p">,</span> a<span class="n">fmod</span><span class="o">+</span>i<span class="n">carfrq</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">;AFM (carrier)</span>
+a<span class="n">sig</span>    <span class="nb">balance</span> a<span class="n">car</span><span class="p">,</span> a<span class="n">env</span>
+        <span class="nb">outs</span>    a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+        
+<span class="kd">endin</span>       
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span>     <span class="mi">0</span>   <span class="mi">8192</span>    <span class="mi">10</span>  <span class="mi">1</span>               
+<span class="nb">f</span> <span class="mi">2</span>     <span class="mi">0</span>   <span class="mi">8192</span>    <span class="mi">9</span>   <span class="mi">1</span> <span class="mi">1</span> <span class="mi">90</span>          
+<span class="nb">f</span><span class="mi">37</span> <span class="mi">0</span>   <span class="mi">1024</span>    <span class="o">-</span><span class="mi">12</span> <span class="mi">40</span>		<span class="c1">;Bessel function-defined from 0 to 40</span>
+
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">2</span>  <span class="mf">.2</span>  <span class="mi">800</span>  <span class="mi">800</span>    <span class="mi">1</span>    <span class="mi">6</span>   <span class="mf">.1</span>   <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="o">+</span>  <span class="o">.</span>  <span class="o">.</span>   <span class="mi">1900</span> <span class="mi">147</span>    <span class="mi">8</span>    <span class="mi">1</span>    <span class="mi">4</span>   <span class="mf">.2</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="o">.</span>  <span class="o">.</span>  <span class="o">.</span>   <span class="mi">1100</span> <span class="mi">380</span>    <span class="mi">2</span>    <span class="mi">9</span>   <span class="mf">.5</span>   <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="o">.</span>  <span class="mi">10</span> <span class="o">.</span>   <span class="mi">100</span>  <span class="mi">100</span>    <span class="mi">11</span>   <span class="mi">3</span>   <span class="mf">.2</span>   <span class="mi">5</span>
+<span class="nb">s</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">1</span> <span class="mf">.1</span>   <span class="mi">200</span> <span class="mi">100</span>     <span class="mi">1</span>    <span class="mi">6</span>   <span class="mf">.1</span>   <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="o">+</span>  <span class="o">.</span>  <span class="o">&lt;</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>      <span class="o">&lt;</span>    <span class="o">&lt;</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="o">+</span>  <span class="o">.</span>  <span class="o">.</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>      <span class="o">&lt;</span>    <span class="o">&lt;</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="o">+</span>  <span class="o">.</span>  <span class="o">.</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>      <span class="o">&lt;</span>    <span class="o">&lt;</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="o">+</span>  <span class="o">.</span>  <span class="o">.</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>      <span class="o">&lt;</span>    <span class="o">&lt;</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="o">+</span>  <span class="o">.</span>  <span class="o">.</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>      <span class="o">&lt;</span>    <span class="o">&lt;</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="o">+</span>  <span class="o">.</span>  <span class="o">.</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>      <span class="o">&lt;</span>    <span class="o">&lt;</span>   <span class="o">&lt;</span>    <span class="o">&lt;</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="o">+</span>  <span class="mi">10</span> <span class="mf">.2</span>  <span class="mi">800</span>  <span class="mi">800</span>    <span class="mi">9</span>    <span class="mi">1</span>   <span class="mf">.9</span>   <span class="mi">6</span>
+<span class="nb">s</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">11</span> <span class="mf">.25</span> <span class="mi">50</span>   <span class="mi">51</span>     <span class="mi">1</span>    <span class="mi">6</span>   <span class="mf">.1</span>   <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">1</span>  <span class="mi">9</span>  <span class="mf">.05</span> <span class="mi">700</span>  <span class="mi">401</span>    <span class="mi">1</span>    <span class="mi">6</span>   <span class="mf">.1</span>   <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">2</span>  <span class="mi">8</span>  <span class="o">.</span>   <span class="mi">900</span>  <span class="mi">147</span>    <span class="mi">8</span>    <span class="mi">1</span>    <span class="mi">4</span>   <span class="mf">.2</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">3</span>  <span class="mi">7</span>  <span class="o">.</span>   <span class="mi">1100</span> <span class="mi">381</span>    <span class="mi">2</span>    <span class="mi">9</span>   <span class="mf">.5</span>   <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">4</span>  <span class="mi">6</span>  <span class="o">.</span>   <span class="mi">200</span>  <span class="mi">102</span>    <span class="mi">11</span>   <span class="mi">3</span>   <span class="mf">.2</span>   <span class="mi">5</span>
+<span class="nb">i</span> <span class="mi">1</span>  <span class="mi">5</span>  <span class="mi">6</span>  <span class="o">.</span>   <span class="mi">800</span>  <span class="mi">803</span>    <span class="mi">9</span>    <span class="mi">1</span>   <span class="mf">.9</span>   <span class="mi">6</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />  
+        <span class="phrase">This is the diagram of the waveform of the GEN12 routines, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen12.png" alt="f 37 0 1024 -12 40 - Bessel function-defined from 0 to 40" />
+          <div class="caption">
+            <p>f 37 0 1024 -12 40 - Bessel function-defined from 0 to 40</p>
+          </div>
+        </div>
+        <p>
+   
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275989127664"></a>
+        <h2>Credits</h2>
+        <p>
+      Example is, with minor modifications, taken from The Csound Book (page 87).
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN11.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN13.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN11 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN13</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

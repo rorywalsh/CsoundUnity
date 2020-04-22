@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vtaba</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vtabk.html" title="vtabk" />
+    <link rel="next" href="vtabwi.html" title="vtabwi" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vtaba</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vtabk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vtabwi.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vtaba"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVtaba" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vtaba</span>
+        </h2>
+        <p>vtaba — 
+      Read vectors (from tables -or arrays of vectors).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036955104"></a>
+        <h2>Description</h2>
+        <p>
+      This opcode reads vectors from tables at a-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036953872"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vtaba</strong></span>  andx, ifn, aout1 [, aout2, aout3, .... , aoutN ]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036951888"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> - table number
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036950304"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>andx</em></span> - Index into f-table, either a positive number range matching the table length
+    </p>
+        <p>
+      <span class="emphasis"><em>aout1...aoutN</em></span> - output vector elements
+    </p>
+        <p>
+      This opcode is useful in all cases in which one needs to access sets of values associated to unique indexes (for example, multi-channel samples, STFT bin frames, spectral formants, p-field based scores etc.). The number of elements of each vector (length of the vector) is determined by the number of optional arguments on the right (<span class="emphasis"><em>aout1</em></span>, <span class="emphasis"><em>aout2</em></span>, <span class="emphasis"><em>aout3</em></span>, ....  <span class="emphasis"><em>aoutN</em></span>).
+    </p>
+        <p>
+      Notice that no wrap nor limit mode is implemented.  So, if  an index attempt to access to a zone not allocated by the table, Csound will probably crash. However this drawback can be easily avoided by using wrap or limit opcodes applied to indexes before using <span class="emphasis"><em>vtaba</em></span>, in order to correct eventual out-of-range values.
+    </p>
+        <p>
+      The <span class="command"><strong>vtab</strong></span> family is similar to the <span class="command"><strong>vtable</strong></span> family, but is much faster because interpolation is not available, table number cannot be changed after initialization, and only raw indexing is supported.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Notice that <span class="emphasis"><em>vtaba</em></span>'s output arguments are placed at the right of the opcode name, differently from usual (this style is already used in other opcodes using undefined lists of output arguments such as <a class="link" href="fin.html" title="fin"><em class="citetitle">fin</em></a> or <a class="link" href="trigseq.html" title="trigseq"><em class="citetitle">trigseq</em></a>).
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036939328"></a>
+        <h2>Examples</h2>
+        <p>
+       The usage of <span class="emphasis"><em>vtaba</em></span> is similar to <a class="link" href="vtablek.html" title="vtablek"><em class="citetitle">vtablek</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036936832"></a>
+        <h2>See also</h2>
+        <p>
+      <a class="link" href="vtabk.html" title="vtabk"><em class="citetitle">vtabk</em></a>,
+      <a class="link" href="vtabi.html" title="vtabi"><em class="citetitle">vtabi</em></a>,
+      <a class="link" href="vtablea.html" title="vtablea"><em class="citetitle">vtablea</em></a>,
+      <a class="link" href="vtablewa.html" title="vtablewa"><em class="citetitle">vtablewa</em></a>,
+      <a class="link" href="vtabwa.html" title="vtabwa"><em class="citetitle">vtabwa</em></a>,
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276036931264"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado.</p>
+        <p>New in Csound 5 (Previously available only on CsoundAV)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vtabk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vtabwi.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vtabk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vtabwi</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

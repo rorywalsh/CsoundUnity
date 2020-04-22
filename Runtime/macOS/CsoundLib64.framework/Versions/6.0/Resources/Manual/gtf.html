@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>gtf</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="gainslider.html" title="gainslider" />
+    <link rel="next" href="gauss.html" title="gauss" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">gtf</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="gainslider.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="gauss.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="gtf"></a>
+      <div class="titlepage"></div>
+      <a id="IndexgGtf" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">gtf</span>
+        </h2>
+        <p>gtf — 
+      Apply a gammatone filter to an audio signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101407344"></a>
+        <h2>Description</h2>
+        <p>
+     Apply a gammatone filter of various orders to an audio signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101406096"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>gtf</strong></span> ain, kfreq, idecay[, iorder, iphase]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101404000"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idecay</em></span> -- rate of decay
+    </p>
+        <p>
+      <span class="emphasis"><em>iorder</em></span> -- (optional) Order of filter in
+      rangs 1 to 10 defaulting to 4.
+    </p>
+        <p>
+      <span class="emphasis"><em>iphase</em></span> -- (optional) Phase output,
+      defaulting to zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101400688"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- audio signal to be filtered.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- central frequency of filter in Hertz.
+    </p>
+        <p>
+      The gammatone filter is commonly used in models of the auditory system.
+      The algorithm is based on Martin Cooke's Ph.D work (Cooke, 1993) using
+      the base-band impulse invariant transformation.   See <a class="ulink" href="http://staffwww.dcs.shef.ac.uk/people/N.Ma/resources/gammatone/" target="_top">http://staffwww.dcs.shef.ac.uk/people/N.Ma/resources/gammatone/</a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101382544"></a>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101375824"></a>
+        <h2>Credits</h2>
+        <p>By: John ffitch 2019</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="gainslider.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="gauss.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">gainslider </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> gauss</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

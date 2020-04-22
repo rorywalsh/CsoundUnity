@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsfreeze</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsfread.html" title="pvsfread" />
+    <link rel="next" href="pvsftr.html" title="pvsftr" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsfreeze</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsfread.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsftr.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvsfreeze"></a>
+      <div class="titlepage"></div>
+      <a id="Indexpvsfreeze" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsfreeze</span>
+        </h2>
+        <p>pvsfreeze — 
+      Freeze the amplitude and frequency time functions of a pv stream according to a control-rate
+      trigger.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064939936"></a>
+        <h2>Description</h2>
+        <p>
+      This opcodes 'freezes' the evolution of pvs stream by locking into steady amplitude and/or
+      frequency values for each bin. The freezing is controlled, independently for amplitudes and
+      frequencies, by a control-rate trigger, which switches the freezing 'on' if equal to or above
+      1 and 'off' if below 1.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064938432"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsfreeze</strong></span> fsigin, kfreeza, kfreezf</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064936336"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output pv stream
+    </p>
+        <p>
+      <span class="emphasis"><em>fsigin</em></span> -- input pv stream.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreeza</em></span> -- freezing switch for amplitudes. Freezing is on if above or equal to 1 and off if below 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfcf</em></span> -- freezing switch for frequencies. Freezing is on if above or equal to 1 and off if below 1.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        It is unsafe to use the same f-variable for both input and output of pvs opcodes. Using the same one might lead to undefined behavior on some opcodes. Use a different one on the left and right sides of the opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064931120"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276064930208"></a>
+          <p class="title">
+            <strong>Example 777. Example</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+asig  <span class="opc">in</span>                                       <span class="comment">; input</span>
+ktrig <span class="opc">oscil</span>     1.5, 0.25, 1                   <span class="comment">; trigger</span>
+fim   <span class="opc">pvsanal</span>   asig1, 1024, 256, 1024, 0      <span class="comment">; pvoc analysis </span>
+fou   <span class="opc">pvsfreeze</span> fim, <span class="opc">abs</span>(ktrig), <span class="opc">abs</span>(ktrig)    <span class="comment">; regular 'freeze' of spectra</span>
+aout  <span class="opc">pvsynth</span>   fou                            <span class="comment">; pvoc synthesis</span></pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      In the example above the input signal will be regularly 'frozen' for a short while, 
+      as the trigger rises above 1 about every two seconds.</p>
+        <p>
+      Here is an example of the use of the <span class="emphasis"><em>pvsfreeze</em></span> opcode. It uses the file <a class="ulink" href="examples/pvsfreeze.csd" target="_top"><em class="citetitle">pvsfreeze.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276064918848"></a>
+          <p class="title">
+            <strong>Example 778. Example of the <span class="emphasis"><em>pvsfreeze</em></span> opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276456887264"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">;; example written by joachim heintz 2009</span>
+
+		<span class="nb">seed</span>		<span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">fftsize</span>	<span class="o">=</span>		<span class="mi">1024</span>
+i<span class="n">overlap</span>	<span class="o">=</span>		i<span class="n">fftsize</span> <span class="o">/</span> <span class="mi">4</span>
+i<span class="n">winsize</span>	<span class="o">=</span>		i<span class="n">fftsize</span>
+i<span class="n">winshape</span>	<span class="o">=</span>		<span class="mi">1</span><span class="c1">; von-Hann window</span>
+S<span class="n">file1</span>		<span class="o">=</span>		<span class="s">"fox.wav"</span>
+a<span class="n">in</span>		<span class="nb">soundin</span>	S<span class="n">file1</span>
+k<span class="n">freq</span>		<span class="nb">randomh</span>	<span class="mf">.7</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mi">3</span><span class="c1">; probability of freezing freqs: 1/4</span>
+k<span class="n">amp</span>		<span class="nb">randomh</span>	<span class="mf">.7</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">,</span> <span class="mi">3</span><span class="c1">; idem for amplitudes</span>
+<span class="n">fftin</span>		<span class="nb">pvsanal</span>	a<span class="n">in</span><span class="p">,</span> i<span class="n">fftsize</span><span class="p">,</span> i<span class="n">overlap</span><span class="p">,</span> i<span class="n">winsize</span><span class="p">,</span> i<span class="n">winshape</span><span class="c1">; fft-analysis of file</span>
+<span class="n">freeze</span>		<span class="nb">pvsfreeze</span>	<span class="n">fftin</span><span class="p">,</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">freq</span><span class="c1">; freeze amps or freqs independently</span>
+a<span class="n">out</span>		<span class="nb">pvsynth</span>	<span class="n">freeze</span><span class="c1">; resynthesize</span>
+		<span class="nb">out</span>		a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">r</span> <span class="mi">10</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.757</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064914464"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvsanal.html" title="pvsanal"><em class="citetitle">pvsanal</em></a>,
+      <a class="link" href="pvsynth.html" title="pvsynth"><em class="citetitle">pvsynth</em></a>,
+      <a class="link" href="pvsadsyn.html" title="pvsadsyn"><em class="citetitle">pvsadsyn</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064910672"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>May 2006 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>May 2006.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsfread.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsftr.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsfread </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsftr</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>bamboo</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="balance2.html" title="balance2" />
+    <link rel="next" href="barmodel.html" title="barmodel" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">bamboo</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="balance2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="barmodel.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="bamboo"></a>
+      <div class="titlepage"></div>
+      <a id="IndexBamboo" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">bamboo</span>
+        </h2>
+        <p>bamboo — 
+      Semi-physical model of a bamboo sound.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124054320"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>bamboo</em></span> is a semi-physical model of a bamboo sound. It is one of the PhISEM percussion opcodes. PhISEM (Physically Informed Stochastic Event Modeling) is an algorithmic approach for simulating collisions of multiple independent sound producing objects.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124052496"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>bamboo</strong></span> kamp, idettack [, inum] [, idamp] [, imaxshake] [, ifreq] \
+      [, ifreq1] [, ifreq2]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124050336"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idettack</em></span> -- period of time over which all sound is stopped
+    </p>
+        <p>
+      <span class="emphasis"><em>inum</em></span> (optional) -- The number of beads, teeth, bells, timbrels, etc.  If zero, the default value is 1.25.
+    </p>
+        <p>
+      <span class="emphasis"><em>idamp</em></span> (optional) -- the damping factor, as part of this equation:
+      </p>
+        <div class="literallayout">
+          <p>damping_amount = 0.9999 + (idamp * 0.002)</p>
+        </div>
+        <p>
+    </p>
+        <p>
+      The default <span class="emphasis"><em>damping_amount</em></span> is 0.9999 which means that the default value of <span class="emphasis"><em>idamp</em></span> is 0. The maximum <span class="emphasis"><em>damping_amount</em></span> is 1.0 (no damping). This means the maximum value for <span class="emphasis"><em>idamp</em></span> is 0.05.
+    </p>
+        <p>
+      The recommended range for <span class="emphasis"><em>idamp</em></span> is usually below 75% of the maximum value.
+    </p>
+        <p>
+      <span class="emphasis"><em>imaxshake</em></span> (optional, default=0) -- amount of energy to add back into the system. The value should be in range 0 to 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifreq</em></span> (optional) -- the main resonant frequency. The default value is 2800.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifreq1</em></span> (optional) -- the first resonant frequency. The default value is 2240.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifreq2</em></span> (optional) -- the second resonant frequency. The default value is 3360.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276132131344"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- Amplitude of output.  Note: As these instruments are stochastic, this is only an approximation.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276132129696"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the bamboo opcode. It uses the file <a class="ulink" href="examples/bamboo.csd" target="_top"><em class="citetitle">bamboo.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276132127936"></a>
+          <p class="title">
+            <strong>Example 81. Example of the bamboo opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276493285888"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o bamboo.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+a<span class="n">sig</span>  <span class="nb">bamboo</span> <span class="nb">p4</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8000</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">20000</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">20000</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276132124000"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="dripwater.html" title="dripwater"><em class="citetitle">dripwater</em></a>,
+      <a class="link" href="guiro.html" title="guiro"><em class="citetitle">guiro</em></a>,
+      <a class="link" href="sleighbells.html" title="sleighbells"><em class="citetitle">sleighbells</em></a>,
+      <a class="link" href="tambourine.html" title="tambourine"><em class="citetitle">tambourine</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276132119328"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Perry Cook, part of the PhISEM (Physically Informed Stochastic Event Modeling)</td>
+          </tr>
+          <tr>
+            <td>Adapted by John ffitch</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 4.07</p>
+        <p>Added notes by Rasmus Ekman on May 2002.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="balance2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="barmodel.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">balance2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> barmodel</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

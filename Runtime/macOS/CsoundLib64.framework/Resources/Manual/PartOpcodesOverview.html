@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Part II. Opcodes Overview</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="prev" href="ScoreStrings.html" title="Strings in p-fields" />
+    <link rel="next" href="SiggenTop.html" title="Signal Generators" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Part II. Opcodes Overview</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ScoreStrings.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="SiggenTop.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="part">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h1 class="title"><a id="PartOpcodesOverview"></a>Part II. Opcodes Overview</h1>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <strong>Table of Contents</strong>
+        </p>
+        <dl class="toc">
+          <dt>
+            <span class="chapter">
+              <a href="SiggenTop.html">Signal Generators</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="SiggenTop.html#SiggenAdditive">Additive Synthesis/Resynthesis</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenBasic.html">Basic Oscillators</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenDynamic.html">Dynamic Spectrum Oscillators</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenFmsynth.html">FM Synthesis</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenGranular.html">Granular Synthesis</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenHvs.html">Hyper Vectorial Synthesis</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenLineexp.html">Linear and Exponential Generators</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenEnvelope.html">Envelope Generators</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenModels.html">Models and Emulations</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenPhasors.html">Phasors</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenNoise.html">Random (Noise) Generators</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenSample.html">Sample Playback</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="section">
+                      <a href="SiggenSample.html#SiggenSampleSF">Soundfonts</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="section">
+                  <a href="SiggenScanTop.html">Scanned Synthesis</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenTableacc.html">Table Access</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenWaveterr.html">Wave Terrain Synthesis</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SiggenWavguide.html">Waveguide Physical Modeling</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="SigioTop.html">Signal Input and Output</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="SigioTop.html#SigioFileIO">File Input and Output</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigioInput.html">Signal Input</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigioOutput.html">Signal Output</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SoftwareBus.html">Software Bus</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigioPdisplay.html">Printing and Display</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigioQueries.html">Sound File Queries</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="SigmodTop.html">Signal Modifiers</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="SigmodTop.html#SigProcAmpMod">Amplitude Modifiers and Dynamic processing</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigProcConmorph.html">Convolution and Morphing</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodDelay.html">Delay</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodPanspatl.html">Panning and Spatialization</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodReverbtn.html">Reverberation</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodSample.html">Sample Level Operators</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodSiglimit.html">Signal Limiters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodSpeciale.html">Special Effects</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodStandard.html">Standard Filters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodSpeciali.html">Specialized Filters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodWavguide.html">Waveguides</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodWavshape.html">Waveshaping and Phase Distortion</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="ControlTop.html">Instrument Control</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="ControlTop.html#ControlClockctl">Clock Control</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="ControlConditional.html">Conditional Values</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="ControlDurctl.html">Duration Control Statements</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="ControlFltkIntro.html">FLTK Widgets and GUI controllers</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="section">
+                      <a href="ControlFltkIntro.html#ControlFltkContainers">FLTK Containers</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="section">
+                      <a href="ControlFltkValuators.html">FLTK Valuators</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="section">
+                      <a href="ControlFltkOther.html">Other FLTK Widgets</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="section">
+                      <a href="ControlFltkAppearance.html">Modifying FLTK Widget Appearance</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="section">
+                      <a href="ControlFltkGeneral.html">General FLTK Widget-related Opcodes</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+              <dt>
+                <span class="section">
+                  <a href="ControlInvocat.html">Instrument Invocation</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="ControlPgmctl.html">Program Flow Control</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="ControlRealtime.html">Real-time Performance Control</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="ControlReinitn.html">Initialization and Reinitialization</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="ControlSensing.html">Sensing and Control</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="ControlStacks.html">Stacks</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="ControlSubinstrument.html">Sub-instrument Control</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="ControlTimeread.html">Time Reading</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="TableTop.html">Function Table Control</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="TableTop.html#TableQueries">Table Queries</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="TableReadwrit.html">Read/Write Operations</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="TableSelect.html">Table Reading with Dynamic Selection</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="MathTop.html">Mathematical Operations</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="MathTop.html#MathAmp">Amplitude Converters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MathArtLogic.html">Arithmetic and Logic Operations</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SigmodCompaccum.html">Comparators and Accumulators</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MathMatfunc.html">Mathematical Functions</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MathOpeqfunc.html">Opcode Equivalents of Functions</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MathRndfunc.html">Random Functions</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MathTrig.html">Trigonometric Functions</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="refentrytitle">
+                  <a href="linearalgebraopcodes.html">Linear Algebra Opcodes</a>
+                </span>
+                <span class="refpurpose"> — 
+      Scalar, vector, and matrix arithmetic on real and complex values.
+    </span>
+              </dt>
+              <dt>
+                <span class="refentrytitle">
+                  <a href="arrayOpcodes.html">Array Opcodes</a>
+                </span>
+                <span class="refpurpose"></span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="PitchTop.html">Pitch Converters</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="PitchTop.html#PitchFuncs">Functions</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="PitchTuning.html">Tuning Opcodes</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="MidiTop.html">Real-time MIDI Support</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="MidiTop.html#MidiVirtual">Virtual MIDI Keyboard</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MidiInput.html">MIDI input</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MidiOutput.html">MIDI Message Output</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MidiGeneric.html">Generic Input and Output</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MidiConvert.html">Converters</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MidiExtender.html">Event Extenders</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MidiOnoff.html">Note-on/Note-off Output</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MidiInterop.html">MIDI/Score Interoperability opcodes</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MidiRealtime.html">System Realtime Messages</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="MidiSlidrbk.html">Slider Banks</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="SpectralTop.html">Spectral Processing</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="SpectralTop.html#SiggenStft">Short-time Fourier Transform (STFT) Resynthesis</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SpectralLpcresyn.html">Linear Predictive Coding (LPC) Resynthesis</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SpectralNonstand.html">Non-standard Spectral Processing</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SpectralRealTime.html">Tools for Real-time Spectral Processing (pvs opcodes)</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="SpectralATS.html">ATS Spectral Processing</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="loris.html">Loris Opcodes</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="arraysfft.html">Array-based spectral opcodes</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="StringsTop.html">Strings</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="StringsTop.html#stringmanipulate">String Manipulation Opcodes</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="stringconvert.html">String Conversion Opcodes</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="vectorial.html">Vectorial Opcodes</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="vectorial.html#vectorialtables">Tables of vectors operators</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="vectorialscalar.html">Operations Between a Vectorial and a Scalar Signal</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="vectorialvectorial.html">Operations Between two  Vectorial Signals</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="envelopeGenerators.html">Vectorial Envelope Generators</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="vectorialimiting.html">Limiting and wrapping of vectorial control signals</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="vectorialdelay.html">Vectorial Control-rate Delay Paths</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="vectorialrandom.html">Vectorial Random Signal Generators</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="ZakTop.html">Zak Patch System</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="chapter">
+              <a href="PluginTop.html">Plugin Hosting</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="PluginTop.html#dssi4cs">DSSI and LADSPA for Csound</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="OSCNetwork.html">OSC and Network</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="OSCNetwork.html#AbletonLink">Ableton Link Opcodes</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="OSC.html">OSC</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="Network.html">Network</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="Remote.html">Remote Opcodes</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="MixerOpcodes.html">Mixer Opcodes</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="chapter">
+              <a href="SignalFlowGraphOpcodes.html">
+    Signal Flow Graph Opcodes
+</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="chapter">
+              <a href="JackoOpcodes.html">Jacko Opcodes</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="chapter">
+              <a href="py.html">Python Opcodes</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="py.html#PythonOpcodes">Introduction</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="section">
+                  <a href="PythonOpcodesSyntax.html">Orchestra Syntax</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="chapter">
+              <a href="ImageopcodesTop.html">Image processing opcodes</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="chapter">
+              <a href="STKTop.html">STK Opcodes</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="chapter">
+              <a href="MiscopcodesTop.html">Miscellaneous opcodes</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ScoreStrings.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="SiggenTop.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Strings in p-fields </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Signal Generators</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

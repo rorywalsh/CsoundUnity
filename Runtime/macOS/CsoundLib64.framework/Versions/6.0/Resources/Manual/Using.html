@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using Csound</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartOverview.html" title="Part I. Overview" />
+    <link rel="prev" href="CommandPreindie.html" title="Independent Pre-Processing with Scsort" />
+    <link rel="next" href="UsingDesign.html" title="How Csound works" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using Csound</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CommandPreindie.html">Prev</a> </td>
+          <th width="60%" align="center">Part I. Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="UsingDesign.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="Using"></a>Using Csound</h2>
+          </div>
+        </div>
+      </div>
+      <p>Csound can be operated in a variety of modes and
+    configurations. The original method for running Csound was as a console
+    program (DOS prompt for Windows, Terminal for Mac OS X). This, of course,
+    still works. Running
+    <span class="application">csound</span> without any arguments prints out a
+    list of command-line options, which are more fully explained in the
+    <a class="link" href="CommandFlagsCategory.html" title="Command-line Flags (by Category)"><em class="citetitle">Command Line Flags
+    (by Category)</em></a> section.
+    Normally, the user executes something
+    like:
+    </p>
+      <pre class="programlisting">csound myfile.csd</pre>
+      <p>
+    or separate orchestra (orc) and score (sco) files can be used:
+    </p>
+      <pre class="programlisting">csound myorchestra.orc myscore.sco</pre>
+      <p>
+    You can find many .csd files in the examples folder. Most opcode entries in this manual also include simple .csd files showing the usage of the opcode.
+  </p>
+      <p>
+    There are also many <a class="link" href="OviewFrontEnds.html" title="Front Ends"><em class="citetitle">Front-Ends</em></a> 
+    which can be used to run
+    <span class="application">csound</span>. A 
+    <a class="link" href="OviewFrontEnds.html" title="Front Ends"><em class="citetitle">Front-End</em></a> is a graphical program
+    that eases the process of running csound, and sometimes provides editing
+    and composing functions.
+  </p>
+      <p>
+    Csound also has several ways of producing output. It can:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">Read and write soundfiles (off-line rendering) - Using the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerO"><em class="citetitle">-o</em></a> and <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerI"><em class="citetitle">-i</em></a> flags specifying an output filename.</li>
+          <li class="listitem">
+	Read and write digital audio using a sound card (real-time rendering) - Using the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerOdac"><em class="citetitle">-odac</em></a> and <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerIadc"><em class="citetitle">-iadc</em></a> flags</li>
+          <li class="listitem">Read and write MIDI files (non-realtime) - Using the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperF"><em class="citetitle">-F</em></a> and <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusMidiOutFile"><em class="citetitle">--midioutfile</em></a> flags.</li>
+          <li class="listitem">
+	Read and write MIDI using a MIDI interface and controller (real-time control) - Using the <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperM"><em class="citetitle">-M</em></a> and <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperQ"><em class="citetitle">-Q</em></a> flags.</li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="ConsoleOutput"></a>Csound's Console Output</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+      </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">This output is from csound5; later versions may differ a bit.</td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      When Csound runs, it prints a text output to the console, which shows data about the Csound run. A Console output looks something like this:
+      </p>
+        <pre class="programlisting">time resolution is 0.455 ns                                  
+PortMIDI real time MIDI plugin for Csound                    
+virtual_keyboard real time MIDI plugin for Csound                                       
+PortAudio real-time audio module for Csound                                              
+0dBFS level = 32768.0                                                                    
+Csound version 5.10 beta (float samples) Apr 19 2009                                     
+libsndfile-1.0.17                                                                        
+Reading options from $HOME/.csoundrc                                                     
+UnifiedCSD:  oscil.csd                                                                   
+STARTING FILE                                                                            
+Creating options                                                                         
+Creating orchestra                                                                       
+Creating score                                                                           
+orchname:  /tmp/csound-XYACV6.orc                                                        
+scorename: /tmp/csound-IYtLAJ.sco                                                        
+rtaudio: ALSA module enabled                                                             
+rtmidi: PortMIDI module enabled                                                          
+orch compiler:                                                                           
+17 lines read                                                                            
+        instr   1                                                                        
+Elapsed time at end of orchestra compile: real: 0.129s, CPU: 0.020s                      
+sorting score ...                                                                        
+        ... done                                                                         
+Elapsed time at end of score sort: real: 0.130s, CPU: 0.020s                             
+Csound version 5.10 beta (float samples) Apr 19 2009                                     
+displays suppressed                                                                      
+0dBFS level = 32768.0
+orch now loaded
+audio buffered in 256 sample-frame blocks
+ALSA input: total buffer size: 1024, period size: 256
+reading 1024-byte blks of shorts from adc (RAW)
+ALSA output: total buffer size: 1024, period size: 256
+writing 1024-byte blks of shorts to dac
+SECTION 1:
+ftable 1:
+new alloc for instr 1:
+B  0.000 ..  2.000 T  2.000 TT  2.000 M:  10000.0  10000.0
+Score finished in csoundPerform().
+inactive allocs returned to freespace
+end of score.              overall amps:  10000.0  10000.0
+           overall samples out of range:        0        0
+0 errors in performance
+Elapsed time at end of performance: real: 2.341s, CPU: 0.050s
+345 1024-byte soundblks of shorts written to dac
+Removing temporary file /tmp/csound-CoVcrm.srt ...
+Removing temporary file /tmp/csound-IYtLAJ.sco ...
+Removing temporary file /tmp/csound-XYACV6.orc ...</pre>
+        <p>
+      The console output of Csound is quite verbose, particularly before the actual performance (like version, plugins loaded, etc.). Performance actually started when the console printed:
+      </p>
+        <pre class="programlisting">SECTION 1:</pre>
+        <p>
+      In this particular run, the lines:
+      </p>
+        <pre class="programlisting">new alloc for instr 1:
+B  0.000 ..  2.000 T  2.000 TT  2.000 M:  10000.0  10000.0</pre>
+        <p>
+      Show that a single note for instrument 1, that lasted 2 seconds starting at time 0.000, was produced with an amplitude of 10000 for both channel 1 and 2. An important section of the console output is:
+      </p>
+        <pre class="programlisting">end of score.              overall amps:  10000.0  10000.0
+           overall samples out of range:        0        0</pre>
+        <p>
+      Which shows the overall amplitude and the number of samples which were clipped because they were out of range.
+    </p>
+        <p>
+      The line:
+      </p>
+        <pre class="programlisting">Elapsed time at end of performance: real: 2.341s, CPU: 0.050s</pre>
+        <p>
+      Shows the clock time and the CPU time it takes for the processor to complete the task. If CPU time is lower than clock time it means the csd can run in realtime (unless it has some sections which are extremely CPU intensive). The "real time" figure is the total running time and it is larger because it acounts for disk access. module loading, etc. (CPU time is strictly number-crunching time). If you have a sound that lasts for 100s and it takes 5s to generate it offline, it means that you are taking around 5% of CPU, and that it runs on 0.05 of realtime.
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CommandPreindie.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartOverview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="UsingDesign.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Independent Pre-Processing with Scsort </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> How Csound works</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

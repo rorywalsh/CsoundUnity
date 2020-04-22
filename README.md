@@ -1,4 +1,4 @@
-# Csound Unity Package Test Project
+# Csound Unity Package
 
 Csound as a Unity Package
 
@@ -11,5 +11,3 @@ CsoundUnity is a fully integrated audio middleware for the Unity(3D) game engine
 Please visit homepage: http://rorywalsh.github.io/CsoundUnity/
 
 This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If you wish to use the Csound API in a model that is idiomatic to .net please use his wrapper instead. http://csound6net.codeplex.com
-# CsoundUnityPackage
- Csound as a Unity Package

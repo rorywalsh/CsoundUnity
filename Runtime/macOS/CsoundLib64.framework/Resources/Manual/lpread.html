@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lpread</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="lposcilsa2.html" title="lposcilsa2" />
+    <link rel="next" href="lpreson.html" title="lpreson" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lpread</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lposcilsa2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lpreson.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lpread"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLpread" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lpread</span>
+        </h2>
+        <p>lpread — 
+      Reads a control file of time-ordered information frames.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082955184"></a>
+        <h2>Description</h2>
+        <p>
+      Reads a control file of time-ordered information frames.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082953936"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">krmsr, krmso, kerr, kcps <span class="command"><strong>lpread</strong></span> ktimpnt, ifilcod [, inpoles] [, ifrmrate]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082951808"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilcod</em></span> -- integer or character-string denoting a control-file (reflection coefficients and four parameter values) derived from n-pole linear predictive spectral analysis of a source audio signal. An integer denotes the suffix of a file <span class="emphasis"><em>lp.m</em></span>; a character-string (in double quotes) gives a filename, optionally a full pathname. If not fullpath, the file is sought first in the current directory, then in that of the environment variable SADIR (if defined). Memory usage depends on the size of the file, which is held entirely in memory during computation but shared by multiple calls (see also <span class="emphasis"><em>adsyn</em></span>, <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>inpoles</em></span> (optional, default=0) -- number of poles in the lpc analysis. It is required only when the control file does not have a header; it is ignored when a header is detected.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifrmrate</em></span> (optional, default=0) -- frame rate per second in the lpc analysis. It is required only when the control file does not have a header; it is ignored when a header is detected.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082946016"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>lpread</em></span> accesses a control file of time-ordered information frames, each containing n-pole filter coefficients derived from linear predictive analysis of a source signal at fixed time intervals (e.g. 1/100 of a second), plus four parameter values:
+    </p>
+        <p>
+      <span class="emphasis"><em>krmsr</em></span> -- root-mean-square (rms) of the residual of analysis
+    </p>
+        <p>
+      <span class="emphasis"><em>krmso</em></span> -- rms of the original signal
+    </p>
+        <p>
+      <span class="emphasis"><em>kerr</em></span> -- the normalized error signal
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> -- pitch in Hz
+    </p>
+        <p>
+      <span class="emphasis"><em>ktimpnt</em></span> -- The passage of time, in seconds, through the analysis file. <span class="emphasis"><em>ktimpnt</em></span> must always be positive, but can move forwards or backwards in time, be stationary or discontinuous, as a pointer into the analysis file.
+    </p>
+        <p>
+      <span class="emphasis"><em>lpread</em></span> gets its values from the control file according to the input value <span class="emphasis"><em>ktimpnt</em></span> (in seconds). If <span class="emphasis"><em>ktimpnt</em></span> proceeds at the analysis rate, time-normal synthesis will result; proceeding at a faster, slower, or variable rate will result in time-warped synthesis. At each k-period, <span class="emphasis"><em>lpread</em></span> interpolates between adjacent frames to more accurately determine the parameter values (presented as output) and the filter coefficient settings (passed internally to a subsequent <a class="link" href="lpreson.html" title="lpreson"><em class="citetitle">lpreson</em></a>).
+    </p>
+        <p>The error signal <span class="emphasis"><em>kerr</em></span> (between 0 and 1) derived during predictive analysis reflects the deterministic/random nature of the analyzed source. This will emerge low for pitched (periodic) material and higher for noisy material. The transition from voiced to unvoiced speech, for example, produces an error signal value of about .3. During synthesis, the error signal value can be used to determine the nature of the <a class="link" href="lpreson.html" title="lpreson"><em class="citetitle">lpreson</em></a> driving function: for example, by arbitrating between pitched and non-pitched input, or even by determining a mix of the two. In normal speech resynthesis, the pitched input to <a class="link" href="lpreson.html" title="lpreson"><em class="citetitle">lpreson</em></a> is a wideband periodic signal or pulse train derived from a unit such as <a class="link" href="buzz.html" title="buzz"><em class="citetitle">buzz</em></a>, and the nonpitched source is usually derived from <a class="link" href="rand.html" title="rand"><em class="citetitle">rand</em></a>. However, any audio signal can be used as the driving function, the only assumption of the analysis being that it has a flat response.
+    </p>
+        <p><a class="link" href="lpfreson.html" title="lpfreson"><em class="citetitle">lpfreson</em></a> is a formant shifted <a class="link" href="lpreson.html" title="lpreson"><em class="citetitle">lpreson</em></a>, in which <span class="emphasis"><em>kfrqratio</em></span> is the (cps) ratio of shifted to original formant positions. This permits synthesis in which the source object changes its apparent acoustic size. <a class="link" href="lpfreson.html" title="lpfreson"><em class="citetitle">lpfreson</em></a> with <span class="emphasis"><em>kfrqratio</em></span> = 1 is equivalent to <a class="link" href="lpreson.html" title="lpreson"><em class="citetitle">lpreson</em></a>.
+    </p>
+        <p>Generally, <a class="link" href="lpreson.html" title="lpreson"><em class="citetitle">lpreson</em></a> provides a means whereby the time-varying content and spectral shaping of a composite audio signal can be controlled by the dynamic spectral content of another. There can be any number of lpread/lpreson (or lpfreson) pairs in an instrument or in an orchestra; they can read from the same or different control files independently.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082924192"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the lpread opcode. It uses the file <a class="ulink" href="examples/lpread.csd" target="_top"><em class="citetitle">lpread.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276082922400"></a>
+          <p class="title">
+            <strong>Example 521. Example of the lpread opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276454905440"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o lpread.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">; works with or without -a option when analyzing "fox.wav" from the manual</span>
+i<span class="n">len</span>  <span class="nb">filelen</span> <span class="s">"fox.wav"</span>	<span class="c1">; length of soundfile</span>
+<span class="nb">prints</span> <span class="s">"fox.wav = %f seconds</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span>i<span class="n">len</span>
+
+k<span class="n">time</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p4</span>
+k<span class="n">rmsr</span><span class="p">,</span>k<span class="n">rmso</span><span class="p">,</span>k<span class="n">err</span><span class="p">,</span>k<span class="n">cps</span> <span class="nb">lpread</span> k<span class="n">time</span><span class="p">,</span><span class="s">"fox_poles.lpc"</span>
+k<span class="n">rmso</span> <span class="o">=</span> k<span class="n">rmso</span><span class="o">*</span><span class="mf">.00007</span>			<span class="c1">; low volume</span>
+a<span class="n">out</span>  <span class="nb">buzz</span> k<span class="n">rmso</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">rmsr</span> <span class="o">=</span> k<span class="n">rmsr</span><span class="o">*</span><span class="mf">.0001</span>			<span class="c1">; low volume</span>
+a<span class="n">sig</span>  <span class="nb">rand</span> k<span class="n">rmsr</span>
+      <span class="nb">outs</span> <span class="p">(</span>a<span class="n">out</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span>a<span class="n">sig</span><span class="p">,</span> <span class="p">(</span>a<span class="n">out</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span>a<span class="n">sig</span>	<span class="c1">; mix buzz and rand</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span> 
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">2.8</span> <span class="mi">1</span>	<span class="c1">; first words only</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mf">2.8</span> <span class="mf">2.8</span>	<span class="c1">; whole sentence</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+      The audio file <span class="quote">“<span class="quote">fox.wav</span>”</span> is 2.8 seconds long. So <span class="emphasis"><em>filelen</em></span>'s output should be a line like this:
+      </p>
+        <pre class="screen">
+fox.wav = 2.756667 seconds
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276082916832"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="lpfreson.html" title="lpfreson"><em class="citetitle">lpfreson</em></a>, 
+      <a class="link" href="lpreson.html" title="lpreson"><em class="citetitle">lpreson</em></a>, 
+      <a class="link" href="lpanal.html" title="lpanal"><em class="citetitle">LPANAL</em></a> 
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lposcilsa2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lpreson.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lposcilsa2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> lpreson</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

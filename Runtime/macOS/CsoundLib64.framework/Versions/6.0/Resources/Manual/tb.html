@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tb</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="DeprecatedTop.html" title="Deprecated Orchestra Opcodes and GEN Routines" />
+    <link rel="prev" href="stack.html" title="stack" />
+    <link rel="next" href="tableiw.html" title="tableiw" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tb</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="stack.html">Prev</a> </td>
+          <th width="60%" align="center">Deprecated Orchestra Opcodes and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tableiw.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tb"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTb15_init" class="indexterm"></a>
+      <a id="IndexTb14_init" class="indexterm"></a>
+      <a id="IndexTb13_init" class="indexterm"></a>
+      <a id="IndexTb12_init" class="indexterm"></a>
+      <a id="IndexTb11_init" class="indexterm"></a>
+      <a id="IndexTb10_init" class="indexterm"></a>
+      <a id="IndexTb9_init" class="indexterm"></a>
+      <a id="IndexTb8_init" class="indexterm"></a>
+      <a id="IndexTb7_init" class="indexterm"></a>
+      <a id="IndexTb6_init" class="indexterm"></a>
+      <a id="IndexTb5_init" class="indexterm"></a>
+      <a id="IndexTb4_init" class="indexterm"></a>
+      <a id="IndexTb3_init" class="indexterm"></a>
+      <a id="IndexTb2_init" class="indexterm"></a>
+      <a id="IndexTb1_init" class="indexterm"></a>
+      <a id="IndexTb0_init" class="indexterm"></a>
+      <a id="IndexTb15" class="indexterm"></a>
+      <a id="IndexTb14" class="indexterm"></a>
+      <a id="IndexTb13" class="indexterm"></a>
+      <a id="IndexTb12" class="indexterm"></a>
+      <a id="IndexTb11" class="indexterm"></a>
+      <a id="IndexTb10" class="indexterm"></a>
+      <a id="IndexTb9" class="indexterm"></a>
+      <a id="IndexTb8" class="indexterm"></a>
+      <a id="IndexTb7" class="indexterm"></a>
+      <a id="IndexTb6" class="indexterm"></a>
+      <a id="IndexTb5" class="indexterm"></a>
+      <a id="IndexTb4" class="indexterm"></a>
+      <a id="IndexTb3" class="indexterm"></a>
+      <a id="IndexTb2" class="indexterm"></a>
+      <a id="IndexTb1" class="indexterm"></a>
+      <a id="IndexTb0" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tb</span>
+        </h2>
+        <p>tb0, tb1, tb2, tb3, tb4, tb5, tb6, tb7, tb8, tb9, tb10, tb11, tb12, tb13, tb14, tb15, tb0_init, tb1_init, tb2_init, tb3_init, tb4_init, tb5_init, tb6_init, tb7_init, tb8_init, tb9_init, tb10_init, tb11_init, tb12_init, tb13_init, tb14_init, tb15_init — 
+      Table Read Access inside expressions.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983246336"></a>
+        <h2>Description</h2>
+        <p>
+      </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top"> These opcodes have been largely superceded by the
+      functional form of the opcode tab</td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    Allow to read tables in function fashion, to be used inside expressions.
+
+    At earlier times Csound only supported functions with a single input
+    argument. However, to access table elements, user must provide two
+    numbers, i.e. the number of table and the index of element. So, in
+    order to allow to access a table element with a function, a
+    previous preparation step should be done.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983244272"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>tb0_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb1_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb2_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb3_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb4_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb5_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb6_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb7_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb8_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb9_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb10_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb11_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb12_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb13_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb14_init</strong></span> ifn</pre>
+        <pre class="synopsis"><span class="command"><strong>tb15_init</strong></span> ifn</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb0</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb0</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb1</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb1</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb2</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb2</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb3</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb3</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb4</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb4</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb5</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb5</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb6</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb6</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb7</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb7</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb8</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb8</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb9</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb9</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb10</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb10</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb11</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb11</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb12</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb12</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb13</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb13</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb14</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb14</strong></span>(kIndex)</pre>
+        <pre class="synopsis">iout = <span class="command"><strong>tb15</strong></span>(iIndex)</pre>
+        <pre class="synopsis">kout = <span class="command"><strong>tb15</strong></span>(kIndex)</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983183904"></a>
+        <h2>Performance</h2>
+        <p>
+      There are 16 different opcodes whose name is associated with a
+      number from 0 to 15. User can associate a specific table with each
+      opcode (so the maximum number of tables that can be accessed in
+      function fashion is 16). Prior to access a table, user must
+      associate the table with one of the 16 opcodes by means of an
+      opcode chosen among <span class="emphasis"><em>tb0_init</em></span>, ...,
+      <span class="emphasis"><em>tb15_init</em></span>. For example,
+      </p>
+        <pre class="programlisting">
+      <span class="opc">tb0_init</span>  1</pre>
+        <p>
+      associates table 1 with tb0( ) function, so that, each element of
+      table 1 can be accessed (in function fashion)  with:
+      </p>
+        <pre class="programlisting">
+      kvar <span class="op">=</span> <span class="opc">tb0</span>(k_some_index_of_table1) <span class="op">*</span> k_some_other_var</pre>
+        <p>
+      </p>
+        <pre class="programlisting">
+      ivar <span class="op">=</span> <span class="opc">tb0</span>(i_some_index_of_table1) <span class="op">+</span> i_some_other_var</pre>
+        <p>
+      etc...
+    </p>
+        <p>
+      By using these opcodes, user can drastically reduce the number of
+      lines of an orchestra, improving its readability.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275983174464"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="stack.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="DeprecatedTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tableiw.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">stack </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tableiw</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

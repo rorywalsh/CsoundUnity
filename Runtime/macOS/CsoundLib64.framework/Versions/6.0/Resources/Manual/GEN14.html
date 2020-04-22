@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN14</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN13.html" title="GEN13" />
+    <link rel="next" href="GEN15.html" title="GEN15" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN14</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN13.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN15.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN14"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN14" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN14</span>
+        </h2>
+        <p>GEN14 — 
+      Stores a polynomial whose coefficients derive from Chebyshevs of the second kind.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990524944"></a>
+        <h2>Description</h2>
+        <p>
+      Uses Chebyshev coefficients to generate stored polynomial functions which, under waveshaping, can be used to split a sinusoid into harmonic partials having a pre-definable spectrum.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990523360"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 14 xint xamp h0 h1 h2 ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990521392"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size</em></span> -- number of points in the table. Must be a power of 2 or a power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>). The normal value is power-of-2 plus 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>xint</em></span> -- provides the left and right values [<span class="emphasis"><em>-xint, +xint</em></span>] of the x interval over which the polynomial is to be drawn. These subroutines both call <a class="link" href="GEN03.html" title="GEN03"><em class="citetitle">GEN03</em></a> to draw their functions; the p5 value here is therefore expanded to a negative-positive p5, p6 pair before <span class="emphasis"><em>GEN03</em></span> is actually called. The normal value is 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>xamp </em></span> -- amplitude scaling factor of the sinusoid input that is expected to produce the following spectrum.
+    </p>
+        <p>
+      <span class="emphasis"><em>h0, h1, h2,</em></span> etc. -- relative strength of partials 0 (DC), 1 (fundamental), 2 ... that will result when a sinusoid of amplitude
+
+      </p>
+        <div class="literallayout">
+          <p><br />
+xamp * int(size/2)/xint<br />
+      </p>
+        </div>
+        <p>
+
+      is waveshaped using this function table. These values thus describe a frequency spectrum associated with a particular factor <span class="emphasis"><em>xamp</em></span> of the input signal.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>
+              <a class="link" href="GEN13.html" title="GEN13"><em class="citetitle">GEN13</em></a> is the function generator normally employed in standard waveshaping. It stores a polynomial whose coefficients derive from the Chebyshev polynomials of the first kind, so that a driving sinusoid of strength <span class="emphasis"><em>xamp</em></span> will exhibit the specified spectrum at output. Note that the evolution of this spectrum is generally not linear with varying <span class="emphasis"><em>xamp</em></span>. However, it is bandlimited (the only partials to appear will be those specified at generation time); and the partials will tend to occur and to develop in ascending order (the lower partials dominating at low <span class="emphasis"><em>xamp</em></span>, and the spectral richness increasing for higher values of <span class="emphasis"><em>xamp</em></span>). A negative <span class="emphasis"><em>hn</em></span> value implies a 180 degree phase shift of that partial; the requested full-amplitude spectrum will not be affected by this shift, although the evolution of several of its component partials may be. The pattern +,+,-,-,+,+,... for <span class="emphasis"><em>h0,h1,h2..</em></span>. will minimize the normalization problem for low <span class="emphasis"><em>xamp</em></span> values (see above), but does not necessarily provide the smoothest pattern of evolution.
+            </p>
+                    </li>
+                    <li class="listitem">
+                      <p>
+              <span class="emphasis"><em>GEN14</em></span> stores a polynomial whose coefficients derive from Chebyshevs of the second kind.
+            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990503792"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the GEN14 generator. It uses the file <a class="ulink" href="examples/gen14.csd" target="_top"><em class="citetitle">gen14.csd</em></a>.
+           </p>
+        <div class="example">
+          <a id="idm275990501984"></a>
+          <p class="title">
+            <strong>Example 1210. Example of the GEN14 generator.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276398202480"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen14.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="c1">;after the example from The Csound Book, page 83</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;compare results from GEN13 &amp; GEN14</span>
+		
+i<span class="n">wshpfn</span>	<span class="o">=</span> <span class="nb">p6</span>	
+i<span class="n">nrmfn</span>	<span class="o">=</span> <span class="nb">p7</span>	
+a<span class="n">swp</span>	<span class="nb">linseg</span>	<span class="mf">0.01</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">.49</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">0.01</span>		<span class="c1">;index sweep function</span>
+a<span class="n">index</span>	<span class="nb">poscil</span>	a<span class="n">swp</span><span class="p">,</span> <span class="nb">p5</span><span class="p">,</span> <span class="mi">2</span>				<span class="c1">;sound to waveshape</span>
+a<span class="n">table</span>	<span class="nb">tablei</span>	a<span class="n">index</span><span class="p">,</span> i<span class="n">wshpfn</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.5</span>			<span class="c1">;waveshape index</span>
+a<span class="n">nrm</span>	<span class="nb">tablei</span>	a<span class="n">swp</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> i<span class="n">nrmfn</span><span class="p">,</span> <span class="mi">1</span>			<span class="c1">;normalization </span>
+a<span class="n">env</span>	<span class="nb">linen</span>	<span class="nb">p4</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.02</span>			<span class="c1">;amplitude envelope</span>
+a<span class="n">sig</span>	<span class="o">=</span> <span class="p">(</span>a<span class="n">table</span><span class="o">*</span>a<span class="n">nrm</span><span class="p">)</span><span class="o">*</span>a<span class="n">env</span>				<span class="c1">;normalize and impose envelope</span>
+a<span class="n">sig</span>    <span class="nb">dcblock2</span> a<span class="n">sig</span>					<span class="c1">;get rid of DC</span>
+	<span class="nb">outs</span>    a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>		
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>			<span class="c1">;sine wave</span>
+
+<span class="nb">f</span> <span class="mi">28</span>  <span class="mi">0</span>   <span class="mi">4097</span> <span class="mi">13</span>  <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">.8</span> <span class="mi">0</span> <span class="mf">.5</span> <span class="mi">0</span> <span class="mf">.2</span>		<span class="c1">;waveshaping function: GEN13 - odd harmonics</span>
+<span class="nb">f</span> <span class="mi">280</span> <span class="mi">0</span>   <span class="mi">2049</span> <span class="mi">4</span>   <span class="mi">28</span> <span class="mi">1</span>				<span class="c1">;normalization function for f28</span>
+<span class="nb">f</span> <span class="mi">29</span>  <span class="mi">0</span>   <span class="mi">4097</span> <span class="mi">14</span>  <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">.8</span> <span class="mi">0</span> <span class="mf">.5</span> <span class="mi">0</span> <span class="mf">.2</span>		<span class="c1">;waveshaping function: GEN14 - same harmonics</span>
+<span class="nb">f</span> <span class="mi">290</span> <span class="mi">0</span>   <span class="mi">2049</span> <span class="mi">4</span>   <span class="mi">29</span> <span class="mi">1</span>				<span class="c1">;normalization function for f29</span>
+
+
+<span class="nb">f</span> <span class="mi">30</span>  <span class="mi">0</span>   <span class="mi">4097</span> <span class="mi">13</span>  <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">.6</span> <span class="mi">0</span> <span class="mf">.4</span> <span class="mi">0</span> <span class="mf">.1</span>	<span class="c1">;waveshaping function: GEN13 - even harmonics</span>
+<span class="nb">f</span> <span class="mi">301</span> <span class="mi">0</span>   <span class="mi">2049</span> <span class="mi">4</span>   <span class="mi">30</span> <span class="mi">1</span>				<span class="c1">;normalization function for f30</span>
+<span class="nb">f</span> <span class="mi">31</span>  <span class="mi">0</span>   <span class="mi">4097</span> <span class="mi">14</span>  <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">.6</span> <span class="mi">0</span> <span class="mf">.4</span> <span class="mi">0</span> <span class="mf">.1</span>	<span class="c1">;waveshaping function: GEN13 - even harmonics</span>
+<span class="nb">f</span> <span class="mi">310</span> <span class="mi">0</span>   <span class="mi">2049</span> <span class="mi">4</span>   <span class="mi">31</span> <span class="mi">1</span>				<span class="c1">;normalization function for 31</span>
+<span class="nb">s</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span>   <span class="mi">3</span>   <span class="mf">.7</span>   <span class="mi">440</span> <span class="mi">28</span>  <span class="mi">280</span> 
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">4</span>   <span class="o">.</span>   <span class="mf">.7</span>    <span class="o">.</span>  <span class="mi">29</span>  <span class="mi">290</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">8</span>   <span class="o">.</span>   <span class="mf">.7</span>    <span class="o">.</span>  <span class="mi">30</span>  <span class="mi">301</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">12</span>  <span class="mi">3</span>   <span class="mf">.7</span>    <span class="o">.</span>  <span class="mi">31</span>  <span class="mi">310</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />  
+        <span class="phrase">These are the diagrams of the waveforms of the GEN14 routines, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen14_1.png" alt="f28 0 4097 13 1 1 1 0 .8 0 .5 0 .2 - waveshaping function: GEN13, odd harmonics" />
+          <div class="caption">
+            <p>f28 0 4097 13  1 1 1 0 .8 0 .5 0 .2 - waveshaping function: GEN13, odd harmonics</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen14_2.png" alt="f29 0 4097 14 1 1 1 0 .8 0 .5 0 .2 - waveshaping function: GEN14, the same odd harmonics" />
+          <div class="caption">
+            <p>f29 0 4097 14  1 1 1 0 .8 0 .5 0 .2 - waveshaping function: GEN14, the same odd harmonics</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen14_3.png" alt="f30 0 4097 13 1 1 0 1 0 .6 0 .4 0 .1 - waveshaping function: GEN13, even harmonics" />
+          <div class="caption">
+            <p>f30 0 4097 13  1 1 0 1 0 .6 0 .4 0 .1 - waveshaping function: GEN13, even harmonics</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen14_4.png" alt="f31 0 4097 14 1 1 0 1 0 .6 0 .4 0 .1 - waveshaping function: GEN14, the same even harmonics" />
+          <div class="caption">
+            <p>f31 0 4097 14  1 1 0 1 0 .6 0 .4 0 .1 - waveshaping function: GEN14, the same even harmonics</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275990483952"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="GEN03.html" title="GEN03"><em class="citetitle">GEN03</em></a>,
+      <a class="link" href="GEN13.html" title="GEN13"><em class="citetitle">GEN13</em></a>, and
+      <a class="link" href="GEN15.html" title="GEN15"><em class="citetitle">GEN15</em></a>.
+          </p>
+        <p> Information about the Chebyshev polynomials on Wikipedia: <a class="ulink" href="http://en.wikipedia.org/wiki/Chebyshev_polynomials" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Chebyshev_polynomials</em></a></p>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN13.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN15.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN13 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN15</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

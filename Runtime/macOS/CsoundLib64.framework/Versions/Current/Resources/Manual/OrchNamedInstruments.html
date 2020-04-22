@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Named Instruments</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OrchTop.html" title="Syntax of the Orchestra" />
+    <link rel="prev" href="OrchMacros.html" title="Macros" />
+    <link rel="next" href="OrchUDO.html" title="User Defined Opcodes (UDO)" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Named Instruments</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="OrchMacros.html">Prev</a> </td>
+          <th width="60%" align="center">Syntax of the Orchestra</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OrchUDO.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="OrchNamedInstruments"></a>Named Instruments</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    As a recent addition to the orchestra syntax, instruments can be defined
+    with string names. Such named instruments are callable from the score, and
+    are supported by a number of opcodes.
+  </p>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276148047952"></a>Syntax</h3>
+            </div>
+          </div>
+        </div>
+        <p>A named instrument is declared as shown below:</p>
+        <pre class="programlisting">
+        <span class="oblock">instr</span> Name[, Name2[, Name3[, ...]]]
+
+        [...]
+
+        <span class="oblock">endin</span></pre>
+        <p>
+    A single instrument can have any number of names, and any of these names can
+    be used to call the instrument. Additionally, it is possible to use numbers
+    as name, denoting a standard numbered instrument, so the following
+    declaration is also valid:
+  </p>
+        <pre class="programlisting">
+        <span class="oblock">instr</span> 100, Name1, 99, Name2, 1, 2, 3</pre>
+        <p>
+    An instrument name may consist of any number of letters, digits, and the
+    underscore (_) character, however, the first character must not be a digit.
+    Optionally, the instrument name may be prefixed with the '+' character (see
+    below), for example:
+  </p>
+        <pre class="programlisting">
+        <span class="oblock">instr</span> +Reverb</pre>
+        <p>
+    For all instrument names, a number is automatically assigned (note: if the
+    message level (-m) is not zero, these numbers are printed to the console
+    during orchestra compilation), following these rules:
+  </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+        any unused instrument numbers are taken up in ascending order, starting
+        from 1
+      </p>
+            </li>
+            <li class="listitem">
+              <p>
+        the numbers are assigned in the order of instrument name definition, so
+        named instruments that are defined later will always have a higher
+        number (except if the '+' modifier is used)
+      </p>
+            </li>
+            <li class="listitem">
+              <p>
+        if the instrument name was prefixed with '+', the assigned number will
+        be higher than that of any of the (both numbered and named) other
+        instruments without '+'. If there are multiple '+' instruments, the
+        numbering of these will follow the order of definition, according to the
+        above rule.
+      </p>
+              <p>
+        Using '+' is mainly useful for global output or effect instruments, that
+        must be performed after the other instruments.
+      </p>
+            </li>
+          </ul>
+        </div>
+        <p>An example for instrument numbers:</p>
+        <pre class="programlisting">
+        <span class="oblock">instr</span> 1, 2
+        <span class="oblock">endin</span>
+
+        <span class="oblock">instr</span> Instr1
+        <span class="oblock">endin</span>
+
+        <span class="oblock">instr</span> +Effect1, Instr2
+        <span class="oblock">endin</span>
+
+        <span class="oblock">instr</span> 100, Instr3, +Effect2, Instr4, 5
+        <span class="oblock">endin</span></pre>
+        <p>
+  In this example, the instrument numbers are assigned as follows:
+  </p>
+        <pre class="programlisting">
+        Instr1:  3
+        Effect1: 101
+        Instr2:  4
+        Instr3:  6
+        Effect2: 102
+        Instr4:  7</pre>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276148030304"></a>Using Named Instruments</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      Named instruments can be called by using the name in double quotes as the
+      instrument number (note: the '+' character should be omitted). Currently
+      (as of Csound 4.22.4), named instruments are supported by:
+    </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>'i' and 'q' score events</p>
+              <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                <table border="0" summary="Note: Notes">
+                  <tr>
+                    <td rowspan="2" align="center" valign="top" width="25">
+                      <img alt="[Note]" src="images/note.png" />
+                    </td>
+                    <th align="left">Notes</th>
+                  </tr>
+                  <tr>
+                    <td align="left" valign="top">
+                      <div class="orderedlist">
+                        <ol class="orderedlist" type="1">
+                          <li class="listitem">
+                            <p>
+                in score files, unmatched quotes, and spaces or other invalid
+                characters in the strings should be avoided, otherwise (at least
+                with current version) unpredictable behavior may occur (this
+                problem does not exist for -L line events). However, there is
+                checking for undefined instruments, and in such cases, the event
+                is simply ignored with a warning.
+              </p>
+                          </li>
+                          <li class="listitem">
+                            <p>
+                Stand-alone utilities (score sort and extract) do not support
+                named instruments. It is still possible to sort such scores by
+                using the -t0 option of the main Csound executable)
+              </p>
+                          </li>
+                        </ol>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </li>
+            <li class="listitem">
+              <p>real-time line events (-L)</p>
+            </li>
+            <li class="listitem">
+              <p>event, schedkwhen, subinstr, and subinstrinit opcodes</p>
+            </li>
+            <li class="listitem">
+              <p>massign, pgmassign, prealloc, and mute opcodes</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+      Additionaly, there is a new opcode (nstrnum) that returns the number of a
+      named instrument:
+    </p>
+        <pre class="programlisting">
+        insno <span class="opc">nstrnum</span> "name"</pre>
+        <p>
+      With the above example, nstrnum "Effect1" would return 101. If an
+      instrument with the specified name does not exist, an init error occurs,
+      and -1 is returned.
+    </p>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276148019312"></a>Example</h3>
+            </div>
+          </div>
+        </div>
+        <pre class="programlisting">
+<span class="comment">; ---- orchestra ----</span>
+
+<span class="ohdr">sr</span>      <span class="op">=</span>  44100
+<span class="ohdr">ksmps</span>   <span class="op">=</span>  10
+<span class="ohdr">nchnls</span>  <span class="op">=</span>  1
+
+        <span class="ohdr">prealloc</span> "SineWave", 20
+        <span class="ohdr">prealloc</span> "MIDISineWave", 20
+
+        <span class="ohdr">massign</span> 1, "MIDISineWave"
+
+gaOutSend       <span class="opc">init</span> 0
+
+        <span class="oblock">instr</span> +OutputInstr
+
+        <span class="opc">out</span> gaOutSend
+        <span class="opc">clear</span> gaOutSend
+
+        <span class="oblock">endin</span>
+
+        <span class="oblock">instr</span> SineWave
+
+a1      <span class="opc">oscils</span> p4, p5, 0
+        <span class="opc">vincr</span> gaOutSend, a1
+
+        <span class="oblock">endin</span>
+
+        <span class="oblock">instr</span> MIDISineWave
+
+iamp    <span class="opc">veloc</span>
+inote   <span class="opc">notnum</span>
+icps    <span class="op">=</span>  <span class="opc">cpsoct</span>(inote <span class="op">/</span> 12 <span class="op">+</span> 3)
+a1      <span class="opc">oscils</span> iamp <span class="op">*</span> 100, icps, 0
+        <span class="opc">vincr</span> gaOutSend, a1
+
+        <span class="oblock">endin</span>
+
+<span class="comment">; ---- score ----</span>
+
+<span class="stamnt">i</span> "SineWave" 0 2 12000 440
+<span class="stamnt">i</span> "OutputInstr" 0 3
+<span class="stamnt">e</span></pre>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276147997392"></a>Author</h3>
+            </div>
+          </div>
+        </div>
+        <p>Istvan Varga</p>
+        <p>2002</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="OrchMacros.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OrchTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OrchUDO.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Macros </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> User Defined Opcodes (UDO)</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

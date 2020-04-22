@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>The Csound Command</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="PartOverview.html" title="Part I. Overview" />
+    <link rel="prev" href="Introduction.html" title="Introduction" />
+    <link rel="next" href="CommandDesc.html" title="Description of the command syntax" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">The Csound Command</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="Introduction.html">Prev</a> </td>
+          <th width="60%" align="center">Part I. Overview</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CommandDesc.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="CommandTop"></a>The Csound Command</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    The command <span class="emphasis"><em>csound</em></span> is a basic frontend to the system that can be used to generate a sound output from an <a class="link" href="OrchTop.html" title="Syntax of the Orchestra"><em class="citetitle">orchestra</em></a> file and a <a class="link" href="ScoreTop.html" title="The Standard Numeric Score"><em class="citetitle">score</em></a> file (or a unified <a class="link" href="CommandUnifile.html" title="Unified File Format for Orchestras and Scores"><em class="citetitle">csd file</em></a>). It is designed to be called from a terminal or DOS window. In addition to it, there are other <a class="link" href="OviewFrontEnds.html" title="Front Ends"><em class="citetitle">front-ends</em></a>, which might be simpler to use. The score file can be in one of many different formats, according to user preference. Translation, sorting, and formatting into orchestra-readable numeric text is handled by various preprocessors; all or part of the score is then sent on to the orchestra. Orchestra performance is influenced by <a class="link" href="CommandFlagsCategory.html" title="Command-line Flags (by Category)"><em class="citetitle">command flags</em></a>, which set the level of displays and console reports, specify I/0 filenames and sample formats, and declare the nature of real-time sensing and control.
+  </p>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="CommandOrder"></a>Order of Precedence</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+      There are five places where options for Csound performance may be set. They are processed in the following order:
+
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>Csound's own defaults</p>
+            </li>
+            <li class="listitem">
+              <p>File defined by the CSOUND6RC <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">environment variable</em></a>, or .csound6rc file in the HOME directory</p>
+            </li>
+            <li class="listitem">
+              <p>A <a class="link" href="CommandUnifileParFile.html" title="Command Line Parameter File (.csound6rc)"><em class="citetitle">.csound6rc</em></a> file in the current directory</p>
+            </li>
+            <li class="listitem">
+              <p>&lt;CsOptions&gt; tag in a <a class="link" href="CommandUnifile.html" title="Unified File Format for Orchestras and Scores"><em class="citetitle">.csd file</em></a></p>
+            </li>
+            <li class="listitem">
+              <p>Passed on the Csound <a class="link" href="CommandDesc.html" title="Description of the command syntax"><em class="citetitle">command</em></a> line</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+        <p>
+      The later options in the list will override any earlier ones.
+      As of version 5.01 of Csound, sample and control rate override flags
+      (<a class="link" href="CommandFlags.html#FlagsMinusLowerR"><em class="citetitle">-r</em></a> and
+      <a class="link" href="CommandFlags.html#FlagsMinusLowerK"><em class="citetitle">-k</em></a>)
+      specified anywhere override sr, kr, and ksmps defined in the orchestra header.
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="Introduction.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="PartOverview.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CommandDesc.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">
+    Introduction
+   </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Description of the command syntax</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

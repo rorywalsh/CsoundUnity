@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>metro</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mediank.html" title="mediank" />
+    <link rel="next" href="metro2.html" title="metro2" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">metro</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mediank.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="metro2.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="metro"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMetro" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">metro</span>
+        </h2>
+        <p>metro — 
+     Trigger Metronome
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081614368"></a>
+        <h2>Description</h2>
+        <p>
+	Generate a metronomic signal to be used in any circumstance an isochronous trigger is needed.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081612992"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ktrig  <span class="command"><strong>metro</strong></span>  kfreq [, initphase]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081610880"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>initphase</em></span>  - initial phase value (in the 0 to 1 range)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081609184"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> - output trigger signal
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> - frequency of trigger bangs in cps
+    </p>
+        <p>
+     <span class="emphasis"><em>metro</em></span> is a simple opcode that outputs a sequence of isochronous bangs (that is 1 values) each 1/kfreq seconds. Trigger signals can be used in any circumstance, mainly to temporize realtime algorithmic compositional structures.
+     </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        <span class="emphasis"><em>metro</em></span> will produce a trigger signal of 1 when its phase is exactly 0 or 1. If you want to skip the initial trigger, use a very small value like 0.00000001.
+     </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081603888"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the metro opcode. It uses the file <a class="ulink" href="examples/metro.csd" target="_top"><em class="citetitle">metro.csd</em></a>
+      </p>
+        <div class="example">
+          <a id="idm276081602112"></a>
+          <p class="title">
+            <strong>Example 546. Example of the metro opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276453976576"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac -B441 -b441
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>     <span class="o">=</span>        <span class="mi">44100</span>
+<span class="vg">kr</span>     <span class="o">=</span>        <span class="mi">100</span>
+<span class="vg">ksmps</span>  <span class="o">=</span>        <span class="mi">441</span>
+<span class="vg">nchnls</span> <span class="o">=</span>        <span class="mi">2</span>
+
+       <span class="kd">instr</span>    <span class="nf">1</span>
+k<span class="n">trig</span> <span class="nb">metro</span> <span class="mf">0.2</span>
+<span class="nb">printk2</span> k<span class="n">trig</span>
+	<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">20</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+            Here is another example of the metro opcode. It uses the file <a class="ulink" href="examples/metro-2.csd" target="_top"><em class="citetitle">metro-2.csd</em></a>
+      </p>
+        <div class="example">
+          <a id="idm276081599760"></a>
+          <p class="title">
+            <strong>Example 547. Another example of the metro opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276451309232"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o metro-2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">pch</span>    <span class="nb">random</span>   <span class="mi">1</span><span class="p">,</span><span class="mi">20</span>		<span class="c1">;produce values at k-rate</span>
+k<span class="n">trig</span>   <span class="nb">metro</span>    <span class="mi">10</span>		<span class="c1">;trigger 10 times per second</span>
+k<span class="n">val</span>	<span class="nb">samphold</span> k<span class="n">pch</span><span class="p">,</span> k<span class="n">trig</span> 	<span class="c1">;change value whenever ktrig = 1 </span>
+a<span class="n">sig</span>	<span class="nb">buzz</span>	 <span class="mi">1</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> k<span class="n">val</span><span class="p">,</span> <span class="mi">1</span><span class="c1">;harmonics</span>
+        <span class="nb">outs</span>     a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">; sine</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081598064"></a>
+        <h2>See Also</h2>
+        <p> More information on this opcode in the Floss Manuals: <a class="ulink" href="http://write.flossmanuals.net/csound/c-control-structures/" target="_top"><em class="citetitle">http://write.flossmanuals.net/csound/c-control-structures/</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081596048"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado.</p>
+        <p>First Example written by Andrés Cabrera.</p>
+        <p>New in Csound 5 (Previously available only on CsoundAV)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mediank.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="metro2.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mediank </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> metro2</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

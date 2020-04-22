@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>readk3</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="readk2.html" title="readk2" />
+    <link rel="next" href="readk4.html" title="readk4" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">readk3</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="readk2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="readk4.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="readk3"></a>
+      <div class="titlepage"></div>
+      <a id="IndexReadk3" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">readk3</span>
+        </h2>
+        <p>readk3 — 
+      Periodically reads three orchestra control-signal values from an external file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062604752"></a>
+        <h2>Description</h2>
+        <p>
+      Periodically reads three orchestra control-signal values from an external file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062603488"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kr1, kr2, kr3 <span class="command"><strong>readk3</strong></span> ifilname, iformat, iprd</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062601392"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilname</em></span> -- an integer N denoting a file named "readk.N" or a character string (in double quotes, spaces permitted) denoting the external file name. For a string, it may either be a full path name with directory specified or a simple filename.  In the later case, the file is sought first in the current directory, then in <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SSDIR</em></a>, and finally in <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SFDIR</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em>iformat</em></span> -- specifies the input data format:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 = 8-bit signed integers (char)</p>
+            </li>
+            <li class="listitem">
+              <p>4 = 16-bit short integers</p>
+            </li>
+            <li class="listitem">
+              <p>5 = 32-bit long integers</p>
+            </li>
+            <li class="listitem">
+              <p>6 = 32-bit floats</p>
+            </li>
+            <li class="listitem">
+              <p>7 = ASCII long integers (plain text)</p>
+            </li>
+            <li class="listitem">
+              <p>8 = ASCII floats (plain text)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      Note that A-law and U-law formats are not available, and that all formats except the last two are binary. The input file should be a "raw", headerless data file.
+    </p>
+        <p>
+      <span class="emphasis"><em>iprd</em></span> -- the rate (period) in seconds, rounded to the nearest orchestra control period, at which the signals are read from the input file.  A value of 0 implies one control period (the enforced minimum), which will read new values at the orchestra control rate.  Longer periods will cause the same values to repeat for more than one control period.
+      
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062588928"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kr1, kr2, kr3</em></span> -- output of the signals read from <span class="emphasis"><em>ifilname</em></span>.
+    </p>
+        <p>
+      This opcode allows three generated control signal values to be read from a named external file. The file should contain no header information but it should contain a regularly sampled time series of control values. For binary formats, the individual samples of each signal are interleaved. For ASCII text formats, the values are assumed to be separated by at least one whitespace character.  The three "channels" in a sample frame may be on the same line or separated by newline characters, it does not matter. There may be any number of <span class="emphasis"><em>readk3</em></span> opcodes in an instrument or orchestra and they may read from the same or different files.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062585040"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the readk3 opcode. It uses the file <a class="ulink" href="examples/readk3.csd" target="_top"><em class="citetitle">readk3.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276062583248"></a>
+          <p class="title">
+            <strong>Example 833. Example of the readk3 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276471092160"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o readk3.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">Sine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">^</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">;writes three control signals to a file</span>
+k<span class="n">freq</span>     <span class="nb">randh</span>     <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">500</span> <span class="c1">;generates one random number between 400 and 600 per second</span>
+k<span class="n">db</span>       <span class="nb">randh</span>     <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span> <span class="c1">;amplitudes in dB between -24 and 0</span>
+k<span class="n">pan</span>      <span class="nb">randh</span>     <span class="mf">.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.5</span> <span class="c1">;panning between 0 and 1</span>
+          <span class="nb">dumpk3</span>    k<span class="n">freq</span><span class="p">,</span> k<span class="n">db</span><span class="p">,</span> k<span class="n">pan</span><span class="p">,</span> <span class="s">"dumpk3.txt"</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span> <span class="c1">;writes the control signals</span>
+          <span class="nb">prints</span>    <span class="s">"WRITING:</span><span class="se">\n</span><span class="s">"</span>
+          <span class="nb">printks</span>   <span class="s">"kfreq = %f, kdb = %f, kpan = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> k<span class="n">db</span><span class="p">,</span> k<span class="n">pan</span>  <span class="c1">;prints them</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span> <span class="c1">;reads the file written by instr 1</span>
+k<span class="n">f</span><span class="p">,</span>k<span class="n">db</span><span class="p">,</span>k<span class="n">p</span> <span class="nb">readk3</span>    <span class="s">"dumpk3.txt"</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span>
+          <span class="nb">prints</span>    <span class="s">"READING:</span><span class="se">\n</span><span class="s">"</span>
+          <span class="nb">printks</span>   <span class="s">"kfreq = %f, kdb = %f, kpan = %f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">f</span><span class="p">,</span> k<span class="n">db</span><span class="p">,</span> k<span class="n">p</span>  <span class="c1">;prints again</span>
+k<span class="n">db</span>       <span class="nb">lineto</span>    k<span class="n">db</span><span class="p">,</span> <span class="mf">.1</span> <span class="c1">;smoothing amp transition</span>
+k<span class="n">p</span>        <span class="nb">lineto</span>    k<span class="n">p</span><span class="p">,</span> <span class="mf">.1</span> <span class="c1">;smoothing pan transition</span>
+a<span class="n">out</span>      <span class="nb">poscil</span>    <span class="nb">ampdb</span><span class="p">(</span>k<span class="n">db</span><span class="p">),</span> k<span class="n">f</span><span class="p">,</span> gi<span class="n">Sine</span>
+a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>    <span class="nb">pan2</span>      a<span class="n">out</span><span class="p">,</span> k<span class="n">p</span>
+          <span class="nb">outs</span>      a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">5</span> <span class="mi">5</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      The output should include lines like these:
+      </p>
+        <pre class="screen">
+WRITING:
+kfreq = 473.352855, kdb = -15.197657, kpan = 0.366764
+kfreq = 473.352855, kdb = -15.197657, kpan = 0.366764
+kfreq = 441.426368, kdb = -19.026206, kpan = 0.207327
+kfreq = 452.965140, kdb = -21.447486, kpan = 0.553270
+kfreq = 585.106328, kdb = -11.903852, kpan = 0.815665
+kfreq = 482.056760, kdb = -4.046744, kpan = 0.876537
+
+READING:
+kfreq = 473.352900, kdb = -15.197700, kpan = 0.366800
+kfreq = 473.352900, kdb = -15.197700, kpan = 0.366800
+kfreq = 441.426400, kdb = -19.026200, kpan = 0.207300
+kfreq = 452.965100, kdb = -21.447500, kpan = 0.553300
+kfreq = 585.106300, kdb = -11.903900, kpan = 0.815700
+kfreq = 482.056800, kdb = -4.046700, kpan = 0.876500
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062578048"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="dumpk.html" title="dumpk"><em class="citetitle">dumpk</em></a>,
+      <a class="link" href="dumpk2.html" title="dumpk2"><em class="citetitle">dumpk2</em></a>,
+      <a class="link" href="dumpk3.html" title="dumpk3"><em class="citetitle">dumpk3</em></a>,
+      <a class="link" href="dumpk4.html" title="dumpk4"><em class="citetitle">dumpk4</em></a>,
+      <a class="link" href="readk.html" title="readk"><em class="citetitle">readk</em></a>,
+      <a class="link" href="readk2.html" title="readk2"><em class="citetitle">readk2</em></a>,
+      <a class="link" href="readk4.html" title="readk4"><em class="citetitle">readk4</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062570736"></a>
+        <h2>Credits</h2>
+        <p>By: John ffitch and Barry L. Vercoe</p>
+        <p>1999 or earlier</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="readk2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="readk4.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">readk2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> readk4</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

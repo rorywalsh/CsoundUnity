@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>release</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="reinit.html" title="reinit" />
+    <link rel="next" href="remoteport.html" title="remoteport" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">release</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="reinit.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="remoteport.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="release"></a>
+      <div class="titlepage"></div>
+      <a id="IndexRelease" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">release</span>
+        </h2>
+        <p>release — 
+      Indicates whether a note is in its <span class="quote">“<span class="quote">release</span>”</span> stage.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062247120"></a>
+        <h2>Description</h2>
+        <p>
+      Provides a way of knowing when a note off message for the current note is received. Only a noteoff message with the same MIDI note number as the one which triggered the note will be reported by <span class="emphasis"><em>release</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062245328"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kflag <span class="command"><strong>release</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062243392"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kflag</em></span> -- indicates whether the note is in its <span class="quote">“<span class="quote">release</span>”</span> stage. (1 if a note off is received, otherwise 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>release</em></span> outputs current note state. If current note is in the <span class="quote">“<span class="quote">release</span>”</span> stage (i.e. if its duration has been extended with <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> opcode and if it has only just deactivated), then the <span class="emphasis"><em>kflag</em></span> output argument is set to 1. Otherwise (in sustain stage of current note), <span class="emphasis"><em>kflag</em></span> is set to 0.
+    </p>
+        <p>
+       This opcode is useful for implementing complex release-oriented envelopes. When used in conjunction with <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a> it can provide an alternative to the hard-coded behaviour of the "r" opcodes (<a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>, <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a> et al), where release time is set to the longest time specified in the active instrument.
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062234864"></a>
+        <h2>Examples</h2>
+        <p>
+      See the examples for <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062232784"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="xtratim.html" title="xtratim"><em class="citetitle">xtratim</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276062230752"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="reinit.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="remoteport.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">reinit </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> remoteport</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

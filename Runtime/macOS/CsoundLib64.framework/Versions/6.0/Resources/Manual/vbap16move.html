@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vbap16move</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vbap16.html" title="vbap16" />
+    <link rel="next" href="vbap4.html" title="vbap4" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vbap16move</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vbap16.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vbap4.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vbap16move"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVbap16move" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vbap16move</span>
+        </h2>
+        <p>vbap16move — 
+      Distribute an audio signal among 16 channels with moving virtual sources.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050139712"></a>
+        <h2>Description</h2>
+        <p>
+      Distribute an audio signal among 16 channels with moving virtual sources.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050138448"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar1, ..., ar16 <span class="command"><strong>vbap16move</strong></span> asig, idur, ispread, ifldnum, ifld1 \
+      [, ifld2] [...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050136320"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idur</em></span> -- the duration over which the
+    movement takes place.
+    </p>
+        <p>
+      <span class="emphasis"><em>ispread</em></span> -- spreading of the virtual source (range 0 - 100).  If value is zero, conventional amplitude panning is used. When <span class="emphasis"><em>ispread</em></span> is increased, the number of loudspeakers used in panning increases. If value is 100, the sound is applied to all loudspeakers.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifldnum</em></span> -- number of fields (absolute value must be 2 or larger). If <span class="emphasis"><em>ifldnum</em></span> is positive, the virtual source movement is a polyline specified by given directions. Each transition is performed in an equal time interval. If <span class="emphasis"><em>ifldnum</em></span> is negative, specified angular velocities are applied to the virtual source during specified relative time intervals (see below).
+    </p>
+        <p>
+      <span class="emphasis"><em>ifld1, ifld2, ... </em></span> -- azimuth angles or angular velocities, and relative durations of movement phases.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043497264"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- audio signal to be panned
+    </p>
+        <p>
+      <span class="emphasis"><em>vbap16move</em></span> allows the use of moving virtual sources. If <span class="emphasis"><em>ifldnum</em></span> is positive, the fields represent directions of virtual sources and equal times, <span class="emphasis"><em>iazi1</em></span>, [<span class="emphasis"><em>iele1</em></span>,] <span class="emphasis"><em>iazi2</em></span>, [<span class="emphasis"><em>iele2</em></span>,], etc.  The position of the virtual source is interpolated between directions starting from the first direction and ending at the last. Each interval is interpolated in time that is fraction total_time / number_of_intervals of the duration of the sound event.
+    </p>
+        <p>
+      If <span class="emphasis"><em>ifldnum</em></span> is negative, the fields represent angular velocities and equal times. The first field is, however, the starting direction, <span class="emphasis"><em>iazi1</em></span>, [<span class="emphasis"><em>iele1</em></span>,] <span class="emphasis"><em>iazi_vel1</em></span>, [<span class="emphasis"><em>iele_vel1</em></span>,] <span class="emphasis"><em>iazi_vel2</em></span>, [<span class="emphasis"><em>iele_vel2</em></span>,] .... Each velocity is applied to the note that is fraction total_time / number_of_velocities of the duration of the sound event.  If the elevation of the virtual source becomes greater than 90 degrees or less than 0 degrees, the polarity of angular velocity is changed. Thus the elevational angular velocity produces a virtual source that moves up and down between 0 and 90 degrees.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>Please note that all <span class="emphasis"><em>vbap</em></span> panning opcodes require the <span class="emphasis"><em>vbap</em></span> system to be initialized using <a class="link" href="vbaplsinit.html" title="vbaplsinit"><em class="citetitle">vbaplsinit</em></a>.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043486192"></a>
+        <h2>Examples</h2>
+        <p>
+      See the entry for <a class="link" href="vbap8move.html" title="vbap8move"><em class="citetitle">vbap8move</em></a> for an example of usage of the <span class="emphasis"><em>vbapXmove</em></span> opcodes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043483664"></a>
+        <h2>Reference</h2>
+        <p>
+      Ville Pulkki: <span class="quote">“<span class="quote">Virtual Sound Source Positioning Using Vector Base Amplitude Panning</span>”</span> <span class="emphasis"><em>Journal of the Audio Engineering Society</em></span>, 1997 June, Vol. 45/6, p. 456.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043481520"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vbap16.html" title="vbap16"><em class="citetitle">vbap16</em></a>, 
+      <a class="link" href="vbap4.html" title="vbap4"><em class="citetitle">vbap4</em></a>, 
+      <a class="link" href="vbap4move.html" title="vbap4move"><em class="citetitle">vbap4move</em></a>, 
+      <a class="link" href="vbap8.html" title="vbap8"><em class="citetitle">vbap8</em></a>, 
+      <a class="link" href="vbap8move.html" title="vbap8move"><em class="citetitle">vbap8move</em></a>, 
+      <a class="link" href="vbaplsinit.html" title="vbaplsinit"><em class="citetitle">vbaplsinit</em></a>, 
+      <a class="link" href="vbapz.html" title="vbapz"><em class="citetitle">vbapz</em></a>, 
+      <a class="link" href="vbapzmove.html" title="vbapzmove"><em class="citetitle">vbapzmove</em></a>,
+      <a class="link" href="vbaplsinit.html" title="vbaplsinit"><em class="citetitle">vbapzmove</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276043472448"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Ville Pulkki</td>
+          </tr>
+          <tr>
+            <td>Sibelius Academy Computer Music Studio</td>
+          </tr>
+          <tr>
+            <td>Laboratory of Acoustics and Audio Signal Processing</td>
+          </tr>
+          <tr>
+            <td>Helsinki University of Technology</td>
+          </tr>
+          <tr>
+            <td>Helsinki, Finland</td>
+          </tr>
+          <tr>
+            <td>May 2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound Version 4.07</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vbap16.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vbap4.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vbap16 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vbap4</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

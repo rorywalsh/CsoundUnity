@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>directory</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="diode_ladder.html" title="diode_ladder" />
+    <link rel="next" href="diskgrain.html" title="diskgrain" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">directory</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="diode_ladder.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="diskgrain.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="directory"></a>
+      <div class="titlepage"></div>
+      <a id="Indexdirectory" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">directory</span>
+        </h2>
+        <p>directory — 
+      Reads a directory and outputs to a string array a list of file names.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116329472"></a>
+        <h2>Description</h2>
+        <p>
+      Reads a directory for files and passes them to a string array. Users can set the file type by passing a file extension as a string.  
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116328144"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">SFiles[] <span class="command"><strong>directory</strong></span> SDirectory[, SExtention]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116326048"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>SDirectory</em></span> -- a string that identifies the directory to browse for files
+    </p>
+        <p>
+      <span class="emphasis"><em>SExtention</em></span> -- Optional. Sets the desired file type. If left out, all files names will be retrieved.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116323520"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>SFiles[]</em></span> -- a string array that holds the names of all files of a given type found in the directory.
+    </p>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note: Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">
+              <p>
+      This works at i-time only and will not pick up changes made to the directory after performance has started.
+      </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116320544"></a>
+        <h2>Example</h2>
+        <p>
+      This example shows how directory can be used to browse for .wav files in a fixed location. <span class="emphasis"><em>printf_i</em></span> is then used to print the file names. It uses the file <a class="ulink" href="examples/directory.csd" target="_top"><em class="citetitle">directory.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276116318256"></a>
+          <p class="title">
+            <strong>Example 217. Example of the directory opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276483139264"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-n
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">;browse for text files in current directory</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+i<span class="n">Cnt</span> <span class="nb">init</span> <span class="mi">0</span>
+S<span class="n">Filenames</span><span class="p">[]</span> <span class="n">directory</span> <span class="s">"."</span><span class="p">,</span> <span class="s">".txt"</span>
+i<span class="n">NumberOfFiles</span> <span class="nb">lenarray</span> S<span class="n">Filenames</span>
+
+<span class="k">until</span> i<span class="n">Cnt</span><span class="o">&gt;=</span>i<span class="n">NumberOfFiles</span> <span class="k">do</span>
+	<span class="nb">printf_i</span> <span class="s">"Filename = %s </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> S<span class="n">Filenames</span><span class="p">[</span>i<span class="n">Cnt</span><span class="p">]</span>
+	i<span class="n">Cnt</span> <span class="o">=</span> i<span class="n">Cnt</span><span class="o">+</span><span class="mi">1</span>
+<span class="k">od</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116316496"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Rory Walsh</td>
+          </tr>
+          <tr>
+            <td>2016</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="diode_ladder.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="diskgrain.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">diode_ladder </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> diskgrain</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

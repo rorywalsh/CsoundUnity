@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>sin</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="signum.html" title="signum" />
+    <link rel="next" href="sinh.html" title="sinh" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">sin</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="signum.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sinh.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="sin"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSin" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">sin</span>
+        </h2>
+        <p>sin — 
+      Performs a sine function.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056198752"></a>
+        <h2>Description</h2>
+        <p>
+      Returns the sine of <span class="emphasis"><em>x</em></span> (<span class="emphasis"><em>x</em></span> in radians).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056196720"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>sin</strong></span>(x) (no rate restriction)</pre>
+        <pre class="synopsis"><span class="command"><strong>sin</strong></span>(k/i[]) (k- or i-arrays )</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056193616"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the sin opcode. It uses the file <a class="ulink" href="examples/sin.csd" target="_top"><em class="citetitle">sin.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276056191824"></a>
+          <p class="title">
+            <strong>Example 915. Example of the sin opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276423271536"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o sin.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">sin1</span>     <span class="o">=</span>          <span class="nb">sin</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> 					<span class="c1">;sine of 0 is 0</span>
+i<span class="n">sin2</span>     <span class="o">=</span>          <span class="nb">sin</span><span class="p">(</span><span class="cp">$M_PI_2</span><span class="p">)</span> 				<span class="c1">;sine of pi/2 (1.5707...) is 1</span>
+i<span class="n">sin3</span>     <span class="o">=</span>          <span class="nb">sin</span><span class="p">(</span><span class="cp">$M_PI</span><span class="p">)</span> 				<span class="c1">;sine of pi (3.1415...) is 0</span>
+i<span class="n">sin4</span>     <span class="o">=</span>          <span class="nb">sin</span><span class="p">(</span><span class="cp">$M_PI_2</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> 				<span class="c1">;sine of 3/2pi (4.7123...) is -1</span>
+i<span class="n">sin5</span>     <span class="o">=</span>          <span class="nb">sin</span><span class="p">(</span><span class="cp">$M_PI</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> 				<span class="c1">;sine of 2pi (6.2831...) is 0</span>
+i<span class="n">sin6</span>     <span class="o">=</span>          <span class="nb">sin</span><span class="p">(</span><span class="cp">$M_PI</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span> 				<span class="c1">;sine of 4pi is also 0</span>
+          <span class="nb">print</span>      i<span class="n">sin1</span><span class="p">,</span> i<span class="n">sin2</span><span class="p">,</span> i<span class="n">sin3</span><span class="p">,</span> i<span class="n">sin4</span><span class="p">,</span> i<span class="n">sin5</span><span class="p">,</span> i<span class="n">sin6</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span> <span class="c1">;sin used in panning, after an example from Hans Mikelson</span>
+
+a<span class="n">out</span>      <span class="nb">vco2</span>       <span class="mf">0.8</span><span class="p">,</span> <span class="mi">220</span> 					<span class="c1">; sawtooth</span>
+k<span class="n">pan</span>      <span class="nb">linseg</span>     <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span> <span class="c1">;0 = left, 1 = right</span>
+k<span class="n">pan</span>      <span class="o">=</span>          k<span class="n">pan</span><span class="o">*</span><span class="cp">$M_PI_2</span> 				<span class="c1">;range 0-1 becomes 0-pi/2</span>
+k<span class="n">panl</span>     <span class="o">=</span>          <span class="nb">cos</span><span class="p">(</span>k<span class="n">pan</span><span class="p">)</span>
+k<span class="n">panr</span>     <span class="o">=</span>          <span class="nb">sin</span><span class="p">(</span>k<span class="n">pan</span><span class="p">)</span>
+          <span class="nb">outs</span>       a<span class="n">out</span><span class="o">*</span>k<span class="n">panl</span><span class="p">,</span> a<span class="n">out</span><span class="o">*</span>k<span class="n">panr</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">5</span> <span class="mi">0</span> <span class="mi">1</span> <span class="c1">;move left to right</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">5</span> <span class="mi">5</span> <span class="mi">1</span> <span class="mi">0</span> <span class="c1">;move right to left</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include a line like this:
+      </p>
+        <pre class="screen">instr 1:  isin1 = 0.000  isin2 = 1.000  isin3 = 0.000  isin4 = -1.000  isin5 = -0.000  isin6 = 0.000</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276056170512"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="cos.html" title="cos"><em class="citetitle">cos</em></a>,
+      <a class="link" href="cosh.html" title="cosh"><em class="citetitle">cosh</em></a>,
+      <a class="link" href="cosinv.html" title="cosinv"><em class="citetitle">cosinv</em></a>,
+      <a class="link" href="sinh.html" title="sinh"><em class="citetitle">sinh</em></a>,
+      <a class="link" href="sininv.html" title="sininv"><em class="citetitle">sininv</em></a>,
+      <a class="link" href="tan.html" title="tan"><em class="citetitle">tan</em></a>,
+      <a class="link" href="tanh.html" title="tanh"><em class="citetitle">tanh</em></a>,
+      <a class="link" href="taninv.html" title="taninv"><em class="citetitle">taninv</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="signum.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sinh.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">signum </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> sinh</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

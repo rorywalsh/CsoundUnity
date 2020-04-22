@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pchmidi</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pchbend.html" title="pchbend" />
+    <link rel="next" href="pchmidib.html" title="pchmidib" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pchmidi</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pchbend.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pchmidib.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pchmidi"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPchmidi" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pchmidi</span>
+        </h2>
+        <p>pchmidi — 
+      Get the note number of the current MIDI event, expressed in pitch-class units.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070824080"></a>
+        <h2>Description</h2>
+        <p>
+      Get the note number of the current MIDI event, expressed in pitch-class units.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070822816"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ipch <span class="command"><strong>pchmidi</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070820880"></a>
+        <h2>Performance</h2>
+        <p>
+      Get the note number of the current MIDI event, expressed in pitch-class units for local processing.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: pchmidi vs. pchmidinn">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">pchmidi vs. pchmidinn</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        The <span class="emphasis"><em>pchmidi</em></span> opcode only produces meaningful results in a Midi-activated note (either real-time or from a Midi score with the -F flag).  With <span class="emphasis"><em>pchmidi</em></span>, the Midi note number value is taken from the Midi event that is internally associated with the instrument instance.  On the other hand, the <span class="emphasis"><em>pchmidinn</em></span> opcode may be used in any Csound instrument instance whether it is activated from a Midi event, score event, line event, or from another instrument.  The input value for <span class="emphasis"><em>pchmidinn</em></span> might for example come from a p-field in a textual score or it may have been retrieved from the real-time Midi event that activated the current note using the <span class="emphasis"><em>notnum</em></span> opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070815744"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pchmidi opcode. It uses the file <a class="ulink" href="examples/pchmidi.csd" target="_top"><em class="citetitle">pchmidi.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276070813952"></a>
+          <p class="title">
+            <strong>Example 690. Example of the pchmidi opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276439560512"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in   No messages  MIDI in</span>
+-odac           -iadc     -d         -M0  <span class="c1">;;;RT audio I/O with MIDI in</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pchmidi.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; This example expects MIDI note inputs on channel 1</span>
+  i<span class="n">1</span> <span class="nb">pchmidi</span>
+
+  <span class="nb">print</span> i<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">;Dummy f-table to give time for real-time MIDI events</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">8000</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070809968"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="aftouch.html" title="aftouch"><em class="citetitle">aftouch</em></a>,
+      <a class="link" href="ampmidi.html" title="ampmidi"><em class="citetitle">ampmidi</em></a>,
+      <a class="link" href="cpsmidi.html" title="cpsmidi"><em class="citetitle">cpsmidi</em></a>,
+      <a class="link" href="cpsmidib.html" title="cpsmidib"><em class="citetitle">cpsmidib</em></a>,
+      <a class="link" href="midictrl.html" title="midictrl"><em class="citetitle">midictrl</em></a>,
+      <a class="link" href="notnum.html" title="notnum"><em class="citetitle">notnum</em></a>,
+      <a class="link" href="octmidi.html" title="octmidi"><em class="citetitle">octmidi</em></a>,
+      <a class="link" href="octmidib.html" title="octmidib"><em class="citetitle">octmidib</em></a>,
+      <a class="link" href="pchbend.html" title="pchbend"><em class="citetitle">pchbend</em></a>,
+      <a class="link" href="pchmidib.html" title="pchmidib"><em class="citetitle">pchmidib</em></a>,
+      <a class="link" href="veloc.html" title="veloc"><em class="citetitle">veloc</em></a>,
+      <a class="link" href="cpsmidinn.html" title="cpsmidinn"><em class="citetitle">cpsmidinn</em></a>,
+      <a class="link" href="octmidinn.html" title="octmidinn"><em class="citetitle">octmidinn</em></a>,
+      <a class="link" href="pchmidinn.html" title="pchmidinn"><em class="citetitle">pchmidinn</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070796496"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Barry L. Vercoe - Mike Berry</td>
+          </tr>
+          <tr>
+            <td>MIT - Mills</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Example written by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pchbend.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pchmidib.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pchbend </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pchmidib</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

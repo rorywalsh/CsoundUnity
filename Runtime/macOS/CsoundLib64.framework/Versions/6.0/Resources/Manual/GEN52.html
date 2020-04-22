@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN52</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN51.html" title="GEN51" />
+    <link rel="next" href="GEN53.html" title="GEN53" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN52</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN51.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN53.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN52"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN52" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN52</span>
+        </h2>
+        <p>GEN52 — 
+      Creates an interleaved multichannel table from the specified
+	 source tables, in the format expected by the <span class="emphasis"><em>ftconv</em></span> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987771920"></a>
+        <h2>Description</h2>
+        <p>
+    GEN52 creates an interleaved multichannel table from the specified
+	source tables, in the format expected by the <a class="link" href="ftconv.html" title="ftconv"><em class="citetitle">ftconv</em></a> opcode.
+	It can also be used to extract a channel from a multichannel table
+	and store it in a normal mono table, copy tables with skipping some
+	samples, adding delay, or store in reverse order, etc.
+    </p>
+        <p>
+      Three parameters must be given for each channel to be processed. <span class="emphasis"><em>fsrc</em></span> declares the source f-table number. The parameter <span class="emphasis"><em>offset</em></span> specifies an offset for the source file. If different to 0, the source file is not read from the beginning, but the  <span class="emphasis"><em>offset</em></span> number of values are skipped. The <span class="emphasis"><em>offset</em></span> is used to determine the channel number to be read from interleaved f-tables, e.g. for channel 2, <span class="emphasis"><em>offset</em></span> must be 1. It can also be used to set a read offset on the source table. This parameter gives absolute values, so if a skip of 20 sample frames for a 2 channel f-table is desired, <span class="emphasis"><em>offset</em></span> must be set to 40. The <span class="emphasis"><em>srcchnls</em></span> parameter is used to declare the number of channels in the source f-table. This parameter sets the skip size when reading the source f-table.
+    </p>
+        <p>
+      When more than one channel (<span class="emphasis"><em>nchannels</em></span> &gt; 1) is given, source f-tables are interleaved in the newly created table.
+    </p>
+        <p>
+      If the source f-table is finished before the destination f-table is full, the remaining values are set to 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987764112"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size 52 nchannels fsrc1 offset1 srcchnls1 [fsrc2 offset2 srcchnls2 ... fsrcN offsetN srcchnlsN]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987762096"></a>
+        <h2>Example</h2>
+        <pre class="programlisting">
+<span class="comment">; source tables</span>
+<span class="stamnt">f</span> 1 0 16384 10 1
+<span class="stamnt">f</span> 2 0 16384 10 0 1
+<span class="comment">; create 2 channel interleaved table</span>
+<span class="stamnt">f</span> 3 0 32768 -52 2 1 0 1 2 0 1
+<span class="comment">; extract first channel from table 3</span>
+<span class="stamnt">f</span> 4 0 16384 -52 1 3 0 2
+<span class="comment">; extract second channel from table 3</span>
+<span class="stamnt">f</span> 5 0 16384 -52 1 3 1 2</pre>
+        <p>
+      Here is a complete example of the GEN52 generator. It uses the file <a class="ulink" href="examples/gen52.csd" target="_top"><em class="citetitle">gen52.csd</em></a>.
+           </p>
+        <div class="example">
+          <a id="idm275987753744"></a>
+          <p class="title">
+            <strong>Example 1233. Example of the GEN52 generator.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276394862384"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen52.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+ga<span class="n">rvb</span>   <span class="nb">init</span> <span class="mi">0</span>
+ga<span class="n">W</span>     <span class="nb">init</span> <span class="mi">0</span>
+ga<span class="n">X</span>     <span class="nb">init</span> <span class="mi">0</span>
+ga<span class="n">Y</span>     <span class="nb">init</span> <span class="mi">0</span>
+
+i<span class="n">tmp</span>    <span class="nb">ftgen</span>  <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span>           \
+               <span class="mi">1</span><span class="p">,</span> <span class="mf">13.000</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">20000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.50</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>   \
+               <span class="mi">1</span><span class="p">,</span>  <span class="mf">2.000</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">20000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>   \
+               <span class="mi">1</span><span class="p">,</span> <span class="mf">16.000</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">20000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>   \
+               <span class="mi">1</span><span class="p">,</span>  <span class="mf">9.000</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">20000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>   \
+               <span class="mi">1</span><span class="p">,</span> <span class="mf">12.000</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">20000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span>   \
+               <span class="mi">1</span><span class="p">,</span>  <span class="mf">8.000</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">20000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mi">2</span>
+
+i<span class="n">tmp</span>    <span class="nb">ftgen</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">262144</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="nb">spat3dt</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.005</span>
+
+i<span class="n">tmp</span>    <span class="nb">ftgen</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">262144</span><span class="p">,</span> <span class="o">-</span><span class="mi">52</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">1</span>      <span class="nb">vco2</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">10</span>
+k<span class="n">frq</span>    <span class="nb">port</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">,</span> <span class="mi">20000</span>
+a<span class="n">1</span>      <span class="nb">butterlp</span> a<span class="n">1</span><span class="p">,</span> k<span class="n">frq</span>
+a<span class="n">2</span>      <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.003</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+a<span class="n">1</span>      <span class="o">=</span>  a<span class="n">1</span> <span class="o">*</span> a<span class="n">2</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="nb">denorm</span> a<span class="n">1</span>
+        <span class="nb">vincr</span> ga<span class="n">rvb</span><span class="p">,</span> a<span class="n">1</span>
+a<span class="n">w</span><span class="p">,</span> a<span class="n">x</span><span class="p">,</span> a<span class="n">y</span><span class="p">,</span> a<span class="n">z</span>  <span class="nb">spat3di</span> a<span class="n">1</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span><span class="p">,</span> <span class="nb">p6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
+        <span class="nb">vincr</span> ga<span class="n">W</span><span class="p">,</span> a<span class="n">w</span>
+        <span class="nb">vincr</span> ga<span class="n">X</span><span class="p">,</span> a<span class="n">x</span>
+        <span class="nb">vincr</span> ga<span class="n">Y</span><span class="p">,</span> a<span class="n">y</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+       <span class="nb">denorm</span> ga<span class="n">rvb</span>
+<span class="c1">; skip as many samples as possible without truncating the IR</span>
+a<span class="n">rW</span><span class="p">,</span> a<span class="n">rX</span><span class="p">,</span> a<span class="n">rY</span>   <span class="nb">ftconv</span> ga<span class="n">rvb</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="p">(</span><span class="mi">65536</span> <span class="o">-</span> <span class="mi">2048</span><span class="p">)</span>
+a<span class="n">W</span>      <span class="o">=</span>  ga<span class="n">W</span> <span class="o">+</span> a<span class="n">rW</span>
+a<span class="n">X</span>      <span class="o">=</span>  ga<span class="n">X</span> <span class="o">+</span> a<span class="n">rX</span>
+a<span class="n">Y</span>      <span class="o">=</span>  ga<span class="n">Y</span> <span class="o">+</span> a<span class="n">rY</span>
+ga<span class="n">rvb</span>   <span class="o">=</span>  <span class="mi">0</span>
+ga<span class="n">W</span>     <span class="o">=</span>  <span class="mi">0</span>
+ga<span class="n">X</span>     <span class="o">=</span>  <span class="mi">0</span>
+ga<span class="n">Y</span>     <span class="o">=</span>  <span class="mi">0</span>
+
+a<span class="n">Wre</span><span class="p">,</span> a<span class="n">Wim</span>      <span class="nb">hilbert</span> a<span class="n">W</span>
+a<span class="n">Xre</span><span class="p">,</span> a<span class="n">Xim</span>      <span class="nb">hilbert</span> a<span class="n">X</span>
+a<span class="n">Yre</span><span class="p">,</span> a<span class="n">Yim</span>      <span class="nb">hilbert</span> a<span class="n">Y</span>
+a<span class="n">WXr</span>    <span class="o">=</span>  <span class="mf">0.0928</span><span class="o">*</span>a<span class="n">Xre</span> <span class="o">+</span> <span class="mf">0.4699</span><span class="o">*</span>a<span class="n">Wre</span>
+a<span class="n">WXiYr</span>  <span class="o">=</span>  <span class="mf">0.2550</span><span class="o">*</span>a<span class="n">Xim</span> <span class="o">-</span> <span class="mf">0.1710</span><span class="o">*</span>a<span class="n">Wim</span> <span class="o">+</span> <span class="mf">0.3277</span><span class="o">*</span>a<span class="n">Yre</span>
+a<span class="n">L</span>      <span class="o">=</span>  a<span class="n">WXr</span> <span class="o">+</span> a<span class="n">WXiYr</span>
+a<span class="n">R</span>      <span class="o">=</span>  a<span class="n">WXr</span> <span class="o">-</span> a<span class="n">WXiYr</span>
+
+       <span class="nb">outs</span> a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">0.5</span>  <span class="mf">0.0</span>  <span class="mf">2.0</span> <span class="o">-</span><span class="mf">0.8</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mf">0.5</span>  <span class="mf">1.4</span>  <span class="mf">1.4</span> <span class="o">-</span><span class="mf">0.6</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mf">0.5</span>  <span class="mf">2.0</span>  <span class="mf">0.0</span> <span class="o">-</span><span class="mf">0.4</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mf">0.5</span>  <span class="mf">1.4</span> <span class="o">-</span><span class="mf">1.4</span> <span class="o">-</span><span class="mf">0.2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mf">0.5</span>  <span class="mf">0.0</span> <span class="o">-</span><span class="mf">2.0</span>  <span class="mf">0.0</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mf">0.5</span> <span class="o">-</span><span class="mf">1.4</span> <span class="o">-</span><span class="mf">1.4</span>  <span class="mf">0.2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span> <span class="mf">0.5</span> <span class="o">-</span><span class="mf">2.0</span>  <span class="mf">0.0</span>  <span class="mf">0.4</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">7</span> <span class="mf">0.5</span> <span class="o">-</span><span class="mf">1.4</span>  <span class="mf">1.4</span>  <span class="mf">0.6</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">8</span> <span class="mf">0.5</span>  <span class="mf">0.0</span>  <span class="mf">2.0</span>  <span class="mf">0.8</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />  
+        <span class="phrase">This is the diagram of the waveform of the GEN52 routine, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen52.png" alt="f 3 0 262144 -52 3 2 0 4 2 1 4 2 2 4" />
+          <div class="caption">
+            <p>f 3 0 262144 -52 3 2 0 4 2 1 4 2 2 4</p>
+          </div>
+        </div>
+        <p>
+   
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275987745760"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN51.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN53.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN51 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN53</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

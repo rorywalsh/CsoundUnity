@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>zkwm</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="zkw.html" title="zkw" />
+    <link rel="next" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">zkwm</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="zkw.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ScoregensTop.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="zkwm"></a>
+      <div class="titlepage"></div>
+      <a id="IndexZkwm" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">zkwm</span>
+        </h2>
+        <p>zkwm — 
+      Writes to a zk variable at k-rate with mixing.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276033960528"></a>
+        <h2>Description</h2>
+        <p>
+      Writes to a zk variable at k-rate with mixing.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276033959216"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>zkwm</strong></span> ksig, kndx [, imix]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276033957248"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imix</em></span> (optional, default=1) -- indicates if mixing should occur.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276033955520"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ksig</em></span> -- value to be written to the zk location.
+    </p>
+        <p>
+      <span class="emphasis"><em>kndx</em></span> -- points to the zk location to which to write.
+    </p>
+        <p>
+      <span class="emphasis"><em>zkwm</em></span> is a mixing opcode, it adds the signal to the current value of the variable. If no <span class="emphasis"><em>imix</em></span> is specified, mixing always occurs. <span class="emphasis"><em>imix</em></span> = 0 will cause overwriting like <span class="emphasis"><em>ziw</em></span>, <span class="emphasis"><em>zkw</em></span>, and <span class="emphasis"><em>zaw</em></span>. Any other value will cause mixing.
+    </p>
+        <p>
+      <span class="emphasis"><em>Caution</em></span>: When using the mixing opcodes <span class="emphasis"><em>ziwm</em></span>, <span class="emphasis"><em>zkwm</em></span>, and <span class="emphasis"><em>zawm</em></span>, care must be taken that the variables mixed to, are zeroed at the end (or start) of each k- or a-cycle. Continuing to add signals to them, can cause their values can drift to astronomical figures.
+    </p>
+        <p>
+      One approach would be to establish certain ranges of zk or za variables to be used for mixing, then use <span class="emphasis"><em>zkcl</em></span> or <span class="emphasis"><em>zacl</em></span> to clear those ranges.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276033945984"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the zkwm opcode. It uses the file <a class="ulink" href="examples/zkwm.csd" target="_top"><em class="citetitle">zkwm.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276033944192"></a>
+          <p class="title">
+            <strong>Example 1179. Example of the zkwm opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276432818208"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o zkwm.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Initialize the ZAK space.</span>
+<span class="c1">; Create 1 a-rate variable and 1 k-rate variable.</span>
+<span class="nb">zakinit</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1 -- a basic instrument.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Generate a k-rate signal.</span>
+  <span class="c1">; The signal goes from 30 to 20,000 then back to 30.</span>
+  k<span class="n">ramp</span> <span class="nb">linseg</span> <span class="mi">30</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">30</span>
+
+  <span class="c1">; Mix the signal into the zk variable #1.</span>
+  <span class="nb">zkwm</span> k<span class="n">ramp</span><span class="p">,</span> <span class="mi">1</span>
+<span class="kd">endin</span>
+
+<span class="c1">; Instrument #2 -- another basic instrument.</span>
+<span class="kd">instr</span> <span class="nf">2</span>
+  <span class="c1">; Generate another k-rate signal.</span>
+  <span class="c1">; This is a low frequency oscillator.</span>
+  k<span class="n">lfo</span> <span class="nb">lfo</span> <span class="mi">3500</span><span class="p">,</span> <span class="mi">2</span>
+
+  <span class="c1">; Mix this signal into the zk variable #1.</span>
+  <span class="nb">zkwm</span> k<span class="n">lfo</span><span class="p">,</span> <span class="mi">1</span>
+<span class="kd">endin</span>
+
+<span class="c1">; Instrument #3 -- generates audio output.</span>
+<span class="kd">instr</span> <span class="nf">3</span>
+  <span class="c1">; Read zk variable #1, containing a mix of both signals.</span>
+  k<span class="n">amp</span> <span class="nb">zkr</span> <span class="mi">1</span>
+
+  <span class="c1">; Create a sine waveform. Its amplitude will vary</span>
+  <span class="c1">; according to the values in zk variable #1.</span>
+  a<span class="n">1</span> <span class="nb">oscil</span> k<span class="n">amp</span><span class="p">,</span> <span class="mi">880</span><span class="p">,</span> <span class="mi">1</span>
+
+  <span class="c1">; Generate the audio output.</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+
+  <span class="c1">; Clear the zk variable, get it ready for </span>
+  <span class="c1">; another pass.</span>
+  <span class="nb">zkcl</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Play Instrument #1 for 5 seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="c1">; Play Instrument #2 for 5 seconds.</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="c1">; Play Instrument #3 for 5 seconds.</span>
+<span class="nb">i</span> <span class="mi">3</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276033940160"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="zaw.html" title="zaw"><em class="citetitle">zaw</em></a>,
+      <a class="link" href="zawm.html" title="zawm"><em class="citetitle">zawm</em></a>,
+      <a class="link" href="ziw.html" title="ziw"><em class="citetitle">ziw</em></a>,
+      <a class="link" href="ziwm.html" title="ziwm"><em class="citetitle">ziwm</em></a>,
+      <a class="link" href="zkcl.html" title="zkcl"><em class="citetitle">zkcl</em></a>,
+      <a class="link" href="zkw.html" title="zkw"><em class="citetitle">zkw</em></a>,
+      <a class="link" href="zkr.html" title="zkr"><em class="citetitle">zkr</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276033932864"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Robin Whittle</td>
+          </tr>
+          <tr>
+            <td>Australia</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 3.45</p>
+        <p>Example written by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="zkw.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ScoregensTop.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">zkw </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Score Statements and GEN Routines</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

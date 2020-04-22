@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>midion2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="midinoteonpch.html" title="midinoteonpch" />
+    <link rel="next" href="midion.html" title="midion" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">midion2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="midinoteonpch.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="midion.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="midion2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMidion2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">midion2</span>
+        </h2>
+        <p>midion2 — 
+      Sends noteon and noteoff messages to the MIDI OUT port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080797840"></a>
+        <h2>Description</h2>
+        <p>
+      Sends noteon and noteoff messages to the MIDI OUT port when triggered by a value different than zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080796544"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>midion2</strong></span> kchn, knum, kvel, ktrig</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080794592"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kchn</em></span> -- MIDI channel (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>knum</em></span> -- MIDI note number (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>kvel</em></span> -- note velocity (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>ktrig</em></span> -- trigger input signal (normally 0)
+    </p>
+        <p>
+      Similar to <a class="link" href="midion.html" title="midion"><em class="citetitle">midion</em></a>, this opcode sends noteon and noteoff messages to the MIDI out port, but only when <span class="emphasis"><em>ktrig</em></span> is non-zero. This opcode is can work together with the output of the <a class="link" href="trigger.html" title="trigger"><em class="citetitle">trigger</em></a> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080787744"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the midion2 opcode. It uses the file <a class="ulink" href="examples/midion2.csd" target="_top"><em class="citetitle">midion2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276080785952"></a>
+          <p class="title">
+            <strong>Example 564. Example of the midion2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276450109040"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+ -M0 -Q1 <span class="c1">;;;midi in and midi out</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">cps</span> <span class="nb">line</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.1</span>	
+k<span class="n">lf</span>  <span class="nb">lfo</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">3</span>	<span class="c1">;use a unipolar square to trigger</span>
+k<span class="n">tr</span>  <span class="nb">trigger</span> k<span class="n">lf</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">;from 3 times to .1 time per sec.</span>
+     <span class="nb">midion2</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> k<span class="n">tr</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">20</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080781968"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="moscil.html" title="moscil"><em class="citetitle">moscil</em></a>,
+      <a class="link" href="midion.html" title="midion"><em class="citetitle">midion</em></a>,
+      <a class="link" href="noteon.html" title="noteon"><em class="citetitle">noteon</em></a>,
+      <a class="link" href="noteoff.html" title="noteoff"><em class="citetitle">noteoff</em></a>,
+      <a class="link" href="noteondur.html" title="noteondur"><em class="citetitle">noteondur</em></a>,
+      <a class="link" href="noteondur2.html" title="noteondur2"><em class="citetitle">noteondur2</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080775536"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.492</p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel and controller number ranges.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="midinoteonpch.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="midion.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">midinoteonpch </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> midion</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

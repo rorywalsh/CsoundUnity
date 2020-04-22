@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>distort</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="display.html" title="display" />
+    <link rel="next" href="distort1.html" title="distort1" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">distort</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="display.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="distort1.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="distort"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDistort" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">distort</span>
+        </h2>
+        <p>distort — 
+      Distort an audio signal via waveshaping and optional clipping.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115825600"></a>
+        <h2>Description</h2>
+        <p>
+      Distort an audio signal via waveshaping and optional clipping.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115824352"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar <span class="command"><strong>distort</strong></span> asig, kdist, ifn[, ihp, istor]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115822272"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn</em></span> -- table number of a waveshaping
+    function with extended guard point.  The function can be of any
+    shape, but it should pass through 0 with positive slope at the
+    table mid-point.  The table size need not be large, since it is
+    read with interpolation. 
+     </p>
+        <p>
+      <span class="emphasis"><em>ihp</em></span> -- (optional) half-power point (in cps)
+    of an internal low-pass filter. The default value is 10. 
+     </p>
+        <p>
+      <span class="emphasis"><em>istor</em></span> -- (optional) initial disposition of
+    internal data space (see reson).  The default value is 0. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115818656"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- Audio signal to be processed
+    </p>
+        <p>
+      <span class="emphasis"><em>kdist</em></span> -- Amount of distortion (usually between 0 and
+      1)
+    </p>
+        <p>
+      This unit distorts an incoming signal using a waveshaping function
+      <span class="emphasis"><em>ifn</em></span> and a distortion index
+      <span class="emphasis"><em>kdist</em></span>. The input signal is first compressed using a
+      running rms, then passed through a waveshaping function which may modify
+      its shape and spectrum. Finally it is rescaled to approximately its
+      original power.
+    </p>
+        <p>
+       The amount of distortion depends on the nature of the shaping function
+       and on the value of <span class="emphasis"><em>kdist</em></span>, which generally ranges
+       from 0 to 1. For low values of <span class="emphasis"><em>kdist</em></span>, we should like
+       the shaping function to pass the signal almost unchanged.  This will be
+       the case if, at the mid-point of the table, the shaping function is
+       near-linear and is passing through 0 with positive slope.  A line function
+       from  -1 to +1 will satisfy this requirement;  so too will a sigmoid
+       (sinusoid from 270 to 90 degrees).  As <span class="emphasis"><em>kdist</em></span> is
+       increased, the compressed signal is expanded to encounter more and more
+       of the shaping function, and if this becomes non-linear the signal is
+       increasingly <span class="emphasis"><em>bent</em></span> on read-through to cause
+       distortion.
+     </p>
+        <p>
+    When <span class="emphasis"><em>kdist</em></span> becomes large enough, the read-through process will
+    eventually hit the outer limits of the table.  The table is not
+    read with wrap-around, but will <span class="quote">“<span class="quote">stick</span>”</span> at the end-points as the
+    incoming signal exceeds them;  this introduces clipping, an
+    additional form of signal distortion.  The point at which clipping
+    begins will depend on the complexity (rms-to-peak value) of the
+    input signal.  For a pure sinusoid, clipping will begin only as
+    <span class="emphasis"><em>kdist</em></span> exceeds 0.7;  for a more complex input, clipping might begin
+    at a <span class="emphasis"><em>kdist</em></span> of 0.5 or much less.  <span class="emphasis"><em>kdist</em></span> can exceed
+    the clip point by any amount, and may be greater than 1. 
+    </p>
+        <p>
+    The shaping function can be made arbitrarily complex for extra effect.
+    It should generally be continuous, though this is not a
+    requirement.  It should also be well-behaved near the mid-point,
+    and roughly balanced positive-negative overall, else some
+    excessive DC offset may result.  The user might experiment with
+    more aggressive functions to suit the purpose.  A generally
+    positive slope allows the distorted signal to be mixed with the
+    source without phase cancellation. 
+    </p>
+        <p>
+    <span class="emphasis"><em>distort</em></span> is useful as an effects process, and is usually combined with
+    reverb and chorusing on effects busses.  However, it can
+    alternatively be used to good effect within a single instrument. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115807424"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the distort opcode. It uses the file <a class="ulink" href="examples/distort.csd" target="_top"><em class="citetitle">distort.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276115805632"></a>
+          <p class="title">
+            <strong>Example 223. Example of the distort opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276482749600"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o distort.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>     <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span>  <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">fn</span>	<span class="nb">ftgen</span>	<span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">257</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">270</span>	<span class="c1">; define a sigmoid, or better </span>
+<span class="c1">;gifn	ftgen	0,0, 257, 9, .5,1,270,1.5,.33,90,2.5,.2,270,3.5,.143,90,4.5,.111,270</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">dist</span>	<span class="nb">line</span>	<span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">2</span>		<span class="c1">; and over 10 seconds</span>
+a<span class="n">sig</span>	<span class="nb">poscil</span>	<span class="mf">0.3</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">out</span>	<span class="nb">distort</span>	a<span class="n">sig</span><span class="p">,</span> k<span class="n">dist</span><span class="p">,</span> gi<span class="n">fn</span>	<span class="c1">; gradually increase the distortion</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115801616"></a>
+        <h2>Credits</h2>
+        <p>Written by Barry L. Vercoe for Extended Csound and released in Csound5.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="display.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="distort1.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">display </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> distort1</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

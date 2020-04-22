@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>strcmp</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="strcatk.html" title="strcatk" />
+    <link rel="next" href="strcmpk.html" title="strcmpk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">strcmp</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="strcatk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="strcmpk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="strcmp"></a>
+      <div class="titlepage"></div>
+      <a id="Indexstrcmp" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">strcmp</span>
+        </h2>
+        <p>strcmp — 
+      Compare strings
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051411952"></a>
+        <h2>Description</h2>
+        <p>
+      Compare strings and set the result to -1, 0, or 1 if the first string is less than, equal to, or greater than the second, respectively. strcmp compares at i-time only.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051410592"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ires <span class="command"><strong>strcmp</strong></span> S1, S2</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051408512"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the strcmp opcode. It uses the file <a class="ulink" href="examples/strcmp.csd" target="_top"><em class="citetitle">strcmp.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276051406720"></a>
+          <p class="title">
+            <strong>Example 973. Example of the strcmp opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276505437712"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o strcmp.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;modified example from Joachim Heintz</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+   <span class="kd">opcode</span> <span class="nf">Triad</span><span class="p">,</span> <span class="kt">iii</span><span class="p">,</span> <span class="kt">S</span>				<span class="c1">;define UDO</span>
+S<span class="n">name</span>      <span class="nb">xin</span>
+i<span class="n">Maj</span>       <span class="nb">strcmp</span>     <span class="s">"maj"</span><span class="p">,</span> S<span class="n">name</span>
+i<span class="n">Min</span>       <span class="nb">strcmp</span>     <span class="s">"min"</span><span class="p">,</span> S<span class="n">name</span>
+i<span class="n">Prim</span>      <span class="o">=</span>          <span class="mf">8.00</span>			<span class="c1">;notes in pitch notattion</span>
+i<span class="n">Quint</span>     <span class="o">=</span>          <span class="mf">8.05</span>
+  <span class="k">if</span> i<span class="n">Maj</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">then</span>
+i<span class="n">Ter</span>       <span class="o">=</span>          <span class="mf">8.03</span>
+  <span class="k">elseif</span> i<span class="n">Min</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">then</span>
+i<span class="n">Ter</span>       <span class="o">=</span>          <span class="mf">8.02</span>
+  <span class="k">endif</span>
+            <span class="nb">xout</span>       i<span class="n">Prim</span><span class="p">,</span> i<span class="n">Ter</span><span class="p">,</span> i<span class="n">Quint</span>
+   <span class="kd">endop</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+S<span class="n">name</span> <span class="nb">strget</span> <span class="nb">p4</span>
+i<span class="n">a</span><span class="p">,</span> i<span class="n">b</span><span class="p">,</span> i<span class="n">c</span> <span class="nf">Triad</span> S<span class="n">name</span>				<span class="c1">;apply UDO</span>
+      <span class="nb">print</span> i<span class="n">a</span><span class="p">,</span> i<span class="n">b</span><span class="p">,</span> i<span class="n">c</span>
+a<span class="n">sig1</span> <span class="nb">pluck</span> <span class="mf">0.7</span><span class="p">,</span> <span class="nb">cpspch</span><span class="p">(</span>i<span class="n">a</span><span class="p">),</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">sig2</span> <span class="nb">pluck</span> <span class="mf">0.7</span><span class="p">,</span> <span class="nb">cpspch</span><span class="p">(</span>i<span class="n">b</span><span class="p">),</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">sig3</span> <span class="nb">pluck</span> <span class="mf">0.7</span><span class="p">,</span> <span class="nb">cpspch</span><span class="p">(</span>i<span class="n">c</span><span class="p">),</span> <span class="mi">220</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">sig</span>  <span class="o">=</span> <span class="p">(</span>a<span class="n">sig1</span><span class="o">+</span>a<span class="n">sig2</span><span class="o">+</span>a<span class="n">sig3</span><span class="p">)</span><span class="o">*</span><span class="mf">.5</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="s">"maj"</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">4</span> <span class="mi">3</span> <span class="s">"min"</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051404976"></a>
+        <h2>See also</h2>
+        <p>
+          <a class="link" href="strcmpk.html" title="strcmpk">
+            <em class="citetitle">strcmpk</em>
+          </a>
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051403200"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="strcatk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="strcmpk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">strcatk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> strcmpk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

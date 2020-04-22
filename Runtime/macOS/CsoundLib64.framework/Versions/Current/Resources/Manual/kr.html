@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>kr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="kgoto.html" title="kgoto" />
+    <link rel="next" href="ksmps.html" title="ksmps" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">kr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="kgoto.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ksmps.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="kr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexKr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">kr</span>
+        </h2>
+        <p>kr — 
+      Sets the control rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087366768"></a>
+        <h2>Description</h2>
+        <p> 
+      These statements are global value <a class="link" href="assign.html" title="="><em class="citetitle">assignments</em></a>, made
+      at the beginning of an orchestra, before any instrument block is
+      defined. Their function is to set certain <a class="link" href="OrchKvar.html#VariableTypes" title="Table 3. Types of Variables"><em class="citetitle">reserved symbol
+      variables</em></a> that are required for
+      performance. Once set, these reserved symbols can be used in
+      expressions anywhere in the orchestra. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087363536"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>kr</strong></span> = iarg</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087361632"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>kr</em></span> = (optional) -- set control rate to <span class="emphasis"><em>iarg</em></span> samples per second. The default value is 4410.
+    </p>
+        <p>
+      In addition, any <a class="link" href="OrchKvar.html#GlobalVariables"><em class="citetitle">global variable</em></a> can be initialized by an <span class="emphasis"><em>init-time assignment</em></span> anywhere before the first <a class="link" href="instr.html" title="instr"><em class="citetitle">instr statement</em></a>.  All of the above assignments are run as instrument 0 (i-pass only) at the start of real performance.
+    </p>
+        <p>
+      Beginning with Csound version 3.46, <span class="emphasis"><em>kr</em></span> can be omitted. Csound will use the default values, or calculate <span class="emphasis"><em>kr</em></span> from defined <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a> and <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a>. It is usually better to just specify <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a> and <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a> and let csound calculate <span class="emphasis"><em>kr</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087351632"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="ohdr">sr</span> <span class="op">=</span> 10000
+<span class="ohdr">kr</span> <span class="op">=</span> 500
+<span class="ohdr">ksmps</span> <span class="op">=</span> 20
+gi1 <span class="op">=</span> <span class="ohdr">sr</span><span class="op">/</span>2.
+ga <span class="opc">init</span> 0
+itranspose <span class="op">=</span> <span class="opc">octpch</span>(.0l)</pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276087342080"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="ksmps.html" title="ksmps"><em class="citetitle">ksmps</em></a>,
+      <a class="link" href="nchnls.html" title="nchnls"><em class="citetitle">nchnls</em></a>,
+      <a class="link" href="nchnls_i.html" title="nchnls_i"><em class="citetitle">nchnls_i</em></a>,
+      <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="kgoto.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ksmps.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">kgoto </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ksmps</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

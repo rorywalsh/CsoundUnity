@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>||</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="raises.html" title="ˆ" />
+    <link rel="next" href="opnot.html" title="!" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">||</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="raises.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="opnot.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="opor"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVerbarVerbar" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">||</span>
+        </h2>
+        <p>|| — 
+      Logical OR operator.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276126454608"></a>
+        <h2>Description</h2>
+        <p>
+      Arithmetic operators perform operations of change-sign (negate), don't-change-sign, logical AND logical OR, add, subtract, multiply and divide. Note that a value or an expression may fall between two of these operators, either of which could take it as its left or right argument, as in
+      </p>
+        <div class="literallayout">
+          <p><br />
+a + b * c.<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      In such cases three rules apply:
+    </p>
+        <p>
+      1. * and <span class="emphasis"><em>/</em></span> bind to their neighbors more strongly than + and −. Thus the above expression is taken as
+      </p>
+        <div class="literallayout">
+          <p>  <br />
+a + (b * c)<br />
+      </p>
+        </div>
+        <p>
+      with * taking b and c and then + taking a and b * c.
+    </p>
+        <p>
+      2. <span class="emphasis"><em>+</em></span> and <span class="emphasis"><em>−</em></span> bind more strongly than &amp;&amp;, which in turn is stronger than ||:
+      </p>
+        <div class="literallayout">
+          <p>  <br />
+a &amp;&amp; b - c || d<br />
+      </p>
+        </div>
+        <p>
+      is taken as
+      </p>
+        <div class="literallayout">
+          <p>  <br />
+(a &amp;&amp; (b - c)) || d<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      3. When both operators bind equally strongly, the operations are done left to right:
+      </p>
+        <div class="literallayout">
+          <p>  <br />
+a - b - c<br />
+      </p>
+        </div>
+        <p>
+      is taken as
+      </p>
+        <div class="literallayout">
+          <p>  <br />
+(a - b) - c<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      Parentheses may be used as above to force particular groupings.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276126427488"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a <span class="command"><strong>||</strong></span> b  (logical OR; not audio-rate)</pre>
+        <p>
+      where the arguments <span class="emphasis"><em>a</em></span> and <span class="emphasis"><em>b</em></span> may be further expressions.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276126424160"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the | operator. It uses the file <a class="ulink" href="examples/logicOR.csd" target="_top"><em class="citetitle">logicOR.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276126422336"></a>
+          <p class="title">
+            <strong>Example 35. Example of the | operator.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276497284032"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac -+rtmidi=virtual -M0   <span class="c1">;;;realtime audio out and virtual midi keyboard</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">;after a UDO from Rory Walsh</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;displays notes, midi channel and control number information</span>
+
+k<span class="n">status</span><span class="p">,</span> k<span class="n">chan</span><span class="p">,</span> k<span class="n">data1</span><span class="p">,</span> k<span class="n">data2</span> <span class="nb">midiin</span>
+k<span class="n">1</span> <span class="nb">changed</span> k<span class="n">status</span>
+k<span class="n">2</span> <span class="nb">changed</span> k<span class="n">chan</span>
+k<span class="n">3</span> <span class="nb">changed</span> k<span class="n">data1</span>
+k<span class="n">4</span> <span class="nb">changed</span> k<span class="n">data2</span>
+<span class="k">if</span><span class="p">((</span>k<span class="n">1</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="o">||</span><span class="p">(</span>k<span class="n">2</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="o">||</span><span class="p">(</span>k<span class="n">3</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="o">||</span><span class="p">(</span>k<span class="n">4</span><span class="o">==</span><span class="mi">1</span><span class="p">))</span> <span class="k">then</span>
+<span class="nb">printks</span> <span class="s">"Value:</span><span class="si">%d</span><span class="s"> ChanNo:</span><span class="si">%d</span><span class="s"> CtrlNo:</span><span class="si">%d</span><span class="se">\n</span><span class="s">"</span> <span class="p">,</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">data2</span><span class="p">,</span> k<span class="n">chan</span><span class="p">,</span> k<span class="n">data1</span>  
+<span class="k">endif</span> 
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">60</span>	<span class="c1">;print values for 60 seconds</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include a line like these:
+      </p>
+        <pre class="screen">
+Value:127 ChanNo:11 CtrlNo:62
+Value:127 ChanNo:11 CtrlNo:60
+Value:127 ChanNo:11 CtrlNo:60
+Value:127 ChanNo:11 CtrlNo:60
+Value:127 ChanNo:11 CtrlNo:60
+....
+Value:0 ChanNo:11 CtrlNo:62
+Value:0 ChanNo:11 CtrlNo:62
+Value:0 ChanNo:11 CtrlNo:62
+Value:0 ChanNo:11 CtrlNo:62
+....
+Value:77 ChanNo:11 CtrlNo:23
+Value:77 ChanNo:11 CtrlNo:23
+Value:76 ChanNo:11 CtrlNo:23
+Value:76 ChanNo:11 CtrlNo:23
+....</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276126417312"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="subtracts.html" title="-"><em class="citetitle">-</em></a>, 
+      <a class="link" href="adds.html" title="+"><em class="citetitle">+</em></a>, 
+      <a class="link" href="opand.html" title="&amp;&amp;"><em class="citetitle">&amp;&amp;</em></a>, 
+      <a class="link" href="multiplies.html" title="*"><em class="citetitle">*</em></a>, 
+      <a class="link" href="divides.html" title="/"><em class="citetitle">/</em></a>, 
+      <a class="link" href="raises.html" title="ˆ"><em class="citetitle">ˆ</em></a>, 
+      <a class="link" href="modulus.html" title="%"><em class="citetitle">%</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="raises.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="opnot.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ˆ </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> !</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>instr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="insglobal.html" title="insglobal" />
+    <link rel="next" href="int.html" title="int" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">instr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="insglobal.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="int.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="instr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexInstr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">instr</span>
+        </h2>
+        <p>instr — 
+      Starts an instrument block.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088638592"></a>
+        <h2>Description</h2>
+        <p>
+      Starts an instrument block.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088637328"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>instr</strong></span> i, j, ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088635376"></a>
+        <h2>Initialization</h2>
+        <p>
+      Starts an instrument block defining instruments <span class="emphasis"><em>i, j</em></span>, ...
+    </p>
+        <p>
+      <span class="emphasis"><em>i, j</em></span>, ... must be numbers, not expressions. Any positive integer is legal, and in any order, but excessively high numbers are best avoided.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        There may be any number of instrument blocks in an orchestra.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+       Instruments can be defined in any order (but they will always be both initialized and performed in ascending instrument number order, with the exception of notes triggered by real time events that are initialized in the order of being received but still performed in ascending instrument number order).  Instrument blocks cannot be nested (i.e. one block cannot contain another).
+     </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088630064"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the instr opcode. It uses the file <a class="ulink" href="examples/instr.csd" target="_top"><em class="citetitle">instr.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276088628256"></a>
+          <p class="title">
+            <strong>Example 450. Example of the instr opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276460439152"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o instr.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  i<span class="n">amp</span> <span class="o">=</span> <span class="mi">10000</span>
+  i<span class="n">cps</span> <span class="o">=</span> <span class="mi">440</span>
+  i<span class="n">phs</span> <span class="o">=</span> <span class="mi">0</span>
+
+  a<span class="n">1</span> <span class="nb">oscils</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> i<span class="n">phs</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for 2 seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088624256"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="endin.html" title="endin"><em class="citetitle">endin</em></a>,
+      <a class="link" href="in.html" title="in"><em class="citetitle">in</em></a>,
+      <a class="link" href="out.html" title="out"><em class="citetitle">out</em></a>,
+      <a class="link" href="opcode.html" title="opcode"><em class="citetitle">opcode</em></a>,
+      <a class="link" href="endop.html" title="endop"><em class="citetitle">endop</em></a>,
+      <a class="link" href="setksmps.html" title="setksmps"><em class="citetitle">setksmps</em></a>,
+      <a class="link" href="xin.html" title="xin"><em class="citetitle">xin</em></a>,
+      <a class="link" href="xout.html" title="xout"><em class="citetitle">xout</em></a>,
+      <a class="link" href="subinstr.html" title="subinstr"><em class="citetitle">subinstr</em></a>,
+      <a class="link" href="subinstrinit.html" title="subinstrinit"><em class="citetitle">subinstrinit</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276088614240"></a>
+        <h2>Credits</h2>
+        <p>Example written by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="insglobal.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="int.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">insglobal </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> int</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>socksend</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sockrecv.html" title="sockrecv" />
+    <link rel="next" href="sorta.html" title="sorta" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">socksend</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sockrecv.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sorta.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="socksend"></a>
+      <div class="titlepage"></div>
+      <a id="Indexsocksend" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">socksend</span>
+        </h2>
+        <p>socksend — 
+      Sends data to other processes using the low-level UDP or TCP protocols
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054556784"></a>
+        <h2>Description</h2>
+        <p>
+      Transmits data directly using the UDP (<span class="emphasis"><em>socksend</em></span> and
+      <span class="emphasis"><em>socksends</em></span>) or TCP (<span class="emphasis"><em>stsend</em></span>)
+      protocol onto a network. The data is not subject to any encoding or special
+      routing. The <span class="emphasis"><em>socksends</em></span> opcode send a stereo signal interleaved.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054553776"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>socksend</strong></span> asig, Sipaddr, iport, ilength</pre>
+        <pre class="synopsis"><span class="command"><strong>socksend</strong></span> ksig, Sipaddr, iport, ilength</pre>
+        <pre class="synopsis"><span class="command"><strong>socksends</strong></span> asigl, asigr, Sipaddr, iport,
+    ilength</pre>
+        <pre class="synopsis"><span class="command"><strong>stsend</strong></span> asig, Sipaddr, iport</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054548304"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sipaddr</em></span>
+      -- a string that is the IP address of the receiver in standard
+    4-octet dotted form.
+    </p>
+        <p>
+      <span class="emphasis"><em>iport</em></span>
+      -- the number of the port that is used for the communication.
+    </p>
+        <p>
+      <span class="emphasis"><em>ilength</em></span>
+      -- the length of the individual packets in UDP transmission.
+      This number must be sufficiently small to fit a single MTU,
+      which is set to the save value of 1456.  In UDP transmissions
+      the receiver needs to know this value
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054544720"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig, ksig, asigl, asigr</em></span> -- data to be transmitted.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054543088"></a>
+        <h2>Example</h2>
+        <p>
+      The example shows a simple sine wave being sent just
+    once to a computer called "172.16.0.255", on port 7777 using UDP.
+    Note that .255 is often used for broadcasting.
+    </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+        <span class="ohdr">sr</span> <span class="op">=</span> 44100
+        <span class="ohdr">ksmps</span> <span class="op">=</span> 100
+        <span class="ohdr">nchnls</span> <span class="op">=</span> 1
+
+
+        <span class="oblock">instr</span>   1
+        a1 <span class="opc">oscil</span>        20000,441,1
+           <span class="opc">socksend</span>     a1, "172.16.0.255",7777, 200
+        <span class="oblock">endin</span></pre>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054534400"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>2006</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sockrecv.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sorta.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sockrecv </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> sorta</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

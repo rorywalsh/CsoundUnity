@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>hilbert2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="hilbert.html" title="hilbert" />
+    <link rel="next" href="hrtfearly.html" title="hrtfearly" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">hilbert2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="hilbert.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="hrtfearly.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="hilbert2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexHilbert2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">hilbert2</span>
+        </h2>
+        <p>hilbert2 — 
+      A Hilbert transformer.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099749568"></a>
+        <h2>Description</h2>
+        <p>
+      A DFT-based implementation of a Hilbert transformer.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099748320"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar1, ar2 <span class="command"><strong>hilbert2</strong></span> asig, ifftsize, ihopsize</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099746224"></a>
+        <h2>Initialisation</h2>
+        <p>
+      <span class="emphasis"><em>ifftsize</em></span> -- DFT analysis size
+    </p>
+        <p>
+      <span class="emphasis"><em>ihopsize</em></span> -- analysis hopsize
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099743808"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>ar1</em></span> -- real output of <span class="emphasis"><em>asig</em></span>
+    </p>
+        <p>
+      <span class="emphasis"><em>ar2</em></span> -- imag output of <span class="emphasis"><em>asig</em></span>
+    </p>
+        <p>
+      <span class="emphasis"><em>hilbert2</em></span> is a DFT-based implementation of
+      the Hilbert Transform producing two outputs in quadrature (90
+      degree phase difference across the spectrum). Unlike the
+      IIR-based <span class="emphasis"><em>hilbert</em></span> opcode,
+      <span class="emphasis"><em>hilbert2</em></span>
+      has a linear frequency response. Given that it employs a
+      streaming algorithm, a delay of fftsize samples will be imposed 
+      between input and output.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099737840"></a>
+        <h2>Example</h2>
+        <p>
+      Here is an example of the hilbert2 opcode. It uses the file <a class="ulink" href="examples/hilbert2.csd" target="_top"><em class="citetitle">hilbert2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276099736048"></a>
+          <p class="title">
+            <strong>Example 415. Example of the hilbert2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276464954672"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">sig</span> <span class="nb">oscili</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span>
+a<span class="n">1</span><span class="p">,</span>a<span class="n">2</span> <span class="n">hilbert2</span> a<span class="n">sig</span><span class="p">,</span><span class="mi">1024</span><span class="p">,</span><span class="mi">256</span>
+  <span class="nb">outs</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span>
+
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span> <span class="mf">0.5</span> <span class="mi">440</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276099732064"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>2017</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="hilbert.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="hrtfearly.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">hilbert </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> hrtfearly</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>squinewave</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sqrt.html" title="sqrt" />
+    <link rel="next" href="sr.html" title="sr" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">squinewave</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sqrt.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="sr.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="squinewave"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSquinewave" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">squinewave</span>
+        </h2>
+        <p>squinewave — 
+      A mostly bandlimited shape-shifting square-pulse-saw-sinewave oscillator with hardsync.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053261776"></a>
+        <h2>Description</h2>
+        <p>
+      This oscillator generates a variable shape waveform that can morph freely between classical shapes sine, square, pulse and saw.
+The shape is controlled by two interacting values: clip (squareness) and "skew" (symmetry).
+All shapes use a minimum number of samples per transition (ie, the sharp end of a saw or a pulse uses minimum N samples), this makes output bandlimited.
+At higher frequency, the minimum sweep rate takes over, so over a certain pitch all shapes "degrade" to sinewave. The minimum sweep rate is i-time configurable.
+Hardsync (a very quick sweep to phase=0) is supported, and a sync signal is output once per cycle.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053259952"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout [, asyncout] <span class="command"><strong>squinewave</strong></span> acps, aClip, aSkew, asyncin [, iMinSweep] [, iphase]</pre>
+        <pre class="synopsis">aout [, asyncout] <span class="command"><strong>squinewave</strong></span> acps, aClip, aSkew [, ksyncin] [, iMinSweep] [, iphase]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053256448"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iMinSweep</em></span> (optional) -- Range 4 and up. Sample count of the shortest square/pulse edges.  Default: sr/3000 (mostly alias-free).
+    </p>
+        <p>
+      <span class="emphasis"><em>iphase</em></span> (optional, default=-1) -- initial phase, range 0-2, proportional to the segments of the waveform (see notes). If negative value is given, skip setting phase
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053253792"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>aout</em></span> -- audio output, normalized +/-1
+    </p>
+        <p>
+      <span class="emphasis"><em>asyncout</em></span> -- (optional) - Sync signal: 1 at endpoint of each cycle, else 0.
+    </p>
+        <p>
+      <span class="emphasis"><em>acps</em></span> -- frequency. Range 0-anything; negative freq not implemented.
+    </p>
+        <p>
+      <span class="emphasis"><em>aClip</em></span> -- "squareness" of waveform shape. Range 0-1. Clip 0 is sinewave (or saw), clip 1 is squarewave (or pulse).
+    </p>
+        <p>
+      <span class="emphasis"><em>aSkew</em></span> -- symmetry of waveform shape. Range -1 to +1. Skew = 0 is symmetric like sine or square. Skew +1 or -1 is right/left-facing saw or pulse.
+    </p>
+        <p>
+      <span class="emphasis"><em>asyncin</em></span>/<span class="emphasis"><em>ksyncin</em></span> -- (optional, ignored if not a-rate) - when &gt;= 1, waveform quickly sweeps to phase 0. Sweep length is 0 to about 1.5*iMinSweep samples depending on current phase.
+    </p>
+        <p>
+      The <span class="emphasis"><em>squinewave</em></span> opcode is a variable shape oscillator with internally generated waveform.
+      The waveform has two parts:
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>cosine sweep down, followed by flat part at -1</p>
+            </li>
+            <li class="listitem">
+              <p>cosine sweep up, followed by flat part at +1</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+        At the end of (2), sync signal is output.
+      </p>
+        <div class="informaltable">
+          <table class="informaltable" border="0">
+            <colgroup>
+              <col />
+              <col />
+            </colgroup>
+            <tbody>
+              <tr>
+                <td>Clip (0-1)</td>
+                <td>controls the proportion of flatness to sweep length in each segment.</td>
+              </tr>
+              <tr>
+                <td>Skew (-1 to +1)</td>
+                <td>controls the proportions of segments (1) and (2) in the waveform cycle.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+      If skew &lt; 0, part (1) is shorter, if skew &gt; 0, (1) is longer than (2)
+    </p>
+        <p>
+      Classic waveforms have simple values:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>sine: clip=0, skew=0</p>
+            </li>
+            <li class="listitem">
+              <p>saw(like): clip=0, skew=+1 or -1 (left- or right-facing)</p>
+            </li>
+            <li class="listitem">
+              <p>square: clip=1, skew=0</p>
+            </li>
+            <li class="listitem">
+              <p>pulse: clip=1, skew=+1 or -1</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+      Fractional values generate intermediate waveforms.
+    </p>
+        <span class="emphasis">
+          <em>asyncin</em>
+        </span>
+        <p>
+Hardsync input (asyncin &gt;= 1) makes the waveform quickly sweep to end by raising frequency to 2 * sr/iMinSweep. 
+Sync pulses are thus sharper than the pulse waveform.
+</p>
+        <span class="emphasis">
+          <em>iMinSweep</em>
+        </span>
+        <p>
+The waveform is bandlimited by always using a minimum number of samples for cosine sweeps, even when clip/skew are at extreme values. This is controlled by <span class="emphasis"><em>iMinSweep</em></span>.
+Since <span class="emphasis"><em>iMinSweep</em></span> is counted in samples, the waveform output is dependent on samplerate, but the spectrum will be very similiar independent of sr.
+Default sr/3000 is fairly "soft", the actual values are 14 samples at 44.1K, 16 at 48K, 32 at 96K etc. <span class="emphasis"><em>iMinSweep</em></span> is counted in integers, although not strictly necessary.
+</p>
+        <p>
+If several units of <span class="emphasis"><em>squinewave</em></span> are run in unison, it is recommend to use different <span class="emphasis"><em>iMinSweep</em></span> values.
+The min sweep value creates "dips" or quieter areas in the overtone series.
+By using slightly different min sweep settings, spectrum is filled, rather than emphasizing the spectral profile.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053231280"></a>
+        <h2>Notes</h2>
+        <p>
+    <span class="emphasis"><em>squinewave</em></span> is based on cosine instead of sine to generate the waveform. (This simplifies the controlling logic.)
+The difference is that cosine cos(0) = 1, whereas sin(0) = 0.
+This means that hardsync occurs when waveform is at peak, just about to enter its down sweep. (Sinewave hardsync would occur at a zero-crossing)
+    </p>
+        <span class="emphasis">
+          <em>Tip</em>
+        </span>
+        <p>
+The length of hardsync sweeps allows chain syncing several <span class="emphasis"><em>squinewave</em></span> units, creating staggered hardsync pulses.
+    </p>
+        <span class="emphasis">
+          <em>Pitch stability</em>
+        </span>
+        <p>
+Note that <span class="emphasis"><em>iMinSweep</em></span> and shape limits the ability of squinewave to match frequency exactly.
+When skew or clip is active, and FM is applied, the <span class="emphasis"><em>squinewave</em></span> waveform will be longer or shorter than the exact period.
+The differences even out however, so with symmetric FM, <span class="emphasis"><em>squinewave</em></span> drifts back to match average frequency.
+Sinewave unshaped signal (clip=skew=0) matches poscil output to 7-8 significant digits (also under FM).
+    </p>
+        <span class="emphasis">
+          <em>Initial phase</em>
+        </span>
+        <p>
+Setting initial phase is useful if squinewave is used as a shaped LFO.
+Init phase is split into 4 segments with symbolic values range 0-2, so it will start at the expected place regardless of skew/clip values.
+0-1 represents the first part, 1-2 the second. Some interesting <span class="emphasis"><em>iphase</em></span> segment values are:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 - start of 1st sweep down.</p>
+            </li>
+            <li class="listitem">
+              <p>0.5 - end of down sweep (start of "low" flat section).</p>
+            </li>
+            <li class="listitem">
+              <p>1 - midpoint, end of 1st flat section, start 2nd, "up" sweep</p>
+            </li>
+            <li class="listitem">
+              <p>1.5 - end of up sweep, (start of "high" flat section)</p>
+            </li>
+            <li class="listitem">
+              <p>0.25 and 1.25 are 0-crossings at middle of down/up sweep sections.</p>
+            </li>
+            <li class="listitem">
+              <p>0.75 and 1.75 are middle of low/high flat sections.</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+If <span class="emphasis"><em>iphase</em></span> &lt; 0 (skip) at first use, initial phase is set to 1.25, ie 0-crossing of the "up" sweep. This makes output look like a sinewave.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053219616"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the <span class="emphasis"><em>squinewave</em></span> opcode. It uses the file <a class="ulink" href="examples/squinewave.csd" target="_top"><em class="citetitle">squinewave.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276053217424"></a>
+          <p class="title">
+            <strong>Example 938. Example of the squinewave opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276420025952"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o sqrt.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">;#################################################</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mf">1.1</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="c1">; aSyncin, FMod for instr 2</span>
+ga<span class="n">fmod</span> <span class="nb">init</span> <span class="mi">0</span>
+ga<span class="n">sync</span> <span class="nb">init</span> <span class="mi">0</span>
+
+<span class="c1">; Modulator squinewave</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+    <span class="c1">; freq start, end</span>
+    a<span class="n">cps</span>  <span class="nb">line</span>  <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span>
+    <span class="c1">; shape start, end</span>
+    a<span class="n">clip</span>  <span class="nb">line</span>  <span class="nb">p6</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p7</span>
+    a<span class="n">skew</span>  <span class="nb">line</span>  <span class="nb">p8</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p9</span>
+
+<span class="c1">;  ar, async   squinewave   aFreq , aclip, askew [, asyncin, iMinSweep, iphase]</span>
+    a<span class="n">out1</span><span class="p">,</span> ga<span class="n">sync</span>   <span class="n">squinewave</span>  <span class="nb">cpsoct</span><span class="p">(</span>a<span class="n">cps</span><span class="p">),</span> a<span class="n">clip</span><span class="p">,</span> a<span class="n">skew</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">17</span>
+
+	<span class="nb">outs1</span> a<span class="n">out1</span>
+
+	ga<span class="n">FMod</span> <span class="o">=</span> a<span class="n">out1</span>
+<span class="kd">endin</span>
+
+
+<span class="c1">; squinewave using gaFMod and gasync input from i1</span>
+<span class="kd">instr</span> <span class="nf">2</span>
+    <span class="c1">; freq &amp; shape start, end</span>
+    a<span class="n">cps</span>  <span class="nb">line</span>  <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span>
+    a<span class="n">clip</span>  <span class="nb">line</span>  <span class="nb">p6</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p7</span>
+    a<span class="n">skew</span>  <span class="nb">line</span>  <span class="nb">p8</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p9</span>
+
+    a<span class="n">FMindex</span> <span class="nb">line</span>  <span class="nb">p10</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p11</span>
+	a<span class="n">syncin</span> <span class="o">=</span> ga<span class="n">sync</span> <span class="o">*</span> <span class="nb">p12</span>
+	a<span class="n">freq</span> <span class="o">=</span> <span class="nb">cpsoct</span><span class="p">(</span>a<span class="n">cps</span> <span class="o">+</span> a<span class="n">FMindex</span> <span class="o">*</span> ga<span class="n">FMod</span><span class="p">)</span>
+
+<span class="c1">;  ar  squinewave   aFreq, aclip, askew [, asyncin, iMinSweep, iphase]</span>
+    a<span class="n">out2</span>  <span class="n">squinewave</span>   a<span class="n">freq</span> <span class="p">,</span> a<span class="n">clip</span><span class="p">,</span> a<span class="n">skew</span><span class="p">,</span> a<span class="n">syncin</span>
+
+	<span class="nb">outs2</span> a<span class="n">out2</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+
+<span class="c1">; First part instr 1 hardsyncs instr 2 (p12)</span>
+
+<span class="c1">;          p4=fund   clip     skew </span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span>  <span class="mf">1.</span>  <span class="mf">6.11</span> <span class="mf">6.06</span>  <span class="mi">0</span>   <span class="mi">1</span>    <span class="o">-</span><span class="mi">1</span>  <span class="o">+</span><span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="mf">1.</span>  <span class="cp">pp5</span>  <span class="mf">2.03</span>  <span class="cp">pp7</span>  <span class="mi">0</span>   <span class="cp">pp9</span>  <span class="mi">0</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="mf">1.</span>  <span class="cp">pp5</span>  <span class="mf">7.11</span>  <span class="cp">pp7</span>  <span class="mf">.8</span>  <span class="cp">pp9</span> <span class="o">-</span><span class="mf">.8</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="mf">2.</span>  <span class="cp">pp5</span>  <span class="mf">8.11</span>  <span class="cp">pp7</span>  <span class="mf">.2</span>  <span class="cp">pp9</span>  <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">6.05</span>  <span class="cp">pp7</span>  <span class="mf">.5</span>  <span class="cp">pp9</span>  <span class="o">-</span><span class="mf">.6</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="mf">2.5</span> <span class="cp">pp5</span>  <span class="mf">6.05</span>  <span class="cp">pp7</span>  <span class="mi">1</span>   <span class="cp">pp9</span>  <span class="mi">1</span>
+
+<span class="c1">;          p4=fund   clip     skew      p10=FM    p12=sync</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span>  <span class="mf">.5</span>  <span class="mf">1.08</span> <span class="mf">2.06</span>  <span class="mi">0</span>   <span class="mf">.3</span>   <span class="o">-</span><span class="mf">.5</span>  <span class="o">+</span><span class="mf">.5</span>  <span class="mi">0</span>     <span class="mi">0</span>   <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">4.03</span>  <span class="cp">pp7</span> <span class="mf">.5</span>   <span class="cp">pp9</span>  <span class="o">-</span><span class="mf">.6</span>  <span class="cp">pp11</span>  <span class="o">.</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">5.11</span>  <span class="cp">pp7</span> <span class="mi">1</span>    <span class="cp">pp9</span>   <span class="mf">.5</span>  <span class="cp">pp11</span>  <span class="o">.</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">6.01</span>  <span class="cp">pp7</span> <span class="mf">.8</span>   <span class="cp">pp9</span>  <span class="o">-</span><span class="mf">.5</span>  <span class="cp">pp11</span>  <span class="o">.</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">2.11</span>  <span class="cp">pp7</span> <span class="mf">.1</span>   <span class="cp">pp9</span>   <span class="mf">.3</span>  <span class="cp">pp11</span>  <span class="o">.</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">3.11</span>  <span class="cp">pp7</span> <span class="mf">.8</span>   <span class="cp">pp9</span>  <span class="o">-</span><span class="mf">.8</span>  <span class="cp">pp11</span>  <span class="o">.</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">2.</span>  <span class="cp">pp5</span>  <span class="mf">4.00</span>  <span class="cp">pp7</span>  <span class="mi">0</span>   <span class="cp">pp9</span>   <span class="mi">0</span>   <span class="cp">pp11</span>  <span class="o">.</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">3.</span>  <span class="cp">pp5</span>  <span class="mf">3.00</span>  <span class="cp">pp7</span>  <span class="mf">.3</span>  <span class="cp">pp9</span>   <span class="mi">1</span>   <span class="cp">pp11</span>  <span class="o">.</span>   <span class="o">.</span>
+
+
+<span class="nb">s</span>  <span class="c1">; End section, reset clock</span>
+
+<span class="c1">; Second part instr 1 outputs FM for instr 2 (p10, p11)</span>
+
+<span class="c1">;          p4=fund   clip     skew </span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span>  <span class="mf">1.</span>  <span class="mf">6.11</span> <span class="mf">6.06</span>  <span class="mi">0</span>    <span class="mi">1</span>   <span class="o">-</span><span class="mf">.3</span>  <span class="o">+</span><span class="mf">.3</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="mf">1.</span>  <span class="cp">pp5</span>  <span class="mf">2.03</span>  <span class="cp">pp7</span>  <span class="mi">0</span>   <span class="cp">pp9</span>  <span class="mi">0</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="mf">1.</span>  <span class="cp">pp5</span>  <span class="mf">7.11</span>  <span class="cp">pp7</span>  <span class="mf">.8</span>  <span class="cp">pp9</span>  <span class="mf">.8</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="mf">2.</span>  <span class="cp">pp5</span>  <span class="mf">8.11</span>  <span class="cp">pp7</span>  <span class="mi">0</span>   <span class="cp">pp9</span>  <span class="mf">.4</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">6.05</span>  <span class="cp">pp7</span> <span class="mf">.5</span>   <span class="cp">pp9</span> <span class="o">-</span><span class="mf">.6</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span>  <span class="mf">2.5</span> <span class="cp">pp5</span>  <span class="mf">6.05</span>  <span class="cp">pp7</span> <span class="mf">.4</span>   <span class="cp">pp9</span>  <span class="mf">.8</span>
+
+
+<span class="c1">;          p4=fund   clip     skew      p10=FM    p12=sync</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span>  <span class="mf">.5</span>  <span class="mf">8.08</span> <span class="mf">6.06</span>  <span class="mi">0</span>   <span class="mf">.3</span>   <span class="o">-</span><span class="mf">.5</span>  <span class="o">+</span><span class="mf">.5</span>  <span class="mi">0</span>     <span class="mi">3</span>   <span class="mi">0</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">6.03</span>  <span class="cp">pp7</span> <span class="mf">.5</span>   <span class="cp">pp9</span>  <span class="o">-</span><span class="mf">.6</span>  <span class="cp">pp11</span>  <span class="mi">2</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">5.11</span>  <span class="cp">pp7</span> <span class="mi">1</span>    <span class="cp">pp9</span>   <span class="mf">.5</span>  <span class="cp">pp11</span>  <span class="o">&lt;</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">6.01</span>  <span class="cp">pp7</span> <span class="mf">.8</span>   <span class="cp">pp9</span>  <span class="o">-</span><span class="mf">.5</span>  <span class="cp">pp11</span>  <span class="mi">1</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">5.11</span>  <span class="cp">pp7</span> <span class="mf">.5</span>   <span class="cp">pp9</span>   <span class="mf">.3</span>  <span class="cp">pp11</span>  <span class="o">&lt;</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">.5</span>  <span class="cp">pp5</span>  <span class="mf">9.04</span>  <span class="cp">pp7</span> <span class="mf">.1</span>   <span class="cp">pp9</span>  <span class="o">-</span><span class="mf">.3</span>  <span class="cp">pp11</span>  <span class="mf">.5</span>  <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">2.</span>  <span class="cp">pp5</span>  <span class="mf">8.11</span>  <span class="cp">pp7</span> <span class="mf">.4</span>   <span class="cp">pp9</span>   <span class="mf">.4</span>  <span class="cp">pp11</span>  <span class="mi">2</span>   <span class="o">.</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mf">3.</span>  <span class="cp">pp5</span>  <span class="mf">8.11</span>  <span class="cp">pp7</span> <span class="mi">0</span>    <span class="cp">pp9</span>   <span class="mi">0</span>   <span class="cp">pp11</span>  <span class="mi">3</span>   <span class="o">.</span>
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276053213424"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Rasmus Ekman</td>
+          </tr>
+          <tr>
+            <td>November 2017</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.10</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sqrt.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sr.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sqrt </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> sr</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>inletkid</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="inletk.html" title="inletk" />
+    <link rel="next" href="inletf.html" title="inletf" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">inletkid</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="inletk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="inletf.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="inletkid"></a>
+      <div class="titlepage"></div>
+      <a id="Indexinletkid" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">inletkid</span>
+        </h2>
+        <p>inletkid — 
+      Receives a krate signal into an instrument from a named port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097495568"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in signalflowgraph</p>
+        <p>
+      Receives a krate signal into an instrument from a named port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097493888"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ksignal <span class="command"><strong>inletkid </strong></span>Sname, SinstanceID</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097491792"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sname</em></span> -- String name of the inlet port.       
+      The name of the inlet is implicitly qualified by the instrument name 
+      or number, so it is valid to use the same inlet name in more than one 
+      instrument (but not to use the same inlet name twice in one instrument).
+    </p>
+        <p>
+      <span class="emphasis"><em>SinstanceID</em></span> -- String name of the outlet port's 
+      instance ID. This enables the inlet to discriminate between different 
+      instances of the outlet, e,g. one instance of the outlet might be created by a note 
+      specifying one instance ID, and another instance might be created by a note 
+      specifying another ID. This might be used, e.g., to situate difference instances 
+      of an instrument at different points in an Ambisonic space in a spatializing 
+      effects processor.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097488656"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ksignal</em></span> -- krate input signal
+    </p>
+        <p>
+      During performance, the krate inlet signal is received from each instance of an instrument
+      containing an outlet port to which this inlet has been connected using the 
+      <a class="link" href="connect.html" title="connect">connect</a> opcode. The signals of all the outlets that 
+      are connected to an inlet, but only those share the specified instance ID, are summed in the inlet.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097485584"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="outleta.html" title="outleta"><em class="citetitle">outleta</em></a>
+      <a class="link" href="outletk.html" title="outletk"><em class="citetitle">outletk</em></a>
+      <a class="link" href="outletkid.html" title="outletkid"><em class="citetitle">outletkid</em></a>
+      <a class="link" href="outletf.html" title="outletf"><em class="citetitle">outletf</em></a>
+      <a class="link" href="inleta.html" title="inleta"><em class="citetitle">inleta</em></a>
+      <a class="link" href="inletf.html" title="inletf"><em class="citetitle">inletf</em></a>
+      <a class="link" href="connect.html" title="connect"><em class="citetitle">connect</em></a>
+      <a class="link" href="alwayson.html" title="alwayson"><em class="citetitle">alwayson</em></a>
+      <a class="link" href="ftgenonce.html" title="ftgenonce"><em class="citetitle">ftgenonce</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097476640"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2009</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="inletk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="inletf.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">inletk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> inletf</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

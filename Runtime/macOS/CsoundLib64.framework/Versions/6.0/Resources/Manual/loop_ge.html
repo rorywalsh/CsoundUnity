@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>loop_ge</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="logcurve.html" title="logcurve" />
+    <link rel="next" href="loop_gt.html" title="loop_gt" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">loop_ge</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="logcurve.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="loop_gt.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="loop_ge"></a>
+      <div class="titlepage"></div>
+      <a id="Indexloop_ge" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">loop_ge</span>
+        </h2>
+        <p>loop_ge — 
+      Looping constructions.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085433376"></a>
+        <h2>Description</h2>
+        <p>
+      Construction of looping operations.
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085432160"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>loop_ge</strong></span>  indx, idecr, imin, label</pre>
+        <pre class="synopsis"><span class="command"><strong>loop_ge</strong></span>  kndx, kdecr, kmin, label</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085429040"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>indx</em></span> -- i-rate variable to count loop.
+    </p>
+        <p>
+      <span class="emphasis"><em>idecr</em></span> -- value to decrement the loop.
+    </p>
+        <p>
+      <span class="emphasis"><em>imin</em></span> -- minimum value of loop index.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085425760"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kndx</em></span> -- k-rate variable to count loop.
+    </p>
+        <p>
+      <span class="emphasis"><em>kdecr</em></span> -- value to decrement the loop.
+    </p>
+        <p>
+      <span class="emphasis"><em>kmin</em></span> -- minimum value of loop index.
+    </p>
+        <p>
+      The actions of <span class="command"><strong>loop_ge</strong></span> are equivalent to the
+      code
+       </p>
+        <pre class="programlisting">
+         indx  <span class="op">=</span>  indx <span class="op">-</span> idecr
+         <span class="opc">if</span> (indx <span class="op">&gt;=</span> imin) <span class="opc">igoto</span> label</pre>
+        <p>
+  or
+       </p>
+        <pre class="programlisting">
+         kndx  <span class="op">=</span>  kndx <span class="op">-</span> kdecr
+         <span class="opc">if</span> (kndx <span class="op">&gt;=</span> kmin) <span class="opc">kgoto</span> label</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085413152"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="loop_gt.html" title="loop_gt"><em class="citetitle">loop_gt</em></a>,
+      <a class="link" href="loop_le.html" title="loop_le"><em class="citetitle">loop_le</em></a> and
+      <a class="link" href="loop_lt.html" title="loop_lt"><em class="citetitle">loop_lt</em></a>.
+    </p>
+        <p> More information on this opcode: <a class="ulink" href="http://www.csoundjournal.com/2006summer/controlFlow_part2.html" target="_top"><em class="citetitle">http://www.csoundjournal.com/2006summer/controlFlow_part2.html</em></a> written by Steven Yi,
+ and in the Floss Manuals: <a class="ulink" href="http://write.flossmanuals.net/csound/c-control-structures" target="_top"><em class="citetitle"> http://write.flossmanuals.net/csound/c-control-structures</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276085407392"></a>
+        <h2>Credits</h2>
+        <p>Istvan Varga. 2006</p>
+        <p>New in Csound version 5.01</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="logcurve.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="loop_gt.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">logcurve </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> loop_gt</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

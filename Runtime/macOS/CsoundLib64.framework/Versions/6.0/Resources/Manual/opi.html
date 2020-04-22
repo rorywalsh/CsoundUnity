@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>i</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="hypot.html" title="hypot" />
+    <link rel="next" href="if.html" title="if" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">i</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="hypot.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="if.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="opi"></a>
+      <div class="titlepage"></div>
+      <a id="IndexI" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">i</span>
+        </h2>
+        <p>i — 
+      Returns an init-type equivalent of a k-rate argument, or directly returns an i-rate argument.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098733456"></a>
+        <h2>Description</h2>
+        <p>
+      Returns an init-type equivalent of a k-rate argument or array
+      element or directly returns an i-rate argument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098732176"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>i</strong></span>(x) (control-rate or init-rate arg)</pre>
+        <pre class="synopsis"><span class="command"><strong>i</strong></span>(karray,index1, ...) (k-array with indices)</pre>
+        <p>
+      Value converters perform arithmetic translation from units of one kind to units of another. The result can then be a term in a further expression.
+      </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>Using i() with a k-rate expression argument is not
+        recommended, and can produce unexpected results.</p>
+                <p>To get the value from an array element reliably the
+        second form should be used.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098726736"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="opa.html" title="a"><em class="citetitle">a</em></a>,
+      <a class="link" href="opk.html" title="k"><em class="citetitle">k</em></a>,
+      <a class="link" href="abs.html" title="abs"><em class="citetitle">abs</em></a>,
+      <a class="link" href="exp.html" title="exp"><em class="citetitle">exp</em></a>,
+      <a class="link" href="frac.html" title="frac"><em class="citetitle">frac</em></a>,
+      <a class="link" href="int.html" title="int"><em class="citetitle">int</em></a>,
+      <a class="link" href="log.html" title="log"><em class="citetitle">log</em></a>,
+      <a class="link" href="log10.html" title="log10"><em class="citetitle">log10</em></a>,
+      <a class="link" href="sqrt.html" title="sqrt"><em class="citetitle">sqrt</em></a>
+    </p>
+        <p> More information on this opcode: <a class="ulink" href="http://www.csoundjournal.com/issue10/CsoundRates.html" target="_top"><em class="citetitle">http://www.csoundjournal.com/issue10/CsoundRates.html</em></a>  , written by Andrés Cabrera </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098716496"></a>
+        <h2>Credits</h2>
+        <p>i-rate arg version of function new since 5.14</p>
+        <p>Array format new in version 6.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="hypot.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="if.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">hypot </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> if</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

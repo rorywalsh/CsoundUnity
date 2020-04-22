@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>expseg</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="exprandi.html" title="exprandi" />
+    <link rel="next" href="expsega.html" title="expsega" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">expseg</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="exprandi.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="expsega.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="expseg"></a>
+      <div class="titlepage"></div>
+      <a id="IndexExpseg" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">expseg</span>
+        </h2>
+        <p>expseg — 
+      Trace a series of exponential segments between specified points.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276114641664"></a>
+        <h2>Description</h2>
+        <p>
+      Trace a series of exponential segments between specified points.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276114640320"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>expseg</strong></span> ia, idur1, ib [, idur2] [, ic] [...]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>expseg</strong></span> ia, idur1, ib [, idur2] [, ic] [...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276114636848"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ia</em></span> -- starting value. Zero is illegal for exponentials.
+    </p>
+        <p>
+      <span class="emphasis"><em>ib, ic</em></span>, etc. -- value after <span class="emphasis"><em>dur1</em></span> seconds, etc. For exponentials, must be non-zero and must agree in sign with <span class="emphasis"><em>ia</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur1</em></span> -- duration in seconds of first segment. A zero or negative value will cause all initialization to be skipped.
+    </p>
+        <p>
+      <span class="emphasis"><em>idur2, idur3</em></span>, etc. -- duration in seconds of subsequent segments. A zero or negative value will terminate the initialization process with the preceding point, permitting the last-defined line or curve to be continued indefinitely in performance. The default is zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276114631072"></a>
+        <h2>Performance</h2>
+        <p>
+      These units generate control or audio signals whose values can pass through 2 or more specified points. The sum of <span class="emphasis"><em>dur</em></span> values may or may not equal the instrument's performance time: a shorter performance will truncate the specified pattern, while a longer one will cause the last-defined segment to continue on in the same direction.
+    </p>
+        <p>
+      Note that the <span class="emphasis"><em>expseg</em></span> opcode does not operate correctly at audio rate when segments are shorter than a k-period. Try the <a class="link" href="expsega.html" title="expsega"><em class="citetitle">expsega</em></a> opcode instead.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276114627072"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the expseg opcode. It uses the file <a class="ulink" href="examples/expseg.csd" target="_top"><em class="citetitle">expseg.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276114625264"></a>
+          <p class="title">
+            <strong>Example 263. Example of the expseg opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276479575840"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o expseg.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; p4 = frequency in pitch-class notation.</span>
+  k<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+
+  <span class="c1">; Create an amplitude envelope.</span>
+  k<span class="n">env</span> <span class="nb">expseg</span> <span class="mf">0.01</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.01</span>
+  k<span class="n">amp</span> <span class="o">=</span> k<span class="n">env</span> <span class="o">*</span> <span class="mi">30000</span>
+
+  a<span class="n">1</span> <span class="nb">oscil</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="nb">out</span> a<span class="n">1</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Table #1, a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Play Instrument #1 for a half-second, p4=8.00</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">0.5</span> <span class="mf">8.00</span>
+<span class="c1">; Play Instrument #1 for a half-second, p4=8.01</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mf">0.5</span> <span class="mf">8.01</span>
+<span class="c1">; Play Instrument #1 for a half-second, p4=8.02</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mf">0.5</span> <span class="mf">8.02</span>
+<span class="c1">; Play Instrument #1 for a half-second, p4=8.03</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mf">0.5</span> <span class="mf">8.03</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276114621232"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="expon.html" title="expon"><em class="citetitle">expon</em></a>,
+      <a class="link" href="expsega.html" title="expsega"><em class="citetitle">expsega</em></a>,
+      <a class="link" href="expsegr.html" title="expsegr"><em class="citetitle">expsegr</em></a>,
+      <a class="link" href="line.html" title="line"><em class="citetitle">line</em></a>,
+      <a class="link" href="linseg.html" title="linseg"><em class="citetitle">linseg</em></a>,
+      <a class="link" href="linsegr.html" title="linsegr"><em class="citetitle">linsegr</em></a>
+      <a class="link" href="transeg.html" title="transeg"><em class="citetitle">transeg</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276114613840"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>Example written by Kevin Conder.</p>
+        <p>New in Csound 3.57</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="exprandi.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="expsega.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">exprandi </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> expsega</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

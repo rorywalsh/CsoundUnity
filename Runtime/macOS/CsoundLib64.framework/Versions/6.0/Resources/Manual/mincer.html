@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mincer</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="minaccum.html" title="minaccum" />
+    <link rel="next" href="minarray.html" title="minarray" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mincer</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="minaccum.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="minarray.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mincer"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMincer" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mincer</span>
+        </h2>
+        <p>mincer — 
+Phase-locked vocoder processing.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080018192"></a>
+        <h2>Description</h2>
+        <p>
+<span class="emphasis"><em>mincer</em></span> implements phase-locked vocoder processing using function tables
+containing sampled-sound sources, with <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>, and
+<span class="emphasis"><em>mincer</em></span> will accept deferred allocation tables.
+  </p>
+        <p>
+This opcode allows for time and frequency-independent scaling. Time is controlled by a time index (in seconds)
+to the function table position and can be moved forward and backward at any chosen speed, as well as stopped at a 
+given position ("frozen"). The quality of the effect is generally improved with phase locking switched on. 
+  </p>
+        <p>
+<span class="emphasis"><em>mincer</em></span> will also scale pitch, independently of frequency, using a transposition factor (k-rate).
+  </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080013184"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>mincer</strong></span> atimpt, kamp, kpitch, ktab, klock[,ifftsize,idecim]
+      </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080010976"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifftsize</em></span> -- FFT size (power-of-two), defaults to 2048.
+    </p>
+        <p>
+      <span class="emphasis"><em>idecim</em></span> -- decimation, defaults to 4 (meaning hopsize = fftsize/4)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080008304"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>atimpt</em></span> -- time position of current audio sample in secs. Table reading wraps around the ends of the function table. 
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude scaling
+    </p>
+        <p>
+      <span class="emphasis"><em>kpitch</em></span> -- grain pitch scaling (1=normal pitch, &lt; 1 lower, &gt; 1 higher; negative, backwards)
+    </p>
+        <p>
+      <span class="emphasis"><em>klock</em></span> -- 0 or 1, to switch phase-locking on/off
+    </p>
+        <p>
+      <span class="emphasis"><em>ktab</em></span> -- source signal function table. Deferred-allocation tables (see
+      <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>) are accepted, but the opcode
+      expects a mono source. Tables can be switched at k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276080001760"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the mincer opcode. It uses the file <a class="ulink" href="examples/mincer.csd" target="_top"><em class="citetitle">mincer.csd</em></a>
+      </p>
+        <div class="example">
+          <a id="idm276079999984"></a>
+          <p class="title">
+            <strong>Example 578. Example of the mincer opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276449553600"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o mincer.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">dur</span>  <span class="o">=</span> <span class="nb">p3</span>
+i<span class="n">lock</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">pitch</span> <span class="o">=</span> <span class="mi">1</span>
+i<span class="n">timescale</span> <span class="o">=</span> <span class="mf">0.5</span>
+i<span class="n">amp</span>  <span class="o">=</span> <span class="mf">0.8</span>
+
+a<span class="n">time</span> <span class="nb">line</span>   <span class="mi">0</span><span class="p">,</span>i<span class="n">dur</span><span class="p">,</span>i<span class="n">dur</span><span class="o">*</span>i<span class="n">timescale</span>
+a<span class="n">sig</span>  <span class="nb">mincer</span> a<span class="n">time</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">pitch</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">lock</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="s">"fox.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span> <span class="mi">0</span>	<span class="c1">;not locked</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span> <span class="mi">5</span> <span class="mi">1</span>	<span class="c1">;locked</span>
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276079998224"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>February 2010</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5.13</p>
+        <p>February 2005.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="minaccum.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="minarray.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">minaccum </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> minarray</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

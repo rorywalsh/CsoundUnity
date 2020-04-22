@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>imagesetpixel</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="imagesave.html" title="imagesave" />
+    <link rel="next" href="imagesize.html" title="imagesize" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">imagesetpixel</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="imagesave.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="imagesize.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="imagesetpixel"></a>
+      <div class="titlepage"></div>
+      <a id="IndexImagesetpixel" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">imagesetpixel</span>
+        </h2>
+        <p>imagesetpixel — 
+      Set the RGB value of a pixel inside a previously opened or created image.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098213536"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in image.</p>
+        <p>Set the RGB value of a pixel inside a previously opened or created image. An image can be loaded with <a class="link" href="imageload.html" title="imageload"><em class="citetitle">imageload</em></a>. An empty image can be created with <a class="link" href="imagecreate.html" title="imagecreate"><em class="citetitle">imagecreate</em></a> and saved with <a class="link" href="imagesave.html" title="imagesave"><em class="citetitle">imagesave</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098209152"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>imagesetpixel</strong></span> iimagenum, ax, ay, ared, agreen, ablue</pre>
+        <pre class="synopsis"><span class="command"><strong>imagesetpixel</strong></span> iimagenum, kx, ky, kred, kgreen, kblue</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098205984"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iimagenum</em></span> -- the reference of the image.. It should be a value returned by <a class="link" href="imageload.html" title="imageload"><em class="citetitle">imageload</em></a> or <a class="link" href="imagecreate.html" title="imagecreate"><em class="citetitle">imagecreate</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098202560"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ax (kx)</em></span> -- horizontal pixel position (must be a float from 0 to 1).
+    </p>
+        <p>
+      <span class="emphasis"><em>ay (ky)</em></span> -- vertical pixel position (must be a float from 0 to 1).
+    </p>
+        <p>
+      <span class="emphasis"><em>ared (kred)</em></span> -- red value of the pixel (mapped to a float from 0 to 1).
+    </p>
+        <p>
+      <span class="emphasis"><em>agreen (kgreen)</em></span> -- green value of the pixel (mapped to a float from 0 to 1).
+    </p>
+        <p>
+      <span class="emphasis"><em>ablue (kblue)</em></span> -- blue value of the pixel (mapped to a float from 0 to 1).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098197136"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the imagesetpixel opcode. It uses the file <a class="ulink" href="examples/imageopcodes.csd" target="_top"><em class="citetitle">imageopcodes.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276098195312"></a>
+          <p class="title">
+            <strong>Example 439. Example of the imagesetpixel opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276460780704"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-n <span class="c1">;no sound output</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span><span class="o">=</span><span class="mi">48000</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">1</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+<span class="c1">; this test .csd copies image.png into a new file 'imageout.png'</span>
+
+gi<span class="n">image1</span> <span class="nb">imageload</span> <span class="s">"image.png"</span>
+gi<span class="n">imagew</span><span class="p">,</span> gi<span class="n">imageh</span> <span class="nb">imagesize</span> gi<span class="n">image1</span>
+gi<span class="n">image2</span> <span class="nb">imagecreate</span> gi<span class="n">imagew</span><span class="p">,</span>gi<span class="n">imageh</span>
+
+    <span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">ndx</span> <span class="o">=</span> <span class="mi">0</span>
+k<span class="n">x_</span> <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">1</span>
+<span class="c1">;print imagewidth and imageheigth of image.png</span>
+<span class="nb">prints</span> <span class="s">"imagewidth = %f pixels, imageheigth = %f pixels</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span> gi<span class="n">imagew</span><span class="p">,</span> gi<span class="n">imageh</span>
+
+<span class="nl">myloop</span><span class="p">:</span>
+k<span class="n">y_</span> <span class="o">=</span> k<span class="n">ndx</span><span class="o">/</span><span class="p">(</span>gi<span class="n">imageh</span><span class="p">)</span>
+k<span class="n">r_</span><span class="p">,</span> k<span class="n">g_</span><span class="p">,</span> k<span class="n">b_</span> <span class="nb">imagegetpixel</span> gi<span class="n">image1</span><span class="p">,</span> k<span class="n">x_</span><span class="p">,</span> k<span class="n">y_</span>
+<span class="nb">imagesetpixel</span> gi<span class="n">image2</span><span class="p">,</span> k<span class="n">x_</span><span class="p">,</span> k<span class="n">y_</span><span class="p">,</span> k<span class="n">r_</span><span class="p">,</span> k<span class="n">g_</span><span class="p">,</span> k<span class="n">b_</span>
+<span class="k">loop_lt</span> k<span class="n">ndx</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> gi<span class="n">imageh</span><span class="p">,</span> <span class="nl">myloop</span>
+    <span class="kd">endin</span>
+
+    <span class="kd">instr</span> <span class="nf">2</span>
+
+<span class="nb">imagesave</span> gi<span class="n">image2</span><span class="p">,</span> <span class="s">"imageout.png"</span>
+    <span class="kd">endin</span>
+
+    <span class="kd">instr</span> <span class="nf">3</span>
+<span class="nb">imagefree</span> gi<span class="n">image1</span>
+<span class="nb">imagefree</span> gi<span class="n">image2</span>
+    <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">2</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">3</span> <span class="mi">1</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+ 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098193520"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="imageload.html" title="imageload"><em class="citetitle">imageload</em></a>,
+      <a class="link" href="imagecreate.html" title="imagecreate"><em class="citetitle">imagecreate</em></a>,
+      <a class="link" href="imagesize.html" title="imagesize"><em class="citetitle">imagesize</em></a>,
+      <a class="link" href="imagesave.html" title="imagesave"><em class="citetitle">imagesave</em></a>,
+      <a class="link" href="imagegetpixel.html" title="imagegetpixel"><em class="citetitle">imagegetpixel</em></a>,
+      <a class="link" href="imagefree.html" title="imagefree"><em class="citetitle">imagefree</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276098186992"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Cesare Marilungo</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="imagesave.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="imagesize.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">imagesave </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> imagesize</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Description of the command syntax</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="CommandTop.html" title="The Csound Command" />
+    <link rel="prev" href="CommandTop.html" title="The Csound Command" />
+    <link rel="next" href="CommandFlags.html" title="Csound command line" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Description of the command syntax</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CommandTop.html">Prev</a> </td>
+          <th width="60%" align="center">The Csound Command</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CommandFlags.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="CommandDesc"></a>Description of the command syntax</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    The csound command is followed by a set of <a class="link" href="CommandFlagsCategory.html" title="Command-line Flags (by Category)"><em class="citetitle">Command Line Flags</em></a> and the name of the orchestra (<a class="link" href="OrchTop.html" title="Syntax of the Orchestra"><em class="citetitle">.orc</em></a>) and score (<a class="link" href="ScoreTop.html" title="The Standard Numeric Score"><em class="citetitle">.sco</em></a>) files or the <a class="link" href="CommandUnifile.html" title="Unified File Format for Orchestras and Scores"><em class="citetitle">Unified csd file</em></a> (containing both orchestra and score) to process. <a class="link" href="CommandFlagsCategory.html" title="Command-line Flags (by Category)"><em class="citetitle">Command Line Flags</em></a> to control input and output configuration may appear anywhere in the command line, either separately or bundled together. A flag taking a Name or Number will find it in that argument, or in the immediately subsequent one. The following are thus equivalent commands:
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="command"><strong>csound</strong></span> -nm3 orchname -Sxxfilename scorename
+<span class="command"><strong>csound</strong></span> -n -m 3 orchname -x xfilename -S scorename</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    All flags and names are optional. The default values are:
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="command"><strong>csound</strong></span> -s -otest -b1024 -B1024 -m7 -P128 orchname scorename</pre>
+      </div>
+      <p>
+  </p>
+      <p>
+    where <span class="emphasis"><em>orchname</em></span> is a file containing Csound orchestra code, and scorename is a file of score data in standard numeric score format, optionally presorted and time-warped. If <span class="emphasis"><em>scorename</em></span> is omitted, there are two default options:
+    </p>
+      <div class="orderedlist">
+        <ol class="orderedlist" type="1">
+          <li class="listitem">
+            <p>if real-time input is expected (e.g. <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperL"><em class="citetitle">-L</em></a>, <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperM"><em class="citetitle">-M</em></a>, <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusLowerIadc"><em class="citetitle">-iadc</em></a> or <a class="link" href="CommandFlagsCategory.html#FlagsCatMinusUpperF"><em class="citetitle">-F</em></a>), a dummy score file is substituted consisting of the single statement 'f 0 3600' (i.e. listen for RT input for one hour)</p>
+          </li>
+          <li class="listitem">
+            <p>else Csound uses the previously processed <span class="emphasis"><em>score.srt</em></span> in the current directory.</p>
+          </li>
+        </ol>
+      </div>
+      <p>
+  </p>
+      <p>
+    Csound reports on the various stages of score and orchestra processing as it executes, performing various syntax and error checks along the way. Once the actual performance has begun, any error messages will derive from either the instrument loader or the unit generators themselves. A CSound command may include any rational combination of flag arguments.
+  </p>
+      <h3><a id="idm276143091344"></a>Running the examples in this manual from the command line</h3>
+      <p>
+    Most of the manual's examples come ready to run without the need of adding any command line flags since they specify options within the csd file's &lt;CsOptions&gt; tag, so you only need to type something like:
+    </p>
+      <div class="informalexample">
+        <pre class="programlisting">
+<span class="command"><strong>csound</strong></span> oscil.csd</pre>
+      </div>
+      <p>
+    within the examples folder, and realtime audio output should be generated.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CommandTop.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="CommandTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CommandFlags.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">The Csound Command </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Csound command line</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

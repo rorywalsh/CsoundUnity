@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvread</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvoc.html" title="pvoc" />
+    <link rel="next" href="pvsadsyn.html" title="pvsadsyn" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvread</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvoc.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsadsyn.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvread"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvread" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvread</span>
+        </h2>
+        <p>pvread — 
+      Reads from a phase vocoder analysis file and returns the frequency and amplitude from a single analysis channel or bin.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068099584"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>pvread</em></span> reads from a <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a> file and returns the frequency and amplitude from a single analysis channel or bin. The returned values can be used anywhere else in the Csound instrument. For example, one can use them as arguments to an oscillator to synthesize a single component from an analyzed signal or a bank of <span class="emphasis"><em>pvreads</em></span> can be used to resynthesize the analyzed sound using additive synthesis by passing the frequency and magnitude values to a bank of oscillators.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068096288"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kfreq, kamp <span class="command"><strong>pvread</strong></span> ktimpnt, ifile, ibin</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068094192"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifile</em></span> -- the <span class="emphasis"><em>pvoc</em></span> number (n in pvoc.n) or the name in quotes of the analysis file made using <span class="emphasis"><em>pvanal</em></span>. (See <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a>.)
+    </p>
+        <p>
+      <span class="emphasis"><em>ibin</em></span> -- the number of the analysis channel from which to return frequency in Hz and magnitude.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068089952"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kfreq, kamp</em></span> -- outputs of the <span class="emphasis"><em>pvread</em></span> unit. These values, retrieved from a phase vocoder analysis file, represent the values of frequency and amplitude from a single analysis channel specified in the <span class="emphasis"><em>ibin</em></span> argument. Interpolation between analysis frames is performed at k-rate resolution and dependent of course upon the rate and direction of <span class="emphasis"><em>ktimpnt</em></span>. 
+    </p>
+        <p>
+      <span class="emphasis"><em>ktimpnt</em></span> -- the passage of time, in seconds, through this file. <span class="emphasis"><em>ktimpnt</em></span> must always be positive, but can move forwards or backwards in time, be stationary or discontinuous, as a pointer into the analysis file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068085424"></a>
+        <h2>Examples</h2>
+        <p>
+      The example below shows the use <span class="emphasis"><em>pvread</em></span> to synthesize a single component at a time from a phase vocoder analysis file. It should be noted that the <span class="emphasis"><em>kfreq</em></span> and <span class="emphasis"><em>kamp</em></span> outputs can be used for any kind of synthesis, filtering, processing, and so on.
+      </p>
+        <div class="example">
+          <a id="idm276068083040"></a>
+          <p class="title">
+            <strong>Example 754. Example of the pvread opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276434128400"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pvread.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">; analyze "fox.wav" with PVANAL first</span>
+i<span class="n">bin</span>  <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">time</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">2.8</span>
+k<span class="n">freq</span><span class="p">,</span> k<span class="n">amp</span> <span class="nb">pvread</span> k<span class="n">time</span><span class="p">,</span> <span class="s">"fox.pvx"</span><span class="p">,</span> i<span class="n">bin</span>	<span class="c1">;read data from 7th analysis bin.</span>
+a<span class="n">sig</span>  <span class="nb">poscil</span> k<span class="n">amp</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> <span class="mi">1</span> 			<span class="c1">;function 1 is a stored sine</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="o">*</span><span class="mi">5</span><span class="p">,</span> a<span class="n">sig</span><span class="o">*</span><span class="mi">5</span>			<span class="c1">;compensate loss of volume</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;sine wave</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">6</span> <span class="mi">7</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">6</span> <span class="mi">15</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="mi">25</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+     </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068079056"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="pvbufread.html" title="pvbufread"><em class="citetitle">pvbufread</em></a>, 
+      <a class="link" href="pvcross.html" title="pvcross"><em class="citetitle">pvcross</em></a>, 
+      <a class="link" href="pvinterp.html" title="pvinterp"><em class="citetitle">pvinterp</em></a>, 
+      <a class="link" href="tableseg.html" title="tableseg"><em class="citetitle">tableseg</em></a>, 
+      <a class="link" href="tablexseg.html" title="tablexseg"><em class="citetitle">tablexseg</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068073504"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Karpen</td>
+          </tr>
+          <tr>
+            <td>Seattle, Wash</td>
+          </tr>
+          <tr>
+            <td>1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 3.44</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvoc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsadsyn.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvoc </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsadsyn</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

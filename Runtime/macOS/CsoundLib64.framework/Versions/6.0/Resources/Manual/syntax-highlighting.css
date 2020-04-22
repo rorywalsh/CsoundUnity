@@ -1,0 +1,61 @@
+/*
+ * Token types and associated styles and colors from
+ * https://github.com/csound/manual/blob/c1b097bae66e04c2b11395f12a03f0d67fc1f059/csound.css
+ * are
+ *
+ * Token type | Style  | Color name   |   R,   G,   B | Hex
+ * -------------------------------------------------------------
+ * csdtag     |        | brown        | 165,  42,  42 | #a52a2a
+ * comment    | italic | green        |   0, 128,   0 | #008000
+ * Ccomment   | italic | peru         | 205, 133,  63 | #cd853f
+ * ohdr       | bold   | darkred      | 139,   0,   0 | #8b0000
+ * oblock     | bold   | purple       | 128,   0, 128 | #800080
+ * opc        | bold   | blue         |   0,   0, 255 | #0000ff
+ * op         | bold   |              |               |
+ * octrl      | bold   | green        |   0, 128,   0 | #008000
+ * olabel     | bold   | indianred    | 205,  92,  92 | #cd5c5c
+ * omacro     | bold   | mediumorchid | 186,  85, 211 | #ba55d3
+ * stamnt     | bold   | blue         |   0,   0, 255 | #0000ff
+ *
+ * Map these styles and colors to Pygments token types (except for stamnt, which
+ * was used for score statements but is identical to opc). Note that peru, which
+ * was used for double-slashed comments, is used for strings.
+ */
+
+body .k  { color: green;        font-weight: bold   } /* Keyword */
+body .kc { color: green;                            } /* Keyword.Constant */
+body .kd { color: purple;       font-weight: bold   } /* Keyword.Declaration */
+body .kn { color: green                             } /* Keyword.Namespace */
+body .kp { color: green                             } /* Keyword.Pseudo */
+body .kr { color: green                             } /* Keyword.Reserved */
+body .kt { color: green                             } /* Keyword.Type */
+
+body .vc { color: green                             } /* Name.Attribute */
+body .nb { color: blue;         font-weight: bold   } /* Name.Builtin */
+body .bp { color: blue;         font-weight: bold   } /* Name.Builtin.Pseudo */
+body .nl { color: indianred;    font-weight: bold   } /* Name.Label */
+body .nt { color: brown                             } /* Name.Tag */
+body .vg { color: darkred;      font-weight: bold   } /* Name.Variable.Global */
+body .vi { color: blue;         font-weight: bold   } /* Name.Variable.Instance */
+
+body .c  { color: green;        font-style:  italic } /* Comment */
+body .cm { color: green;        font-style:  italic } /* Comment.Multiline */
+body .cp { color: mediumorchid; font-weight: bold   } /* Comment.Preproc */
+body .c1 { color: green;        font-style:  italic } /* Comment.Single */
+body .cs { color: green;        font-style:  italic } /* Comment.Special */
+
+body .o  {                      font-weight: bold   } /* Operator */
+body .ow { color: green;        font-weight: bold   } /* Operator.Word */
+
+body .s  { color: peru                              } /* Literal.String */
+body .sb { color: peru                              } /* Literal.String.Backtick */
+body .sc { color: peru                              } /* Literal.String.Char */
+body .sd { color: peru;         font-style:  italic } /* Literal.String.Doc */
+body .s2 { color: peru                              } /* Literal.String.Double */
+body .se { color: green                             } /* Literal.String.Escape */
+body .sh { color: peru                              } /* Literal.String.Heredoc */
+body .si { color: peru;         font-weight: bold   } /* Literal.String.Interpol */
+body .sx { color: peru                              } /* Literal.String.Other */
+body .sr { color: peru                              } /* Literal.String.Regex */
+body .s1 { color: peru                              } /* Literal.String.Single */
+body .ss { color: peru                              } /* Literal.String.Symbol */

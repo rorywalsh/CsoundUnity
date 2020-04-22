@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>inrg</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="inq.html" title="inq" />
+    <link rel="next" href="ins.html" title="ins" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">inrg</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="inq.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ins.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="inrg"></a>
+      <div class="titlepage"></div>
+      <a id="IndexInrg" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">inrg</span>
+        </h2>
+        <p>inrg — 
+      Allow input from a range of adjacent audio channels from the audio input device
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097253808"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>inrg</em></span> reads audio from a range of adjacent audio channels from the audio input device.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097252144"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>inrg</strong></span> kstart, ain1 [,ain2, ain3, ..., ainN]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097249712"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kstart</em></span> - the number of the first channel of the input device to be accessed (channel numbers starts with 1, which is the first channel)
+    </p>
+        <p>
+      <span class="emphasis"><em>ain1, ain2, ... ainN</em></span> - the output arguments filled with the incoming audio coming from corresponding channels.
+    </p>
+        <p>
+      <span class="emphasis"><em>inrg</em></span> allows input from a range of adjacent channels from the input device. <span class="emphasis"><em>kstart</em></span> indicates the first channel to be accessed (channel 1 is the first channel). The user must be sure that the number obtained by summing <span class="emphasis"><em>kstart</em></span> plus the number of accessed channels -1 is &lt;= <a class="link" href="nchnls_i.html" title="nchnls_i"><em class="citetitle">nchnls_i</em></a>.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Note that this opcode is exceptional in that it produces its <span class="quote">“<span class="quote">output</span>”</span> on the parameters to the right.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097241856"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="inq.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ins.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">inq </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ins</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

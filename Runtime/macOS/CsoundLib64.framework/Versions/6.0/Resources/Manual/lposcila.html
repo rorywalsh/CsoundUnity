@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>lposcila</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="lposcil3.html" title="lposcil3" />
+    <link rel="next" href="lposcilsa.html" title="lposcilsa" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">lposcila</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lposcil3.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lposcilsa.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lposcila"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLposcila" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">lposcila</span>
+        </h2>
+        <p>lposcila — 
+      Read sampled sound from a table with looping and high precision.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083136304"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>lposcila</em></span> reads sampled sound from a table with looping and high precision.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083134656"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar <span class="command"><strong>lposcila</strong></span> aamp, kfreqratio, kloop, kend, ift [,iphs] </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083132560"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ift</em></span> -- function table number
+    </p>
+        <p>
+      <span class="emphasis"><em>iphs</em></span> -- initial phase (in samples)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083130144"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ar</em></span> -- output signal
+    </p>
+        <p>
+      <span class="emphasis"><em>aamp</em></span> -- amplitude
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreqratio</em></span> -- multiply factor of table frequency (for example: 1 = original frequency, 1.5 = a fifth up , .5 = an octave down)
+    </p>
+        <p>
+      <span class="emphasis"><em>kloop</em></span> -- start loop point (in samples)
+    </p>
+        <p>
+      <span class="emphasis"><em>kend</em></span> -- end loop point (in samples)
+    </p>
+        <p>
+      <span class="emphasis"><em>lposcila</em></span> is the same as <a class="link" href="lposcil.html" title="lposcil"><em class="citetitle">lposcil</em></a>, but has an audio-rate amplitude argument (instead of k-rate) to allow fast envelope transients.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083122976"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the lposcila opcode. It uses the file <a class="ulink" href="examples/lposcila.csd" target="_top"><em class="citetitle">lposcila.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276083121200"></a>
+          <p class="title">
+            <strong>Example 518. Example of the lposcila opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276453410944"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o lposcila.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">cps</span>  <span class="o">=</span> <span class="mf">1.3</span>					<span class="c1">;a 3d up</span>
+k<span class="n">loop</span> <span class="o">=</span> <span class="mi">0</span>					<span class="c1">;loop start time in samples</span>
+k<span class="n">end</span>  <span class="o">=</span> <span class="mi">10000</span>					<span class="c1">;loop end time in samples</span>
+
+a<span class="n">env</span> <span class="nb">expsega</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.01</span>	<span class="c1">;envelope with fast and short segment</span>
+a<span class="n">sig</span> <span class="nb">lposcila</span> a<span class="n">env</span><span class="p">,</span> k<span class="n">cps</span><span class="p">,</span> k<span class="n">loop</span><span class="p">,</span> k<span class="n">end</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">;use it for amplitude</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; Its table size is deferred,</span>
+<span class="c1">; and format taken from the soundfile header.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="s">"beats.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+
+<span class="c1">; Play Instrument #1 for 6 seconds.</span>
+<span class="c1">; This will loop the drum pattern several times.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083117216"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="lposcil.html" title="lposcil"><em class="citetitle">lposcil</em></a>,
+      <a class="link" href="lposcilsa.html" title="lposcilsa"><em class="citetitle">lposcilsa</em></a>,
+      <a class="link" href="lposcilsa2.html" title="lposcilsa2"><em class="citetitle">lposcilsa2</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276083113424"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 5.06</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lposcil3.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lposcilsa.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lposcil3 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> lposcilsa</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

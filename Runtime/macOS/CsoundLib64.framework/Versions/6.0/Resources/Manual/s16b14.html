@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>s16b14</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ops.html" title="S" />
+    <link rel="next" href="s32b14.html" title="s32b14" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">s16b14</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ops.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="s32b14.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="s16b14"></a>
+      <div class="titlepage"></div>
+      <a id="IndexS16b14" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">s16b14</span>
+        </h2>
+        <p>s16b14 — 
+      Creates a bank of 16 different 14-bit MIDI control message numbers.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276060857664"></a>
+        <h2>Description</h2>
+        <p>
+      Creates a bank of 16 different 14-bit MIDI control message numbers.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276060856416"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">i1,...,i16 <span class="command"><strong>s16b14</strong></span> ichan, ictlno_msb1, ictlno_lsb1, imin1, imax1, \
+      initvalue1, ifn1,..., ictlno_msb16, ictlno_lsb16, imin16, imax16, initvalue16, ifn16</pre>
+        <pre class="synopsis">k1,...,k16 <span class="command"><strong>s16b14</strong></span> ichan, ictlno_msb1, ictlno_lsb1, imin1, imax1, \
+      initvalue1, ifn1,..., ictlno_msb16, ictlno_lsb16, imin16, imax16, initvalue16, ifn16</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276060852784"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>i1 ... i64</em></span> -- output values
+    </p>
+        <p>
+      <span class="emphasis"><em>ichan</em></span> -- MIDI channel (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>ictlno_msb1 .... ictlno_msb32</em></span> -- MIDI control number, most significant byte (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>ictlno_lsb1 .... ictlno_lsb32</em></span> -- MIDI control number, least significant byte (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>imin1 ... imin64</em></span> -- minimum values for each controller
+    </p>
+        <p>
+      <span class="emphasis"><em>imax1 ... imax64</em></span> -- maximum values for each controller
+    </p>
+        <p>
+      <span class="emphasis"><em>init1 ... init64</em></span> -- initial value for each controller
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn1 ... ifn64</em></span> -- function table for conversion for each controller
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276060845248"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>k1 ... k64</em></span> -- output values
+    </p>
+        <p>
+      <span class="emphasis"><em>s16b14</em></span> is a bank of MIDI controllers, useful when using MIDI mixer such as Kawai MM-16 or others for changing whatever sound parameter in real-time. The raw MIDI control messages at the input port are converted to agree with <span class="emphasis"><em>iminN</em></span> and <span class="emphasis"><em>imaxN</em></span>,  and an initial value can be set. Also, an optional non-interpolated function table with a custom translation curve is allowed, useful for enabling exponential response curves.
+    </p>
+        <p>
+      When no function table translation is required, set the <span class="emphasis"><em>ifnN</em></span> value to 0, else set <span class="emphasis"><em>ifnN</em></span> to a valid function table number.  When table translation is enabled (i.e. setting <span class="emphasis"><em>ifnN</em></span> value to a non-zero number referring to an already allocated function table), <span class="emphasis"><em>initN</em></span> value should be set equal to <span class="emphasis"><em>iminN</em></span> or <span class="emphasis"><em>imaxN</em></span> value, else the initial output value will not be the same as specified in <span class="emphasis"><em>initN</em></span> argument.
+    </p>
+        <p>
+      <span class="emphasis"><em>s16b14</em></span> allows a bank of 16 different MIDI control message numbers. It uses 14-bit values instead of MIDI's normal 7-bit values.
+    </p>
+        <p>
+      As the input and output arguments are many, you can split the line using '\' (backslash) character (new in 3.47 version) to improve the readability. Using these opcodes is considerably more efficient than using the separate ones (<a class="link" href="ctrl7.html" title="ctrl7"><em class="citetitle">ctrl7</em></a> and <a class="link" href="tonek.html" title="tonek"><em class="citetitle">tonek</em></a>) when more controllers are required.
+    </p>
+        <p>
+      In the i-rate version of <span class="emphasis"><em>s16b14</em></span>, there is not an initial value input argument. The output is taken directly from the current status of internal controller array of Csound.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276060833712"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>December 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.50</p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel and controller number ranges.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ops.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="s32b14.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">S </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> s32b14</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

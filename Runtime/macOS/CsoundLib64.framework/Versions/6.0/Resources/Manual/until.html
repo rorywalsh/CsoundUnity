@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>until</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="unirand.html" title="unirand" />
+    <link rel="next" href="unwrap.html" title="unwrap" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">until</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="unirand.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="unwrap.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="until"></a>
+      <div class="titlepage"></div>
+      <a id="IndexUntil" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">until</span>
+        </h2>
+        <p>until — 
+      A syntactic looping construction.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276044483376"></a>
+        <h2>Description</h2>
+        <p>
+      A syntactic looping construction.
+   </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070897504"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>until</strong></span>  condition <span class="command"><strong>do</strong></span>
+    ... <span class="command"><strong>od</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070894464"></a>
+        <h2>Performance</h2>
+        <p>
+      The statements between the <span class="emphasis"><em>do</em></span> and
+      <span class="emphasis"><em>od</em></span> form the body of a loop which is obeyed
+      until the conditional becomes true.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070892368"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the until construction. It uses the file <a class="ulink" href="examples/until.csd" target="_top"><em class="citetitle">until.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276070890576"></a>
+          <p class="title">
+            <strong>Example 1061. Example of the until opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276410935056"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o ifthen.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="nl">lab99</span><span class="p">:</span>
+<span class="k">if</span> <span class="nb">p4</span><span class="o">&lt;</span><span class="mi">0</span> <span class="k">goto</span> <span class="nl">lab100</span>
+  <span class="nb">p4</span> <span class="o">=</span> <span class="nb">p4</span><span class="o">-</span><span class="mi">1</span>
+  <span class="nb">print</span> <span class="nb">p4</span>
+  <span class="k">goto</span> <span class="nl">lab99</span>
+<span class="nl">lab100</span><span class="p">:</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+  <span class="k">until</span> <span class="nb">p4</span><span class="o">&lt;</span><span class="mi">0</span> <span class="k">do</span>
+    <span class="nb">p4</span> <span class="o">=</span> <span class="nb">p4</span><span class="o">-</span><span class="mi">1</span>
+    <span class="nb">print</span> <span class="nb">p4</span>
+  <span class="k">od</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">4</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">4</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+            Its output should include lines like this:
+      </p>
+        <pre class="screen">
+B  0.000 ..  1.000 T  1.000 TT  1.000 M:      0.0
+new alloc for instr 1:
+instr 1:  p4 = 3.000
+instr 1:  p4 = 2.000
+instr 1:  p4 = 1.000
+instr 1:  p4 = 0.000
+instr 1:  p4 = -1.000
+B  1.000 ..  2.000 T  2.000 TT  2.000 M:      0.0
+new alloc for instr 2:
+instr 2:  p4 = 3.000
+instr 2:  p4 = 2.000
+instr 2:  p4 = 1.000
+instr 2:  p4 = 0.000
+instr 2:  p4 = -1.000
+B  2.000 ..  3.000 T  3.000 TT  3.000 M:      0.0
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070885488"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="loop_ge.html" title="loop_ge"><em class="citetitle">loop_ge</em></a>,
+      <a class="link" href="loop_gt.html" title="loop_gt"><em class="citetitle">loop_gt</em></a> and
+      <a class="link" href="loop_le.html" title="loop_le"><em class="citetitle">loop_le</em></a>.
+      <a class="link" href="loop_lt.html" title="loop_lt"><em class="citetitle">loop_lt</em></a>.
+      <a class="link" href="while.html" title="while"><em class="citetitle">while</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070879920"></a>
+        <h2>Credits</h2>
+        <p>John ffitch.</p>
+        <p>New in Csound version 5.14 with new parser</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="unirand.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="unwrap.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">unirand </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> unwrap</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

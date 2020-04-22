@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLexecButton</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLcount.html" title="FLcount" />
+    <link rel="next" href="FLgetsnap.html" title="FLgetsnap" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLexecButton</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLcount.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLgetsnap.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLexecButton"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLexecButton" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLexecButton</span>
+        </h2>
+        <p>FLexecButton — 
+      A FLTK widget opcode that creates a button that executes a command.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110149712"></a>
+        <h2>Description</h2>
+        <p>
+      A FLTK widget opcode that creates a button that executes a command. Useful
+      for opening up HTML documentation as About text or to start a separate
+      program from an FLTK widget interface.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Because any command can be executed, the user is advised to be very
+        careful when using this opcode and when running orchestras by others
+        using this opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110146960"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ihandle <span class="command"><strong>FLexecButton</strong></span> "command", iwidth, iheight, ix, iy</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110144784"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span>
+      -- a handle value (an integer number) that unequivocally references a
+      corresponding widget. This is used by other opcodes that modify a widget's
+      properties (see
+      <a class="link" href="ControlFltkAppearance.html" title="Modifying FLTK Widget Appearance"><em class="citetitle">Modifying FLTK Widget Appearance</em></a>). It is automatically output by <span class="emphasis"><em>FLexecButton</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">command</span>”</span></em></span> -- a double-quoted string containing a command to execute.
+    </p>
+        <p>
+      Notice that with <span class="emphasis"><em>FLexecButton</em></span>, the default text for the button is "About" and it is necessary to call the <a class="link" href="FLsetText.html" title="FLsetText"><em class="citetitle">FLsetText</em></a>
+ opcode to change the text of the button.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110135376"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLexecButton opcode. It uses the file <a class="ulink" href="examples/FLexecButton.csd" target="_top"><em class="citetitle">FLexecButton.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276110133568"></a>
+          <p class="title">
+            <strong>Example 296. Example of the FLexecButton opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276500457520"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No display</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+  <span class="vg">sr</span>	    <span class="o">=</span>  <span class="mi">44100</span>
+  <span class="vg">ksmps</span>	    <span class="o">=</span>  <span class="mi">10</span>
+  <span class="vg">nchnls</span>    <span class="o">=</span>  <span class="mi">1</span>
+
+<span class="c1">; Example by Jonathan Murphy 2007</span>
+
+<span class="c1">;;; reset amplitude range</span>
+  <span class="vg">0dbfs</span>	    <span class="o">=</span>  <span class="mi">1</span>
+
+<span class="c1">;;; set the base colour for the panel</span>
+	    <span class="nb">FLcolor</span>   <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">200</span>
+<span class="c1">;;; define the panel</span>
+	    <span class="nb">FLpanel</span>   <span class="s">"FLexecButton"</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+<span class="c1">;;; sliders to control time stretch and pitch</span>
+  gk<span class="n">str</span><span class="p">,</span> gi<span class="n">stretch</span>    <span class="nb">FLslider</span>			  <span class="s">"Time"</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">20</span>
+  gk<span class="n">pch</span><span class="p">,</span> gi<span class="n">pitch</span>      <span class="nb">FLslider</span>			  <span class="s">"Pitch"</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">20</span>
+<span class="c1">;;; set FLexecButton colour</span>
+	    <span class="nb">FLcolor</span>   <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span>
+<span class="c1">;;; when this button is pressed, fourier analysis is performed on the file</span>
+<span class="c1">;;; "beats.wav", producing the analysis file "beats.pvx"</span>
+  gi<span class="n">pvoc</span>    <span class="nb">FLexecButton</span>  <span class="s">"csound -U pvanal beats.wav beats.pvx"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span>
+<span class="c1">;;; set FLexecButton text</span>
+	    <span class="nb">FLsetText</span>	<span class="s">"PVOC"</span><span class="p">,</span> gi<span class="n">pvoc</span>
+<span class="c1">;;; when this button is pressed, instr 10000 is called, exiting</span>
+<span class="c1">;;; Csound immediately</span>
+
+<span class="c1">;;; cancel previous  colour</span>
+	    <span class="nb">FLcolor</span>   <span class="o">-</span><span class="mi">1</span>
+<span class="c1">;;; set colour for kill button</span>
+	    <span class="nb">FLcolor</span>   <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+  gk<span class="n">kill</span><span class="p">,</span> gi<span class="n">kill</span>      <span class="nb">FLbutton</span>			  <span class="s">"X"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span>
+<span class="c1">;;; cancel previous colour</span>
+	    <span class="nb">FLcolor</span>   <span class="o">-</span><span class="mi">1</span>
+<span class="c1">;;; set colour for play/stop and pause buttons</span>
+	    <span class="nb">FLcolor</span>   <span class="mi">0</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">0</span>
+<span class="c1">;;; pause and play/stop buttons</span>
+  gk<span class="n">pause</span><span class="p">,</span> gi<span class="n">pause</span>    <span class="nb">FLbutton</span>			  <span class="s">"@||"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+  gk<span class="n">play</span><span class="p">,</span> gi<span class="n">play</span>      <span class="nb">FLbutton</span>			  <span class="s">"@|&gt;"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+<span class="c1">;;; end the panel</span>
+	    <span class="nb">FLpanelEnd</span>
+<span class="c1">;;; set initial values for time stretch and pitch</span>
+	    <span class="nb">FLsetVal_i</span>	<span class="mi">1</span><span class="p">,</span> gi<span class="n">stretch</span>
+	    <span class="nb">FLsetVal_i</span>	<span class="mi">1</span><span class="p">,</span> gi<span class="n">pitch</span>
+<span class="c1">;;; run the panel</span>
+	    <span class="nb">FLrun</span>
+    
+	
+    <span class="kd">instr</span> <span class="nf">1</span>					  <span class="c1">; trigger play/stop</span>
+<span class="c1">;;; is the play/stop button on or off?</span>
+<span class="c1">;;; either way we need to trigger something,</span>
+<span class="c1">;;; so we can't just use the value of gkplay</span>
+  k<span class="n">on</span>	    <span class="nb">trigger</span>   gk<span class="n">play</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+  k<span class="n">off</span>	    <span class="nb">trigger</span>   gk<span class="n">play</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+<span class="c1">;;; if on, start instr 2</span>
+	    <span class="nb">schedkwhen</span>	k<span class="n">on</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+<span class="c1">;;; if off, stop instr 2</span>
+	    <span class="nb">schedkwhen</span>	k<span class="n">off</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="kd">endin</span>
+
+    <span class="kd">instr</span> <span class="nf">2</span>
+
+<span class="c1">;;; paused or playing?</span>
+<span class="k">if</span> <span class="p">(</span>gk<span class="n">pause</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">kgoto</span> <span class="nl">pause</span>
+	    <span class="k">kgoto</span>     <span class="nl">start</span>
+<span class="nl">pause</span><span class="p">:</span>
+<span class="c1">;;; if the pause button is on, skip sound production</span>
+	    <span class="k">kgoto</span>     <span class="nl">end</span>
+<span class="nl">start</span><span class="p">:</span>
+<span class="c1">;;; get the length of the analysis file in seconds</span>
+  i<span class="n">len</span>	    <span class="nb">filelen</span>   <span class="s">"beats.pvx"</span>
+<span class="c1">;;; determine base frequency of playback</span>
+  i<span class="n">cps</span>	    <span class="o">=</span>  <span class="mi">1</span><span class="o">/</span>i<span class="n">len</span>
+<span class="c1">;;; create a table over the length of the file</span>
+  i<span class="n">tpt</span>	    <span class="nb">ftgen</span>     <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">513</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> i<span class="n">len</span>
+<span class="c1">;;; phasor for time control</span>
+  k<span class="n">phs</span>	    <span class="nb">phasor</span>    i<span class="n">cps</span> <span class="o">*</span> gk<span class="n">str</span>
+<span class="c1">;;; use phasor as index into table</span>
+  k<span class="n">ndx</span>	    <span class="o">=</span>  k<span class="n">phs</span> <span class="o">*</span> <span class="mi">512</span>
+<span class="c1">;;; read table </span>
+  k<span class="n">tpt</span>	    <span class="nb">tablei</span>    k<span class="n">ndx</span><span class="p">,</span> i<span class="n">tpt</span> 
+<span class="c1">;;; use value from table as time pointer into file</span>
+  <span class="n">fsig1</span>	    <span class="nb">pvsfread</span>  k<span class="n">tpt</span><span class="p">,</span> <span class="s">"beats.pvx"</span>
+<span class="c1">;;; change playback pitch</span>
+  <span class="n">fsig2</span>	    <span class="nb">pvscale</span>   <span class="n">fsig1</span><span class="p">,</span> gk<span class="n">pch</span>
+<span class="c1">;;; resynthesize</span>
+  a<span class="n">out</span>	    <span class="nb">pvsynth</span>   <span class="n">fsig2</span>
+<span class="c1">;;; envelope to avoid clicks and clipping</span>
+  a<span class="n">env</span>	    <span class="nb">linsegr</span>   <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span>
+  a<span class="n">out</span>	    <span class="o">=</span>  a<span class="n">out</span> <span class="o">*</span> a<span class="n">env</span>
+	    <span class="nb">out</span>	      a<span class="n">out</span>
+<span class="nl">end</span><span class="p">:</span>
+
+    <span class="kd">endin</span>
+
+
+    <span class="kd">instr</span> <span class="nf">10000</span>					  <span class="c1">; kill</span>
+
+	    <span class="nb">exitnow</span>
+  
+    <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10000</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110129552"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLbutton.html" title="FLbutton"><em class="citetitle">FLbutton</em></a>,
+      <a class="link" href="FLbox.html" title="FLbox"><em class="citetitle">FLbox</em></a>,
+      <a class="link" href="FLbutBank.html" title="FLbutBank"><em class="citetitle">FLbutBank</em></a>,
+      <a class="link" href="FLprintk.html" title="FLprintk"><em class="citetitle">FLprintk</em></a>,
+      <a class="link" href="FLprintk2.html" title="FLprintk2"><em class="citetitle">FLprintk2</em></a>,
+      <a class="link" href="FLvalue.html" title="FLvalue"><em class="citetitle">FLvalue</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110123120"></a>
+        <h2>Credits</h2>
+        <p>Author: Steven Yi</p>
+        <p>Example by: Jonathan Murphy</p>
+        <p>New in version 5.05</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLcount.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLgetsnap.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLcount </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLgetsnap</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

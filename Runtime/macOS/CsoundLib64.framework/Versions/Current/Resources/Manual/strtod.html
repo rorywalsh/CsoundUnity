@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>strtod</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="strsubk.html" title="strsubk" />
+    <link rel="next" href="strtodk.html" title="strtodk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">strtod</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="strsubk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="strtodk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="strtod"></a>
+      <div class="titlepage"></div>
+      <a id="Indexstrtod" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">strtod</span>
+        </h2>
+        <p>strtod — 
+      Converts a string to a float (i-rate).
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066154368"></a>
+        <h2>Description</h2>
+        <p> Convert a string to a floating point value. It is also possible to
+    pass an strset index or a string p-field from the score instead of a string
+    argument. If the string cannot be parsed as a floating point or integer number, an init or perf error occurs and the instrument is deactivated. </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066152240"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ir <span class="command"><strong>strtod</strong></span> Sstr</pre>
+        <pre class="synopsis">ir <span class="command"><strong>strtod</strong></span> indx</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066148832"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sstr</em></span> -- String to convert.
+    </p>
+        <p>
+      <span class="emphasis"><em>indx</em></span> -- index of string set by strset
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066146272"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ir</em></span> -- Value of string as float.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066144448"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Istvan Varga</td>
+          </tr>
+          <tr>
+            <td>2005</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="strsubk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="strtodk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">strsubk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> strtodk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

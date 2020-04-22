@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>dnoise</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilityConversion.html" title="File Conversion (HET_IMPORT, HET_EXPORT, PVLOOK, PV_EXPORT, PV_IMPORT, SDIF2AD, SRCONV)" />
+    <link rel="prev" href="UtilityConversion.html" title="File Conversion (HET_IMPORT, HET_EXPORT, PVLOOK, PV_EXPORT, PV_IMPORT, SDIF2AD, SRCONV)" />
+    <link rel="next" href="het_export.html" title="het_export" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">dnoise</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="UtilityConversion.html">Prev</a> </td>
+          <th width="60%" align="center">File Conversion (HET_IMPORT, HET_EXPORT, PVLOOK, PV_EXPORT, PV_IMPORT, SDIF2AD, SRCONV)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="het_export.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="dnoise"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">dnoise</span>
+        </h2>
+        <p>dnoise — 
+      Reduces noise in a file.
+      <a id="IndexDnoise" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275980340112"></a>
+        <h2>Description</h2>
+        <p>
+      This is a noise reduction scheme using frequency-domain noise-gating. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275980338848"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>dnoise</strong></span> [flags] -i noise_ref_file  -o output_soundfile  input_soundfile</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275980336848"></a>
+        <h2>Initialization</h2>
+        <p>
+      Dnoise specific flags:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p><span class="emphasis"><em>(no flag)</em></span> input soundfile to be denoised</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-i fname</em></span> input reference noise soundfile</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-o fname</em></span> output soundfile</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-N fnum</em></span> # of bandpass filters (default: 1024)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-w fovlp</em></span> filter overlap factor: {0,1,(2),3} DON'T USE <span class="emphasis"><em>-w</em></span> AND <span class="emphasis"><em>-M</em></span></p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-M awlen</em></span> analysis window length (default: N-1 unless <span class="emphasis"><em>-w</em></span> is specified)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-L swlen</em></span> synthesis window length (default: M)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-D dfac</em></span> decimation factor (default: M/8)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-b btim</em></span> begin time in noise reference soundfile (default: 0)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-B smpst</em></span> starting sample in noise reference soundfile (default: 0)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-e etim</em></span> end time in noise reference soundfile (default: end of file)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-E smpend</em></span> final sample in noise reference soundfile (default: end of file)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-t thr</em></span> threshold above noise reference in dB (default: 30)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-S gfact</em></span> sharpness of noise-gate turnoff, range: 1 to 5 (default: 1)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-n numfrm</em></span> number of FFT frames to average over (default: 5)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-m mingain</em></span> minimum gain of noise-gate when off in dB (default: -40)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      Soundfile format options:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p><span class="emphasis"><em>-A</em></span> AIFF format output</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-W</em></span> WAV format output</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-J</em></span> IRCAM format output</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-h</em></span> skip soundfile header (not valid for AIFF/WAV output)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-8</em></span> 8-bit unsigned char sound samples</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-c</em></span> 8-bit signed_char sound samples</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-a</em></span> alaw sound samples</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-u</em></span> ulaw sound samples</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-s</em></span> short_int sound samples</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-l</em></span> long_int sound samples</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-f</em></span> float sound samples. Floats also supported for WAV files. (New in Csound 3.47.)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      Additional options:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p><span class="emphasis"><em>-R</em></span> verbose - print status info</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-H [N]</em></span> print a heartbeat character at each soundfile write.</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-- fname</em></span> output to log file fname</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>-V</em></span> verbose - print status info</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        DNOISE also looks at the environment variable SFOUTYP to determine soundfile output format.
+      </p>
+                <p>
+        The -i flag is used for a reference noise file (normally created from a short section of the denoised file, where only noise is audible). The input soundfile to be denoised can be given anywhere on the command line, without a flag.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275980304992"></a>
+        <h2>Performance</h2>
+        <p>
+      This is a noise reduction scheme using frequency-domain noise-gating.  This should work best in the case of high signal-to-noise with hiss-type noise.
+    </p>
+        <p>
+      The algorithm is that suggested by Moorer &amp; Berger in <span class="quote">“<span class="quote">Linear-Phase Bandsplitting: Theory and Applications</span>”</span> presented at the 76th Convention 1984 October 8-11 New York of the Audio Engineering Society (preprint #2132) except that it uses the Weighted Overlap-Add formulation for short-time Fourier analysis-synthesis in place of the recursive formulation suggested by Moorer &amp; Berger.  The gain in each frequency bin is computed independently according to
+
+      </p>
+        <div class="literallayout">
+          <p><br />
+gain = g0 + (1-g0) * [avg / (avg + th*th*nref)] ˆ sh<br />
+      </p>
+        </div>
+        <p>
+
+      where <span class="emphasis"><em>avg</em></span> and <span class="emphasis"><em>nref</em></span> are the mean squared signal and noise respectively for the bin in question.  (This is slightly different than in Moorer &amp; Berger.)
+    </p>
+        <p>
+      The critical parameters <span class="emphasis"><em>th</em></span> and <span class="emphasis"><em>g0</em></span> are specified in dB and internally converted to decimal values.  The <span class="emphasis"><em>nref</em></span> values are computed at the start of the program on the basis of a noise_soundfile (specified in the command line) which contains noise without signal.
+    </p>
+        <p>
+      The <span class="emphasis"><em>avg</em></span> values are computed over a rectangular window of m FFT frames looking both ahead and behind the current time.  This corresponds to a temporal extent of m*D/R (which is typically (m*N/8)/R).  The default settings of N, M, and D should be appropriate for most uses.  A higher sample rate than 16 Khz might indicate a higher N.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275980296736"></a>
+        <h2>Credits</h2>
+        <p>Author: Mark Dolson</p>
+        <p>August 26, 1989</p>
+        <p>Author: John ffitch</p>
+        <p>December 30, 2000</p>
+        <p>Updated by Rasmus Ekman on March 11, 2002.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="UtilityConversion.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilityConversion.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="het_export.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">File Conversion (HET_IMPORT, HET_EXPORT, PVLOOK, PV_EXPORT, PV_IMPORT, SDIF2AD, SRCONV) </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> het_export</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsinit</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsinfo.html" title="pvsinfo" />
+    <link rel="next" href="pvsin.html" title="pvsin" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsinit</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsinfo.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsin.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvsinit"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvsinit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsinit</span>
+        </h2>
+        <p>pvsinit — 
+      Initialise a spectral (f) variable to zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067140512"></a>
+        <h2>Description</h2>
+        <p>
+      Performs the equivalent to an init operation on an f-variable.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067139264"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsinit</strong></span> isize[, iolap, iwinsize, iwintype, iformat]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067137152"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- output pv stream set to zero.
+    </p>
+        <p>
+      <span class="emphasis"><em>isize</em></span> -- size of the DFT frame.
+    </p>
+        <p>
+      <span class="emphasis"><em>iolap</em></span> -- size of the analysis overlap, defaults to <span class="emphasis"><em>isize</em></span>/4.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwinsize</em></span> -- size of the analysis window, defaults to <span class="emphasis"><em>isize</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwintype</em></span> -- type of analysis window, defaults to 1, Hanning.
+    </p>
+        <p>
+      <span class="emphasis"><em>iformat</em></span> -- pvsdata format, defaults to 0:PVS_AMP_FREQ.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067130528"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276067129616"></a>
+          <p class="title">
+            <strong>Example 787. Example</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+fsig  <span class="opc">pvsinit</span>   1024</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067127296"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>November 2004 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>November 2004.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsinfo.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsin.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsinfo </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsin</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

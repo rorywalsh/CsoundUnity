@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>diskgrain</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="directory.html" title="directory" />
+    <link rel="next" href="diskin.html" title="diskin" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">diskgrain</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="directory.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="diskin.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="diskgrain"></a>
+      <div class="titlepage"></div>
+      <a id="Indexdiskgrain" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">diskgrain</span>
+        </h2>
+        <p>diskgrain — 
+      Synchronous granular synthesis, using a soundfile as source.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116288944"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>diskgrain</em></span> implements synchronous granular synthesis. The source sound for the grains is obtained by reading a soundfile containing the samples of the source waveform. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116287024"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>diskgrain</strong></span> Sfname, kamp, kfreq, kpitch, kgrsize, kprate, \
+      ifun, iolaps [,imaxgrsize , ioffset]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116284752"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sfilename</em></span> -- source soundfile.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifun</em></span> -- grain envelope function table.
+    </p>
+        <p>
+      <span class="emphasis"><em>iolaps</em></span> -- maximum number of overlaps, max(kfreq)*max(kgrsize). Estimating
+      a large value should not affect performance, but exceeding this value will probably have disastrous
+      consequences.
+    </p>
+        <p>
+      <span class="emphasis"><em>imaxgrsize</em></span> -- max grain size in secs (default 1.0).
+    </p>
+        <p>
+      <span class="emphasis"><em>ioffset</em></span> -- start offset in secs from beginning of file (default: 0).	
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116279280"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude scaling
+    </p>
+        <p>
+      <span class="emphasis"><em>kfreq</em></span> -- frequency of grain generation, or density, in grains/sec.
+    </p>
+        <p>
+      <span class="emphasis"><em>kpitch</em></span> -- grain pitch scaling (1=normal pitch, &lt; 1 lower, &gt; 1 higher; negative, backwards)
+    </p>
+        <p>
+      <span class="emphasis"><em>kgrsize</em></span> -- grain size in secs.
+    </p>
+        <p>
+      <span class="emphasis"><em>kprate</em></span> -- readout pointer rate, in
+      grains. The value of 1 will advance the reading pointer 1 grain
+      ahead in the source table. Larger values will time-compress and
+      smaller values will time-expand the source signal.  Negative
+      values will cause the pointer to run backwards and zero will
+      freeze it.
+    </p>
+        <p>
+      The grain generator has full control of frequency (grains/sec),
+      overall amplitude, grain pitch (a sampling increment) and grain
+      size (in secs), both as fixed or time-varying (signal)
+      parameters.  An extra parameter is the grain pointer speed (or
+      rate), which controls which position the generator will start
+      reading samples in the file for each successive grain. It is
+      measured in fractions of grain size, so a value of 1 (the
+      default) will make each successive grain read from where the
+      previous grain should finish. A value of 0.5 will make the next
+      grain start at the midway position from the previous grain start
+      and finish, etc.. A value of 0 will make the generator read
+      always from a fixed position (wherever the pointer was last at).
+      A negative value will decrement pointer positions. This control
+      gives extra flexibility for creating timescale modifications in
+      the resynthesis.
+    </p>
+        <p>
+      <span class="emphasis"><em>Diskgrain</em></span> will generate any number of
+      parallel grain streams (which will depend on grain
+      density/frequency), up to the olaps value (default 100). The
+      number of streams (overlapped grains) is determined by
+      grainsize*grain_freq. More grain overlaps will demand more
+      calculations and the synthesis might not run in realtime
+      (depending on processor power).
+    </p>
+        <p>
+      <span class="emphasis"><em>Diskgrain</em></span> can simulate FOF-like formant
+      synthesis, provided that a suitable shape is used as grain
+      envelope and a sinewave as the grain wave. For this use, grain
+      sizes of around 0.04 secs can be used. The formant centre
+      frequency is determined by the grain pitch.  Since this is a
+      sampling increment, in order to use a frequency in Hz, that
+      value has to be scaled by tablesize/sr. Grain frequency will
+      determine the fundamental.
+    </p>
+        <p>
+      This opcode is a variation on the <a class="link" href="syncgrain.html" title="syncgrain"><em class="citetitle">syncgrain</em></a>
+      opcode.
+    </p>
+        <p>
+      </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">diskgrain does not do any resanmpling, so if the
+      sample rate of the source filename is not the same as csound's sr
+      value there will be pitch shifts
+      </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116268224"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the diskgrain opcode. It uses the file <a class="ulink" href="examples/diskgrain.csd" target="_top"><em class="citetitle">diskgrain.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276116266416"></a>
+          <p class="title">
+            <strong>Example 218. Example of the diskgrain opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276483726480"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o diskgrain.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>     <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span>  <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">olaps</span>  <span class="o">=</span> <span class="mi">2</span>
+i<span class="n">grsize</span> <span class="o">=</span> <span class="mf">0.04</span>
+i<span class="n">freq</span>   <span class="o">=</span> i<span class="n">olaps</span><span class="o">/</span>i<span class="n">grsize</span>
+i<span class="n">ps</span>     <span class="o">=</span> <span class="mi">1</span><span class="o">/</span>i<span class="n">olaps</span>
+
+i<span class="n">str</span> <span class="o">=</span> <span class="nb">p4</span>  <span class="cm">/* timescale */</span>
+i<span class="n">pitch</span> <span class="o">=</span> <span class="nb">p5</span> <span class="cm">/* pitchscale */</span>
+
+a<span class="n">1</span> <span class="nb">diskgrain</span> <span class="s">"mary.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">freq</span><span class="p">,</span> i<span class="n">pitch</span><span class="p">,</span> i<span class="n">grsize</span><span class="p">,</span> i<span class="n">ps</span><span class="o">*</span>i<span class="n">str</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">olaps</span>
+   <span class="nb">outs</span>   a<span class="n">1</span><span class="p">,</span> a<span class="n">1</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">20</span> <span class="mi">2</span> <span class="mi">1</span>  <span class="c1">;Hanning function</span>
+
+<span class="c1">;           timescale   pitchscale</span>
+<span class="nb">i</span> <span class="mi">1</span>   <span class="mi">0</span>   <span class="mi">5</span>     <span class="mi">1</span>           <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span>   <span class="o">+</span>   <span class="mi">5</span>     <span class="mi">2</span>           <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span>   <span class="o">+</span>   <span class="mi">5</span>     <span class="mi">1</span>          <span class="mf">0.75</span>
+<span class="nb">i</span> <span class="mi">1</span>   <span class="o">+</span>   <span class="mi">5</span>     <span class="mf">1.5</span>        <span class="mf">1.5</span>
+<span class="nb">i</span> <span class="mi">1</span>   <span class="o">+</span>   <span class="mi">5</span>     <span class="mf">0.5</span>        <span class="mf">1.5</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276116262400"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>May 2007</td>
+          </tr>
+        </table>
+        <p>
+      New in Csound 5.06
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="directory.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="diskin.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">directory </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> diskin</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

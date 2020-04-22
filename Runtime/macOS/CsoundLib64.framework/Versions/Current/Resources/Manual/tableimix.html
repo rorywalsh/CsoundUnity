@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tableimix</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tableikt.html" title="tableikt" />
+    <link rel="next" href="tablekt.html" title="tablekt" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tableimix</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tableikt.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tablekt.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tableimix"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTableimix" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tableimix</span>
+        </h2>
+        <p>tableimix — 
+      Mixes two tables.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048566160"></a>
+        <h2>Description</h2>
+        <p>
+      Mixes two tables.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048564960"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>tableimix</strong></span> idft, idoff, ilen, is1ft, is1off, is1g, is2ft, is2off, is2g</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048562976"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>idft</em></span> -- Destination function table.
+    </p>
+        <p>
+      <span class="emphasis"><em>idoff</em></span> -- Offset to start writing from. Can be negative.
+    </p>
+        <p>
+      <span class="emphasis"><em>ilen</em></span> -- Number of write operations to perform. Negative means work backwards.
+    </p>
+        <p>
+      <span class="emphasis"><em>is1ft</em></span>, <span class="emphasis"><em>is2ft</em></span> -- Source function tables. These can be the same as the destination table, if care is exercised about direction of copying data.
+    </p>
+        <p>
+      <span class="emphasis"><em>is1off</em></span>, <span class="emphasis"><em>is2off</em></span> -- Offsets to start reading from in source tables.
+    </p>
+        <p>
+      <span class="emphasis"><em>is1g</em></span>, <span class="emphasis"><em>is2g</em></span> -- Gains to apply when reading from the source tables. The results are added and the sum is written to the destination table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048555744"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>tableimix</em></span> -- This opcode mixes from two tables, with separate gains into the destination table. Writing is done for <span class="emphasis"><em>ilen</em></span> locations, usually stepping forward through the table - if <span class="emphasis"><em>ilen</em></span> is positive. If it is negative, then the writing and reading order is backwards - towards lower indexes in the tables. This bi-directional option makes it easy to shift the contents of a table sideways by reading from it and writing back to it with a different offset.
+    </p>
+        <p>
+      If <span class="emphasis"><em>ilen</em></span> is 0, no writing occurs. Note that the internal integer value of <span class="emphasis"><em>ilen</em></span> is derived from the ANSI C floor() function - which returns the next most negative integer. Hence a fractional negative <span class="emphasis"><em>ilen</em></span> value of -2.3 would create an internal length of 3, and cause the copying to start from the offset locations and proceed for two locations to the left.
+    </p>
+        <p>
+      The total index for table reading and writing is calculated from the starting offset for each table, plus the index value, which starts at 0 and then increments (or decrements) by 1 as mixing proceeds.
+    </p>
+        <p>
+      These total indexes can potentially be very large, since there is no restriction on the offset or the <span class="emphasis"><em>ilen</em></span>. However each total index for each table is ANDed with a length mask (such as 0000 0111 for a table of length 8) to form a final index which is actually used for reading or writing. So no reading or writing can occur outside the tables. This is the same as <span class="quote">“<span class="quote">wrap</span>”</span> mode in table read and write. These opcodes do not read or write the guardpoint. If a table has been rewritten with one of these, then if it has a guardpoint which is supposed to contain the same value as the location 0, then call <a class="link" href="tableigpw.html" title="tableigpw"><em class="citetitle">tableigpw</em></a> afterwards.
+    </p>
+        <p>
+      The indexes and offsets are all in table steps - they are not normalized to 0 - 1. So for a table of length 256, <span class="emphasis"><em>ilen</em></span> should be set to 256 if all the table was to be read or written.
+    </p>
+        <p>
+      The tables do not need to be the same length - wrapping occurs individually for each table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048546144"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tableimix opcode. It uses the file <a class="ulink" href="examples/tableimix.csd" target="_top"><em class="citetitle">tableimix.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276048544352"></a>
+          <p class="title">
+            <strong>Example 1001. Example of the tableimix opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276420067520"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac   <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tableimix.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">sine</span> <span class="nb">ftgen</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.4</span>		<span class="c1">;sinoid</span>
+gi<span class="n">saw</span>  <span class="nb">ftgen</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">;saw</span>
+gi<span class="n">mix</span>  <span class="nb">ftgen</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">1</span>		<span class="c1">;used to mix</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+      <span class="nb">tableimix</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.5</span>
+a<span class="n">sig</span>  <span class="nb">poscil</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> gi<span class="n">mix</span>			<span class="c1">;mix table 1 &amp; 2			</span>
+      <span class="nb">outs</span>   a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048540352"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="tablecopy.html" title="tablecopy"><em class="citetitle">tablecopy</em></a>,
+      <a class="link" href="tablegpw.html" title="tablegpw"><em class="citetitle">tablegpw</em></a>,
+      <a class="link" href="tablemix.html" title="tablemix"><em class="citetitle">tablemix</em></a>,
+      <a class="link" href="tableicopy.html" title="tableicopy"><em class="citetitle">tableicopy</em></a>,
+      <a class="link" href="tableigpw.html" title="tableigpw"><em class="citetitle">tableigpw</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048534800"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Robin Whittle</td>
+          </tr>
+          <tr>
+            <td>Australia</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tableikt.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tablekt.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tableikt </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tablekt</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

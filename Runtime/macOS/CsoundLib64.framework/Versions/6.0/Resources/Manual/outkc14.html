@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>outkc14</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="outkat.html" title="outkat" />
+    <link rel="next" href="outkc.html" title="outkc" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">outkc14</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="outkat.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="outkc.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="outkc14"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOutkc14" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">outkc14</span>
+        </h2>
+        <p>outkc14 — 
+      Sends 14-bit MIDI controller output at k-rate.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074494240"></a>
+        <h2>Description</h2>
+        <p>
+      Sends 14-bit MIDI controller output at k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074493008"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>outkc14</strong></span> kchn, kmsb, klsb, kvalue, kmin, kmax</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074491040"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kchn</em></span> -- MIDI channel number (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>kmsb</em></span> -- most significant byte controller number when using 14-bit parameters (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>klsb</em></span> -- least significant byte controller number when using 14-bit parameters (0-127)
+    </p>
+        <p>
+      <span class="emphasis"><em>kvalue</em></span> -- floating point value
+    </p>
+        <p>
+      <span class="emphasis"><em>kmin</em></span> -- minimum floating point value (converted in MIDI integer value 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>kmax</em></span> -- maximum floating point value (converted in MIDI integer value 16383 (14-bit))
+    </p>
+        <p>
+      <span class="emphasis"><em>outkc14</em></span> (k-rate MIDI 14-bit controller output) sends a pair of controller messages. It works only with MIDI instruments which recognize them. These opcodes can drive 14-bit parameters on MIDI instruments that recognize them. The first control message contains the most significant byte of <span class="emphasis"><em>kvalue</em></span> argument while the second message contains the less significant byte. <span class="emphasis"><em>kmsb</em></span> and <span class="emphasis"><em>klsb</em></span> are the number of the most and less significant controller.
+    </p>
+        <p>
+      It can drive a different value of a parameter for each note currently active. 
+    </p>
+        <p>
+      It can scale the k-value floating-point argument according to the <span class="emphasis"><em>kmin</em></span> and <span class="emphasis"><em>kmax</em></span> values. For example: set <span class="emphasis"><em>kmin</em></span> = 1.0 and <span class="emphasis"><em>kmax</em></span> = 2.0.
+When the <span class="emphasis"><em>kvalue</em></span> argument receives a 2.0 value, the opcode will send a 127 value to the MIDI OUT device. When the <span class="emphasis"><em>kvalue</em></span> argument receives a 1.0 value, it will send a 0 value. k-rate opcodes send a message each time the MIDI converted value of argument <span class="emphasis"><em>kvalue</em></span> changes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074478544"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="outiat.html" title="outiat"><em class="citetitle">outiat</em></a>,
+      <a class="link" href="outic14.html" title="outic14"><em class="citetitle">outic14</em></a>,
+      <a class="link" href="outic.html" title="outic"><em class="citetitle">outic</em></a>,
+      <a class="link" href="outipat.html" title="outipat"><em class="citetitle">outipat</em></a>,
+      <a class="link" href="outipb.html" title="outipb"><em class="citetitle">outipb</em></a>,
+      <a class="link" href="outipc.html" title="outipc"><em class="citetitle">outipc</em></a>,
+      <a class="link" href="outkat.html" title="outkat"><em class="citetitle">outkat</em></a>,
+      <a class="link" href="outkc.html" title="outkc"><em class="citetitle">outkc</em></a>,
+      <a class="link" href="outkpat.html" title="outkpat"><em class="citetitle">outkpat</em></a>,
+      <a class="link" href="outkpb.html" title="outkpb"><em class="citetitle">outkpb</em></a>,
+      <a class="link" href="outkpc.html" title="outkpc"><em class="citetitle">outkpc</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276074467712"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+        <p>Thanks goes to Rasmus Ekman for pointing out the correct MIDI channel and controller number ranges.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="outkat.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="outkc.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">outkat </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> outkc</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

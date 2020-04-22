@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>betarand</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="beosc.html" title="beosc" />
+    <link rel="next" href="bexprnd.html" title="bexprnd" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">betarand</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="beosc.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="bexprnd.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="betarand"></a>
+      <div class="titlepage"></div>
+      <a id="IndexBetarandXClass" class="indexterm"></a>
+      <a id="IndexBetarand" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">betarand</span>
+        </h2>
+        <p>betarand — 
+      Beta distribution random number generator (positive values only).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123577760"></a>
+        <h2>Description</h2>
+        <p>
+      Beta distribution random number generator (positive values only). This is an x-class noise generator.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123576336"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>betarand</strong></span> krange, kalpha, kbeta</pre>
+        <pre class="synopsis">ires <span class="command"><strong>betarand</strong></span> krange, kalpha, kbeta</pre>
+        <pre class="synopsis">kres <span class="command"><strong>betarand</strong></span> krange, kalpha, kbeta</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123571568"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>krange</em></span> -- range of the random numbers (0 - <span class="emphasis"><em>krange</em></span>). 
+    </p>
+        <p>
+      <span class="emphasis"><em>kalpha</em></span> -- alpha value. If <span class="emphasis"><em>kalpha</em></span> is smaller than one, smaller values favor values near 0. 
+    </p>
+        <p>
+      <span class="emphasis"><em>kbeta</em></span> -- beta value. If <span class="emphasis"><em>kbeta</em></span> is smaller than one, smaller values favor values near <span class="emphasis"><em>krange</em></span>. 
+    </p>
+        <p>
+      If both <span class="emphasis"><em>kalpha</em></span> and <span class="emphasis"><em>kbeta</em></span> equal one we have uniform distribution. If both <span class="emphasis"><em>kalpha</em></span> and <span class="emphasis"><em>kbeta</em></span> are greater than one we have a sort of Gaussian distribution. Outputs only positive numbers.
+    </p>
+        <p>
+      For more detailed explanation of these distributions, see:
+      </p>
+        <div class="orderedlist">
+          <ol class="orderedlist" type="1">
+            <li class="listitem">
+              <p>C. Dodge - T.A. Jerse 1985. Computer music. Schirmer books. pp.265 - 286</p>
+            </li>
+            <li class="listitem">
+              <p>D. Lorrain. A panoply of stochastic cannons. In C. Roads, ed. 1989. Music machine . Cambridge, Massachusetts: MIT press, pp. 351 - 379.</p>
+            </li>
+          </ol>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123560912"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the betarand opcode. It uses the file <a class="ulink" href="examples/betarand.csd" target="_top"><em class="citetitle">betarand.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276123559104"></a>
+          <p class="title">
+            <strong>Example 91. Example of the betarand opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276494266384"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o betarand.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>  	<span class="c1">; every run time same values</span>
+
+k<span class="n">beta</span>	<span class="nb">betarand</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+	<span class="nb">printk</span> <span class="mf">.2</span><span class="p">,</span> k<span class="n">beta</span>		<span class="c1">; look </span>
+a<span class="n">out</span>	<span class="nb">oscili</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">beta</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; &amp; listen</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>		<span class="c1">; every run time different values</span>
+
+	<span class="nb">seed</span> <span class="mi">0</span>
+k<span class="n">beta</span>	<span class="nb">betarand</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+	<span class="nb">printk</span> <span class="mf">.2</span><span class="p">,</span> k<span class="n">beta</span>		<span class="c1">; look </span>
+a<span class="n">out</span>	<span class="nb">oscili</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mi">440</span><span class="o">+</span>k<span class="n">beta</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; &amp; listen</span>
+	<span class="nb">outs</span>	a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; sine wave</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">16384</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include a line like:
+      </p>
+        <pre class="screen">
+ i   1 time     0.00267:    85.74227
+ i   1 time     0.20267:    12.07606
+ i   1 time     0.40267:    25.03239
+ i   1 time     0.60267:     0.42037
+ i   1 time     0.80267:    76.69589
+ i   1 time     1.00000:    29.73339
+ i   1 time     1.20267:    48.29811
+ i   1 time     1.40267:    75.46507
+ i   1 time     1.60267:    74.80686
+ i   1 time     1.80000:    81.37473
+ i   1 time     2.00000:    55.48827
+Seeding from current time 3472120656
+ i   2 time     3.00267:    57.21408
+ i   2 time     3.20267:    30.95705
+ i   2 time     3.40267:    19.71687
+ i   2 time     3.60000:    64.48965
+ i   2 time     3.80267:    72.35818
+ i   2 time     4.00000:    49.65395
+ i   2 time     4.20000:    55.25888
+ i   2 time     4.40267:     3.98308
+ i   2 time     4.60267:    52.98075
+ i   2 time     4.80267:    58.07925
+ i   2 time     5.00000:    56.38914
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123554416"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="seed.html" title="seed"><em class="citetitle">seed</em></a>,
+      <a class="link" href="bexprnd.html" title="bexprnd"><em class="citetitle">bexprnd</em></a>,
+      <a class="link" href="cauchy.html" title="cauchy"><em class="citetitle">cauchy</em></a>,
+      <a class="link" href="exprand.html" title="exprand"><em class="citetitle">exprand</em></a>,
+      <a class="link" href="gauss.html" title="gauss"><em class="citetitle">gauss</em></a>,
+      <a class="link" href="linrand.html" title="linrand"><em class="citetitle">linrand</em></a>,
+      <a class="link" href="pcauchy.html" title="pcauchy"><em class="citetitle">pcauchy</em></a>,
+      <a class="link" href="poisson.html" title="poisson"><em class="citetitle">poisson</em></a>,
+      <a class="link" href="trirand.html" title="trirand"><em class="citetitle">trirand</em></a>,
+      <a class="link" href="unirand.html" title="unirand"><em class="citetitle">unirand</em></a>,
+      <a class="link" href="weibull.html" title="weibull"><em class="citetitle">weibull</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276123543408"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paris Smaragdis</td>
+          </tr>
+          <tr>
+            <td>MIT, Cambridge</td>
+          </tr>
+          <tr>
+            <td>1995</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Existed in 3.30</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="beosc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="bexprnd.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">beosc </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> bexprnd</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

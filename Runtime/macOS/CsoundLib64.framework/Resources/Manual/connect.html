@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>connect</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="compress2.html" title="compress2" />
+    <link rel="next" href="control.html" title="control" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">connect</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="compress2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="control.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="connect"></a>
+      <div class="titlepage"></div>
+      <a id="Indexconnect" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">connect</span>
+        </h2>
+        <p>connect — 
+      Connects a source outlet to a sink inlet.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276131974192"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in signalflowgraph</p>
+        <p>
+      The connect opcode, valid only in the orchestra header, sends the signals
+      from the indicated outlet in all instances of the indicated source
+      instrument to the indicated inlet in all instances of the indicated sink
+      instrument. Each inlet instance receives the sum of the signals in all 
+      outlet instances. Thus multiple instances of an outlet may fan in to one 
+      instance of an inlet, or one instance of an outlet may fan out to 
+      multiple instances of an inlet. 
+    </p>
+        <p>
+      When Csound creates a new instance of an instrument template, new instances
+      of its connections also are created.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276131971552"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>connect </strong></span>Tsource1, Soutlet1, Tsink1, Sinlet1</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276131969584"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Tsource1</em></span> -- String name of the source instrument definition.       
+    </p>
+        <p>
+      <span class="emphasis"><em>Soutlet1</em></span> -- String name of the source outlet in the source instrument.       
+    </p>
+        <p>
+      <span class="emphasis"><em>Tsink1</em></span> -- String name of the sink instrument definition.       
+    </p>
+        <p>
+      <span class="emphasis"><em>Sinlet1</em></span> -- String name of the sink inlet in the sink instrument.       
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276131965360"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the connect opcode. It uses the file <a class="ulink" href="examples/connect.csd" target="_top"><em class="citetitle">connect.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276131963568"></a>
+          <p class="title">
+            <strong>Example 150. Example of the connect opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276487849040"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o connect.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/* Written by Michael Gogins */</span>
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; Connect up the instruments to create a signal flow graph.</span>
+
+<span class="nb">connect</span> <span class="s">"SimpleSine"</span><span class="p">,</span>   <span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"leftin"</span>
+<span class="nb">connect</span> <span class="s">"SimpleSine"</span><span class="p">,</span>   <span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"rightin"</span>
+
+<span class="nb">connect</span> <span class="s">"Moogy"</span><span class="p">,</span>        <span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"leftin"</span>
+<span class="nb">connect</span> <span class="s">"Moogy"</span><span class="p">,</span>        <span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Reverberator"</span><span class="p">,</span>     	<span class="s">"rightin"</span>
+
+<span class="nb">connect</span> <span class="s">"Reverberator"</span><span class="p">,</span> <span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Compressor"</span><span class="p">,</span>       	<span class="s">"leftin"</span>
+<span class="nb">connect</span> <span class="s">"Reverberator"</span><span class="p">,</span> <span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Compressor"</span><span class="p">,</span>       	<span class="s">"rightin"</span>
+
+<span class="nb">connect</span> <span class="s">"Compressor"</span><span class="p">,</span>   <span class="s">"leftout"</span><span class="p">,</span>     <span class="s">"Soundfile"</span><span class="p">,</span>       	<span class="s">"leftin"</span>
+<span class="nb">connect</span> <span class="s">"Compressor"</span><span class="p">,</span>   <span class="s">"rightout"</span><span class="p">,</span>    <span class="s">"Soundfile"</span><span class="p">,</span>       	<span class="s">"rightin"</span>
+
+<span class="c1">; Turn on the "effect" units in the signal flow graph.</span>
+
+<span class="nb">alwayson</span> <span class="s">"Reverberator"</span><span class="p">,</span> <span class="mf">0.91</span><span class="p">,</span> <span class="mi">12000</span>
+<span class="nb">alwayson</span> <span class="s">"Compressor"</span>
+<span class="nb">alwayson</span> <span class="s">"Soundfile"</span>
+
+<span class="kd">instr</span> <span class="nf">SimpleSine</span>
+  i<span class="n">hz</span> <span class="o">=</span> <span class="nb">cpsmidinn</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+  i<span class="n">amplitude</span> <span class="o">=</span> <span class="nb">ampdb</span><span class="p">(</span><span class="nb">p5</span><span class="p">)</span>
+  <span class="nb">print</span> i<span class="n">hz</span><span class="p">,</span> i<span class="n">amplitude</span>
+  <span class="c1">; Use ftgenonce instead of ftgen, ftgentmp, or f statement.</span>
+  i<span class="n">sine</span> <span class="nb">ftgenonce</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">1</span> <span class="nb">oscili</span> i<span class="n">amplitude</span><span class="p">,</span> i<span class="n">hz</span><span class="p">,</span> i<span class="n">sine</span>
+  a<span class="n">env</span> <span class="nb">madsr</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span>
+  a<span class="n">signal</span> <span class="o">=</span> a<span class="n">1</span> <span class="o">*</span> a<span class="n">env</span>
+  <span class="c1">; Stereo audio outlet to be routed in the orchestra header.</span>
+  <span class="nb">outleta</span> <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">signal</span> <span class="o">*</span> <span class="mf">0.25</span>
+  <span class="nb">outleta</span> <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">signal</span> <span class="o">*</span> <span class="mf">0.75</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">Moogy</span>
+  i<span class="n">hz</span> <span class="o">=</span> <span class="nb">cpsmidinn</span><span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+  i<span class="n">amplitude</span> <span class="o">=</span> <span class="nb">ampdb</span><span class="p">(</span><span class="nb">p5</span><span class="p">)</span>
+  <span class="c1">; Use ftgenonce instead of ftgen, ftgentmp, or f statement.</span>
+  i<span class="n">sine</span> <span class="nb">ftgenonce</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4096</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">signal</span> <span class="nb">vco</span> i<span class="n">amplitude</span><span class="p">,</span> i<span class="n">hz</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> i<span class="n">sine</span>
+  k<span class="n">fco</span> <span class="nb">line</span> <span class="mi">200</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">2000</span>
+  k<span class="n">rez</span> <span class="nb">init</span> <span class="mf">0.9</span>
+  a<span class="n">signal</span> <span class="nb">moogvcf</span> a<span class="n">signal</span><span class="p">,</span> k<span class="n">fco</span><span class="p">,</span> k<span class="n">rez</span><span class="p">,</span> <span class="mi">100000</span>
+  <span class="c1">; Stereo audio outlet to be routed in the orchestra header.</span>
+  <span class="nb">outleta</span> <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">signal</span> <span class="o">*</span> <span class="mf">0.75</span>
+  <span class="nb">outleta</span> <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">signal</span> <span class="o">*</span> <span class="mf">0.25</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">Reverberator</span>
+  <span class="c1">; Stereo input.</span>
+  a<span class="n">leftin</span> <span class="nb">inleta</span> <span class="s">"leftin"</span>
+  a<span class="n">rightin</span> <span class="nb">inleta</span> <span class="s">"rightin"</span>
+  i<span class="n">delay</span> <span class="o">=</span> <span class="nb">p4</span>
+  i<span class="n">cutoff</span> <span class="o">=</span> <span class="nb">p5</span>
+  a<span class="n">leftout</span><span class="p">,</span> a<span class="n">rightout</span> <span class="nb">reverbsc</span> a<span class="n">leftin</span><span class="p">,</span> a<span class="n">rightin</span><span class="p">,</span> i<span class="n">delay</span><span class="p">,</span> i<span class="n">cutoff</span>
+  <span class="c1">; Stereo output.</span>
+  <span class="nb">outleta</span> <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">leftout</span>
+  <span class="nb">outleta</span> <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">rightout</span> 
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">Compressor</span>
+  <span class="c1">; Stereo input.</span>
+  a<span class="n">leftin</span> <span class="nb">inleta</span> <span class="s">"leftin"</span>
+  a<span class="n">rightin</span> <span class="nb">inleta</span> <span class="s">"rightin"</span>
+  k<span class="n">threshold</span> <span class="o">=</span> <span class="mi">25000</span>
+  i<span class="n">comp1</span> <span class="o">=</span> <span class="mf">0.5</span>
+  i<span class="n">comp2</span> <span class="o">=</span> <span class="mf">0.763</span>
+  i<span class="n">rtime</span> <span class="o">=</span> <span class="mf">0.1</span>
+  i<span class="n">ftime</span> <span class="o">=</span> <span class="mf">0.1</span>
+  a<span class="n">leftout</span> <span class="nb">dam</span> a<span class="n">leftin</span><span class="p">,</span> k<span class="n">threshold</span><span class="p">,</span> i<span class="n">comp1</span><span class="p">,</span> i<span class="n">comp2</span><span class="p">,</span> i<span class="n">rtime</span><span class="p">,</span> i<span class="n">ftime</span>
+  a<span class="n">rightout</span> <span class="nb">dam</span> a<span class="n">rightin</span><span class="p">,</span> k<span class="n">threshold</span><span class="p">,</span> i<span class="n">comp1</span><span class="p">,</span> i<span class="n">comp2</span><span class="p">,</span> i<span class="n">rtime</span><span class="p">,</span> i<span class="n">ftime</span>
+  <span class="c1">; Stereo output.</span>
+  <span class="nb">outleta</span> <span class="s">"leftout"</span><span class="p">,</span> a<span class="n">leftout</span> 
+  <span class="nb">outleta</span> <span class="s">"rightout"</span><span class="p">,</span> a<span class="n">rightout</span> 
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">Soundfile</span>
+  <span class="c1">; Stereo input.</span>
+  a<span class="n">leftin</span> <span class="nb">inleta</span> <span class="s">"leftin"</span>
+  a<span class="n">rightin</span> <span class="nb">inleta</span> <span class="s">"rightin"</span>
+  <span class="nb">outs</span> a<span class="n">leftin</span><span class="p">,</span> a<span class="n">rightin</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; Not necessary to activate "effects" or create f-tables in the score!</span>
+<span class="c1">; Overlapping notes to create new instances of instruments.</span>
+<span class="nb">i</span> <span class="s">"SimpleSine"</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mi">60</span> <span class="mi">85</span>
+<span class="nb">i</span> <span class="s">"SimpleSine"</span> <span class="mi">2</span> <span class="mi">5</span> <span class="mi">64</span> <span class="mi">80</span>
+<span class="nb">i</span> <span class="s">"Moogy"</span> <span class="mi">3</span> <span class="mi">5</span> <span class="mi">67</span> <span class="mi">75</span>
+<span class="nb">i</span> <span class="s">"Moogy"</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">71</span> <span class="mi">70</span>
+<span class="c1">;6 extra seconds after the performance</span>
+<span class="nb">e</span> <span class="mi">12</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276131961824"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="outleta.html" title="outleta"><em class="citetitle">outleta</em></a>
+      <a class="link" href="outletk.html" title="outletk"><em class="citetitle">outletk</em></a>
+      <a class="link" href="outletf.html" title="outletf"><em class="citetitle">outletf</em></a>
+      <a class="link" href="inleta.html" title="inleta"><em class="citetitle">inleta</em></a>
+      <a class="link" href="inletk.html" title="inletk"><em class="citetitle">inletk</em></a>
+      <a class="link" href="inletf.html" title="inletf"><em class="citetitle">inletf</em></a>
+      <a class="link" href="alwayson.html" title="alwayson"><em class="citetitle">alwayson</em></a>
+      <a class="link" href="ftgenonce.html" title="ftgenonce"><em class="citetitle">ftgenonce</em></a>
+    </p>
+        <p> More information on this opcode: <a class="ulink" href="http://www.csoundjournal.com/issue13/signalFlowGraphOpcodes.html" target="_top"><em class="citetitle">http://www.csoundjournal.com/issue13/signalFlowGraphOpcodes.html</em></a>  , written by Michael Gogins </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276131952384"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2009</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="compress2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="control.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">compress2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> control</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

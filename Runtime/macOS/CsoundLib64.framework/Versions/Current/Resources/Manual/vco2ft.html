@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vco2ft</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vco2.html" title="vco2" />
+    <link rel="next" href="vco2ift.html" title="vco2ift" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vco2ft</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vco2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vco2ift.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vco2ft"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVco2ft" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vco2ft</span>
+        </h2>
+        <p>vco2ft — 
+      Returns a table number at k-time for a given oscillator frequency and wavform.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041807088"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>vco2ft</em></span> returns the function table number to be used for generating the specified waveform at a given frequency. This function table number can be used by any Csound opcode that generates a signal by reading function tables (like <a class="link" href="oscilikt.html" title="oscilikt"><em class="citetitle">oscilikt</em></a>). The tables must be calculated by <a class="link" href="vco2init.html" title="vco2init"><em class="citetitle">vco2init</em></a> before <span class="emphasis"><em>vco2ft</em></span> is called and shared as Csound ftables (<span class="emphasis"><em>ibasfn</em></span>).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041802640"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kfn <span class="command"><strong>vco2ft</strong></span> kcps, iwave [, inyx]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041800544"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iwave</em></span> -- the waveform for which table number is to be selected. Allowed values are:
+        </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0: sawtooth</p>
+            </li>
+            <li class="listitem">
+              <p>1: 4 * x * (1 - x)   (integrated sawtooth)</p>
+            </li>
+            <li class="listitem">
+              <p>2: pulse (not normalized)</p>
+            </li>
+            <li class="listitem">
+              <p>3: square wave</p>
+            </li>
+            <li class="listitem">
+              <p>4: triangle</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      Additionally, negative <span class="emphasis"><em>iwave</em></span> values select user defined waveforms (see also <a class="link" href="vco2init.html" title="vco2init"><em class="citetitle">vco2init</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>inyx</em></span> (optional, default=0.5) -- bandwidth of the generated waveform, as percentage (0 to 1) of the sample rate. The expected range is 0 to 0.5 (i.e. up to <a class="link" href="sr.html" title="sr"><em class="citetitle">sr</em></a>/2), other values are limited to the allowed range.
+    </p>
+        <p>
+      Setting <span class="emphasis"><em>inyx</em></span> to 0.25 (<span class="emphasis"><em>sr</em></span>/4), or 0.3333 (<span class="emphasis"><em>sr</em></span>/3) can produce a <span class="quote">“<span class="quote">fatter</span>”</span> sound in some cases, although it is more likely to reduce quality.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041790080"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kfn</em></span> -- the ftable number, returned at k-rate.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> -- frequency in Hz, returned at k-rate. Zero and negative values are allowed. However, if the absolute value exceeds <span class="emphasis"><em>sr</em></span>/2 (or <span class="emphasis"><em>sr</em></span> * <span class="emphasis"><em>inyx</em></span>), the selected table will contain silence.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041786320"></a>
+        <h2>Examples</h2>
+        <p>
+      See the example for the <a class="link" href="vco2.html" title="vco2"><em class="citetitle">vco2</em></a> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041784240"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vco2ift.html" title="vco2ift"><em class="citetitle">vco2ift</em></a>,
+      <a class="link" href="vco2init.html" title="vco2init"><em class="citetitle">vco2init</em></a>, and
+      <a class="link" href="vco2.html" title="vco2"><em class="citetitle">vco2</em></a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041780432"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+        <p>New in version 4.22</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vco2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vco2ift.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vco2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vco2ift</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

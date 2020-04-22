@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvanal</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="UtilitySoundfile.html#UtilityAnalysis" title="Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL)" />
+    <link rel="prev" href="lpanal.html" title="lpanal" />
+    <link rel="next" href="UtilityQueries.html" title="File Queries (SNDINFO)" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvanal</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lpanal.html">Prev</a> </td>
+          <th width="60%" align="center">Analysis File Generation (ATSA, CVANAL, HETRO, LPANAL, PVANAL)</th>
+          <td width="20%" align="right"> <a accesskey="n" href="UtilityQueries.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvanal"></a>
+      <div class="titlepage"></div>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvanal</span>
+        </h2>
+        <p>pvanal — 
+      Converts a soundfile into a series of short-time Fourier transform frames.
+      <a id="IndexPvanal" class="indexterm"></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981775200"></a>
+        <h2>Description</h2>
+        <p>
+      Fourier analysis for the Csound <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a> generator
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981773104"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>csound -U pvanal</strong></span> [flags] infilename outfilename</pre>
+        <pre class="synopsis"><span class="command"><strong>pvanal</strong></span> [flags] infilename outfilename</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981769968"></a>
+        <h2>Pvanal extension to create a PVOC-EX file.</h2>
+        <p>
+      The standard Csound utility program pvanal has been extended to enable a PVOC-EX format file to be created, using the existing interface. To create a PVOC-EX file, the file name must be given the required extension, <span class="quote">“<span class="quote">.pvx</span>”</span>, e.g <span class="quote">“<span class="quote">test.pvx</span>”</span>. The requirement for the FFT size to be a power of two is here relaxed, and any positive value is accepted; odd numbers are rounded up internally. However, power-of-two sizes are still to be preferred for all normal applications.
+    </p>
+        <p>
+      The channel select flags are ignored, and all source channels will be analysed and written to the output file, up to a compiler-set limit of eight channels. The analysis window size (iwinsize) is set internally to double the FFT size.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981766848"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>pvanal</em></span> converts a soundfile into a series of short-time Fourier transform (STFT) frames at regular timepoints (a frequency-domain representation). The output file can be used by <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a> to generate audio fragments based on the original sample, with timescales and pitches arbitrarily and dynamically modified. Analysis is conditioned by the flags below. A space is optional between the flag and its argument.
+    </p>
+        <p>
+      <span class="emphasis"><em>-s srate</em></span> -- sampling rate of the audio input file. This will over-ride the srate of the soundfile header, which otherwise applies. If neither is present, the default is 10000.
+    </p>
+        <p>
+      <span class="emphasis"><em>-c channel</em></span> -- channel number sought. The default is 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>-b begin</em></span> -- beginning time (in seconds) of the audio segment to be analyzed. The default is 0.0
+    </p>
+        <p>
+      <span class="emphasis"><em>-d duration</em></span> -- duration (in seconds) of the audio segment to be analyzed. The default of 0.0 means to the end of the file.
+    </p>
+        <p>
+      <span class="emphasis"><em>-n frmsiz</em></span> -- STFT frame size, the number of samples in each Fourier analysis frame. Must be a power of two, in the range 16 to 16384. For clean results, a frame must be larger than the longest pitch period of the sample. However, very long frames result in temporal "smearing" or reverberation. The bandwidth of each STFT bin is determined by sampling rate / frame size. The default framesize is the smallest power of two that corresponds to more than 20 milliseconds of the source (e.g. 256 points at 10 kHz sampling, giving a 25.6 ms frame).
+    </p>
+        <p>
+      <span class="emphasis"><em>-w windfact</em></span> -- Window overlap factor. This controls the number of Fourier transform frames per second. Csound's <a class="link" href="pvoc.html" title="pvoc"><em class="citetitle">pvoc</em></a> will interpolate between frames, but too few frames will generate audible distortion; too many frames will result in a huge analysis file. A good compromise for windfact is 4, meaning that each input point occurs in 4 output windows, or conversely that the offset between successive STFT frames is framesize/4. The default value is 4. Do not use this flag with <span class="emphasis"><em>-h</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>-h hopsize</em></span> -- STFT frame offset. Converse of above, specifying the increment in samples between successive frames of analysis (see also <a class="link" href="lpanal.html" title="lpanal"><em class="citetitle">lpanal</em></a>). Do not use with <span class="emphasis"><em>-w</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>-H</em></span> -- Use a Hamming window instead of the
+    default von Hann window.
+    </p>
+        <p>
+      <span class="emphasis"><em>-K</em></span> -- Use a Kaiser window instead of the
+    default von Hann window.  The Kaiser parameter default is 6.8, but
+    can be set with the <span class="emphasis"><em>-B</em></span> option.
+    </p>
+        <p>
+      <span class="emphasis"><em>-B beta</em></span> -- Set the beta parameter for any
+    Kaiser window used to the floating point value beta.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981751424"></a>
+        <h2>Examples</h2>
+        <p>
+
+        </p>
+        <pre class="programlisting"><span class="emphasis"><em>pvanal</em></span> asound pvfile</pre>
+        <p>
+
+
+      will analyze the soundfile "asound" using the default frmsiz and windfact to produce the file "pvfile" suitable for use with pvoc.
+    </p>
+        <div class="refsect2">
+          <a id="idm275981748560"></a>
+          <h3>Files</h3>
+          <p>
+        The output file has a special <span class="emphasis"><em>pvoc</em></span> header containing details of the source audio file, the analysis frame rate and overlap. Frames of analysis data are stored as float, with the magnitude and <span class="quote">“<span class="quote">frequency</span>”</span> (in Hz) for the first N/2 + 1 Fourier bins of each frame in turn. <span class="quote">“<span class="quote">Frequency</span>”</span> encodes the phase increment in such a way that for strong harmonics it gives a good indication of the true frequency. For low amplitude or rapidly moving harmonics it is less meaningful.
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm275981745696"></a>
+          <h3>Diagnostics</h3>
+          <p>
+        Prints total number of frames, and frames completed every 20th frame.
+      </p>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275981744304"></a>
+        <h2>Credits</h2>
+        <p>Author: Dan Ellis</p>
+        <p>MIT Media Lab</p>
+        <p>Cambridge, Massachussetts</p>
+        <p>1990</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lpanal.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="UtilitySoundfile.html#UtilityAnalysis">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="UtilityQueries.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lpanal </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> File Queries (SNDINFO)</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

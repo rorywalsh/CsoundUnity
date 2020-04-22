@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>nstrstr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="nstrnum.html" title="nstrnum" />
+    <link rel="next" href="ntrpol.html" title="ntrpol" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">nstrstr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="nstrnum.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ntrpol.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="nstrstr"></a>
+      <div class="titlepage"></div>
+      <a id="IndexNstrstr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">nstrstr</span>
+        </h2>
+        <p>nstrstr — 
+      Returns the string of a named instr from its number.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077270992"></a>
+        <h2>Description</h2>
+        <p>
+      Returns the string of a named instr from its number or an empty
+      string if no such association exists.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077269696"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">Sname <span class="command"><strong>nstrstr</strong></span>insno</pre>
+        <pre class="synopsis">Sname <span class="command"><strong>nstrstr</strong></span>knsno</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077266320"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>insno</em></span> -- the instrument number of the named instrument.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077264688"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>knsno</em></span> -- the named instrument's number.
+    </p>
+        <p>
+      <span class="emphasis"><em>Sname</em></span> -- the named instrument's name.
+    </p>
+        <p>
+      If an instrument with the specified name does not exist an empty
+      string is returned.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276077261744"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>New in version 6.13</td>
+          </tr>
+          <tr>
+            <td>Written in the year 2019.</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="nstrnum.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ntrpol.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">nstrnum </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> ntrpol</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

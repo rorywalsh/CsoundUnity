@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvs2tab</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvswarp.html" title="pvswarp" />
+    <link rel="next" href="pyassign.html" title="pyassign Opcodes" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvs2tab</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvswarp.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pyassign.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvs2tab"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvs2tab" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvs2tab</span>
+        </h2>
+        <p>pvs2tab — 
+     Copies spectral data to k-rate arrays (or t-variables). Also known as pvs2array.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064001536"></a>
+        <h2>Description</h2>
+        <p>
+       Copies a pvs frame to a t-variable. Currently only AMP+FREQ and AMP+PHASE formats allowed. Since t-vars are an earlier version of k-rate arrays, the opcode also works with these. The opcode pvs2array is an alias of this one.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276064000128"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kframe <span class="command"><strong>pvs2tab</strong></span> tvar|kvar[], fsig</pre>
+        <pre class="synopsis">kframe <span class="command"><strong>pvs2tab</strong></span> kmags[], kfreqs[], fsig</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063996720"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kframe</em></span> -- current copied frame number. It can be used to detect when a new frame has been copied.
+    </p>
+        <p>
+      <span class="emphasis"><em>tvar|kvar[]</em></span> -- t-variable or k-rate array containing the output. It is produced at every k-period, but may not contain a new frame, pvs frames are produced at their own frame rate that is independent of kr. Generally, this vector needs to be big enough to contain the frame samples, i.e. N+2 (N is the dft size). If smaller, only a portion of the frame will be copied; if bigger, unused points will exist at higher indexes. 
+    </p>
+        <p>
+        <span class="emphasis"><em>kmags[], kfreqs[]</em></span> k-rate arrays containing magnitude and frequency values. These arrays need to be generally be of size N/2 + 1, where N is dft frame size. If smaller, only a portion of the pvs frame will be copied; if bigger, unused points will exist at higher indexes.
+    </p>
+        <p>
+      <span class="emphasis"><em>fsig</em></span> -- input fsig to be copied.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063991920"></a>
+        <h2>Examples</h2>
+        <p>
+      </p>
+        <div class="example">
+          <a id="idm276063991008"></a>
+          <p class="title">
+            <strong>Example 805. Example</strong>
+          </p>
+          <div class="example-contents">
+            <pre class="programlisting">
+karr[] init 1026
+a1 inch 1
+fsig1   pvsanal a1, 1024,256,1024, 1
+kframe  <span class="opc">pvs2tab</span> karr, fsig1</pre>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063988624"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>October 2011 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5</p>
+        <p>October 2011.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvswarp.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pyassign.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvswarp </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pyassign Opcodes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

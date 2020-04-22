@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>soundin</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="sortd.html" title="sortd" />
+    <link rel="next" href="space.html" title="space" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">soundin</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sortd.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="space.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="soundin"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSoundin" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">soundin</span>
+        </h2>
+        <p>soundin — 
+      Reads audio data from an external device or stream.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054426080"></a>
+        <h2>Description</h2>
+        <p>
+      Reads audio data from an external device or stream.  Up to 24
+      channels may be read before v5.14, extended to 40 in later versions.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054424608"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar1[, ar2[, ar3[, ... a24]]] <span class="command"><strong>soundin</strong></span> ifilcod [, iskptim] [, iformat] \
+      [, iskipinit] [, ibufsize]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054422368"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilcod</em></span> -- integer or character-string denoting the source soundfile name. An integer denotes the file soundin.filcod; a character-string (in double quotes, spaces permitted) gives the filename itself, optionally a full pathname. If not a full path, the named file is sought first in the current directory, then in that given by the environment variable <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SSDIR</em></a> (if defined) then by <a class="link" href="CommandEnvironment.html" title="Csound Environment Variables"><em class="citetitle">SFDIR</em></a>. See also <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>.
+    </p>
+        <p>
+      <span class="emphasis"><em>iskptim</em></span> (optional, default=0) -- time in seconds of input sound to be skipped. The default value is 0. In csound 5.00 and later, this may be negative to add a delay instead of skipping time.
+    </p>
+        <p>
+      <span class="emphasis"><em>iformat</em></span> (optional, default=0) -- specifies the audio data file format:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 = 8-bit signed char (high-order 8 bits of a 16-bit integer)</p>
+            </li>
+            <li class="listitem">
+              <p>2 = 8-bit A-law bytes</p>
+            </li>
+            <li class="listitem">
+              <p>3 = 8-bit U-law bytes</p>
+            </li>
+            <li class="listitem">
+              <p>4 = 16-bit short integers</p>
+            </li>
+            <li class="listitem">
+              <p>5 = 32-bit long integers</p>
+            </li>
+            <li class="listitem">
+              <p>6 = 32-bit floats</p>
+            </li>
+            <li class="listitem">
+              <p>7 = 8-bit unsigned int (not available in Csound versions older than 5.00)</p>
+            </li>
+            <li class="listitem">
+              <p>8 = 24-bit int (not available in Csound versions older than 5.00)</p>
+            </li>
+            <li class="listitem">
+              <p>9 = 64-bit doubles (not available in Csound versions older than 5.00)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+     <span class="emphasis"><em>iskipinit</em></span> -- switches off all initialisation if
+     non zero (default=0).  This was introduced in 4_23f13 and
+     csound5.
+    </p>
+        <p>
+     <span class="emphasis"><em>ibufsize</em></span> -- buffer size in mono samples (not sample frames). Not available in Csound versions older than 5.00. The default buffer size is 2048.
+    </p>
+        <p>
+      If <span class="emphasis"><em>iformat</em></span> = 0 it is taken from the soundfile header, and if no header from the Csound <a class="link" href="CommandFlags.html#FlagsMinusLowerO"><em class="citetitle">-o</em></a> command-line flag. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054403680"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>soundin</em></span> is functionally an audio generator that derives its signal from a pre-existing file. The number of channels read in is controlled by the number of result cells, a1, a2, etc., which must match that of the input file. A <span class="emphasis"><em>soundin</em></span> opcode opens this file whenever the host instrument is initialized, then closes it again each time the instrument is turned off.
+    </p>
+        <p>
+      There can be any number of <span class="emphasis"><em>soundin</em></span> opcodes within a single instrument or orchestra. Two or more of them can read simultaneously from the same external file.
+    </p>
+        <div class="caution" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Caution: Note to Windows users">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Caution]" src="images/caution.png" />
+              </td>
+              <th align="left">Note to Windows users</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Windows users typically use back-slashes, <span class="quote">“<span class="quote">\</span>”</span>, when specifying the paths of their files. As an example, a Windows user might use the path <span class="quote">“<span class="quote">c:\music\samples\loop001.wav</span>”</span>. This is problematic because back-slashes are normally used to specify special characters.
+      </p>
+                <p>
+	To correctly specify this path in Csound, one may alternately:
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p><span class="emphasis"><em>Use forward slashes</em></span>: c:/music/samples/loop001.wav</p>
+                    </li>
+                    <li class="listitem">
+                      <p><span class="emphasis"><em>Use back-slash special characters, <span class="quote">“<span class="quote">\\</span>”</span></em></span>: c:\\music\\samples\\loop001.wav</p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054394848"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the soundin opcode. It uses the file <a class="ulink" href="examples/soundin.csd" target="_top"><em class="citetitle">soundin.csd</em></a>,
+<a class="ulink" href="examples/fox.wav" target="_top"><em class="citetitle">fox.wav</em></a> and <a class="ulink" href="examples/kickroll.wav" target="_top"><em class="citetitle">kickroll.wav</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276054391440"></a>
+          <p class="title">
+            <strong>Example 926. Example of the soundin opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276423124912"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">;-odac     ;;;realtime audio out</span>
+-iadc   <span class="c1">;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">;-o soundin.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">; choose between mono or stereo file</span>
+
+i<span class="n">chn</span> <span class="nb">filenchnls</span>  <span class="nb">p4</span>	<span class="c1">;check number of channels</span>
+<span class="nb">print</span>  i<span class="n">chn</span>
+
+<span class="k">if</span> i<span class="n">chn</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">then</span>	
+a<span class="n">sig</span>   <span class="nb">soundin</span> <span class="nb">p4</span>	<span class="c1">;mono signal</span>
+       <span class="nb">outs</span>    a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="k">else</span>			<span class="c1">;stereo signal</span>
+a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span> <span class="nb">soundin</span> <span class="nb">p4</span>
+       <span class="nb">outs</span>    a<span class="n">L</span><span class="p">,</span> a<span class="n">R</span>
+<span class="k">endif</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="s">"fox.wav"</span>	<span class="c1">;mono signal</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mi">2</span> <span class="s">"kickroll.wav"</span>	<span class="c1">;stereo signal</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054387440"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="diskin.html" title="diskin"><em class="citetitle">diskin</em></a>,
+      <a class="link" href="in.html" title="in"><em class="citetitle">in</em></a>,
+      <a class="link" href="inh.html" title="inh"><em class="citetitle">inh</em></a>,
+      <a class="link" href="ino.html" title="ino"><em class="citetitle">ino</em></a>,
+      <a class="link" href="inq.html" title="inq"><em class="citetitle">inq</em></a>,
+      <a class="link" href="ins.html" title="ins"><em class="citetitle">ins</em></a>
+     </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276054381072"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Authors: Barry L. Vercoe, Matt Ingalls/Mike Berry</td>
+          </tr>
+          <tr>
+            <td>MIT, Mills College</td>
+          </tr>
+          <tr>
+            <td>1993-1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>Warning to Windows users added by Kevin Conder, April 2002</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sortd.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="space.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">sortd </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> space</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

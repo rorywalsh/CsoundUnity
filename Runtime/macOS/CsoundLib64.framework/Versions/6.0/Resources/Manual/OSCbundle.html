@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>OSCbundle</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="oscilx.html" title="oscilx" />
+    <link rel="next" href="OSCcount.html" title="OSCcount" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">OSCbundle</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="oscilx.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="OSCcount.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="OSCbundle"></a>
+      <div class="titlepage"></div>
+      <a id="IndexOSCbundle" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">OSCbundle</span>
+        </h2>
+        <p>OSCbundle — 
+      Sends data to other processes using the OSC protocol by packing
+      messages in a bundle.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075695968"></a>
+        <h2>Description</h2>
+        <p>
+      Uses the OSC protocol to send one or more messages to other OSC listening
+      processes in a single bundle. Unlike OSCsend, it can be used to
+      send multiple messages at the same time, but only standard OSC numeric types
+      are allowed.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075694528"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>OSCbundle</strong></span> kwhen, ihost, iport,
+    Sdest[], Stype[],kArgs[][][,isize]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075692544"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihost</em></span>
+      -- a string that is the intended host computer domain name.  An
+    empty string is interpreted as the current computer.
+    </p>
+        <p>
+      <span class="emphasis"><em>iport</em></span>
+      -- the number of the port that is used for the communication.
+    </p>
+        <p>
+     <span class="emphasis"><em>isize</em></span>
+      -- maximum packet size in bytes, defaults to 65536.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075689120"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kwhen</em></span> -- a bundle of messages is sent whenever this
+    value changes.  A message will always be sent on the first call.
+    </p>
+        <p>
+      <span class="emphasis"><em> Sdest[]</em></span>
+      -- an array of strings containing the destination address for
+      each message. Length must agree with Stype[].
+    </p>
+        <p>
+      <span class="emphasis"><em>Stype[]</em></span>
+      -- an array of strings containing the types for each
+      message. Only numeric types ('i' for integers and 'f' for
+      floats) are supported. Length must agree with Sdest[].
+    </p>
+        <p>
+      <span class="emphasis"><em>kArg[][]</em></span> -- a two-dimensional array
+      containing the arguments for each message. Its dimension 1
+      (number of rows) must agree with Sdest[] and Stype[]. Each row
+      should contain the arguments for the types of each message. If
+      a row contains fewer arguments, any remaining data items are
+      filled with zeros. Arguments in excess of what each type string
+      requires are ignored.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075684336"></a>
+        <h2>Example</h2>
+        <p>
+      Here is an example of the OSCBundle opcode. It uses the file <a class="ulink" href="examples/oscbundle.csd" target="_top"><em class="citetitle">oscbundle.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276075682544"></a>
+          <p class="title">
+            <strong>Example 646. Example of the OSCbundle opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276444815040"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+S<span class="n">dest</span><span class="p">[]</span> <span class="nb">init</span> <span class="mi">2</span>
+S<span class="n">type</span><span class="p">[]</span> <span class="nb">init</span> <span class="mi">2</span>
+k<span class="n">data</span><span class="p">[][]</span> <span class="nb">init</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+
+S<span class="n">dest</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">"/test/floats"</span>
+S<span class="n">dest</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">"/test/ints"</span>
+S<span class="n">type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">"ff"</span>
+S<span class="n">type</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">"ii"</span>
+
+k<span class="n">data</span> <span class="nb">fillarray</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span>
+
+<span class="n">OSCbundle</span>  <span class="mi">1</span><span class="p">,</span> <span class="s">"localhost"</span><span class="p">,</span> <span class="mi">7000</span><span class="p">,</span> S<span class="n">dest</span><span class="p">,</span> S<span class="n">type</span><span class="p">,</span> k<span class="n">data</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075678544"></a>
+        <h2>See Also</h2>
+        <p>
+        <a class="link" href="OSClisten.html" title="OSClisten"><em class="citetitle">OSClisten</em></a>,
+        <a class="link" href="OSCinit.html" title="OSCinit"><em class="citetitle">OSCinit</em></a>
+      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276075675632"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>2018</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="oscilx.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="OSCcount.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">oscilx </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> OSCcount</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

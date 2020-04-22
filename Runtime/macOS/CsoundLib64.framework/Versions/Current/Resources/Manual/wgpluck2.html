@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>wgpluck2</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="wgpluck.html" title="wgpluck" />
+    <link rel="next" href="wguide1.html" title="wguide1" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">wgpluck2</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="wgpluck.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="wguide1.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="wgpluck2"></a>
+      <div class="titlepage"></div>
+      <a id="IndexWgpluck2" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">wgpluck2</span>
+        </h2>
+        <p>wgpluck2 — 
+      Physical model of the plucked string.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066044992"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>wgpluck2</em></span> is an implementation of the physical model of the plucked string, with control over the pluck point, the pickup point and the filter. Based on the Karplus-Strong algorithm.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066043040"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>wgpluck2</strong></span> iplk, kamp, icps, kpick, krefl</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066040928"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iplk</em></span> -- The point of pluck is <span class="emphasis"><em>iplk</em></span>, which is a fraction of the way up the string (0 to 1). A pluck point of zero means no initial pluck.
+    </p>
+        <p>
+      <span class="emphasis"><em>icps</em></span>  -- The string plays at <span class="emphasis"><em>icps</em></span> pitch.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066037424"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- Amplitude of note.
+    </p>
+        <p>
+      <span class="emphasis"><em>kpick</em></span> -- Proportion of the way along the string to sample the output.
+    </p>
+        <p>
+      <span class="emphasis"><em>krefl</em></span> -- the coefficient of reflection, indicating the lossiness and the rate of decay. It must be strictly between 0 and 1 (it will complain about both 0 and 1).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066033696"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the wgpluck2 opcode. It uses the file <a class="ulink" href="examples/wgpluck2.csd" target="_top"><em class="citetitle">wgpluck2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276066031888"></a>
+          <p class="title">
+            <strong>Example 1143. Example of the wgpluck2 opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276403372480"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o wgpluck2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  i<span class="n">plk</span> <span class="o">=</span> <span class="mf">0.75</span>
+  k<span class="n">amp</span> <span class="o">=</span> <span class="mi">30000</span>
+  i<span class="n">cps</span> <span class="o">=</span> <span class="mi">220</span>
+  k<span class="n">pick</span> <span class="o">=</span> <span class="mf">0.75</span>
+  k<span class="n">refl</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+  a<span class="n">pluck</span> <span class="nb">wgpluck2</span> i<span class="n">plk</span><span class="p">,</span> k<span class="n">amp</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> k<span class="n">pick</span><span class="p">,</span> k<span class="n">refl</span>
+
+  <span class="nb">out</span> a<span class="n">pluck</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for two seconds.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066027856"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="repluck.html" title="repluck"><em class="citetitle">repluck</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276066025808"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch (after Perry Cook)</td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.47</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="wgpluck.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="wguide1.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">wgpluck </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> wguide1</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

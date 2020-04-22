@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>dssiinit</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="dssictls.html" title="dssictls" />
+    <link rel="next" href="dssilist.html" title="dssilist" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">dssiinit</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="dssictls.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="dssilist.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="dssiinit"></a>
+      <div class="titlepage"></div>
+      <a id="IndexDssiinit" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">dssiinit</span>
+        </h2>
+        <p>dssiinit — Loads a DSSI or LADSPA plugin.
+    </p>
+      </div>
+      <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+        <table border="0" summary="Note">
+          <tr>
+            <td rowspan="2" align="center" valign="top" width="25">
+              <img alt="[Note]" src="images/note.png" />
+            </td>
+            <th align="left">Note</th>
+          </tr>
+          <tr>
+            <td align="left" valign="top">plugin: Requires dssi4cs plugin</td>
+          </tr>
+        </table>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115353088"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ihandle <span class="command"><strong>dssiinit</strong></span> ilibraryname, iplugindex [, iverbose] </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115350976"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in dssi4cs.</p>
+        <p><span class="emphasis"><em>dssiinit</em></span> is used to load a DSSI or LADSPA plugin into memory for use with
+      the other dssi4cs opcodes. Both LADSPA effects and DSSI instruments can be used.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115348784"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>ihandle</em></span> - the number which identifies the
+      plugin, to be passed to other dssi4cs opcodes.</p>
+        <p><span class="emphasis"><em>ilibraryname</em></span> - the name of the .so (shared object) file to load.</p>
+        <p><span class="emphasis"><em>iplugindex</em></span> - The index of the plugin to
+    be used, zero or greater.</p>
+        <p><span class="emphasis"><em>iverbose</em></span> (optional) - show plugin information and
+      parameters when loading. (default = 1)</p>
+        <p>  <span class="emphasis"><em>dssiinit</em></span> looks for  <span class="emphasis"><em>ilibraryname</em></span> on LADSPA_PATH and DSSI_PATH. One of these variables must be set, otherwise <span class="emphasis"><em>dssiinit</em></span> will return an error. LADSPA and DSSI libraries may contain more than one plugin which must be referenced by its index. <span class="emphasis"><em>dssiinit</em></span> then attempts to find plugin index <span class="emphasis"><em>iplugindex</em></span> in the library and load the plugin into memory if it is found. To find out which plugins you have available and their index numbers you can use:  <a class="link" href="dssilist.html" title="dssilist"><em class="citetitle">dssilist</em></a>. </p>
+        <p>If <span class="emphasis"><em>iverbose</em></span> is not 0 (the default), information about the plugin detailing its characteristics and its ports will be shown. This information is important for opcodes like  <a class="link" href="dssictls.html" title="dssictls"><em class="citetitle">dssictls</em></a>.</p>
+        <p>Plugins are set to inactive by default, so you <span class="emphasis"><em>*must*</em></span> use <a class="link" href="dssiactivate.html" title="dssiactivate"><em class="citetitle">dssiactivate</em></a> to get the plugin to produce sound. This is required even if the plugin doesn't provide an activate() function.
+    </p>
+        <p>
+      <span class="emphasis"><em>dssiinit</em></span> may cause audio stream breakups when used in realtime, so it is recommended to load all plugins to be used before playing.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115336448"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the dssinit opcode. It uses the file <a class="ulink" href="examples/dssiinit.csd" target="_top"><em class="citetitle">dssiinit.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276115334640"></a>
+          <p class="title">
+            <strong>Example 233. Example of the dssiinit opcode. (Remember to change the Library name)</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276481653632"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o dssiinit.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+gi<span class="n">handle</span> <span class="n">dssiinit</span> <span class="s">"g2reverb.so"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+ga<span class="n">out</span>    <span class="nb">init</span>  <span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">; activate DSSI</span>
+
+<span class="n">dssiactivate</span> gi<span class="n">handle</span><span class="p">,</span> <span class="mi">1</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+a<span class="n">in1</span>	<span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span>
+
+ga<span class="n">out</span> <span class="o">=</span> ga<span class="n">out</span><span class="o">+</span><span class="p">(</span>a<span class="n">in1</span><span class="o">*</span><span class="mf">.3</span><span class="p">)</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">3</span> 
+	
+<span class="n">dssictls</span> gi<span class="n">handle</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; room 10 to 150 </span>
+<span class="n">dssictls</span> gi<span class="n">handle</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; reverb time 1 to 20</span>
+<span class="n">dssictls</span> gi<span class="n">handle</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; input bandwith 0 to 1</span>
+<span class="n">dssictls</span> gi<span class="n">handle</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; damping 0 to 1</span>
+<span class="n">dssictls</span> gi<span class="n">handle</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; dry -80 to 0</span>
+<span class="n">dssictls</span> gi<span class="n">handle</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; reflections -80 to 0</span>
+<span class="n">dssictls</span> gi<span class="n">handle</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">1</span>	<span class="c1">; rev. tail -80 to 0</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">4</span>
+
+a<span class="n">out1</span><span class="p">,</span> a<span class="n">out2</span> <span class="n">dssiaudio</span> gi<span class="n">handle</span><span class="p">,</span> ga<span class="n">out</span><span class="p">,</span> ga<span class="n">out</span>	<span class="c1">;get beats.wav and</span>
+	     <span class="nb">outs</span> a<span class="n">out1</span><span class="p">,</span>a<span class="n">out2</span>	 		<span class="c1">; stereo DSSI plugin</span>
+
+ga<span class="n">out</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> 
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">10</span>
+<span class="nb">i</span> <span class="mi">3</span> <span class="mi">1</span> <span class="mi">10</span>
+<span class="nb">i</span> <span class="mi">4</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276115332832"></a>
+        <h2>Credits</h2>
+        <p>2005</p>
+        <p>By: Andrés Cabrera</p>
+        <p>Uses code from Richard Furse's LADSPA sdk.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="dssictls.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="dssilist.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">dssictls </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> dssilist</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

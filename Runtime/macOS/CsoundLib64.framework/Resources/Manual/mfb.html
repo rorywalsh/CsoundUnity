@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mfb</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="metro2.html" title="metro2" />
+    <link rel="next" href="midglobal.html" title="midglobal" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mfb</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="metro2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="midglobal.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mfb"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMfb" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mfb</span>
+        </h2>
+        <p>mfb — 
+     Mel scale filterbank for spectral magnitudes.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081513616"></a>
+        <h2>Description</h2>
+        <p>
+       Applies a Mel scale filterbank to an array containing a series of magnitude bins. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081512368"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout[] <span class="command"><strong>mfb</strong></span> kin[],klow,khigh,ibands</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081510288"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ibands</em></span> -- number of bands in the Mel filter bank. Determines the size of
+      the output array.
+         </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081508608"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kout[]</em></span> -- output array containing the MFB with ibands bands. It will be created if it does not exist.
+         </p>
+        <p>
+      <span class="emphasis"><em>kin[]</em></span> -- input array containing the input magnitude bins.
+       </p>
+        <p>
+      <span class="emphasis"><em>klow</em></span> -- lowest frequency (rounded to the nearest bin centre frequency).
+	      </p>
+        <p>
+      <span class="emphasis"><em>khigh</em></span> -- highest lowest frequency (rounded to the nearest bin centre frequency). 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081504336"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the mfb opcode. It uses the file <a class="ulink" href="examples/mfb.csd" target="_top"><em class="citetitle">mfb.csd</em></a>.</p>
+        <div class="example">
+          <a id="idm276081502448"></a>
+          <p class="title">
+            <strong>Example 549. Example of the mfb opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276453962000"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+
+ i<span class="n">fftsize</span> <span class="nb">init</span> <span class="mi">1024</span>
+ i<span class="n">bins</span> <span class="nb">init</span> i<span class="n">fftsize</span><span class="o">/</span><span class="mi">2</span>
+ k<span class="n">In</span><span class="p">[]</span> <span class="nb">init</span> i<span class="n">fftsize</span>
+ k<span class="n">cnt</span> <span class="nb">init</span> <span class="mi">0</span>
+ <span class="nb">p3</span> <span class="o">=</span> <span class="nb">filelen</span><span class="p">(</span><span class="s">"fox.wav"</span><span class="p">)</span>
+ a<span class="n">sig</span> <span class="nb">diskin</span> <span class="s">"fox.wav"</span>
+ k<span class="n">In</span> <span class="nb">shiftin</span> a<span class="n">sig</span>
+ k<span class="n">cnt</span> <span class="o">+=</span> <span class="vg">ksmps</span>
+ <span class="k">if</span> k<span class="n">cnt</span> <span class="o">==</span> i<span class="n">fftsize</span> <span class="k">then</span>
+  k<span class="n">FFT</span><span class="p">[]</span> <span class="o">=</span> <span class="nb">rfft</span><span class="p">(</span>k<span class="n">In</span><span class="p">)</span>
+  k<span class="n">Pows</span><span class="p">[]</span> <span class="o">=</span> <span class="n">pows</span><span class="p">(</span>k<span class="n">FFT</span><span class="p">)</span>
+  k<span class="n">MFB</span><span class="p">[]</span> <span class="o">=</span> <span class="nb">log</span><span class="p">(</span><span class="n">mfb</span><span class="p">(</span>k<span class="n">Pows</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="mi">8000</span><span class="p">,</span><span class="mi">32</span><span class="p">))</span>
+  k<span class="n">mfcc</span><span class="p">[]</span> <span class="o">=</span> <span class="n">dct</span><span class="p">(</span>k<span class="n">MFB</span><span class="p">)</span>
+  k<span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+  k<span class="n">fb</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> k<span class="n">fb</span> <span class="o">&lt;</span> <span class="mi">32</span> <span class="k">do</span>
+   <span class="nb">printf</span><span class="p">(</span><span class="s">"mfcc[</span><span class="si">%d</span><span class="s">] = %.3f </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> k<span class="n">fb</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> k<span class="n">fb</span><span class="p">,</span> k<span class="n">mfcc</span><span class="p">[</span>k<span class="n">fb</span><span class="p">])</span>
+   k<span class="n">fb</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="k">od</span>
+ <span class="k">endif</span>
+               
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">1</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <br class="example-break" />
+      </div>
+      <div class="refsect1">
+        <a id="idm276081498592"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vectorial.html" title="Vectorial Opcodes"><em class="citetitle"></em>Vectorial opcodes</a>,
+      <a class="link" href="arrayOpcodes.html" title="Array Opcodes"><em class="citetitle"></em>array opcodes</a>,
+      <a class="link" href="dct.html" title="dct"><em class="citetitle">dct</em></a>
+</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081494800"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>NUI Maynooth</td>
+          </tr>
+          <tr>
+            <td>2016</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="metro2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="midglobal.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">metro2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> midglobal</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>filepeak</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="filenchnls.html" title="filenchnls" />
+    <link rel="next" href="filescal.html" title="filescal" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">filepeak</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="filenchnls.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="filescal.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="filepeak"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFilepeak" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">filepeak</span>
+        </h2>
+        <p>filepeak — 
+      Returns the peak absolute value of a sound file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111241104"></a>
+        <h2>Description</h2>
+        <p>
+      Returns the peak absolute value of a sound file.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111239792"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ir <span class="command"><strong>filepeak</strong></span> ifilcod [, ichnl]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111237696"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilcod</em></span> -- sound file to be queried
+    </p>
+        <p>
+      <span class="emphasis"><em>ichnl</em></span> (optional, default=0) -- channel to
+      be used in calculating the peak value. Default is 0. 
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p><span class="emphasis"><em>ichnl</em></span> = 0 returns peak value of all channels</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>ichnl</em></span> &gt; 0 returns peak value of <span class="emphasis"><em>ichnl</em></span></p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111232160"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>filepeak</em></span> returns the peak absolute value of the sound file <span class="emphasis"><em>ifilcod</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111230096"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the filepeak opcode. It uses the file <a class="ulink" href="examples/filepeak.csd" target="_top"><em class="citetitle">filepeak.csd</em></a>,
+and <a class="ulink" href="examples/Church.wav" target="_top"><em class="citetitle">Church.wav</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276111227488"></a>
+          <p class="title">
+            <strong>Example 279. Example of the filepeak opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276478613824"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o filepeak.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> 
+
+i<span class="n">scaldb</span> <span class="o">=</span> <span class="nb">p4</span> <span class="c1">;set peak amplitude in dB</span>
+i<span class="n">peak</span>   <span class="nb">filepeak</span> <span class="s">"Church.wav"</span>
+i<span class="n">scal</span>   <span class="o">=</span> <span class="nb">ampdb</span><span class="p">(</span>i<span class="n">scaldb</span><span class="p">)</span><span class="o">/</span>i<span class="n">peak</span> <span class="c1">;calculate amp multiplier</span>
+<span class="nb">printf_i</span> <span class="s">"</span><span class="se">\n</span><span class="s">Peak value in file '%s' is %f (%.3f dB).</span><span class="se">\n\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"Church.wav"</span><span class="p">,</span> i<span class="n">peak</span><span class="p">,</span> <span class="nb">dbamp</span><span class="p">(</span>i<span class="n">peak</span><span class="p">)</span>
+
+a<span class="n">snd</span> <span class="nb">soundin</span> <span class="s">"Church.wav"</span>
+     <span class="nb">outs</span> a<span class="n">snd</span><span class="p">,</span> a<span class="n">snd</span>
+<span class="c1">; scale &amp; write file to disk</span>
+a<span class="n">sig</span> <span class="o">=</span> a<span class="n">snd</span><span class="o">*</span>i<span class="n">scal</span> <span class="c1">;scale to p4</span>
+<span class="nb">fout</span> <span class="s">"Church_norm.wav"</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span> <span class="c1">; play scaled file</span>
+
+a<span class="n">out</span>   <span class="nb">soundin</span>  <span class="s">"Church_norm.wav"</span>
+i<span class="n">pknew</span> <span class="nb">filepeak</span> <span class="s">"Church_norm.wav"</span>
+<span class="nb">printf_i</span> <span class="s">"</span><span class="se">\n</span><span class="s">Peak value in file '%s' is %f (%.3f dB).</span><span class="se">\n\n</span><span class="s">"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"Church_norm.wav"</span><span class="p">,</span> i<span class="n">pknew</span><span class="p">,</span> <span class="nb">dbamp</span><span class="p">(</span>i<span class="n">pknew</span><span class="p">)</span>
+       <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span> <span class="o">-</span><span class="mi">6</span> <span class="c1">; normalize audio to -6 dB</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      The <span class="emphasis"><em>filepeak</em></span>'s output should include lines like this:
+      </p>
+        <pre class="screen">
+Peak value in file 'Church.wav' is 0.909363 (-0.825 dB).
+Peak value in file 'Church_norm.wav' is 0.501190 (-6.000 dB).
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111222080"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="filelen.html" title="filelen"><em class="citetitle">filelen</em></a>,
+      <a class="link" href="filenchnls.html" title="filenchnls"><em class="citetitle">filenchnls</em></a>,
+      <a class="link" href="filesr.html" title="filesr"><em class="citetitle">filesr</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111218240"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Matt Ingalls</td>
+          </tr>
+          <tr>
+            <td>July 1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.57</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="filenchnls.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="filescal.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">filenchnls </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> filescal</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

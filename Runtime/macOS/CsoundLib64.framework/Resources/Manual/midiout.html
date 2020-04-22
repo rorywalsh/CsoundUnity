@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>midiout</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="midiout_i.html" title="midiout_i" />
+    <link rel="next" href="midipitchbend.html" title="midipitchbend" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">midiout</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="midiout_i.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="midipitchbend.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="midiout"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMidiout" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">midiout</span>
+        </h2>
+        <p>midiout — 
+      Sends a generic MIDI message to the MIDI OUT port.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106699360"></a>
+        <h2>Description</h2>
+        <p>
+      Sends a generic MIDI message to the MIDI OUT port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106698128"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>midiout</strong></span> kstatus, kchan, kdata1, kdata2</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106696176"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kstatus</em></span> -- the type of MIDI message. Can be:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>128 (note off)</p>
+            </li>
+            <li class="listitem">
+              <p>144 (note on)</p>
+            </li>
+            <li class="listitem">
+              <p>160 (polyphonic aftertouch)</p>
+            </li>
+            <li class="listitem">
+              <p>176 (control change)</p>
+            </li>
+            <li class="listitem">
+              <p>192 (program change)</p>
+            </li>
+            <li class="listitem">
+              <p>208 (channel aftertouch)</p>
+            </li>
+            <li class="listitem">
+              <p>224 (pitch bend)</p>
+            </li>
+            <li class="listitem">
+              <p>0 when no MIDI messages must be sent to the MIDI OUT port</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>kchan</em></span> -- MIDI channel (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>kdata1, kdata2</em></span> -- message-dependent data values
+    </p>
+        <p>
+      <span class="emphasis"><em>midiout</em></span> has no output arguments, because it sends a message to the MIDI OUT port implicitly. It works at k-rate. It sends a MIDI message only when <span class="emphasis"><em>kstatus</em></span> is non-zero.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        <span class="emphasis"><em>Warning:</em></span> Normally <span class="emphasis"><em>kstatus</em></span> should be set to 0. Only when the user intends to send a MIDI message, can it be set to the corresponding message type number.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106685088"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the midiout opcode. It uses the file <a class="ulink" href="examples/midiout.csd" target="_top"><em class="citetitle">midiout.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276106683296"></a>
+          <p class="title">
+            <strong>Example 568. Example of the midiout opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276450372992"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac -Ma -Q1 <span class="c1">;;;realtime audio out and midi out and midi in (all midi inputs)</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="nb">midiout</span>	<span class="mi">192</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">0</span>	<span class="c1">;program change to instr. 21</span>
+i<span class="n">num</span> <span class="nb">notnum</span>
+i<span class="n">vel</span> <span class="nb">veloc</span>
+<span class="nb">midion</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">num</span><span class="p">,</span> i<span class="n">vel</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span>  <span class="mi">80</span> <span class="mi">100</span>		<span class="c1">;play note for 3 seconds</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276106679312"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.492</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="midiout_i.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="midipitchbend.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">midiout_i </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> midipitchbend</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

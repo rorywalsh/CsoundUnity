@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>veloc</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vecdelay.html" title="vecdelay" />
+    <link rel="next" href="vexp.html" title="vexp" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">veloc</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vecdelay.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vexp.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="veloc"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVeloc" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">veloc</span>
+        </h2>
+        <p>veloc — 
+      Get the velocity from a MIDI event.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040718320"></a>
+        <h2>Description</h2>
+        <p>
+      Get the velocity from a MIDI event.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040717040"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ival <span class="command"><strong>veloc</strong></span> [ilow] [, ihigh]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040714928"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ilow, ihigh</em></span> -- low and hi ranges for mapping
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040713264"></a>
+        <h2>Performance</h2>
+        <p>
+      Get the MIDI byte value (0 - 127) denoting the velocity of the current event.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040711888"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the veloc opcode. It uses the file <a class="ulink" href="examples/veloc.csd" target="_top"><em class="citetitle">veloc.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276040710080"></a>
+          <p class="title">
+            <strong>Example 1100. Example of the veloc opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276407246608"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac -+rtmidi=virtual  -M0  <span class="c1">;;;realtime audio I/O with MIDI in</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">sine</span>	<span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">vel</span> <span class="nb">veloc</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>				<span class="c1">;scale 0 - 1</span>
+<span class="nb">print</span> i<span class="n">vel</span>				<span class="c1">;print velocity</span>
+a<span class="n">sig</span> <span class="nb">poscil</span> <span class="mf">.5</span><span class="o">*</span>i<span class="n">vel</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> gi<span class="n">sine</span>	<span class="c1">;and use it as amplitude</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+       
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">30</span>     <span class="c1">;runs 30 seconds</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040706080"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="aftouch.html" title="aftouch"><em class="citetitle">aftouch</em></a>,
+      <a class="link" href="ampmidi.html" title="ampmidi"><em class="citetitle">ampmidi</em></a>,
+      <a class="link" href="cpsmidi.html" title="cpsmidi"><em class="citetitle">cpsmidi</em></a>,
+      <a class="link" href="cpsmidib.html" title="cpsmidib"><em class="citetitle">cpsmidib</em></a>,
+      <a class="link" href="midictrl.html" title="midictrl"><em class="citetitle">midictrl</em></a>,
+      <a class="link" href="notnum.html" title="notnum"><em class="citetitle">notnum</em></a>,
+      <a class="link" href="octmidi.html" title="octmidi"><em class="citetitle">octmidi</em></a>,
+      <a class="link" href="octmidib.html" title="octmidib"><em class="citetitle">octmidib</em></a>,
+      <a class="link" href="pchbend.html" title="pchbend"><em class="citetitle">pchbend</em></a>,
+      <a class="link" href="pchmidi.html" title="pchmidi"><em class="citetitle">pchmidi</em></a>,
+      <a class="link" href="pchmidib.html" title="pchmidib"><em class="citetitle">pchmidib</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040695072"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Barry L. Vercoe - Mike Berry</td>
+          </tr>
+          <tr>
+            <td>MIT - Mills</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vecdelay.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vexp.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vecdelay </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vexp</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

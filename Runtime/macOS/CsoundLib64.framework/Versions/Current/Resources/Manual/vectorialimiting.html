@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Limiting and wrapping of vectorial control signals</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="vectorial.html" title="Vectorial Opcodes" />
+    <link rel="prev" href="envelopeGenerators.html" title="Vectorial Envelope Generators" />
+    <link rel="next" href="vectorialdelay.html" title="Vectorial Control-rate Delay Paths" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Limiting and wrapping of vectorial control signals</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="envelopeGenerators.html">Prev</a> </td>
+          <th width="60%" align="center">Vectorial Opcodes</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vectorialdelay.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="vectorialimiting"></a>Limiting and wrapping of vectorial control signals</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    The opcodes to perform limiting and wrapping of elements within a vector are:
+    </p>
+      <div class="itemizedlist">
+        <ul class="itemizedlist" style="list-style-type: disc; ">
+          <li class="listitem">
+            <p>
+              <a class="link" href="vlimit.html" title="vlimit">
+                <em class="citetitle">vlimit</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vwrap.html" title="vwrap">
+                <em class="citetitle">vwrap</em>
+              </a>
+            </p>
+          </li>
+          <li class="listitem">
+            <p>
+              <a class="link" href="vmirror.html" title="vmirror">
+                <em class="citetitle">vmirror</em>
+              </a>
+            </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+  </p>
+      <p>
+    These opcodes are similar to <a class="link" href="limit.html" title="limit"><em class="citetitle">limit</em></a>, <a class="link" href="wrap.html" title="wrap"><em class="citetitle">wrap</em></a> and <a class="link" href="mirror.html" title="mirror"><em class="citetitle">mirror</em></a>, but operate on a vector instead of a scalar signal. The old values of the vector contained in an f-table are over-written if they are out of min/max interval. If you want to keep the original values of the input vector, use the <a class="link" href="vcopy.html" title="vcopy"><em class="citetitle">vcopy</em></a> opcode to copy it in another table.
+  </p>
+      <p>All these opcodes work at k-rate. 
+  </p>
+      <p>
+    All these operators are designed to be used together with other opcodes that operate with vectorial signals such as <a class="link" href="vcella.html" title="vcella"><em class="citetitle">vcella</em></a>, <a class="link" href="adsynt.html" title="adsynt"><em class="citetitle">adsynt</em></a>, <a class="link" href="adsynt2.html" title="adsynt2"><em class="citetitle">adsynt2</em></a> etc.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="envelopeGenerators.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="vectorial.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vectorialdelay.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Vectorial Envelope Generators </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Vectorial Control-rate Delay Paths</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

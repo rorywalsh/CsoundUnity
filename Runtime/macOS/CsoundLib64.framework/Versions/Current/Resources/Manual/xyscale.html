@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>xyscale</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="xyin.html" title="xyin" />
+    <link rel="next" href="zacl.html" title="zacl" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">xyscale</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="xyin.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="zacl.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="xyscale"></a>
+      <div class="titlepage"></div>
+      <a id="IndexXyscale" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">xyscale</span>
+        </h2>
+        <p>xyscale — 
+          2D linear interpolation 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035105936"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in emugens.</p>
+        <p>
+          2D linear interpolation between 4 points at (0,0), (1,0), (0,1),
+          (1,1)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035104240"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout <span class="command"><strong>xyscale</strong></span> kx, ky, k00, k10, k01, k11</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035101648"></a>
+        <h2>Performance</h2>
+        <p>
+          <span class="emphasis"><em>kx</em></span>, <span class="emphasis"><em>ky</em></span> -- Coordinates
+          to evaluate the interpolation. Value between 0-1, where:
+        </p>
+        <p>
+      <span class="emphasis"><em>k00</em></span> -- Value of point at coord (x=0, y=0)
+    </p>
+        <p>
+      <span class="emphasis"><em>k10</em></span> -- Value of point at coord (x=1, y=0)
+    </p>
+        <p>
+      <span class="emphasis"><em>k01</em></span> -- Value of point at coord (x=0, y=1)
+    </p>
+        <p>
+          <span class="emphasis"><em>k11</em></span> -- Value of point at coord (x=1, y=1)
+    </p>
+        <pre class="programlisting">
+
+          (0,1)      (1,1)
+
+          
+          (0,0)      (1,0)
+                 
+                          
+        </pre>
+        <p>
+          Given 4 values placed at the corners of a square,
+          find the interpolated value at point (x, y), where x and y
+          are defined between 0-1. 
+        </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035094688"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the xyscale opcode. It uses the file <a class="ulink" href="examples/xyscale.csd" target="_top"><em class="citetitle">xyscale.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276035091888"></a>
+          <p class="title">
+            <strong>Example 1159. Example of the xyscale opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276402541328"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">128</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+gi<span class="n">width</span> <span class="o">=</span> <span class="mi">400</span>
+gi<span class="n">height</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="nb">FLpanel</span> <span class="s">"FLmouse"</span><span class="p">,</span> gi<span class="n">width</span><span class="p">,</span> gi<span class="n">height</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span>
+<span class="nb">FLpanelEnd</span>
+
+<span class="nb">FLrun</span>
+
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; We define four chords for bottom-left, bottom-right, top-left and top-right</span>
+  <span class="c1">; Use the mouse to interpolate between them</span>
+  i<span class="n">bl</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4C"</span><span class="p">),</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4Eb"</span><span class="p">),</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4G"</span><span class="p">)</span>
+  i<span class="n">tl</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4E"</span><span class="p">),</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4G#"</span><span class="p">),</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4B"</span><span class="p">)</span>
+  i<span class="n">br</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4G"</span><span class="p">),</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4A"</span><span class="p">),</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4B"</span><span class="p">)</span>
+  i<span class="n">tr</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4Eb"</span><span class="p">),</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4Eb+"</span><span class="p">),</span> <span class="n">ntom</span><span class="p">:</span><span class="nb">i</span><span class="p">(</span><span class="s">"4F"</span><span class="p">)</span>
+ 
+  k<span class="n">mousex</span><span class="p">,</span> k<span class="n">mousey</span><span class="p">,</span> k<span class="n">b1</span><span class="p">,</span> k<span class="n">b2</span><span class="p">,</span> k<span class="n">b3</span>    <span class="nb">FLmouse</span> <span class="mi">2</span>
+  k<span class="n">x</span> <span class="o">=</span> <span class="nb">limit</span><span class="p">(</span>k<span class="n">mousex</span><span class="o">/</span>gi<span class="n">width</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+  k<span class="n">y</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">limit</span><span class="p">(</span>k<span class="n">mousey</span><span class="o">/</span>gi<span class="n">height</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+  <span class="nb">printf</span> <span class="s">"x: %f   y: %f </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="nb">changed</span><span class="p">(</span>k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span><span class="p">),</span> k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span>
+
+  i<span class="n">amp</span> <span class="o">=</span> <span class="mf">0.1</span>
+  a<span class="n">0</span> <span class="nb">oscili</span> i<span class="n">amp</span><span class="p">,</span> <span class="n">mtof</span><span class="p">(</span><span class="n">xyscale</span><span class="p">(</span>k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span><span class="p">,</span> i<span class="n">bl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> i<span class="n">tl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> i<span class="n">br</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> i<span class="n">tr</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+  a<span class="n">1</span> <span class="nb">oscili</span> i<span class="n">amp</span><span class="p">,</span> <span class="n">mtof</span><span class="p">(</span><span class="n">xyscale</span><span class="p">(</span>k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span><span class="p">,</span> i<span class="n">bl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> i<span class="n">tl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> i<span class="n">br</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> i<span class="n">tr</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+  a<span class="n">2</span> <span class="nb">oscili</span> i<span class="n">amp</span><span class="p">,</span> <span class="n">mtof</span><span class="p">(</span><span class="n">xyscale</span><span class="p">(</span>k<span class="n">x</span><span class="p">,</span> k<span class="n">y</span><span class="p">,</span> i<span class="n">bl</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> i<span class="n">tl</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> i<span class="n">br</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> i<span class="n">tr</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+  a<span class="n">out</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>a<span class="n">0</span><span class="p">,</span> a<span class="n">1</span><span class="p">,</span> a<span class="n">2</span><span class="p">)</span>
+  <span class="nb">outs</span> a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>  
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">120</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035090192"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="scale.html" title="scale"><em class="citetitle">scale</em></a>, 
+          <a class="link" href="ntrpol.html" title="ntrpol"><em class="citetitle">ntrpol</em></a>, 
+          <a class="link" href="linlin.html" title="linlin"><em class="citetitle">linlin</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276035086080"></a>
+        <h2>Credits</h2>
+        <p>By: Eduardo Moguillansky 2017</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="xyin.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="zacl.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">xyin </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> zacl</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

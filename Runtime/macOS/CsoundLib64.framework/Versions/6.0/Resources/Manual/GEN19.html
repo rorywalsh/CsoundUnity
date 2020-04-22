@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN19</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN18.html" title="GEN18" />
+    <link rel="next" href="GEN20.html" title="GEN20" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN19</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN18.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN20.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN19"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN19" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN19</span>
+        </h2>
+        <p>GEN19 — 
+      Generate composite waveforms made up of weighted sums of simple sinusoids.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988898720"></a>
+        <h2>Description</h2>
+        <p>
+      These subroutines generate composite waveforms made up of weighted sums of simple sinusoids. The specification of each contributing partial requires 4 p-fields using <span class="emphasis"><em>GEN19</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988896944"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size  19  pna   stra  phsa  dcoa  pnb strb  phsb  dcob  ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988894944"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>size</em></span> -- number of points in the table. Must be a power of 2 or power-of-2 plus 1 (see <a class="link" href="f.html" title="f Statement (or Function Table Statement)"><em class="citetitle">f statement</em></a>).
+    </p>
+        <p>
+      <span class="emphasis"><em>pna, pnb</em></span>, etc. -- partial no. (relative to a fundamental that would occupy <span class="emphasis"><em>size</em></span> locations per cycle) of sinusoid a, sinusoid b, etc. Must be positive, but need not be a whole number, i.e., non-harmonic partials are permitted. Partials may be in any order.
+    </p>
+        <p>
+      <span class="emphasis"><em>stra, strb</em></span>, etc. -- strength of partials <span class="emphasis"><em>pna, pnb</em></span>, etc. These are relative strengths, since the composite waveform may be rescaled later. Negative values are permitted and imply a 180 degree phase shift.
+    </p>
+        <p>
+      <span class="emphasis"><em>phsa, phsb</em></span>, etc. -- initial phase of partials <span class="emphasis"><em>pna, pnb,</em></span> etc., expressed in degrees.
+    </p>
+        <p>
+      <span class="emphasis"><em>dcoa, dcob</em></span>, etc. -- DC offset of partials <span class="emphasis"><em>pna, pnb</em></span>, etc. This is applied <span class="emphasis"><em>after</em></span> strength scaling, i.e. a value of 2 will lift a 2-strength sinusoid from range [-2,2] to range [0,4] (before later rescaling).
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        </p>
+                <div class="itemizedlist">
+                  <ul class="itemizedlist" style="list-style-type: disc; ">
+                    <li class="listitem">
+                      <p>
+              These subroutines generate stored functions as sums of sinusoids of different frequencies. The two major restrictions on <span class="emphasis"><em>GEN10</em></span> that the partials be harmonic and in phase do not apply to <span class="emphasis"><em>GEN09</em></span> or <span class="emphasis"><em>GEN19</em></span>.
+            </p>
+                      <p>
+              In each case the composite wave, once drawn, is then rescaled to unity if p4 was positive. A negative p4 will cause rescaling to be skipped.
+            </p>
+                    </li>
+                  </ul>
+                </div>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988881376"></a>
+        <h2>Examples</h2>
+        <p>
+	    Here is an example of the GEN19 routine. It uses the files <a class="ulink" href="examples/gen19.csd" target="_top"><em class="citetitle">gen19.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275988879568"></a>
+          <p class="title">
+            <strong>Example 1215. An example of the GEN19 routine.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276204866960"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o gen19.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+<span class="c1">;p4 = transposition factor</span>
+<span class="c1">;p5 = speed factor</span>
+<span class="c1">;p6 = function table for grain data</span>
+i<span class="n">1</span>    <span class="o">=</span>	<span class="vg">sr</span><span class="o">/</span><span class="nb">ftlen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>							<span class="c1">;scaling to reflect sample rate and table length</span>
+a<span class="n">1</span>    <span class="nb">phasor</span> i<span class="n">1</span><span class="o">*</span><span class="nb">p5</span>							<span class="c1">;index for speed</span>
+a<span class="n">sigl</span> <span class="nb">fog</span>    <span class="mf">.5</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> a<span class="n">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">p3</span> 		<span class="c1">;left channel</span>
+a<span class="n">sigr</span> <span class="nb">fog</span>    <span class="mf">.4</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="nb">p4</span><span class="o">+</span><span class="mf">.2</span><span class="p">,</span> a<span class="n">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mf">.01</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">.5</span>	<span class="c1">;right channel</span>
+      <span class="nb">outs</span>   a<span class="n">sigl</span><span class="p">,</span> a<span class="n">sigr</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">131072</span> <span class="mi">1</span> <span class="s">"fox.wav"</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="nb">f</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">19</span> <span class="mf">.5</span> <span class="mf">.5</span> <span class="mi">270</span> <span class="mf">.5</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span> <span class="mf">.7</span>  <span class="mf">.1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">4</span>  <span class="mf">1.2</span>  <span class="mi">2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+        <span class="phrase">This is the diagram of the waveform of the GEN19 routines, as used in the example:</span>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/gen19_1.png" alt="f 2 0 1024 19 .5 .5 270 .5 - a rising sigmoid" />
+          <div class="caption">
+            <p>f 2 0 1024 19 .5 .5 270 .5 - a rising sigmoid</p>
+          </div>
+        </div>
+        <p>
+
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988873712"></a>
+        <h2>See Also</h2>
+        <p>
+       <a class="link" href="GEN09.html" title="GEN09"><em class="citetitle">GEN09</em></a> and
+       <a class="link" href="GEN10.html" title="GEN10"><em class="citetitle">GEN10</em></a>
+     </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN18.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN20.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN18 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN20</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

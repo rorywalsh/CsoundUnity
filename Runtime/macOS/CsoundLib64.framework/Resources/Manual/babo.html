@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>babo</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ATSsinnoi.html" title="ATSsinnoi" />
+    <link rel="next" href="balance.html" title="balance" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">babo</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ATSsinnoi.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="balance.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="babo"></a>
+      <div class="titlepage"></div>
+      <a id="IndexBabo" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">babo</span>
+        </h2>
+        <p>babo — 
+      A physical model reverberator.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124247600"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>babo</em></span>  stands  for  <span class="emphasis"><em>ba</em></span>ll-within-the-<span class="emphasis"><em>bo</em></span>x.   It is a physical model reverberator based on the paper by Davide  Rocchesso "The  Ball  within  the Box: a sound-processing metaphor", Computer Music Journal,  Vol  19,  N.4,  pp.45-47,  Winter 1995.
+    </p>
+        <p>
+      The resonator geometry can be defined, along with some response characteristics, the position of the listener within the resonator, and the position of the sound source.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124243952"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1, a2 <span class="command"><strong>babo</strong></span> asig, ksrcx, ksrcy, ksrcz, irx, iry, irz [, idiff] [, ifno]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124241808"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>irx, iry, irz</em></span> -- the  coordinates of the geometry of the resonator (length of the edges in meters)
+    </p>
+        <p>
+      <span class="emphasis"><em>idiff</em></span> -- is  the  coefficient  of  diffusion  at  the walls,  which regulates the amount of diffusion (0-1, where 0 = no diffusion, 1 = maximum diffusion - default: 1)
+    </p>
+        <p>
+      <span class="emphasis"><em>ifno</em></span> -- expert  values  function:  a function number that holds all the additional parameters  of the resonator. This is typically a GEN2--type function used in non-rescaling mode. They are as follows:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p><span class="emphasis"><em>decay</em></span> -- main decay of the resonator (default: 0.99)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>hydecay</em></span> -- high frequency decay of the resonator (default: 0.1)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>rcvx, rcvy, rcvz</em></span> -- the coordinates of the position of the receiver (the listener) (in  meters;  0,0,0 is the resonator center)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>rdistance</em></span> -- the  distance in meters between the two pickups (your ears,  for  example  - default: 0.3)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>direct</em></span> -- the attenuation of the direct signal (0-1, default: 0.5)</p>
+            </li>
+            <li class="listitem">
+              <p><span class="emphasis"><em>early_diff</em></span> -- the attenuation coefficient of the  early reflections (0-1, default: 0.8)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124232112"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- the input signal
+    </p>
+        <p>
+      <span class="emphasis"><em>ksrcx, ksrcy, ksrcz</em></span> -- the virtual coordinates of the source of sound (the input signal). These are allowed to move at k-rate and provide all the necessary variations in terms of response of the resonator.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124229264"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a simple example of the babo opcode. It uses the file <a class="ulink" href="examples/babo.csd" target="_top"><em class="citetitle">babo.csd</em></a>, and <a class="ulink" href="examples/beats.wav" target="_top"><em class="citetitle">beats.wav</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276124226656"></a>
+          <p class="title">
+            <strong>Example 77. A simple example of the babo opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276493742480"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o babo.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/* Written by Nicola Bernardini */</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; minimal babo instrument</span>
+<span class="c1">;</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+       i<span class="n">x</span>     <span class="o">=</span> <span class="nb">p4</span>  <span class="c1">; x position of source</span>
+       i<span class="n">y</span>     <span class="o">=</span> <span class="nb">p5</span>  <span class="c1">; y position of source</span>
+       i<span class="n">z</span>     <span class="o">=</span> <span class="nb">p6</span>  <span class="c1">; z position of source</span>
+       i<span class="n">xsize</span> <span class="o">=</span> <span class="nb">p7</span>  <span class="c1">; width  of the resonator</span>
+       i<span class="n">ysize</span> <span class="o">=</span> <span class="nb">p8</span>  <span class="c1">; depth  of the resonator</span>
+       i<span class="n">zsize</span> <span class="o">=</span> <span class="nb">p9</span>  <span class="c1">; height of the resonator</span>
+
+a<span class="n">input</span> <span class="nb">soundin</span> <span class="s">"beats.wav"</span>
+
+a<span class="n">l</span><span class="p">,</span>a<span class="n">r</span>  <span class="nb">babo</span>    a<span class="n">input</span><span class="o">*</span><span class="mf">0.7</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span><span class="p">,</span> i<span class="n">z</span><span class="p">,</span> i<span class="n">xsize</span><span class="p">,</span> i<span class="n">ysize</span><span class="p">,</span> i<span class="n">zsize</span>
+
+       <span class="nb">outs</span>    a<span class="n">l</span><span class="p">,</span>a<span class="n">r</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="cm">/* Written by Nicola Bernardini */</span>
+<span class="c1">; simple babo usage:</span>
+<span class="c1">;</span>
+<span class="c1">;p4     : x position of source</span>
+<span class="c1">;p5     : y position of source</span>
+<span class="c1">;p6     : z position of source</span>
+<span class="c1">;p7     : width  of the resonator</span>
+<span class="c1">;p8     : depth  of the resonator</span>
+<span class="c1">;p9     : height of the resonator</span>
+<span class="c1">;</span>
+<span class="nb">i</span>  <span class="mi">1</span>  <span class="mi">0</span>  <span class="mi">20</span> <span class="mi">6</span>  <span class="mi">4</span>  <span class="mi">3</span>    <span class="mf">14.39</span> <span class="mf">11.86</span> <span class="mi">10</span>
+<span class="c1">;           ^^^^^^^    ^^^^^^^^^^^^^^</span>
+<span class="c1">;           |||||||    ++++++++++++++: optimal room dims according to</span>
+<span class="c1">;           |||||||                    Milner and Bernard JASA 85(2), 1989</span>
+<span class="c1">;           +++++++++: source position</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is an advanced example of the babo opcode. It uses the file <a class="ulink" href="examples/babo_expert.csd" target="_top"><em class="citetitle">babo_expert.csd</em></a>, and <a class="ulink" href="examples/beats.wav" target="_top"><em class="citetitle">beats.wav</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276124220816"></a>
+          <p class="title">
+            <strong>Example 78. An advanced example of the babo opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276493711632"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o babo_expert.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="cm">/* Written by Nicola Bernardini */</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; full blown babo instrument with movement</span>
+<span class="c1">;</span>
+<span class="kd">instr</span> <span class="nf">2</span>
+  i<span class="n">xstart</span> <span class="o">=</span> <span class="nb">p4</span>   <span class="c1">; start x position of source (left-right)</span>
+  i<span class="n">xend</span>   <span class="o">=</span> <span class="nb">p7</span>   <span class="c1">; end   x position of source</span>
+  i<span class="n">ystart</span> <span class="o">=</span> <span class="nb">p5</span>   <span class="c1">; start y position of source (front-back)</span>
+  i<span class="n">yend</span>   <span class="o">=</span> <span class="nb">p8</span>   <span class="c1">; end   y position of source</span>
+  i<span class="n">zstart</span> <span class="o">=</span> <span class="nb">p6</span>   <span class="c1">; start z position of source (up-down)</span>
+  i<span class="n">zend</span>   <span class="o">=</span> <span class="nb">p9</span>  <span class="c1">; end   z position of source</span>
+  i<span class="n">xsize</span>  <span class="o">=</span> <span class="nb">p10</span>  <span class="c1">; width  of the resonator</span>
+  i<span class="n">ysize</span>  <span class="o">=</span> <span class="nb">p11</span>  <span class="c1">; depth  of the resonator</span>
+  i<span class="n">zsize</span>  <span class="o">=</span> <span class="nb">p12</span>  <span class="c1">; height of the resonator</span>
+  i<span class="n">diff</span>   <span class="o">=</span> <span class="nb">p13</span>  <span class="c1">; diffusion coefficient</span>
+  i<span class="n">expert</span> <span class="o">=</span> <span class="nb">p14</span>  <span class="c1">; power user values stored in this function</span>
+
+a<span class="n">input</span>    <span class="nb">soundin</span> <span class="s">"beats.wav"</span>
+k<span class="n">source_x</span> <span class="nb">line</span>    i<span class="n">xstart</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">xend</span>
+k<span class="n">source_y</span> <span class="nb">line</span>    i<span class="n">ystart</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">yend</span>
+k<span class="n">source_z</span> <span class="nb">line</span>    i<span class="n">zstart</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> i<span class="n">zend</span>
+
+a<span class="n">l</span><span class="p">,</span>a<span class="n">r</span>     <span class="nb">babo</span>    a<span class="n">input</span><span class="o">*</span><span class="mf">0.7</span><span class="p">,</span> k<span class="n">source_x</span><span class="p">,</span> k<span class="n">source_y</span><span class="p">,</span> k<span class="n">source_z</span><span class="p">,</span> i<span class="n">xsize</span><span class="p">,</span> i<span class="n">ysize</span><span class="p">,</span> i<span class="n">zsize</span><span class="p">,</span> i<span class="n">diff</span><span class="p">,</span> i<span class="n">expert</span>
+
+          <span class="nb">outs</span>    a<span class="n">l</span><span class="p">,</span>a<span class="n">r</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="cm">/* Written by Nicola Bernardini */</span>
+<span class="c1">; full blown instrument</span>
+<span class="c1">;p4         : start x position of source (left-right)</span>
+<span class="c1">;p5         : end   x position of source</span>
+<span class="c1">;p6         : start y position of source (front-back)</span>
+<span class="c1">;p7         : end   y position of source</span>
+<span class="c1">;p8         : start z position of source (up-down)</span>
+<span class="c1">;p9         : end   z position of source</span>
+<span class="c1">;p10        : width  of the resonator</span>
+<span class="c1">;p11        : depth  of the resonator</span>
+<span class="c1">;p12        : height of the resonator</span>
+<span class="c1">;p13        : diffusion coefficient</span>
+<span class="c1">;p14        : power user values stored in this function</span>
+
+<span class="c1">;         decay  hidecay rx ry rz rdistance direct early_diff</span>
+<span class="nb">f</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">8</span> <span class="o">-</span><span class="mi">2</span>  <span class="mf">0.95</span>   <span class="mf">0.95</span>   <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>    <span class="mf">0.3</span>     <span class="mf">0.5</span>      <span class="mf">0.8</span>  <span class="c1">; brighter</span>
+<span class="nb">f</span><span class="mi">2</span>  <span class="mi">0</span> <span class="mi">8</span> <span class="o">-</span><span class="mi">2</span>  <span class="mf">0.95</span>   <span class="mf">0.5</span>    <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>    <span class="mf">0.3</span>     <span class="mf">0.5</span>      <span class="mf">0.8</span>  <span class="c1">; default (to be set as)</span>
+<span class="nb">f</span><span class="mi">3</span>  <span class="mi">0</span> <span class="mi">8</span> <span class="o">-</span><span class="mi">2</span>  <span class="mf">0.95</span>   <span class="mf">0.01</span>   <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>    <span class="mf">0.3</span>     <span class="mf">0.5</span>      <span class="mf">0.8</span>  <span class="c1">; darker</span>
+<span class="nb">f</span><span class="mi">4</span>  <span class="mi">0</span> <span class="mi">8</span> <span class="o">-</span><span class="mi">2</span>  <span class="mf">0.95</span>   <span class="mf">0.7</span>    <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>    <span class="mf">0.3</span>     <span class="mf">0.1</span>      <span class="mf">0.4</span>  <span class="c1">; to hear the effect of diffusion</span>
+<span class="nb">f</span><span class="mi">5</span>  <span class="mi">0</span> <span class="mi">8</span> <span class="o">-</span><span class="mi">2</span>  <span class="mf">0.9</span>    <span class="mf">0.5</span>    <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>    <span class="mf">0.3</span>     <span class="mf">2.0</span>      <span class="mf">0.98</span> <span class="c1">; to hear the movement</span>
+<span class="nb">f</span><span class="mi">6</span>  <span class="mi">0</span> <span class="mi">8</span> <span class="o">-</span><span class="mi">2</span>  <span class="mf">0.99</span>   <span class="mf">0.1</span>    <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>    <span class="mf">0.3</span>     <span class="mf">0.5</span>      <span class="mf">0.8</span>  <span class="c1">; default vals</span>
+<span class="c1">;        ^</span>
+<span class="c1">;         ----- gen. number: negative to avoid rescaling</span>
+
+
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">10</span>  <span class="mi">6</span>  <span class="mi">4</span>  <span class="mi">3</span>   <span class="mi">6</span>   <span class="mi">4</span>  <span class="mi">3</span>  <span class="mf">14.39</span>  <span class="mf">11.86</span>  <span class="mi">10</span>    <span class="mi">1</span>  <span class="mi">6</span> <span class="c1">; defaults</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">4</span>  <span class="mi">6</span>  <span class="mi">4</span>  <span class="mi">3</span>   <span class="mi">6</span>   <span class="mi">4</span>  <span class="mi">3</span>  <span class="mf">14.39</span>  <span class="mf">11.86</span>  <span class="mi">10</span>    <span class="mi">1</span>  <span class="mi">1</span> <span class="c1">; hear brightness 1</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">4</span>  <span class="mi">6</span>  <span class="mi">4</span>  <span class="mi">3</span>  <span class="o">-</span><span class="mi">6</span>  <span class="o">-</span><span class="mi">4</span>  <span class="mi">3</span>  <span class="mf">14.39</span>  <span class="mf">11.86</span>  <span class="mi">10</span>    <span class="mi">1</span>  <span class="mi">2</span> <span class="c1">; hear brightness 2</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">4</span>  <span class="mi">6</span>  <span class="mi">4</span>  <span class="mi">3</span>  <span class="o">-</span><span class="mi">6</span>  <span class="o">-</span><span class="mi">4</span>  <span class="mi">3</span>  <span class="mf">14.39</span>  <span class="mf">11.86</span>  <span class="mi">10</span>    <span class="mi">1</span>  <span class="mi">3</span> <span class="c1">; hear brightness 3</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">3</span> <span class="mf">.6</span> <span class="mf">.4</span> <span class="mf">.3</span> <span class="o">-</span><span class="mf">.6</span> <span class="o">-</span><span class="mf">.4</span> <span class="mf">.3</span>  <span class="mf">1.439</span>  <span class="mf">1.186</span>  <span class="mf">1.0</span> <span class="mf">0.0</span>  <span class="mi">4</span> <span class="c1">; hear diffusion 1</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">3</span> <span class="mf">.6</span> <span class="mf">.4</span> <span class="mf">.3</span> <span class="o">-</span><span class="mf">.6</span> <span class="o">-</span><span class="mf">.4</span> <span class="mf">.3</span>  <span class="mf">1.439</span>  <span class="mf">1.186</span>  <span class="mf">1.0</span> <span class="mf">1.0</span>  <span class="mi">4</span> <span class="c1">; hear diffusion 2</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">4</span> <span class="mi">12</span>  <span class="mi">4</span>  <span class="mi">3</span> <span class="o">-</span><span class="mi">12</span>  <span class="o">-</span><span class="mi">4</span> <span class="o">-</span><span class="mi">3</span>  <span class="mf">24.39</span>  <span class="mf">21.86</span>  <span class="mi">20</span>    <span class="mi">1</span>  <span class="mi">5</span> <span class="c1">; hear movement</span>
+<span class="c1">;</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">4</span>  <span class="mi">6</span>  <span class="mi">4</span>  <span class="mi">3</span>   <span class="mi">6</span>   <span class="mi">4</span>  <span class="mi">3</span>  <span class="mf">14.39</span>  <span class="mf">11.86</span>   <span class="mi">10</span>   <span class="mi">1</span>  <span class="mi">1</span> <span class="c1">; hear brightness 1</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">4</span>  <span class="mi">6</span>  <span class="mi">4</span>  <span class="mi">3</span>  <span class="o">-</span><span class="mi">6</span>  <span class="o">-</span><span class="mi">4</span>  <span class="mi">3</span>  <span class="mf">14.39</span>  <span class="mf">11.86</span>   <span class="mi">10</span>   <span class="mi">1</span>  <span class="mi">2</span> <span class="c1">; hear brightness 2</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">4</span>  <span class="mi">6</span>  <span class="mi">4</span>  <span class="mi">3</span>  <span class="o">-</span><span class="mi">6</span>  <span class="o">-</span><span class="mi">4</span>  <span class="mi">3</span>  <span class="mf">14.39</span>  <span class="mf">11.86</span>   <span class="mi">10</span>   <span class="mi">1</span>  <span class="mi">3</span> <span class="c1">; hear brightness 3</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">3</span> <span class="mf">.6</span> <span class="mf">.4</span> <span class="mf">.3</span> <span class="o">-</span><span class="mf">.6</span> <span class="o">-</span><span class="mf">.4</span> <span class="mf">.3</span>  <span class="mf">1.439</span>  <span class="mf">1.186</span>  <span class="mf">1.0</span> <span class="mf">0.0</span>  <span class="mi">4</span> <span class="c1">; hear diffusion 1</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">3</span> <span class="mf">.6</span> <span class="mf">.4</span> <span class="mf">.3</span> <span class="o">-</span><span class="mf">.6</span> <span class="o">-</span><span class="mf">.4</span> <span class="mf">.3</span>  <span class="mf">1.439</span>  <span class="mf">1.186</span>  <span class="mf">1.0</span> <span class="mf">1.0</span>  <span class="mi">4</span> <span class="c1">; hear diffusion 2</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="o">+</span>  <span class="mi">4</span> <span class="mi">12</span>  <span class="mi">4</span>  <span class="mi">3</span> <span class="o">-</span><span class="mi">12</span>  <span class="o">-</span><span class="mi">4</span> <span class="o">-</span><span class="mi">3</span>  <span class="mf">24.39</span>  <span class="mf">21.86</span>   <span class="mi">20</span>   <span class="mi">1</span>  <span class="mi">5</span> <span class="c1">; hear movement</span>
+<span class="c1">;       ^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^   ^  ^</span>
+<span class="c1">;       |||||||||||||||||||  |||||||||||||||||   |   --: expert values function</span>
+<span class="c1">;       |||||||||||||||||||  |||||||||||||||||   +--: diffusion</span>
+<span class="c1">;       |||||||||||||||||||  ----------------: optimal room dims according to Milner and Bernard JASA 85(2), 1989</span>
+<span class="c1">;       |||||||||||||||||||</span>
+<span class="c1">;       --------------------: source position start and end</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276124219088"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Paolo Filippi</td>
+          </tr>
+          <tr>
+            <td>Padova, Italy</td>
+          </tr>
+          <tr>
+            <td>1999</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Nicola Bernardini</td>
+          </tr>
+          <tr>
+            <td>Rome, Italy</td>
+          </tr>
+          <tr>
+            <td>2000</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 4.09</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ATSsinnoi.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="balance.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ATSsinnoi </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> balance</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pvsanal</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pvsadsyn.html" title="pvsadsyn" />
+    <link rel="next" href="pvsarp.html" title="pvsarp" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pvsanal</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pvsadsyn.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pvsarp.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pvsanal"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPvsanal" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pvsanal</span>
+        </h2>
+        <p>pvsanal — 
+      Generate an fsig from a mono audio source ain, using phase vocoder overlap-add analysis. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068028416"></a>
+        <h2>Description</h2>
+        <p>
+      Generate an fsig from a mono audio source ain, using phase vocoder overlap-add analysis.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068027136"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">fsig <span class="command"><strong>pvsanal</strong></span> ain, ifftsize, ioverlap, iwinsize, iwintype [, iformat] [, iinit]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276068024992"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifftsize</em></span> -- The FFT size in samples. Need not be a power of two (though these are especially efficient), but must be even. Odd numbers are rounded up internally. <span class="emphasis"><em>ifftsize</em></span> determines the number of analysis bins in <span class="emphasis"><em>fsig</em></span>, as <span class="emphasis"><em>ifftsize/2 + 1</em></span>. For example, where <span class="emphasis"><em>ifftsize</em></span> = 1024, <span class="emphasis"><em>fsig</em></span> will contain 513 analysis bins, ordered linearly from the fundamental to Nyquist. The fundamental of analysis (which in principle gives the lowest resolvable frequency) is determined as <span class="emphasis"><em>sr/ifftsize</em></span>. Thus, for the example just given and assuming <span class="emphasis"><em>sr</em></span> = 44100, the fundamental of analysis is 43.07Hz. In practice, due to the phase-preserving nature of the phase vocoder, the frequency of any bin can deviate bilaterally, so that DC components are recorded. Given a strongly pitched signal, frequencies in adjacent bins can bunch very closely together, around partials in the source, and the lowest bins may even have negative frequencies.
+    </p>
+        <p>
+      As a rule, the only reason to use a non power-of-two value for <span class="emphasis"><em>ifftsize</em></span> would be to match the known fundamental frequency of a strongly pitched source. Values with many small factors can be almost as efficient as power-of-two sizes; for  example: 384, for a source pitched at around low A=110Hz.
+    </p>
+        <p>
+      <span class="emphasis"><em>ioverlap</em></span> -- The distance in samples (<span class="quote">“<span class="quote">hop size</span>”</span>) between overlapping analysis frames. As a rule, this needs to be at least <span class="emphasis"><em>ifftsize/4</em></span>, e.g. 256 for the example above. <span class="emphasis"><em>ioverlap</em></span> determines the underlying analysis rate, as <span class="emphasis"><em>sr/ioverlap</em></span>. <span class="emphasis"><em>ioverlap</em></span> does not require to be a simple factor of <span class="emphasis"><em>ifftsize</em></span>; for example a value of 160 would be legal. The choice of <span class="emphasis"><em>ioverlap</em></span> may be dictated by the degree of pitch modification applied to the <span class="emphasis"><em>fsig</em></span>, if any. As a rule of thumb, the more extreme the pitch shift, the higher the analysis rate needs to be, and hence the smaller the value for <span class="emphasis"><em>ioverlap</em></span>. A higher analysis rate can also be advantageous with broadband transient sounds, such as drums (where a small analysis window gives less smearing, but more frequency-related errors).
+    </p>
+        <p>
+      Note that it is possible, and reasonable, to have distinct fsigs in an orchestra (even in the same instrument), running at different analysis rates. Interactions between such fsigs is currently unsupported,  and the fsig assignment opcode does not allow copying between fsigs with different properties, even if the only difference is in <span class="emphasis"><em>ioverlap</em></span>. However, this is not a closed issue, as it is possible in theory to achieve crude rate conversion (especially with regard to in-memory analysis files) in ways analogous to time-domain techniques.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwinsize</em></span> -- The size in samples of the analysis window filter (as set by <span class="emphasis"><em>iwintype</em></span>). This must be at least <span class="emphasis"><em>ifftsize</em></span>, and can usefully be larger. Though other proportions are permitted, it is recommended that <span class="emphasis"><em>iwinsize</em></span> always be an integral multiple of <span class="emphasis"><em>ifftsize</em></span>, e.g. 2048 for the example above. Internally, the analysis window (Hamming, von Hann) is multiplied by a sinc function, so that amplitudes are zero at the boundaries between frames. The larger analysis window size has been found to be especially important for oscillator bank resynthesis (e.g. using <span class="emphasis"><em>pvsadsyn</em></span>), as it has the effect of increasing the frequency resolution of the analysis, and hence the accuracy of the resynthesis. As noted above, <span class="emphasis"><em>iwinsize</em></span> determines the overall latency of the analysis/resynthesis system. In many cases, and especially in the absence of pitch modifications, it will be found that setting <span class="emphasis"><em>iwinsize=ifftsize</em></span> works very well, and offers the lowest latency.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwintype</em></span> -- The shape of the analysis
+      window. Currently three choices computed windows implemented:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 = Hamming window</p>
+            </li>
+            <li class="listitem">
+              <p>1 = von Hann window</p>
+            </li>
+            <li class="listitem">
+              <p>3 = Kaiser window (not in sliding form)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      These are also supported by the PVOC-EX file format.  The window
+      type is stored as an internal attribute of the fsig, together
+      with the other parameters (see <a class="link" href="pvsinfo.html" title="pvsinfo"><em class="citetitle">pvsinfo</em></a>). Other
+      types may be implemented later on; if the value of wintype is
+      strictly negative then the absolute value is used as the number of
+      an f-table which must pre-exist. A significant issue here is the
+      common constraint of f-tables to power-of-two sizes, so this
+      method does not offer a complete solution.  Most users will find
+      the Hamming window meets all normal needs, and can be regarded
+      as the default choice. 
+    </p>
+        <p>
+      <span class="emphasis"><em>iformat</em></span> -- (optional) The analysis format. Currently only one format is implemented by this opcode:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 =  amplitude + frequency</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      This is the classic phase vocoder format; easy to process, and a natural format for oscillator-bank resynthesis. It would be very easy (tempting, one might say) to treat an fsig frame not purely as a phase vocoder frame but as a generic additive synthesis frame. It is indeed possible to use an fsig this way, but it is important to bear in mind that the two are not, strictly speaking, directly equivalent.
+    </p>
+        <p>
+      Other important formats (supported by PVOC-EX) are:  
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 =  amplitude + phase</p>
+            </li>
+            <li class="listitem">
+              <p>2 =  complex (real + imaginary)</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      iformat is provided in case it proves useful later to add support for these other formats. Formats 0 and 1 are very closely related (as the phase is <span class="quote">“<span class="quote">wrapped</span>”</span> in both cases - it is a trivial matter to convert from one to the other), but the complex format might warrant a second explicit signal type (a <span class="quote">“<span class="quote">csig</span>”</span>) specifically for convolution-based processes, and other processes where the full complement of arithmetic operators may be useful.
+    </p>
+        <p>
+      <span class="emphasis"><em>iinit</em></span> -- (optional) Skip reinitialization. This is not currently implemented for any of these opcodes, and it remains to be seen if it is even practical.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        It is unsafe to use the same f-variable for both input and output of pvs opcodes. Using the same one might lead to undefined behavior on some opcodes. Use a different one on the left and right sides of the opcode.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067994592"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the pvsanal opcode. It uses the file <a class="ulink" href="examples/pvsanal.csd" target="_top"><em class="citetitle">pvsanal.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276067992800"></a>
+          <p class="title">
+            <strong>Example 756. Example of the pvsanal opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276434451008"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac      <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o pvsanal.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>	<span class="c1">;pvsanal has no influence when there is no transformation of original sound</span>
+
+i<span class="n">fftsize</span>  <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">overlap</span>  <span class="o">=</span> i<span class="n">fftsize</span> <span class="o">/</span> <span class="mi">4</span>
+i<span class="n">winsize</span>  <span class="o">=</span> i<span class="n">fftsize</span>
+i<span class="n">winshape</span> <span class="o">=</span> <span class="mi">1</span>							<span class="c1">;von-Hann window</span>
+S<span class="n">file</span>     <span class="o">=</span> <span class="s">"fox.wav"</span>
+a<span class="n">in</span>       <span class="nb">soundin</span> S<span class="n">file</span>
+<span class="n">fftin</span>     <span class="nb">pvsanal</span> a<span class="n">in</span><span class="p">,</span> i<span class="n">fftsize</span><span class="p">,</span> i<span class="n">overlap</span><span class="p">,</span> i<span class="n">winsize</span><span class="p">,</span> i<span class="n">winshape</span>	<span class="c1">;fft-analysis of the audio-signal</span>
+<span class="n">fftblur</span>   <span class="nb">pvscale</span> <span class="n">fftin</span><span class="p">,</span> <span class="nb">p5</span>					<span class="c1">;scale</span>
+a<span class="n">out</span>      <span class="nb">pvsynth</span> <span class="n">fftblur</span>					<span class="c1">;resynthesis</span>
+          <span class="nb">outs</span>	  a<span class="n">out</span><span class="p">,</span> a<span class="n">out</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">s</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">512</span> <span class="mi">1</span>		<span class="c1">;original sound - ifftsize of pvsanal does not have any influence</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">3</span> <span class="mi">1024</span> <span class="mi">1</span>		<span class="c1">;even with different</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span> <span class="mi">3</span> <span class="mi">2048</span> <span class="mi">1</span>		<span class="c1">;settings</span>
+
+<span class="nb">s</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">512</span> <span class="mf">1.5</span>		<span class="c1">;but transformation - here a fifth higher</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">3</span> <span class="mi">1024</span> <span class="mf">1.5</span>	<span class="c1">;but with different settings</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">6</span> <span class="mi">3</span> <span class="mi">2048</span> <span class="mf">1.5</span>	<span class="c1">;for ifftsize of pvsanal</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276067988816"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Richard Dobson</td>
+          </tr>
+          <tr>
+            <td>August 2001 </td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 4.13</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pvsadsyn.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pvsarp.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pvsadsyn </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pvsarp</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

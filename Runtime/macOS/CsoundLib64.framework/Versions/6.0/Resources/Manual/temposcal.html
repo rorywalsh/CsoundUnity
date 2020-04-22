@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>temposcal</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tempo.html" title="tempo" />
+    <link rel="next" href="tempoval.html" title="tempoval" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">temposcal</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tempo.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tempoval.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="temposcal"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTemposcal" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">temposcal</span>
+        </h2>
+        <p>temposcal — 
+      Phase-locked vocoder processing with onset detection/processing, 'tempo-scaling'.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046336384"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>temposcal</em></span> implements phase-locked vocoder processing using function tables
+      containing sampled-sound sources, with <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>, and
+      <span class="emphasis"><em>temposcal</em></span> will accept deferred allocation tables.
+    </p>
+        <p>
+      This opcode allows for time and frequency-independent scaling. Time is advanced internally, but controlled by a tempo scaling parameter; when an onset is detected, timescaling is momentarily stopped to avoid smearing of attacks. The quality of the effect is generally improved with phase locking switched on. 
+    </p>
+        <p>
+      <span class="emphasis"><em>temposcal</em></span> will also scale pitch, independently of frequency, using a transposition factor (k-rate).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046331776"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">asig <span class="command"><strong>temposcal</strong></span> ktimescal, kamp, kpitch, ktab, klock [,ifftsize, idecim, ithresh]
+      </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046329632"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifftsize</em></span> -- FFT size (power-of-two), defaults to 2048.
+    </p>
+        <p>
+      <span class="emphasis"><em>idecim</em></span> -- decimation, defaults to 4 (meaning hopsize = fftsize/4)
+    </p>
+        <p>
+      <span class="emphasis"><em>idbthresh</em></span> -- threshold based on dB power spectrum ratio between two successive windows. A detected ratio above it will cancel timescaling momentarily, to avoid smearing (defaults to 1)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046326160"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktimescal</em></span> -- timescaling ratio, &lt; 1 stretch, &gt; 1 contract.
+    </p>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude scaling
+    </p>
+        <p>
+      <span class="emphasis"><em>kpitch</em></span> -- grain pitch scaling (1=normal pitch, &lt; 1 lower, &gt; 1 higher; negative, backwards)
+    </p>
+        <p>
+      <span class="emphasis"><em>klock</em></span> -- 0 or 1, to switch phase-locking on/off
+    </p>
+        <p>
+      <span class="emphasis"><em>ktab</em></span> -- source signal function table. Deferred-allocation tables (see
+      <a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>) are accepted, but the opcode
+      expects a mono source. Tables can be switched at k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046319888"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the temposcal opcode. It uses the file <a class="ulink" href="examples/temposcal.csd" target="_top"><em class="citetitle">temposcal.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276046318096"></a>
+          <p class="title">
+            <strong>Example 1026. Example of the temposcal opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276413685040"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o temposcal.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">lock</span>  <span class="o">=</span>  <span class="nb">p4</span>
+i<span class="n">tab</span>   <span class="o">=</span>  <span class="mi">1</span>
+i<span class="n">pitch</span> <span class="o">=</span>  <span class="mi">1</span>
+i<span class="n">amp</span>   <span class="o">=</span>  <span class="mf">0.8</span>
+k<span class="n">time</span>  <span class="nb">linseg</span> <span class="mf">0.3</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="nb">p3</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.3</span>
+a<span class="n">sig</span>   <span class="nb">temposcal</span> k<span class="n">time</span><span class="p">,</span> i<span class="n">amp</span><span class="p">,</span> i<span class="n">pitch</span><span class="p">,</span> i<span class="n">tab</span><span class="p">,</span> i<span class="n">lock</span>
+       <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="s">"fox.wav"</span> <span class="mi">0</span> <span class="mi">4</span> <span class="mi">0</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mf">3.8</span> <span class="mi">0</span>	<span class="c1">;no locking</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mf">3.8</span> <span class="mi">1</span>	<span class="c1">;locking</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276046314096"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>February 2010</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New plugin in version 5.13</p>
+        <p>February 2005.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tempo.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tempoval.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tempo </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tempoval</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

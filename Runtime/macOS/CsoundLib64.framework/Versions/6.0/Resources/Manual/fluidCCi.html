@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fluidCCi</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="fluidAllOut.html" title="fluidAllOut" />
+    <link rel="next" href="fluidCCk.html" title="fluidCCk" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fluidCCi</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="fluidAllOut.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fluidCCk.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="fluidCCi"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFluidCCi" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fluidCCi</span>
+        </h2>
+        <p>fluidCCi — 
+      Sends a MIDI controller data message to fluid.
+           </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105120368"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>fluidCCi</strong></span> iEngineNumber, iChannelNumber, iControllerNumber, iValue</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105118384"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in fluidOpcodes.</p>
+        <p>Sends a MIDI controller data (MIDI controller number and value to use)
+    message to a fluid engine by number on the user specified MIDI channel number.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105116640"></a>
+        <h2>Initialization</h2>
+        <p><span class="emphasis"><em>iEngineNumber </em></span> -- engine number assigned from
+    fluidEngine</p>
+        <p><span class="emphasis"><em>iChannelNumber </em></span> -- MIDI channel number to which the
+    Fluidsynth program is assigned: from 0 to 255. MIDI channels numbered 16 or
+    higher are virtual channels.</p>
+        <p><span class="emphasis"><em>iControllerNumber </em></span> -- MIDI controller number to use
+    for this message</p>
+        <p><span class="emphasis"><em>iValue </em></span> -- value to set for controller (usually
+    0-127)</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105112880"></a>
+        <h2>Performance</h2>
+        <p>This opcode is useful for setting controller values at init time. For 
+    continous changes, use fluidCCk.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105111600"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the fluidCCi opcodes. It uses the file <a class="ulink" href="examples/fluidCCi.csd" target="_top"><em class="citetitle">fluidCCi.csd</em></a>.
+    </p>
+        <div class="refsect1">
+          <a id="idm276477917792"></a>
+          <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  -+rtmidi=virtual  -M0    <span class="c1">;;;realtime audio out and realtime midi in</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">;-o fluidCCi.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">engine</span> <span class="nb">fluidEngine</span>
+<span class="c1">; soundfont path to manual/examples</span>
+i<span class="n">sfnum</span>	 <span class="nb">fluidLoad</span> <span class="s">"19Trumpet.sf2"</span><span class="p">,</span> gi<span class="n">engine</span><span class="p">,</span> <span class="mi">1</span>
+	 <span class="nb">fluidProgramSelect</span> gi<span class="n">engine</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">sfnum</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">56</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+	<span class="nb">mididefault</span>   <span class="mi">60</span><span class="p">,</span> <span class="nb">p3</span>
+	<span class="nb">midinoteonkey</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p5</span>
+i<span class="n">key</span>	<span class="nb">init</span> <span class="nb">p4</span>
+i<span class="n">vel</span>	<span class="nb">init</span> <span class="nb">p5</span>
+	<span class="nb">fluidCCi</span> gi<span class="n">engine</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">93</span><span class="p">,</span> <span class="mi">127</span> 	<span class="c1">;full chorus &amp;</span>
+	<span class="nb">fluidCCi</span> gi<span class="n">engine</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">127</span> 	<span class="c1">;full reverb!</span>
+	<span class="nb">fluidNote</span> gi<span class="n">engine</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> i<span class="n">key</span><span class="p">,</span> i<span class="n">vel</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">99</span>
+
+i<span class="n">mvol</span>  <span class="nb">init</span> <span class="mi">7</span>
+a<span class="n">sigl</span><span class="p">,</span> a<span class="n">sigr</span> <span class="nb">fluidOut</span> gi<span class="n">engine</span>
+       <span class="nb">outs</span> a<span class="n">sigl</span><span class="o">*</span>i<span class="n">mvol</span><span class="p">,</span> a<span class="n">sigr</span><span class="o">*</span>i<span class="n">mvol</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span> <span class="mi">60</span> <span class="mi">100</span> <span class="c1">;play one note from score and...</span>
+<span class="nb">i</span> <span class="mi">99</span> <span class="mi">0</span> <span class="mi">60</span>      <span class="c1">;play virtual keyboard for 60 sec.</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105108864"></a>
+        <h2>See Also</h2>
+        <p><a class="link" href="fluidEngine.html" title="fluidEngine"><em class="citetitle">fluidEngine</em></a>, <a class="link" href="fluidNote.html" title="fluidNote"><em class="citetitle">fluidNote</em></a>, <a class="link" href="fluidLoad.html" title="fluidLoad"><em class="citetitle">fluidLoad</em></a>, <a class="link" href="fluidCCk.html" title="fluidCCk"><em class="citetitle">fluidCCk</em></a></p>
+        <p> More information on soundfonts is in the Floss Manuals: <a class="ulink" href="http://write.flossmanuals.net/csound/d-reading-midi-files" target="_top"><em class="citetitle">http://write.flossmanuals.net/csound/d-reading-midi-files</em></a></p>
+        <p> For other information on soundfonts look in the
+        Wikipedia: <a class="ulink" href="http://en.wikipedia.org/wiki/Soundfont" target="_top"><em class="citetitle">http://en.wikipedia.org/wiki/Soundfont</em></a></p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105102144"></a>
+        <h2>Credits</h2>
+        <p>Michael Gogins (gogins at pipeline dot com), Steven Yi. 
+    Thanks to Peter Hanappe for Fluidsynth.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="fluidAllOut.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fluidCCk.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">fluidAllOut </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fluidCCk</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

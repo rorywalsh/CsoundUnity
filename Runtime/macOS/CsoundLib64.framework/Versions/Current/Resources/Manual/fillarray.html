@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fillarray</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="filevalid.html" title="filevalid" />
+    <link rel="next" href="fft.html" title="fft" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fillarray</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="filevalid.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fft.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="fillarray"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFillarray" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fillarray</span>
+        </h2>
+        <p>fillarray — 
+      Generate a vector with initial values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111012992"></a>
+        <h2>Description</h2>
+        <p>
+      Generate a vector (one-dimensional k-rate array) with a sequence
+      of numeric or string values.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111011712"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">karray[] <span class="command"><strong>fillarray</strong></span> ival1, ival2,.....ivaln</pre>
+        <pre class="synopsis">karray <span class="command"><strong>fillarray</strong></span> ival1, ival2,.....ivaln</pre>
+        <pre class="synopsis">karray <span class="command"><strong>fillarray</strong></span> kval1, kval2,.....kvaln</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111006992"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ival1,...ivaln</em></span> -- values to place in the vector.
+    </p>
+        <p>
+      In the second form the answer array must be pre-declared, and it
+      may be a multidimensional array which if filled in row-major
+      order.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111004832"></a>
+        <h2>Performance</h2>
+        <p>
+      In the third form the vector is regenerated at k-rate with values
+      <span class="emphasis"><em>kval1,..., kvaln</em></span>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276111003152"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the fillarray opcode. It uses the file <a class="ulink" href="examples/fillarray.csd" target="_top"><em class="citetitle">fillarray.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276111001360"></a>
+          <p class="title">
+            <strong>Example 283. Example of the fillarray opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276478936656"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-n
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+  k<span class="n">S</span><span class="p">[]</span> <span class="nb">fillarray</span> <span class="mi">1</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">5</span>
+       <span class="nb">printk</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+       <span class="nb">printk</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">S</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+       <span class="nb">printk</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">S</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+  <span class="nb">turnoff</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110997360"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="vectorial.html" title="Vectorial Opcodes"><em class="citetitle"></em>Vectorial opcodes</a>
+            <a class="link" href="arrayOpcodes.html" title="Array Opcodes"><em class="citetitle"></em>array opcodes</a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276110994448"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>Codemist Ltd</td>
+          </tr>
+          <tr>
+            <td>2013</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 6.00</p>
+        <p>Third, k-rate, form new in 6.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="filevalid.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fft.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">filevalid </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fft</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

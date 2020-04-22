@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tableshuffle</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tableseg.html" title="tableseg" />
+    <link rel="next" href="tablew.html" title="tablew" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tableshuffle</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tableseg.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tablew.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tableshuffle"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTableshuffle" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tableshuffle</span>
+        </h2>
+        <p>tableshuffle — 
+      shuffles the content of a function table so that each element of the source
+      table is put into a different random position.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048018416"></a>
+        <h2>Description</h2>
+        <p>
+      This opcode can be used in order to shuffle the content of
+      function tables into a random order but without loosing any of
+      the elements. Imagine shuffling a deck of cards. Each element of
+      the table is copied to a different random position. If that
+      position was already chosen before then the next free position
+      is chosen. The length of the table remains the same.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048016832"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>tableshuffle</strong></span> ktablenum</pre>
+        <pre class="synopsis"><span class="command"><strong>tableshufflei</strong></span> itablenum</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048013744"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktablenum</em></span> or <span class="emphasis"><em>itablenum</em></span>
+      -- the number of the table to shuffle.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048011696"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tableshuffle opcode. It uses the file <a class="ulink" href="examples/farey7shuffled.csd" target="_top"><em class="citetitle">farey7shuffled.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276048009920"></a>
+          <p class="title">
+            <strong>Example 1006. Example of the tableshuffle opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276415282272"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac -+rtaudio=alsa --midioutfile=farey7.mid
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">sr</span><span class="o">=</span><span class="mi">48000</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">10</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">1</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">delta</span> <span class="nb">init</span> <span class="mi">100</span>
+gi<span class="n">mult</span> <span class="nb">init</span> <span class="mi">101</span>
+
+<span class="c1">;-------- loop and trigger instrument 901 using a Farey Sequence polyrhythm</span>
+	  <span class="kd">instr</span> <span class="nf">1</span>
+k<span class="n">indx</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">indx2</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">trigger</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">time_unit</span> <span class="nb">init</span> <span class="nb">p6</span>
+k<span class="n">start</span> <span class="nb">init</span> <span class="nb">p4</span>
+k<span class="n">loop</span> <span class="nb">init</span> <span class="nb">p5</span>
+k<span class="n">initndx</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">fn_times</span> <span class="nb">init</span> gi<span class="n">delta</span>
+k<span class="n">note</span> <span class="nb">init</span> <span class="mi">60</span>
+k<span class="n">basenote</span> <span class="nb">init</span> <span class="nb">p8</span>
+i<span class="n">fundam</span> <span class="nb">init</span> <span class="nb">p7</span>
+k<span class="n">trigger</span> <span class="nb">seqtime</span> k<span class="n">time_unit</span><span class="p">,</span> k<span class="n">start</span><span class="p">,</span> k<span class="n">loop</span><span class="p">,</span> k<span class="n">initndx</span><span class="p">,</span> k<span class="n">fn_times</span>
+<span class="k">if</span> <span class="p">(</span>k<span class="n">trigger</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">)</span> <span class="k">then</span>
+     k<span class="n">pitch</span> <span class="o">=</span> <span class="nb">cpspch</span><span class="p">(</span>i<span class="n">fundam</span><span class="p">)</span>
+     k<span class="n">mult</span> <span class="nb">tab</span> k<span class="n">indx2</span><span class="p">,</span> gi<span class="n">mult</span>
+     k<span class="n">pitch</span> <span class="o">=</span> k<span class="n">pitch</span> <span class="o">*</span> k<span class="n">mult</span>
+     k<span class="n">note</span> <span class="o">=</span> k<span class="n">basenote</span> <span class="o">+</span> k<span class="n">mult</span>
+     <span class="nb">event</span> <span class="s">"i"</span><span class="p">,</span> <span class="mi">901</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">.4</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> k<span class="n">pitch</span><span class="p">,</span> k<span class="n">pitch</span> <span class="o">*</span> <span class="mf">.9</span><span class="p">,</span> <span class="mf">.4</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>   <span class="mf">.75</span><span class="p">,</span> <span class="mf">.8</span><span class="p">,</span>  <span class="mf">1.0</span><span class="p">,</span> <span class="mf">.15</span><span class="p">,</span> <span class="mf">.0</span><span class="p">,</span>  <span class="mf">.125</span><span class="p">,</span> <span class="mf">.125</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span>  <span class="mf">1.0</span><span class="p">,</span> <span class="mf">.0</span><span class="p">,</span> <span class="mf">.0</span><span class="p">,</span>  <span class="mf">.0</span><span class="p">,</span>  <span class="mf">.0</span><span class="p">,</span>  <span class="mf">.125</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> k<span class="n">note</span>
+     k<span class="n">indx</span> <span class="o">=</span> k<span class="n">indx</span> <span class="o">+</span> <span class="mi">1</span>
+     k<span class="n">indx</span> <span class="o">=</span> k<span class="n">indx</span> <span class="o">%</span> k<span class="n">loop</span>
+     k<span class="n">indx2</span> <span class="o">=</span> k<span class="n">indx2</span> <span class="o">+</span> <span class="mi">1</span>
+     k<span class="n">indx2</span> <span class="o">=</span> k<span class="n">indx2</span> <span class="o">%</span> k<span class="n">loop</span>
+     <span class="k">if</span> <span class="p">(</span>k<span class="n">indx2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
+     	<span class="nb">tableshuffle</span> gi<span class="n">mult</span>
+     <span class="k">endif</span>
+	
+<span class="k">endif</span>
+	<span class="kd">endin</span> <span class="c1">; 1</span>
+
+<span class="c1">;------ basic 2 Operators FM algorithm ----------------</span>
+	<span class="kd">instr</span> <span class="nf">901</span>
+i<span class="n">notedur</span>	<span class="o">=</span>		<span class="nb">p3</span>
+i<span class="n">maxamp</span>		<span class="o">=</span>		<span class="nb">p4</span> <span class="c1">;ampdb(p4)</span>
+i<span class="n">carrfreq</span>	<span class="o">=</span>		<span class="nb">p5</span>
+i<span class="n">modfreq</span>	<span class="o">=</span>		<span class="nb">p6</span>
+i<span class="n">lowndx</span>		<span class="o">=</span>		<span class="nb">p7</span>
+i<span class="n">ndxdiff</span>	<span class="o">=</span>		<span class="nb">p8</span><span class="o">-</span><span class="nb">p7</span>
+k<span class="n">note</span>	        <span class="o">=</span>		<span class="nb">p27</span>
+a<span class="n">ampenv</span>		<span class="nb">linseg</span>	<span class="nb">p9</span><span class="p">,</span> <span class="nb">p14</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p10</span><span class="p">,</span> <span class="nb">p15</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p11</span><span class="p">,</span> <span class="nb">p16</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p12</span><span class="p">,</span> <span class="nb">p17</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p13</span> 
+a<span class="n">devenv</span>		<span class="nb">linseg</span>	<span class="nb">p18</span><span class="p">,</span> <span class="nb">p23</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p19</span><span class="p">,</span> <span class="nb">p24</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p20</span><span class="p">,</span> <span class="nb">p25</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p21</span><span class="p">,</span> <span class="nb">p26</span><span class="o">*</span><span class="nb">p3</span><span class="p">,</span> <span class="nb">p22</span>
+a<span class="n">modosc</span>		<span class="nb">oscili</span>	<span class="p">(</span>i<span class="n">lowndx</span><span class="o">+</span>i<span class="n">ndxdiff</span><span class="o">*</span>a<span class="n">devenv</span><span class="p">)</span><span class="o">*</span>i<span class="n">modfreq</span><span class="p">,</span> i<span class="n">modfreq</span><span class="p">,</span> <span class="mi">10</span> 
+a<span class="n">carosc</span>		<span class="nb">oscili</span>	i<span class="n">maxamp</span><span class="o">*</span>a<span class="n">ampenv</span><span class="p">,</span> i<span class="n">carrfreq</span><span class="o">+</span>a<span class="n">modosc</span><span class="p">,</span> <span class="mi">10</span> 
+			<span class="nb">out</span>		a<span class="n">carosc</span> 
+<span class="c1">;------ we also write down a midi track here ----------</span>
+<span class="nb">midion</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">note</span><span class="p">,</span> <span class="mi">100</span>
+       	<span class="kd">endin</span> <span class="c1">; 901</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">10</span> <span class="mi">0</span> <span class="mi">4096</span> <span class="mi">10</span> <span class="mi">1</span>				
+<span class="nb">f</span><span class="mi">100</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">18</span> <span class="s">"farey"</span> <span class="mi">7</span> <span class="mi">1</span>
+<span class="nb">f</span><span class="mi">101</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">18</span> <span class="s">"farey"</span> <span class="mi">7</span> <span class="mi">2</span>
+
+<span class="c1">; p4 kstart  := index offset into the Farey Sequence</span>
+<span class="c1">; p5 kloop   := end index into Farey Seq.</span>
+<span class="c1">; p6 timefac := time in seconds for one loop to complete</span>
+<span class="c1">; p7 fundam  := fundamental of the FM instrument</span>
+<span class="c1">; p8 basenote:= root pitch of the midi voice output</span>
+<span class="c1">; note that pitch structures of the midi file output are not equivalent to the</span>
+<span class="c1">; ones used for the FM real-time synthesis.</span>
+
+<span class="c1">;	start		dur		kstart	kloop   timefac	fundam. basenote</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mf">0.0</span>		<span class="mi">44</span>		<span class="mi">0</span> 	<span class="mi">18</span>	<span class="mi">1</span>	<span class="mf">6.05</span>	<span class="mi">60</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">4</span>		<span class="mi">40</span>		<span class="mi">0</span> 	<span class="mi">18</span>	<span class="mi">3</span>	<span class="mf">7.05</span>	<span class="mi">72</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">10</span>		<span class="mi">38</span>		<span class="mi">0</span> 	<span class="mi">18</span>	<span class="mf">1.5</span>	<span class="mi">8</span>	<span class="mi">84</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">15</span>		<span class="mi">50</span>		<span class="mi">0</span>	<span class="mi">18</span>	<span class="mi">1</span>	<span class="mi">5</span>	<span class="mi">48</span>
+<span class="nb">i</span><span class="mi">1</span>	<span class="mi">22</span>		<span class="mi">75</span>		<span class="mi">5</span>	<span class="mi">17</span>	<span class="mf">1.7</span>	<span class="mi">4</span>	<span class="mi">36</span>	
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048005904"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="GENfarey.html" title="GENfarey"><em class="citetitle">GEN farey</em></a>,
+      <a class="link" href="tablefilter.html" title="tablefilter"><em class="citetitle">tablefilter</em></a>,
+      <a class="link" href="tablecopy.html" title="tablecopy"><em class="citetitle">tablecopy</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276048002000"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Georg Boenn </td>
+          </tr>
+          <tr>
+            <td>University of Glamorgan, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.13</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tableseg.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tablew.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tableseg </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tablew</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

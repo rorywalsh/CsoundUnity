@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tempoval</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="temposcal.html" title="temposcal" />
+    <link rel="next" href="tigoto.html" title="tigoto" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tempoval</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="temposcal.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tigoto.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tempoval"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTempoval" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tempoval</span>
+        </h2>
+        <p>tempoval — 
+      Reads the current value of the tempo.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050704688"></a>
+        <h2>Description</h2>
+        <p>
+      Reads the current value of the tempo.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050703392"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kres <span class="command"><strong>tempoval</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050701440"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kres</em></span> -- the value of the tempo. If you use a positive value with the <a class="link" href="CommandFlags.html#FlagsMinusLowerT"><em class="citetitle">-t command-line flag</em></a>, <span class="emphasis"><em>tempoval</em></span> returns the percentage increase/decrease from the original tempo of 60 beats per minute. If you don't, its value will be 60 (for 60 beats per minute).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050698144"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tempoval opcode. Remember, it only works if you use the <a class="link" href="CommandFlags.html#FlagsMinusLowerT"><em class="citetitle">-t</em></a> flag with Csound. It uses the file <a class="ulink" href="examples/tempoval.csd" target="_top"><em class="citetitle">tempoval.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276050695392"></a>
+          <p class="title">
+            <strong>Example 1027. Example of the tempoval opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276415627504"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    -t60 <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tempoval.wav -W -t60 ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; Initialize the global variables.</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument #1.</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+  <span class="c1">; Adjust the tempo to 120 beats per minute.</span>
+  <span class="nb">tempo</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">60</span>
+
+  <span class="c1">; Get the tempo value.</span>
+  k<span class="n">val</span> <span class="nb">tempoval</span>
+
+  <span class="nb">printks</span> <span class="s">"kval = %f</span><span class="se">\\</span><span class="s">n"</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> k<span class="n">val</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Play Instrument #1 for one second.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Since 120 beats per minute is a 50% increase over the original 60 beats per minute, its output should include lines like:
+      </p>
+        <pre class="screen">
+kval = 0.500000
+      </pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050690208"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="tempo.html" title="tempo"><em class="citetitle">tempo</em></a> and <a class="link" href="miditempo.html" title="miditempo"><em class="citetitle">miditempo</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276050687328"></a>
+        <h2>Credits</h2>
+        <p>Example written by Kevin Conder.</p>
+        <p>New in version 4.15</p>
+        <p>December 2002. Thanks to Drake Wilson for pointing out unclear documentation.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="temposcal.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tigoto.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">temposcal </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tigoto</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

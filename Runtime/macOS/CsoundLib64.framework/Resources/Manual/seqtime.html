@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>seqtime</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="seqtime2.html" title="seqtime2" />
+    <link rel="next" href="setcol.html" title="setcol" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">seqtime</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="seqtime2.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="setcol.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="seqtime"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSeqtime" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">seqtime</span>
+        </h2>
+        <p>seqtime — 
+      Generates a trigger signal according to the values stored in a table.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276057739296"></a>
+        <h2>Description</h2>
+        <p>
+      Generates a trigger signal according to the values stored in a table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276057738032"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ktrig_out <span class="command"><strong>seqtime</strong></span> ktime_unit, kstart, kloop, kinitndx, kfn_times</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276057735920"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ktrig_out</em></span> -- output trigger signal
+    </p>
+        <p>
+      <span class="emphasis"><em>ktime_unit</em></span> -- unit of measure of time, related to seconds.
+    </p>
+        <p>
+      <span class="emphasis"><em>kstart</em></span> -- start index of looped section
+    </p>
+        <p>
+      <span class="emphasis"><em>kloop</em></span> -- end index of looped section
+    </p>
+        <p>
+      <span class="emphasis"><em>kinitndx</em></span> -- initial index
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note: Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Although <span class="emphasis"><em>kinitndx</em></span> is listed as k-rate, it is in fact accessed only at init-time. So if you are using a k-rate argument, it must be assigned with <a class="link" href="init.html" title="init"><em class="citetitle">init</em></a>.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      <span class="emphasis"><em>kfn_times</em></span> -- number of table containing a sequence of times
+    </p>
+        <p>
+      This opcode handles timed-sequences of groups of values stored into a table.
+    </p>
+        <p>
+      <span class="emphasis"><em>seqtime</em></span> generates a trigger signal (a sequence of impulses, see also <a class="link" href="trigger.html" title="trigger"><em class="citetitle">trigger</em></a> opcode), according to the values stored in the <span class="emphasis"><em>kfn_times</em></span> table. This table should contain a series of delta-times (i.e. times beetween to adjacent events). The time units stored into table are expressed in seconds, but can be rescaled by means of ktime_unit argument. The table can be filled with <a class="link" href="GEN02.html" title="GEN02"><em class="citetitle">GEN02</em></a> or by means of an external text-file containing numbers, with <a class="link" href="GEN23.html" title="GEN23"><em class="citetitle">GEN23</em></a>. 
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>Note that the <span class="emphasis"><em>kloop</em></span> index marks the loop boundary and is NOT included in the looped elements. If you want to loop the first four elements, you would set <span class="emphasis"><em>kstart</em></span> to 0 and <span class="emphasis"><em>kloop</em></span> to 4.</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      It is possible to start the sequence from a value different than the first, by assigning to <span class="emphasis"><em>kinitndx</em></span> an index different than zero (which corresponds to the first value of the table). Normally the sequence is looped, and the start and end of loop can be adjusted by modifying <span class="emphasis"><em>kstart</em></span> and <span class="emphasis"><em>kloop</em></span> arguments. User must be sure that values of these arguments (as well as <span class="emphasis"><em>kinitndx</em></span>) correspond to valid table numbers, otherwise Csound will crash (because no range-checking is implementeted).
+    </p>
+        <p>
+      It is possible to disable loop (one-shot mode) by assigning the same value both to <span class="emphasis"><em>kstart</em></span> and <span class="emphasis"><em>kloop</em></span> arguments. In this case, the last read element will be the one corresponding to the value of such arguments.  Table can be read backward by assigning a negative <span class="emphasis"><em>kloop</em></span> value. It is possible to trigger two events almost at the same time (actually separated by a k-cycle) by giving a zero value to the corresponding delta-time.  First element contained in the table should be zero, if the user intends to send a trigger impulse, it should come immediately after the orchestra instrument containing <span class="emphasis"><em>seqtime</em></span> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276057715184"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the seqtime opcode. It uses the file <a class="ulink" href="examples/seqtime.csd" target="_top"><em class="citetitle">seqtime.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276057713392"></a>
+          <p class="title">
+            <strong>Example 894. Example of the seqtime opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276425087872"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in</span>
+-odac           -iadc    <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o seqtime.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+ <span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+ <span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">64</span>
+ <span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">; By Tim Mortimer and Andres Cabrera 2007</span>
+
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">sine</span>         <span class="nb">ftgen</span>    <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8192</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span>    <span class="mi">1</span>
+<span class="c1">;;; table defining an integer pitch set</span>
+gi<span class="n">pset</span>    <span class="nb">ftgen</span>     <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">8.00</span><span class="p">,</span> <span class="mf">8.04</span><span class="p">,</span> <span class="mf">8.07</span><span class="p">,</span> <span class="mf">8.10</span>
+<span class="c1">;;;DELTA times for seqtime</span>
+gi<span class="n">delta</span>    <span class="nb">ftgen</span>    <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">1.25</span>
+
+
+  <span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">ndx</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">trigger</span> <span class="nb">init</span> <span class="mi">0</span>
+
+k<span class="n">time_unit</span> <span class="nb">init</span> <span class="mi">1</span>
+k<span class="n">start</span> <span class="nb">init</span> <span class="nb">p4</span>
+k<span class="n">loop</span> <span class="nb">init</span> <span class="nb">p5</span>
+k<span class="n">initndx</span> <span class="nb">init</span> <span class="mi">0</span>
+k<span class="n">fn_times</span> <span class="nb">init</span> gi<span class="n">delta</span>
+
+k<span class="n">trigger</span> <span class="nb">seqtime</span> k<span class="n">time_unit</span><span class="p">,</span> k<span class="n">start</span><span class="p">,</span> k<span class="n">loop</span><span class="p">,</span> k<span class="n">initndx</span><span class="p">,</span> k<span class="n">fn_times</span>
+
+<span class="nb">printk2</span> k<span class="n">trigger</span>
+
+
+<span class="k">if</span> <span class="p">(</span>k<span class="n">trigger</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
+   k<span class="n">pitch</span> <span class="nb">table</span> k<span class="n">ndx</span><span class="p">,</span> gi<span class="n">pset</span>
+   <span class="nb">event</span> <span class="s">"i"</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> k<span class="n">pitch</span>
+   k<span class="n">ndx</span> <span class="o">=</span> k<span class="n">ndx</span> <span class="o">+</span> <span class="mi">1</span>
+   k<span class="n">ndx</span> <span class="o">=</span> k<span class="n">ndx</span> <span class="o">%</span> k<span class="n">loop</span>
+<span class="k">endif</span>
+
+  <span class="kd">endin</span>
+
+
+  <span class="kd">instr</span> <span class="nf">2</span>
+i<span class="n">cps</span> <span class="o">=</span> <span class="nb">cpspch</span> <span class="p">(</span><span class="nb">p4</span><span class="p">)</span>
+a<span class="n">1</span>    <span class="nb">buzz</span>    <span class="mi">1</span><span class="p">,</span> i<span class="n">cps</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> gi<span class="n">sine</span>
+a<span class="n">amp</span> <span class="nb">expseg</span>    <span class="mf">0.00003</span><span class="p">,</span><span class="mf">.02</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">p3</span><span class="o">-</span><span class="mf">.02</span><span class="p">,</span><span class="mf">0.00003</span>
+
+a<span class="n">1</span> <span class="o">=</span> a<span class="n">1</span> <span class="o">*</span> a<span class="n">amp</span> <span class="o">*</span> <span class="mf">0.5</span>
+
+<span class="nb">out</span> a<span class="n">1</span>
+  <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">;      start    dur   kstart  kloop</span>
+<span class="nb">i</span> <span class="mi">1</span>	<span class="mi">0</span>	<span class="mi">7</span>	<span class="mi">0</span>	<span class="mi">4</span>
+<span class="nb">i</span> <span class="mi">1</span>	<span class="mi">8</span>	<span class="mi">10</span>	<span class="mi">0</span>	<span class="mi">3</span>
+<span class="nb">i</span> <span class="mi">1</span>	<span class="mi">19</span>	<span class="mi">10</span>	<span class="mi">4</span>	<span class="mi">4</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276057709408"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="GEN02.html" title="GEN02"><em class="citetitle">GEN02</em></a>,
+      <a class="link" href="GEN23.html" title="GEN23"><em class="citetitle">GEN23</em></a>,
+      <a class="link" href="trigseq.html" title="trigseq"><em class="citetitle">trigseq</em></a>
+      <a class="link" href="seqtime2.html" title="seqtime2"><em class="citetitle">seqtime2</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276057704752"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>November 2002. Added a note about the <span class="emphasis"><em>kinitndx</em></span> parameter, thanks to Rasmus Ekman.</p>
+        <p>New in version 4.06</p>
+        <p>Example by: Tim Mortimer and Andres Cabrera 2007</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="seqtime2.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="setcol.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">seqtime2 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> setcol</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

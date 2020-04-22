@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>chebyshevpoly</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="cbrt.html" title="cbrt" />
+    <link rel="next" href="checkbox.html" title="checkbox" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">chebyshevpoly</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="cbrt.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="checkbox.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="chebyshevpoly"></a>
+      <div class="titlepage"></div>
+      <a id="IndexChebyshevpoly" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">chebyshevpoly</span>
+        </h2>
+        <p>chebyshevpoly — 
+      Efficiently evaluates the sum of Chebyshev polynomials of arbitrary order.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121611216"></a>
+        <h2>Description</h2>
+        <p>
+      The <span class="emphasis"><em>chebyshevpoly</em></span> opcode calculates the value of a polynomial expression with a single a-rate input variable that is made up of a linear combination of the first N Chebyshev polynomials of the first kind.  Each Chebyshev polynomial, Tn(x), is weighted by a k-rate coefficient, <span class="emphasis"><em>kn</em></span>, so that the opcode is calculating a sum of any number of terms in the form <span class="emphasis"><em>kn*Tn(x)</em></span>.  Thus, the <span class="emphasis"><em>chebyshevpoly</em></span> opcode allows for the waveshaping of an audio signal with a <span class="emphasis"><em>dynamic</em></span> transfer function that gives precise control over the harmonic content of the output.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121607488"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">aout <span class="command"><strong>chebyshevpoly</strong></span> ain, k0 [, k1 [, k2 [...]]]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121605392"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ain</em></span> --  the input signal used as the independent variable of the Chebyshev polynomials ("x").
+    </p>
+        <p>
+      <span class="emphasis"><em>aout</em></span> --  the output signal ("y").
+    </p>
+        <p>
+      <span class="emphasis"><em>k0, k1, k2, ...</em></span> --  k-rate multipliers for each Chebyshev polynomial.
+    </p>
+        <p>
+      This opcode is very useful for dynamic waveshaping of an audio signal.  Traditional waveshaping techniques utilize a lookup table for the transfer function -- usually a sum of Chebyshev polynomials.  When a sine wave at full-scale amplitude is used as an index to read the table, the precise harmonic spectrum as defined by the weights of the Chebyshev polynomials is produced.   A dynamic spectrum is acheived by varying the amplitude of the input sine wave, but this produces a non-linear change in the spectrum.
+    </p>
+        <p>
+      By directly calculating the Chebyshev polynomials, the <span class="emphasis"><em>chebyshevpoly</em></span> opcode allows more control over the spectrum and the number of harmonic partials added to the input can be varied with time.  The value of each <span class="emphasis"><em>kn</em></span> coefficient directly controls the amplitude of the nth harmonic partial if the input <span class="emphasis"><em>ain</em></span> is a sine wave with amplitude = 1.0.  This makes <span class="emphasis"><em>chebyshevpoly</em></span> an efficient additive synthesis engine for N partials that requires only one oscillator instead of N oscillators.  The amplitude or waveform of the input signal can also be changed for different waveshaping effects. 
+    </p>
+        <p>
+      If we consider the input parameter <span class="emphasis"><em>ain</em></span> to be "x" and the output <span class="emphasis"><em>aout</em></span> to be "y", then the <span class="emphasis"><em>chebyshevpoly</em></span> opcode calculates the following equation:
+      </p>
+        <div class="literallayout">
+          <p><br />
+        y = k0*T0(x) + k1*T1(x) + k2*T2(x) + k3*T3(x) + ...<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      where the Tn(x) are defined by the recurrence relation
+      </p>
+        <div class="literallayout">
+          <p><br />
+        T0(x) = 1,<br />
+        T1(x) = x, <br />
+        Tn(x) = 2x*T[n-1](x) - T[n-2](x)<br />
+      </p>
+        </div>
+        <p>
+    </p>
+        <p>
+      More information about Chebyshev polynomials can be found on Wikipedia at
+      <a class="ulink" href="http://en.wikipedia.org/wiki/Chebyshev_polynomial" target="_top">
+        <em class="citetitle">http://en.wikipedia.org/wiki/Chebyshev_polynomial</em>
+      </a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121592848"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="polynomial.html" title="polynomial"><em class="citetitle">polynomial</em></a>, 
+      <a class="link" href="mac.html" title="mac"><em class="citetitle">mac</em></a>
+      <a class="link" href="maca.html" title="maca"><em class="citetitle">maca</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121589104"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the chebyshevpoly opcode. It uses the file <a class="ulink" href="examples/chebyshevpoly.csd" target="_top"><em class="citetitle">chebyshevpoly.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276121587296"></a>
+          <p class="title">
+            <strong>Example 125. Example of the chebyshevpoly opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276489676640"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o chebyshevpoly.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; time-varying mixture of first six harmonics</span>
+<span class="kd">instr</span> <span class="nf">1</span>
+	<span class="c1">; According to the GEN13 manual entry,</span>
+	<span class="c1">; the pattern + - - + + - - for the signs of </span>
+	<span class="c1">; the chebyshev coefficients has nice properties.</span>
+	
+	<span class="c1">; these six lines control the relative powers of the harmonics</span>
+	k<span class="n">1</span>         <span class="nb">line</span>           <span class="mf">1.0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.0</span>
+	k<span class="n">2</span>         <span class="nb">line</span>           <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.0</span>
+	k<span class="n">3</span>         <span class="nb">line</span>           <span class="o">-</span><span class="mf">0.333</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span>
+	k<span class="n">4</span>         <span class="nb">line</span>           <span class="mf">0.0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.5</span>
+	k<span class="n">5</span>         <span class="nb">line</span>           <span class="mf">0.0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.7</span>
+	k<span class="n">6</span>         <span class="nb">line</span>           <span class="mf">0.0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span>
+	
+	<span class="c1">; play the sine wave at a frequency of 256 Hz with amplitude = 1.0</span>
+	a<span class="n">x</span>         <span class="nb">oscili</span>         <span class="mi">1</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">1</span>
+	
+	<span class="c1">; waveshape it</span>
+	a<span class="n">y</span>         <span class="nb">chebyshevpoly</span>  a<span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> k<span class="n">1</span><span class="p">,</span> k<span class="n">2</span><span class="p">,</span> k<span class="n">3</span><span class="p">,</span> k<span class="n">4</span><span class="p">,</span> k<span class="n">5</span><span class="p">,</span> k<span class="n">6</span>
+	
+	<span class="c1">; avoid clicks, scale final amplitude, and output</span>
+	a<span class="n">declick</span>   <span class="nb">linseg</span>         <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="nb">p3</span> <span class="o">-</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span>
+	           <span class="nb">outs</span>           a<span class="n">y</span> <span class="o">*</span> a<span class="n">declick</span> <span class="o">*</span> <span class="mi">10000</span><span class="p">,</span> a<span class="n">y</span> <span class="o">*</span> a<span class="n">declick</span> <span class="o">*</span> <span class="mi">10000</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">32768</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">; a sine wave</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276121583280"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Anthony Kozar</td>
+          </tr>
+          <tr>
+            <td>January 2008</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.08</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="cbrt.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="checkbox.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">cbrt </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> checkbox</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

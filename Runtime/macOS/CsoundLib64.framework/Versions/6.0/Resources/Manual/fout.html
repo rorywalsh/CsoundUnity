@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>fout</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="foscili.html" title="foscili" />
+    <link rel="next" href="fouti.html" title="fouti" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">fout</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="foscili.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="fouti.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="fout"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFout" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">fout</span>
+        </h2>
+        <p>fout — 
+      Outputs a-rate signals to an arbitrary number of channels.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107358144"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>fout</em></span> outputs <span class="emphasis"><em>N</em></span> a-rate signals to a specified file of <span class="emphasis"><em>N</em></span> channels.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107355696"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>fout</strong></span> ifilename, iformat, aout1 [, aout2, aout3,...,aoutN]</pre>
+        <pre class="synopsis"><span class="command"><strong>fout</strong></span> ifilename, iformat, array[]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107352544"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilename</em></span> -- the output file's name (in double-quotes).
+    </p>
+        <p>
+      <span class="emphasis"><em>iformat</em></span> -- a flag to choose output file format (note: Csound versions older than 5.0 may only support formats 0, 1, and 2):
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>-1 - format exactly as per global csound output format flags (-A, -W, --format=..., etc).</p>
+            </li>
+            <li class="listitem">
+              <p>0 - 32-bit floating point samples without header (binary PCM multichannel file)</p>
+            </li>
+            <li class="listitem">
+              <p>1 - 16-bit integers without header (binary PCM multichannel file)</p>
+            </li>
+            <li class="listitem">
+              <p>2 - 16-bit integers with a header. The header type depends on the render (-o) format. For example, if the user chooses the AIFF format (using the <a class="link" href="CommandFlags.html#FlagsMinusUpperA"><em class="citetitle">-A flag</em></a>), the header format will be AIFF type.</p>
+            </li>
+            <li class="listitem">
+              <p>3 - u-law samples with a header (see iformat=2).</p>
+            </li>
+            <li class="listitem">
+              <p>4 - 16-bit integers with a header (see iformat=2).</p>
+            </li>
+            <li class="listitem">
+              <p>5 - 32-bit integers with a header (see iformat=2).</p>
+            </li>
+            <li class="listitem">
+              <p>6 - 32-bit floats with a header (see iformat=2).</p>
+            </li>
+            <li class="listitem">
+              <p>7 - 8-bit unsigned integers with a header (see iformat=2).</p>
+            </li>
+            <li class="listitem">
+              <p>8 - 24-bit integers with a header (see iformat=2).</p>
+            </li>
+            <li class="listitem">
+              <p>9 - 64-bit floats with a header (see iformat=2).</p>
+            </li>
+            <li class="listitem">
+              <p> 50 - ogg-vorbis format.</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+      In addition, Csound versions 5.0 and later allow for explicitly selecting a particular header type by specifying the format as 10 * fileType + sampleFormat, where fileType may be 1 for WAV, 2 for AIFF, 3 for raw (headerless) files, and 4 for IRCAM; sampleFormat is one of the above values in the range 0 to 9, except sample format 0 is taken from the command line (-o), format 1 is 8-bit signed integers, and format 2 is a-law. So, for example, iformat=25 means 32-bit integers with AIFF header.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107337872"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>aout1,... aoutN</em></span> -- signals to be written to the file. In the case of raw files, the expected range of audio signals is determined by the selected sample format; for sound files with a header like WAV and AIFF, the audio signals should be in the range -0dbfs to 0dbfs.
+    </p>
+        <p>
+      <span class="emphasis"><em>fout</em></span> (file output) writes samples of audio signals to a file with any number of channels. Channel number depends by the number of <span class="emphasis"><em>aoutN</em></span> variables (i.e. a mono signal with only an a-rate argument, a stereo signal with two a-rate arguments etc.) Maximum number of channels is fixed to 64. Multiple <span class="emphasis"><em>fout</em></span> opcodes can be present in the same instrument, referring to different files.
+    </p>
+        <p>
+      Notice that, unlike <a class="link" href="out.html" title="out"><em class="citetitle">out</em></a>, <a class="link" href="outs.html" title="outs"><em class="citetitle">outs</em></a> and <a class="link" href="outq.html" title="outq"><em class="citetitle">outq</em></a>, <span class="emphasis"><em>fout</em></span> does not zero the audio variable so you must zero it after calling it. If polyphony is to be used, you can use <a class="link" href="vincr.html" title="vincr"><em class="citetitle">vincr</em></a> and <a class="link" href="clear.html" title="clear"><em class="citetitle">clear</em></a> opcodes for this task.
+    </p>
+        <p>
+      Notice that <span class="emphasis"><em>fout</em></span> and <a class="link" href="foutk.html" title="foutk"><em class="citetitle">foutk</em></a> uses a
+      string containing a file pathname.
+      
+      
+      Whereas, with <a class="link" href="fouti.html" title="fouti"><em class="citetitle">fouti</em></a> and <a class="link" href="foutir.html" title="foutir"><em class="citetitle">foutir</em></a>, the
+      target file can be only specified by means of a handle-number. 
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>If you are using <span class="emphasis"><em>fout</em></span> to generate an audio file for the global output of csound, you might want to use the <a class="link" href="monitor.html" title="monitor"><em class="citetitle">monitor</em></a> opcode, which can tap the output buffer, to avoid having to route </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107322240"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is a simple example of the fout opcode. It uses the file <a class="ulink" href="examples/fout.csd" target="_top"><em class="citetitle">fout.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276107320448"></a>
+          <p class="title">
+            <strong>Example 351. Example of the fout opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276471438240"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o fout.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">Sine</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">^</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">sig</span> <span class="nb">poscil3</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">880</span><span class="p">,</span> gi<span class="n">Sine</span>
+<span class="c1">;write a raw file: 32 bits with header</span>
+     <span class="nb">fout</span> <span class="s">"fout_880.wav"</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> a<span class="n">sig</span>	
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+k<span class="n">lfo</span> <span class="nb">lfo</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>
+a<span class="n">sig</span> <span class="nb">poscil3</span> <span class="mf">.5</span><span class="o">*</span>k<span class="n">lfo</span><span class="p">,</span> <span class="mi">220</span><span class="p">,</span> gi<span class="n">Sine</span>
+<span class="c1">;write an aiff file: 32 bits with header</span>
+     <span class="nb">fout</span> <span class="s">"fout_aif.aiff"</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> a<span class="n">sig</span>	
+<span class="c1">;        fout "fout_all3.wav", 14, asig</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">99</span> <span class="c1">;read the stereo csound output buffer</span>
+
+a<span class="n">llL</span><span class="p">,</span> a<span class="n">llR</span> <span class="nb">monitor</span>
+<span class="c1">;write the output of csound to an audio file</span>
+<span class="c1">;to a wav file: 16 bits with header</span>
+           <span class="nb">fout</span> <span class="s">"fout_all.wav"</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> a<span class="n">llL</span><span class="p">,</span> a<span class="n">llR</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">3</span>
+<span class="nb">i</span> <span class="mi">99</span> <span class="mi">0</span> <span class="mi">3</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is another example of <span class="emphasis"><em>fout</em></span>, using it to save the contents of a table to an audio file. It uses the file <a class="ulink" href="examples/fout_ftable.csd" target="_top"><em class="citetitle">fout_ftable.csd</em></a> and <a class="ulink" href="examples/beats.wav" target="_top"><em class="citetitle">beats.wav</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276107314208"></a>
+          <p class="title">
+            <strong>Example 352. Example of the fout opcode to save the contents of an f-table.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276470357632"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o fout_ftable.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">; By: Jonathan Murphy 2007</span>
+
+  gi<span class="n">len</span>		<span class="o">=</span>		<span class="mi">131072</span>
+  gi<span class="n">cps</span>		<span class="o">=</span>		<span class="vg">sr</span><span class="o">/</span>gi<span class="n">len</span>
+  gi<span class="n">tab</span>		<span class="nb">ftgen</span>		<span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">len</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+                <span class="kd">instr</span> <span class="nf">1</span>
+
+  <span class="cm">/******** write file to table ********/</span>
+
+  a<span class="n">in</span>		<span class="nb">diskin2</span>		<span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+  a<span class="n">phs</span>		<span class="nb">phasor</span>		gi<span class="n">cps</span>
+  a<span class="n">ndx</span>		<span class="o">=</span>		a<span class="n">phs</span> <span class="o">*</span> gi<span class="n">len</span>
+		<span class="nb">tablew</span>		a<span class="n">in</span><span class="p">,</span> a<span class="n">ndx</span><span class="p">,</span> gi<span class="n">tab</span>
+
+  <span class="cm">/******** write table to file ********/</span>
+
+  a<span class="n">osc</span>		<span class="nb">table</span>		a<span class="n">phs</span><span class="p">,</span> gi<span class="n">tab</span><span class="p">,</span> <span class="mi">1</span>
+		<span class="nb">out</span>		a<span class="n">osc</span>
+		<span class="nb">fout</span>		<span class="s">"beats_copy.wav"</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> a<span class="n">osc</span>
+
+                <span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107312496"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="fiopen.html" title="fiopen"><em class="citetitle">fiopen</em></a>,
+      <a class="link" href="fouti.html" title="fouti"><em class="citetitle">fouti</em></a>,
+      <a class="link" href="foutir.html" title="foutir"><em class="citetitle">foutir</em></a>,
+      <a class="link" href="foutk.html" title="foutk"><em class="citetitle">foutk</em></a>,
+      <a class="link" href="monitor.html" title="monitor"><em class="citetitle">monitor</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276107306944"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>1999</td>
+          </tr>
+          <tr>
+            <td>Author: John ffitch</td>
+          </tr>
+          <tr>
+            <td>NUIM, 2013</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.56</p>
+        <p>October 2002. Added a note from Richard Dobson.</p>
+        <p>Array version new in 6.01</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="foscili.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="fouti.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">foscili </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> fouti</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

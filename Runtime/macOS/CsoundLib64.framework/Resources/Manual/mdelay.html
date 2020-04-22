@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>mdelay</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="mclock.html" title="mclock" />
+    <link rel="next" href="median.html" title="median" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">mdelay</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="mclock.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="median.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="mdelay"></a>
+      <div class="titlepage"></div>
+      <a id="IndexMdelay" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">mdelay</span>
+        </h2>
+        <p>mdelay — 
+      A MIDI delay opcode.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081758144"></a>
+        <h2>Description</h2>
+        <p>
+      A MIDI delay opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081756928"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>mdelay</strong></span> kstatus, kchan, kd1, kd2, kdelay</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081754960"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kstatus</em></span> -- status byte of MIDI message to be delayed
+    </p>
+        <p>
+      <span class="emphasis"><em>kchan</em></span> -- MIDI channel (1-16)
+    </p>
+        <p>
+      <span class="emphasis"><em>kd1</em></span> -- first MIDI data byte
+    </p>
+        <p>
+      <span class="emphasis"><em>kd2</em></span> -- second MIDI data byte
+    </p>
+        <p>
+      <span class="emphasis"><em>kdelay</em></span> -- delay time in seconds
+    </p>
+        <p>
+      Each time that <span class="emphasis"><em>kstatus</em></span> is other than zero, <span class="emphasis"><em>mdelay</em></span> outputs a MIDI message to the MIDI out port after <span class="emphasis"><em>kdelay</em></span> seconds. This opcode is useful in implementing MIDI delays. Several instances of <span class="emphasis"><em>mdelay</em></span> can be present in the same instrument with different argument values, so complex and colorful MIDI echoes can be implemented. Further, the delay time can be changed at k-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081747632"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the mdelay opcode. It uses the file <a class="ulink" href="examples/mdelay.csd" target="_top"><em class="citetitle">mdelay.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276081745840"></a>
+          <p class="title">
+            <strong>Example 543. Example of the mdelay opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276453966784"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d         -M0  -Q0 
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">4410</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">; Example by Giorgio Zucco 2007</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>  <span class="c1">;Triggered by MIDI notes on channel 1</span>
+
+  k<span class="n">status</span> <span class="nb">init</span> <span class="mi">0</span>
+  i<span class="n">fund</span>   <span class="nb">notnum</span> 	 
+  i<span class="n">vel</span> 	<span class="nb">veloc</span> 
+
+  <span class="nb">noteondur</span>  <span class="mi">1</span><span class="p">,</span> i<span class="n">fund</span><span class="p">,</span> i<span class="n">vel</span><span class="p">,</span> <span class="mi">1</span>
+
+  k<span class="n">status</span> <span class="o">=</span> k<span class="n">status</span> <span class="o">+</span> <span class="mi">1</span> 
+
+  i<span class="n">del1</span> <span class="o">=</span> <span class="mf">.2</span>
+  i<span class="n">del2</span> <span class="o">=</span> <span class="mf">.4</span>
+  i<span class="n">del3</span> <span class="o">=</span> <span class="mf">.6</span>
+  i<span class="n">del4</span> <span class="o">=</span> <span class="mf">.8</span>
+
+  <span class="c1">;make four delay lines</span>
+
+  <span class="nb">mdelay</span> 	k<span class="n">status</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>i<span class="n">fund</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> i<span class="n">vel</span><span class="p">,</span>i<span class="n">del1</span>
+  <span class="nb">mdelay</span> 	k<span class="n">status</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>i<span class="n">fund</span><span class="o">+</span><span class="mi">4</span><span class="p">,</span> i<span class="n">vel</span><span class="p">,</span>i<span class="n">del2</span>
+  <span class="nb">mdelay</span> 	k<span class="n">status</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>i<span class="n">fund</span><span class="o">+</span><span class="mi">6</span><span class="p">,</span> i<span class="n">vel</span><span class="p">,</span>i<span class="n">del3</span>
+  <span class="nb">mdelay</span> 	k<span class="n">status</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span>i<span class="n">fund</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span> i<span class="n">vel</span><span class="p">,</span>i<span class="n">del4</span>
+
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="c1">; Dummy ftable</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">60</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276081741856"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Gabriel Maldonado</td>
+          </tr>
+          <tr>
+            <td>Italy</td>
+          </tr>
+          <tr>
+            <td>November 1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.492</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="mclock.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="median.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">mclock </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> median</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

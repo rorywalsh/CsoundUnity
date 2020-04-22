@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Unified File Format for Orchestras and Scores</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="CommandTop.html" title="The Csound Command" />
+    <link rel="prev" href="CommandEnvironment.html" title="Csound Environment Variables" />
+    <link rel="next" href="CommandUnifileExample.html" title="Example" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Unified File Format for Orchestras and Scores</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="CommandEnvironment.html">Prev</a> </td>
+          <th width="60%" align="center">The Csound Command</th>
+          <td width="20%" align="right"> <a accesskey="n" href="CommandUnifileExample.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="CommandUnifile"></a>Unified File Format for Orchestras and Scores</h2>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="CommandUnifileDescription"></a>Description</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      The Unified File Format<a id="IndexUnifiedFile" class="indexterm"></a>, introduced in Csound version 3.50, enables the orchestra and score files, as well as command line flags, to be combined in one file. The file has the extension <span class="emphasis"><em>.csd</em></span>. This format was originally introduced by Michael Gogins in AXCsound.
+
+      <a id="IndexCSD" class="indexterm"></a>
+      <a id="IndexCsoundrcUnifile" class="indexterm"></a>
+      <a id="IndexCsFileB" class="indexterm"></a>
+      <a id="IndexCsFile" class="indexterm"></a>
+      <a id="IndexCsInstruments" class="indexterm"></a>
+      <a id="IndexCsMidifileB" class="indexterm"></a>
+      <a id="IndexCsOptions" class="indexterm"></a>
+      <a id="IndexCsSampleB" class="indexterm"></a>
+      <a id="IndexCsScore" class="indexterm"></a>
+      <a id="IndexCsoundSynthesizer" class="indexterm"></a>
+      <a id="IndexCsVersion" class="indexterm"></a>
+      <a id="IndexCsLicense" class="indexterm"></a>
+      <a id="IndexCsShortLicense" class="indexterm"></a>
+    </p>
+        <p>
+      The file is a structured data file which uses markup language, similar to any SGML such as HTML. Start tags (&lt;<span class="emphasis"><em>tag</em></span>&gt;) and end tags (&lt;/<span class="emphasis"><em>tag</em></span>&gt;) are used to delimit the various elements. The file is saved as a text file.
+    </p>
+        <h4><a id="idm276142569728"></a>Structured Data File Format</h4>
+        <h4><a id="idm276142569312"></a>Mandatory Elements</h4>
+        <p>
+      The first tag in the file must be the start tag <span class="emphasis"><em>&lt;CsoundSynthesizer&gt;. </em></span>The last tag in the file must be the end tag <span class="emphasis"><em>&lt;/CsoundSynthesizer&gt;. </em></span>This element is used to alert the csound compiler to the <span class="emphasis"><em>.csd</em></span> format.  All text before the start tag and after the end tag is ignored by Csound.  The tag may also be spelled <span class="emphasis"><em>&lt;CsoundSynthesiser&gt;</em></span>.
+    </p>
+        <h4><a id="idm276142566496"></a>Options (&lt;CsOptions&gt;)</h4>
+        <p>
+      Csound <a class="link" href="CommandFlagsCategory.html" title="Command-line Flags (by Category)"><em class="citetitle">command line flags</em></a> are put in the Options Element. This section is delimited by the start tag <span class="emphasis"><em>&lt;CsOptions&gt;</em></span> and the end tag <span class="emphasis"><em>&lt;/CsOptions&gt; </em></span>Lines beginning with <span class="emphasis"><em>#</em></span> or <span class="emphasis"><em>;</em></span> are treated as comments.
+    </p>
+        <h4><a id="idm276142562976"></a>Orchestra (&lt;CsInstruments&gt;)</h4>
+        <p>
+      The instrument definitions (orchestra) are put into the Instruments Element. The statements and syntax in this section are identical to the Csound <a class="link" href="OrchTop.html" title="Syntax of the Orchestra"><em class="citetitle">orchestra file</em></a>, and have the same requirements, including the header statements (<span class="emphasis"><em>sr</em></span>, <span class="emphasis"><em>kr</em></span>, etc.) This Instruments Element is delimited with the start tag <span class="emphasis"><em>&lt;CsInstruments&gt;</em></span> and the end tag <span class="emphasis"><em>&lt;/CsInstruments&gt;.</em></span>
+    </p>
+        <h4><a id="idm276142559328"></a>Score (&lt;CsScore&gt;)</h4>
+        <p>
+      Csound score statements are put in the Score Element. The statements and syntax in this section are identical to the Csound <a class="link" href="ScoreTop.html" title="The Standard Numeric Score"><em class="citetitle">score file</em></a>, and have the same requirements. The Score Element is delimited by the start tag <span class="emphasis"><em>&lt;CsScore&gt; </em></span>and the end tag <span class="emphasis"><em>&lt;/CsScore&gt;.</em></span>
+    </p>
+        <p>
+      As an alternative Csound score statements can also be generated by an external
+      program using the CsScore scheme with an attribute bin. The lines upto the closing
+      tag <span class="emphasis"><em>&lt;/CsScore&gt;</em></span> are copied to a file
+      and the external program named is called with that file name and
+      the destination score file.  The external program should create a
+      standard Csound score.
+    </p>
+        <h4><a id="idm276142555360"></a>Optional Elements</h4>
+        <h4><a id="idm276142554944"></a>Included Base64 Files (&lt;CsFileB&gt;)</h4>
+        <p>
+      Base64-encoded files may be included with the tag <span class="emphasis"><em>&lt;CsFileB filename=</em></span><span class="emphasis"><em>filename</em></span><span class="emphasis"><em>&gt;</em></span>, where <span class="emphasis"><em>filename</em></span> is the name of the file to be included. The Base64-encoded data should be terminated with a <span class="emphasis"><em>&lt;/CsFileB&gt;</em></span> tag. For encoding files, the csb64enc and  <a class="link" href="makecsd.html" title="makecsd"><em class="citetitle">makecsd</em></a> utilities (included with Csound 5.00 and newer) can be used. The file will be extracted to the current directory, and deleted at end of performance. If there is an already existing file with the same name, it is not overwritten, but an error will occur instead.
+    </p>
+        <p>
+      Base64-encoded MIDI files may be included with the tag <span class="emphasis"><em>&lt;CsMidifileB filename=</em></span><span class="emphasis"><em>filename</em></span><span class="emphasis"><em>&gt;</em></span>, where <span class="emphasis"><em>filename</em></span> is the name of the file containing the MIDI information. There is no matching end tag. This was added in Csound version 4.07. Note: using this tag is not recommended; use <span class="emphasis"><em>&lt;CsFileB&gt;</em></span> instead.
+    </p>
+        <p>
+      Base64-encoded sample files may be included with the tag <span class="emphasis"><em>&lt;CsSampleB filename=</em></span><span class="emphasis"><em>filename</em></span><span class="emphasis"><em>&gt;</em></span>, where <span class="emphasis"><em>filename</em></span> is the name of the file containing the sample. There is no matching end tag. This was added in Csound version 4.07. Note: using this tag is not recommended; use <span class="emphasis"><em>&lt;CsFileB&gt;</em></span> instead.
+    </p>
+        <h4><a id="idm276142545952"></a>Included Unencoded Files (&lt;CsFile&gt;)</h4>
+        <p>
+      Unencoded files may be included with the tag
+      <span class="emphasis"><em>&lt;CsFile
+      filename=</em></span><span class="emphasis"><em>filename</em></span><span class="emphasis"><em>&gt;</em></span>,
+      where <span class="emphasis"><em>filename</em></span> is the name of the file to
+      be included. The data should be terminated with a
+      <span class="emphasis"><em>&lt;/CsFile&gt;</em></span> tag alone on a line. The
+      file will be extracted to the current directory, and deleted at
+      end of performance. If there is an already existing file with
+      the same name, it is not overwritten, but an error will occur
+      instead.
+    </p>
+        <h4><a id="idm276142542896"></a>Version Blocking (&lt;CsVersion&gt;)</h4>
+        <p>
+        Versions of Csound may blocked by placing one of the following statements between the start tag &lt;CsVersion&gt; and the end tag &lt;/CsVersion&gt;:
+
+          </p>
+        <div class="informalexample">
+          <pre class="programlisting">Before #.#</pre>
+        </div>
+        <p>
+
+         or
+
+          </p>
+        <div class="informalexample">
+          <pre class="programlisting">After #.#</pre>
+        </div>
+        <p>
+
+         where #.# is the requested Csound version number. The second statement may be written simply as:
+
+          </p>
+        <div class="informalexample">
+          <pre class="programlisting">#.#</pre>
+        </div>
+        <p>
+
+         This was added in Csound version 4.09.
+        </p>
+        <h4><a id="idm276142538544"></a>Licence Information (&lt;CsLicence&gt; or &lt;CsLicense&gt;)</h4>
+        <p>
+        Licencing details can be included in between the start tag
+        <span class="emphasis"><em>&lt;CsLicence&gt;</em></span> and the end tag
+        <span class="emphasis"><em>&lt;/CsLicence&gt;</em></span>.  There is no format
+        for this information, any text is acceptable.  This text will
+        be printed by Csound to the console when the CSD is run.
+        </p>
+        <h4><a id="idm276142536544"></a>Licence Information (&lt;CsShortLicence&gt; or &lt;CsShortLicense&gt;)</h4>
+        <p>
+          From version 6.05 licencing details can be also included in
+          between the start tag
+          <span class="emphasis"><em>&lt;CsShortLicence&gt;</em></span> and the end tag
+          <span class="emphasis"><em>&lt;/CsShortLicence&gt;</em></span>.  This offers
+          seven well-known licences, coded as as an integer.
+        </p>
+        <p>
+          </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>0: "All rights reserved" (default)</td>
+          </tr>
+          <tr>
+            <td>1: "Creative Commons Attribution-NonCommercial-NoDerivatives (CC BY-NC-ND)"</td>
+          </tr>
+          <tr>
+            <td>2: "Creative Commons Attribution-NonCommercial-ShareAlike (CC BY-NC-SA)"</td>
+          </tr>
+          <tr>
+            <td>3: "Creative Commons Attribution-NonCommercial (CC BY-NC)"</td>
+          </tr>
+          <tr>
+            <td>4: "Creative Commons Attribution-NoDerivatives (CC BY-ND)"</td>
+          </tr>
+          <tr>
+            <td>5: "Creative Commons Attribution-ShareAlike (CC BY-SA)"</td>
+          </tr>
+          <tr>
+            <td>6: "Creative Commons Attribution-ShareAlike (CC BY)"</td>
+          </tr>
+          <tr>
+            <td>7: "Licenced under BSD"</td>
+          </tr>
+        </table>
+        <p>
+        </p>
+        <h4><a id="idm276142529968"></a>Embedded HTML (&lt;html&gt;)</h4>
+        <p>
+        Any valid HTML code can be embedded in the CSD file. This code should be structured exactly like an ordinary Web page. This code
+        can contain any valid HTML, JavaScript, Cascading Style Sheet, WebGL, etc., etc. code.
+      </p>
+        <p>
+        In some Csound front ends and programming environments, including at least CsoundQt or Csound for Android, this page will be parsed, executed,
+        and displayed by a Web browser embedded in the environment. JavaScript code in this page will have access to a global <span class="emphasis"><em>csound</em></span>
+        object that implements the following functions, which are a selected subset of the Csound API. The names, data types, and
+        uses of these functions are exactly the same as detailed in the Csound API Reference Manual.
+        </p>
+        <p>
+            </p>
+        <pre class="programlisting">
+[int] getVersion ();
+compileOrc (orchestra_text);
+[double] evalCode (orchestra_expression);
+readScore (score_text);
+setControlChannel (channel_name, numeric_value);
+[double] getControlChannel (channel_name);
+message (message_string);
+[int] getSr ();
+[int] getKsmps ();
+[int] getNchnls ();
+// Not a part of the Csound API -- called by the environment to detect whether Csound is running.
+[int] isPlaying ();
+            </pre>
+        <p>
+        </p>
+        <p>
+        The HTML element of the CSD file can be used to create custom user interfaces for the piece, to generate score events and even orchestra code
+        using JavaSscript, to store presets for widgets, and for many other purposes. The
+        <a class="ulink" href="examples/GameOfLife3D.csd" target="_top"><em class="citetitle">GameOfLife3D.csd</em></a> and
+        <a class="ulink" href="examples/LindenmayerCanvas.csd" target="_top"><em class="citetitle">LindenmayerCanvas.csd</em></a>
+        examples demonstrate these uses (tested in CsoundQt; running these examples
+        requires additional resources found in the Csound examples directory in GIT).
+        </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="CommandEnvironment.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="CommandTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="CommandUnifileExample.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Csound Environment Variables </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Example</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

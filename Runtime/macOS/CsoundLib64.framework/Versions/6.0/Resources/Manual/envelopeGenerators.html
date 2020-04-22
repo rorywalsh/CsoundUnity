@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Vectorial Envelope Generators</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="vectorial.html" title="Vectorial Opcodes" />
+    <link rel="prev" href="vectorialvectorial.html" title="Operations Between two Vectorial Signals" />
+    <link rel="next" href="vectorialimiting.html" title="Limiting and wrapping of vectorial control signals" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Vectorial Envelope Generators</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vectorialvectorial.html">Prev</a> </td>
+          <th width="60%" align="center">Vectorial Opcodes</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vectorialimiting.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="envelopeGenerators"></a>Vectorial Envelope Generators</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    The opcodes to generate vectors containing envelopes are
+    <a class="link" href="vlinseg.html" title="vlinseg"><em class="citetitle">vlinseg</em></a> and
+    <a class="link" href="vexpseg.html" title="vexpseg"><em class="citetitle">vexpseg</em></a>.
+  </p>
+      <p>
+    These opcodes are similar to <a class="link" href="linseg.html" title="linseg"><em class="citetitle">linseg</em></a> and <a class="link" href="expseg.html" title="expseg"><em class="citetitle">expseg</em></a>, but operate with vectorial signals instead of with scalar signals.
+  </p>
+      <p>
+    Output is a vector hosted by an f-table (that must be previously allocated), while each break-point of the envelope is actually a vector of values. All break-points must contain the same number of elements (<span class="emphasis"><em>ielements</em></span>).
+  </p>
+      <h3>
+        <a id="idm276128487424"></a>
+      </h3>
+      <p>
+    These operators are designed to be used together with other opcodes that operate with vectorial signals such as <a class="link" href="vcella.html" title="vcella"><em class="citetitle">vcella</em></a>, <a class="link" href="adsynt.html" title="adsynt"><em class="citetitle">adsynt</em></a>, <a class="link" href="adsynt2.html" title="adsynt2"><em class="citetitle">adsynt2</em></a>, etc.
+  </p>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vectorialvectorial.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="vectorial.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vectorialimiting.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Operations Between two  Vectorial Signals </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Limiting and wrapping of vectorial control signals</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

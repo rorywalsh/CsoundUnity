@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>&lt;</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="lastcycle.html" title="lastcycle" />
+    <link rel="next" href="lessequal.html" title="&lt;=" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">&lt;</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="lastcycle.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="lessequal.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="lessthan"></a>
+      <div class="titlepage"></div>
+      <a id="IndexLtColon" class="indexterm"></a>
+      <a id="IndexLtQuestion" class="indexterm"></a>
+      <a id="IndexLtExpression" class="indexterm"></a>
+      <a id="IndexLt" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">&lt;</span>
+        </h2>
+        <p>&lt; — 
+      Determines if one value is less than another.
+                            </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127156624"></a>
+        <h2>Description</h2>
+        <p>
+      Determines if one value is less than another.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127155312"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">(a <span class="command"><strong>&lt;</strong></span>  b <span class="command"><strong>?</strong></span> v1 <span class="command"><strong>:</strong></span> v2)</pre>
+        <p>
+      where <span class="emphasis"><em>a</em></span>, <span class="emphasis"><em>b</em></span>, <span class="emphasis"><em>v1</em></span> and <span class="emphasis"><em>v2</em></span> may be expressions, but <span class="emphasis"><em>a</em></span>, <span class="emphasis"><em>b</em></span> not audio-rate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127149136"></a>
+        <h2>Performance</h2>
+        <p>
+      In the above conditional, <span class="emphasis"><em>a</em></span> and <span class="emphasis"><em>b</em></span> are first compared. If the indicated relation is true (<span class="emphasis"><em>a</em></span> less than <span class="emphasis"><em>b</em></span>), then the conditional expression has the value of <span class="emphasis"><em>v1</em></span>; if the relation is false, the expression has the value of <span class="emphasis"><em>v2</em></span>.
+    </p>
+        <p>
+      NB.: If <span class="emphasis"><em>v1</em></span> or <span class="emphasis"><em>v2</em></span> are expressions, these will be evaluated before the conditional is determined.
+    </p>
+        <p>
+      In terms of binding strength, all conditional operators (i.e. the relational operators (<span class="emphasis"><em>&lt;</em></span>, etc.), and <span class="emphasis"><em>?</em></span>, and <span class="emphasis"><em>:</em></span> ) are weaker than the arithmetic and logical operators (<span class="emphasis"><em>+</em></span>, <span class="emphasis"><em>-</em></span>, <span class="emphasis"><em>*</em></span>, <span class="emphasis"><em>/</em></span>, <span class="emphasis"><em>&amp;&amp;</em></span> and <span class="emphasis"><em>||</em></span>).
+    </p>
+        <p>
+      These are <span class="emphasis"><em>operators</em></span> not <span class="emphasis"><em>opcodes</em></span>. Therefore, they can be used within orchestra statements, but do not form complete statements themselves.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127138400"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the &lt; operator. It uses the file <a class="ulink" href="examples/lessthan.csd" target="_top"><em class="citetitle">lessthan.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276127136592"></a>
+          <p class="title">
+            <strong>Example 25. Example of the &lt; operator.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276497865376"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o &lt;.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+i<span class="n">pch</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">pitch</span>	<span class="o">=</span> <span class="p">(</span>i<span class="n">pch</span> <span class="o">&lt;</span> <span class="mi">15</span> <span class="p">?</span> <span class="nb">cpspch</span><span class="p">(</span>i<span class="n">pch</span><span class="p">)</span> <span class="p">:</span> i<span class="n">pch</span><span class="p">)</span>	<span class="c1">;if p4 is lower then 15, it assumes p4 to be pitch-class</span>
+<span class="nb">print</span> i<span class="n">pitch</span>					<span class="c1">;and not meant to be a frequency in Hertz</span>
+a<span class="n">sig</span>  <span class="nb">poscil</span> <span class="mf">.5</span><span class="p">,</span>  i<span class="n">pitch</span> <span class="p">,</span> <span class="mi">1</span>
+      <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+  
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>	<span class="c1">;sine wave</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span>  <span class="mi">3</span> <span class="mf">8.00</span>	<span class="c1">;pitch class</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">4</span>  <span class="mi">3</span> <span class="mi">800</span>	<span class="c1">;frequency</span>
+
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+
+      Its output should include lines like this:
+      </p>
+        <pre class="screen">
+ipitch = 261.626
+ipitch = 800.00</pre>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276127131776"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="equals.html" title="=="><em class="citetitle">==</em></a>,
+      <a class="link" href="greaterequal.html" title="&gt;="><em class="citetitle">&gt;=</em></a>,
+      <a class="link" href="greaterthan.html" title="&gt;"><em class="citetitle">&gt;</em></a>,
+      <a class="link" href="lessequal.html" title="&lt;="><em class="citetitle">&lt;=</em></a>,
+      <a class="link" href="notequal.html" title="!="><em class="citetitle">!=</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="lastcycle.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lessequal.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">lastcycle </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> &lt;=</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

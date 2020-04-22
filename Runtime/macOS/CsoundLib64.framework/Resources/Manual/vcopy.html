@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vcopy</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vcomb.html" title="vcomb" />
+    <link rel="next" href="vcopy_i.html" title="vcopy_i" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vcopy</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vcomb.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vcopy_i.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vcopy"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVcopy" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vcopy</span>
+        </h2>
+        <p>vcopy — 
+      Copies between two vectorial control signals
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041466384"></a>
+        <h2>Description</h2>
+        <p>
+      Copies between two vectorial control signals
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041465152"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vcopy</strong></span>  ifn1, ifn2, kelements [, kdstoffset] [, ksrcoffset] [, kverbose]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041463152"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifn1</em></span> - number of the table where the vectorial signal will be copied (destination)
+    </p>
+        <p>
+      <span class="emphasis"><em>ifn2</em></span> - number of the table hosting the vectorial signal to be copied (source)
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041460624"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kelements</em></span> - number of elements of the vector
+    </p>
+        <p>
+      <span class="emphasis"><em>kdstoffset</em></span> - index offset for the destination (<span class="emphasis"><em>ifn1</em></span>) table (Default=0)
+    </p>
+        <p>
+      <span class="emphasis"><em>ksrcoffset</em></span> - index offset for the source (<span class="emphasis"><em>ifn2</em></span>) table (Default=0)
+    </p>
+        <p>
+      <span class="emphasis"><em>kverbose</em></span> - Selects whether or not warnings are printed (Default=0)
+    </p>
+        <p>
+      <span class="emphasis"><em>vcopy</em></span> copies <span class="emphasis"><em>kelements</em></span> elements from <span class="emphasis"><em>ifn2</em></span> (starting from position <span class="emphasis"><em>ksrcoffset</em></span>) to <span class="emphasis"><em>ifn1</em></span> (starting from position <span class="emphasis"><em>kdstoffset</em></span>). Useful to keep old vector values, by storing them in another table.
+    </p>
+        <p>
+      Negative values for <span class="emphasis"><em>kdstoffset</em></span> and <span class="emphasis"><em>ksrcoffset</em></span> are acceptable. If <span class="emphasis"><em>kdstoffset</em></span> is negative, the out of range section of the vector will be discarded. If <span class="emphasis"><em>kdstoffset</em></span> is negative, the out of range elements will be assumed to be 1 (i.e. the destination elements will not be changed). If elements for the destination vector are beyond the size of the table (including guard point), these elements are discarded (i.e. elements do not wrap around the tables). If elements for the source vector are beyond the table length, these elements are taken as 1 (i.e. the destination vector will not be changed for these elements).
+    </p>
+        <p>
+      If the optional <span class="emphasis"><em>kverbose</em></span> argument is different to 0, the opcode will print warning messages every k-pass if table lengths are exceeded.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Using the same table as source and destination table in versions earlier than 5.04, might produce unexpected behavior, so use with care.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      This opcode works at k-rate (this means that every k-pass the vectors are copied). There's an i-rate version of this opcode called <a class="link" href="vcopy_i.html" title="vcopy_i"><em class="citetitle">vcopy_i</em></a>.
+    </p>
+        <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Note">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Note]" src="images/note.png" />
+              </td>
+              <th align="left">Note</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Please note that the <span class="emphasis"><em>elements</em></span> argument has changed in version 5.03 from i-rate to k-rate. This will change the opcode's behavior in the unusual cases where the i-rate variable <span class="emphasis"><em>ielements</em></span> is changed inside the instrument, for example in:
+        </p>
+                <pre class="programlisting">
+    <span class="oblock">instr</span> 1
+ielements  <span class="op">=</span>        10
+           <span class="opc">vadd</span>     1, 1, ielements
+ielements  <span class="op">=</span>        20
+           <span class="opc">vadd</span>     2, 1, ielements
+           <span class="opc">turnoff</span>
+    <span class="oblock">endin</span></pre>
+                <p>
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      All these operators (<a class="link" href="vaddv.html" title="vaddv"><em class="citetitle">vaddv</em></a>, <a class="link" href="vsubv.html" title="vsubv"><em class="citetitle">vsubv</em></a>, <a class="link" href="vmultv.html" title="vmultv"><em class="citetitle">vmultv</em></a>, <a class="link" href="vdivv.html" title="vdivv"><em class="citetitle">vdivv</em></a>, <a class="link" href="vpowv.html" title="vpowv"><em class="citetitle">vpowv</em></a>, <a class="link" href="vexp.html" title="vexp"><em class="citetitle">vexp</em></a>, <a class="link" href="vcopy.html" title="vcopy"><em class="citetitle">vcopy</em></a> and <a class="link" href="vmap.html" title="vmap"><em class="citetitle">vmap</em></a>) are designed to be used together with other opcodes that operate with vectorial signals such as <a class="link" href="vcella.html" title="vcella"><em class="citetitle">vcella</em></a>, <a class="link" href="adsynt.html" title="adsynt"><em class="citetitle">adsynt</em></a>, <a class="link" href="adsynt2.html" title="adsynt2"><em class="citetitle">adsynt2</em></a> etc. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041429344"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the vcopy opcode. It uses the file <a class="ulink" href="examples/vcopy.csd" target="_top"><em class="citetitle">vcopy.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276041427552"></a>
+          <p class="title">
+            <strong>Example 1090. Example of the vcopy opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276409696192"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span><span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o vcopy.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">kr</span><span class="o">=</span><span class="mi">4410</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">10</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+	<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">;table playback</span>
+a<span class="n">r</span> <span class="nb">lposcil</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">262144</span><span class="p">,</span> <span class="mi">1</span>
+<span class="nb">outs</span> a<span class="n">r</span><span class="p">,</span>a<span class="n">r</span>
+	<span class="kd">endin</span>    
+
+	<span class="kd">instr</span> <span class="nf">2</span>
+<span class="nb">vcopy</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">20000</span> <span class="c1">;copy vector from sample to empty table</span>
+<span class="nb">vmult</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">20000</span><span class="p">,</span> <span class="mi">262144</span> <span class="c1">;scale noise to make it audible</span>
+<span class="nb">vcopy</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">20000</span>  <span class="c1">;put noise into sample</span>
+<span class="nb">turnoff</span>
+	<span class="kd">endin</span>
+
+	<span class="kd">instr</span> <span class="nf">3</span>
+<span class="nb">vcopy</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">20000</span> <span class="c1">;put original information back in</span>
+<span class="nb">turnoff</span>
+	<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span>  <span class="mi">0</span> <span class="mi">262144</span>   <span class="o">-</span><span class="mi">1</span> <span class="s">"beats.wav"</span> <span class="mi">0</span> <span class="mi">4</span> <span class="mi">0</span>
+<span class="nb">f</span><span class="mi">2</span>  <span class="mi">0</span> <span class="mi">262144</span>   <span class="mi">2</span>  <span class="mi">0</span>
+
+<span class="nb">f</span><span class="mi">5</span>  <span class="mi">0</span> <span class="mi">262144</span>   <span class="mi">21</span>  <span class="mi">3</span> <span class="mi">30000</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">3</span> <span class="mi">1</span>
+
+<span class="nb">s</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">3</span> <span class="mi">1</span>
+<span class="nb">s</span>
+
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276041425920"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado. Optional arguments added by Andres Cabrera and Istvan Varga.</p>
+        <p>New in Csound 5 (Previously available only on CsoundAV)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vcomb.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vcopy_i.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vcomb </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vcopy_i</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GEN31</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoregensTop.html" title="Score Statements and GEN Routines" />
+    <link rel="prev" href="GEN30.html" title="GEN30" />
+    <link rel="next" href="GEN32.html" title="GEN32" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">GEN31</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="GEN30.html">Prev</a> </td>
+          <th width="60%" align="center">Score Statements and GEN Routines</th>
+          <td width="20%" align="right"> <a accesskey="n" href="GEN32.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="GEN31"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGEN31" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">GEN31</span>
+        </h2>
+        <p>GEN31 — 
+      Mixes any waveform specified in an existing table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988271520"></a>
+        <h2>Description</h2>
+        <p>
+      This routine is similar to <a class="link" href="GEN09.html" title="GEN09">GEN09</a>, but allows mixing any waveform specified in an existing table.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988269488"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>f</strong></span> # time size  31  src  pna stra phsa  pnb strb phsb  ...</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988267520"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>src</em></span> -- source table number
+    </p>
+        <p>
+      <span class="emphasis"><em>pna, pnb, ...</em></span> -- partial number, must be a positive integer
+    </p>
+        <p>
+      <span class="emphasis"><em>stra, strb, ...</em></span> -- amplitude scale
+    </p>
+        <p>
+      <span class="emphasis"><em>phsa, phsb, ...</em></span> -- start phase (0 to 1)
+    </p>
+        <p>
+      <span class="emphasis"><em>GEN31</em></span> does not support tables with an extended guard point (ie. table size = power of two + 1). Although such tables will work both for input and output, when reading source table(s), the guard point is ignored, and when writing the output table, guard point is simply copied from the first sample (table index = 0).
+    </p>
+        <p>
+      The reason of this limitation is that <span class="emphasis"><em>GEN31</em></span> uses FFT, which requires power of two table size.  <a class="link" href="GEN32.html" title="GEN32"><em class="citetitle">GEN32</em></a> allows using linear interpolation for resampling and phase shifting, which makes it possible to use any table size (however, for partials calculated with FFT, the power of two limitation still exists).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988260384"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the GEN31 routine. It uses the files <a class="ulink" href="examples/gen31.csd" target="_top"><em class="citetitle">gen31.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm275988258592"></a>
+          <p class="title">
+            <strong>Example 1224. Example of the GEN31 routine.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276398809472"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+gi<span class="n">sine</span>  <span class="nb">ftgen</span>  <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">4096</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span>
+gi<span class="n">31</span>    <span class="nb">ftgen</span>  <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">4096</span><span class="p">,</span><span class="mi">31</span><span class="p">,</span>gi<span class="n">sine</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+  a<span class="n">a</span>  <span class="nb">oscil3</span>  <span class="mf">0.6</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> gi<span class="n">31</span>
+      <span class="nb">out</span>     a<span class="n">a</span>
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">5</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm275988254608"></a>
+        <h2>Credits</h2>
+        <p>Author: Istvan Varga</p>
+        <p>New in version 4.15</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="GEN30.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoregensTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="GEN32.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">GEN30 </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> GEN32</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

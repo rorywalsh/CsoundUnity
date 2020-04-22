@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>pyeval Opcodes</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="pycall.html" title="pycall Opcodes" />
+    <link rel="next" href="pyexec.html" title="pyexec Opcodes" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">pyeval Opcodes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="pycall.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="pyexec.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="pyeval"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPyEval" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">pyeval Opcodes</span>
+        </h2>
+        <p>pyeval — Evaluate a generic Python expression and store the result in a Csound variable at k-time or i-time (i suffix).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063705744"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kresult <span class="command"><strong>pyeval</strong></span> "expression"</pre>
+        <pre class="synopsis">iresult <span class="command"><strong>pyevali</strong></span> "expression"</pre>
+        <pre class="synopsis">kresult <span class="command"><strong>pyleval</strong></span> "expression"</pre>
+        <pre class="synopsis">iresult <span class="command"><strong>pylevali</strong></span> "expression"</pre>
+        <pre class="synopsis">kresult <span class="command"><strong>pyevalt</strong></span> ktrigger, "expression"</pre>
+        <pre class="synopsis">kresult <span class="command"><strong>pylevalt</strong></span> ktrigger, "expression"</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063697152"></a>
+        <h2>Description</h2>
+        <p>These opcodes evaluate a generic Python expression and store the
+      result in a Csound variable at k-time or i-time (i suffix).</p>
+        <p>The expression must evaluate in a float or an object that can be
+      cast to a float.</p>
+        <p>They can be used effectively to trasfer data from a Python
+      object into a Csound variable.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063694880"></a>
+        <h2>Example of the pyeval Opcode Group</h2>
+        <p>The code:</p>
+        <pre class="programlisting">
+k1           <span class="opc">pyeval</span>      "v1"</pre>
+        <p>will copy the content of the Python variable <span class="emphasis"><em>v1</em></span> into the Csound variable <span class="emphasis"><em>k1</em></span> at each k-time.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276063691120"></a>
+        <h2>Credits</h2>
+        <p>Copyright (c) 2002 by Maurizio Umberto Puxeddu. All rights
+      reserved. Portions copyright (c) 2004 and 2005 by Michael Gogins. This
+      document has been updated Sunday 25 July 2004 and 1 February 2005 by
+      Michael Gogins.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="pycall.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="pyexec.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">pycall Opcodes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> pyexec Opcodes</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

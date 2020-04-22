@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>inletk</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="inleta.html" title="inleta" />
+    <link rel="next" href="inletkid.html" title="inletkid" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">inletk</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="inleta.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="inletkid.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="inletk"></a>
+      <div class="titlepage"></div>
+      <a id="Indexinletk" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">inletk</span>
+        </h2>
+        <p>inletk — 
+      Receives a krate signal into an instrument from a named port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097548688"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in signalflowgraph</p>
+        <p>
+      Receives a krate signal into an instrument from a named port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097547008"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ksignal <span class="command"><strong>inletk </strong></span>Sname</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097544928"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>Sname</em></span> -- String name of the inlet port.       
+      The name of the inlet is implicitly qualified by the instrument name 
+      or number, so it is valid to use the same inlet name in more than one 
+      instrument (but not to use the same inlet name twice in one instrument).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097543072"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ksignal</em></span> -- krate input signal
+    </p>
+        <p>
+      During performance, the krate inlet signal is received from each instance of an instrument
+      containing an outlet port to which this inlet has been connected using the 
+      <a class="link" href="connect.html" title="connect">connect</a> opcode.
+      The signals of all the outlets connected to an inlet are summed in the inlet.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097540048"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the inletk opcode. It uses the file <a class="ulink" href="examples/inletk.csd" target="_top"><em class="citetitle">inletk.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276097538256"></a>
+          <p class="title">
+            <strong>Example 446. Example of the inletk opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276460257152"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span> 
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o inletk.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span> 
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">connect</span> <span class="s">"bend"</span><span class="p">,</span> <span class="s">"bendout"</span><span class="p">,</span> <span class="s">"guitar"</span><span class="p">,</span> <span class="s">"bendin"</span> 
+
+<span class="kd">instr</span> <span class="nf">bend</span> 
+
+k<span class="n">bend</span> <span class="nb">line</span> <span class="nb">p4</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="nb">p5</span> 
+      <span class="nb">outletk</span> <span class="s">"bendout"</span><span class="p">,</span> k<span class="n">bend</span> 
+<span class="kd">endin</span> 
+
+<span class="kd">instr</span> <span class="nf">guitar</span> 
+
+k<span class="n">bend</span> <span class="nb">inletk</span> <span class="s">"bendin"</span> 
+k<span class="n">pch</span> <span class="nb">pow</span> <span class="mi">2</span><span class="p">,</span> k<span class="n">bend</span><span class="o">/</span><span class="mi">12</span>
+     <span class="nb">printk2</span> k<span class="n">pch</span>
+a<span class="n">sig</span> <span class="nb">oscili</span> <span class="mf">.4</span><span class="p">,</span> <span class="mi">440</span><span class="o">*</span>k<span class="n">pch</span><span class="p">,</span> <span class="mi">1</span> 
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span> 
+
+<span class="nt">&lt;/CsInstruments&gt;</span> 
+<span class="nt">&lt;CsScore&gt;</span> 
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="nb">i</span><span class="s">"guitar"</span> <span class="mi">0</span> <span class="mi">5</span> <span class="mf">8.00</span> 
+<span class="nb">i</span><span class="s">"bend"</span> <span class="mi">3</span> <span class="mf">.2</span> <span class="o">-</span><span class="mi">12</span> <span class="mi">12</span> 
+<span class="nb">i</span><span class="s">"bend"</span> <span class="mi">4</span> <span class="mf">.1</span> <span class="o">-</span><span class="mi">17</span> <span class="mi">40</span> 
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span> 
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span> 
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097536512"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="outleta.html" title="outleta"><em class="citetitle">outleta</em></a>
+      <a class="link" href="outletk.html" title="outletk"><em class="citetitle">outletk</em></a>
+      <a class="link" href="outletkid.html" title="outletkid"><em class="citetitle">outletkid</em></a>
+      <a class="link" href="outletf.html" title="outletf"><em class="citetitle">outletf</em></a>
+      <a class="link" href="inleta.html" title="inleta"><em class="citetitle">inleta</em></a>
+      <a class="link" href="inletf.html" title="inletf"><em class="citetitle">inletf</em></a>
+      <a class="link" href="connect.html" title="connect"><em class="citetitle">connect</em></a>
+      <a class="link" href="alwayson.html" title="alwayson"><em class="citetitle">alwayson</em></a>
+      <a class="link" href="ftgenonce.html" title="ftgenonce"><em class="citetitle">ftgenonce</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097527568"></a>
+        <h2>Credits</h2>
+        <p>By: Michael Gogins 2009</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="inleta.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="inletkid.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">inleta </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> inletkid</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

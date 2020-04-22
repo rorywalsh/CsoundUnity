@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>evalstr</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="eqfil.html" title="eqfil" />
+    <link rel="next" href="event.html" title="event" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">evalstr</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="eqfil.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="event.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="evalstr"></a>
+      <div class="titlepage"></div>
+      <a id="Indexevalstr" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">evalstr</span>
+        </h2>
+        <p>evalstr — 
+    Evalstrs evaluates a string containing Csound code, returning a value.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113663968"></a>
+        <h2>Description</h2>
+        <p>
+      Evalstr compiles and runs Csound code and returns a value from the global space (instr 0). This opcode can be
+also used to compile new instruments (as compilestr).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113662624"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ires <span class="command"><strong>evalstr</strong></span> Scode </pre>
+        <pre class="synopsis">kres <span class="command"><strong>evalstr</strong></span> Scode, ktrig </pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113659248"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">Scode</span>”</span></em></span> --  a string to be compiled and evaluated.
+</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113657504"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">ktrig</span>”</span></em></span> -- triggers the compilation/evaluation if non-zero.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113655744"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the evalstr opcode in conjunction with return:
+      </p>
+        <div class="example">
+          <a id="idm276113654736"></a>
+          <p class="title">
+            <strong>Example 252. </strong>
+          </p>
+          <div class="example-contents">
+            <p>   
+</p>
+            <pre class="programlisting">
+ival <span class="op">evalstr</span> "return 2 + 2"
+<span class="op">print</span> ival
+ </pre>
+            <p>
+    </p>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276113651744"></a>
+        <h2>Credits</h2>
+        <p>Author: Victor Lazzarini, 2013 </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="eqfil.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="event.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">eqfil </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> event</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

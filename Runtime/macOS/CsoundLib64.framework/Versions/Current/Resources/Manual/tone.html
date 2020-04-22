@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tone</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tlineto.html" title="tlineto" />
+    <link rel="next" href="tonek.html" title="tonek" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tone</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tlineto.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tonek.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tone"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTone" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tone</span>
+        </h2>
+        <p>tone — 
+      A first-order recursive low-pass filter with variable frequency response.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045847152"></a>
+        <h2>Description</h2>
+        <p>
+      A first-order recursive low-pass filter with variable frequency response.
+    </p>
+        <p>
+      <span class="emphasis"><em>tone</em></span> is a 1 term IIR filter. Its formula is:
+        </p>
+        <div class="informalexample">
+          <p>
+            y<sub>n</sub> = c1 * x<sub>n</sub> + c2 * y<sub>n-1</sub>
+          </p>
+        </div>
+        <p>
+
+      where
+
+        </p>
+        <div class="informalexample">
+          <p>
+            </p>
+          <div class="itemizedlist">
+            <ul class="itemizedlist" style="list-style-type: disc; ">
+              <li class="listitem">
+                <p>b  = 2 - cos(2 π hp/sr);</p>
+              </li>
+              <li class="listitem">
+                <p>c2 = b - sqrt(b<sup>2</sup> - 1.0)</p>
+              </li>
+              <li class="listitem">
+                <p>c1 = 1 - c2</p>
+              </li>
+            </ul>
+          </div>
+          <p>
+          </p>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045839088"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>tone</strong></span> asig, khp [, iskip]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045836992"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>iskip</em></span> (optional, default=0) -- initial disposition of internal data space. Since filtering incorporates a feedback loop of previous output, the initial status of the storage space used is significant. A zero value will clear the space; a non-zero value will allow previous information to remain. The default value is 0.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045835104"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>ares</em></span> -- the output audio signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- the input audio signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>khp</em></span> --  the response curve's half-power point, in Hertz. Half power is defined as peak power / root 2. 
+    </p>
+        <p>
+      <span class="emphasis"><em>tone</em></span> implements a first-order recursive low-pass filter in which the variable <span class="emphasis"><em>khp</em></span> (in Hz) determines the response curve's half-power point. Half power is defined as peak power / root 2.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045830416"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the tone opcode. It uses the file <a class="ulink" href="examples/tone.csd" target="_top"><em class="citetitle">tone.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276045828640"></a>
+          <p class="title">
+            <strong>Example 1037. Example of the tone opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276412957424"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o tone.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">sig</span> <span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+
+k<span class="n">ton</span> <span class="nb">line</span> <span class="mi">10000</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mi">0</span>		<span class="c1">;all the way down to 0 Hz</span>
+a<span class="n">sig</span> <span class="nb">diskin2</span> <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">sig</span> <span class="nb">tone</span> a<span class="n">sig</span><span class="p">,</span> k<span class="n">ton</span>		<span class="c1">;half-power point at 500 Hz</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">2</span>
+<span class="nb">i</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span>
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276045824656"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="areson.html" title="areson"><em class="citetitle">areson</em></a>,
+      <a class="link" href="aresonk.html" title="aresonk"><em class="citetitle">aresonk</em></a>,
+      <a class="link" href="atone.html" title="atone"><em class="citetitle">atone</em></a>,
+      <a class="link" href="atonek.html" title="atonek"><em class="citetitle">atonek</em></a>,
+      <a class="link" href="port.html" title="port"><em class="citetitle">port</em></a>,
+      <a class="link" href="portk.html" title="portk"><em class="citetitle">portk</em></a>,
+      <a class="link" href="reson.html" title="reson"><em class="citetitle">reson</em></a>,
+      <a class="link" href="resonk.html" title="resonk"><em class="citetitle">resonk</em></a>,
+      <a class="link" href="tonek.html" title="tonek"><em class="citetitle">tonek</em></a>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tlineto.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tonek.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tlineto </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tonek</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

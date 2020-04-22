@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>vexpseg</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="vexp_i.html" title="vexp_i" />
+    <link rel="next" href="vexpv.html" title="vexpv" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">vexpseg</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="vexp_i.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="vexpv.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="vexpseg"></a>
+      <div class="titlepage"></div>
+      <a id="IndexVexpseg" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">vexpseg</span>
+        </h2>
+        <p>vexpseg — 
+      Vectorial envelope generator
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040489568"></a>
+        <h2>Description</h2>
+        <p>
+      Generate exponential vectorial segments
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040488336"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>vexpseg</strong></span>  ifnout, ielements, ifn1, idur1, ifn2 [, idur2, ifn3 [...]]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040486352"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifnout</em></span> - number of table hosting output vectorial signal
+      </p>
+        <p>
+      <span class="emphasis"><em>ifn1</em></span> - starting vector
+      </p>
+        <p>
+      <span class="emphasis"><em>ifn2, ifn3,etc.</em></span> - vector after <span class="emphasis"><em>idurx</em></span> seconds
+    </p>
+        <p>
+      <span class="emphasis"><em>idur1</em></span> - duration in seconds of first segment.
+      </p>
+        <p>
+      <span class="emphasis"><em>idur2, idur3, etc. </em></span> - duration in seconds of subsequent segments.
+    </p>
+        <p>
+      <span class="emphasis"><em>ielements</em></span> - number of elements of vectors.
+      </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040480144"></a>
+        <h2>Performance</h2>
+        <p>
+      These opcodes are similar to <span class="emphasis"><em>linseg</em></span> and <span class="emphasis"><em>expseg</em></span>, but operate with vectorial signals instead of with scalar signals.
+    </p>
+        <p>
+      Output is a vectorial control signal hosted by <span class="emphasis"><em>ifnout</em></span> (that must be previously allocated), while each break-point of the envelope is actually a vector of values. All break-points must contain the same number of elements (<span class="emphasis"><em>ielements</em></span>).
+    </p>
+        <p>
+      All these operators are designed to be used together with other opcodes that operate with vectorial signals such as&gt;, <span class="emphasis"><em>vcella</em></span>, <span class="emphasis"><em>adsynt</em></span>, <span class="emphasis"><em>adsynt2</em></span>, etc. 
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040474864"></a>
+        <h2>Example</h2>
+        <p>
+      Here is an example of the vexpseg opcode. It uses the files <a class="ulink" href="examples/vexpseg.csd" target="_top"><em class="citetitle">vexpseg.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276040473072"></a>
+          <p class="title">
+            <strong>Example 1103. Example of the vexpseg opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276407977808"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+-odac -B441 -b441
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+
+<span class="vg">sr</span><span class="o">=</span><span class="mi">44100</span>
+<span class="vg">ksmps</span><span class="o">=</span><span class="mi">10</span>
+<span class="vg">nchnls</span><span class="o">=</span><span class="mi">2</span>
+
+gi<span class="n">len</span> <span class="nb">init</span> <span class="mi">32</span>
+
+gi<span class="n">table1</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">len</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+gi<span class="n">table2</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">len</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span>
+
+gi<span class="n">table3</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">len</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> gi<span class="n">len</span><span class="p">,</span> <span class="mi">35</span>
+gi<span class="n">table4</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">len</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> gi<span class="n">len</span><span class="p">,</span> <span class="mi">450</span>
+gi<span class="n">table5</span> <span class="nb">ftgen</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">len</span><span class="p">,</span> <span class="o">-</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> gi<span class="n">len</span><span class="p">,</span> <span class="mi">5500</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="nb">vcopy</span> gi<span class="n">table2</span><span class="p">,</span> gi<span class="n">table1</span><span class="p">,</span> gi<span class="n">len</span>
+<span class="nb">turnoff</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">2</span>
+<span class="nb">vexpseg</span> gi<span class="n">table2</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> gi<span class="n">table3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> gi<span class="n">table4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> gi<span class="n">table5</span>
+<span class="kd">endin</span>
+
+<span class="kd">instr</span> <span class="nf">3</span>
+k<span class="n">count</span> <span class="nb">init</span> <span class="mi">0</span>
+<span class="k">if</span> k<span class="n">count</span> <span class="o">&lt;</span> <span class="mi">16</span> <span class="k">then</span>
+	k<span class="n">val</span> <span class="nb">table</span> k<span class="n">count</span><span class="p">,</span> gi<span class="n">table2</span>
+	<span class="nb">printk</span> <span class="mi">0</span><span class="p">,</span>k<span class="n">val</span>
+	k<span class="n">count</span> <span class="o">=</span> k<span class="n">count</span> <span class="o">+</span><span class="mi">1</span>
+<span class="k">else</span>
+<span class="nb">turnoff</span>
+<span class="k">endif</span>
+
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">s</span>
+<span class="nb">i</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">1</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mf">1.5</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">2</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mf">2.5</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">3</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mf">3.5</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mi">4</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">3</span> <span class="mf">4.5</span> <span class="mi">1</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276040471328"></a>
+        <h2>Credits</h2>
+        <p>Written by Gabriel Maldonado.</p>
+        <p>Example by Andres Cabrera.</p>
+        <p>New in Csound 5 (Previously available only on CsoundAV)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="vexp_i.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="vexpv.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">vexp_i </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> vexpv</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

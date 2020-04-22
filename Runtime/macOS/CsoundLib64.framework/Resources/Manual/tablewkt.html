@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>tablewkt</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="tablewa.html" title="tablewa" />
+    <link rel="next" href="tablexkt.html" title="tablexkt" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">tablewkt</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tablewa.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="tablexkt.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="tablewkt"></a>
+      <div class="titlepage"></div>
+      <a id="IndexTablewkt" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">tablewkt</span>
+        </h2>
+        <p>tablewkt — 
+      Change the contents of existing function tables.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047631600"></a>
+        <h2>Description</h2>
+        <p>
+      This opcode operates on existing function tables, changing their contents. <span class="emphasis"><em>tablewkt</em></span> uses a k-rate variable for selecting the table number. The valid combinations of variable types are shown by the first letter of the variable names.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047629776"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"><span class="command"><strong>tablewkt</strong></span> asig, andx, kfn [, ixmode] [, ixoff] [, iwgmode]</pre>
+        <pre class="synopsis"><span class="command"><strong>tablewkt</strong></span> ksig, kndx, kfn [, ixmode] [, ixoff] [, iwgmode]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047626592"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span>, <span class="emphasis"><em>ksig</em></span> -- The value to be written into the table.
+    </p>
+        <p>
+      <span class="emphasis"><em>andx</em></span>, <span class="emphasis"><em>kndx</em></span> -- Index into table, either a positive number range matching the table length (<span class="emphasis"><em>ixmode</em></span> = 0) or a 0 to 1 range (<span class="emphasis"><em>ixmode</em></span> != 0)
+    </p>
+        <p>
+      <span class="emphasis"><em>kfn</em></span> -- Table number. Must be &gt;= 1. Floats are rounded down to an integer. If a table number does not point to a valid table, or the table has not yet been loaded (<a class="link" href="GEN01.html" title="GEN01"><em class="citetitle">GEN01</em></a>) then an error will result and the instrument will be de-activated.
+    </p>
+        <p>
+      <span class="emphasis"><em>ixmode</em></span> -- index mode. Default is zero.
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+            0 = <span class="emphasis"><em>xndx</em></span> and <span class="emphasis"><em>ixoff</em></span> ranges match the length of the table.
+          </p>
+            </li>
+            <li class="listitem">
+              <p>
+            Not equal to 0 = <span class="emphasis"><em>xndx</em></span> and <span class="emphasis"><em>ixoff</em></span> have a 0 to 1 range. 
+          </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>ixoff</em></span> -- index offset. Default is 0.
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+             0 = Total index is controlled directly by <span class="emphasis"><em>xndx</em></span>, i.e. the indexing starts from the start of the table. 
+           </p>
+            </li>
+            <li class="listitem">
+              <p>
+             Not equal to 0 = Start indexing from somewhere else in the table. Value must be positive and less than the table length (<span class="emphasis"><em>ixmode</em></span> = 0) or less than 1 (<span class="emphasis"><em>ixmode</em></span> != 0).
+           </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      <span class="emphasis"><em>iwgmode</em></span> -- table writing mode. Default is 0.
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>
+             0 = Limit mode.
+           </p>
+            </li>
+            <li class="listitem">
+              <p>
+             1 = Wrap mode.
+           </p>
+            </li>
+            <li class="listitem">
+              <p>
+             2 = Guardpoint mode.
+           </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047607808"></a>
+        <h2>Performance</h2>
+        <div class="refsect2">
+          <a id="idm276047607152"></a>
+          <h3>Limit mode (0)</h3>
+          <p>
+        Limit the total index (<span class="emphasis"><em>ndx</em></span> + <span class="emphasis"><em>ixoff</em></span>) to between 0 and the guard point. For a table of length 5, this means that locations 0 to 3 and location 4 (the guard point) can be written. A negative total index writes to location 0.
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm276047604944"></a>
+          <h3>Wrap mode (1)</h3>
+          <p>
+        Wrap total index value into locations 0 to E, where E is one less than either the table length or the factor of 2 number which is one less than the table length. For example, wrap into a 0 to 3 range - so that total index 6 writes to location 2.
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm276047603504"></a>
+          <h3>Guardpoint mode (2)</h3>
+          <p>
+        The guardpoint is written at the same time as location 0 is written - with the same value.
+      </p>
+          <p>
+        This facilitates writing to tables which are intended to be read with interpolation for producing smooth cyclic waveforms. In addition, before it is used, the total index is incremented by half the range between one location and the next, before being rounded down to the integer address of a table location.
+      </p>
+          <p>
+        Normally (<span class="emphasis"><em>igwmode</em></span> = 0 or 1) for a table of length 5 - which has locations 0 to 3 as the main table and location 4 as the guard point, a total index in the range of 0 to 0.999 will write to location 0. ("0.999" means just less than 1.0.) 1.0 to 1.999 will write to location 1 etc. A similar pattern holds for all total indexes 0 to 4.999 (<span class="emphasis"><em>igwmode</em></span> = 0) or to 3.999 (<span class="emphasis"><em>igwmode</em></span> = 1). <span class="emphasis"><em>igwmode</em></span> = 0 enables locations 0 to 4 to be written - with the guardpoint (4) being written with a potentially different value from location 0.
+      </p>
+          <p>
+        With a table of length 5 and the <span class="emphasis"><em>iwgmode</em></span> = 2, then when the total index is in the range 0 to 0.499, it will write to locations 0 and 4. Range 0.5 to 1.499 will write to location 1 etc. 3.5 to 4.0 will also write to locations 0 and 4.
+      </p>
+          <p>
+        This way, the writing operation most closely approximates the results of interpolated reading. Guard point mode should only be used with tables that have a guardpoint.
+      </p>
+          <p>
+        Guardpoint mode is accomplished by adding 0.5 to the total index, rounding to the next lowest integer, wrapping it modulo the factor of two which is one less than the table length, writing the table (locations 0 to 3 in our example) and then writing to the guard point if index = 0.
+      </p>
+        </div>
+        <div class="refsect2">
+          <a id="idm276047596592"></a>
+          <h3>Caution with k-rate table numbers</h3>
+          <p>
+        At k-rate or a-rate, if a table number of &lt; 1 is given, or the table number points to a non-existent table, or to one which has a length of 0 (it is to be loaded from a file later) then an error will result and the instrument will be deactivated. <span class="emphasis"><em>kfn</em></span> and <span class="emphasis"><em>afn</em></span> must be initialized at the appropriate rate using <span class="emphasis"><em>init</em></span>. Attempting to load an i-rate value into <span class="emphasis"><em>kfn</em></span> or <span class="emphasis"><em>afn</em></span> will result in an error.
+      </p>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047592512"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="tableiw.html" title="tableiw"><em class="citetitle">tableiw</em></a>,
+      <a class="link" href="tablew.html" title="tablew"><em class="citetitle">tablew</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276047589600"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Robin Whittle</td>
+          </tr>
+          <tr>
+            <td>Australia</td>
+          </tr>
+          <tr>
+            <td>May 1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tablewa.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="tablexkt.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">tablewa </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> tablexkt</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>gausstrig</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="gaussi.html" title="gaussi" />
+    <link rel="next" href="gbuzz.html" title="gbuzz" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">gausstrig</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="gaussi.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="gbuzz.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="gausstrig"></a>
+      <div class="titlepage"></div>
+      <a id="IndexGausstrig" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">gausstrig</span>
+        </h2>
+        <p>gausstrig — 
+      Random impulses around a certain frequency.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101164080"></a>
+        <h2>Description</h2>
+        <p>
+      Generates random impulses around a certain frequency.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101162752"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>gausstrig</strong></span> kamp, kcps, kdev [, imode] [, ifrst1]</pre>
+        <pre class="synopsis">kres <span class="command"><strong>gausstrig</strong></span> kamp, kcps, kdev [, imode] [, ifrst1]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101159296"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>imode</em></span> (optional, default=0) -- imode &gt; 0
+      means better frequency modulation. If the frequency changes, the
+      delay before the next impulse is calculed again. With the
+      default mode we have the classic behavior of the GaussTrig ugen
+      in SuperCollider, where the frequency modulation is bypassed
+      during the delay time that precedes the next impulse.
+    </p>
+        <p>
+      <span class="emphasis"><em>ifrst1</em></span> (optional, default=0) -- ifrst1 &gt; 0
+      changes the original behavior of the GuassTrig ugen. By default, it
+      always generates an impulse in the very beginning. Otherwise, the first
+      impulse appearance is random and depends on <span class="emphasis"><em>kcps</em></span> and
+      <span class="emphasis"><em>kdev</em></span> parameters.</p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101155072"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamp</em></span> -- amplitude.
+    </p>
+        <p>
+      <span class="emphasis"><em>kcps</em></span> -- the mean frequency over which random impulses are distributed.
+    </p>
+        <p>
+      <span class="emphasis"><em>kdev</em></span> -- random deviation from mean (0 &lt;= dev &lt; 1).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101151616"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the gausstrig opcode. It uses the file <a class="ulink" href="examples/gausstrig.csd" target="_top"><em class="citetitle">gausstrig.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276101149808"></a>
+          <p class="title">
+            <strong>Example 386. Example of the gausstrig opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276491823888"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o oscil.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">dev</span> <span class="nb">line</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="p">,</span> <span class="mf">0.9</span>
+<span class="nb">seed</span> <span class="mi">20120125</span>
+a<span class="n">imp</span> <span class="nb">gausstrig</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> k<span class="n">dev</span>
+a<span class="n">env</span> <span class="nb">filter2</span> a<span class="n">imp</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.993</span><span class="p">,</span> <span class="mf">0.993</span>
+a<span class="n">noi</span> <span class="nb">fractalnoise</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.7</span>
+a<span class="n">l</span>   <span class="o">=</span> a<span class="n">noi</span><span class="o">*</span>a<span class="n">env</span>
+a<span class="n">r</span>   <span class="nb">delay</span> a<span class="n">l</span><span class="p">,</span> <span class="mf">0.02</span>
+<span class="nb">outs</span> a<span class="n">l</span><span class="p">,</span> a<span class="n">r</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is an example of the gausstrig opcode with imode = 1. It uses the file <a class="ulink" href="examples/gausstrig-2.csd" target="_top"><em class="citetitle">gausstrig-2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276101144736"></a>
+          <p class="title">
+            <strong>Example 387. Example of the gausstrig opcode with imode = 1.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276491687408"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o oscil.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+k<span class="n">frq0</span> <span class="nb">oscil</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">1</span>
+k<span class="n">trig</span> <span class="nb">metro</span> <span class="mi">1</span>
+k<span class="n">frq</span>  <span class="nb">samphold</span> k<span class="n">frq0</span><span class="o">+</span><span class="mi">8</span><span class="p">,</span> k<span class="n">trig</span> 
+<span class="nb">seed</span>  <span class="mi">20120125</span>
+a<span class="n">imp</span>  <span class="nb">gausstrig</span> <span class="mf">0.5</span><span class="p">,</span> k<span class="n">frq</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">env</span>  <span class="nb">filter2</span> a<span class="n">imp</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.993</span><span class="p">,</span> <span class="mf">0.993</span>
+a<span class="n">noi</span>  <span class="nb">fractalnoise</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.7</span>
+a<span class="n">l</span>    <span class="o">=</span> a<span class="n">noi</span><span class="o">*</span>a<span class="n">env</span>
+a<span class="n">r</span>    <span class="nb">delay</span> a<span class="n">l</span><span class="p">,</span> <span class="mf">0.02</span>
+<span class="nb">outs</span>  a<span class="n">l</span><span class="p">,</span> a<span class="n">r</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8192</span> <span class="mi">10</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">16</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101143008"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="dust.html" title="dust"><em class="citetitle">dust</em></a>
+      <a class="link" href="dust2.html" title="dust2"><em class="citetitle">dust2</em></a>
+      <a class="link" href="mpulse.html" title="mpulse"><em class="citetitle">mpulse</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276101139232"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Based on Bhob Rainey's GaussTrig ugen (SuperCollider)</td>
+          </tr>
+          <tr>
+            <td>Author: Tito Latini</td>
+          </tr>
+          <tr>
+            <td>January 2012</td>
+          </tr>
+          <tr>
+            <td>Modification: Gleb Rogozinsky</td>
+          </tr>
+          <tr>
+            <td>March 2015</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.16</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="gaussi.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="gbuzz.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">gaussi </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> gbuzz</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

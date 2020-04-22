@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>inq</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="ino.html" title="ino" />
+    <link rel="next" href="inrg.html" title="inrg" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">inq</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ino.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="inrg.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="inq"></a>
+      <div class="titlepage"></div>
+      <a id="Indexinq" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">inq</span>
+        </h2>
+        <p>inq — 
+      Reads quad audio data from an external device or stream.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097304752"></a>
+        <h2>Description</h2>
+        <p>
+      Reads quad audio data from an external device or stream.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: Warning">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">Warning</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        This opcode is designed to be used only with orchestras that have
+        nchnls_i=4. Doing so with orchestras with nchnls_i &gt; 4 will
+        cause incorrect audio input.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097302080"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ar1, ar2,  ar3, a4 <span class="command"><strong>inq</strong></span></pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097300144"></a>
+        <h2>Performance</h2>
+        <p>
+      Reads quad audio data from an external device or stream. If the command-line <a class="link" href="CommandFlags.html#FlagsMinusLowerI"><em class="citetitle">-i</em></a> flag is set, sound is read continuously from the audio input stream (e.g. <span class="emphasis"><em>stdin</em></span> or a soundfile) into an internal buffer. Any number of these opcodes can read freely from this buffer.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097297376"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the inq opcode. It uses the file <a class="ulink" href="examples/inq.csd" target="_top"><em class="citetitle">inq.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276097295632"></a>
+          <p class="title">
+            <strong>Example 447. Example of the inq opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276460254976"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  -idac <span class="c1">;;;realtime audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; inq.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span>   <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span>   <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span>   <span class="o">=</span> <span class="mi">2</span>	<span class="c1">;2 channels out</span>
+<span class="vg">0dbfs</span>    <span class="o">=</span> <span class="mi">1</span>
+<span class="vg">nchnls_i</span> <span class="o">=</span> <span class="mi">4</span>	<span class="c1">;4 channels in</span>
+
+<span class="kd">instr</span> <span class="nf">1</span> <span class="c1">;4 channels in, two channels out</span>
+
+a<span class="n">in1</span><span class="p">,</span> a<span class="n">in2</span><span class="p">,</span> a<span class="n">in3</span><span class="p">,</span> a<span class="n">in4</span> <span class="nb">inq</span>		<span class="c1">;grab your mics and sing</span>
+
+a<span class="n">del</span>   <span class="nb">linseg</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mi">0</span>	  <span class="c1">;max delay time = 20ms</span>
+a<span class="n">del2</span>  <span class="nb">linseg</span> <span class="mf">0.02</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">p3</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="mf">0.02</span> <span class="c1">;max delay time = 20ms	</span>
+a<span class="n">outl</span>  <span class="nb">flanger</span> a<span class="n">in1</span><span class="p">,</span> a<span class="n">del</span><span class="p">,</span> <span class="mf">.7</span>
+a<span class="n">outr</span>  <span class="nb">flanger</span> a<span class="n">in2</span><span class="p">,</span> a<span class="n">del</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mf">.8</span>
+a<span class="n">outla</span> <span class="nb">flanger</span> a<span class="n">in3</span><span class="p">,</span> a<span class="n">del2</span><span class="p">,</span> <span class="mf">.9</span>
+a<span class="n">outra</span> <span class="nb">flanger</span> a<span class="n">in4</span><span class="p">,</span> a<span class="n">del2</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mf">.5</span>
+<span class="c1">;write to quad file, 16 bits with header</span>
+       <span class="nb">fout</span> <span class="s">"in_4.wav"</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> a<span class="n">outl</span><span class="p">,</span> a<span class="n">outr</span><span class="p">,</span> a<span class="n">outla</span><span class="p">,</span> a<span class="n">outra</span>	
+       <span class="nb">outs</span> <span class="p">(</span>a<span class="n">outl</span><span class="o">+</span>a<span class="n">outla</span><span class="p">)</span><span class="o">*</span><span class="mf">.5</span><span class="p">,</span> <span class="p">(</span>a<span class="n">outr</span><span class="o">+</span>a<span class="n">outra</span><span class="p">)</span><span class="o">*</span><span class="mf">.5</span> <span class="c1">;stereo out</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">10</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />      
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097293888"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="diskin.html" title="diskin"><em class="citetitle">diskin</em></a>,
+      <a class="link" href="in.html" title="in"><em class="citetitle">in</em></a>,
+      <a class="link" href="inch.html" title="inch"><em class="citetitle">inh</em></a>,
+      <a class="link" href="inh.html" title="inh"><em class="citetitle">inh</em></a>,
+      <a class="link" href="ino.html" title="ino"><em class="citetitle">ino</em></a>,
+      <a class="link" href="ins.html" title="ins"><em class="citetitle">ins</em></a>,
+      <a class="link" href="soundin.html" title="soundin"><em class="citetitle">soundin</em></a>
+     </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276097286720"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Authors: Barry L. Vercoe, Matt Ingalls/Mike Berry</td>
+          </tr>
+          <tr>
+            <td>MIT, Mills College</td>
+          </tr>
+          <tr>
+            <td>1993-1997</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ino.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="inrg.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">ino </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> inrg</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>streson</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="strcmpk.html" title="strcmpk" />
+    <link rel="next" href="strfromurl.html" title="strfromurl" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">streson</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="strcmpk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="strfromurl.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="streson"></a>
+      <div class="titlepage"></div>
+      <a id="IndexStreson" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">streson</span>
+        </h2>
+        <p>streson — 
+      A string resonator with variable fundamental frequency.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051354272"></a>
+        <h2>Description</h2>
+        <p>
+      An audio signal is modified by a string resonator with variable fundamental frequency.
+    </p>
+      </div>
+      <div class="refsect1"><a id="idm276051352880"></a><h2>Syntax</h2>%
+    <pre class="synopsis">ares <span class="command"><strong>streson</strong></span> asig, kfr, kfdbgain</pre></div>
+      <div class="refsect1">
+        <a id="idm276051350752"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>asig</em></span> -- the input audio signal.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfr</em></span> -- the fundamental frequency of the string.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfdbgain</em></span> -- feedback gain, typically between 0 and 1,
+      of the internal delay line. A value close to 1 creates a slower
+      decay and a more pronounced resonance. Small values may leave
+      the input signal unaffected. Depending on the filter frequency,
+      typical values are &gt; 0.9.  Values down to -1 are also useful.
+    </p>
+        <p>
+      <span class="emphasis"><em>streson</em></span> passes the input <span class="emphasis"><em>asig</em></span> through a network composed of comb, low-pass and all-pass filters, similar to the one used in some versions of the Karplus-Strong algorithm, creating a string resonator effect. The fundamental frequency of the <span class="quote">“<span class="quote">string</span>”</span> is controlled by the k-rate variable <span class="emphasis"><em>kfr</em></span>.This opcode can be used to simulate sympathetic resonances to an input signal.
+    </p>
+        <p>
+      See <a class="link" href="MiscModalFreq.html" title="Appendix E. Modal Frequency Ratios"><em class="citetitle">Modal Frequency Ratios</em></a> for frequency ratios of real instruments which can be used to determine the values of <span class="emphasis"><em>kfrq</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>streson</em></span> is an adaptation of the StringFlt object of the SndObj Sound Object Library developed by the author.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051341504"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the streson opcode. It uses the file <a class="ulink" href="examples/streson.csd" target="_top"><em class="citetitle">streson.csd</em></a>.
+      </p>
+        <div class="example">
+          <a id="idm276051339696"></a>
+          <p class="title">
+            <strong>Example 974. Example of the streson opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276505333296"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac  <span class="c1">;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o streson.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span> 
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span> 
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span> 
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">sig</span> <span class="nb">diskin2</span> <span class="s">"fox.wav"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+ 
+k<span class="n">fr</span> <span class="o">=</span> <span class="nb">p4</span>
+i<span class="n">fdbgain</span> <span class="o">=</span> <span class="mf">0.90</span>
+
+a<span class="n">str</span> <span class="nb">streson</span> a<span class="n">sig</span><span class="p">,</span> k<span class="n">fr</span><span class="p">,</span> i<span class="n">fdbgain</span>
+a<span class="n">sig</span> <span class="nb">clip</span> a<span class="n">str</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+     <span class="nb">outs</span> a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">20</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="o">&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="o">&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="o">&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="o">&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="o">&gt;</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="o">.</span> <span class="mi">1000</span>
+<span class="nb">e</span>
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276051335696"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Victor Lazzarini</td>
+          </tr>
+          <tr>
+            <td>Music Department</td>
+          </tr>
+          <tr>
+            <td>National University of Ireland, Maynooth</td>
+          </tr>
+          <tr>
+            <td>Maynooth, Co. Kildare</td>
+          </tr>
+          <tr>
+            <td>1998</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 3.494</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="strcmpk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="strfromurl.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">strcmpk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> strfromurl</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

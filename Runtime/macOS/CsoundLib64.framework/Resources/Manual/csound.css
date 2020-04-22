@@ -1,0 +1,310 @@
+/* csound.css - for Csound5 html manual                      */
+/* (c) Francois Pinot, 2007                                  */
+/* (c) Andres Cabrera, 2008                                  */
+/* Free software, licensed by GNU Free Documentation License */
+
+pre.programlisting {
+  background-color: #e5e5e5;
+  padding: 10px 2em;
+  border-style: dotted;
+  border-width: 1px;
+  border-color: #663333;
+}
+
+pre.screen {
+  background-color: #f0f0f0; padding: 10px 2em;
+}
+
+div.literallayout {
+  font-family: monospace;
+  padding-left: 1.5cm;
+}
+
+span.strong {
+  font-weight: 700;
+}
+
+div.table table, div.informaltable table {
+  border-collapse: collapse;
+}
+
+div.table thead {
+  border-bottom: solid;
+}
+
+div.table td, div.table th, div.informaltable table td {
+/*   font-size: 150% */
+  padding: 2px 6px; 
+}
+
+div.chapter pre {
+  margin-bottom: 0; margin-top: 0;
+}
+
+div.chapter pre.synopsis {
+  background-color: #e0e0e0; padding: 0px 2em;
+}
+
+div.chapter a {
+  color: blue; font-weight: bolder; text-decoration: none;
+}
+
+div.chapter p b {
+  font-size: 1.17em; font-weight: bolder;
+  display: block; margin-top: 40px; padding-top: 5px; border-top: 1px solid;
+}
+
+div.navheader {
+  font-family: sans-serif;
+}
+
+div.navheader th{
+  color: #336699;
+}
+
+div.navheader tr td a{
+  font-size: small;
+  color: #336699;
+  font-family: sans-serif;
+}
+
+div.toc b{
+/* Table of contents Title */
+  font-size: large;
+  color: #336699;
+  font-family: sans-serif;
+  font-weight: bold;
+/*   padding-left: 1.5cm; */
+}
+
+div.navfooter {
+  color: #336699;
+  font-family: sans-serif;
+  font-size: small;
+}
+
+div.navfooter tr td{
+  font-size: small;
+  color: #000000;
+  font-family: sans-serif;
+}
+
+div.navfooter tr td a{
+  font-size: small;
+  color: #336699;
+  font-family: sans-serif;
+}
+
+h1.title {
+/*   Main title */
+  font-family: sans-serif;
+  padding-left: 1.5cm;
+  color: #336699;
+  font-size: xx-large;
+}
+
+h2.title {
+  font-family: sans-serif;
+/*   padding-left: 0.5cm; */
+  color: #663333;
+/*   font-size: x-large; */
+}
+
+div.section h2.title {
+  font-family: sans-serif;
+/*   padding-left: 0.5cm; */
+  color: #666633;
+  font-size: large;
+}
+
+h2 {
+  font-family: sans-serif;
+/*   padding-left: 1cm; */
+/*   font-size: x-small; */
+  color: #996633;
+}
+
+h2.subtitle {
+  font-family: sans-serif;
+  padding-left: 1.5cm;
+  color: #336699;
+  font-size: x-large;
+}
+
+h3.author {
+  font-family: sans-serif;
+  padding-left: 2cm;
+  font-size: medium;
+  color: #663333;
+}
+
+h3 {
+  font-family: sans-serif;
+/*   padding-left: 1cm; */
+/*   font-size: x-small; */
+  color: #996633;
+}
+
+h3.editor {
+  font-family: sans-serif;
+  padding-left: 2cm;
+  font-size: x-small;
+  color: #663333;
+}
+
+h4 {
+  font-family: sans-serif;
+/*   padding-left: 1cm; */
+/*   font-size: x-small; */
+  color: #996633;
+}
+
+span.orgname {
+  font-family: serif;
+  padding-left: 2cm;
+  font-size: medium;
+}
+
+div.mediaobject div.caption {
+  font-style: italic;
+}
+
+p {
+ text-align: justify;
+/* Most text */
+/*   font-size: 11px; */
+/*   padding-left: 1cm; */
+}
+
+h2 span.refentrytitle {
+  font-family: sans-serif;
+/*   padding-left: 0.5cm; */
+  color: #666633;
+  font-size: xx-large;
+}
+
+/*dt span.refentrytitle {
+  font-family: sans-serif;
+  font-size: small;
+  color: #666633;
+}*/
+
+span.refentrytitle a {
+  font-family: sans-serif;
+  font-size: small;
+  color: #666633;
+}
+
+div.refsect1 h2 {
+  font-family: sans-serif;
+/*   padding-left: 1cm; */
+  color: #996633;
+  font-size: large;
+}
+
+span.preface a {
+  font-family: sans-serif;
+  color: #336699;
+  font-weight: bold;
+}
+
+span.part a {
+  font-family: sans-serif;
+  color: #336699;
+  font-weight: bold;
+}
+
+span.chapter a {
+  font-family: sans-serif;
+  color: #666633;
+}
+
+div.toc span.refentrytitle a {
+/*   Csound command line entry */
+  font-family: sans-serif;
+  font-size: medium;
+  color: #666633;
+}
+
+span.section a {
+  font-family: sans-serif;
+  color: #666633;
+}
+
+span.appendix a {
+  font-family: sans-serif;
+  color: #336699;
+  font-weight: bold;
+}
+
+span.glossary a {
+  font-family: sans-serif;
+  color: #336699;
+  font-weight: bold;
+}
+
+span.term {
+  font-family: sans-serif;
+  font-size: small;
+  font-weight: bold;
+}
+
+div.note th {
+  font-family: sans-serif;
+}
+
+p.title b {
+  font-family: sans-serif;
+/*   padding-left: 1cm; */
+  color: #996633;
+}
+
+pre.synopsis {
+  background-color: #e0e0e0; padding: 10px 2em;
+}
+
+/* Syntax highlighting rules */
+pre.programlisting span.csdtag {
+  color: brown;
+}
+
+pre.programlisting span.comment {
+  color: green; font-style: italic;
+}
+
+pre.programlisting span.Ccomment {
+  color: peru; font-style: italic;
+}
+
+pre.programlisting span.ohdr {
+  color: darkred; font-weight: bold;
+}
+
+pre.programlisting span.oblock {
+  color: purple; font-weight: bold;
+}
+
+pre.programlisting span.opc {
+  color: blue; font-weight: bold;
+}
+
+pre.programlisting span.op {
+  font-weight: bolder;
+}
+
+pre.programlisting span.octrl {
+  color: green; font-weight: bold;
+}
+
+pre.programlisting span.olabel {
+  color: indianred; font-weight: bold;
+}
+
+pre.programlisting span.omacro {
+  color: mediumorchid; font-weight: bold;
+}
+
+pre.programlisting span.stamnt {
+  color: blue; font-weight: bold;
+}
+

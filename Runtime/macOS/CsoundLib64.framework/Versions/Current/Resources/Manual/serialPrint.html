@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>serialPrint</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="serialFlush.html" title="serialFlush" />
+    <link rel="next" href="serialRead.html" title="serialRead" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">serialPrint</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="serialFlush.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="serialRead.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="serialPrint"></a>
+      <div class="titlepage"></div>
+      <a id="IndexSerialPrint" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">serialPrint</span>
+        </h2>
+        <p>serialPrint — 
+      Print data from a serial port.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058036352"></a>
+        <h2>Description</h2>
+        <p>Plugin opcode in serial.</p>
+        <p>
+Print to the screen any bytes (up to 32k) in the input buffer.  
+Note that these bytes will be cleared from the buffer.
+use this opcode mainly for debugging messages.
+If you want to mix debugging and other communication 
+messages over the same port, you will need to manually
+parse the data with the <span class="emphasis"><em>serialRead</em></span> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058034080"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis"> <span class="command"><strong>serialPrint</strong></span> iPort</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058032016"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>iPort</em></span> -- port number optained from a
+      <span class="emphasis"><em>serialBegin</em></span> opcode.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058029984"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="serialBegin.html" title="serialBegin"><em class="citetitle"></em>serialBegin</a>,
+      <a class="link" href="serialEnd.html" title="serialEnd"><em class="citetitle"></em>serialEnd</a>,
+      <a class="link" href="serialWrite_i.html" title="serialWrite_i"><em class="citetitle"></em>serialWrite_i</a>,
+      <a class="link" href="serialWrite.html" title="serialWrite"><em class="citetitle"></em>serialWrite</a>,
+      <a class="link" href="serialRead.html" title="serialRead"><em class="citetitle"></em>serialRead</a>,
+      <a class="link" href="serialFlush.html" title="serialFlush"><em class="citetitle"></em>serialFlush</a>.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276058023536"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Matt Ingalls</td>
+          </tr>
+          <tr>
+            <td>2011</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in version 5.14</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="serialFlush.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="serialRead.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">serialFlush </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> serialRead</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

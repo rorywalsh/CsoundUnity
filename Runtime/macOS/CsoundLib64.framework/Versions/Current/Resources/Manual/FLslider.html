@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>FLslider</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="FLslidBnk2Setk.html" title="FLslidBnk2Setk" />
+    <link rel="next" href="FLtabs.html" title="FLtabs" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">FLslider</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="FLslidBnk2Setk.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="FLtabs.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="FLslider"></a>
+      <div class="titlepage"></div>
+      <a id="IndexFLslider" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">FLslider</span>
+        </h2>
+        <p>FLslider — 
+      Puts a slider into the corresponding FLTK container.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105448560"></a>
+        <h2>Description</h2>
+        <p>
+      <span class="emphasis"><em>FLslider</em></span> puts a slider into the corresponding container.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105446864"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">kout, ihandle <span class="command"><strong>FLslider</strong></span> "label", imin, imax, iexp, itype, idisp, iwidth, \
+      iheight, ix, iy</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105444640"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ihandle</em></span> -- a handle value (an integer number) that unequivocally references a corresponding widget. This is used by other opcodes that modify a widget's properties (see <a class="link" href="ControlFltkAppearance.html" title="Modifying FLTK Widget Appearance"><em class="citetitle">Modifying FLTK Widget Appearance</em></a>). It is automatically output by <span class="emphasis"><em>FLslider</em></span> and must not be set by the user label. (The user label is a double-quoted string containing some user-provided text placed near the widget.)
+    </p>
+        <p>
+      <span class="emphasis"><em><span class="quote">“<span class="quote">label</span>”</span></em></span> -- a double-quoted string containing some user-provided text, placed near the corresponding widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>imin</em></span> -- minimum value of output range (corresponds to the left value for horizontal sliders, and the top value for vertical sliders).
+    </p>
+        <p>
+      <span class="emphasis"><em>imax</em></span> -- maximum value of output range (corresponds to the right value for horizontal sliders, and the bottom value for vertical sliders).
+    </p>
+        <p>
+      The <span class="emphasis"><em>imin</em></span> argument may be greater than <span class="emphasis"><em>imax</em></span> argument. This has the effect of <span class="quote">“<span class="quote">reversing</span>”</span> the object so the larger values are in the opposite direction. This also switches which end of the filled sliders is filled.
+    </p>
+        <p>
+      <span class="emphasis"><em>iexp</em></span> -- an integer number denoting the behaviour of valuator:
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>0 = valuator output is linear</p>
+            </li>
+            <li class="listitem">
+              <p>-1 = valuator output is exponential</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+    </p>
+        <p>
+      All other positive numbers for <span class="emphasis"><em>iexp</em></span> indicate the number of an existing table that is used for indexing. Linear interpolation is provided in table indexing. A negative table number suppresses interpolation.
+    </p>
+        <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+          <table border="0" summary="Warning: IMPORTANT!">
+            <tr>
+              <td rowspan="2" align="center" valign="top" width="25">
+                <img alt="[Warning]" src="images/warning.png" />
+              </td>
+              <th align="left">IMPORTANT!</th>
+            </tr>
+            <tr>
+              <td align="left" valign="top">
+                <p>
+        Notice that the tables used by valuators must be created with the <a class="link" href="ftgen.html" title="ftgen"><em class="citetitle">ftgen</em></a> opcode and placed in the orchestra before the corresponding valuator. They can not placed in the score. This is because tables placed in the score are created later than the initialization of the opcodes placed in the header section of the orchestra.
+      </p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <p>
+      <span class="emphasis"><em>itype</em></span> -- an integer number denoting the appearance of the valuator.
+    </p>
+        <p>
+      The <span class="emphasis"><em>itype</em></span> argument can be set to the following values:
+
+      </p>
+        <div class="itemizedlist">
+          <ul class="itemizedlist" style="list-style-type: disc; ">
+            <li class="listitem">
+              <p>1 - shows a horizontal fill slider</p>
+            </li>
+            <li class="listitem">
+              <p>2 - a vertical fill slider</p>
+            </li>
+            <li class="listitem">
+              <p>3 - a horizontal engraved slider</p>
+            </li>
+            <li class="listitem">
+              <p>4 - a vertical engraved slider</p>
+            </li>
+            <li class="listitem">
+              <p>5 - a horizontal nice slider</p>
+            </li>
+            <li class="listitem">
+              <p>6 - a vertical nice slider</p>
+            </li>
+            <li class="listitem">
+              <p>7 - a horizontal up-box nice slider</p>
+            </li>
+            <li class="listitem">
+              <p>8 - a vertical up-box nice slider</p>
+            </li>
+          </ul>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/flslider_horizontal-fill.png" alt="FLslider - a horizontal fill slider (itype=1)." />
+          <div class="caption">
+            <p>FLslider - a horizontal fill slider (itype=1).</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/flslider_horizontal-engraved.png" alt="FLslider - a horizontal engraved slider (itype=3)." />
+          <div class="caption">
+            <p>FLslider - a horizontal engraved slider (itype=3).</p>
+          </div>
+        </div>
+        <p>
+
+      </p>
+        <div class="mediaobject">
+          <img src="images/flslider_horizontal-nice.png" alt="FLslider - a horizontal nice slider (itype=5)." />
+          <div class="caption">
+            <p>FLslider - a horizontal nice slider (itype=5).</p>
+          </div>
+        </div>
+        <p>
+      You can also create "plastic" looking sliders by adding 20 to <span class="emphasis"><em>itype</em></span>.
+    </p>
+        <p>
+      <span class="emphasis"><em>idisp</em></span> -- a handle value that was output from a previous instance of the <a class="link" href="FLvalue.html" title="FLvalue"><em class="citetitle">FLvalue</em></a> opcode to display the current value of the current valuator in the <span class="emphasis"><em>FLvalue</em></span> widget itself. If the user doesn't want to use this feature that displays current values, it must be set to a negative number by the user.
+    </p>
+        <p>
+      <span class="emphasis"><em>iwidth</em></span> -- width of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>iheight</em></span> -- height of widget.
+    </p>
+        <p>
+      <span class="emphasis"><em>ix</em></span> -- horizontal position of upper left corner of the valuator, relative to the upper left corner of corresponding window (expressed in pixels).
+    </p>
+        <p>
+      <span class="emphasis"><em>iy</em></span> -- vertical position of upper left corner of the valuator, relative to the upper
+left corner of corresponding window (expressed in pixels).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105406432"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kout</em></span> -- output value
+    </p>
+        <p>
+      FLsliders are created with the minimum value by default in the left/at the top. If you want to reverse the slider, reverse the values. See the example below.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105404064"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the FLslider opcode. It uses the file <a class="ulink" href="examples/FLslider.csd" target="_top"><em class="citetitle">FLslider.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276105402256"></a>
+          <p class="title">
+            <strong>Example 317. Example of the FLslider opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276474473584"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o FLslider.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="c1">; A sine with oscillator with flslider controlled frequency</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">441</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="nb">FLpanel</span> <span class="s">"Frequency Slider"</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span>
+    <span class="c1">; Minimum value output by the slider</span>
+    i<span class="n">min</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="c1">; Maximum value output by the slider</span>
+    i<span class="n">max</span> <span class="o">=</span> <span class="mi">5000</span>
+    <span class="c1">; Logarithmic type slider selected</span>
+    i<span class="n">exp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="c1">; Slider graphic type (5='nice' slider)</span>
+    i<span class="n">type</span> <span class="o">=</span> <span class="mi">5</span> 
+    <span class="c1">; Display handle (-1=not used)</span>
+    i<span class="n">disp</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="c1">; Width of the slider in pixels</span>
+    i<span class="n">width</span> <span class="o">=</span> <span class="mi">750</span>
+    <span class="c1">; Height of the slider in pixels</span>
+    i<span class="n">height</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="c1">; Distance of the left edge of the slider</span>
+    <span class="c1">; from the left edge of the panel</span>
+    i<span class="n">x</span> <span class="o">=</span> <span class="mi">125</span>
+    <span class="c1">; Distance of the top edge of the slider </span>
+    <span class="c1">; from the top edge of the panel</span>
+    i<span class="n">y</span> <span class="o">=</span> <span class="mi">50</span>
+
+    gk<span class="n">freq</span><span class="p">,</span> i<span class="n">handle</span> <span class="nb">FLslider</span> <span class="s">"Frequency"</span><span class="p">,</span> i<span class="n">min</span><span class="p">,</span> i<span class="n">max</span><span class="p">,</span> i<span class="n">exp</span><span class="p">,</span> i<span class="n">type</span><span class="p">,</span> i<span class="n">disp</span><span class="p">,</span> i<span class="n">width</span><span class="p">,</span> i<span class="n">height</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span>
+<span class="c1">; End of panel contents</span>
+<span class="nb">FLpanelEnd</span>
+<span class="c1">; Run the widget thread!</span>
+<span class="nb">FLrun</span>
+
+<span class="c1">;Set the widget's initial value</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">300</span><span class="p">,</span> i<span class="n">handle</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+    i<span class="n">amp</span> <span class="o">=</span> <span class="mi">15000</span>
+    i<span class="n">fn</span> <span class="o">=</span> <span class="mi">1</span>
+    k<span class="n">freq</span> <span class="nb">portk</span> gk<span class="n">freq</span><span class="p">,</span> <span class="mf">0.005</span>  <span class="c1">;Smooth gkfreq to avoid zipper noise</span>
+    a<span class="n">sig</span> <span class="nb">oscili</span> i<span class="n">amp</span><span class="p">,</span> k<span class="n">freq</span><span class="p">,</span> i<span class="n">fn</span>
+    <span class="nb">out</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="c1">; Function table that defines a single cycle</span>
+<span class="c1">; of a sine wave.</span>
+<span class="nb">f</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1024</span> <span class="mi">10</span> <span class="mi">1</span>
+
+<span class="c1">; Instrument 1 will play a note for 1 hour.</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">3600</span>
+<span class="nb">e</span>
+
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+        <p>
+      Here is another example of the FLslider opcode, showing the slider types and other options. It also shows the usage of FLvalue to display a widget's contents. It uses the file <a class="ulink" href="examples/FLslider-2.csd" target="_top"><em class="citetitle">FLslider-2.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276105397120"></a>
+          <p class="title">
+            <strong>Example 318. More complex example of the FLslider opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <div class="refsect1">
+              <a id="idm276474471376"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">; Audio out   Audio in    No messages</span>
+-odac           -iadc     -d     <span class="c1">;;;RT audio I/O</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o FLslider-2.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">kr</span> <span class="o">=</span> <span class="mi">441</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1">;By Andres Cabrera 2007</span>
+
+<span class="nb">FLpanel</span> <span class="s">"Slider Types"</span><span class="p">,</span> <span class="mi">410</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span>
+    <span class="c1">; Distance of the left edge of the slider</span>
+    <span class="c1">; from the left edge of the panel</span>
+    i<span class="n">x</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="c1">; Distance of the top edge of the slider </span>
+    <span class="c1">; from the top edge of the panel</span>
+    i<span class="n">y</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="c1">; Create boxes to display widget values</span>
+    gi<span class="n">value1</span> <span class="nb">FLvalue</span> <span class="s">"1"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">330</span><span class="p">,</span> i<span class="n">y</span>
+    gi<span class="n">value3</span> <span class="nb">FLvalue</span> <span class="s">"3"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">330</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">40</span>
+    gi<span class="n">value5</span> <span class="nb">FLvalue</span> <span class="s">"5"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">330</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">80</span>
+
+    gi<span class="n">value2</span> <span class="nb">FLvalue</span> <span class="s">"2"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">60</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">140</span>
+    gi<span class="n">value4</span> <span class="nb">FLvalue</span> <span class="s">"4"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">195</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">140</span>
+    gi<span class="n">value6</span> <span class="nb">FLvalue</span> <span class="s">"6"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">320</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">140</span>
+
+    <span class="c1">;Horizontal sliders</span>
+    gk<span class="n">dummy1</span><span class="p">,</span> gi<span class="n">handle1</span> <span class="nb">FLslider</span> <span class="s">"Type 1"</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> gi<span class="n">value1</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span>
+    gk<span class="n">dummy3</span><span class="p">,</span> gi<span class="n">handle3</span> <span class="nb">FLslider</span> <span class="s">"Type 3"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">15000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> gi<span class="n">value3</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">40</span>
+    <span class="c1">; Reversed slider</span>
+    gk<span class="n">dummy5</span><span class="p">,</span> gi<span class="n">handle5</span> <span class="nb">FLslider</span> <span class="s">"Type 5"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> gi<span class="n">value5</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">80</span>
+
+    <span class="c1">;Vertical sliders</span>
+    gk<span class="n">dummy2</span><span class="p">,</span> gi<span class="n">handle2</span> <span class="nb">FLslider</span> <span class="s">"Type 2"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> gi<span class="n">value2</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> i<span class="n">x</span><span class="o">+</span> <span class="mi">30</span> <span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">120</span>
+    <span class="c1">; Reversed slider</span>
+    gk<span class="n">dummy4</span><span class="p">,</span> gi<span class="n">handle4</span> <span class="nb">FLslider</span> <span class="s">"Type 4"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> gi<span class="n">value4</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">165</span> <span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">120</span>
+    gk<span class="n">dummy6</span><span class="p">,</span> gi<span class="n">handle6</span> <span class="nb">FLslider</span> <span class="s">"Type 6"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> gi<span class="n">value6</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">290</span> <span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">120</span>
+<span class="nb">FLpanelEnd</span>
+
+<span class="nb">FLpanel</span> <span class="s">"Plastic Slider Types"</span><span class="p">,</span> <span class="mi">410</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">150</span>
+    <span class="c1">; Distance of the left edge of the slider</span>
+    <span class="c1">; from the left edge of the panel</span>
+    i<span class="n">x</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="c1">; Distance of the top edge of the slider </span>
+    <span class="c1">; from the top edge of the panel</span>
+    i<span class="n">y</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="c1">; Create boxes to display widget values</span>
+    gi<span class="n">value21</span> <span class="nb">FLvalue</span> <span class="s">"21"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">330</span><span class="p">,</span> i<span class="n">y</span>
+    gi<span class="n">value23</span> <span class="nb">FLvalue</span> <span class="s">"23"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">330</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">40</span>
+    gi<span class="n">value25</span> <span class="nb">FLvalue</span> <span class="s">"25"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">330</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">80</span>
+
+    gi<span class="n">value22</span> <span class="nb">FLvalue</span> <span class="s">"22"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">60</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">140</span>
+    gi<span class="n">value24</span> <span class="nb">FLvalue</span> <span class="s">"24"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">195</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">140</span>
+    gi<span class="n">value26</span> <span class="nb">FLvalue</span> <span class="s">"26"</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">320</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">140</span>
+
+    <span class="c1">;Horizontal sliders</span>
+    gk<span class="n">dummy21</span><span class="p">,</span> gi<span class="n">handle21</span> <span class="nb">FLslider</span> <span class="s">"Type 21"</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> gi<span class="n">value21</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span>
+    gk<span class="n">dummy23</span><span class="p">,</span> gi<span class="n">handle23</span> <span class="nb">FLslider</span> <span class="s">"Type 23"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">15000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> gi<span class="n">value23</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">40</span>
+    <span class="c1">; Reversed slider</span>
+    gk<span class="n">dummy25</span><span class="p">,</span> gi<span class="n">handle25</span> <span class="nb">FLslider</span> <span class="s">"Type 25"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> gi<span class="n">value25</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> i<span class="n">x</span><span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">80</span>
+
+    <span class="c1">;Vertical sliders</span>
+    gk<span class="n">dummy22</span><span class="p">,</span> gi<span class="n">handle22</span> <span class="nb">FLslider</span> <span class="s">"Type 22"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> gi<span class="n">value22</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> i<span class="n">x</span><span class="o">+</span> <span class="mi">30</span> <span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">120</span>
+    <span class="c1">; Reversed slider</span>
+    gk<span class="n">dummy24</span><span class="p">,</span> gi<span class="n">handle24</span> <span class="nb">FLslider</span> <span class="s">"Type 24"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> gi<span class="n">value24</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">165</span> <span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">120</span>
+    gk<span class="n">dummy26</span><span class="p">,</span> gi<span class="n">handle26</span> <span class="nb">FLslider</span> <span class="s">"Type 26"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> gi<span class="n">value26</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> i<span class="n">x</span> <span class="o">+</span> <span class="mi">290</span> <span class="p">,</span> i<span class="n">y</span> <span class="o">+</span> <span class="mi">120</span>
+    <span class="c1">;Button to add color to the sliders</span>
+    gk<span class="n">colors</span><span class="p">,</span> i<span class="n">hdummy</span> <span class="nb">FLbutton</span> <span class="s">"Color"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">260</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+<span class="nb">FLpanelEnd</span>
+<span class="nb">FLrun</span>
+
+
+
+<span class="c1">;Set some widget's initial value</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">500</span><span class="p">,</span> gi<span class="n">handle1</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">1000</span><span class="p">,</span> gi<span class="n">handle3</span>
+
+<span class="kd">instr</span> <span class="nf">10</span>
+<span class="c1">; Set the color of widgets</span>
+<span class="nb">FLsetColor</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle1</span>
+<span class="nb">FLsetColor</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> gi<span class="n">handle2</span>
+<span class="nb">FLsetColor</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> gi<span class="n">handle3</span>
+<span class="nb">FLsetColor</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle4</span>
+<span class="nb">FLsetColor</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle5</span>
+<span class="nb">FLsetColor</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle6</span>
+
+<span class="nb">FLsetColor</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">value1</span>
+<span class="nb">FLsetColor</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> gi<span class="n">value2</span>
+<span class="nb">FLsetColor</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> gi<span class="n">value3</span>
+<span class="nb">FLsetColor</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">value4</span>
+<span class="nb">FLsetColor</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> gi<span class="n">value5</span>
+<span class="nb">FLsetColor</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> gi<span class="n">value6</span>
+
+<span class="nb">FLsetColor2</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> gi<span class="n">handle1</span>
+<span class="nb">FLsetColor2</span> <span class="mi">200</span><span class="p">,</span><span class="mi">0</span> <span class="p">,</span><span class="mi">123</span> <span class="p">,</span> gi<span class="n">handle2</span>
+<span class="nb">FLsetColor2</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> gi<span class="n">handle3</span>
+<span class="nb">FLsetColor2</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> gi<span class="n">handle4</span>
+<span class="nb">FLsetColor2</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> gi<span class="n">handle5</span>
+<span class="nb">FLsetColor2</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> gi<span class="n">handle6</span>
+
+<span class="nb">FLsetColor</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle21</span>
+<span class="nb">FLsetColor</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> gi<span class="n">handle22</span>
+<span class="nb">FLsetColor</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> gi<span class="n">handle23</span>
+<span class="nb">FLsetColor</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle24</span>
+<span class="nb">FLsetColor</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle25</span>
+<span class="nb">FLsetColor</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle26</span>
+
+<span class="nb">FLsetColor</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">value21</span>
+<span class="nb">FLsetColor</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> gi<span class="n">value22</span>
+<span class="nb">FLsetColor</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> gi<span class="n">value23</span>
+<span class="nb">FLsetColor</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">value24</span>
+<span class="nb">FLsetColor</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> gi<span class="n">value25</span>
+<span class="nb">FLsetColor</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> gi<span class="n">value26</span>
+
+<span class="nb">FLsetColor2</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> gi<span class="n">handle21</span>
+<span class="nb">FLsetColor2</span> <span class="mi">200</span><span class="p">,</span><span class="mi">0</span> <span class="p">,</span><span class="mi">123</span> <span class="p">,</span> gi<span class="n">handle22</span>
+<span class="nb">FLsetColor2</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> gi<span class="n">handle23</span>
+<span class="nb">FLsetColor2</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> gi<span class="n">handle24</span>
+<span class="nb">FLsetColor2</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> gi<span class="n">handle25</span>
+<span class="nb">FLsetColor2</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> gi<span class="n">handle26</span>
+
+<span class="c1">; Slider values must be updated for colors to change</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">250</span><span class="p">,</span> gi<span class="n">handle1</span>
+<span class="nb">FLsetVal_i</span> <span class="mf">0.5</span><span class="p">,</span> gi<span class="n">handle2</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle3</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle4</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle5</span>
+<span class="nb">FLsetVal_i</span> <span class="mf">0.5</span><span class="p">,</span> gi<span class="n">handle6</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">250</span><span class="p">,</span> gi<span class="n">handle21</span>
+<span class="nb">FLsetVal_i</span> <span class="mf">0.5</span><span class="p">,</span> gi<span class="n">handle22</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">500</span><span class="p">,</span> gi<span class="n">handle23</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle24</span>
+<span class="nb">FLsetVal_i</span> <span class="mi">0</span><span class="p">,</span> gi<span class="n">handle25</span>
+<span class="nb">FLsetVal_i</span> <span class="mf">0.5</span><span class="p">,</span> gi<span class="n">handle26</span>
+
+<span class="kd">endin</span>
+
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span> <span class="mi">0</span> <span class="mi">3600</span>   <span class="c1">;Dumy table to make csound wait for realtime events</span>
+
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105395408"></a>
+        <h2>See Also</h2>
+        <p>
+      <a class="link" href="FLcount.html" title="FLcount"><em class="citetitle">FLcount</em></a>,
+      <a class="link" href="FLjoy.html" title="FLjoy"><em class="citetitle">FLjoy</em></a>,
+      <a class="link" href="FLknob.html" title="FLknob"><em class="citetitle">FLknob</em></a>,
+      <a class="link" href="FLroller.html" title="FLroller"><em class="citetitle">FLroller</em></a>,
+      <a class="link" href="FLslidBnk.html" title="FLslidBnk"><em class="citetitle">FLslidBnk</em></a>,
+      <a class="link" href="FLtext.html" title="FLtext"><em class="citetitle">FLtext</em></a>
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276105388880"></a>
+        <h2>Credits</h2>
+        <p>Author: Gabriel Maldonado</p>
+        <p>New in version 4.22</p>
+        <p>February 2004. Thanks to a note from Dave Phillips, deleted the extraneous istep parameter.</p>
+        <p>Example written by Iain McCurdy, edited by Kevin Conder.</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="FLslidBnk2Setk.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="FLtabs.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">FLslidBnk2Setk </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> FLtabs</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

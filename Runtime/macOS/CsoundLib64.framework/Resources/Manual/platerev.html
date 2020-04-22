@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>platerev</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="planet.html" title="planet" />
+    <link rel="next" href="plltrack.html" title="plltrack" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">platerev</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="planet.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="plltrack.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="platerev"></a>
+      <div class="titlepage"></div>
+      <a id="IndexPlaterev" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">platerev</span>
+        </h2>
+        <p>platerev — 
+      Models the reverberation of a metal plate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070016464"></a>
+        <h2>Description</h2>
+        <p>
+      Models the reverberation of a rectangular metal plate with
+      settable physical characteristics when excited by audio signal(s).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070015152"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">a1[, a2, ...] <span class="command"><strong>platerev</strong></span> itabexcite. itabouts, kbndry, iaspect, istiff, idecay, iloss, aexcite1[, aexcite2, ...]</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070012992"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>itabexcite</em></span> -- number of a table that
+      contains triplets for each excitation signal, (frequency, radius,
+      initial phase in radians).  The radius should be less than 1.
+      These control where the excitation happens.  The values in the
+      table for frequency and radius may be changed in performance,
+      with the proviso about clicking if the changes are too large.
+    </p>
+        <p>
+      <span class="emphasis"><em>itabouts</em></span> -- number of a table that
+      contains triplets for each output signal, (frequency, radius,
+      initial phase in radians).  See itabexcite description.
+      
+    </p>
+        <p>
+      <span class="emphasis"><em>kbndry</em></span> -- boundary condition of the plate;
+      0 = free, 1 = clamped, 2 = pivoting.  Other values are
+      undefined.  Thus parameter may be changed at k-rate but that
+      might give rise to clicks.
+    </p>
+        <p>
+      <span class="emphasis"><em>iaspect</em></span> -- plate aspect ratio which should
+      be less than or equal to 1.
+    </p>
+        <p>
+      <span class="emphasis"><em>istiff</em></span> -- plate stiffness parameter (set
+      around 1 or less for plate reverb).
+    </p>
+        <p>
+      <span class="emphasis"><em>idecay</em></span> -- time taken for 30 dB decay
+    </p>
+        <p>
+      <span class="emphasis"><em>iloss</em></span> -- loss parameter for
+      high-frequency damping (value about 0.001 suggested).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070005632"></a>
+        <h2>Performance</h2>
+        <p>
+      A metal plate is excited by a stereo signal and the resulting
+      reverberation captured.
+    </p>
+        <p>
+      <span class="emphasis"><em>aexcite</em></span>n -- excitation signal to be
+      inserted into the plate.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276070003488"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the platerev opcode. It uses the file <a class="ulink" href="examples/plate.csd" target="_top"><em class="citetitle">plate.csd</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276070001696"></a>
+          <p class="title">
+            <strong>Example 716. Example of the platerev opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276437513552"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+<span class="c1">;-odac    ;;;realtime audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if realtime audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+ -o plate.wav -W <span class="c1">;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+<span class="c1">; Note: this example is heavy on CPU</span>
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span>  <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+
+a<span class="n">b</span>    <span class="nb">diskin2</span>  <span class="s">"beats.wav"</span><span class="p">,</span> <span class="mi">1</span>
+a<span class="n">l</span><span class="p">,</span>a<span class="n">r</span> <span class="nb">platerev</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">p4</span><span class="p">,</span> <span class="mf">0.73</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> a<span class="n">b</span><span class="p">,</span>a<span class="n">b</span>
+      <span class="nb">outs</span>      a<span class="n">l</span><span class="o">*</span><span class="mf">.25</span><span class="p">,</span>a<span class="n">r</span><span class="o">*</span><span class="mf">.25</span>
+
+<span class="kd">endin</span>
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+<span class="nb">f</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">8</span> <span class="o">-</span><span class="mi">2</span>   <span class="mf">0.3</span>   <span class="mf">0.3875</span>    <span class="mf">0.39274</span>  <span class="mf">0.32</span>   <span class="mf">0.85714</span> <span class="mf">0.78548</span>
+<span class="nb">f</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">8</span> <span class="o">-</span><span class="mi">2</span>   <span class="mf">0.2</span>   <span class="mf">0.666667</span>  <span class="mf">1.57097</span>  <span class="mf">0.24</span>   <span class="mf">0.75</span>    <span class="mf">0.78548</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span> <span class="mi">1</span>
+<span class="nb">i</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">4</span> <span class="mi">2</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276069997680"></a>
+        <h2>Credits</h2>
+        <p>
+      </p>
+        <table border="0" summary="Simple list" class="simplelist">
+          <tr>
+            <td>Author: Stefan Bilbao </td>
+          </tr>
+          <tr>
+            <td>University of Edinburgh, UK</td>
+          </tr>
+          <tr>
+            <td>Author: John ffitch </td>
+          </tr>
+          <tr>
+            <td>University of Bath, Codemist Ltd.</td>
+          </tr>
+          <tr>
+            <td>Bath, UK</td>
+          </tr>
+        </table>
+        <p>
+    </p>
+        <p>New in Csound version 5.17.12</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="planet.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="plltrack.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">planet </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> plltrack</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

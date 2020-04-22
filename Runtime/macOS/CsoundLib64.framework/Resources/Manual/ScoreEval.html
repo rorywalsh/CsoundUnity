@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Evaluation of Expressions</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="ScoreTop.html" title="The Standard Numeric Score" />
+    <link rel="prev" href="ScoreMult.html" title="Multiple File Score" />
+    <link rel="next" href="ScoreStrings.html" title="Strings in p-fields" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Evaluation of Expressions</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ScoreMult.html">Prev</a> </td>
+          <th width="60%" align="center">The Standard Numeric Score</th>
+          <td width="20%" align="right"> <a accesskey="n" href="ScoreStrings.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="section">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="ScoreEval"></a>Evaluation of Expressions</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+    In earlier versions of Csound the numbers presented in a score were used as given.  There are occasions when some simple evaluation would be easier.  This need is increased when there are macros.  To assist in this area the syntax of arithmetic expressions within square brackets [ ] has been introduced.  Expressions built from the operations +, -, *,  /, % ("modulo"), and ^ ("power of") are allowed, together with grouping with ( ). Unary minus and plus are also supported. The expressions can include numbers, and naturally macros whose values are numeric or arithmetic strings.  All calculations are made in floating point numbers. The usual precedence rules are followed when evaluating: expressions within parantheses ( ) are evaluated first and ^ is evaluated before *, /, and % which are evaluated before + and -.
+  </p>
+      <p>
+    In addition to arithmetic operations, the following bitwise logical operators are also available: &amp; (AND), | (OR), and # (XOR, exclusive-OR).  These operators round their operands to the nearest (long) integer before evaluating.  The logical operators have the same precedence as the *, /, and % arithmetic operators.
+  </p>
+      <p>
+    Finally, the tilde symbol ˜ can be used in an expression wherever a number is permissible to use.  Each ˜ will evaluate to a random value between zero (0) and one (1).
+  </p>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276136150560"></a>Example</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">r</span>3  CNT
+
+<span class="stamnt">i</span>1  0  [0.3*$CNT.]
+<span class="stamnt">i</span>1  +  [($CNT./3)+0.2]
+
+<span class="stamnt">e</span></pre>
+        </div>
+        <p>
+
+      As the three copies of the section have the macro $CNT. with the different values of 1, 2 and 3, this expands to
+
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">s</span>
+<span class="stamnt">i</span>1  0  0.3
+<span class="stamnt">i</span>1  0.3  0.533333
+<span class="stamnt">s</span>
+<span class="stamnt">i</span>1  0  0.6
+<span class="stamnt">i</span>1  0.6  0.866667
+<span class="stamnt">s</span>
+<span class="stamnt">i</span>1  0  0.9
+<span class="stamnt">i</span>1  0.9  1.2
+<span class="stamnt">e</span></pre>
+        </div>
+        <p>
+
+      This is an extreme form, but the evaluation system can be used to ensure that repeated sections are subtly different.
+    </p>
+        <p>
+      Here are some simple examples of each operator:
+      
+      </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+<span class="stamnt">i</span>1  0   1   [ 110 + 220 ]      ; evaluates to 330
+<span class="stamnt">i</span>1  +   .   [ 330 - 55 ]       ; 275
+<span class="stamnt">i</span>1  +   .   [ 44 * 10 ]        ; 440
+<span class="stamnt">i</span>1  +   .   [ 1100 / 2 ]       ; 550
+<span class="stamnt">i</span>1  +   .   [ 5 ^ 4 ]          ; 625
+<span class="stamnt">i</span>1  +   .   [ 5660 % 1000 ]    ; 660
+<span class="stamnt">i</span>1  +   .   [ 110 &amp; 220 ]      ; 76
+<span class="stamnt">i</span>1  +   .   [ 110 | 220 ]      ; 254
+<span class="stamnt">i</span>1  +   .   [ 110 # 220 ]      ; 178
+<span class="stamnt">i</span>1  +   .   [~]                ; random between 0-1
+<span class="stamnt">i</span>1  +   .   [~ * 4 + 1]        ; random between 1-5
+<span class="stamnt">i</span>1  +   .   [~ * 95 + 5]       ; random between 5-100
+
+<span class="stamnt">i</span>1  +   .   [ 8 / 2 * 3 ]      ; 12
+<span class="stamnt">i</span>1  +   .   [ 4 + 3 - 2 + 1 ]  ; 6
+<span class="stamnt">i</span>1  +   .   [ 4 + 3 * 2 + 1 ]  ; 11
+<span class="stamnt">i</span>1  +   .   [(4 + 3)*(2 + 1)]  ; 21
+
+<span class="stamnt">i</span>1  +   .   [ 2 * 2 &amp; 3 ]      ; 4
+<span class="stamnt">i</span>1  +   .   [ 3 &amp; 2 * 2 ]      ; 0
+<span class="stamnt">i</span>1  +   .   [ 4 | 3 * 3 ]      ; 13
+        </pre>
+        </div>
+        <p>
+    </p>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276136124096"></a>The @ operator</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+    New in Csound version 3.56 are <span class="emphasis"><em>@</em></span><span class="emphasis"><em>x</em></span> (next power-of-two greater than or equal to <span class="emphasis"><em>x</em></span>) and <span class="emphasis"><em>@@</em></span><span class="emphasis"><em>x</em></span> (next power-of-two-plus-one greater than or equal to <span class="emphasis"><em>x</em></span>).
+
+    <a id="IndexCommat" class="indexterm"></a>
+    <a id="IndexCommatCommat" class="indexterm"></a>
+  </p>
+        <div class="informalexample">
+          <pre class="programlisting">
+[ @ 11 ] will evaluate to 16
+[ @@ 11 ] to 17</pre>
+        </div>
+      </div>
+      <div class="simplesect">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="idm276136117120"></a>Credits</h3>
+            </div>
+          </div>
+        </div>
+        <p>Author: John ffitch</p>
+        <p>University of Bath/Codemist Ltd.</p>
+        <p>Bath, UK</p>
+        <p>April, 1998 (New in Csound version 3.48)</p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ScoreMult.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="ScoreTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="ScoreStrings.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Multiple File Score </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Strings in p-fields</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>adsyn</title>
+    <link rel="stylesheet" type="text/css" href="csound.css" />
+    <link rel="stylesheet" type="text/css" href="syntax-highlighting.css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.79.1" />
+    <link rel="home" href="index.html" title="The Canonical Csound Reference Manual" />
+    <link rel="up" href="OpcodesTop.html" title="Orchestra Opcodes and Operators" />
+    <link rel="prev" href="adsr.html" title="adsr" />
+    <link rel="next" href="adsynt.html" title="adsynt" />
+  </head>
+  <body>
+    <div class="navheader">
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">adsyn</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="adsr.html">Prev</a> </td>
+          <th width="60%" align="center">Orchestra Opcodes and Operators</th>
+          <td width="20%" align="right"> <a accesskey="n" href="adsynt.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="refentry">
+      <a id="adsyn"></a>
+      <div class="titlepage"></div>
+      <a id="IndexAdsyn" class="indexterm"></a>
+      <div class="refnamediv">
+        <h2>
+          <span class="refentrytitle">adsyn</span>
+        </h2>
+        <p>adsyn — 
+      Output is an additive set of individually controlled sinusoids, using an oscillator bank.
+          </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125855888"></a>
+        <h2>Description</h2>
+        <p>
+      Output is an additive set of individually controlled sinusoids, using an oscillator bank.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125854528"></a>
+        <h2>Syntax</h2>
+        <pre class="synopsis">ares <span class="command"><strong>adsyn</strong></span> kamod, kfmod, ksmod, ifilcod</pre>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125852544"></a>
+        <h2>Initialization</h2>
+        <p>
+      <span class="emphasis"><em>ifilcod</em></span> --  integer or character-string denoting a control-file derived from analysis of an audio signal. An integer denotes the suffix of a file <span class="emphasis"><em>adsyn.m</em></span> or <span class="emphasis"><em>pvoc.m</em></span>; a character-string (in double quotes) gives a filename, optionally a full pathname. If not fullpath, the file is sought first in the current directory, then in the one given by the environment variable <a class="link" href="OrchDirFiles.html" title="Directories and Files"><em class="citetitle">SADIR</em></a> (if defined). <span class="emphasis"><em>adsyn</em></span> control contains breakpoint amplitude- and frequency-envelope values organized for oscillator resynthesis, while <span class="emphasis"><em>pvoc</em></span> control contains similar data organized for fft resynthesis. Memory usage depends on the size of the files involved, which are read and held entirely in memory during computation but are shared by multiple calls (see also <a class="link" href="lpread.html" title="lpread"><em class="citetitle">lpread</em></a>).
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125847296"></a>
+        <h2>Performance</h2>
+        <p>
+      <span class="emphasis"><em>kamod</em></span> -- amplitude factor of the contributing partials.
+    </p>
+        <p>
+      <span class="emphasis"><em>kfmod</em></span> -- frequency factor of the contributing partials. It is a control-rate transposition factor: a value of 1 incurs no transposition, 1.5 transposes up a perfect fifth, and .5 down an octave.
+    </p>
+        <p>
+      <span class="emphasis"><em>ksmod</em></span> -- speed factor of the contributing partials.
+    </p>
+        <p>
+      <span class="emphasis"><em>adsyn</em></span> synthesizes complex time-varying timbres through the method of additive synthesis. Any number of sinusoids, each individually controlled in frequency and amplitude, can be summed by high-speed arithmetic to produce a high-fidelity result.
+    </p>
+        <p>
+      Component sinusoids are described by a control file describing amplitude and frequency tracks in millisecond breakpoint fashion. Tracks are defined by sequences of 16-bit binary integers:
+      </p>
+        <div class="literallayout">
+          <p><br />
+-1, time, amp, time, amp,... <br />
+-2, time, freq, time, freq,...<br />
+      </p>
+        </div>
+        <p>
+      such as from hetrodyne filter analysis of an audio file. (For details see <a class="link" href="hetro.html" title="hetro"><em class="citetitle">hetro</em></a>.) The instantaneous amplitude and frequency values are used by an internal fixed-point oscillator that adds each active partial into an accumulated output signal. While there is a practical limit (limit removed in version 3.47) on the number of contributing partials, there is no restriction on their behavior over time. Any sound that can be described in terms of the behavior of sinusoids can be synthesized by <span class="emphasis"><em>adsyn</em></span> alone.
+    </p>
+        <p>
+      Sound described by an <span class="emphasis"><em>adsyn</em></span> control file can also be modified during re-synthesis. The signals <span class="emphasis"><em>kamod,</em></span> <span class="emphasis"><em>kfmod</em></span>, <span class="emphasis"><em>ksmod</em></span> will modify the amplitude, frequency, and speed of contributing partials. These are multiplying factors, with <span class="emphasis"><em>kfmod</em></span> modifying the frequency and <span class="emphasis"><em>ksmod</em></span> modifying the <span class="emphasis"><em>speed</em></span> with which the millisecond breakpoint line-segments are traversed. Thus .7, 1.5, and 2 will give rise to a softer sound, a perfect fifth higher, but only half as long. The values 1,1,1 will leave the sound unmodified. Each of these inputs can be a control signal.
+    </p>
+      </div>
+      <div class="refsect1">
+        <a id="idm276125835136"></a>
+        <h2>Examples</h2>
+        <p>
+      Here is an example of the adsyn opcode. It uses the file <a class="ulink" href="examples/adsyn.csd" target="_top"><em class="citetitle">adsyn.csd</em></a>, and <a class="ulink" href="examples/kickroll.het" target="_top"><em class="citetitle">kickroll.het</em></a>. The file <span class="quote">“<span class="quote">kickroll.het</span>”</span> was created by using the <a class="link" href="hetro.html" title="hetro"><em class="citetitle">hetro</em></a> utility with the audio file <a class="ulink" href="examples/kickroll.wav" target="_top"><em class="citetitle">kickroll.wav</em></a>.
+
+      </p>
+        <div class="example">
+          <a id="idm276125830592"></a>
+          <p class="title">
+            <strong>Example 46. Example of the adsyn opcode.</strong>
+          </p>
+          <div class="example-contents">
+            <p>See the sections <a class="link" href="UsingRealTime.html" title="Real-Time Audio"><em class="citetitle">Real-time Audio</em></a> and <a class="link" href="CommandFlags.html" title="Csound command line"><em class="citetitle">Command Line Flags</em></a> for more information on using command line flags.</p>
+            <div class="refsect1">
+              <a id="idm276497010944"></a>
+              <pre class="programlisting">
+<span class="nt">&lt;CsoundSynthesizer&gt;</span>
+<span class="nt">&lt;CsOptions&gt;</span>
+<span class="c1">; Select audio/midi flags here according to platform</span>
+-odac     <span class="c1">;;;RT audio out</span>
+<span class="c1">;-iadc    ;;;uncomment -iadc if RT audio input is needed too</span>
+<span class="c1">; For Non-realtime ouput leave only the line below:</span>
+<span class="c1">; -o adsyn.wav -W ;;; for file output any platform</span>
+<span class="nt">&lt;/CsOptions&gt;</span>
+<span class="nt">&lt;CsInstruments&gt;</span>
+
+<span class="vg">sr</span> <span class="o">=</span> <span class="mi">44100</span>
+<span class="vg">ksmps</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="vg">nchnls</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="vg">0dbfs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="kd">instr</span> <span class="nf">1</span>
+<span class="c1">; analyze the file "kickroll.wav" first</span>
+k<span class="n">amod</span> <span class="o">=</span> <span class="mi">1</span>
+k<span class="n">fmod</span> <span class="o">=</span> <span class="nb">p4</span>
+k<span class="n">smod</span> <span class="o">=</span> <span class="nb">p5</span>
+
+a<span class="n">sig</span>	<span class="nb">adsyn</span>	k<span class="n">amod</span><span class="p">,</span> k<span class="n">fmod</span><span class="p">,</span> k<span class="n">smod</span><span class="p">,</span> <span class="s">"kickroll.het"</span>
+	<span class="nb">outs</span>	a<span class="n">sig</span><span class="p">,</span> a<span class="n">sig</span>
+<span class="kd">endin</span>
+
+<span class="nt">&lt;/CsInstruments&gt;</span>
+<span class="nt">&lt;CsScore&gt;</span>
+
+<span class="nb">i</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">4</span>  <span class="mi">1</span> <span class="mf">.2</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span>  <span class="mi">2</span>  <span class="mi">1</span>
+<span class="nb">i</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="mf">.3</span> <span class="mf">1.5</span>
+<span class="nb">e</span>
+
+<span class="nt">&lt;/CsScore&gt;</span>
+<span class="nt">&lt;/CsoundSynthesizer&gt;</span>
+</pre>
+            </div>
+          </div>
+        </div>
+        <p><br class="example-break" />
+    </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="adsr.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="OpcodesTop.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="adsynt.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">adsr </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> adsynt</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
