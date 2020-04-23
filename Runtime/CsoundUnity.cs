@@ -315,7 +315,6 @@ public class CsoundUnity : MonoBehaviour
         {
             for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)
             {
-
                 for (int channel = 0; channel < numChannels; channel++)
                 {
                     if (mute == true)
@@ -330,13 +329,13 @@ public class CsoundUnity : MonoBehaviour
 
                         if (processClipAudio)
                         {
-                            SetInputSample(ksmpsIndex * numChannels + channel, channel, samples[i + channel]);
-                            samples[i + channel] = (float)GetOutputSample(ksmpsIndex * numChannels + channel, channel);
+                            SetInputSample(ksmpsIndex, channel, samples[i + channel]);
+                            //Debug.Log((float)GetOutputSample(ksmpsIndex, channel));
+                            samples[i + channel] = (float)GetOutputSample(ksmpsIndex, channel);
                         }
                         else
                         {
                             samples[i + channel] = (float)(GetOutputSample(ksmpsIndex, channel) / zerdbfs);
-
                         }
                     }
                 }
@@ -383,15 +382,15 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Set a sample in Csound's input buffer
     */
-    public void SetInputSample(int pos, int channel, double sample)
+    public void SetInputSample(int frame, int channel, MYFLT sample)
     {
-        csound.SetSpinSample(pos, channel, sample);
+        csound.SetSpinSample(frame, channel, sample);
     }
 
     /**
         * Get a sample from Csound's audio output buffer
     */
-    public double GetOutputSample(int frame, int channel)
+    public MYFLT GetOutputSample(int frame, int channel)
     {
         return csound.GetSpoutSample(frame, channel);
     }
@@ -438,7 +437,7 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Retrieves a single sample from a Csound function table. 
      */
-    public double GetTableSample(int tableNumber, int index)
+    public MYFLT GetTableSample(int tableNumber, int index)
     {
         return csound.GetTable(tableNumber, index);
     }
