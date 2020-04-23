@@ -133,7 +133,7 @@ public class CsoundUnityBridge
     /// <summary>
     /// Returns the value of a slot in a function table. The table number and index are assumed to be valid.
     /// </summary>
-	public double GetTable(int table, int index)
+	public MYFLT GetTable(int table, int index)
     {
         return Csound6.NativeMethods.csoundTableGet(csound, table, index);
     }
@@ -261,7 +261,7 @@ public class CsoundUnityBridge
     /// <summary>
     /// Get a sample from Csound's audio output buffer
     /// <summary>
-    public double GetSpoutSample(int frame, int channel)
+    public MYFLT GetSpoutSample(int frame, int channel)
     {
         return Csound6.NativeMethods.csoundGetSpoutSample(csound, frame, channel);
     }
@@ -269,7 +269,7 @@ public class CsoundUnityBridge
     /// <summary>
     /// Set a sample from Csound's audio output buffer
     /// <summary>
-    public double SetSpinSample(int frame, int channel, double sample)
+    public MYFLT SetSpinSample(int frame, int channel, MYFLT sample)
     {
         return Csound6.NativeMethods.csoundSetSpinSample(csound, frame, channel, sample);
     }
