@@ -28,32 +28,32 @@ using MYFLT = System.Single;
 
 namespace csoundcsharp
 {
-	// This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If you wish to 
-	// use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
-	// http://csound6net.codeplex.com
+    // This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If you wish to 
+    // use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
+    // http://csound6net.codeplex.com
 
-	// This lightweight wrapper was created to provide an interface to the Unity3d game engine
-	public partial class Csound6
+    // This lightweight wrapper was created to provide an interface to the Unity3d game engine
+    public partial class Csound6
     {
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
         internal const string _dllVersion = "csound64.dll";
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        internal const string _dllVersion = "CsoundLib64.framework/CsoundLib64";//"macOS/CsoundLib64";////"CsoundLib64.framework/CsoundLib64";
+        internal const string _dllVersion = "CsoundLib64.framework/CsoundLib64";
 #elif UNITY_ANDROID
         internal const string _dllVersion = "csoundandroid";
 #endif
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void MessageCallbackProxy(IntPtr csound, Int32 attr, string format, IntPtr valist);
-		
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void FileOpenCallbackProxy(IntPtr csound, string pathname, int csFileType, int writing, int temporary);
-		
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate void RtcloseCallbackProxy(IntPtr csound);
+        internal delegate void MessageCallbackProxy(IntPtr csound, Int32 attr, string format, IntPtr valist);
 
-		public class NativeMethods
-		{
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void FileOpenCallbackProxy(IntPtr csound, string pathname, int csFileType, int writing, int temporary);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void RtcloseCallbackProxy(IntPtr csound);
+
+        public class NativeMethods
+        {
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
             internal static extern Int32 csoundInitialize([In] int flags);
@@ -164,7 +164,7 @@ namespace csoundcsharp
             internal static extern MYFLT csoundGetSpoutSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-            internal static extern MYFLT csoundSetSpinSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel, [In] MYFLT value);
+            internal static extern void csoundSetSpinSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel, [In] MYFLT value);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern MYFLT csoundGetKr([In] IntPtr csound);
@@ -330,7 +330,13 @@ namespace csoundcsharp
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern IntPtr csoundAddSpinSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel, [In] MYFLT sample);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern IntPtr csoundGetSpin([In] IntPtr csound);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern IntPtr csoundGetSpout([In] IntPtr csound);
         }
-	}
+    }
 }
 

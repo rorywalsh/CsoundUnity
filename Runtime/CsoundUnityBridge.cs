@@ -269,9 +269,35 @@ public class CsoundUnityBridge
     /// <summary>
     /// Set a sample from Csound's audio output buffer
     /// <summary>
-    public MYFLT SetSpinSample(int frame, int channel, MYFLT sample)
+    public void SetSpinSample(int frame, int channel, MYFLT sample)
     {
-        return Csound6.NativeMethods.csoundSetSpinSample(csound, frame, channel, sample);
+        Csound6.NativeMethods.csoundSetSpinSample(csound, frame, channel, sample);
+    }
+
+    /// <summary>
+    /// Returns the Csound audio input working buffer (spin) as a MYFLT array.
+    /// Enables external software to write audio into Csound before calling csoundPerformKsmps.
+    /// </summary>
+    /// <returns>a MYFLT array representing the Csound audio input buffer</returns>
+    public MYFLT[] GetSpin() {
+        var size = Csound6.NativeMethods.csoundGetInputBufferSize(csound);
+        var spin = new MYFLT[size];
+        var addr = Csound6.NativeMethods.csoundGetSpin(csound);
+        Marshal.Copy(addr, spin, 0, size);
+        return spin;
+    }
+
+    /// <summary>
+    /// Returns the Csound audio output working buffer (spout) as a MYFLT array.
+    /// Enables external software to read audio from Csound after calling csoundPerformKsmps.
+    /// </summary>
+    /// <returns>a MYFLT array representing the Csound audio output buffer</returns>
+    public MYFLT[] GetSpout() {
+        var size = Csound6.NativeMethods.csoundGetOutputBufferSize(csound);
+        var spout = new MYFLT[size];
+        var addr = Csound6.NativeMethods.csoundGetSpout(csound);
+        Marshal.Copy(addr, spout, 0, size);
+        return spout;
     }
 
     /// <summary>

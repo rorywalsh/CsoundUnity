@@ -369,8 +369,8 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /**
-    * get file path
-    */
+     * Get file path
+     */
 #if UNITY_EDITOR
     public string GetFilePath(UnityEngine.Object obj)
     {
@@ -381,23 +381,37 @@ public class CsoundUnity : MonoBehaviour
 
     /**
      * Set a sample in Csound's input buffer
-    */
+     */
     public void SetInputSample(int frame, int channel, MYFLT sample)
     {
         csound.SetSpinSample(frame, channel, sample);
     }
 
     /**
-        * Get a sample from Csound's audio output buffer
-    */
+     * Get a sample from Csound's audio output buffer
+     */
     public MYFLT GetOutputSample(int frame, int channel)
     {
         return csound.GetSpoutSample(frame, channel);
     }
+
+    /**
+     * Get Csound's audio input buffer
+     */
+    public MYFLT[] GetSpin() {
+        return csound.GetSpin();
+    }
+
+    /**
+     * Get Csound's audio output buffer
+     **/
+    public MYFLT[] GetSpout() {
+        return csound.GetSpout();
+    }
+
     /**
      * map MYFLT within one range to another 
      */
-
     public static float Remap(float value, float from1, float to1, float from2, float to2)
     {
         float retValue = (value - from1) / (to1 - from1) * (to2 - from2) + from2;
@@ -411,6 +425,7 @@ public class CsoundUnity : MonoBehaviour
     {
         csound.SetChannel(channel, val);
     }
+
     /**
      * Sets a string channel in Csound. Used in connection with a chnget opcode in your Csound instrument.
      */
@@ -418,6 +433,7 @@ public class CsoundUnity : MonoBehaviour
     {
         csound.SetStringChannel(channel, val);
     }
+
     /**
      * Gets a Csound channel. Used in connection with a chnset opcode in your Csound instrument.
      */
@@ -512,7 +528,7 @@ public class CsoundUnity : MonoBehaviour
         return csound.IsNamedGEN(num);
     }
 
-    /***
+    /**
      * Gets the GEN name from a number num, if this is a named GEN 
      * The final parameter is the max len of the string (excluding termination)
     */
