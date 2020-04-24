@@ -327,14 +327,13 @@ public class CsoundUnity : MonoBehaviour
                     {
                         if ((ksmpsIndex >= ksmps) && (ksmps > 0))
                         {
-                            spin = GetSpin();
-                            spout = GetSpout();
-                            PerformKsmps();                            
+                            PerformKsmps();
                             ksmpsIndex = 0; 
                         }
 
                         if (processClipAudio)
                         {
+
                             uint index = (ksmpsIndex * GetNchnls()) + channel;
                             spin[(int)index] = samples[i + channel] * zerdbfs;
                             samples[i + channel] = (float)spout[(int)index] / zerdbfs;

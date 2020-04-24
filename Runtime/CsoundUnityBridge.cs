@@ -294,7 +294,7 @@ public class CsoundUnityBridge
     /// <returns>a MYFLT array representing the Csound audio output buffer</returns>
     public MYFLT[] GetSpout() {
         var size = Csound6.NativeMethods.csoundGetOutputBufferSize(csound);
-        var spout = new MYFLT[size];
+        var spout = new MYFLT[Csound6.NativeMethods.csoundGetKsmps(csound)];
         var addr = Csound6.NativeMethods.csoundGetSpout(csound);
         Marshal.Copy(addr, spout, 0, size);
         return spout;
