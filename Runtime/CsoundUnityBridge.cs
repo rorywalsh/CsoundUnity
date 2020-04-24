@@ -308,6 +308,22 @@ public class CsoundUnityBridge
         return Csound6.NativeMethods.csoundGetControlChannel(csound, channel, IntPtr.Zero);
     }
 
+    /// <summary>
+    /// Get number of input channels
+    /// <summary>
+    public uint GetNchnlsInput()
+    {
+        return Csound6.NativeMethods.csoundGetNchnlsInput(csound);
+    }
+
+    /// <summary>
+    /// Get number of input channels
+    /// <summary>
+    public uint GetNchnls()
+    {
+        return Csound6.NativeMethods.csoundGetNchnls(csound);
+    }
+
     public int GetCsoundMessageCount()
     {
         return Csound6.NativeMethods.csoundGetMessageCnt(csound);
