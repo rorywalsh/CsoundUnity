@@ -327,9 +327,9 @@ public class CsoundUnity : MonoBehaviour
                     {
                         if ((ksmpsIndex >= ksmps) && (ksmps > 0))
                         {
-                            PerformKsmps();
                             spin = GetSpin();
                             spout = GetSpout();
+                            PerformKsmps();                            
                             ksmpsIndex = 0; 
                         }
 
