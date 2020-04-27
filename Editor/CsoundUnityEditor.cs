@@ -45,7 +45,7 @@ public class CsoundUnityEditor : Editor
         controllerValues = new List<float>();
 
         m_csoundFile = this.serializedObject.FindProperty("csoundFile");
-        m_processAudio = this.serializedObject.FindProperty("_processClipAudio");
+        m_processAudio = this.serializedObject.FindProperty("processClipAudio");
         m_mute = this.serializedObject.FindProperty("mute");
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
 
@@ -69,7 +69,6 @@ public class CsoundUnityEditor : Editor
 
         this.serializedObject.Update();
 
-
         //get caption info first
         for (int i = 0; i < channelControllers.Count; i++)
         {
@@ -82,7 +81,13 @@ public class CsoundUnityEditor : Editor
         EditorGUILayout.HelpBox(infoText, MessageType.None);
         GUI.SetNextControlName("CsoundfileTextField");
         m_csoundFile.stringValue = EditorGUILayout.TextField("Csound file", csoundUnity.csoundFile);
-        m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", csoundUnity.processClipAudio);
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
+        if (EditorGUI.EndChangeCheck()) {
+            csoundUnity.ClearSpin();
+            csoundUnity.processClipAudio = !m_processAudio.boolValue;
+        }
+        
         m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", csoundUnity.mute);
         m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", csoundUnity.logCsoundOutput);
 

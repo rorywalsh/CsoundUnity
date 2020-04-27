@@ -89,8 +89,8 @@ public class CsoundUnity : MonoBehaviour
     private float zerdbfs = 1;
     private bool compiledOk = false;
     public bool mute = false;
-    public bool processClipAudio { get { return _processClipAudio; } set { if (!value) { this.ClearSpin(); } _processClipAudio = value; } }
-    [SerializeField] private bool _processClipAudio;
+    //public bool processClipAudio { get { return _processClipAudio; } set { if (!value) { this.ClearSpin(); } _processClipAudio = value; } }
+    public bool processClipAudio;
     //structure to hold channel data
     List<CsoundChannelController> channels;
     private AudioSource audioSource;
@@ -403,9 +403,8 @@ public class CsoundUnity : MonoBehaviour
      */
     public void ClearSpin()
     {
-        if (csound != null && GetSpin() != null)
+        if (csound != null)
         {
-            Debug.Log("clear");
             csound.ClearSpin();
         }
     }
