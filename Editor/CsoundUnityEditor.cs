@@ -33,12 +33,22 @@ public class CsoundUnityEditor : Editor
     public static CsoundUnityEditor window;
     bool initPass = true;
 
+    SerializedProperty m_csoundFile;
+    SerializedProperty m_processAudio;
+    SerializedProperty m_mute;
+    SerializedProperty m_logCsoundOutput;
 
     void OnEnable()
     {
         csoundUnity = (CsoundUnity)target;
         channelControllers = new List<CsoundChannelController>();
         controllerValues = new List<float>();
+
+        m_csoundFile = this.serializedObject.FindProperty("csoundFile");
+        m_processAudio = this.serializedObject.FindProperty("_processClipAudio");
+        m_mute = this.serializedObject.FindProperty("mute");
+        m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
+
 
         //parse Csound files for CsoundUnity descriptor
         if (csoundUnity.csoundFile.Length > 4)
@@ -57,6 +67,9 @@ public class CsoundUnityEditor : Editor
     {
         GUI.skin = (GUISkin)(AssetDatabase.LoadAssetAtPath("Packages/com.csound.csoundunity/Editor/CsoundUnity.guiskin", typeof(GUISkin)));
 
+        this.serializedObject.Update();
+
+
         //get caption info first
         for (int i = 0; i < channelControllers.Count; i++)
         {
@@ -68,10 +81,12 @@ public class CsoundUnityEditor : Editor
 
         EditorGUILayout.HelpBox(infoText, MessageType.None);
         GUI.SetNextControlName("CsoundfileTextField");
-        csoundUnity.csoundFile = EditorGUILayout.TextField("Csound file", csoundUnity.csoundFile);
-        csoundUnity.processClipAudio = EditorGUILayout.Toggle("Process Clip Audio", csoundUnity.processClipAudio);
-        csoundUnity.mute = EditorGUILayout.Toggle("Mute Csound", csoundUnity.mute);
-        csoundUnity.logCsoundOutput = EditorGUILayout.Toggle("Log Csound Output", csoundUnity.logCsoundOutput);
+        m_csoundFile.stringValue = EditorGUILayout.TextField("Csound file", csoundUnity.csoundFile);
+        m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", csoundUnity.processClipAudio);
+        m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", csoundUnity.mute);
+        m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", csoundUnity.logCsoundOutput);
+
+        serializedObject.ApplyModifiedProperties();
 
         //create drag and drop area for Csound files
         DropAreaGUI();

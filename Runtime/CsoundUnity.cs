@@ -90,7 +90,7 @@ public class CsoundUnity : MonoBehaviour
     private bool compiledOk = false;
     public bool mute = false;
     public bool processClipAudio { get { return _processClipAudio; } set { if (!value) { this.ClearSpin(); } _processClipAudio = value; } }
-    private bool _processClipAudio;
+    [SerializeField] private bool _processClipAudio;
     //structure to hold channel data
     List<CsoundChannelController> channels;
     private AudioSource audioSource;
@@ -405,7 +405,7 @@ public class CsoundUnity : MonoBehaviour
     {
         if (csound != null && GetSpin() != null)
         {
-            Debug.Log("Clearing spin");
+            Debug.Log("clear");
             csound.ClearSpin();
         }
     }
