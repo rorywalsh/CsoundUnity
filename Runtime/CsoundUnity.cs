@@ -126,8 +126,6 @@ public class CsoundUnity : MonoBehaviour
         dataPath = Application.dataPath + "/Plugins"; // Csound plugin libraries get copied to the root of plugins directory in the application data directory 
 #endif
 
-        string packagePath = Path.GetFullPath("Packages/com.csound.unity/Package Resources/Scene1/Scene1.unity");
-        Debug.Log($"PackagePath: {packagePath}");
         string path = System.Environment.GetEnvironmentVariable("Path");
         string updatedPath = path + ";" + dataPath;
         print("Updated path:" + updatedPath);
@@ -139,11 +137,9 @@ public class CsoundUnity : MonoBehaviour
         UnityWebRequest webrequest = UnityWebRequest.Get(csoundFileTmp);
         webrequest.SendWebRequest();
         while (!webrequest.isDone) { }
-        csoundFilePath = getCsoundFile(webrequest.downloadHandler.text);
+        csoundFilePath = GetCsoundFile(webrequest.downloadHandler.text);
         // string dataPath = "not needed for Android";
-
         // Copy all audio files to persistent data storage
-        Debug.Log("Before Copy: "+Application.persistentDataPath);
         csoundFileTmp = "jar:file://" + Application.dataPath + "!/assets/CsoundFiles/csoundFiles.json";
         webrequest = UnityWebRequest.Get(csoundFileTmp);
         webrequest.SendWebRequest();
