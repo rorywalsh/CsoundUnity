@@ -48,14 +48,14 @@ public class CsoundUnityBridge
     {
 
         Debug.Log("CsoundUnityBridge constructor from dir: " + csoundDir + " csdFile: " + csdFile);
-#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN) 
+#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
         Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.streamingAssetsPath + "/CsoundFiles");
         Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.streamingAssetsPath + "/CsoundFiles");
         Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.streamingAssetsPath + "/CsoundFiles");
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
         //if (Directory.Exists(csoundDir+"/CsoundLib64.framework/Resources/Opcodes64"))
-       Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", "Packages/com.csound/Runtime/Plugins/macOS/CsoundLib64.framework/Resources/Opcodes64");
+        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", "Packages/com.csound/Runtime/Plugins/macOS/CsoundLib64.framework/Resources/Opcodes64");
 #elif UNITY_ANDROID
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
         Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.persistentDataPath);
@@ -70,7 +70,7 @@ public class CsoundUnityBridge
         Debug.Log("System buffer size: " + systemBufferSize + ", buffer count: " + systemNumBuffers + " , samplerate: " + AudioSettings.outputSampleRate);
         Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
-        string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "--ksmps=32"};
+        string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "--ksmps=32" };
         Debug.Log("CsoundUnity is overriding the orchestra sample rate to match that of Unity.");
         Debug.Log("CsoundUnity is overriding the orchestra ksmps value to best match Unity's audio settings, i.e, 32 ksmps");
         int ret = Csound6.NativeMethods.csoundCompile(csound, 4, runargs);
@@ -275,12 +275,21 @@ public class CsoundUnityBridge
     }
 
     /// <summary>
+    /// Clears the input buffer (spin).
+    /// </summary>
+    public void ClearSpin()
+    {
+        Csound6.NativeMethods.csoundClearSpin(csound);
+    }
+
+    /// <summary>
     /// Returns the Csound audio input working buffer (spin) as a MYFLT array.
     /// Enables external software to write audio into Csound before calling csoundPerformKsmps.
     /// </summary>
     /// <returns>a MYFLT array representing the Csound audio input buffer</returns>
-    public MYFLT[] GetSpin() {
-        var size = (Int32)Csound6.NativeMethods.csoundGetKsmps(csound)*(int)GetNchnlsInput();
+    public MYFLT[] GetSpin()
+    {
+        var size = (Int32)Csound6.NativeMethods.csoundGetKsmps(csound) * (int)GetNchnlsInput();
         var spin = new MYFLT[size];
         var addr = Csound6.NativeMethods.csoundGetSpin(csound);
         Marshal.Copy(addr, spin, 0, size);
@@ -292,8 +301,9 @@ public class CsoundUnityBridge
     /// Enables external software to read audio from Csound after calling csoundPerformKsmps.
     /// </summary>
     /// <returns>a MYFLT array representing the Csound audio output buffer</returns>
-    public MYFLT[] GetSpout() {
-        var size = (Int32)Csound6.NativeMethods.csoundGetKsmps(csound)* (int)GetNchnls();
+    public MYFLT[] GetSpout()
+    {
+        var size = (Int32)Csound6.NativeMethods.csoundGetKsmps(csound) * (int)GetNchnls();
         var spout = new MYFLT[size];
         var addr = Csound6.NativeMethods.csoundGetSpout(csound);
         Marshal.Copy(addr, spout, 0, size);

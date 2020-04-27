@@ -89,11 +89,11 @@ public class CsoundUnity : MonoBehaviour
     private float zerdbfs = 1;
     private bool compiledOk = false;
     public bool mute = false;
-    public bool processClipAudio = false;
+    public bool processClipAudio { get { return _processClipAudio; } set { if (!value) { this.ClearSpin(); } _processClipAudio = value; } }
+    private bool _processClipAudio;
     //structure to hold channel data
     List<CsoundChannelController> channels;
     private AudioSource audioSource;
-
 
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
@@ -178,7 +178,7 @@ public class CsoundUnity : MonoBehaviour
         csound = new CsoundUnityBridge(dataPath, csoundFilePath);
         if (csound != null)
         {
-            
+
             channels = ParseCsdFile(csoundFilePath);
 
             //initialise channels if found in xml descriptor..
@@ -186,7 +186,7 @@ public class CsoundUnity : MonoBehaviour
             {
                 csound.SetChannel(channels[i].channel, channels[i].value);
             }
-            
+
             /*
              * This method prints the Csound output to the Unity console
              */
@@ -194,7 +194,7 @@ public class CsoundUnity : MonoBehaviour
                 InvokeRepeating("LogCsoundMessages", 0, .5f);
 
             compiledOk = csound.CompiledWithoutError();
-            
+
 
             if (compiledOk)
             {
@@ -329,15 +329,9 @@ public class CsoundUnity : MonoBehaviour
 
                         if (processClipAudio)
                         {
-                            uint index = ksmpsIndex * (uint)numChannels + channel;
                             SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel]);
-                            samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel);
                         }
-                        else
-                        {
-                            uint index = (ksmpsIndex * GetNchnls()) + channel;
-                            samples[i + channel] = (float)spout[(int)index] / zerdbfs;
-                        }
+                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel);
                     }
                 }
             }
@@ -405,6 +399,18 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /**
+     * Clears the input buffer (spin).
+     */
+    public void ClearSpin()
+    {
+        if (csound != null && GetSpin() != null)
+        {
+            Debug.Log("Clearing spin");
+            csound.ClearSpin();
+        }
+    }
+
+    /**
      * Get a sample from Csound's audio output buffer
      */
     public MYFLT GetOutputSample(int frame, int channel)
@@ -415,14 +421,16 @@ public class CsoundUnity : MonoBehaviour
     /**
      * Get Csound's audio input buffer
      */
-    public MYFLT[] GetSpin() {
+    public MYFLT[] GetSpin()
+    {
         return csound.GetSpin();
     }
 
     /**
      * Get Csound's audio output buffer
      **/
-    public MYFLT[] GetSpout() {
+    public MYFLT[] GetSpout()
+    {
         return csound.GetSpout();
     }
 

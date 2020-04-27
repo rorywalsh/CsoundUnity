@@ -335,6 +335,9 @@ namespace csoundcsharp
             internal static extern IntPtr csoundGetSpin([In] IntPtr csound);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern void csoundClearSpin([In] IntPtr csound);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern IntPtr csoundGetSpout([In] IntPtr csound);
         }
     }
