@@ -90,8 +90,6 @@ public class CsoundUnity : MonoBehaviour
     private bool compiledOk = false;
     public bool mute = false;
     public bool processClipAudio = false;
-    MYFLT[] spin;
-    MYFLT[] spout;
     //structure to hold channel data
     List<CsoundChannelController> channels;
     private AudioSource audioSource;
@@ -196,8 +194,7 @@ public class CsoundUnity : MonoBehaviour
                 InvokeRepeating("LogCsoundMessages", 0, .5f);
 
             compiledOk = csound.CompiledWithoutError();
-            spin = GetSpin();
-            spout = GetSpout(); 
+            
 
             if (compiledOk)
             {
@@ -213,7 +210,6 @@ public class CsoundUnity : MonoBehaviour
                 string persistentPath = Application.persistentDataPath + "/CsoundFiles/"; // TODO ??
                 csound.SetStringChannel("CsoundFilesPath", Application.dataPath);
 #endif
-
             }
         }
         else
@@ -328,15 +324,14 @@ public class CsoundUnity : MonoBehaviour
                         if ((ksmpsIndex >= ksmps) && (ksmps > 0))
                         {
                             PerformKsmps();
-                            ksmpsIndex = 0; 
+                            ksmpsIndex = 0;
                         }
 
                         if (processClipAudio)
                         {
-
-                            uint index = (ksmpsIndex * GetNchnls()) + channel;
-                            spin[(int)index] = samples[i + channel] * zerdbfs;
-                            samples[i + channel] = (float)spout[(int)index] / zerdbfs;
+                            uint index = ksmpsIndex * (uint)numChannels + channel;
+                            SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel]);
+                            samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel);
                         }
                         else
                         {

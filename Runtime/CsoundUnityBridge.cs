@@ -68,7 +68,7 @@ public class CsoundUnityBridge
         int systemNumBuffers;
         AudioSettings.GetDSPBufferSize(out systemBufferSize, out systemNumBuffers);
         Debug.Log("System buffer size: " + systemBufferSize + ", buffer count: " + systemNumBuffers + " , samplerate: " + AudioSettings.outputSampleRate);
-        Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, systemBufferSize);
+        Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
         string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "--ksmps=32"};
         Debug.Log("CsoundUnity is overriding the orchestra sample rate to match that of Unity.");
@@ -280,7 +280,7 @@ public class CsoundUnityBridge
     /// </summary>
     /// <returns>a MYFLT array representing the Csound audio input buffer</returns>
     public MYFLT[] GetSpin() {
-        var size = Csound6.NativeMethods.csoundGetInputBufferSize(csound);
+        var size = (Int32)Csound6.NativeMethods.csoundGetKsmps(csound)*(int)GetNchnlsInput();
         var spin = new MYFLT[size];
         var addr = Csound6.NativeMethods.csoundGetSpin(csound);
         Marshal.Copy(addr, spin, 0, size);
@@ -293,8 +293,8 @@ public class CsoundUnityBridge
     /// </summary>
     /// <returns>a MYFLT array representing the Csound audio output buffer</returns>
     public MYFLT[] GetSpout() {
-        var size = Csound6.NativeMethods.csoundGetOutputBufferSize(csound);
-        var spout = new MYFLT[Csound6.NativeMethods.csoundGetKsmps(csound)];
+        var size = (Int32)Csound6.NativeMethods.csoundGetKsmps(csound)* (int)GetNchnls();
+        var spout = new MYFLT[size];
         var addr = Csound6.NativeMethods.csoundGetSpout(csound);
         Marshal.Copy(addr, spout, 0, size);
         return spout;
@@ -321,7 +321,7 @@ public class CsoundUnityBridge
     /// <summary>
     public uint GetNchnls()
     {
-        return Csound6.NativeMethods.csoundGetNchnls(csound);
+        return Csound6.NativeMethods.csoundGetNchnlsInput(csound);
     }
 
     public int GetCsoundMessageCount()
