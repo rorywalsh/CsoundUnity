@@ -20,7 +20,6 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
 
-
 [CustomEditor(typeof(CsoundUnity))]
 [System.Serializable]
 public class CsoundUnityEditor : Editor
@@ -49,7 +48,6 @@ public class CsoundUnityEditor : Editor
         m_mute = this.serializedObject.FindProperty("mute");
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
 
-
         //parse Csound files for CsoundUnity descriptor
         if (csoundUnity.csoundFile.Length > 4)
         {
@@ -57,10 +55,7 @@ public class CsoundUnityEditor : Editor
             string dir = Application.streamingAssetsPath + "/CsoundFiles";
             if (Directory.Exists(dir))
                 channelControllers = csoundUnity.ParseCsdFile(dir + "/" + csoundUnity.csoundFile);
-            //else
-            //    channelControllers = csoundUnity.parseCsdFile(Application.dataPath + "/CsoundUnity/Scripts/" + csoundUnity.csoundFile);
         }
-
     }
 
     public override void OnInspectorGUI()
@@ -83,11 +78,12 @@ public class CsoundUnityEditor : Editor
         m_csoundFile.stringValue = EditorGUILayout.TextField("Csound file", csoundUnity.csoundFile);
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
-        if (EditorGUI.EndChangeCheck()) {
+        if (EditorGUI.EndChangeCheck())
+        {
             csoundUnity.ClearSpin();
             csoundUnity.processClipAudio = !m_processAudio.boolValue;
         }
-        
+
         m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", csoundUnity.mute);
         m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", csoundUnity.logCsoundOutput);
 
@@ -95,6 +91,9 @@ public class CsoundUnityEditor : Editor
 
         //create drag and drop area for Csound files
         DropAreaGUI();
+
+        //clear controller values list
+        controllerValues.Clear();
 
         //create controls for each Csound channel found in the file descriptor
         for (int i = 0; i < channelControllers.Count; i++)
