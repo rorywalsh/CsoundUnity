@@ -325,9 +325,9 @@ public class CsoundUnity : MonoBehaviour
 
                         if (processClipAudio)
                         {
-                            SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel]);
+                            SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel] * zerdbfs);
                         }
-                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel);
+                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel) / zerdbfs;
                     }
                 }
             }
