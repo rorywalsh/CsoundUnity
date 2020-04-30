@@ -83,17 +83,19 @@ public class CsoundUnity : MonoBehaviour
                                        * Unity output console. Note that this can slow down performance if there is a 
                                        * lot of information being printed.
                                        */
+    public bool mute = false;
+    public bool processClipAudio;
 
+    private const string packageName = "com.csound.csoundunity";
     private uint ksmps = 32;
     private uint ksmpsIndex = 0;
     private float zerdbfs = 1;
     private bool compiledOk = false;
-    public bool mute = false;
-    //public bool processClipAudio { get { return _processClipAudio; } set { if (!value) { this.ClearSpin(); } _processClipAudio = value; } }
-    public bool processClipAudio;
+    
     //structure to hold channel data
-    List<CsoundChannelController> channels;
+    private List<CsoundChannelController> channels;
     private AudioSource audioSource;
+
 
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
@@ -110,27 +112,26 @@ public class CsoundUnity : MonoBehaviour
         * - All audio or data files referenced by your csd files are placed in Assets/StreamingAssets/CsoundFiles (SFDIR, SSDIR, SADIR point to this directory)
         *
         */
-        string csoundFilePath = "";
-        string dataPath = "";
-
         Debug.Log("AudioSettings.outputSampleRate: " + AudioSettings.outputSampleRate);
+
+        string csoundFilePath = "";
+        string dataPath = Path.GetFullPath(Path.Combine("Packages", packageName, "Runtime"));
+        
         if (string.IsNullOrWhiteSpace(csoundFile)) return;
 
-#if UNITY_EDITOR || UNITY_STANDALONE
         csoundFilePath = Application.streamingAssetsPath + "/CsoundFiles/" + csoundFile;
-#endif
-#if UNITY_EDITOR
-        dataPath = Application.dataPath + "/Plugins/Win64/CsoundPlugins"; // Csound plugin libraries in Editor
 
-#elif UNITY_STANDALONE_WIN
-        dataPath = Application.dataPath + "/Plugins"; // Csound plugin libraries get copied to the root of plugins directory in the application data directory 
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+        dataPath = Path.Combine(dataPath, "Win64"; // Csound plugin libraries in Windows Editor
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+        dataPath = Path.Combine(dataPath, "macOS");
 #endif
 
         string path = System.Environment.GetEnvironmentVariable("Path");
         string updatedPath = path + ";" + dataPath;
         print("Updated path:" + updatedPath);
-
         System.Environment.SetEnvironmentVariable("Path", updatedPath); // Is this needed for Csound to find libraries?
+
 #if UNITY_ANDROID
         // Copy CSD to persistent data storage
         string csoundFileTmp = "jar:file://" + Application.dataPath + "!/assets/CsoundFiles/" + csoundFile;
@@ -138,7 +139,7 @@ public class CsoundUnity : MonoBehaviour
         webrequest.SendWebRequest();
         while (!webrequest.isDone) { }
         csoundFilePath = GetCsoundFile(webrequest.downloadHandler.text);
-        // string dataPath = "not needed for Android";
+        dataPath = Path.Combine(dataPath, "Android");//"not needed for Android";
         // Copy all audio files to persistent data storage
         csoundFileTmp = "jar:file://" + Application.dataPath + "!/assets/CsoundFiles/csoundFiles.json";
         webrequest = UnityWebRequest.Get(csoundFileTmp);
@@ -190,7 +191,6 @@ public class CsoundUnity : MonoBehaviour
                 InvokeRepeating("LogCsoundMessages", 0, .5f);
 
             compiledOk = csound.CompiledWithoutError();
-
 
             if (compiledOk)
             {
@@ -401,6 +401,7 @@ public class CsoundUnity : MonoBehaviour
     {
         if (csound != null)
         {
+            Debug.Log("clear spin");
             csound.ClearSpin();
         }
     }
