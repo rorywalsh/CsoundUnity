@@ -122,7 +122,7 @@ public class CsoundUnity : MonoBehaviour
         csoundFilePath = Application.streamingAssetsPath + "/CsoundFiles/" + csoundFile;
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-        dataPath = Path.Combine(dataPath, "Win64"; // Csound plugin libraries in Windows Editor
+        dataPath = Path.Combine(dataPath, "Win64"); // Csound plugin libraries in Windows Editor
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
         dataPath = Path.Combine(dataPath, "macOS");
 #endif
