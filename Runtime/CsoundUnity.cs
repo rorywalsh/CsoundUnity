@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System;
 #if UNITY_EDITOR
 using UnityEditor;
+using System.Threading.Tasks;
 #endif
 #if UNITY_ANDROID
 using UnityEngine.Networking;
@@ -53,7 +54,6 @@ public struct CsoundFilesInfo
     public string[] fileNames;
 }
 
-
 /*
  * CsoundUnity class
  */
@@ -62,7 +62,6 @@ public struct CsoundFilesInfo
 [RequireComponent(typeof(AudioSource))]
 public class CsoundUnity : MonoBehaviour
 {
-
     // Use this for initialization
     private CsoundUnityBridge csound;/**< 
                                      * The private member variable csound provides access to the CsoundUnityBridge class, which 
@@ -91,12 +90,11 @@ public class CsoundUnity : MonoBehaviour
     private uint ksmpsIndex = 0;
     private float zerdbfs = 1;
     private bool compiledOk = false;
-    
+
     //structure to hold channel data
     private List<CsoundChannelController> channels;
     private AudioSource audioSource;
-
-
+    
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
@@ -116,8 +114,9 @@ public class CsoundUnity : MonoBehaviour
 
         string csoundFilePath = "";
         string dataPath = Path.GetFullPath(Path.Combine("Packages", packageName, "Runtime"));
-        
-        if (string.IsNullOrWhiteSpace(csoundFile)) return;
+
+        //commented! also if the csd is not set it should be possible to call csound methods
+        // if (string.IsNullOrWhiteSpace(csoundFile)) return; 
 
         csoundFilePath = Application.streamingAssetsPath + "/CsoundFiles/" + csoundFile;
 
@@ -178,11 +177,12 @@ public class CsoundUnity : MonoBehaviour
 
             channels = ParseCsdFile(csoundFilePath);
 
-            //initialise channels if found in xml descriptor..
-            for (int i = 0; i < channels.Count; i++)
-            {
-                csound.SetChannel(channels[i].channel, channels[i].value);
-            }
+            if (channels != null)
+                //initialise channels if found in xml descriptor..
+                for (int i = 0; i < channels.Count; i++)
+                {
+                    csound.SetChannel(channels[i].channel, channels[i].value);
+                }
 
             /*
              * This method prints the Csound output to the Unity console
@@ -280,31 +280,62 @@ public class CsoundUnity : MonoBehaviour
 
         //csound.reset();
     }
-
-    /**
-     * Get the current control rate
-     */
+       
+    /// <summary>
+    /// Get the current control rate
+    /// </summary>
+    /// <returns></returns>
     public MYFLT SetKr()
     {
         return csound.GetKr();
     }
 
+    /// <summary>
+    /// The enum representing the Csound Environments
+    /// </summary>
+    public enum EnvType { OPCODE6DIR64, SFDIR, SSDIR, SADIR }
 
-    /**
-     * this gets called for every block of samples
-     */
+    /// <summary>
+    /// Get Environment path
+    /// </summary>
+    /// <param name="envType">the type of the environment to get</param>
+    /// <returns></returns>
+    public string GetEnv(EnvType envType)
+    {
+        return csound.GetEnv(envType.ToString());
+    }
+
+    /// <summary>
+    /// Get the Opcode List, async
+    /// </summary>
+    /// <returns></returns>
+    public async Task<IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>>> GetOpcodeListAsync()
+    {
+        return await csound.GetOpcodeListAsync();
+    }
+
+    /// <summary>
+    /// Get the Opcode List, blocking
+    /// </summary>
+    /// <returns></returns>
+    public IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>> GetOpcodeList()
+    {
+        return csound.GetOpcodeList();
+    }
+        
     void OnAudioFilterRead(float[] data, int channels)
     {
         if (csound != null)
         {
             ProcessBlock(data, channels);
         }
-
     }
 
-    /**
-    * Processes a block of samples
-    */
+    /// <summary>
+    /// Processes a block of samples
+    /// </summary>
+    /// <param name="samples"></param>
+    /// <param name="numChannels"></param>
     public void ProcessBlock(float[] samples, int numChannels)
     {
         if (compiledOk)
@@ -334,69 +365,77 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
-
-    /**
-     * process a ksmps-sized block of samples
-     */
+    /// <summary>
+    /// Process a ksmps-sized block of samples
+    /// </summary>
+    /// <returns></returns>
     public int PerformKsmps()
     {
         return csound.PerformKsmps();
     }
 
-    /**
-     * Get the current control rate
-     */
+    /// <summary>
+    /// Get the current control rate
+    /// </summary>
+    /// <returns></returns>
     public uint GetKsmps()
     {
         return csound.GetKsmps();
     }
 
-    /**
-     * Get the number of input channels
-     */
+    /// <summary>
+    /// Get the number of input channels
+    /// </summary>
+    /// <returns></returns>
     public uint GetNchnlsInputs()
     {
         return csound.GetNchnlsInput();
     }
 
-    /**
-     * Get the number of output channels
-     */
+    /// <summary>
+    /// Get the number of output channels
+    /// </summary>
+    /// <returns></returns>
     public uint GetNchnls()
     {
         return csound.GetNchnls();
     }
-
-    /**
-     * Get 0 dbfs
-     */
+        
+    /// <summary>
+    /// Get 0 dbfs
+    /// </summary>
+    /// <returns></returns>
     public MYFLT Get0dbfs()
     {
         return csound.Get0dbfs();
     }
-
-    /**
-     * Get file path
-     */
+    
 #if UNITY_EDITOR
+    /// <summary>
+    /// Get file path
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
     public string GetFilePath(UnityEngine.Object obj)
     {
         return Application.dataPath.Replace("Assets", "") + AssetDatabase.GetAssetPath(obj);
     }
 #endif
 
-
-    /**
-     * Set a sample in Csound's input buffer
-     */
+    /// <summary>
+    /// Set a sample in Csound's input buffer
+    /// </summary>
+    /// <param name="frame"></param>
+    /// <param name="channel"></param>
+    /// <param name="sample"></param>
     public void SetInputSample(int frame, int channel, MYFLT sample)
     {
         csound.SetSpinSample(frame, channel, sample);
     }
 
-    /**
-     * Clears the input buffer (spin).
-     */
+    /// <summary>
+    /// Clears the input buffer (spin).
+    /// </summary>
     public void ClearSpin()
     {
         if (csound != null)
@@ -406,170 +445,227 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
-    /**
-     * Get a sample from Csound's audio output buffer
-     */
+    /// <summary>
+    /// Get a sample from Csound's audio output buffer
+    /// </summary>
+    /// <param name="frame"></param>
+    /// <param name="channel"></param>
+    /// <returns></returns>
     public MYFLT GetOutputSample(int frame, int channel)
     {
         return csound.GetSpoutSample(frame, channel);
     }
 
-    /**
-     * Get Csound's audio input buffer
-     */
+    /// <summary>
+    /// Get Csound's audio input buffer
+    /// </summary>
+    /// <returns></returns>
     public MYFLT[] GetSpin()
     {
         return csound.GetSpin();
     }
 
-    /**
-     * Get Csound's audio output buffer
-     **/
+    /// <summary>
+    /// Get Csound's audio output buffer
+    /// </summary>
+    /// <returns></returns>
     public MYFLT[] GetSpout()
     {
         return csound.GetSpout();
     }
 
-    /**
-     * map MYFLT within one range to another 
-     */
+    /// <summary>
+    /// map MYFLT within one range to another
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="from1"></param>
+    /// <param name="to1"></param>
+    /// <param name="from2"></param>
+    /// <param name="to2"></param>
+    /// <returns></returns>
     public static float Remap(float value, float from1, float to1, float from2, float to2)
     {
         float retValue = (value - from1) / (to1 - from1) * (to2 - from2) + from2;
         return Mathf.Clamp(retValue, from2, to2);
     }
-
-    /**
-     * Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
-     */
+        
+    /// <summary>
+    /// Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
+    /// </summary>
+    /// <param name="channel"></param>
+    /// <param name="val"></param>
     public void SetChannel(string channel, MYFLT val)
     {
         csound.SetChannel(channel, val);
     }
 
-    /**
-     * Sets a string channel in Csound. Used in connection with a chnget opcode in your Csound instrument.
-     */
+    /// <summary>
+    /// Sets a string channel in Csound. Used in connection with a chnget opcode in your Csound instrument.
+    /// </summary>
+    /// <param name="channel"></param>
+    /// <param name="val"></param>
     public void SetStringChannel(string channel, string val)
     {
         csound.SetStringChannel(channel, val);
     }
-
-    /**
-     * Gets a Csound channel. Used in connection with a chnset opcode in your Csound instrument.
-     */
+         
+    /// <summary>
+    /// Gets a Csound channel. Used in connection with a chnset opcode in your Csound instrument.
+    /// </summary>
+    /// <param name="channel"></param>
+    /// <returns></returns>
     public MYFLT GetChannel(string channel)
     {
         return csound.GetChannel(channel);
     }
-
-    /**
-     *  Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
-    */
+        
+    /// <summary>
+    /// Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
+    /// </summary>
+    /// <param name="table"></param>
+    /// <returns></returns>
     public int GetTableLength(int table)
     {
         return csound.TableLength(table);
     }
-
-    /**
-     * Retrieves a single sample from a Csound function table. 
-     */
+        
+    /// <summary>
+    /// Retrieves a single sample from a Csound function table.
+    /// </summary>
+    /// <param name="tableNumber"></param>
+    /// <param name="index"></param>
+    /// <returns></returns>
     public MYFLT GetTableSample(int tableNumber, int index)
     {
         return csound.GetTable(tableNumber, index);
     }
 
-    /**
-    * Stores values to function table 'tableNum' in tableValues, and returns the table length (not including the guard point). 
-    * If the table does not exist, tableValues is set to NULL and -1 is returned.
-    */
+    /// <summary>
+    /// Stores values to function table 'tableNum' in tableValues, and returns the table length (not including the guard point).
+    /// If the table does not exist, tableValues is set to NULL and -1 is returned.
+    /// </summary>
+    /// <param name="tableValues"></param>
+    /// <param name="numTable"></param>
+    /// <returns></returns>
     public int GetTable(out MYFLT[] tableValues, int numTable)
     {
         return csound.GetTable(out tableValues, numTable);
     }
 
-    /**
-     * Stores the arguments used to generate function table 'tableNum' in args, and returns the number of arguments used. 
-     * If the table does not exist, args is set to NULL and -1 is returned. 
-     * NB: the argument list starts with the GEN number and is followed by its parameters. eg. f 1 0 1024 10 1 0.5 yields the list {10.0,1.0,0.5}
-    */
+    /// <summary>
+    /// Stores the arguments used to generate function table 'tableNum' in args, and returns the number of arguments used.
+    /// If the table does not exist, args is set to NULL and -1 is returned.
+    /// NB: the argument list starts with the GEN number and is followed by its parameters.
+    /// eg. f 1 0 1024 10 1 0.5 yields the list {10.0,1.0,0.5}
+    /// </summary>
+    /// <param name="args"></param>
+    /// <param name="index"></param>
+    /// <returns></returns>
     public int GetTableArgs(out MYFLT[] args, int index)
     {
         return csound.GetTableArgs(out args, index);
     }
 
-    /**
-     * Sets the value of a slot in a function table. The table number and index are assumed to be valid.
-    */
+    /// <summary>
+    /// Sets the value of a slot in a function table. The table number and index are assumed to be valid.
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="index"></param>
+    /// <param name="value"></param>
     public void SetTable(int table, int index, MYFLT value)
     {
         csound.SetTable(table, index, value);
     }
 
-    /**
-    * Copy the contents of a function table into a supplied array dest 
-    * The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
-    */
+    /// <summary>
+    /// Copy the contents of a function table into a supplied array dest
+    /// The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="dest"></param>
     public void CopyTableOut(int table, out MYFLT[] dest)
     {
         csound.TableCopyOut(table, out dest);
     }
 
-    /**
-     * Asynchronous version of copyTableOut
-     */
+    /// <summary>
+    /// Asynchronous version of copyTableOut
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="dest"></param>
     public void CopyTableOutAsync(int table, out MYFLT[] dest)
     {
         csound.TableCopyOutAsync(table, out dest);
     }
 
-    /**
-    * Copy the contents of a function table into a supplied array dest 
-    * The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
-    */
+    /// <summary>
+    /// Copy the contents of a function table into a supplied array dest
+    /// The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="source"></param>
     public void CopyTableIn(int table, MYFLT[] source)
     {
         csound.TableCopyIn(table, source);
     }
 
-    /**
-     * Asynchronous version of copyTableOut
-     */
+    /// <summary>
+    /// Asynchronous version of copyTableOut
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="source"></param>
     public void CopyTableInAsync(int table, MYFLT[] source)
     {
         csound.TableCopyInAsync(table, source);
     }
 
-    /**
-    * Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char) 
-    * Otherwise it returns 0.
-    */
+    /// <summary>
+    /// Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char)
+    /// Otherwise it returns 0.
+    /// </summary>
+    /// <param name="num"></param>
+    /// <returns></returns>
     public int IsNamedGEN(int num)
     {
         return csound.IsNamedGEN(num);
     }
 
-    /**
-     * Gets the GEN name from a number num, if this is a named GEN 
-     * The final parameter is the max len of the string (excluding termination)
-    */
+    /// <summary>
+    /// Gets the GEN name from a number num, if this is a named GEN
+    /// The final parameter is the max len of the string (excluding termination)
+    /// </summary>
+    /// <param name="num"></param>
+    /// <param name="name"></param>
+    /// <param name="len"></param>
     public void GetNamedGEN(int num, out string name, int len)
     {
         csound.GetNamedGEN(num, out name, len);
     }
 
-    /**
-     * Send a score event to Csound in the form of "i1 0 10 ...."
-     */
+    /// <summary>
+    /// Returns a Dictionary keyed by the names of all named table generators.
+    /// Each name is paired with its internal function number.
+    /// </summary>
+    /// <returns></returns>
+    public IDictionary<string, int> GetNamedGens()
+    {
+        return csound.GetNamedGens();
+    }
+
+    /// <summary>
+    /// Send a score event to Csound in the form of "i1 0 10 ....
+    /// </summary>
+    /// <param name="scoreEvent">the score string to send</param>
     public void SendScoreEvent(string scoreEvent)
     {
         //print(scoreEvent);
         csound.SendScoreEvent(scoreEvent);
     }
 
-    /**
-     * Print the Csound output to the Unity message console. No need to call this manually, it is set up and controlled in the CsoundUnity Awake() function.
-     */
+    /// <summary>
+    /// Print the Csound output to the Unity message console.
+    /// No need to call this manually, it is set up and controlled in the CsoundUnity Awake() function.
+    /// </summary>
     void LogCsoundMessages()
     {
         //print Csound message to Unity console....
@@ -577,9 +673,15 @@ public class CsoundUnity : MonoBehaviour
             print(csound.GetCsoundMessage());
     }
 
-
+    /// <summary>
+    /// Parse the csd file
+    /// </summary>
+    /// <param name="filename">the csd file to parse</param>
+    /// <returns></returns>
     public List<CsoundChannelController> ParseCsdFile(string filename)
     {
+        if (!File.Exists(filename)) return null;
+
         string[] fullCsdText = File.ReadAllLines(filename);
         if (fullCsdText.Length < 1) return null;
 

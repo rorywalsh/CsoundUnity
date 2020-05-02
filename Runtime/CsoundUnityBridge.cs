@@ -21,6 +21,8 @@ using System.Net;
 using System.Text;
 using System.Runtime.InteropServices;
 using csoundcsharp;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
 #elif UNITY_ANDROID
@@ -56,8 +58,8 @@ public class CsoundUnityBridge
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
         //if (Directory.Exists(csoundDir+"/CsoundLib64.framework/Resources/Opcodes64"))
         var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.framework/Resources/Opcodes64"));
-        Debug.Log($"opcodePath {opcodePath} exists? "+Directory.Exists(opcodePath));
-            Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
+        Debug.Log($"opcodePath {opcodePath} exists? " + Directory.Exists(opcodePath));
+        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
 #elif UNITY_ANDROID
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
         Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.persistentDataPath);
@@ -249,6 +251,35 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundGetNamedGEN(csound, num, out name, len);
     }
 
+    /// <summary>
+    /// Named Gen Proxy 
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    private class NamedGenProxy
+    {
+        public IntPtr name;
+        public int genum;
+        public IntPtr next; //NAMEDGEN pointer used by csound as linked list, but not sure if we care
+    }
+
+    /// <summary>
+    /// Returns a Dictionary keyed by the names of all named table generators.
+    /// Each name is paired with its internal function number.
+    /// </summary>
+    /// <returns></returns>
+    public IDictionary<string, int> GetNamedGens()
+    {
+        IDictionary<string, int> gens = new Dictionary<string, int>();
+        IntPtr pNAMEDGEN = Csound6.NativeMethods.csoundGetNamedGens(csound);
+        while (pNAMEDGEN != IntPtr.Zero)
+        {
+            NamedGenProxy namedGen = (NamedGenProxy)Marshal.PtrToStructure(pNAMEDGEN, typeof(NamedGenProxy));
+            gens.Add(Marshal.PtrToStringAnsi(namedGen.name), namedGen.genum);
+            pNAMEDGEN = namedGen.next;
+        }
+        return gens;
+    }
+
     public MYFLT GetKr()
     {
         return Csound6.NativeMethods.csoundGetKr(csound);
@@ -350,7 +381,7 @@ public class CsoundUnityBridge
 
     public static string GetMessageText(IntPtr message)
     {
-        return Marshal.PtrToStringAnsi(message);
+        return CharPtr2String(message);
         //int len = 0;
         //while (Marshal.ReadByte(message, len) != 0) ++len;
         //byte[] buffer = new byte[len];
@@ -358,6 +389,104 @@ public class CsoundUnityBridge
         //return Encoding.UTF8.GetString(buffer);
     }
 
+    /// <summary>
+    /// Async version of GetOpcodeList()
+    /// </summary>
+    /// <returns>A sorted Dictionary keyed by all opcodes which are active in the current instance of csound.</returns>
+    public async Task<IDictionary<string, IList<OpcodeArgumentTypes>>> GetOpcodeListAsync()
+    {
+        return await Task.Run(() =>
+        {
+            return GetOpcodeList();
+        });
+    }
+
+    /// <summary>
+    /// Returns a sorted Dictionary keyed by all opcodes which are active in the current instance of csound.
+    /// The values contain argument strings representing signatures for an opcode's
+    /// output and input parameters.
+    /// The argument strings pairs are stored in a list to accomodate opcodes with multiple signatures.
+    /// </summary>
+    /// <returns>A sorted Dictionary keyed by all opcodes which are active in the current instance of csound.</returns>
+    public IDictionary<string, IList<OpcodeArgumentTypes>> GetOpcodeList()
+    {
+        var opcodes = new SortedDictionary<string, IList<OpcodeArgumentTypes>>();
+        IntPtr ppOpcodeList = IntPtr.Zero;
+        int size = Csound6.NativeMethods.csoundNewOpcodeList(csound, out ppOpcodeList);
+        if ((ppOpcodeList != IntPtr.Zero) && (size >= 0))
+        {
+            int proxySize = Marshal.SizeOf(typeof(OpcodeListProxy));
+            for (int i = 0; i < size; i++)
+            {
+                OpcodeListProxy proxy = Marshal.PtrToStructure(ppOpcodeList + (i * proxySize), typeof(OpcodeListProxy)) as OpcodeListProxy;
+                string opname = Marshal.PtrToStringAnsi(proxy.opname);
+                OpcodeArgumentTypes opcode = new OpcodeArgumentTypes();
+                opcode.outypes = Marshal.PtrToStringAnsi(proxy.outtypes);
+                opcode.intypes = Marshal.PtrToStringAnsi(proxy.intypes);
+                opcode.flags = proxy.flags;
+                if (!opcodes.ContainsKey(opname))
+                {
+                    IList<OpcodeArgumentTypes> types = new List<OpcodeArgumentTypes>();
+                    types.Add(opcode);
+                    opcodes.Add(opname, types);
+                }
+                else
+                {
+                    opcodes[opname].Add(opcode);
+                }
+            }
+            Csound6.NativeMethods.csoundDisposeOpcodeList(csound, ppOpcodeList);
+        }
+        return opcodes;
+    }
+
+    /// <summary>
+    /// Defines a class to hold out and in types, and flags
+    /// </summary>
+    public class OpcodeArgumentTypes
+    {
+        public string outypes;
+        public string intypes;
+        public int flags;
+    }
+
+    /// <summary>
+    /// Defines an OpcodeList to be Marshaled
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    private class OpcodeListProxy
+    {
+        public IntPtr opname;
+        public IntPtr outtypes;
+        public IntPtr intypes;
+        public int flags;
+    }
+
+    /// <summary>
+    /// Gets a string value from csound's environment values.
+    /// Meaningful values include the contents of Windows' OS environment values 
+    /// such as SFDIR or SADIR for path name defaults.
+    /// </summary>
+    /// <param name="key">the name of the Environment Variable to get</param>
+    /// <returns>the corresponding value or an empty string if no such key exists</returns>
+    public string GetEnv(string key)
+    {
+        return CharPtr2String(Csound6.NativeMethods.csoundGetEnv(csound, key));
+    }
+
+    /// <summary>
+    /// Converts the char* for an ascii "c" string represented by the provided IntPtr
+    /// into a managed string.  Usually used for values returning a const char * from
+    /// a csound routine.
+    /// Using this method avoids pInvoke's default automatic attpempted deletion
+    /// of the returned char[] when string is expressly given as a marshalling type.
+    /// </summary>
+    /// <param name="pString"></param>
+    /// <returns></returns>
+    internal static String CharPtr2String(IntPtr pString)
+    {
+        return ((pString != null) && (pString != IntPtr.Zero)) ? Marshal.PtrToStringAnsi(pString) : string.Empty;
+    }
 }
 
 
