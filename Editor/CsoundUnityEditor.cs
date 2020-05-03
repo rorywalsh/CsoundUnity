@@ -64,14 +64,15 @@ public class CsoundUnityEditor : Editor
 
         this.serializedObject.Update();
 
-        //get caption info first
-        for (int i = 0; i < channelControllers.Count; i++)
-        {
-            if (channelControllers[i].type.Contains("form"))
+        if (channelControllers != null)
+            //get caption info first
+            for (int i = 0; i < channelControllers.Count; i++)
             {
-                infoText = channelControllers[i].caption;
+                if (channelControllers[i].type.Contains("form"))
+                {
+                    infoText = channelControllers[i].caption;
+                }
             }
-        }
 
         EditorGUILayout.HelpBox(infoText, MessageType.None);
         GUI.SetNextControlName("CsoundfileTextField");
@@ -95,44 +96,45 @@ public class CsoundUnityEditor : Editor
         //clear controller values list
         controllerValues.Clear();
 
-        //create controls for each Csound channel found in the file descriptor
-        for (int i = 0; i < channelControllers.Count; i++)
-        {
-            controllerValues.Add(channelControllers[i].value);
-            string label = channelControllers[i].text.Length > 3 ? channelControllers[i].text : channelControllers[i].channel;
-            if (channelControllers[i].type.Contains("slider"))
+        if (channelControllers != null)
+            //create controls for each Csound channel found in the file descriptor
+            for (int i = 0; i < channelControllers.Count; i++)
             {
-                controllerValues[i] = EditorGUILayout.Slider(label, controllerValues[i], channelControllers[i].min, channelControllers[i].max);
-                if (controllerValues[i] != channelControllers[i].value || initPass)
+                controllerValues.Add(channelControllers[i].value);
+                string label = channelControllers[i].text.Length > 3 ? channelControllers[i].text : channelControllers[i].channel;
+                if (channelControllers[i].type.Contains("slider"))
                 {
-                    channelControllers[i].value = controllerValues[i];
-                    if (Application.isPlaying)
-                        csoundUnity.SetChannel(channelControllers[i].channel, controllerValues[i]);
+                    controllerValues[i] = EditorGUILayout.Slider(label, controllerValues[i], channelControllers[i].min, channelControllers[i].max);
+                    if (controllerValues[i] != channelControllers[i].value || initPass)
+                    {
+                        channelControllers[i].value = controllerValues[i];
+                        if (Application.isPlaying)
+                            csoundUnity.SetChannel(channelControllers[i].channel, controllerValues[i]);
+                    }
+                }
+                else if (channelControllers[i].type.Contains("button"))
+                {
+                    if (GUILayout.Button(label))
+                    {
+                        channelControllers[i].value = channelControllers[i].value == 1 ? 0 : 1;
+                        csoundUnity.SetChannel(channelControllers[i].channel, channelControllers[i].value);
+                    }
+                }
+                else if (channelControllers[i].type.Contains("groupbox"))
+                {
+                    EditorGUILayout.HelpBox(channelControllers[i].text, MessageType.None);
+                }
+                else if (channelControllers[i].type.Contains("checkbox"))
+                {
+                    controllerValues[i] = EditorGUILayout.Toggle(label, controllerValues[i] == 1 ? true : false) == true ? 1 : 0;
+                    if (controllerValues[i] != channelControllers[i].value)
+                    {
+                        channelControllers[i].value = controllerValues[i];
+                        if (Application.isPlaying)
+                            csoundUnity.SetChannel(channelControllers[i].channel, controllerValues[i]);
+                    }
                 }
             }
-            else if (channelControllers[i].type.Contains("button"))
-            {
-                if (GUILayout.Button(label))
-                {
-                    channelControllers[i].value = channelControllers[i].value == 1 ? 0 : 1;
-                    csoundUnity.SetChannel(channelControllers[i].channel, channelControllers[i].value);
-                }
-            }
-            else if (channelControllers[i].type.Contains("groupbox"))
-            {
-                EditorGUILayout.HelpBox(channelControllers[i].text, MessageType.None);
-            }
-            else if (channelControllers[i].type.Contains("checkbox"))
-            {
-                controllerValues[i] = EditorGUILayout.Toggle(label, controllerValues[i] == 1 ? true : false) == true ? 1 : 0;
-                if (controllerValues[i] != channelControllers[i].value)
-                {
-                    channelControllers[i].value = controllerValues[i];
-                    if (Application.isPlaying)
-                        csoundUnity.SetChannel(channelControllers[i].channel, controllerValues[i]);
-                }
-            }
-        }
         initPass = false;
     }
 
