@@ -94,7 +94,7 @@ public class CsoundUnity : MonoBehaviour
     //structure to hold channel data
     private List<CsoundChannelController> channels;
     private AudioSource audioSource;
-    
+
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
@@ -280,7 +280,7 @@ public class CsoundUnity : MonoBehaviour
 
         //csound.reset();
     }
-       
+
     /// <summary>
     /// Get the current control rate
     /// </summary>
@@ -291,9 +291,105 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// The enum representing the Csound Environments
+    /// The enum representing the Csound Environment Variables
+    /// 
     /// </summary>
-    public enum EnvType { OPCODE6DIR64, SFDIR, SSDIR, SADIR }
+    public enum EnvType
+    {
+        /// <summary>
+        /// Default directory for sound files.
+        /// Used if no full path is given for sound files.
+        /// </summary>
+        SFDIR,
+
+        /// <summary>
+        /// Default directory for input (source) audio and MIDI files.
+        /// Used if no full path is given for sound files.
+        /// May be used in conjunction with SFDIR to set separate input and output directories.
+        /// Please note that MIDI files as well as audio files are also sought inside SSDIR.
+        /// </summary>
+        SSDIR,
+
+        /// <summary>
+        /// Default directory for analysis files.
+        /// Used if no full path is given for analysis files.
+        /// </summary>
+        SADIR,
+
+        /// <summary>
+        /// Sets the default output file type.
+        /// Currently only 'WAV', 'AIFF' and 'IRCAM' are valid.
+        /// This flag is checked by the csound executable and the utilities and is used if no file output type is specified.
+        /// </summary>
+        SFOUTYP,
+
+        /// <summary>
+        /// Include directory. Specifies the location of files used by #include statements.
+        /// </summary>
+        INCDIR,
+
+        /// <summary>
+        /// Defines the location of csound opcode plugins for the single precision float (32-bit) version.
+        /// </summary>
+        OPCODE6DIR,
+
+        /// <summary>
+        /// Defines the location of csound opcode plugins for the double precision float (64-bit) version.
+        /// </summary>
+        OPCODE6DIR64,
+
+        /// <summary>
+        /// Is used by the FLTK widget opcodes when loading and saving snapshots.
+        /// </summary>
+        SNAPDIR,
+
+        /// <summary>
+        /// Defines the csound resource (or configuration) file.
+        /// A full path and filename containing csound flags must be specified.
+        /// This variable defaults to .csoundrc if not present.
+        /// </summary>
+        CSOUNDRC,
+        /// <summary>
+        /// In Csound 5.00 and later versions,
+        /// the localisation of messages is controlled by two environment variables CSSTRNGS and CS_LANG,
+        /// both of which are optional.
+        /// CSSTRNGS points to a directory containing .xmg files.
+        /// </summary>
+        CSSTRNGS,
+
+        /// <summary>
+        /// Selects a language for csound messages.
+        /// </summary>
+        CS_LANG,
+
+        /// <summary>
+        /// Is used by the STK opcodes to find the raw wave files.
+        /// Only relevant if you are using STK wrapper opcodes like STKBowed or STKBrass.
+        /// </summary>
+        RAWWAVE_PATH,
+
+        /// <summary>
+        /// If this environment variable is set to "yes",
+        /// then any graph displays are closed automatically at the end of performance
+        /// (meaning that you possibly will not see much of them in the case of a short non-realtime render).
+        /// Otherwise, you need to click "Quit" in the FLTK display window to exit,
+        /// allowing for viewing the graphs even after the end of score is reached.
+        /// </summary>
+        CSNOSTOP,
+
+        /// <summary>
+        /// Default directory for MIDI files.
+        /// Used if no full path is given for MIDI files.
+        /// Please note that MIDI files are sought in SSDIR and SFDIR as well.
+        /// </summary>
+        MFDIR,
+
+        /// <summary>
+        /// Allows defining a list of plugin libraries that should be skipped.
+        /// Libraries can be separated with commas, and don't require the "lib" prefix.
+        /// </summary>
+        CS_OMIT_LIBS
+    }
 
     /// <summary>
     /// Get Environment path
@@ -322,7 +418,7 @@ public class CsoundUnity : MonoBehaviour
     {
         return csound.GetOpcodeList();
     }
-        
+
     void OnAudioFilterRead(float[] data, int channels)
     {
         if (csound != null)
@@ -400,7 +496,7 @@ public class CsoundUnity : MonoBehaviour
     {
         return csound.GetNchnls();
     }
-        
+
     /// <summary>
     /// Get 0 dbfs
     /// </summary>
@@ -409,7 +505,7 @@ public class CsoundUnity : MonoBehaviour
     {
         return csound.Get0dbfs();
     }
-    
+
 #if UNITY_EDITOR
     /// <summary>
     /// Get file path
@@ -488,7 +584,7 @@ public class CsoundUnity : MonoBehaviour
         float retValue = (value - from1) / (to1 - from1) * (to2 - from2) + from2;
         return Mathf.Clamp(retValue, from2, to2);
     }
-        
+
     /// <summary>
     /// Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
     /// </summary>
@@ -508,7 +604,7 @@ public class CsoundUnity : MonoBehaviour
     {
         csound.SetStringChannel(channel, val);
     }
-         
+
     /// <summary>
     /// Gets a Csound channel. Used in connection with a chnset opcode in your Csound instrument.
     /// </summary>
@@ -518,7 +614,7 @@ public class CsoundUnity : MonoBehaviour
     {
         return csound.GetChannel(channel);
     }
-        
+
     /// <summary>
     /// Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
     /// </summary>
@@ -528,7 +624,7 @@ public class CsoundUnity : MonoBehaviour
     {
         return csound.TableLength(table);
     }
-        
+
     /// <summary>
     /// Retrieves a single sample from a Csound function table.
     /// </summary>

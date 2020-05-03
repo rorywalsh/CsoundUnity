@@ -420,10 +420,12 @@ public class CsoundUnityBridge
             {
                 OpcodeListProxy proxy = Marshal.PtrToStructure(ppOpcodeList + (i * proxySize), typeof(OpcodeListProxy)) as OpcodeListProxy;
                 string opname = Marshal.PtrToStringAnsi(proxy.opname);
-                OpcodeArgumentTypes opcode = new OpcodeArgumentTypes();
-                opcode.outypes = Marshal.PtrToStringAnsi(proxy.outtypes);
-                opcode.intypes = Marshal.PtrToStringAnsi(proxy.intypes);
-                opcode.flags = proxy.flags;
+                OpcodeArgumentTypes opcode = new OpcodeArgumentTypes
+                {
+                    outypes = Marshal.PtrToStringAnsi(proxy.outtypes),
+                    intypes = Marshal.PtrToStringAnsi(proxy.intypes),
+                    flags = proxy.flags
+                };
                 if (!opcodes.ContainsKey(opname))
                 {
                     IList<OpcodeArgumentTypes> types = new List<OpcodeArgumentTypes>();
