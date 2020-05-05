@@ -33,7 +33,9 @@ using MYFLT = System.Double;
 using MYFLT = System.Single;
 #endif
 
-//utility class for controller and channels
+/// <summary>
+/// Utility class for controller and channels
+/// </summary>
 public class CsoundChannelController
 {
     public string type = "", channel = "", text = "", caption = "";
@@ -45,9 +47,11 @@ public class CsoundChannelController
         max = uMax;
         value = uValue;
     }
-
 }
 
+/// <summary>
+/// Utility class for CsoundFiles to copy 
+/// </summary>
 [Serializable]
 public struct CsoundFilesInfo
 {

@@ -22,7 +22,6 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-
 class CsoundBuildPreprocessor : IPreprocessBuildWithReport
  {
 	public int callbackOrder { get { return 0; } }
@@ -99,4 +98,4 @@ class CsoundBuildPreprocessor : IPreprocessBuildWithReport
         }
     }
 }
- #endif
+#endif
