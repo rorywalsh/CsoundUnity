@@ -29,8 +29,6 @@ using MYFLT = System.Double;
 using MYFLT = System.Single;
 #endif
 
-
-
 /*
  * CsoundUnityBridge class
  */
@@ -81,12 +79,10 @@ public class CsoundUnityBridge
         compiledOk = ret == 0 ? true : false;
         Debug.Log("csoundCompile: " + compiledOk);
     }
-
-
+    
     public void StopCsound()
     {
         Csound6.NativeMethods.csoundStop(csound);
-
     }
 
     public void Reset()
@@ -490,6 +486,3 @@ public class CsoundUnityBridge
         return ((pString != null) && (pString != IntPtr.Zero)) ? Marshal.PtrToStringAnsi(pString) : string.Empty;
     }
 }
-
-
-

@@ -99,6 +99,11 @@ public class CsoundUnity : MonoBehaviour
     private List<CsoundChannelController> channels;
     private AudioSource audioSource;
 
+    /// <summary>
+    /// a string to hold all the csoundFile content
+    /// </summary>
+    private string csdString;
+
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
@@ -797,7 +802,6 @@ public class CsoundUnity : MonoBehaviour
             string control = line.Substring(0, line.IndexOf(" ") > -1 ? line.IndexOf(" ") : 0);
             if (control.Length > 0)
                 newLine = newLine.Replace(control, "");
-
 
             if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox") || control.Contains("groupbox") || control.Contains("form"))
             {

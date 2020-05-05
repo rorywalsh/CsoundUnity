@@ -88,6 +88,12 @@ namespace csoundcsharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern Int32 csoundCompileArgs([In] IntPtr csound, [In] Int32 argc, [In] string[] argv);
 
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern Int32 csoundCompileCsd([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String csdFilename);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern Int32 csoundCompileCsdText([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String csdText);
+
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern Int32 csoundStart([In] IntPtr csound);
 

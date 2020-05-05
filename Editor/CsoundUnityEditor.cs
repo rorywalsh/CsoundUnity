@@ -163,7 +163,6 @@ public class CsoundUnityEditor : Editor
                         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
                         if (csoundUnity.csoundFile.Length > 4)
                             channelControllers = csoundUnity.ParseCsdFile(dragged_object);
-
                     }
                 }
                 break;
