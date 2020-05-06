@@ -402,9 +402,11 @@ namespace csoundcsharp
 
             // PUBLIC int csoundGetChannelPtr (CSOUND *, MYFLT **p, const char *name, int type)
 
-            // PUBLIC int csoundListChannels (CSOUND *, controlChannelInfo_t **lst)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern Int32 csoundListChannels([In] IntPtr csound, [Out] out IntPtr ppChannels);
 
-            // PUBLIC void csoundDeleteChannelList (CSOUND *, controlChannelInfo_t *lst)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundDeleteChannelList([In] IntPtr csound, [In] IntPtr ppChannels);
 
             // PUBLIC int csoundSetControlChannelHints (CSOUND *, const char *name, controlChannelHints_t hints)
 

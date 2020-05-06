@@ -624,6 +624,10 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetChannel(channel);
     }
 
+    public IDictionary<string, CsoundUnityBridge.ChannelInfo> GetChannelList() {
+        return csound.GetChannelList();
+    }
+
     /// <summary>
     /// Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
     /// </summary>
