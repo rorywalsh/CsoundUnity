@@ -807,7 +807,8 @@ public class CsoundUnity : MonoBehaviour
             if (control.Length > 0)
                 newLine = newLine.Replace(control, "");
 
-            if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox") || control.Contains("groupbox") || control.Contains("form"))
+            if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox") 
+                || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox"))
             {
                 CsoundChannelController controller = new CsoundChannelController();
                 controller.type = control;
@@ -824,6 +825,12 @@ public class CsoundUnity : MonoBehaviour
                     string text = line.Substring(line.IndexOf("text(") + 6);
                     text = text.Substring(0, text.IndexOf(")") - 1);
                     controller.text = text;
+                    if(controller.type == "combobox") //if combobox, create a range
+                    {
+                        char[] delimiterChars = { ',' };
+                        string[] tokens = text.Split(delimiterChars);
+                        controller.SetRange(0, tokens.Length, 0);
+                    }
                 }
 
                 if (line.IndexOf("channel(") > -1)

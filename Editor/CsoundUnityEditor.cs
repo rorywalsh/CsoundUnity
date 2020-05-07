@@ -112,6 +112,18 @@ public class CsoundUnityEditor : Editor
                             csoundUnity.SetChannel(channelControllers[i].channel, controllerValues[i]);
                     }
                 }
+
+                if (channelControllers[i].type.Contains("combobox"))
+                {
+                    controllerValues[i] = EditorGUILayout.Slider(label, controllerValues[i], channelControllers[i].min, channelControllers[i].max);
+                    if (controllerValues[i] != channelControllers[i].value || initPass)
+                    {
+                        channelControllers[i].value = controllerValues[i];
+                        if (Application.isPlaying)
+                            csoundUnity.SetChannel(channelControllers[i].channel, controllerValues[i]);
+                    }
+                }
+
                 else if (channelControllers[i].type.Contains("button"))
                 {
                     if (GUILayout.Button(label))
