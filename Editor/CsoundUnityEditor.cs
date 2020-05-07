@@ -27,115 +27,74 @@ public class CsoundUnityEditor : Editor
     CsoundUnity csoundUnity;
     string infoText;
     List<float> controllerValues;
-    List<CsoundChannelController> channelControllers;
+    //List<CsoundChannelController> channelControllers;
 
     public static CsoundUnityEditor window;
-    bool initPass = true;
+    // bool initPass = true;
 
     SerializedProperty m_csoundFile;
+    SerializedProperty m_csoundFilePath;
+    SerializedProperty m_csoundString;
     SerializedProperty m_processAudio;
     SerializedProperty m_mute;
     SerializedProperty m_logCsoundOutput;
+    SerializedProperty m_channelControllers;
 
     void OnEnable()
     {
         csoundUnity = (CsoundUnity)target;
-        channelControllers = new List<CsoundChannelController>();
         controllerValues = new List<float>();
 
         m_csoundFile = this.serializedObject.FindProperty("csoundFile");
+        m_csoundString = this.serializedObject.FindProperty("csoundString");
+        m_csoundFilePath = this.serializedObject.FindProperty("csoundFilePath");
         m_processAudio = this.serializedObject.FindProperty("processClipAudio");
         m_mute = this.serializedObject.FindProperty("mute");
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
+        m_channelControllers = this.serializedObject.FindProperty("channels");
 
-        //parse Csound files for CsoundUnity descriptor
-        if (csoundUnity.csoundFile.Length > 4)
+        if (m_csoundFile.stringValue.Length > 4)
         {
-            //deals with Csound files found the CsoundFiles folder
-            string dir = Application.streamingAssetsPath + "/CsoundFiles";
-            if (Directory.Exists(dir))
-                channelControllers = csoundUnity.ParseCsdFile(dir + "/" + csoundUnity.csoundFile);
+            Debug.Log($"csoundFile is: {m_csoundFile.stringValue} channels size: {m_channelControllers.arraySize} file path: {m_csoundFilePath.stringValue} csoundString: {m_csoundString.stringValue}");
         }
     }
 
     public override void OnInspectorGUI()
     {
-        GUI.skin = (GUISkin)(AssetDatabase.LoadAssetAtPath("Packages/com.csound.csoundunity/Editor/CsoundUnity.guiskin", typeof(GUISkin)));
-
         this.serializedObject.Update();
 
-        if (channelControllers != null)
+        if (m_channelControllers != null)
             //get caption info first
-            for (int i = 0; i < channelControllers.Count; i++)
+            for (int i = 0; i < m_channelControllers.arraySize; i++)
             {
-                if (channelControllers[i].type.Contains("form"))
+                var cc = m_channelControllers.GetArrayElementAtIndex(i);
+                var prop = cc.FindPropertyRelative("type");
+                if (prop.stringValue.Contains("form"))
                 {
-                    infoText = channelControllers[i].caption;
+                    var cap = cc.FindPropertyRelative("caption");
+                    infoText = cap.stringValue;
                 }
             }
 
         EditorGUILayout.HelpBox(infoText, MessageType.None);
         GUI.SetNextControlName("CsoundfileTextField");
-        m_csoundFile.stringValue = EditorGUILayout.TextField("Csound file", csoundUnity.csoundFile);
+        EditorGUILayout.LabelField("Csound file", m_csoundFile.stringValue);
+
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
         if (EditorGUI.EndChangeCheck())
         {
             csoundUnity.ClearSpin();
-            csoundUnity.processClipAudio = !m_processAudio.boolValue;
         }
-
-        m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", csoundUnity.mute);
-        m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", csoundUnity.logCsoundOutput);
-
-        serializedObject.ApplyModifiedProperties();
+        EditorGUILayout.Toggle("Mute Csound", m_mute.boolValue);
+        m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
 
         //create drag and drop area for Csound files
         DropAreaGUI();
 
-        //clear controller values list
-        controllerValues.Clear();
+        DrawChannelControllers();
 
-        if (channelControllers != null)
-            //create controls for each Csound channel found in the file descriptor
-            for (int i = 0; i < channelControllers.Count; i++)
-            {
-                controllerValues.Add(channelControllers[i].value);
-                string label = channelControllers[i].text.Length > 3 ? channelControllers[i].text : channelControllers[i].channel;
-                if (channelControllers[i].type.Contains("slider"))
-                {
-                    controllerValues[i] = EditorGUILayout.Slider(label, controllerValues[i], channelControllers[i].min, channelControllers[i].max);
-                    if (controllerValues[i] != channelControllers[i].value || initPass)
-                    {
-                        channelControllers[i].value = controllerValues[i];
-                        if (Application.isPlaying)
-                            csoundUnity.SetChannel(channelControllers[i].channel, controllerValues[i]);
-                    }
-                }
-                else if (channelControllers[i].type.Contains("button"))
-                {
-                    if (GUILayout.Button(label))
-                    {
-                        channelControllers[i].value = channelControllers[i].value == 1 ? 0 : 1;
-                        csoundUnity.SetChannel(channelControllers[i].channel, channelControllers[i].value);
-                    }
-                }
-                else if (channelControllers[i].type.Contains("groupbox"))
-                {
-                    EditorGUILayout.HelpBox(channelControllers[i].text, MessageType.None);
-                }
-                else if (channelControllers[i].type.Contains("checkbox"))
-                {
-                    controllerValues[i] = EditorGUILayout.Toggle(label, controllerValues[i] == 1 ? true : false) == true ? 1 : 0;
-                    if (controllerValues[i] != channelControllers[i].value)
-                    {
-                        channelControllers[i].value = controllerValues[i];
-                        if (Application.isPlaying)
-                            csoundUnity.SetChannel(channelControllers[i].channel, controllerValues[i]);
-                    }
-                }
-            }
-        initPass = false;
+        serializedObject.ApplyModifiedProperties();
     }
 
     public void DropAreaGUI()
@@ -160,12 +119,76 @@ public class CsoundUnityEditor : Editor
                     foreach (string dragged_object in DragAndDrop.paths)
                     {
                         csoundUnity.csoundFile = Path.GetFileName(dragged_object);
+                        csoundUnity.csoundFilePath = Path.GetFullPath(dragged_object);
+                        csoundUnity.csoundString = File.ReadAllText(csoundUnity.csoundFilePath);
+
                         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+
                         if (csoundUnity.csoundFile.Length > 4)
-                            channelControllers = csoundUnity.ParseCsdFile(dragged_object);
+                            csoundUnity.channels = csoundUnity.ParseCsdFile(dragged_object);
                     }
                 }
                 break;
         }
+    }
+
+    public void DrawChannelControllers()
+    {
+        if (m_channelControllers != null)
+            //create controls for each Csound channel found in the file descriptor
+            for (int i = 0; i < m_channelControllers.arraySize; i++)
+            {
+                var cc = m_channelControllers.GetArrayElementAtIndex(i);
+                var chanValue = cc.FindPropertyRelative("value");
+                var text = cc.FindPropertyRelative("text").stringValue;
+                var channel = cc.FindPropertyRelative("channel").stringValue;
+                string label = text.Length > 3 ? text : channel;
+                var type = cc.FindPropertyRelative("type").stringValue;
+
+                if (type.Contains("slider"))
+                {
+                    var min = cc.FindPropertyRelative("min").floatValue;
+                    var max = cc.FindPropertyRelative("max").floatValue;
+
+                    EditorGUI.BeginChangeCheck();
+                    chanValue.floatValue = EditorGUILayout.Slider(label, chanValue.floatValue, min, max);
+                    if (EditorGUI.EndChangeCheck() && Application.isPlaying)
+                    {
+                        csoundUnity.SetChannel(channel, chanValue.floatValue);
+                    }
+                }
+                else if (type.Contains("combobox"))
+                {
+                    var min = cc.FindPropertyRelative("min").intValue;
+                    var max = cc.FindPropertyRelative("max").intValue;
+
+                    EditorGUI.BeginChangeCheck();
+                    chanValue.intValue = EditorGUILayout.IntSlider(label, chanValue.intValue, min, max);
+                    if (EditorGUI.EndChangeCheck() && Application.isPlaying)
+                    {
+                        csoundUnity.SetChannel(channel, chanValue.floatValue);
+                    }
+                }
+                else if (type.Contains("button"))
+                {
+                    if (GUILayout.Button(label) && Application.isPlaying)
+                    {
+                        csoundUnity.SetChannel(channel, 1);
+                    }
+                }
+                else if (type.Contains("groupbox"))
+                {
+                    EditorGUILayout.HelpBox(text, MessageType.None);
+                }
+                else if (type.Contains("checkbox"))
+                {
+                    EditorGUI.BeginChangeCheck();
+                    chanValue.floatValue = EditorGUILayout.Toggle(label, chanValue.floatValue == 1 ? true : false) ? 1f : 0f;
+                    if (EditorGUI.EndChangeCheck() && Application.isPlaying)
+                    {
+                        csoundUnity.SetChannel(channel, chanValue.floatValue);
+                    }
+                }
+            }
     }
 }

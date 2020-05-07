@@ -33,13 +33,22 @@ using MYFLT = System.Double;
 using MYFLT = System.Single;
 #endif
 
+[Serializable]
+[SerializeField]
 /// <summary>
 /// Utility class for controller and channels
 /// </summary>
 public class CsoundChannelController
 {
-    public string type = "", channel = "", text = "", caption = "";
-    public float min, max, value, skew, increment;
+    [SerializeField] public string type = "";
+    [SerializeField] public string channel = "";
+    [SerializeField] public string text = "";
+    [SerializeField] public string caption = "";
+    [SerializeField] public float min;
+    [SerializeField] public float max;
+    [SerializeField] public float value;
+    [SerializeField] public float skew;
+    [SerializeField] public float increment;
 
     public void SetRange(float uMin, float uMax, float uValue)
     {
@@ -95,14 +104,20 @@ public class CsoundUnity : MonoBehaviour
     private float zerdbfs = 1;
     private bool compiledOk = false;
 
-    //structure to hold channel data
-    private List<CsoundChannelController> channels;
+    /// <summary>
+    /// structure to hold channel data
+    /// </summary>
+    public List<CsoundChannelController> channels = new List<CsoundChannelController>();
     private AudioSource audioSource;
 
     /// <summary>
     /// a string to hold all the csoundFile content
     /// </summary>
-    private string csdString;
+    public string csoundString;
+    /// <summary>
+    /// the csound file path on disk
+    /// </summary>
+    public string csoundFilePath;
 
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
@@ -121,13 +136,13 @@ public class CsoundUnity : MonoBehaviour
         */
         Debug.Log("AudioSettings.outputSampleRate: " + AudioSettings.outputSampleRate);
 
-        string csoundFilePath = "";
+        //string csoundFilePath = "";
         string dataPath = Path.GetFullPath(Path.Combine("Packages", packageName, "Runtime"));
 
         //commented! also if the csd is not set it should be possible to call csound methods
         // if (string.IsNullOrWhiteSpace(csoundFile)) return; 
 
-        csoundFilePath = Application.streamingAssetsPath + "/CsoundFiles/" + csoundFile;
+       // csoundFilePath = Application.streamingAssetsPath + "/CsoundFiles/" + csoundFile;
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
         dataPath = Path.Combine(dataPath, "Win64"); // Csound plugin libraries in Windows Editor
@@ -172,7 +187,7 @@ public class CsoundUnity : MonoBehaviour
 #endif
 
         audioSource = GetComponent<AudioSource>();
-        channels = new List<CsoundChannelController>();
+        //channels = new List<CsoundChannelController>();
 
         /*
          * the CsoundUnity constructor takes a path to the project's Data folder, and path to the file name.
@@ -180,18 +195,21 @@ public class CsoundUnity : MonoBehaviour
          * After this we start the performance of Csound. After this, we send the streaming assets path to
          * Csound on a string channel. This means we can then load samples contained within that folder.
          */
-        csound = new CsoundUnityBridge(dataPath, csoundFilePath);
+
+        //csdString = File.ReadAllText(csoundFilePath);
+
+        Debug.Log(csoundString);
+        csound = new CsoundUnityBridge(dataPath, csoundString);
         if (csound != null)
         {
+            //channels = ParseCsdFile(csoundFilePath);
 
-            channels = ParseCsdFile(csoundFilePath);
-
-            if (channels != null)
-                //initialise channels if found in xml descriptor..
-                for (int i = 0; i < channels.Count; i++)
-                {
-                    csound.SetChannel(channels[i].channel, channels[i].value);
-                }
+            //if (channels != null)
+            //    //initialise channels if found in xml descriptor..
+            //    for (int i = 0; i < channels.Count; i++)
+            //    {
+            //        csound.SetChannel(channels[i].channel, channels[i].value);
+            //    }
 
             /*
              * This method prints the Csound output to the Unity console
@@ -622,6 +640,11 @@ public class CsoundUnity : MonoBehaviour
     public MYFLT GetChannel(string channel)
     {
         return csound.GetChannel(channel);
+    }
+
+    public IDictionary<string, CsoundUnityBridge.ChannelInfo> GetChannelList()
+    {
+        return csound.GetChannelList();
     }
 
     /// <summary>

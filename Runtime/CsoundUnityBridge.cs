@@ -46,7 +46,6 @@ public class CsoundUnityBridge
 	*/
     public CsoundUnityBridge(string csoundDir, string csdFile)
     {
-
         Debug.Log("CsoundUnityBridge constructor from dir: " + csoundDir + " csdFile: " + csdFile);
 #if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
@@ -72,14 +71,20 @@ public class CsoundUnityBridge
         Debug.Log("System buffer size: " + systemBufferSize + ", buffer count: " + systemNumBuffers + " , samplerate: " + AudioSettings.outputSampleRate);
         Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
-        string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "--ksmps=32" };
+        //string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "--ksmps=32" };
         Debug.Log("CsoundUnity is overriding the orchestra sample rate to match that of Unity.");
         Debug.Log("CsoundUnity is overriding the orchestra ksmps value to best match Unity's audio settings, i.e, 32 ksmps");
-        int ret = Csound6.NativeMethods.csoundCompile(csound, 4, runargs);
+        //int ret = Csound6.NativeMethods.csoundCompile(csound, 4, runargs);
+        Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
+        Csound6.NativeMethods.csoundSetOption(csound, "--ksmps=32");
+        Csound6.NativeMethods.csoundSetOption(csound, "-n");
+        Csound6.NativeMethods.csoundStart(csound);
+        int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
+
         compiledOk = ret == 0 ? true : false;
         Debug.Log("csoundCompile: " + compiledOk);
     }
-    
+
     public void StopCsound()
     {
         Csound6.NativeMethods.csoundStop(csound);
@@ -439,6 +444,44 @@ public class CsoundUnityBridge
     }
 
     /// <summary>
+    /// Provides a dictionary of all currently defined channels resulting from compilation of an orchestra
+    /// containing channel definitions.
+    /// Entries, keyed by name, are polymorphically assigned to their correct data type: control, audio, string, pvc.
+    /// Used by the Csound6SoftwareBus class to initialize its contents.
+    /// </summary>
+    /// <returns>a dictionary of all currently defined channels keyed by their name to its ChannelInfo</returns>
+    public IDictionary<string, ChannelInfo> GetChannelList()
+    {
+        IDictionary<string, ChannelInfo> channels = new SortedDictionary<string, ChannelInfo>();
+        IntPtr ppChannels = IntPtr.Zero;
+        int size = Csound6.NativeMethods.csoundListChannels(csound, out ppChannels);
+        if ((ppChannels != IntPtr.Zero) && (size >= 0))
+        {
+            int proxySize = Marshal.SizeOf(typeof(ChannelInfoProxy));
+            for (int i = 0; i < size; i++)
+            {
+                var proxy = Marshal.PtrToStructure(ppChannels + (i * proxySize), typeof(ChannelInfoProxy)) as ChannelInfoProxy;
+                string chanName = Marshal.PtrToStringAnsi(proxy.name);
+                ChannelInfo info = new ChannelInfo(chanName, (ChannelType)(proxy.type & 15), (ChannelDirection)(proxy.type >> 4));
+                var hintProxy = proxy.hints;
+                var hints = new ChannelHints((ChannelBehavior)hintProxy.behav, hintProxy.dflt, hintProxy.min, hintProxy.max)
+                {
+                    x = hintProxy.x,
+                    y = hintProxy.y,
+                    height = hintProxy.height,
+                    width = hintProxy.width,
+                    attributes = (hintProxy.attributes != IntPtr.Zero) ? Marshal.PtrToStringAnsi(hintProxy.attributes) : null
+                };
+                info.Hints = hints;
+                channels.Add(chanName, info);
+            }
+            Csound6.NativeMethods.csoundDeleteChannelList(csound, ppChannels);
+        }
+
+        return channels;
+    }
+
+    /// <summary>
     /// Defines a class to hold out and in types, and flags
     /// </summary>
     public class OpcodeArgumentTypes
@@ -460,6 +503,133 @@ public class CsoundUnityBridge
         public int flags;
     }
 
+    /// <summary>
+    /// Private proxy class used during marshalling of actual ChannelInfo 
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    private class ChannelInfoProxy
+    {
+        public IntPtr name;
+        public int type;
+        [MarshalAs(UnmanagedType.Struct)]
+        public ChannelHintsProxy hints;
+    }
+
+    /// <summary>
+    /// Private proxy class used during marshalling of Channel Hints for Krate channels.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    private struct ChannelHintsProxy
+    {
+        public ChannelHintsProxy(ChannelHints hints)
+        {
+            behav = (int)hints.behav;
+            dflt = hints.dflt; min = hints.min; max = hints.max;
+            x = hints.x; y = hints.y; height = hints.height; width = hints.width;
+            attributes = IntPtr.Zero;
+        }
+
+        public int behav;
+        public double dflt;
+        public double min;
+        public double max;
+        public int x;
+        public int y;
+        public int width;
+        public int height;
+        public IntPtr attributes;
+    }
+
+    [CLSCompliant(true)]
+    public class ChannelInfo
+    {
+        public ChannelInfo(string _name, ChannelType _type, ChannelDirection _direction)
+        {
+            Name = _name;
+            Type = _type;
+            Direction = _direction;
+        }
+        public string Name;
+        public ChannelType Type;
+        public ChannelDirection Direction;
+        public ChannelHints Hints;
+    };
+
+    /// <summary>
+    /// This structure holds the parameter hints for control channels.
+    /// </summary>
+    [CLSCompliant(true)]
+    public class ChannelHints
+    {
+        /// <summary>
+        /// Creates an empty hint by calling main constructor with all zeros
+        /// </summary>
+        public ChannelHints() : this(ChannelBehavior.None, 0, 0, 0)
+        {
+        }
+
+        /// <summary>
+        /// Creates a channel hint initialized with the most common Control Channel values as provided.
+        /// </summary>
+        /// <param name="ibehav">Linear, Exponential or </param>
+        /// <param name="idflt"></param>
+        /// <param name="imin"></param>
+        /// <param name="imax"></param>
+        public ChannelHints(ChannelBehavior ibehav, double idflt, double imin, double imax)
+        {
+            behav = ibehav;
+            dflt = idflt;
+            min = imin;
+            max = imax;
+            x = 0;
+            y = 0;
+            width = 0;
+            height = 0;
+            attributes = null;
+        }
+
+        public ChannelBehavior behav;
+        public double dflt;
+        public double min;
+        public double max;
+        public int x;
+        public int y;
+        public int width;
+        public int height;
+        public string attributes;
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum ChannelBehavior
+    {
+        None = 0,
+        Integer = 1,
+        Linear = 2,
+        Exponential = 3
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum ChannelType
+    {
+        None = 0, //error return type only, meaningless in input
+        Control = 1,
+        Audio = 2,
+        String = 3,
+        Pvs = 4,
+        Var = 5,
+    }
+
+    [Flags]
+    public enum ChannelDirection
+    {
+        Input = 1,
+        Output = 2
+    }
     /// <summary>
     /// Gets a string value from csound's environment values.
     /// Meaningful values include the contents of Windows' OS environment values 
