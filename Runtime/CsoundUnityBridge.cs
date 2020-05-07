@@ -482,6 +482,33 @@ public class CsoundUnityBridge
     }
 
     /// <summary>
+    /// Fills in a provided raw CSOUND_PARAMS object with csounds current parameter settings.
+    /// This method is used internally to manage this class and is not expected to be used directly by a host program.
+    /// </summary>
+    /// <param name="oparms">a CSOUND_PARAMS structure to be filled in by csound</param>
+    /// <returns>The same parameter structure that was provided but filled in with csounds current internal contents</returns>
+    public CSOUND_PARAMS GetParams()
+    {
+        CSOUND_PARAMS oparms = new CSOUND_PARAMS();
+        Csound6.NativeMethods.csoundGetParams(csound, oparms);
+        return oparms;
+    }
+
+    /// <summary>
+    /// Transfers the contents of the provided raw CSOUND_PARAMS object into csound's 
+    /// internal data structues (chiefly its OPARMS structure).
+    /// This method is used internally to manage this class and is not expected to be used directly by a host program.
+    /// Most values are used and reflected in CSOUND_PARAMS.
+    /// Internally to csound, as of release 6.0.0, Heartbeat and IsComputingOpcodeWeights are ignored
+    /// and IsUsingCsdLineCounts can only be set and never reset once set.
+    /// </summary>
+    /// <param name="parms">a </param>
+    public void SetParams(CSOUND_PARAMS parms)
+    {
+        Csound6.NativeMethods.csoundSetParams(csound, parms);
+    }
+
+    /// <summary>
     /// Defines a class to hold out and in types, and flags
     /// </summary>
     public class OpcodeArgumentTypes
@@ -630,6 +657,46 @@ public class CsoundUnityBridge
         Input = 1,
         Output = 2
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public class CSOUND_PARAMS
+    {
+        public int debug_mode;     /* debug mode, 0 or 1 */
+        public int buffer_frames;  /* number of frames in in/out buffers */
+        public int hardware_buffer_frames; /* ibid. hardware */
+        public int displays;       /* graph displays, 0 or 1 */
+        public int ascii_graphs;   /* use ASCII graphs, 0 or 1 */
+        public int postscript_graphs; /* use postscript graphs, 0 or 1 */
+        public int message_level;     /* message printout control */
+        public int tempo;             /* tempo (sets Beatmode)  */
+        public int ring_bell;         /* bell, 0 or 1 */
+        public int use_cscore;        /* use cscore for processing */
+        public int terminate_on_midi; /* terminate performance at the end
+                                        of midifile, 0 or 1 */
+        public int heartbeat;         /* print heart beat, 0 or 1 */
+        public int defer_gen01_load;  /* defer GEN01 load, 0 or 1 */
+        public int midi_key;           /* pfield to map midi key no */
+        public int midi_key_cps;       /* pfield to map midi key no as cps */
+        public int midi_key_oct;       /* pfield to map midi key no as oct */
+        public int midi_key_pch;       /* pfield to map midi key no as pch */
+        public int midi_velocity;      /* pfield to map midi velocity */
+        public int midi_velocity_amp;   /* pfield to map midi velocity as amplitude */
+        public int no_default_paths;     /* disable relative paths from files, 0 or 1 */
+        public int number_of_threads;   /* number of threads for multicore performance */
+        public int syntax_check_only;   /* do not compile, only check syntax */
+        public int csd_line_counts;     /* csd line error reporting */
+        public int compute_weights;     /* use calculated opcode weights for
+                                          multicore, 0 or 1  */
+        public int realtime_mode;       /* use realtime priority mode, 0 or 1 */
+        public int sample_accurate;     /* use sample-level score event accuracy */
+        public double sample_rate_override; /* overriding sample rate */
+        public double control_rate_override; /* overriding control rate */
+        public int nchnls_override;     /* overriding number of out channels */
+        public int nchnls_i_override;   /* overriding number of in channels */
+        public double e0dbfs_override;  /* overriding 0dbfs */
+    }
+
+
     /// <summary>
     /// Gets a string value from csound's environment values.
     /// Meaningful values include the contents of Windows' OS environment values 

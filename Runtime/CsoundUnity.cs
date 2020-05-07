@@ -312,9 +312,18 @@ public class CsoundUnity : MonoBehaviour
     /// Get the current control rate
     /// </summary>
     /// <returns></returns>
-    public MYFLT SetKr()
+    public MYFLT GetKr()
     {
         return csound.GetKr();
+    }
+
+    public CsoundUnityBridge.CSOUND_PARAMS GetParams() {
+        return csound.GetParams();
+    }
+
+    public void SetParams(CsoundUnityBridge.CSOUND_PARAMS parms)
+    {
+        csound.SetParams(parms);
     }
 
     /// <summary>

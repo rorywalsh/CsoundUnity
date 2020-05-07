@@ -186,9 +186,11 @@ namespace csoundcsharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
             internal static extern Int32 csoundSetOption([In] IntPtr csound, [In] string option);
 
-            // PUBLIC void csoundSetParams (CSOUND *csound, CSOUND_PARAMS *p)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern void csoundGetParams(IntPtr csound, [Out, MarshalAs(UnmanagedType.LPStruct)] CsoundUnityBridge.CSOUND_PARAMS parms);
 
-            // PUBLIC void csoundGetParams (CSOUND *csound, CSOUND_PARAMS *p)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern void csoundSetParams(IntPtr csound, [In, MarshalAs(UnmanagedType.LPStruct)] CsoundUnityBridge.CSOUND_PARAMS parms);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern Int32 csoundGetDebug([In] IntPtr csound);
