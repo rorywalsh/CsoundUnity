@@ -75,9 +75,15 @@ public class CsoundUnityBridge
         Debug.Log("CsoundUnity is overriding the orchestra sample rate to match that of Unity.");
         Debug.Log("CsoundUnity is overriding the orchestra ksmps value to best match Unity's audio settings, i.e, 32 ksmps");
         //int ret = Csound6.NativeMethods.csoundCompile(csound, 4, runargs);
-        Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
-        Csound6.NativeMethods.csoundSetOption(csound, "--ksmps=32");
+        //Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
+        //Csound6.NativeMethods.csoundSetOption(csound, "--ksmps=32");
         Csound6.NativeMethods.csoundSetOption(csound, "-n");
+        var parms = GetParams();
+        parms.control_rate_override = 32;
+        parms.sample_rate_override = AudioSettings.outputSampleRate;
+        parms.e0dbfs_override = 1;
+        SetParams(parms);
+
         Csound6.NativeMethods.csoundStart(csound);
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
 
