@@ -40,6 +40,8 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_logCsoundOutput;
     SerializedProperty m_channelControllers;
 
+    string csoundScore;
+
     void OnEnable()
     {
         csoundUnity = (CsoundUnity)target;
@@ -91,6 +93,14 @@ public class CsoundUnityEditor : Editor
 
         //create drag and drop area for Csound files
         DropAreaGUI();
+
+        EditorGUILayout.HelpBox("Write test score here", MessageType.None);
+        csoundScore = EditorGUILayout.TextField(csoundScore);
+
+        if (GUILayout.Button("Send score") && csoundScore.Length > 3 && Application.isPlaying && csoundUnity != null)
+        {
+            csoundUnity.SendScoreEvent(csoundScore);
+        }
 
         DrawChannelControllers();
 
@@ -152,7 +162,7 @@ public class CsoundUnityEditor : Editor
 
                     EditorGUI.BeginChangeCheck();
                     chanValue.floatValue = EditorGUILayout.Slider(label, chanValue.floatValue, min, max);
-                    if (EditorGUI.EndChangeCheck() && Application.isPlaying)
+                    if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
                     {
                         csoundUnity.SetChannel(channel, chanValue.floatValue);
                     }
@@ -162,17 +172,17 @@ public class CsoundUnityEditor : Editor
                     var min = (int)cc.FindPropertyRelative("min").floatValue;
                     var max = (int)cc.FindPropertyRelative("max").floatValue;
                     EditorGUI.BeginChangeCheck();
-                    var options = text.Split(new char[] { ',' }); 
+                    var options = text.Split(new char[] { ',' });
                     chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, options);
                     //chanValue.floatValue = EditorGUILayout.IntSlider(label, (int)chanValue.floatValue, min, max);
-                    if (EditorGUI.EndChangeCheck() && Application.isPlaying)
+                    if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
                     {
-                        csoundUnity.SetChannel(channel, chanValue.floatValue);
+                        csoundUnity.SetChannel(channel, chanValue.floatValue + 1);
                     }
                 }
                 else if (type.Contains("button"))
                 {
-                    if (GUILayout.Button(label) && Application.isPlaying)
+                    if (GUILayout.Button(label) && Application.isPlaying && csoundUnity != null)
                     {
                         csoundUnity.SetChannel(channel, 1);
                     }
@@ -185,7 +195,7 @@ public class CsoundUnityEditor : Editor
                 {
                     EditorGUI.BeginChangeCheck();
                     chanValue.floatValue = EditorGUILayout.Toggle(label, chanValue.floatValue == 1 ? true : false) ? 1f : 0f;
-                    if (EditorGUI.EndChangeCheck() && Application.isPlaying)
+                    if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
                     {
                         csoundUnity.SetChannel(channel, chanValue.floatValue);
                     }
