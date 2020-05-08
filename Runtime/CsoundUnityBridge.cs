@@ -83,10 +83,8 @@ public class CsoundUnityBridge
         parms.sample_rate_override = AudioSettings.outputSampleRate;
         parms.e0dbfs_override = 1;
         SetParams(parms);
-
-        Csound6.NativeMethods.csoundStart(csound);
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
-
+        Csound6.NativeMethods.csoundStart(csound);
         compiledOk = ret == 0 ? true : false;
         Debug.Log("csoundCompile: " + compiledOk);
     }

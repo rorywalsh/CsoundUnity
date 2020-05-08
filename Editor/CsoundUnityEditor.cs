@@ -55,7 +55,7 @@ public class CsoundUnityEditor : Editor
 
         if (m_csoundFile.stringValue.Length > 4)
         {
-            Debug.Log($"csoundFile is: {m_csoundFile.stringValue} channels size: {m_channelControllers.arraySize} file path: {m_csoundFilePath.stringValue} csoundString: {m_csoundString.stringValue}");
+            //Debug.Log($"csoundFile is: {m_csoundFile.stringValue} channels size: {m_channelControllers.arraySize} file path: {m_csoundFilePath.stringValue} csoundString: {m_csoundString.stringValue}");
         }
     }
 
@@ -159,11 +159,11 @@ public class CsoundUnityEditor : Editor
                 }
                 else if (type.Contains("combobox"))
                 {
-                    var min = cc.FindPropertyRelative("min").intValue;
-                    var max = cc.FindPropertyRelative("max").intValue;
-
+                    var min = (int)cc.FindPropertyRelative("min").floatValue;
+                    var max = (int)cc.FindPropertyRelative("max").floatValue;
                     EditorGUI.BeginChangeCheck();
-                    chanValue.intValue = EditorGUILayout.IntSlider(label, chanValue.intValue, min, max);
+
+                    chanValue.floatValue = EditorGUILayout.IntSlider(label, (int)chanValue.floatValue, min, max);
                     if (EditorGUI.EndChangeCheck() && Application.isPlaying)
                     {
                         csoundUnity.SetChannel(channel, chanValue.floatValue);
