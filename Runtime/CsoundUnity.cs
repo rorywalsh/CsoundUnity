@@ -853,7 +853,7 @@ public class CsoundUnity : MonoBehaviour
                 {
                     string text = line.Substring(line.IndexOf("text(") + 6);
                     text = text.Substring(0, text.IndexOf(")") - 1);
-                    controller.text = text;
+                    controller.text = text.Replace("\"", "");
                     if (controller.type == "combobox") //if combobox, create a range
                     {
                         char[] delimiterChars = { ',' };

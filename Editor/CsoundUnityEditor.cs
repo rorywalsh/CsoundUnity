@@ -162,8 +162,9 @@ public class CsoundUnityEditor : Editor
                     var min = (int)cc.FindPropertyRelative("min").floatValue;
                     var max = (int)cc.FindPropertyRelative("max").floatValue;
                     EditorGUI.BeginChangeCheck();
-
-                    chanValue.floatValue = EditorGUILayout.IntSlider(label, (int)chanValue.floatValue, min, max);
+                    var options = text.Split(new char[] { ',' }); 
+                    chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, options);
+                    //chanValue.floatValue = EditorGUILayout.IntSlider(label, (int)chanValue.floatValue, min, max);
                     if (EditorGUI.EndChangeCheck() && Application.isPlaying)
                     {
                         csoundUnity.SetChannel(channel, chanValue.floatValue);
