@@ -119,6 +119,11 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     public string csoundFilePath;
 
+    /// <summary>
+    /// the score to send via editor
+    /// </summary>
+    public string csoundScore;
+
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
@@ -875,7 +880,18 @@ public class CsoundUnity : MonoBehaviour
                     range = range.Substring(0, range.IndexOf(")"));
                     char[] delimiterChars = { ',' };
                     string[] tokens = range.Split(delimiterChars);
-                    controller.SetRange(float.Parse(tokens[0]), float.Parse(tokens[1]), float.Parse(tokens[2]));
+                    for (var i = 0; i < tokens.Length; i++)
+                    {
+                        tokens[i] = string.Join("", tokens[i].Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
+                        if (tokens[i].StartsWith("."))
+                        {
+                            tokens[i] = "0" + tokens[i];
+                        }
+                    }
+                    var val = float.Parse(tokens[0]);
+                    var min = float.Parse(tokens[1]);
+                    var max = float.Parse(tokens[2]);
+                    controller.SetRange(val, min, max);
                 }
 
                 if (line.IndexOf("value(") > -1)
@@ -891,3 +907,5 @@ public class CsoundUnity : MonoBehaviour
         return locaChannelControllers;
     }
 }
+
+

@@ -35,12 +35,13 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_csoundFile;
     SerializedProperty m_csoundFilePath;
     SerializedProperty m_csoundString;
+    SerializedProperty m_csoundScore;
     SerializedProperty m_processAudio;
     SerializedProperty m_mute;
     SerializedProperty m_logCsoundOutput;
     SerializedProperty m_channelControllers;
 
-    string csoundScore;
+    
 
     void OnEnable()
     {
@@ -54,7 +55,7 @@ public class CsoundUnityEditor : Editor
         m_mute = this.serializedObject.FindProperty("mute");
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
         m_channelControllers = this.serializedObject.FindProperty("channels");
-
+        m_csoundScore = this.serializedObject.FindProperty("csoundScore");
         if (m_csoundFile.stringValue.Length > 4)
         {
             //Debug.Log($"csoundFile is: {m_csoundFile.stringValue} channels size: {m_channelControllers.arraySize} file path: {m_csoundFilePath.stringValue} csoundString: {m_csoundString.stringValue}");
@@ -95,11 +96,12 @@ public class CsoundUnityEditor : Editor
         DropAreaGUI();
 
         EditorGUILayout.HelpBox("Write test score here", MessageType.None);
-        csoundScore = EditorGUILayout.TextField(csoundScore);
+        m_csoundScore.stringValue = EditorGUILayout.TextField(m_csoundScore.stringValue);
 
-        if (GUILayout.Button("Send score") && csoundScore.Length > 3 && Application.isPlaying && csoundUnity != null)
+        if (GUILayout.Button("Send score") && m_csoundScore.stringValue.Length > 3 && Application.isPlaying && csoundUnity != null)
         {
-            csoundUnity.SendScoreEvent(csoundScore);
+            Debug.Log("sending score: "+ m_csoundScore.stringValue);
+            csoundUnity.SendScoreEvent(m_csoundScore.stringValue);
         }
 
         DrawChannelControllers();
@@ -173,6 +175,9 @@ public class CsoundUnityEditor : Editor
                     var max = (int)cc.FindPropertyRelative("max").floatValue;
                     EditorGUI.BeginChangeCheck();
                     var options = text.Split(new char[] { ',' });
+                    for (var o = 0; o < options.Length; o++) {
+                        options[o] = string.Join("", options[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
+                    }
                     chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, options);
                     //chanValue.floatValue = EditorGUILayout.IntSlider(label, (int)chanValue.floatValue, min, max);
                     if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
