@@ -816,6 +816,15 @@ public class CsoundUnity : MonoBehaviour
             print(csound.GetCsoundMessage());
     }
 
+    public void SetCsd(string fileName)
+    {
+        this.csoundFile = Path.GetFileName(fileName);
+        this.csoundFilePath = Path.GetFullPath(fileName);
+        this.csoundString = File.ReadAllText(this.csoundFilePath);
+        if (this.csoundFile.Length > 4)
+            this.channels = this.ParseCsdFile(fileName);
+    }
+
     /// <summary>
     /// Parse the csd file
     /// </summary>
@@ -833,9 +842,15 @@ public class CsoundUnity : MonoBehaviour
 
         foreach (string line in fullCsdText)
         {
+
             if (line.Contains("</"))
                 break;
 
+            //discard csound comments in cabbage widgets
+            if (line.StartsWith(";")) {
+                //Debug.Log("discarding "+line);
+                continue;
+            }
             string newLine = line;
             string control = line.Substring(0, line.IndexOf(" ") > -1 ? line.IndexOf(" ") : 0);
             if (control.Length > 0)
@@ -900,7 +915,6 @@ public class CsoundUnity : MonoBehaviour
                     value = value.Substring(0, value.IndexOf(")"));
                     controller.value = value.Length > 0 ? float.Parse(value) : 0;
                 }
-
                 locaChannelControllers.Add(controller);
             }
         }

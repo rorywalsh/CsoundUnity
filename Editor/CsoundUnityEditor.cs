@@ -130,14 +130,16 @@ public class CsoundUnityEditor : Editor
 
                     foreach (string dragged_object in DragAndDrop.paths)
                     {
-                        csoundUnity.csoundFile = Path.GetFileName(dragged_object);
-                        csoundUnity.csoundFilePath = Path.GetFullPath(dragged_object);
-                        csoundUnity.csoundString = File.ReadAllText(csoundUnity.csoundFilePath);
+                        csoundUnity.SetCsd(dragged_object);
+                        //csoundUnity.csoundFile = Path.GetFileName(dragged_object);
+                        //csoundUnity.csoundFilePath = Path.GetFullPath(dragged_object);
+                        //csoundUnity.csoundString = File.ReadAllText(csoundUnity.csoundFilePath);
 
                         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
 
-                        if (csoundUnity.csoundFile.Length > 4)
-                            csoundUnity.channels = csoundUnity.ParseCsdFile(dragged_object);
+                        //if (csoundUnity.csoundFile.Length > 4)
+                        //    csoundUnity.channels = csoundUnity.ParseCsdFile(dragged_object);
+
                     }
                 }
                 break;
