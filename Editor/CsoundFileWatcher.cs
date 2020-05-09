@@ -7,7 +7,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 #if UNITY_EDITOR
 [InitializeOnLoad]
-public class CsoundFileWatcher : MonoBehaviour
+public class CsoundFileWatcher
 {
     static CsoundUnity[] csoundInstances;
     static List<FileSystemWatcher> fswInstances = new List<FileSystemWatcher>();
