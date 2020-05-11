@@ -44,6 +44,7 @@ public class CsoundFileWatcher
 
     private static void StartWatching(string filePath)
     {
+        if (string.IsNullOrWhiteSpace(filePath)) return;
         Debug.Log($"START WATCHING {filePath}");
         FileSystemWatcher watcher = new FileSystemWatcher();
         watcher.Path = Path.GetDirectoryName(filePath);

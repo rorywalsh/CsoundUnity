@@ -89,6 +89,12 @@ public class CsoundUnity : MonoBehaviour
                                     * but you can use as many instruments within that file as you wish. You may also create as many 
                                     * of CsoundUnity objects as you wish. 
                                     */
+
+    /// <summary>
+    /// a reference to a csd file as DefaultAsset 
+    /// </summary>
+    public DefaultAsset csoundFileRef;
+
     public bool logCsoundOutput = false;/**<
                                        * **logCsoundOutput** is a boolean variable. As a boolean it can be either true or false. 
                                        * When it is set to true, all Csound output messages will be sent to the 
@@ -822,7 +828,7 @@ public class CsoundUnity : MonoBehaviour
         this.csoundFilePath = Path.GetFullPath(fileName);
         this.csoundString = File.ReadAllText(this.csoundFilePath);
         if (this.csoundFile.Length > 4)
-            this.channels = this.ParseCsdFile(fileName);
+            this.channels = ParseCsdFile(fileName);
     }
 
     /// <summary>
@@ -830,7 +836,7 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     /// <param name="filename">the csd file to parse</param>
     /// <returns></returns>
-    public List<CsoundChannelController> ParseCsdFile(string filename)
+    public static List<CsoundChannelController> ParseCsdFile(string filename)
     {
         if (!File.Exists(filename)) return null;
 
@@ -847,7 +853,8 @@ public class CsoundUnity : MonoBehaviour
                 break;
 
             //discard csound comments in cabbage widgets
-            if (line.StartsWith(";")) {
+            if (line.StartsWith(";"))
+            {
                 //Debug.Log("discarding "+line);
                 continue;
             }
@@ -914,6 +921,12 @@ public class CsoundUnity : MonoBehaviour
                     string value = line.Substring(line.IndexOf("value(") + 6);
                     value = value.Substring(0, value.IndexOf(")"));
                     controller.value = value.Length > 0 ? float.Parse(value) : 0;
+                    if (control.Contains("combobox"))
+                    {
+                        //Cabbage combobox index starts from 1
+                        controller.value = controller.value - 1;
+                       // Debug.Log("combobox value in parse: " + controller.value);
+                    }
                 }
                 locaChannelControllers.Add(controller);
             }
@@ -921,5 +934,3 @@ public class CsoundUnity : MonoBehaviour
         return locaChannelControllers;
     }
 }
-
-
