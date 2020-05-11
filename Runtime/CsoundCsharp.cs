@@ -402,7 +402,8 @@ namespace csoundcsharp
 
             #region Channels, Control and Events
 
-            // PUBLIC int csoundGetChannelPtr (CSOUND *, MYFLT **p, const char *name, int type)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern int csoundGetChannelPtr([In] IntPtr csound, out IntPtr pChannel, [In, MarshalAs(UnmanagedType.LPStr)] string name, [In] Int32 flags);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
             internal static extern Int32 csoundListChannels([In] IntPtr csound, [Out] out IntPtr ppChannels);

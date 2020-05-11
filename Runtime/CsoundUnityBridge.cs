@@ -446,6 +446,26 @@ public class CsoundUnityBridge
         }
         return opcodes;
     }
+        
+    /// <summary>
+    /// Legacy channel access method.  Should be avoided in favor of csound 6's new thread-safe
+    /// access methods as used in subclasses.
+    /// Used internally by Get/SetValueDirect methods in subclasses ideally called from
+    /// within the same thread between calls to PerformKsmps or PerformBuffer.
+    /// If used between different threads (not recommended - use threadsafe property "Value" instead),
+    /// you should acquire and use a lock (see GetLock method) to arbitrate potential race conditions.
+    /// </summary>
+    /// <returns>a pointer to unmanaged memory where the channel's data begins</returns>
+    //internal IntPtr GetChannelPointer()
+    //{
+
+    //        int flags = (sizeof(int)) + (int)(((uint)Direction) << 4);
+    //        CsoundStatus result = Csound6Net.Int2StatusEnum(NativeMethods.csoundGetChannelPtr(csound, out m_pChannel, Name, flags));
+    //        if (((int)result) < 0) throw new Csound6NetException(Csound6NetException.ChannelAccessFailed, Name, result);
+    //    }
+
+    //    return m_pChannel;
+    //}
 
     /// <summary>
     /// Provides a dictionary of all currently defined channels resulting from compilation of an orchestra

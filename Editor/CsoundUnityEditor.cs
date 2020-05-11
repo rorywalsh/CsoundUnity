@@ -104,13 +104,13 @@ public class CsoundUnityEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    private DefaultAsset _lastAsset;
+    private static DefaultAsset _lastAsset;
 
     public void DropAreaGUI()
     {
         DefaultAsset obj = (DefaultAsset)m_csoundFileRef.objectReferenceValue;
         obj = (DefaultAsset)EditorGUILayout.ObjectField(obj, typeof(DefaultAsset), false);
-        if (obj != _lastAsset)
+        if (_lastAsset == null || obj != _lastAsset)
         {
             Undo.RecordObject(target, "Set Csd");
             var path = AssetDatabase.GetAssetPath(obj);
@@ -129,13 +129,14 @@ public class CsoundUnityEditor : Editor
 
             }
             _lastAsset = obj;
+
             EditorUtility.SetDirty(csoundUnity.gameObject);
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
             SceneView.RepaintAll();
-
         }
 
         Event evt = Event.current;
+
         //EditorGUIUtility.ShowObjectPicker<DefaultAsset>(obj, false, ".csd", 0);
         //var testRect = GUILayoutUtility.GetRect(0.0f, 20.0f, GUILayout.ExpandWidth(true));
         //GUI.Button(testRect, "testCircle", GUI.skin.GetStyle("IN ObjectField"));
@@ -258,8 +259,8 @@ public class CsoundUnityEditor : Editor
                 var channels = CsoundUnity.ParseCsdFile(fileName);
                 for (var i = 0; i < channels.Count; i++)
                 {
-                    this.m_channelControllers.InsertArrayElementAtIndex(i);// = channels[i] as Object;
-                    Debug.Log("m_channelControllersSize: " + m_channelControllers.arraySize);
+                    this.m_channelControllers.InsertArrayElementAtIndex(i);
+                    // Debug.Log("m_channelControllersSize: " + m_channelControllers.arraySize);
                     var cc = this.m_channelControllers.GetArrayElementAtIndex(i);
                     cc.FindPropertyRelative("value").floatValue = channels[i].value;
                     cc.FindPropertyRelative("text").stringValue = channels[i].text;
