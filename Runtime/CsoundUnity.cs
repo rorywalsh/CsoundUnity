@@ -33,6 +33,8 @@ using MYFLT = System.Double;
 using MYFLT = System.Single;
 #endif
 
+using YIELD_CALLBACK = csoundcsharp.Csound6.NativeMethods.YieldCallback;
+
 [Serializable]
 [SerializeField]
 /// <summary>
@@ -225,7 +227,7 @@ public class CsoundUnity : MonoBehaviour
                 }
 
             //TEST CALLBACK
-            csound.SetYieldCallback(YieldCallback);
+            //csound.SetYieldCallback(YieldCallback);
 
             /*
              * This method prints the Csound output to the Unity console
@@ -824,6 +826,10 @@ public class CsoundUnity : MonoBehaviour
     {
         //print(scoreEvent);
         csound.SendScoreEvent(scoreEvent);
+    }
+
+    public void SetYieldCallback(YIELD_CALLBACK callback) {
+        csound.SetYieldCallback(callback);
     }
 
     /// <summary>

@@ -161,11 +161,10 @@ public class CsoundUnityBridge
         return dest;
     }
 
-    internal void SetYieldCallback(Csound6.NativeMethods.YieldCallback callback)
+    public void SetYieldCallback(Csound6.NativeMethods.YieldCallback callback)
     {
         string name = callback.Method.Name;
         if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(callback));
-        GCHandle.Alloc(callback);
         Csound6.NativeMethods.csoundSetYieldCallback(csound, callback);
     }
 
