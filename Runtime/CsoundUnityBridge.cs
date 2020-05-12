@@ -165,12 +165,14 @@ public class CsoundUnityBridge
     {
         Csound6.NativeMethods.YieldCallback cb = new Csound6.NativeMethods.YieldCallback((csd) =>
         {
+           // Debug.Log("callback " + (callback == null ? "is null" : "is not null"));
             if (callback == null) return -1;
-            callback();
+            callback?.Invoke();
             return 1;
         });
 
-        string name = cb.Method.Name;
+        string name = callback.Method.GetHashCode().ToString();
+        Debug.Log("method name: " + name);
         if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(cb));
         Csound6.NativeMethods.csoundSetYieldCallback(csound, cb);
     }
