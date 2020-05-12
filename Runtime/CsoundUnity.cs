@@ -116,6 +116,8 @@ public class CsoundUnity : MonoBehaviour
     public List<CsoundChannelController> channels = new List<CsoundChannelController>();
     private AudioSource audioSource;
 
+    
+
     /// <summary>
     /// a string to hold all the csoundFile content
     /// </summary>
@@ -221,6 +223,9 @@ public class CsoundUnity : MonoBehaviour
                 {
                     csound.SetChannel(channels[i].channel, channels[i].value);
                 }
+
+            //TEST CALLBACK
+            csound.SetYieldCallback(YieldCallback);
 
             /*
              * This method prints the Csound output to the Unity console
@@ -474,6 +479,16 @@ public class CsoundUnity : MonoBehaviour
             ProcessBlock(data, channels);
         }
     }
+
+    /// <summary>
+    /// Yield Callback: Hope it works!
+    /// </summary>
+    event csoundcsharp.Csound6.NativeMethods.YieldCallback YieldCallback = new csoundcsharp.Csound6.NativeMethods.YieldCallback((csd) =>
+    {
+        Debug.Log($"callback? ");
+        return 1;
+    });
+
 
     /// <summary>
     /// Processes a block of samples

@@ -129,10 +129,12 @@ public class CsoundUnityEditor : Editor
 
             }
             _lastAsset = obj;
-
-            EditorUtility.SetDirty(csoundUnity.gameObject);
-            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            SceneView.RepaintAll();
+            if (!Application.isPlaying)
+            {
+                EditorUtility.SetDirty(csoundUnity.gameObject);
+                EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+                SceneView.RepaintAll();
+            }
         }
 
         Event evt = Event.current;

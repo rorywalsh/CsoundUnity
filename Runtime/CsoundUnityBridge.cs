@@ -42,12 +42,6 @@ public class CsoundUnityBridge
 
     private IDictionary<string, GCHandle> m_callbacks = new Dictionary<string, GCHandle>();  //a map of GCHandles pinned callbacks in memory: kept for unpinning during Dispose()
 
-    Csound6.NativeMethods.YieldCallback yieldCallback = new Csound6.NativeMethods.YieldCallback((csd) =>
-    {
-        Debug.Log($"callback? ");
-        return 1;
-    });
-
     /* 
 		constructor sets up the OPCODE6DIR64 directory that holds the Csound plugins. 
 		also creates an instance of Csound and compiles it
@@ -85,9 +79,6 @@ public class CsoundUnityBridge
         //int ret = Csound6.NativeMethods.csoundCompile(csound, 4, runargs);
         //Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
         //Csound6.NativeMethods.csoundSetOption(csound, "--ksmps=32");
-
-        //TEST CALLBACK
-        SetYieldCallback(yieldCallback);
 
         Csound6.NativeMethods.csoundSetOption(csound, "-n");
         var parms = GetParams();
