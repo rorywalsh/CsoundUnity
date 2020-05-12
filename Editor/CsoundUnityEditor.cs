@@ -110,7 +110,7 @@ public class CsoundUnityEditor : Editor
     {
         DefaultAsset obj = (DefaultAsset)m_csoundFileRef.objectReferenceValue;
         obj = (DefaultAsset)EditorGUILayout.ObjectField(obj, typeof(DefaultAsset), false);
-        if (_lastAsset == null || obj != _lastAsset)
+        if (/*_lastAsset == null &&*/ obj != _lastAsset)
         {
             Undo.RecordObject(target, "Set Csd");
             var path = AssetDatabase.GetAssetPath(obj);

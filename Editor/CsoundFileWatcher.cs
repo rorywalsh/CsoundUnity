@@ -108,6 +108,9 @@ public class CsoundFileWatcher
         Debug.Log($"found {csoundInstances.Length} instance(s) of csound");
         foreach (var csd in csoundInstances)
         {
+            //do nothing if the csoundFilePath is empty
+            if (string.IsNullOrWhiteSpace(csd.csoundFilePath)) continue;
+
             if (_pathsCsdListDict.ContainsKey(csd.csoundFilePath))
             {
                 //Debug.Log("csd is already watched, add the csound script to the list of CsoundUnity instances to update");
