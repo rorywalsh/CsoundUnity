@@ -542,7 +542,11 @@ namespace csoundcsharp
 
             #region Threading and concurrency
 
-            // PUBLIC void csoundSetYieldCallback (CSOUND *, int(*yieldCallback_)(CSOUND *))
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            internal delegate int YieldCallback(IntPtr csound);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundSetYieldCallback([In] IntPtr csound, YieldCallback yieldCallback);
 
             // PUBLIC void * csoundCreateThread (uintptr_t(*threadRoutine)(void *), void *userdata)
 

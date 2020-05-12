@@ -40,6 +40,14 @@ public class CsoundUnityBridge
     //volatile bool shouldFinish=false;
     bool compiledOk = false;
 
+    private IDictionary<string, GCHandle> m_callbacks = new Dictionary<string, GCHandle>();  //a map of GCHandles pinned callbacks in memory: kept for unpinning during Dispose()
+
+    Csound6.NativeMethods.YieldCallback yieldCallback = new Csound6.NativeMethods.YieldCallback((csd) =>
+    {
+        Debug.Log($"callback? ");
+        return 1;
+    });
+
     /* 
 		constructor sets up the OPCODE6DIR64 directory that holds the Csound plugins. 
 		also creates an instance of Csound and compiles it
@@ -77,6 +85,10 @@ public class CsoundUnityBridge
         //int ret = Csound6.NativeMethods.csoundCompile(csound, 4, runargs);
         //Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
         //Csound6.NativeMethods.csoundSetOption(csound, "--ksmps=32");
+
+        //TEST CALLBACK
+        SetYieldCallback(yieldCallback);
+
         Csound6.NativeMethods.csoundSetOption(csound, "-n");
         var parms = GetParams();
         parms.control_rate_override = 32;
@@ -92,6 +104,13 @@ public class CsoundUnityBridge
     public void StopCsound()
     {
         Csound6.NativeMethods.csoundStop(csound);
+        //dispose of unmanaged callbacks here?
+        if (m_callbacks != null)
+        {
+            foreach (GCHandle gch in m_callbacks.Values) gch.Free();
+            m_callbacks.Clear();
+            m_callbacks = null;
+        }
     }
 
     public void Reset()
@@ -149,6 +168,14 @@ public class CsoundUnityBridge
         Marshal.Copy(buffer, dest, 0, dest.Length);
         Marshal.FreeHGlobal(buffer);
         return dest;
+    }
+
+    internal void SetYieldCallback(Csound6.NativeMethods.YieldCallback callback)
+    {
+        string name = callback.Method.Name;
+        if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(callback));
+        GCHandle.Alloc(callback);
+        Csound6.NativeMethods.csoundSetYieldCallback(csound, callback);
     }
 
     /// <summary>
