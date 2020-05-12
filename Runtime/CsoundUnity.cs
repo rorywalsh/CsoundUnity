@@ -33,8 +33,6 @@ using MYFLT = System.Double;
 using MYFLT = System.Single;
 #endif
 
-using YIELD_CALLBACK = csoundcsharp.Csound6.NativeMethods.YieldCallback;
-
 [Serializable]
 [SerializeField]
 /// <summary>
