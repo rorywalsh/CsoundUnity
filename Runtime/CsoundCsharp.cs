@@ -423,9 +423,12 @@ namespace csoundcsharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern IntPtr csoundSetControlChannel([In] IntPtr csound, [In] String str, [In] MYFLT value);
 
-            // PUBLIC void csoundGetAudioChannel (CSOUND *csound, const char *name, MYFLT *samples)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern void csoundGetAudioChannel([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] string name, IntPtr samples);
 
-            // PUBLIC void csoundSetAudioChannel (CSOUND *csound, const char *name, MYFLT *samples)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern void csoundSetAudioChannel([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] string name, IntPtr samples);
+
 
             // PUBLIC void csoundGetStringChannel (CSOUND *csound, const char *name, char *string)
 

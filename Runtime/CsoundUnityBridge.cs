@@ -131,6 +131,26 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundSetStringChannel(csound, channel, value);
     }
 
+    public void SetAudioChannel(string name, MYFLT[] audio)
+    {
+        var bufsiz = GetKsmps();
+        var buffer = Marshal.AllocHGlobal(sizeof(MYFLT) * (int)bufsiz);
+        Marshal.Copy(audio, 0, buffer, (int)Math.Min(audio.Length, bufsiz));
+        Csound6.NativeMethods.csoundSetAudioChannel(csound, name, buffer);
+        Marshal.FreeHGlobal(buffer);
+    }
+
+    public MYFLT[] GetAudioChannel(string name)
+    {
+        var bufsiz = GetKsmps();
+        var buffer = Marshal.AllocHGlobal(sizeof(MYFLT) * (int)bufsiz);
+        MYFLT[] dest = new MYFLT[bufsiz];//include nchnls/nchnlss_i? no, not an output channel: just a single ksmps-sized buffer
+        Csound6.NativeMethods.csoundGetAudioChannel(csound, name, buffer);
+        Marshal.Copy(buffer, dest, 0, dest.Length);
+        Marshal.FreeHGlobal(buffer);
+        return dest;
+    }
+
     /// <summary>
     /// Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
     /// </summary>
@@ -446,7 +466,7 @@ public class CsoundUnityBridge
         }
         return opcodes;
     }
-        
+
     /// <summary>
     /// Legacy channel access method.  Should be avoided in favor of csound 6's new thread-safe
     /// access methods as used in subclasses.
