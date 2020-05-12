@@ -828,7 +828,8 @@ public class CsoundUnity : MonoBehaviour
         csound.SendScoreEvent(scoreEvent);
     }
 
-    public void SetYieldCallback(YIELD_CALLBACK callback) {
+    public void SetYieldCallback(Action callback) {
+        
         csound.SetYieldCallback(callback);
     }
 

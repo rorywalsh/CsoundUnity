@@ -161,11 +161,18 @@ public class CsoundUnityBridge
         return dest;
     }
 
-    public void SetYieldCallback(Csound6.NativeMethods.YieldCallback callback)
+    internal void SetYieldCallback(Action callback)
     {
-        string name = callback.Method.Name;
-        if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(callback));
-        Csound6.NativeMethods.csoundSetYieldCallback(csound, callback);
+        Csound6.NativeMethods.YieldCallback cb = new Csound6.NativeMethods.YieldCallback((csd) =>
+        {
+            if (callback == null) return -1;
+            callback();
+            return 1;
+        });
+
+        string name = cb.Method.Name;
+        if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(cb));
+        Csound6.NativeMethods.csoundSetYieldCallback(csound, cb);
     }
 
     /// <summary>
