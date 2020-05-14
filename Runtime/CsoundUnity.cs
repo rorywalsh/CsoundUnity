@@ -109,6 +109,11 @@ public class CsoundUnity : MonoBehaviour
     private uint ksmpsIndex = 0;
     private float zerdbfs = 1;
     private bool compiledOk = false;
+    int bufferSize, numBuffers;
+    public MYFLT[] namedAudioChannelData;
+    public MYFLT[] tempBuffer;
+
+    private List<CsoundUnityNode> csoundUnityNodes = new List<CsoundUnityNode>();
 
     /// <summary>
     /// structure to hold channel data
@@ -116,7 +121,9 @@ public class CsoundUnity : MonoBehaviour
     public List<CsoundChannelController> channels = new List<CsoundChannelController>();
     private AudioSource audioSource;
 
-    
+    public Dictionary<string, MYFLT[]> namedAudioChannelDataDict = new Dictionary<string, MYFLT[]>();
+    public Dictionary<string, MYFLT[]> namedAudioChannelTempBufferDict = new Dictionary<string, MYFLT[]>();
+
 
     /// <summary>
     /// a string to hold all the csoundFile content
@@ -148,6 +155,11 @@ public class CsoundUnity : MonoBehaviour
         *
         */
         Debug.Log("AudioSettings.outputSampleRate: " + AudioSettings.outputSampleRate);
+
+        AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
+
+        tempBuffer = new MYFLT[ksmps];
+        namedAudioChannelData = new MYFLT[bufferSize];
 
         //string csoundFilePath = "";
         string dataPath = Path.GetFullPath(Path.Combine("Packages", packageName, "Runtime"));
@@ -324,6 +336,21 @@ public class CsoundUnity : MonoBehaviour
         //csound.reset();
     }
 
+    //add child node, and allocate space for corresponding named channel buffers
+    public void AddChildNode(CsoundUnityNode node)
+    {
+        csoundUnityNodes.Add(node);
+
+        foreach (var name in node.GetChannelNames())
+        {
+            if (!namedAudioChannelDataDict.ContainsKey(name))
+            {
+                namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
+                namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
+            }
+        }
+    }
+
     /// <summary>
     /// Get the current control rate
     /// </summary>
@@ -483,11 +510,11 @@ public class CsoundUnity : MonoBehaviour
     /// <summary>
     /// Yield Callback: Hope it works!
     /// </summary>
-    event csoundcsharp.Csound6.NativeMethods.YieldCallback YieldCallback = new csoundcsharp.Csound6.NativeMethods.YieldCallback((csd) =>
-    {
-        Debug.Log($"callback? ");
-        return 1;
-    });
+    //event csoundcsharp.Csound6.YieldCallback YieldCallback = new csoundcsharp.Csound6.YieldCallback((csd) =>
+    //{
+    //    Debug.Log($"callback? ");
+    //    return 1;
+    //});
 
 
     /// <summary>
@@ -511,13 +538,30 @@ public class CsoundUnity : MonoBehaviour
                         {
                             PerformKsmps();
                             ksmpsIndex = 0;
+                            foreach (var node in csoundUnityNodes)
+                            {
+                                foreach (var chanName in node.GetChannelNames())
+                                {
+                                    namedAudioChannelTempBufferDict[chanName] = GetAudioChannel(chanName);
+                                }
+                            }
                         }
 
                         if (processClipAudio)
                         {
                             SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel] * zerdbfs);
                         }
+
                         samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel) / zerdbfs;
+
+                        foreach (var node in csoundUnityNodes)
+                        {
+                            foreach (var chanName in node.GetChannelNames())
+                            {
+                                Debug.Log(namedAudioChannelDataDict[chanName].Length + "-> i + channel: " + (i + channel));
+                                namedAudioChannelDataDict[chanName][i + channel] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
+                            }
+                        }
                     }
                 }
             }
@@ -678,6 +722,16 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetChannel(channel);
     }
 
+    /// <summary>
+    /// Gets a Csound Audio channel. Used in connection with a chnset opcode in your Csound instrument.
+    /// </summary>
+    /// <param name="channel"></param>
+    /// <returns></returns>
+    public MYFLT[] GetAudioChannel(string channel)
+    {
+        return csound.GetAudioChannel(channel);
+    }
+
     public IDictionary<string, CsoundUnityBridge.ChannelInfo> GetChannelList()
     {
         return csound.GetChannelList();
@@ -826,9 +880,25 @@ public class CsoundUnity : MonoBehaviour
         csound.SendScoreEvent(scoreEvent);
     }
 
-    public void SetYieldCallback(Action callback) {
-        
+    public void SetYieldCallback(Action callback)
+    {
+
         csound.SetYieldCallback(callback);
+    }
+
+    public void SetSenseEventCallback<T>(Action<T> action, T type) where T : class
+    {
+        csound.SetSenseEventCallback(action, type);
+    }
+
+    public void AddSenseEventCallback(CsoundUnityBridge.Csound6SenseEventCallbackHandler callbackHandler)
+    {
+        csound.SenseEventsCallback += callbackHandler;//Csound_SenseEventsCallback;
+    }
+
+    public void RemoveSenseEventCallback(CsoundUnityBridge.Csound6SenseEventCallbackHandler callbackHandler)
+    {
+        csound.SenseEventsCallback -= callbackHandler;
     }
 
     /// <summary>
@@ -945,7 +1015,7 @@ public class CsoundUnity : MonoBehaviour
                     {
                         //Cabbage combobox index starts from 1
                         controller.value = controller.value - 1;
-                       // Debug.Log("combobox value in parse: " + controller.value);
+                        // Debug.Log("combobox value in parse: " + controller.value);
                     }
                 }
                 locaChannelControllers.Add(controller);

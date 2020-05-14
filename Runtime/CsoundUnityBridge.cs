@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using csoundcsharp;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
 #elif UNITY_ANDROID
@@ -161,20 +162,93 @@ public class CsoundUnityBridge
         return dest;
     }
 
+    public class Csound6SenseEventsArgs : EventArgs
+    {
+        public object UserData;
+    }
+
+    public delegate void Csound6SenseEventCallbackHandler(object sender, Csound6SenseEventsArgs e);
+
+    public void RawSenseEventsCallback(IntPtr csound, IntPtr userdata) { }
+
+    /// <summary>
+    /// Registers a callback proxy (below) that transforms csound callbacks into .net events.
+    /// </summary>
+    /// <param name="callback"></param>
+    /// <returns></returns>
+    internal void SetSenseEventCallback<T>(Action<T> callback, T userData) where T : class
+    {
+        Csound6.SenseEventCallbackProxy cb = new Csound6.SenseEventCallbackProxy((csd, ptr) =>
+        {
+            GCHandle handle = GCHandle.Alloc(userData, GCHandleType.Pinned);
+            IntPtr p = (IntPtr)handle;
+            ptr = p;
+            callback?.Invoke(userData);
+            handle.Free();
+        });
+
+        GCHandle gch = FreezeCallbackInHeap(callback);
+        Csound6.NativeMethods.csoundRegisterSenseEventCallback(csound, cb);
+        //return gch;
+    }
+
+    protected EventHandlerList m_callbackHandlers;
+
+    public event CsoundUnityBridge.Csound6SenseEventCallbackHandler SenseEventsCallback
+    {
+        add
+        {
+            //  CsoundUnityBridge.Csound6SenseEventCallbackHandler handler = m_callbackHandlers[_inputChannelEventKey] as Csound6SenseEventCallbackHandler;
+            //if (handler == null)
+            SetSenseEventCallback(RawSenseEventsCallback);
+            //  m_callbackHandlers.AddHandler(_senseEventKey, value);
+        }
+        remove
+        {
+            //  m_callbackHandlers.RemoveHandler(_senseEventKey, value);
+        }
+
+    }
+
+    internal GCHandle SetSenseEventCallback(Csound6.SenseEventCallbackProxy callback)
+    {
+        GCHandle gch = FreezeCallbackInHeap(callback);
+        Csound6.NativeMethods.csoundRegisterSenseEventCallback(csound, callback);
+        return gch;
+    }
+
     internal void SetYieldCallback(Action callback)
     {
-        Csound6.NativeMethods.YieldCallback cb = new Csound6.NativeMethods.YieldCallback((csd) =>
+        Csound6.YieldCallback cb = new Csound6.YieldCallback((csd) =>
         {
-           // Debug.Log("callback " + (callback == null ? "is null" : "is not null"));
+            // Debug.Log("callback " + (callback == null ? "is null" : "is not null"));
             if (callback == null) return -1;
             callback?.Invoke();
             return 1;
         });
 
-        string name = callback.Method.GetHashCode().ToString();
-        Debug.Log("method name: " + name);
-        if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(cb));
+        //string name = callback.Method.GetHashCode().ToString();
+        //Debug.Log("method name: " + name);
+        //if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(cb));
+        var gchandle = FreezeCallbackInHeap(callback);
         Csound6.NativeMethods.csoundSetYieldCallback(csound, cb);
+    }
+
+    /// <summary>
+    /// Pins a callback in memory for the duration of the life of this csound instance.
+    /// Csound expects a callback to be valid as long as it references it whereas pInvoke
+    /// callbacks can get garbage collected when no references to it are detected.
+    /// Callbacks are unpinned automatically by the Dispose() method when called
+    /// </summary>
+    /// <param name="callback">the callback to pin</param>
+    /// <returns>the handle pinning the callback in the heap.  Usually can be ignores.</returns>
+    internal GCHandle FreezeCallbackInHeap(Delegate callback)
+    {
+        //string name = callback.Method.Name;
+        string name = callback.Method.GetHashCode().ToString();
+        // Debug.Log("method name: " + name);
+        if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(callback));
+        return m_callbacks[name];
     }
 
     /// <summary>

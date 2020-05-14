@@ -52,6 +52,13 @@ namespace csoundcsharp
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void RtcloseCallbackProxy(IntPtr csound);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        internal delegate void SenseEventCallbackProxy(IntPtr csound, IntPtr userdata);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate int YieldCallback(IntPtr csound);
+
+
         // Csound API 6.11
         public class NativeMethods
         {
@@ -461,6 +468,9 @@ namespace csoundcsharp
             // PUBLIC int csoundKillInstance (CSOUND *csound, MYFLT instr, char *instrName, int mode, int allow_release)
 
             // PUBLIC int csoundRegisterSenseEventCallback (CSOUND *, void(*func)(CSOUND *, void *), void *userData)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern int csoundRegisterSenseEventCallback([In] IntPtr csound, SenseEventCallbackProxy senseEventProxy);
+
 
             // PUBLIC void csoundKeyPress (CSOUND *, char c)
 
@@ -542,8 +552,6 @@ namespace csoundcsharp
 
             #region Threading and concurrency
 
-            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-            internal delegate int YieldCallback(IntPtr csound);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
             internal static extern void csoundSetYieldCallback([In] IntPtr csound, YieldCallback yieldCallback);
