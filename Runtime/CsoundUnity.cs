@@ -558,8 +558,8 @@ public class CsoundUnity : MonoBehaviour
                         {
                             foreach (var chanName in node.GetChannelNames())
                             {
-                                Debug.Log(namedAudioChannelDataDict[chanName].Length + "-> i + channel: " + (i + channel));
-                                namedAudioChannelDataDict[chanName][i + channel] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
+                                //Debug.Log(namedAudioChannelDataDict[chanName].Length + "-> i + channel: " + ((i/numChannels)));
+                                namedAudioChannelDataDict[chanName][i/numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
                             }
                         }
                     }

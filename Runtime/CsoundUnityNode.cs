@@ -19,7 +19,7 @@ public class CsoundUnityNode : MonoBehaviour
     private CsoundUnity csoundUnity;
     private AudioSource audioSource;
     public string[] namedAudioChannelNames;
-    public MYFLT[] namedAudioChannelData;
+    public List<MYFLT[]> namedAudioChannelData;
     private uint ksmpsIndex = 0;
     int bufferSize;
     int numBuffers;
@@ -43,6 +43,14 @@ public class CsoundUnityNode : MonoBehaviour
     {
         ksmps = csoundUnity.GetKsmps();
         csoundUnity.AddChildNode(this);
+        namedAudioChannelData = new List<MYFLT[]>();
+
+
+        foreach (string channel in namedAudioChannelNames)
+        {
+            namedAudioChannelData.Add(new MYFLT[bufferSize]);
+        }
+
         zerodbfs = csoundUnity.Get0dbfs();
     }
 
@@ -67,13 +75,19 @@ public class CsoundUnityNode : MonoBehaviour
 
     public void ProcessBlock(float[] samples, int numChannels)
     {
-        var namedAudioChannelData = csoundUnity.namedAudioChannelDataDict[namedAudioChannelNames[0]];
+        for (int i = 0; i < namedAudioChannelNames.Length; i++)
+        {
+            namedAudioChannelData[i] = csoundUnity.namedAudioChannelDataDict[namedAudioChannelNames[i]];
+        }
 
         for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
         {
             for (uint channel = 0; channel < numChannels; channel++)
             {
-                samples[i + channel] = (float)(namedAudioChannelData[sampleIndex] / zerodbfs);
+                if(namedAudioChannelNames.Length == 1)//mono
+                    samples[i + channel] = (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs);
+                else if (namedAudioChannelNames.Length == 2)//stereo
+                    samples[i + channel] = (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
             }
         }
     }
