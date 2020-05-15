@@ -113,7 +113,7 @@ public class CsoundUnity : MonoBehaviour
     public MYFLT[] namedAudioChannelData;
     public MYFLT[] tempBuffer;
 
-    private List<CsoundUnityNode> csoundUnityNodes = new List<CsoundUnityNode>();
+    private List<CsoundUnityChild> csoundUnityNodes = new List<CsoundUnityChild>();
 
     /// <summary>
     /// structure to hold channel data
@@ -337,7 +337,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     //add child node, and allocate space for corresponding named channel buffers
-    public void AddChildNode(CsoundUnityNode node)
+    public void AddChildNode(CsoundUnityChild node)
     {
         csoundUnityNodes.Add(node);
 

@@ -11,7 +11,7 @@ using MYFLT = System.Single;
 
 [RequireComponent(typeof(AudioSource))]
 
-public class CsoundUnityNode : MonoBehaviour
+public class CsoundUnityChild : MonoBehaviour
 {
     // Start is called before the first frame update
 
