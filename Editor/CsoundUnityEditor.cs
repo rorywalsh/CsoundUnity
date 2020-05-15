@@ -38,6 +38,7 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_mute;
     SerializedProperty m_logCsoundOutput;
     SerializedProperty m_channelControllers;
+    SerializedProperty m_availableAudioChannels;
 
     void OnEnable()
     {
@@ -53,6 +54,7 @@ public class CsoundUnityEditor : Editor
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
         m_channelControllers = this.serializedObject.FindProperty("channels");
         m_csoundScore = this.serializedObject.FindProperty("csoundScore");
+        m_availableAudioChannels = this.serializedObject.FindProperty("availableAudioChannels");
         //if (m_csoundFile.stringValue.Length > 4)
         //{
         //    Debug.Log($"csoundFile is: {m_csoundFile.stringValue} channels size: {m_channelControllers.arraySize} file path: {m_csoundFilePath.stringValue} csoundString: {m_csoundString.stringValue}");
@@ -164,9 +166,11 @@ public class CsoundUnityEditor : Editor
                 {
                     DragAndDrop.AcceptDrag();
 
+
                     foreach (string dragged_object in DragAndDrop.paths)
                     {
                         SetCsd(dragged_object);
+
                         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
                     }
                 }
@@ -240,7 +244,15 @@ public class CsoundUnityEditor : Editor
 
     public void SetCsd(string fileName)
     {
+        //serializedObject.Update();
+        //serializedObject.ApplyModifiedProperties();
+
+        // csoundUnity.SetCsd(fileName);
+        // EditorUtility.SetDirty(csoundUnity);
+
+        // ALL THE NEXT SECTION SHOULD BE DONE WITH THE ABOVE LINES, BUT IT DOESN'T WORK IN ALL CASES!!
         this.m_channelControllers.ClearArray();
+        this.m_availableAudioChannels.ClearArray();
 
         if (string.IsNullOrWhiteSpace(fileName))
         {
@@ -259,6 +271,8 @@ public class CsoundUnityEditor : Editor
             if (this.m_csoundFile.stringValue.Length > 4)
             {
                 var channels = CsoundUnity.ParseCsdFile(fileName);
+                var audioChannels = CsoundUnity.ParseCsdFileForAudioChannels(fileName);
+
                 for (var i = 0; i < channels.Count; i++)
                 {
                     this.m_channelControllers.InsertArrayElementAtIndex(i);
@@ -270,6 +284,14 @@ public class CsoundUnityEditor : Editor
                     cc.FindPropertyRelative("type").stringValue = channels[i].type;
                     cc.FindPropertyRelative("min").floatValue = channels[i].min;
                     cc.FindPropertyRelative("max").floatValue = channels[i].max;
+                }
+
+                for (var i = 0; i < audioChannels.Count; i++)
+                {
+                    this.m_availableAudioChannels.InsertArrayElementAtIndex(i);
+                    var ca = this.m_availableAudioChannels.GetArrayElementAtIndex(i);
+                    ca.stringValue = audioChannels[i];
+                    Debug.Log($"AUDIOCHANNELS {i}: {audioChannels[i]}");
                 }
             }
             Debug.Log("CSOUNDUNITY NEW CSD! " + this.m_csoundFile.stringValue);

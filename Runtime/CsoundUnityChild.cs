@@ -14,10 +14,18 @@ using MYFLT = System.Single;
 public class CsoundUnityChild : MonoBehaviour
 {
     // Start is called before the first frame update
-
+    [SerializeField]
     public GameObject csoundUnityGameObject;
+
+    public enum AudioChannels { MONO = 1, STEREO = 2/*, QUAD?, FIVE_PLUS_ONE???*/}
+    public AudioChannels AudioChannelsSetting;
+
     private CsoundUnity csoundUnity;
+    [SerializeField, HideInInspector]
+    public int[] selectedAudioChannelIndexByChannel;
+
     private AudioSource audioSource;
+    [HideInInspector] //TODO  NOW AUDIOCHANNELS ARE OBTAINED THROUGH EDITOR
     public string[] namedAudioChannelNames;
     public List<MYFLT[]> namedAudioChannelData;
     private uint ksmpsIndex = 0;
@@ -37,6 +45,8 @@ public class CsoundUnityChild : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         if (!audioSource)
             Debug.LogError("AudioSource was not found?");
+
+        selectedAudioChannelIndexByChannel = new int[(int)AudioChannelsSetting];
     }
 
     void Start()
@@ -64,7 +74,7 @@ public class CsoundUnityChild : MonoBehaviour
     {
         return namedAudioChannelNames;
     }
-    
+
     void OnAudioFilterRead(float[] data, int channels)
     {
         if (csoundUnity != null)
@@ -75,16 +85,28 @@ public class CsoundUnityChild : MonoBehaviour
 
     public void ProcessBlock(float[] samples, int numChannels)
     {
-        for (int i = 0; i < namedAudioChannelNames.Length; i++)
+        //for (int i = 0; i < namedAudioChannelNames.Length; i++)
+        //{
+        //    namedAudioChannelData[i] = csoundUnity.namedAudioChannelDataDict[namedAudioChannelNames[i]];
+        //}
+        if (namedAudioChannelNames.Length < (int)AudioChannelsSetting)
         {
-            namedAudioChannelData[i] = csoundUnity.namedAudioChannelDataDict[namedAudioChannelNames[i]];
+            return;
+        }
+
+        for (int i = 0; i < (int)AudioChannelsSetting; i++)
+        {
+            var chanToUse = namedAudioChannelNames[selectedAudioChannelIndexByChannel[i]];
+            if (string.IsNullOrWhiteSpace(chanToUse)) continue;
+            if (!csoundUnity.namedAudioChannelDataDict.ContainsKey(chanToUse)) continue;
+            namedAudioChannelData[i] = csoundUnity.namedAudioChannelDataDict[chanToUse];
         }
 
         for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
         {
             for (uint channel = 0; channel < numChannels; channel++)
             {
-                if(namedAudioChannelNames.Length == 1)//mono
+                if (namedAudioChannelNames.Length == 1)//mono
                     samples[i + channel] = (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs);
                 else if (namedAudioChannelNames.Length == 2)//stereo
                     samples[i + channel] = (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);

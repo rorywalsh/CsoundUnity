@@ -236,6 +236,15 @@ public class CsoundUnity : MonoBehaviour
                     csound.SetChannel(channels[i].channel, channels[i].value);
                 }
 
+            foreach (var name in availableAudioChannels)
+            {
+                if (!namedAudioChannelDataDict.ContainsKey(name))
+                {
+                    namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
+                    namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
+                }
+            }
+
             //TEST CALLBACK
             //csound.SetYieldCallback(YieldCallback);
 
@@ -341,14 +350,14 @@ public class CsoundUnity : MonoBehaviour
     {
         csoundUnityNodes.Add(node);
 
-        foreach (var name in node.GetChannelNames())
-        {
-            if (!namedAudioChannelDataDict.ContainsKey(name))
-            {
-                namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
-                namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
-            }
-        }
+        //foreach (var name in node.GetChannelNames())
+        //{
+        //    if (!namedAudioChannelDataDict.ContainsKey(name))
+        //    {
+        //        namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
+        //        namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
+        //    }
+        //}
     }
 
     /// <summary>
@@ -538,12 +547,17 @@ public class CsoundUnity : MonoBehaviour
                         {
                             PerformKsmps();
                             ksmpsIndex = 0;
-                            foreach (var node in csoundUnityNodes)
+                            //foreach (var node in csoundUnityNodes)
+                            //{
+                            //    foreach (var chanName in node.GetChannelNames())
+                            //    {
+                            //        namedAudioChannelTempBufferDict[chanName] = GetAudioChannel(chanName);
+                            //    }
+                            //}
+                            foreach (var chanName in availableAudioChannels)
                             {
-                                foreach (var chanName in node.GetChannelNames())
-                                {
-                                    namedAudioChannelTempBufferDict[chanName] = GetAudioChannel(chanName);
-                                }
+                                if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
+                                namedAudioChannelTempBufferDict[chanName] = GetAudioChannel(chanName);
                             }
                         }
 
@@ -554,13 +568,18 @@ public class CsoundUnity : MonoBehaviour
 
                         samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel) / zerdbfs;
 
-                        foreach (var node in csoundUnityNodes)
+                        //foreach (var node in csoundUnityNodes)
+                        //{
+                        //    foreach (var chanName in node.GetChannelNames())
+                        //    {
+                        //        //Debug.Log(namedAudioChannelDataDict[chanName].Length + "-> i + channel: " + ((i/numChannels)));
+                        //        namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
+                        //    }
+                        //}
+                        foreach (var chanName in availableAudioChannels)
                         {
-                            foreach (var chanName in node.GetChannelNames())
-                            {
-                                //Debug.Log(namedAudioChannelDataDict[chanName].Length + "-> i + channel: " + ((i/numChannels)));
-                                namedAudioChannelDataDict[chanName][i/numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
-                            }
+                            if (!namedAudioChannelDataDict.ContainsKey(chanName) || !namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
+                            namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
                         }
                     }
                 }
@@ -912,13 +931,66 @@ public class CsoundUnity : MonoBehaviour
             print(csound.GetCsoundMessage());
     }
 
+    private void ResetFields()
+    {
+        this.csoundFile = null;
+        this.csoundFilePath = null;
+        this.csoundString = null;
+        this.namedAudioChannelDataDict.Clear();
+        this.namedAudioChannelTempBufferDict.Clear();
+        this.channels.Clear();
+        this.availableAudioChannels.Clear();
+    }
+
     public void SetCsd(string fileName)
     {
+        if (fileName.Length < 4 || Path.GetFileName(fileName).Length < 4)
+        {
+            ResetFields();
+            return;
+        }
+
         this.csoundFile = Path.GetFileName(fileName);
         this.csoundFilePath = Path.GetFullPath(fileName);
         this.csoundString = File.ReadAllText(this.csoundFilePath);
-        if (this.csoundFile.Length > 4)
-            this.channels = ParseCsdFile(fileName);
+        this.channels = ParseCsdFile(fileName);
+        this.availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
+
+        foreach (var name in availableAudioChannels)
+        {
+            if (string.IsNullOrWhiteSpace(name)) continue;
+
+            if (!namedAudioChannelDataDict.ContainsKey(name))
+            {
+                namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
+                namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
+            }
+        }
+    }
+
+    [SerializeField, HideInInspector]
+    public List<string> availableAudioChannels = new List<string>();
+
+    public static List<string> ParseCsdFileForAudioChannels(string filename)
+    {
+        if (!File.Exists(filename)) return null;
+
+        string[] fullCsdText = File.ReadAllLines(filename);
+        if (fullCsdText.Length < 1) return null;
+
+        List<string> locaAudioChannels = new List<string>();
+
+        foreach (string line in fullCsdText)
+        {
+            if (!line.Contains("chnset")) continue;
+
+            var lndx = line.IndexOf("chnset");
+            var chnsetEnd = lndx + "chnset".Length + 1;
+            var prms = line.Substring(chnsetEnd, line.Length - chnsetEnd);
+            var ach = prms.Split(',')[1].Replace('\\', ' ').Replace('\"', ' ').Trim();
+            locaAudioChannels.Add(ach);
+        }
+        return locaAudioChannels;
     }
 
     /// <summary>
