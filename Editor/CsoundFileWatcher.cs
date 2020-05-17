@@ -20,9 +20,10 @@ public class CsoundFileWatcher
 
     static CsoundFileWatcher()
     {
-        FindInstancesAndStartWatching();
-        EditorApplication.hierarchyChanged += OnHierarchyChanged;
-        EditorApplication.update += EditorUpdate;
+        //  UNCOMMENT THE FOLLOWING LINES TO RESTORE FILE WATCHING
+        //  FindInstancesAndStartWatching();
+        //  EditorApplication.hierarchyChanged += OnHierarchyChanged;
+        //  EditorApplication.update += EditorUpdate;
     }
 
     private static void EditorUpdate()

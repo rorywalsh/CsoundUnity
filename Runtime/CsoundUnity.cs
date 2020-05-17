@@ -139,6 +139,10 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     public string csoundScore;
 
+    //a field to check when this has changed on editor
+    [SerializeField, HideInInspector]
+    public DefaultAsset lastAsset;
+
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
@@ -345,6 +349,7 @@ public class CsoundUnity : MonoBehaviour
         //csound.reset();
     }
 
+    //useless!
     //add child node, and allocate space for corresponding named channel buffers
     public void AddChildNode(CsoundUnityChild node)
     {
