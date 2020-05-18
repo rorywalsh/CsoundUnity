@@ -90,10 +90,17 @@ public class CsoundUnity : MonoBehaviour
                                     * of CsoundUnity objects as you wish. 
                                     */
 
+#if UNITY_EDITOR
     /// <summary>
     /// a reference to a csd file as DefaultAsset 
     /// </summary>
     public DefaultAsset csoundFileRef;
+
+    //a field to check when this has changed on editor
+    [SerializeField, HideInInspector]
+    public DefaultAsset lastAsset;
+
+#endif
 
     public bool logCsoundOutput = false;/**<
                                        * **logCsoundOutput** is a boolean variable. As a boolean it can be either true or false. 
@@ -138,10 +145,6 @@ public class CsoundUnity : MonoBehaviour
     /// the score to send via editor
     /// </summary>
     public string csoundScore;
-
-    //a field to check when this has changed on editor
-    [SerializeField, HideInInspector]
-    public DefaultAsset lastAsset;
 
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
@@ -495,14 +498,16 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetEnv(envType.ToString());
     }
 
-    /// <summary>
-    /// Get the Opcode List, async
-    /// </summary>
-    /// <returns></returns>
-    public async Task<IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>>> GetOpcodeListAsync()
-    {
-        return await csound.GetOpcodeListAsync();
-    }
+//#if CSHARP_7_3_OR_NEWER
+//    /// <summary>
+//    /// Get the Opcode List, async
+//    /// </summary>
+//    /// <returns></returns>
+//    public async Task<IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>>> GetOpcodeListAsync()
+//    {
+//        return await csound.GetOpcodeListAsync();
+//    }
+//#endif
 
     /// <summary>
     /// Get the Opcode List, blocking

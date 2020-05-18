@@ -514,17 +514,20 @@ public class CsoundUnityBridge
         //return Encoding.UTF8.GetString(buffer);
     }
 
-    /// <summary>
-    /// Async version of GetOpcodeList()
-    /// </summary>
-    /// <returns>A sorted Dictionary keyed by all opcodes which are active in the current instance of csound.</returns>
-    public async Task<IDictionary<string, IList<OpcodeArgumentTypes>>> GetOpcodeListAsync()
-    {
-        return await Task.Run(() =>
-        {
-            return GetOpcodeList();
-        });
-    }
+//#if CSHARP_7_3_OR_NEWER
+
+//    /// <summary>
+//    /// Async version of GetOpcodeList()
+//    /// </summary>
+//    /// <returns>A sorted Dictionary keyed by all opcodes which are active in the current instance of csound.</returns>
+//    public async Task<IDictionary<string, IList<OpcodeArgumentTypes>>> GetOpcodeListAsync()
+//    {
+//        return await Task.Run(() =>
+//        {
+//            return GetOpcodeList();
+//        });
+//    }
+//#endif
 
     /// <summary>
     /// Returns a sorted Dictionary keyed by all opcodes which are active in the current instance of csound.
