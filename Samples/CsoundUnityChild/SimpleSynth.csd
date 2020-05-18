@@ -12,7 +12,7 @@ combobox bounds(290, 14, 100, 30), channel("waveform"), text("W1", "W2", "W3")
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
--odac0 -+rtmidi=portmidi2 --midi-key=4 --midi-velocity-amp=5
+-n -d -+rtmidi=NULL -M0 --midi-key=4 --midi-velocity-amp=5
 </CsOptions>
 <CsInstruments>
 ; Initialize the global variables. 
@@ -20,31 +20,23 @@ ksmps = 32
 nchnls = 2
 0dbfs = 1
 
+giWave1 ftgen 1, 0, 4096, 10, 1
+giWave2 ftgen 1, 0, 4096, 10, 1, .5, .25, .17
 
-instr 1
-    prints "P4" 
-    iWaves[] fillarray 0, 2, 4
-    print p4
-    kEnv madsr 0.1, .5, .6, 1
-    print chnget:i("waveform")
-    a1 vco2 kEnv*chnget:k("hrm1"), cpsmidinn(p4), iWaves[chnget:i("waveform")-1], .5
-    a2 vco2 kEnv*chnget:k("hrm2"), cpsmidinn(p4)*2, iWaves[chnget:i("waveform")-1], .5
-    a3 vco2 kEnv*chnget:k("hrm3"), cpsmidinn(p4)*3, iWaves[chnget:i("waveform")-1], .5
-    a4 vco2 kEnv*chnget:k("hrm4"), cpsmidinn(p4)*4, iWaves[chnget:i("waveform")-1], .5
-    aMix = a1+a2+a3+a4
-    outs aMix*kEnv*chnget:k("gain"), aMix*kEnv*chnget:k("gain")
-endin
-
-instr 2
-a1 oscili 1, 440
-chnset a1, "oscil"
+;this instrument sends audio to two named channels
+;this audio can be picked up by any CsoundUnityNode component..
+instr ChildSounds
+    a1 oscili 1, 440, giWave1
+    chnset a1, "sound1"
+    a2 oscili 1, 840, giWave1
+    chnset a2, "sound2"
 endin
 
 </CsInstruments>
 <CsScore>
 ;causes Csound to run for about 7000 years...
 f0 z
-i2 0 z
+i"ChildSounds" 0 z
 ;starts instrument 1 and runs it for a week
 </CsScore>
 </CsoundSynthesizer>
