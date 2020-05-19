@@ -47,6 +47,8 @@ public class CsoundUnityChild : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         if (!audioSource)
             Debug.LogError("AudioSource was not found?");
+
+        audioSource.velocityUpdateMode = AudioVelocityUpdateMode.Fixed;
     }
 
     void Start()
@@ -69,6 +71,7 @@ public class CsoundUnityChild : MonoBehaviour
 
     public void ProcessBlock(float[] samples, int numChannels)
     {
+        print("CsoundUnityChild DSP Time - " + AudioSettings.dspTime * 48000);
         if (availableAudioChannels.Count < 1)
         {
             return;
@@ -100,6 +103,7 @@ public class CsoundUnityChild : MonoBehaviour
                         samples[i + channel] = (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
                         break;
                 }
+
             }
         }
     }
