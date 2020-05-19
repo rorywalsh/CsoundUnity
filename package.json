@@ -8,23 +8,22 @@
     {
       "displayName": "Csound Test",
       "description": "CsoundUnity scene to test opcodes and environment variables",
-      "path": "Samples/CsoundTest"
+      "path": "Samples~/CsoundTest"
     },
     {
       "displayName": "Basic Test",
       "description": "Basic CsoundUnity scene to test a simple csd with a slider",
-      "path": "Samples/BasicTest"
+      "path": "Samples~/BasicTest"
     },
     {
       "displayName": "CsoundUnity Child Test",
       "description": "Reading data from Named AudioChannels",
-      "path": "Samples/CsoundUnityChild"
+      "path": "Samples~/CsoundUnityChild"
     },
     {
       "displayName": "Simple Sequencer",
       "description": "A sequencer to play with!",
-      "path": "Samples/SimpleSequencer"
+      "path": "Samples~/SimpleSequencer"
     }
-
   ]
 }
