@@ -15,10 +15,16 @@
       "description": "Basic CsoundUnity scene to test a simple csd with a slider",
       "path": "Samples/BasicTest"
     },
-	{
-	  "displayName": "CsoundUnity Node Test",
+    {
+      "displayName": "CsoundUnity Child Test",
       "description": "Reading data from Named AudioChannels",
-      "path": "Samples/CsoundNodeTest"
-	}
+      "path": "Samples/CsoundUnityChild"
+    },
+    {
+      "displayName": "Simple Sequencer",
+      "description": "A sequencer to play with!",
+      "path": "Samples/SimpleSequencer"
+    }
+
   ]
 }

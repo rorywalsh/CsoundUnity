@@ -498,16 +498,16 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetEnv(envType.ToString());
     }
 
-//#if CSHARP_7_3_OR_NEWER
-//    /// <summary>
-//    /// Get the Opcode List, async
-//    /// </summary>
-//    /// <returns></returns>
-//    public async Task<IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>>> GetOpcodeListAsync()
-//    {
-//        return await csound.GetOpcodeListAsync();
-//    }
-//#endif
+    //#if CSHARP_7_3_OR_NEWER
+    //    /// <summary>
+    //    /// Get the Opcode List, async
+    //    /// </summary>
+    //    /// <returns></returns>
+    //    public async Task<IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>>> GetOpcodeListAsync()
+    //    {
+    //        return await csound.GetOpcodeListAsync();
+    //    }
+    //#endif
 
     /// <summary>
     /// Get the Opcode List, blocking
@@ -553,7 +553,7 @@ public class CsoundUnity : MonoBehaviour
                         samples[i + channel] = 0.0f;
                     else
                     {
-                        if ((ksmpsIndex >= ksmps) && (ksmps > 0))
+                        if ((ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
                         {
                             PerformKsmps();
                             ksmpsIndex = 0;
@@ -586,12 +586,13 @@ public class CsoundUnity : MonoBehaviour
                         //        namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
                         //    }
                         //}
-                        foreach (var chanName in availableAudioChannels)
-                        {
-                            if (!namedAudioChannelDataDict.ContainsKey(chanName) || !namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
-                            namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
-                        }
+                        
                     }
+                }
+                foreach (var chanName in availableAudioChannels)
+                {
+                    if (!namedAudioChannelDataDict.ContainsKey(chanName) || !namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
+                    namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
                 }
             }
         }
@@ -998,7 +999,8 @@ public class CsoundUnity : MonoBehaviour
             var chnsetEnd = lndx + "chnset".Length + 1;
             var prms = line.Substring(chnsetEnd, line.Length - chnsetEnd);
             var ach = prms.Split(',')[1].Replace('\\', ' ').Replace('\"', ' ').Trim();
-            locaAudioChannels.Add(ach);
+            if (!locaAudioChannels.Contains(ach))
+                locaAudioChannels.Add(ach);
         }
         return locaAudioChannels;
     }
