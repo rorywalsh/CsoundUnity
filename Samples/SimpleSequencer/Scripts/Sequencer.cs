@@ -32,10 +32,12 @@ public class Sequencer : MonoBehaviour
     {
         csoundUnity.SetChannel("BPM", BPM);
         //string samplesPath = Application.dataPath + "/Scenes/SimpleSequencer/Samples";
-        string samplePath = Path.GetFullPath("Packages/CsoundUnity/Samples/SimpleSequencer");
+        //string samplePath = Path.GetFullPath("Packages/CsoundUnity/Samples/SimpleSequencer");
+        //this is what I had to do to make it work. It's something we have to dig into! The package path is not updated! Also the refs are lost!
+        string samplePath = Path.Combine(Application.dataPath, "Samples/CsoundUnity/1.0.0/Simple Sequencer/Samples");
 
         for (var i = 0; i < clips.Length; i++)
-            csoundUnity.SetStringChannel("sample" + (i + 1).ToString(), samplesPath + "/" + clips[i].name + ".wav");
+            csoundUnity.SetStringChannel("sample" + (i + 1).ToString(), samplePath + "/" + clips[i].name + ".wav");
 
         if (showSequencerGUI)
         {

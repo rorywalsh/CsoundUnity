@@ -23,6 +23,7 @@ using System;
 #if UNITY_EDITOR
 using UnityEditor;
 using System.Threading.Tasks;
+using System.Collections;
 #endif
 #if UNITY_ANDROID
 using UnityEngine.Networking;
@@ -146,6 +147,9 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     public string csoundScore;
 
+    private Coroutine LoggingCoroutine;
+
+
     /**
      * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
      * This functions behaves in more or less the same way as a class constructor. When creating references to the
@@ -258,8 +262,9 @@ public class CsoundUnity : MonoBehaviour
             /*
              * This method prints the Csound output to the Unity console
              */
-            if (logCsoundOutput)
-                InvokeRepeating("LogCsoundMessages", 0, .5f);
+            //if (logCsoundOutput)
+            //    InvokeRepeating("LogCsoundMessages", 0, .5f);
+            LoggingCoroutine = StartCoroutine(Logging(.1f));
 
             compiledOk = csound.CompiledWithoutError();
 
@@ -344,11 +349,12 @@ public class CsoundUnity : MonoBehaviour
      */
     void OnApplicationQuit()
     {
+        StopCoroutine(LoggingCoroutine);
+
         if (csound != null)
         {
             csound.StopCsound();
         }
-
         //csound.reset();
     }
 
@@ -940,6 +946,17 @@ public class CsoundUnity : MonoBehaviour
         //print Csound message to Unity console....
         for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
             print(csound.GetCsoundMessage());
+    }
+
+    IEnumerator Logging(float interval) {
+
+        while (this.logCsoundOutput)
+        {
+            yield return new WaitForSeconds(interval);
+            for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
+                print(csound.GetCsoundMessage());
+        }
+        
     }
 
     private void ResetFields()
