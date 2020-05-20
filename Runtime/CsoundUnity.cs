@@ -1143,6 +1143,24 @@ public class CsoundUnity : MonoBehaviour
         return locaChannelControllers;
     }
 
+    public void CreateTable(int tableNumber, MYFLT[] samples)
+    {
+        CreateTableInstrument(tableNumber, samples.Length);
+        for (var i = 0; i < samples.Length; i++)
+        {
+            SetTable(tableNumber, i, samples[i]);
+        }
+    }
+
+    public void CreateTable(int tableNumber, float[] samples)
+    {
+        MYFLT[] fltSamples = new MYFLT[samples.Length];
+        for (var i = 0; i < samples.Length; i++)
+        {
+            fltSamples[i] = (MYFLT)samples[i];
+        }
+        CreateTable(tableNumber, fltSamples);
+    }
 
     /*
      * 
