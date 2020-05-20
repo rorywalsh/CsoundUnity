@@ -360,18 +360,37 @@ public class CsoundUnity : MonoBehaviour
 
     //useless!
     //add child node, and allocate space for corresponding named channel buffers
-    public void AddChildNode(CsoundUnityChild node)
-    {
-        csoundUnityNodes.Add(node);
+    //public void AddChildNode(CsoundUnityChild node)
+    //{
+    //    csoundUnityNodes.Add(node);
 
-        //foreach (var name in node.GetChannelNames())
-        //{
-        //    if (!namedAudioChannelDataDict.ContainsKey(name))
-        //    {
-        //        namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
-        //        namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
-        //    }
-        //}
+    //    //foreach (var name in node.GetChannelNames())
+    //    //{
+    //    //    if (!namedAudioChannelDataDict.ContainsKey(name))
+    //    //    {
+    //    //        namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
+    //    //        namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
+    //    //    }
+    //    //}
+    //}
+
+    /// <summary>
+    /// Parse, and compile the given orchestra from an ASCII string,
+    /// also evaluating any global space code (i-time only)
+    /// this can be called during performance to compile a new orchestra.
+    /// <example>
+    /// This sample shows how to use CompileOrc
+    /// <code>
+    /// string orc = "instr 1 \n a1 rand 0dbfs/4 \n out a1 \nendin\n";
+    /// CompileOrc(orc);
+    /// </code>
+    /// </example>
+    /// </summary>
+    /// <param name="orcStr"></param>
+    /// <returns></returns>
+    public int CompileOrc(string orcStr)
+    {
+        return csound.CompileOrc(orcStr);
     }
 
     /// <summary>
@@ -592,7 +611,7 @@ public class CsoundUnity : MonoBehaviour
                         //        namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
                         //    }
                         //}
-                        
+
                     }
                 }
                 foreach (var chanName in availableAudioChannels)
@@ -948,15 +967,14 @@ public class CsoundUnity : MonoBehaviour
             print(csound.GetCsoundMessage());
     }
 
-    IEnumerator Logging(float interval) {
-
+    IEnumerator Logging(float interval)
+    {
         while (this.logCsoundOutput)
         {
             yield return new WaitForSeconds(interval);
             for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
                 print(csound.GetCsoundMessage());
         }
-        
     }
 
     private void ResetFields()
@@ -1123,5 +1141,35 @@ public class CsoundUnity : MonoBehaviour
             }
         }
         return locaChannelControllers;
+    }
+
+    public enum SamplesOrigin { Resources, StreamingAssets, External }
+
+    public static MYFLT[] GetSamples(string source, SamplesOrigin origin)
+    {
+        MYFLT[] res = new MYFLT[0];
+
+        switch (origin)
+        {
+            case SamplesOrigin.Resources:
+                var src = Resources.Load<AudioClip>(source);
+                var data = new float[src.samples];
+                src.GetData(data, 0);
+                res = new MYFLT[src.samples];
+                var s = 0;
+                foreach (var d in data)
+                {
+                    res[s] = d;
+                    s++;
+                }
+
+                break;
+            case SamplesOrigin.StreamingAssets:
+                break;
+            case SamplesOrigin.External:
+                break;
+        }
+
+        return res;
     }
 }

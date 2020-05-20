@@ -117,6 +117,11 @@ public class CsoundUnityBridge
         return compiledOk;
     }
 
+    public int CompileOrc(string orchStr)
+    {
+        return Csound6.NativeMethods.csoundCompileOrc(csound, orchStr);
+    }
+
     public int PerformKsmps()
     {
         return Csound6.NativeMethods.csoundPerformKsmps(csound);
@@ -131,6 +136,8 @@ public class CsoundUnityBridge
     {
         Csound6.NativeMethods.csoundInputMessage(csound, scoreEvent);
     }
+
+
 
     public void SetChannel(string channel, MYFLT value)
     {
@@ -514,20 +521,20 @@ public class CsoundUnityBridge
         //return Encoding.UTF8.GetString(buffer);
     }
 
-//#if CSHARP_7_3_OR_NEWER
+    //#if CSHARP_7_3_OR_NEWER
 
-//    /// <summary>
-//    /// Async version of GetOpcodeList()
-//    /// </summary>
-//    /// <returns>A sorted Dictionary keyed by all opcodes which are active in the current instance of csound.</returns>
-//    public async Task<IDictionary<string, IList<OpcodeArgumentTypes>>> GetOpcodeListAsync()
-//    {
-//        return await Task.Run(() =>
-//        {
-//            return GetOpcodeList();
-//        });
-//    }
-//#endif
+    //    /// <summary>
+    //    /// Async version of GetOpcodeList()
+    //    /// </summary>
+    //    /// <returns>A sorted Dictionary keyed by all opcodes which are active in the current instance of csound.</returns>
+    //    public async Task<IDictionary<string, IList<OpcodeArgumentTypes>>> GetOpcodeListAsync()
+    //    {
+    //        return await Task.Run(() =>
+    //        {
+    //            return GetOpcodeList();
+    //        });
+    //    }
+    //#endif
 
     /// <summary>
     /// Returns a sorted Dictionary keyed by all opcodes which are active in the current instance of csound.
@@ -777,6 +784,7 @@ public class CsoundUnityBridge
     /// <summary>
     /// 
     /// </summary>
+    [CLSCompliant(true)]
     public enum ChannelBehavior
     {
         None = 0,

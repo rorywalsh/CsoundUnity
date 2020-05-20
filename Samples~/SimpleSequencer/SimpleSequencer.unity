@@ -226,22 +226,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1232899646}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d15fe3b7e16a6db49b40c55df04e197d, type: 3}
+  m_Script: {fileID: 11500000, guid: 1a074afbd3ea65641b3d7045e59f31c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfVoices: 8
+  numberOfVoices: 9
   numberOfBeats: 16
   clips:
-  - {fileID: 8300000, guid: 17e30eaa7151efd4c8e802233f82e196, type: 3}
-  - {fileID: 8300000, guid: 02d826152823ce4469554d4657d69368, type: 3}
-  - {fileID: 8300000, guid: 4b3223deea59cba499d3f8f74aa3035b, type: 3}
-  - {fileID: 8300000, guid: ca621431216f7d749abac838a073be6b, type: 3}
-  - {fileID: 8300000, guid: 7f83136f551516d4483cbc1d0a5f8976, type: 3}
-  - {fileID: 8300000, guid: 99114e6a78a7601429f8271aff0629cb, type: 3}
-  - {fileID: 8300000, guid: 43c86f9927b1fdd48ac8d5229265296b, type: 3}
-  - {fileID: 8300000, guid: 4414338461d0aa34aac36c013a1e906f, type: 3}
+  - {fileID: 8300000, guid: 7a6ac3abd3209a74ea5fb82bd82f8e97, type: 3}
+  - {fileID: 8300000, guid: 8e34370472097ee4ca249e04983a8b34, type: 3}
+  - {fileID: 8300000, guid: 262eb2e9f7fdc384fa306dcb93f1e3b6, type: 3}
+  - {fileID: 8300000, guid: 3c403f90dfcd1b342bf4f8176c8bcdee, type: 3}
+  - {fileID: 8300000, guid: a5fbed20e24c7584db01be0b9e90f92e, type: 3}
+  - {fileID: 8300000, guid: 8219b9093838e454aa9c33a68ff7ae3c, type: 3}
+  - {fileID: 8300000, guid: 192d55c4502748d44ad4a5703a003f1d, type: 3}
+  - {fileID: 8300000, guid: bc049fde51383a649acb3e4b26232fe1, type: 3}
+  - {fileID: 8300000, guid: e42adb7abd5ecd84bb8dcd15f9936207, type: 3}
   showSequencerGUI: 1
-  BPM: 180
+  BPM: 120
 --- !u!114 &1232899648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,8 +256,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   csoundFile: Sequencer.csd
-  csoundFileRef: {fileID: 102900000, guid: 758db29ac110efc4d9119a96eebc3786, type: 3}
-  lastAsset: {fileID: 102900000, guid: 758db29ac110efc4d9119a96eebc3786, type: 3}
+  csoundFileRef: {fileID: 102900000, guid: b0953dd90827ba24896232107c3e0fc4, type: 3}
+  lastAsset: {fileID: 102900000, guid: b0953dd90827ba24896232107c3e0fc4, type: 3}
   logCsoundOutput: 1
   mute: 0
   processClipAudio: 0
@@ -266,7 +267,7 @@ MonoBehaviour:
   - type: form
     channel: 
     text: 
-    caption: Sequencer
+    caption: 
     min: 0
     max: 0
     value: 0
@@ -304,7 +305,8 @@ MonoBehaviour:
     iBeat < 16 do\n            tabw_i birnd(1) > .5 ? 1 : 0, iBeat, iTable\n       
     iBeat += 1\n        od\n    iTable += 1\n    od\nendin\n\n\n</CsInstruments>\n<CsScore>\nf0
     z\ni\"SEQUENCER\" 0 z\n;i\"RandomSequencer\" 1 0\n</CsScore>\n</CsoundSynthesizer>"
-  csoundFilePath: C:\Users\rory\sourcecode\CsoundUnityPackage\Assets\Scenes\SimpleSequencer\Sequencer.csd
+  csoundFilePath: /Users/gb/Desktop/WORKS_&_STUFF/CSOUND/GIT/CsoundUnityPackage/CsoundUnityPackage-TestProject/Assets/Simple
+    Sequencer/Sequencer.csd
   csoundScore: 
   availableAudioChannels:
   - beatNumber
