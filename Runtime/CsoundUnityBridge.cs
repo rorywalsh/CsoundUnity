@@ -356,7 +356,9 @@ public class CsoundUnityBridge
         if (res != -1)
             Marshal.Copy(tablePtr, tableValues, 0, len);
         else tableValues = null;
-        Marshal.FreeHGlobal(tablePtr);
+        //Marshal.FreeCoTaskMem(tablePtr);
+        //Marshal.FreeHGlobal(tablePtr);
+        tablePtr = IntPtr.Zero;
         return res;
     }
 

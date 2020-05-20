@@ -120,6 +120,7 @@ public class CsoundUnity : MonoBehaviour
     int bufferSize, numBuffers;
     public MYFLT[] namedAudioChannelData;
     public MYFLT[] tempBuffer;
+    public bool initialized = false;
 
     private List<CsoundUnityChild> csoundUnityNodes = new List<CsoundUnityChild>();
 
@@ -165,6 +166,9 @@ public class CsoundUnity : MonoBehaviour
         * - All audio or data files referenced by your csd files are placed in Assets/StreamingAssets/CsoundFiles (SFDIR, SSDIR, SADIR point to this directory)
         *
         */
+
+        initialized = false;
+
         Debug.Log("AudioSettings.outputSampleRate: " + AudioSettings.outputSampleRate);
 
         AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
@@ -291,6 +295,7 @@ public class CsoundUnity : MonoBehaviour
         }
 
         Debug.Log("CsoundUnity done init");
+        initialized = true;
     }
 
 #if UNITY_ANDROID
@@ -1148,22 +1153,20 @@ public class CsoundUnity : MonoBehaviour
         if (samples.Length < 1) return -1;
 
         var resTable = CreateTableInstrument(tableNumber, samples.Length);
-        if (resTable != 0) return - 1;
+        if (resTable != 0)
+            return -1;
+        // test the created table for existence
         MYFLT[] test;
         int res = GetTable(out test, tableNumber);
-
+        // if exists copy the values in the table
         if (res != -1 && test != null && test.Length > 0)
-            for (var i = 0; i < test.Length; i++)
+        {
+            for (var i = 0; i < samples.Length; i++)
             {
-                Debug.Log($"{i}: {test[i]}");
+                SetTable(tableNumber, i, samples[i]);
             }
-
-        //for (var i = 0; i < samples.Length; i++)
-        //{
-        //    SetTable(tableNumber, i, samples[i]);
-        //}
-
-        return resTable == 0 && res == 0 ? 0 : -1;
+        }
+        return resTable == 0 && res > 0 ? 0 : -1;
     }
 
     public void CreateTable(int tableNumber, float[] samples)
@@ -1176,23 +1179,10 @@ public class CsoundUnity : MonoBehaviour
         CreateTable(tableNumber, fltSamples);
     }
 
-    /*
-     * 
-    String.Format(@"
-    schedule 9999, 0, 0
-    instr 9999
-    i1 ftgen {0}, 0, {1}, -2, 0, {1}, 0
-    endif"
-
-         */
     public int CreateTableInstrument(int tableNumber, int tableLength)
     {
-        string createTableInstrument = String.Format(@"schedule 9999, 0, 0
-        instr 9999
-         gisampletable{0} ftgen {0}, 0, {1}, -2, 0, 0
-        endin",
-        tableNumber, -tableLength * AudioSettings.outputSampleRate);
-
+        string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -2, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
+        // Debug.Log("orc to create table: \n" + createTableInstrument);
         return CompileOrc(createTableInstrument);
     }
 
@@ -1217,10 +1207,9 @@ public class CsoundUnity : MonoBehaviour
                 var s = 0;
                 foreach (var d in data)
                 {
-                    res[s] = d;
+                    res[s] = (MYFLT)d;
                     s++;
                 }
-
                 break;
             case SamplesOrigin.StreamingAssets:
                 break;
