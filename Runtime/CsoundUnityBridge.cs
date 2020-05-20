@@ -301,6 +301,12 @@ public class CsoundUnityBridge
     public void TableCopyOutAsync(int table, out MYFLT[] dest)
     {
         int len = Csound6.NativeMethods.csoundTableLength(csound, table);
+        if (len < 1)
+        {
+            dest = null;
+            return;
+        }
+
         dest = new MYFLT[len];
         IntPtr des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
         Csound6.NativeMethods.csoundTableCopyOutAsync(csound, table, des);
@@ -338,6 +344,12 @@ public class CsoundUnityBridge
     public int GetTable(out MYFLT[] tableValues, int numTable)
     {
         int len = Csound6.NativeMethods.csoundTableLength(csound, numTable);
+        if (len < 1)
+        {
+            tableValues = null;
+            return -1;
+        }
+
         IntPtr tablePtr = new IntPtr();
         tableValues = new MYFLT[len];
         int res = Csound6.NativeMethods.csoundGetTable(csound, out tablePtr, numTable);

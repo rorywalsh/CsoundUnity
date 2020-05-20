@@ -1143,13 +1143,27 @@ public class CsoundUnity : MonoBehaviour
         return locaChannelControllers;
     }
 
-    public void CreateTable(int tableNumber, MYFLT[] samples)
+    public int CreateTable(int tableNumber, MYFLT[] samples)
     {
-        CreateTableInstrument(tableNumber, samples.Length);
-        for (var i = 0; i < samples.Length; i++)
-        {
-            SetTable(tableNumber, i, samples[i]);
-        }
+        if (samples.Length < 1) return -1;
+
+        var resTable = CreateTableInstrument(tableNumber, samples.Length);
+        if (resTable != 0) return - 1;
+        MYFLT[] test;
+        int res = GetTable(out test, tableNumber);
+
+        if (res != -1 && test != null && test.Length > 0)
+            for (var i = 0; i < test.Length; i++)
+            {
+                Debug.Log($"{i}: {test[i]}");
+            }
+
+        //for (var i = 0; i < samples.Length; i++)
+        //{
+        //    SetTable(tableNumber, i, samples[i]);
+        //}
+
+        return resTable == 0 && res == 0 ? 0 : -1;
     }
 
     public void CreateTable(int tableNumber, float[] samples)
@@ -1171,16 +1185,15 @@ public class CsoundUnity : MonoBehaviour
     endif"
 
          */
-    public void CreateTableInstrument(int tableNumber, int tableLength)
+    public int CreateTableInstrument(int tableNumber, int tableLength)
     {
-        string createTableInstrument = String.Format(@"
-                schedule 9999, 0, 0
-                instr 9999
-                gisampletable{0} ftgen {0}, 0, {1}, -2, 0
-                endin",
-                tableNumber, -tableLength * AudioSettings.outputSampleRate);
+        string createTableInstrument = String.Format(@"schedule 9999, 0, 0
+        instr 9999
+         gisampletable{0} ftgen {0}, 0, {1}, -2, 0, 0
+        endin",
+        tableNumber, -tableLength * AudioSettings.outputSampleRate);
 
-        CompileOrc(createTableInstrument);
+        return CompileOrc(createTableInstrument);
     }
 
     public enum SamplesOrigin { Resources, StreamingAssets, External }
@@ -1193,6 +1206,11 @@ public class CsoundUnity : MonoBehaviour
         {
             case SamplesOrigin.Resources:
                 var src = Resources.Load<AudioClip>(source);
+                if (src == null)
+                {
+                    res = null;
+                    break;
+                }
                 var data = new float[src.samples];
                 src.GetData(data, 0);
                 res = new MYFLT[src.samples];
