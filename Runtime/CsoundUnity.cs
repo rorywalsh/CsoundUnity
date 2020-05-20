@@ -1143,6 +1143,28 @@ public class CsoundUnity : MonoBehaviour
         return locaChannelControllers;
     }
 
+
+    /*
+     * 
+    String.Format(@"
+    schedule 9999, 0, 0
+    instr 9999
+    i1 ftgen {0}, 0, {1}, -2, 0, {1}, 0
+    endif"
+
+         */
+    public void CreateTableInstrument(int tableNumber, int tableLength)
+    {
+        string createTableInstrument = String.Format(@"
+                schedule 9999, 0, 0
+                instr 9999
+                gisampletable{0} ftgen {0}, 0, {1}, -2, 0
+                endin",
+                tableNumber, -tableLength * AudioSettings.outputSampleRate);
+
+        CompileOrc(createTableInstrument);
+    }
+
     public enum SamplesOrigin { Resources, StreamingAssets, External }
 
     public static MYFLT[] GetSamples(string source, SamplesOrigin origin)
