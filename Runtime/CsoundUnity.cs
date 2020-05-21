@@ -291,7 +291,7 @@ public class CsoundUnity : MonoBehaviour
                 csound.SetStringChannel("CsoundFilesPath", Application.dataPath);
 #endif
                 initialized = true;
-                OnCsoundInitialized();
+                OnCsoundInitialized?.Invoke();
             }
         }
         else
