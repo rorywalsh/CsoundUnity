@@ -21,29 +21,22 @@ giTable6 ftgen 6, 0, 16, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 giTable7 ftgen 7, 0, 16, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 giTable8 ftgen 8, 0, 16, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
-gSSamples[] init 8;
-
+gSSamples[] init 8
+giTable[] init 8
+  
 instr SEQUENCER
     kBeat init 0
     kVoice = 0
     kBPM = abs(chnget:k("BPM"))
-
-    gSSamples[0] chnget "sample1"
-    gSSamples[1] chnget "sample2"
-    gSSamples[2] chnget "sample3"
-    gSSamples[3] chnget "sample4"
-    gSSamples[4] chnget "sample5"
-    gSSamples[5] chnget "sample6"
-    gSSamples[6] chnget "sample7"
-    gSSamples[7] chnget "sample8"
-
     
     if metro(kBPM/60) == 1 then
         chnset kBeat, "beatNumber"
+        printk2 kBeat
         while kVoice < 8 do
             kValue tablekt kBeat, kVoice+1
             if(kValue == 1) then
                 event "i", "PlaySample", 0, 2, kVoice
+                prints "event i %d", kVoice
             endif
             kVoice += 1
         od
@@ -52,8 +45,29 @@ instr SEQUENCER
 endin
 
 instr PlaySample
-    a1, a2 diskin2 gSSamples[p4], 1, 0, 0
-    outs a1*.1, a2*.1
+        
+    giTable[0] chnget "sampletable900"
+    giTable[1] chnget "sampletable901"
+    giTable[2] chnget "sampletable902"
+    giTable[3] chnget "sampletable903"
+    giTable[4] chnget "sampletable904"
+    giTable[5] chnget "sampletable905"
+    giTable[6] chnget "sampletable906"
+    giTable[7] chnget "sampletable907"
+    
+    ifn   = giTable[p4]
+    ;prints "giTable p4 = %d, ifn = %d\n", p4, ifn
+    ilen  =  nsamp(ifn)
+    ;prints "actual numbers of samples = %d\n", ilen
+    itrns =  1	; no transposition
+    ilps  =  0	; loop starts at index 0
+    ilpe  =  ilen	; ends at value returned by nsamp above
+    imode =  1	; loops forward
+    istrt =  0	; commence playback at index 0 samples
+    ; lphasor provides index into f1 
+    alphs lphasor itrns, ilps, ilpe, imode, istrt
+    atab  tablei  alphs, ifn
+    outs atab *.1, atab*.1
 endin
 
 instr UpdateSequencer

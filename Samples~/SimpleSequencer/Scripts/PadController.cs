@@ -22,6 +22,6 @@ public class PadController : MonoBehaviour
 
     private void OnMouseDown()
     {
-        sequencer.updateSequencerPad(Int32.Parse(gameObject.name));
+        sequencer.UpdateSequencerPad(Int32.Parse(gameObject.name));
     }
 }

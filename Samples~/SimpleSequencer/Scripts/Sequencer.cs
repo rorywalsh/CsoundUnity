@@ -17,8 +17,8 @@ public class Sequencer : MonoBehaviour
     public bool showSequencerGUI = true;
     public int BPM = 60;
     private int padIndex = 0;
-    private Vector3 padScale;
-
+    //private Vector3 padScale;
+    private bool isInitialized;
 
     void Awake()
     {
@@ -27,18 +27,39 @@ public class Sequencer : MonoBehaviour
         if (!csoundUnity)
             Debug.LogError("Can't find CsoundUnity");
     }
-
-    void Start()
+    
+    IEnumerator Start()
     {
+        isInitialized = false;
+
+        // wait for csound to be initialized
+        while (!csoundUnity.IsInitialized) {
+            yield return null;
+        }
+
         csoundUnity.SetChannel("BPM", BPM);
-        //string samplesPath = Application.dataPath + "/Scenes/SimpleSequencer/Samples";
-        //string samplePath = Path.GetFullPath("Packages/CsoundUnity/Samples/SimpleSequencer");
-        //this is what I had to do to make it work. It's something we have to dig into! The package path is not updated! Also the refs are lost!
-        string samplePath = Path.Combine(Application.dataPath, "Samples/CsoundUnity/1.0.0/Simple Sequencer/Samples");
 
-        for (var i = 0; i < clips.Length; i++)
-            csoundUnity.SetStringChannel("sample" + (i + 1).ToString(), samplePath + "/" + clips[i].name + ".wav");
+        var count = 0;
+        foreach (var clip in clips)
+        {
+            var name = "Samples/" + clip.name;
 
+            Debug.Log("loading clip " + name);
+            var samples = CsoundUnity.GetSamples(name, CsoundUnity.SamplesOrigin.Resources);
+            Debug.Log("samples read: " + samples.Length);
+            if (samples.Length > 0)
+            {
+                var nChan = clip.channels;
+                var tn = 900 + count;
+                var res = csoundUnity.CreateTable(tn, samples);
+                //Debug.Log($"creating table: sampletable{tn}");
+                csoundUnity.SetChannel($"sampletable{tn}", tn);
+                Debug.Log(res == 0 ? $"<color=green>Table {tn} created, set channel sampletable{tn} = {tn} </color>" : $"<color=red>Error: Couldn't create Table {tn} </color>");
+                count++;
+            }
+            yield return new WaitForEndOfFrame();
+        }
+        
         if (showSequencerGUI)
         {
             pads = new GameObject[numpads];
@@ -54,18 +75,19 @@ public class Sequencer : MonoBehaviour
                     gObj.AddComponent<PadController>();
                     gObj.name = padIndex++.ToString();
                     pads[beat + (voice * numberOfBeats)] = gObj;
-
                 }
             }
         }
+        //padScale = pads[0].transform.localScale;
 
-        padScale = pads[0].transform.localScale;
-
+        isInitialized = true;
+        Debug.Log("start end!");
     }
 
 
     void Update()
     {
+        if (!isInitialized || !csoundUnity.IsInitialized) return;
 
         if (Input.GetKeyDown("1"))
         {
@@ -86,8 +108,6 @@ public class Sequencer : MonoBehaviour
         if (beatNumber != csoundUnity.GetChannel("beatNumber"))
         {
             beatNumber = (int)csoundUnity.GetChannel("beatNumber");
-
-            
 
             if (showSequencerGUI)
             {
@@ -111,7 +131,7 @@ public class Sequencer : MonoBehaviour
         }
     }
 
-    void updateSequencerGUI()
+    void UpdateSequencerGUI()
     {
         //now update the GUI
         for (int voice = 0; voice < numberOfVoices; voice++)
@@ -125,9 +145,8 @@ public class Sequencer : MonoBehaviour
         }
     }
 
-    public void updateSequencerPad(int index)
+    public void UpdateSequencerPad(int index)
     {
-        int numberOfPads = numberOfBeats * numberOfVoices;
         var currentPad = index;
         var currentCol = (currentPad % numberOfBeats);
         int currentRow = 0;
@@ -140,11 +159,8 @@ public class Sequencer : MonoBehaviour
                 break;
             }
         }
-
         csoundUnity.SendScoreEvent("i\"UpdateSequencer\" 0 0 " + currentCol.ToString() + " " + (currentRow).ToString());
 
-        Invoke("updateSequencerGUI", .1f);
-       
+        Invoke("UpdateSequencerGUI", .1f);
     }
-
 }

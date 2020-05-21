@@ -272,7 +272,7 @@ public class CsoundUnity : MonoBehaviour
              */
             //if (logCsoundOutput)
             //    InvokeRepeating("LogCsoundMessages", 0, .5f);
-            LoggingCoroutine = StartCoroutine(Logging(.1f));
+            LoggingCoroutine = StartCoroutine(Logging(.01f));
 
             compiledOk = csound.CompiledWithoutError();
 
@@ -360,7 +360,8 @@ public class CsoundUnity : MonoBehaviour
      */
     void OnApplicationQuit()
     {
-        StopCoroutine(LoggingCoroutine);
+        if (LoggingCoroutine != null)
+            StopCoroutine(LoggingCoroutine);
 
         if (csound != null)
         {
@@ -1154,7 +1155,7 @@ public class CsoundUnity : MonoBehaviour
         return locaChannelControllers;
     }
 
-    public int CreateTable(int tableNumber, MYFLT[] samples)
+    public int CreateTable(int tableNumber, MYFLT[] samples/*, int nChannels*/)
     {
         if (samples.Length < 1) return -1;
 
@@ -1167,17 +1168,17 @@ public class CsoundUnity : MonoBehaviour
         return resTable;
     }
 
-    public void CreateTable(int tableNumber, float[] samples)
+    public void CreateTable(int tableNumber, float[] samples/*, int nChannels*/)
     {
         MYFLT[] fltSamples = new MYFLT[samples.Length];
         for (var i = 0; i < samples.Length; i++)
         {
             fltSamples[i] = (MYFLT)samples[i];
         }
-        CreateTable(tableNumber, fltSamples);
+        CreateTable(tableNumber, fltSamples/*, nChannels*/);
     }
 
-    public int CreateTableInstrument(int tableNumber, int tableLength)
+    public int CreateTableInstrument(int tableNumber, int tableLength/*, int nChannels*/)
     {
         string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -2, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
         // Debug.Log("orc to create table: \n" + createTableInstrument);
