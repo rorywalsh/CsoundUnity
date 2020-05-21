@@ -288,6 +288,12 @@ public class CsoundUnityBridge
     public void TableCopyOut(int table, out MYFLT[] dest)
     {
         int len = Csound6.NativeMethods.csoundTableLength(csound, table);
+        if (len < 1)
+        {
+            dest = null;
+            return;
+        }
+
         dest = new MYFLT[len];
         IntPtr des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
         Csound6.NativeMethods.csoundTableCopyOut(csound, table, des);
@@ -320,6 +326,8 @@ public class CsoundUnityBridge
     /// </summary>
     public void TableCopyIn(int table, MYFLT[] source)
     {
+        var len = Csound6.NativeMethods.csoundTableLength(csound, table);
+        if (len < 1 || len < source.Length) return;
         IntPtr src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
         Marshal.Copy(source, 0, src, source.Length);
         Csound6.NativeMethods.csoundTableCopyIn(csound, table, src);
@@ -331,6 +339,8 @@ public class CsoundUnityBridge
     /// </summary>
     public void TableCopyInAsync(int table, MYFLT[] source)
     {
+        var len = Csound6.NativeMethods.csoundTableLength(csound, table);
+        if (len < 1 || len < source.Length) return;
         IntPtr src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
         Marshal.Copy(source, 0, src, source.Length);
         Csound6.NativeMethods.csoundTableCopyInAsync(csound, table, src);
@@ -358,7 +368,9 @@ public class CsoundUnityBridge
         else tableValues = null;
         //Marshal.FreeCoTaskMem(tablePtr);
         //Marshal.FreeHGlobal(tablePtr);
-        tablePtr = IntPtr.Zero;
+        //tablePtr = IntPtr.Zero;
+        GCHandle gc = GCHandle.FromIntPtr(tablePtr);
+        gc.Free();
         return res;
     }
 

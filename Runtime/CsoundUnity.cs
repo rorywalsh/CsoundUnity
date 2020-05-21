@@ -120,7 +120,11 @@ public class CsoundUnity : MonoBehaviour
     int bufferSize, numBuffers;
     public MYFLT[] namedAudioChannelData;
     public MYFLT[] tempBuffer;
-    public bool initialized = false;
+    private bool initialized = false;
+    public bool IsInitialized { get { return initialized; } }
+
+    public delegate void CsoundInitialized();
+    public event CsoundInitialized OnCsoundInitialized;
 
     private List<CsoundUnityChild> csoundUnityNodes = new List<CsoundUnityChild>();
 
@@ -286,6 +290,8 @@ public class CsoundUnity : MonoBehaviour
                 string persistentPath = Application.persistentDataPath + "/CsoundFiles/"; // TODO ??
                 csound.SetStringChannel("CsoundFilesPath", Application.dataPath);
 #endif
+                initialized = true;
+                OnCsoundInitialized();
             }
         }
         else
@@ -295,7 +301,7 @@ public class CsoundUnity : MonoBehaviour
         }
 
         Debug.Log("CsoundUnity done init");
-        initialized = true;
+
     }
 
 #if UNITY_ANDROID
@@ -877,11 +883,11 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Copy the contents of a function table into a supplied array dest
+    /// Copy the contents of a supplied array into a function table
     /// The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
     /// </summary>
-    /// <param name="table"></param>
-    /// <param name="source"></param>
+    /// <param name="table">the number of the table</param>
+    /// <param name="source">the supplied array</param>
     public void CopyTableIn(int table, MYFLT[] source)
     {
         csound.TableCopyIn(table, source);
@@ -1155,18 +1161,10 @@ public class CsoundUnity : MonoBehaviour
         var resTable = CreateTableInstrument(tableNumber, samples.Length);
         if (resTable != 0)
             return -1;
-        // test the created table for existence
-        MYFLT[] test;
-        int res = GetTable(out test, tableNumber);
-        // if exists copy the values in the table
-        if (res != -1 && test != null && test.Length > 0)
-        {
-            for (var i = 0; i < samples.Length; i++)
-            {
-                SetTable(tableNumber, i, samples[i]);
-            }
-        }
-        return resTable == 0 && res > 0 ? 0 : -1;
+        // copy samples to the newly created table
+        CopyTableIn(tableNumber, samples);
+
+        return resTable;
     }
 
     public void CreateTable(int tableNumber, float[] samples)
