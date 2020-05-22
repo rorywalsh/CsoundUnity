@@ -20,10 +20,10 @@ public class CsoundFileWatcher
 
     static CsoundFileWatcher()
     {
-        //  UNCOMMENT THE FOLLOWING LINES TO RESTORE FILE WATCHING
-        //  FindInstancesAndStartWatching();
-        //  EditorApplication.hierarchyChanged += OnHierarchyChanged;
-        //  EditorApplication.update += EditorUpdate;
+        //UNCOMMENT THE FOLLOWING LINES TO RESTORE FILE WATCHING
+        FindInstancesAndStartWatching();
+        EditorApplication.hierarchyChanged += OnHierarchyChanged;
+        EditorApplication.update += EditorUpdate;
     }
 
     private static void EditorUpdate()
@@ -63,6 +63,12 @@ public class CsoundFileWatcher
         {
             var fileChanged = e.FullPath;
             Debug.Log("fileChanged! " + fileChanged);
+
+            //if(TestCsoundForErrors(fileChanged) != 0)        
+            //{
+            //    Debug.LogError("Heuston we have a problem...");
+            //}
+
             if (!_lastFileChangeDict.ContainsKey(fileChanged)) return;
 
             var lastChange = _lastFileChangeDict[fileChanged];
@@ -89,6 +95,31 @@ public class CsoundFileWatcher
                     });
             }
         }
+    }
+
+    static int TestCsoundForErrors(string file)
+    {
+        var csoundProcess = new System.Diagnostics.Process
+        {
+            StartInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "csound.exe",
+                Arguments = file,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            }
+        };
+
+        csoundProcess.Start();
+        while (!csoundProcess.StandardOutput.EndOfStream)
+        {
+            string line = csoundProcess.StandardOutput.ReadLine();
+            Debug.Log(line);// do something with line
+        }
+
+        return csoundProcess.ExitCode;
+        
     }
 
     static void OnHierarchyChanged()
