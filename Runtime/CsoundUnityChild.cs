@@ -8,33 +8,44 @@ using MYFLT = System.Double;
 using MYFLT = System.Single;
 #endif
 
-
+/// <summary>
+/// CsoundUnityChild is a component that can output AudioChannels found in the csd of the associated CsoundUnity gameObject
+/// </summary>
 [RequireComponent(typeof(AudioSource))]
-
 public class CsoundUnityChild : MonoBehaviour
 {
-    // Start is called before the first frame update
+    #region PUBLIC_FIELDS
+
+    [Tooltip("The gameObject with the CsoundUnity component to load Audio Channels from")]
     [SerializeField]
     public GameObject csoundUnityGameObject;
 
     public enum AudioChannels { MONO = 1, STEREO = 2/*, QUAD?, FIVE_PLUS_ONE???*/}
+    [Tooltip("Audio Output settings")]
     public AudioChannels AudioChannelsSetting = AudioChannels.MONO;
 
-    private CsoundUnity csoundUnity;
     [SerializeField, HideInInspector]
     public int[] selectedAudioChannelIndexByChannel;
-
-    private AudioSource audioSource;
 
     [SerializeField, HideInInspector]
     public List<string> availableAudioChannels;
     [SerializeField]
     public List<MYFLT[]> namedAudioChannelData = new List<MYFLT[]>();
-    private uint ksmpsIndex = 0;
+
+    #endregion PUBLIC_FIELDS
+
+    #region PRIVATE_FIELDS
+
     [SerializeField, HideInInspector]
     int bufferSize;
     int numBuffers;
     private MYFLT zerodbfs;
+    private AudioSource audioSource;
+    private CsoundUnity csoundUnity;
+    // private uint ksmpsIndex = 0;
+
+    #endregion PRIVATE_FIELDS
+
 
     private void Awake()
     {
@@ -49,6 +60,9 @@ public class CsoundUnityChild : MonoBehaviour
             Debug.LogError("AudioSource was not found?");
 
         audioSource.velocityUpdateMode = AudioVelocityUpdateMode.Fixed;
+        audioSource.spatialBlend = 1.0f;
+        // TODO: force doppler level of the AudioSource to 0, to avoid audio artefacts ?
+        // audioSource.dopplerLevel = 0;
     }
 
     void Start()
@@ -71,7 +85,7 @@ public class CsoundUnityChild : MonoBehaviour
 
     public void ProcessBlock(float[] samples, int numChannels)
     {
-        print("CsoundUnityChild DSP Time - " + AudioSettings.dspTime * 48000);
+        // print("CsoundUnityChild DSP Time - " + AudioSettings.dspTime * 48000);
         if (availableAudioChannels.Count < 1)
         {
             return;
@@ -89,11 +103,6 @@ public class CsoundUnityChild : MonoBehaviour
         {
             for (uint channel = 0; channel < numChannels; channel++)
             {
-                //if (namedAudioChannelNames.Length == 1)//mono
-                //    samples[i + channel] = (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs);
-                //else if (namedAudioChannelNames.Length == 2)//stereo
-                //    samples[i + channel] = (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
-
                 switch (AudioChannelsSetting)
                 {
                     case AudioChannels.MONO:
@@ -103,7 +112,6 @@ public class CsoundUnityChild : MonoBehaviour
                         samples[i + channel] = (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
                         break;
                 }
-
             }
         }
     }

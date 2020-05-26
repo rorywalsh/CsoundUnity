@@ -34,6 +34,8 @@ using MYFLT = System.Double;
 using MYFLT = System.Single;
 #endif
 
+#region PUBLIC_CLASSES
+
 [Serializable]
 [SerializeField]
 /// <summary>
@@ -68,125 +70,157 @@ public struct CsoundFilesInfo
     public string[] fileNames;
 }
 
-/*
- * CsoundUnity class
- */
+#endregion PUBLIC_CLASSES
+
+/// <summary>
+/// Csound Unity Class
+/// </summary>
 [AddComponentMenu("Audio/CsoundUnity")]
-[System.Serializable]
+[Serializable]
 [RequireComponent(typeof(AudioSource))]
 public class CsoundUnity : MonoBehaviour
 {
-    // Use this for initialization
-    private CsoundUnityBridge csound;/**< 
-                                     * The private member variable csound provides access to the CsoundUnityBridge class, which 
-                                     * is defined in the *CsoundUnity.dll*(Assets/Plugins). If for some reason CsoundUnity.dll can 
-                                     * not be found, Unity will report the issue in its output Console. The CsoundUnityBrdige object 
-                                     * provides access to Csounds low level native functions. The csound object is defined as private,
-                                     * meaning other scripts cannot access it. If other scripts need to call any of Csounds native 
-                                     * fuctions, then methods should be added to the CsoundUnity.cs file.CsoundUnityBridge class. */
-    [SerializeField]
-    public string csoundFile = "";/**<
-                                    * The file CsoundUnity will try to load. You can only load one file with each instance of CsoundUnity,
-                                    * but you can use as many instruments within that file as you wish. You may also create as many 
-                                    * of CsoundUnity objects as you wish. 
-                                    */
+    #region PUBLIC_FIELDS
+
+    /// <summary>
+    /// The name of this package
+    /// </summary>
+    public const string packageName = "com.csound.csoundunity";
+
+    /// <summary>
+    /// The version of this package
+    /// </summary>
+    public const string packageVersion = "1.0.0";
+
+    /// <summary>
+    /// the unique guid of the file
+    /// </summary>
+    public string csoundFileGUID { get => _csoundFileGUID; }
+
+    /// <summary>
+    /// The file CsoundUnity will try to load. You can only load one file with each instance of CsoundUnity,
+    /// but you can use as many instruments within that file as you wish.You may also create as many
+    /// of CsoundUnity objects as you wish. 
+    /// </summary>
+    public string csoundFileName { get => _csoundFileName; }
+
+    /// <summary>
+    /// a string to hold all the csoundFile content
+    /// </summary>
+    public string csoundString { get => _csoundString; }
 
 #if UNITY_EDITOR
     /// <summary>
     /// a reference to a csd file as DefaultAsset 
     /// </summary>
-    public DefaultAsset csoundFileRef;
-
-    //a field to check when this has changed on editor
-    [SerializeField, HideInInspector]
-    public DefaultAsset lastAsset;
-
+    //[SerializeField]
+    public DefaultAsset csoundAsset { get => _csoundAsset; }
 #endif
 
-    public bool logCsoundOutput = false;/**<
-                                       * **logCsoundOutput** is a boolean variable. As a boolean it can be either true or false. 
-                                       * When it is set to true, all Csound output messages will be sent to the 
-                                       * Unity output console. Note that this can slow down performance if there is a 
-                                       * lot of information being printed.
-                                       */
+    /// <summary>
+    /// When it is set to true, all Csound output messages will be sent to the 
+    /// Unity output console.
+    /// Note that this can slow down performance if there is a
+    /// lot of information being printed.
+    /// </summary>
+    public bool logCsoundOutput = false;
+
+    /// <summary>
+    /// When it is set to true, no audio is sent to output
+    /// </summary>
     public bool mute = false;
+
+    /// <summary>
+    /// When set to true Csound uses as an input the AudioClip attached to this AudioSource
+    /// If false, no processing occurs on the attached AudioClip
+    /// </summary>
     public bool processClipAudio;
 
-    private const string packageName = "com.csound.csoundunity";
-    private uint ksmps = 32;
-    private uint ksmpsIndex = 0;
-    private float zerdbfs = 1;
-    private bool compiledOk = false;
-    int bufferSize, numBuffers;
-    public MYFLT[] namedAudioChannelData;
-    public MYFLT[] tempBuffer;
-    private bool initialized = false;
-    public bool IsInitialized { get { return initialized; } }
+    /// <summary>
+    /// list to hold channel data
+    /// </summary>
+    public List<CsoundChannelController> channels { get => _channels; }
 
+    /// <summary>
+    /// list to hold available audioChannels names
+    /// </summary>
+    public List<string> availableAudioChannels { get => _availableAudioChannels; }
+
+    /// <summary>
+    /// public named audio Channels shown in CsoundUnityChild inspector
+    /// </summary>
+    public readonly Dictionary<string, MYFLT[]> namedAudioChannelDataDict = new Dictionary<string, MYFLT[]>();
+
+    /// <summary>
+    /// Is Csound initialized?
+    /// </summary>
+    public bool IsInitialized { get => initialized; }
+
+    /// <summary>
+    /// The delegate of the event OnCsoundInitialized
+    /// </summary>
     public delegate void CsoundInitialized();
+    /// <summary>
+    /// An event that will be executed when Csound is initialized
+    /// </summary>
     public event CsoundInitialized OnCsoundInitialized;
-
-    private List<CsoundUnityChild> csoundUnityNodes = new List<CsoundUnityChild>();
-
-    /// <summary>
-    /// structure to hold channel data
-    /// </summary>
-    public List<CsoundChannelController> channels = new List<CsoundChannelController>();
-    private AudioSource audioSource;
-
-    public Dictionary<string, MYFLT[]> namedAudioChannelDataDict = new Dictionary<string, MYFLT[]>();
-    public Dictionary<string, MYFLT[]> namedAudioChannelTempBufferDict = new Dictionary<string, MYFLT[]>();
-
-
-    /// <summary>
-    /// a string to hold all the csoundFile content
-    /// </summary>
-    public string csoundString;
-    /// <summary>
-    /// the csound file path on disk
-    /// </summary>
-    public string csoundFilePath;
 
     /// <summary>
     /// the score to send via editor
     /// </summary>
     public string csoundScore;
 
+    #endregion PUBLIC_FIELDS
+
+    #region PRIVATE_FIELDS
+
+    /// <summary>
+    /// The private member variable csound provides access to the CsoundUnityBridge class, which 
+    /// is defined in the CsoundUnity native libraries. If for some reason the libraries can 
+    /// not be found, Unity will report the issue in its output Console. The CsoundUnityBridge object
+    /// provides access to Csounds low level native functions. The csound object is defined as private,
+    /// meaning other scripts cannot access it. If other scripts need to call any of Csounds native
+    /// fuctions, then methods should be added to the CsoundUnity.cs file and CsoundUnityBridge class.
+    /// </summary>
+    private CsoundUnityBridge csound;
+    [SerializeField] private string _csoundFileGUID;
+    [SerializeField] private string _csoundString;
+    [SerializeField] private string _csoundFileName;
+    [SerializeField] private DefaultAsset _csoundAsset;
+    [SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
+    [SerializeField] private List<string> _availableAudioChannels = new List<string>();
+
+    private bool initialized = false;
+    private uint ksmps = 32;
+    private uint ksmpsIndex = 0;
+    private float zerdbfs = 1;
+    private bool compiledOk = false;
+    private AudioSource audioSource;
     private Coroutine LoggingCoroutine;
+    int bufferSize, numBuffers;
+
+    /// <summary>
+    /// the temp buffer, ksmps sized 
+    /// </summary>
+    private Dictionary<string, MYFLT[]> namedAudioChannelTempBufferDict = new Dictionary<string, MYFLT[]>();
+
+    #endregion
 
 
-    /**
-     * CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
-     * This functions behaves in more or less the same way as a class constructor. When creating references to the
-     * CsoundUnity object make sure to create them in the scripts Awake() function.
-     * 
-     */
+    /// <summary>
+    /// CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
+    /// This functions behaves in more or less the same way as a class constructor. When creating references to the
+    /// CsoundUnity object make sure to create them in the scripts Awake() function.
+    /// </summary>
     void Awake()
     {
-        /* I M P O R T A N T
-        * 
-        * Please ensure that:
-        * - All csd files reside in your Assets/CsoundUnity/Scripts/CsoundFiles directory. A copy of these will be made to Assets/Streamingassets/CsoundFiles, do not delete or move these copies.
-        * - All audio or data files referenced by your csd files are placed in Assets/StreamingAssets/CsoundFiles (SFDIR, SSDIR, SADIR point to this directory)
-        *
-        */
-
         initialized = false;
 
         Debug.Log("AudioSettings.outputSampleRate: " + AudioSettings.outputSampleRate);
 
         AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
 
-        tempBuffer = new MYFLT[ksmps];
-        namedAudioChannelData = new MYFLT[bufferSize];
-
-        //string csoundFilePath = "";
         string dataPath = Path.GetFullPath(Path.Combine("Packages", packageName, "Runtime"));
-
-        //commented! also if the csd is not set it should be possible to call csound methods
-        // if (string.IsNullOrWhiteSpace(csoundFile)) return; 
-
-        // csoundFilePath = Application.streamingAssetsPath + "/CsoundFiles/" + csoundFile;
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
         dataPath = Path.Combine(dataPath, "Win64"); // Csound plugin libraries in Windows Editor
@@ -231,25 +265,21 @@ public class CsoundUnity : MonoBehaviour
 #endif
 
         audioSource = GetComponent<AudioSource>();
-        //channels = new List<CsoundChannelController>();
 
-        /*
-         * the CsoundUnity constructor takes a path to the project's Data folder, and path to the file name.
-         * It then calls createCsound() to create an instance of Csound and compile the 'csdFile'. 
-         * After this we start the performance of Csound. After this, we send the streaming assets path to
-         * Csound on a string channel. This means we can then load samples contained within that folder.
-         */
+        //Debug.Log(csoundString);
 
-        //csdString = File.ReadAllText(csoundFilePath);
-
-        Debug.Log(csoundString);
-        csound = new CsoundUnityBridge(dataPath, csoundString);
+        /// the CsoundUnityBridge constructor takes a path to the package Runtime folder, and a string with the csound code.
+        /// It then calls createCsound() to create an instance of Csound and compile the csd string.
+        /// After this we start the performance of Csound.
+        /// TODO CHECK THIS: ->
+        /// After this, we send the streaming assets path to Csound on a string channel.
+        /// This means we can then load samples contained within that folder.
+        csound = new CsoundUnityBridge(dataPath, _csoundString);
         if (csound != null)
         {
-            //channels = ParseCsdFile(csoundFilePath);
-
+            /// channels are created when a csd file is selected in the inspector
             if (channels != null)
-                //initialise channels if found in xml descriptor..
+                // initialise channels if found in xml descriptor..
                 for (int i = 0; i < channels.Count; i++)
                 {
                     csound.SetChannel(channels[i].channel, channels[i].value);
@@ -264,14 +294,7 @@ public class CsoundUnity : MonoBehaviour
                 }
             }
 
-            //TEST CALLBACK
-            //csound.SetYieldCallback(YieldCallback);
-
-            /*
-             * This method prints the Csound output to the Unity console
-             */
-            //if (logCsoundOutput)
-            //    InvokeRepeating("LogCsoundMessages", 0, .5f);
+            /// This coroutine prints the Csound output to the Unity console
             LoggingCoroutine = StartCoroutine(Logging(.01f));
 
             compiledOk = csound.CompiledWithoutError();
@@ -301,128 +324,10 @@ public class CsoundUnity : MonoBehaviour
         }
 
         Debug.Log("CsoundUnity done init");
-
     }
 
-#if UNITY_ANDROID
 
-    /**
-     * Android method to write csd file to a location it can be read from Method returns the file path. 
-     */
-    public string GetCsoundFile(string csoundFileContents)
-    {
-        try
-        {
-            Debug.Log("Csound file contents:");
-            Debug.Log(csoundFileContents);
-            string filename = Application.persistentDataPath + "/csoundFile.csd";
-            Debug.Log("Writing to " + filename);
-
-            if (!File.Exists(filename))
-            {
-                Debug.Log("File doesnt exist, creating it");
-                File.Create(filename).Close();
-            }
-
-            if (File.Exists(filename))
-            {
-                Debug.Log("File has been created");
-            }
-
-            File.WriteAllText(filename, csoundFileContents);
-            return filename;
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Error writing to file: " + e.ToString());
-        }
-
-        return "";
-    }
-
-    public void GetCsoundAudioFile(byte[] data, string filename)
-    {
-        try
-        {
-            string name = Application.persistentDataPath + "/" + filename;
-            File.Create(name).Close();
-            File.WriteAllBytes(name, data);
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Error writing to file: " + e.ToString());
-        }
-    }
-#endif
-
-    /**
-     * Called automatically when the game stops. Needed so that Csound stops when your game does
-     */
-    void OnApplicationQuit()
-    {
-        if (LoggingCoroutine != null)
-            StopCoroutine(LoggingCoroutine);
-
-        if (csound != null)
-        {
-            csound.StopCsound();
-        }
-        //csound.reset();
-    }
-
-    //useless!
-    //add child node, and allocate space for corresponding named channel buffers
-    //public void AddChildNode(CsoundUnityChild node)
-    //{
-    //    csoundUnityNodes.Add(node);
-
-    //    //foreach (var name in node.GetChannelNames())
-    //    //{
-    //    //    if (!namedAudioChannelDataDict.ContainsKey(name))
-    //    //    {
-    //    //        namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
-    //    //        namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
-    //    //    }
-    //    //}
-    //}
-
-    /// <summary>
-    /// Parse, and compile the given orchestra from an ASCII string,
-    /// also evaluating any global space code (i-time only)
-    /// this can be called during performance to compile a new orchestra.
-    /// <example>
-    /// This sample shows how to use CompileOrc
-    /// <code>
-    /// string orc = "instr 1 \n a1 rand 0dbfs/4 \n out a1 \nendin\n";
-    /// CompileOrc(orc);
-    /// </code>
-    /// </example>
-    /// </summary>
-    /// <param name="orcStr"></param>
-    /// <returns></returns>
-    public int CompileOrc(string orcStr)
-    {
-        return csound.CompileOrc(orcStr);
-    }
-
-    /// <summary>
-    /// Get the current control rate
-    /// </summary>
-    /// <returns></returns>
-    public MYFLT GetKr()
-    {
-        return csound.GetKr();
-    }
-
-    public CsoundUnityBridge.CSOUND_PARAMS GetParams()
-    {
-        return csound.GetParams();
-    }
-
-    public void SetParams(CsoundUnityBridge.CSOUND_PARAMS parms)
-    {
-        csound.SetParams(parms);
-    }
+    #region ENUMS
 
     /// <summary>
     /// The enum representing the Csound Environment Variables
@@ -526,113 +431,96 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Get Environment path
+    /// Where the samples to load come from:
+    /// the Resources folder
+    /// the StreamingAssets folder
+    /// An absolute path, can be external of the Unity Project
     /// </summary>
-    /// <param name="envType">the type of the environment to get</param>
-    /// <returns></returns>
-    public string GetEnv(EnvType envType)
-    {
-        return csound.GetEnv(envType.ToString());
-    }
+    public enum SamplesOrigin { Resources, StreamingAssets, Absolute }
 
-    //#if CSHARP_7_3_OR_NEWER
-    //    /// <summary>
-    //    /// Get the Opcode List, async
-    //    /// </summary>
-    //    /// <returns></returns>
-    //    public async Task<IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>>> GetOpcodeListAsync()
-    //    {
-    //        return await csound.GetOpcodeListAsync();
-    //    }
-    //#endif
+    #endregion ENUMS
 
-    /// <summary>
-    /// Get the Opcode List, blocking
-    /// </summary>
-    /// <returns></returns>
-    public IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>> GetOpcodeList()
-    {
-        return csound.GetOpcodeList();
-    }
+    #region PUBLIC_METHODS
 
-    void OnAudioFilterRead(float[] data, int channels)
+    #region PERFORMANCE
+
+    public void SetCsd(string guid)
     {
-        if (csound != null)
+        Debug.Log($"SET CSD guid: {guid}");
+        if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out Guid guidResult))
         {
-            ProcessBlock(data, channels);
+            Debug.LogWarning($"GUID NOT VALID Resetting fields");
+            ResetFields();
+            return;
         }
-    }
+        var fileName = AssetDatabase.GUIDToAssetPath(guid);
 
-    /// <summary>
-    /// Yield Callback: Hope it works!
-    /// </summary>
-    //event csoundcsharp.Csound6.YieldCallback YieldCallback = new csoundcsharp.Csound6.YieldCallback((csd) =>
-    //{
-    //    Debug.Log($"callback? ");
-    //    return 1;
-    //});
-
-
-    /// <summary>
-    /// Processes a block of samples
-    /// </summary>
-    /// <param name="samples"></param>
-    /// <param name="numChannels"></param>
-    public void ProcessBlock(float[] samples, int numChannels)
-    {
-        if (compiledOk)
+        if (string.IsNullOrWhiteSpace(fileName) ||
+            fileName.Length < 4 ||
+            Path.GetFileName(fileName).Length < 4 ||
+            !Path.GetFileName(fileName).EndsWith(".csd"))
         {
-            for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)
+            Debug.LogWarning("FILENAME not valid, Resetting fields");
+            ResetFields();
+            return;
+        }
+
+        this._csoundFileGUID = guid;
+        this._csoundFileName = Path.GetFileName(fileName);
+        var csoundFilePath = Path.GetFullPath(fileName);
+        this._csoundAsset = (DefaultAsset)(AssetDatabase.LoadAssetAtPath(fileName, typeof(DefaultAsset)));
+        this._csoundString = File.ReadAllText(csoundFilePath);
+        this._channels = ParseCsdFile(fileName);
+        this._availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
+
+        foreach (var name in availableAudioChannels)
+        {
+            if (string.IsNullOrWhiteSpace(name)) continue;
+
+            if (!namedAudioChannelDataDict.ContainsKey(name))
             {
-                for (uint channel = 0; channel < numChannels; channel++)
-                {
-                    if (mute == true)
-                        samples[i + channel] = 0.0f;
-                    else
-                    {
-                        if ((ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
-                        {
-                            PerformKsmps();
-                            ksmpsIndex = 0;
-                            //foreach (var node in csoundUnityNodes)
-                            //{
-                            //    foreach (var chanName in node.GetChannelNames())
-                            //    {
-                            //        namedAudioChannelTempBufferDict[chanName] = GetAudioChannel(chanName);
-                            //    }
-                            //}
-                            foreach (var chanName in availableAudioChannels)
-                            {
-                                if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
-                                namedAudioChannelTempBufferDict[chanName] = GetAudioChannel(chanName);
-                            }
-                        }
-
-                        if (processClipAudio)
-                        {
-                            SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel] * zerdbfs);
-                        }
-
-                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel) / zerdbfs;
-
-                        //foreach (var node in csoundUnityNodes)
-                        //{
-                        //    foreach (var chanName in node.GetChannelNames())
-                        //    {
-                        //        //Debug.Log(namedAudioChannelDataDict[chanName].Length + "-> i + channel: " + ((i/numChannels)));
-                        //        namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
-                        //    }
-                        //}
-
-                    }
-                }
-                foreach (var chanName in availableAudioChannels)
-                {
-                    if (!namedAudioChannelDataDict.ContainsKey(chanName) || !namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
-                    namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
-                }
+                namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
+                namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
             }
         }
+    }
+
+    /// <summary>
+    /// Parse, and compile the given orchestra from an ASCII string,
+    /// also evaluating any global space code (i-time only)
+    /// this can be called during performance to compile a new orchestra.
+    /// <example>
+    /// This sample shows how to use CompileOrc
+    /// <code>
+    /// string orc = "instr 1 \n a1 rand 0dbfs/4 \n out a1 \nendin\n";
+    /// CompileOrc(orc);
+    /// </code>
+    /// </example>
+    /// </summary>
+    /// <param name="orcStr"></param>
+    /// <returns></returns>
+    public int CompileOrc(string orcStr)
+    {
+        return csound.CompileOrc(orcStr);
+    }
+
+    /// <summary>
+    /// Send a score event to Csound in the form of "i1 0 10 ....
+    /// </summary>
+    /// <param name="scoreEvent">the score string to send</param>
+    public void SendScoreEvent(string scoreEvent)
+    {
+        //print(scoreEvent);
+        csound.SendScoreEvent(scoreEvent);
+    }
+
+    /// <summary>
+    /// Get the current control rate
+    /// </summary>
+    /// <returns></returns>
+    public MYFLT GetKr()
+    {
+        return csound.GetKr();
     }
 
     /// <summary>
@@ -653,44 +541,150 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetKsmps();
     }
 
+    #endregion PERFORMANCE
+
+    #region CSD_PARSE
+
     /// <summary>
-    /// Get the number of input channels
+    /// Parse the csd and returns available audio channels (set in csd via: <code>chnset avar, "audio channel name") </code>
     /// </summary>
+    /// <param name="filename"></param>
     /// <returns></returns>
-    public uint GetNchnlsInputs()
+    public static List<string> ParseCsdFileForAudioChannels(string filename)
     {
-        return csound.GetNchnlsInput();
+        if (!File.Exists(filename)) return null;
+
+        string[] fullCsdText = File.ReadAllLines(filename);
+        if (fullCsdText.Length < 1) return null;
+
+        List<string> locaAudioChannels = new List<string>();
+
+        foreach (string line in fullCsdText)
+        {
+            var trimmd = line.TrimStart();
+            if (!trimmd.Contains("chnset")) continue;
+            if (trimmd.StartsWith(";")) continue;
+            var lndx = trimmd.IndexOf("chnset");
+            var chnsetEnd = lndx + "chnset".Length + 1;
+            var prms = trimmd.Substring(chnsetEnd, trimmd.Length - chnsetEnd);
+            var split = prms.Split(',');
+            if (!split[0].StartsWith("a") && !split[0].StartsWith("ga"))
+                continue; //discard non audio variables
+            Debug.Log("found audio channel");
+            var ach = split[1].Replace('\\', ' ').Replace('\"', ' ').Trim();
+            if (!locaAudioChannels.Contains(ach))
+                locaAudioChannels.Add(ach);
+        }
+        return locaAudioChannels;
     }
 
     /// <summary>
-    /// Get the number of output channels
+    /// Parse the csd file
     /// </summary>
+    /// <param name="filename">the csd file to parse</param>
     /// <returns></returns>
-    public uint GetNchnls()
+    public static List<CsoundChannelController> ParseCsdFile(string filename)
     {
-        return csound.GetNchnls();
+        if (!File.Exists(filename)) return null;
+
+        string[] fullCsdText = File.ReadAllLines(filename);
+        if (fullCsdText.Length < 1) return null;
+
+        List<CsoundChannelController> locaChannelControllers;
+        locaChannelControllers = new List<CsoundChannelController>();
+
+        foreach (string line in fullCsdText)
+        {
+
+            if (line.Contains("</"))
+                break;
+
+            var trimmd = line.TrimStart();
+            //discard csound comments in cabbage widgets
+            if (trimmd.StartsWith(";"))
+            {
+                //Debug.Log("discarding "+line);
+                continue;
+            }
+            string newLine = line;
+            string control = line.Substring(0, line.IndexOf(" ") > -1 ? line.IndexOf(" ") : 0);
+            if (control.Length > 0)
+                newLine = newLine.Replace(control, "");
+
+            if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox")
+                || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox"))
+            {
+                CsoundChannelController controller = new CsoundChannelController();
+                controller.type = control;
+
+                if (line.IndexOf("caption(") > -1)
+                {
+                    string infoText = line.Substring(line.IndexOf("caption(") + 9);
+                    infoText = infoText.Substring(0, infoText.IndexOf(")") - 1);
+                    controller.caption = infoText;
+                }
+
+                if (line.IndexOf("text(") > -1)
+                {
+                    string text = line.Substring(line.IndexOf("text(") + 6);
+                    text = text.Substring(0, text.IndexOf(")") - 1);
+                    controller.text = text.Replace("\"", "");
+                    if (controller.type == "combobox") //if combobox, create a range
+                    {
+                        char[] delimiterChars = { ',' };
+                        string[] tokens = text.Split(delimiterChars);
+                        controller.SetRange(1, tokens.Length, 0);
+                    }
+                }
+
+                if (line.IndexOf("channel(") > -1)
+                {
+                    string channel = line.Substring(line.IndexOf("channel(") + 9);
+                    channel = channel.Substring(0, channel.IndexOf(")") - 1);
+                    controller.channel = channel;
+                }
+
+                if (line.IndexOf("range(") > -1)
+                {
+                    string range = line.Substring(line.IndexOf("range(") + 6);
+                    range = range.Substring(0, range.IndexOf(")"));
+                    char[] delimiterChars = { ',' };
+                    string[] tokens = range.Split(delimiterChars);
+                    for (var i = 0; i < tokens.Length; i++)
+                    {
+                        tokens[i] = string.Join("", tokens[i].Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
+                        if (tokens[i].StartsWith("."))
+                        {
+                            tokens[i] = "0" + tokens[i];
+                        }
+                    }
+                    var val = float.Parse(tokens[0]);
+                    var min = float.Parse(tokens[1]);
+                    var max = float.Parse(tokens[2]);
+                    controller.SetRange(val, min, max);
+                }
+
+                if (line.IndexOf("value(") > -1)
+                {
+                    string value = line.Substring(line.IndexOf("value(") + 6);
+                    value = value.Substring(0, value.IndexOf(")"));
+                    controller.value = value.Length > 0 ? float.Parse(value) : 0;
+                    if (control.Contains("combobox"))
+                    {
+                        //Cabbage combobox index starts from 1
+                        controller.value = controller.value - 1;
+                        // Debug.Log("combobox value in parse: " + controller.value);
+                    }
+                }
+                locaChannelControllers.Add(controller);
+            }
+        }
+        return locaChannelControllers;
     }
 
-    /// <summary>
-    /// Get 0 dbfs
-    /// </summary>
-    /// <returns></returns>
-    public MYFLT Get0dbfs()
-    {
-        return csound.Get0dbfs();
-    }
+    #endregion CSD_PARSE
 
-#if UNITY_EDITOR
-    /// <summary>
-    /// Get file path
-    /// </summary>
-    /// <param name="obj"></param>
-    /// <returns></returns>
-    public string GetFilePath(UnityEngine.Object obj)
-    {
-        return Application.dataPath.Replace("Assets", "") + AssetDatabase.GetAssetPath(obj);
-    }
-#endif
+    #region IO_BUFFERS
 
     /// <summary>
     /// Set a sample in Csound's input buffer
@@ -744,21 +738,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetSpout();
     }
 
-    /// <summary>
-    /// map MYFLT within one range to another
-    /// </summary>
-    /// <param name="value"></param>
-    /// <param name="from1"></param>
-    /// <param name="to1"></param>
-    /// <param name="from2"></param>
-    /// <param name="to2"></param>
-    /// <returns></returns>
-    public static float Remap(float value, float from1, float to1, float from2, float to2)
-    {
-        float retValue = (value - from1) / (to1 - from1) * (to2 - from2) + from2;
-        return Mathf.Clamp(retValue, from2, to2);
-    }
+    #endregion IO_BUFFERS
 
+    #region CONTROL_CHANNELS
     /// <summary>
     /// Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
     /// </summary>
@@ -790,6 +772,19 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
+    /// blocking method to get a list of the channels from Csound, not from the serialized list of this instance
+    /// </summary>
+    /// <returns></returns>
+    public IDictionary<string, CsoundUnityBridge.ChannelInfo> GetChannelList()
+    {
+        return csound.GetChannelList();
+    }
+
+    #endregion CONTROL_CHANNELS
+
+    #region AUDIO_CHANNELS
+
+    /// <summary>
     /// Gets a Csound Audio channel. Used in connection with a chnset opcode in your Csound instrument.
     /// </summary>
     /// <param name="channel"></param>
@@ -799,9 +794,38 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetAudioChannel(channel);
     }
 
-    public IDictionary<string, CsoundUnityBridge.ChannelInfo> GetChannelList()
+    #endregion AUDIO_CHANNELS
+
+    #region TABLES
+
+    public int CreateTable(int tableNumber, MYFLT[] samples/*, int nChannels*/)
     {
-        return csound.GetChannelList();
+        if (samples.Length < 1) return -1;
+
+        var resTable = CreateTableInstrument(tableNumber, samples.Length);
+        if (resTable != 0)
+            return -1;
+        // copy samples to the newly created table
+        CopyTableIn(tableNumber, samples);
+
+        return resTable;
+    }
+
+    public void CreateTable(int tableNumber, float[] samples/*, int nChannels*/)
+    {
+        MYFLT[] fltSamples = new MYFLT[samples.Length];
+        for (var i = 0; i < samples.Length; i++)
+        {
+            fltSamples[i] = (MYFLT)samples[i];
+        }
+        CreateTable(tableNumber, fltSamples/*, nChannels*/);
+    }
+
+    public int CreateTableInstrument(int tableNumber, int tableLength/*, int nChannels*/)
+    {
+        string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -2, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
+        // Debug.Log("orc to create table: \n" + createTableInstrument);
+        return CompileOrc(createTableInstrument);
     }
 
     /// <summary>
@@ -937,15 +961,10 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetNamedGens();
     }
 
-    /// <summary>
-    /// Send a score event to Csound in the form of "i1 0 10 ....
-    /// </summary>
-    /// <param name="scoreEvent">the score string to send</param>
-    public void SendScoreEvent(string scoreEvent)
-    {
-        //print(scoreEvent);
-        csound.SendScoreEvent(scoreEvent);
-    }
+    #endregion TABLES
+
+
+    #region CALLBACKS
 
     public void SetYieldCallback(Action callback)
     {
@@ -968,225 +987,109 @@ public class CsoundUnity : MonoBehaviour
         csound.SenseEventsCallback -= callbackHandler;
     }
 
-    /// <summary>
-    /// Print the Csound output to the Unity message console.
-    /// No need to call this manually, it is set up and controlled in the CsoundUnity Awake() function.
-    /// </summary>
-    void LogCsoundMessages()
-    {
-        //print Csound message to Unity console....
-        for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
-            print(csound.GetCsoundMessage());
-    }
+    #endregion CALLBACKS
 
-    IEnumerator Logging(float interval)
-    {
-        while (this.logCsoundOutput)
-        {
-            yield return new WaitForSeconds(interval);
-            for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
-                print(csound.GetCsoundMessage());
-        }
-    }
 
-    private void ResetFields()
-    {
-        this.csoundFile = null;
-        this.csoundFilePath = null;
-        this.csoundString = null;
-        this.namedAudioChannelDataDict.Clear();
-        this.namedAudioChannelTempBufferDict.Clear();
-        this.channels.Clear();
-        this.availableAudioChannels.Clear();
-    }
-
-    public void SetCsd(string fileName)
-    {
-        if (fileName.Length < 4 || Path.GetFileName(fileName).Length < 4)
-        {
-            ResetFields();
-            return;
-        }
-
-        this.csoundFile = Path.GetFileName(fileName);
-        this.csoundFilePath = Path.GetFullPath(fileName);
-        this.csoundString = File.ReadAllText(this.csoundFilePath);
-        this.channels = ParseCsdFile(fileName);
-        this.availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
-
-        foreach (var name in availableAudioChannels)
-        {
-            if (string.IsNullOrWhiteSpace(name)) continue;
-
-            if (!namedAudioChannelDataDict.ContainsKey(name))
-            {
-                namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
-                namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
-            }
-        }
-    }
-
-    [SerializeField, HideInInspector]
-    public List<string> availableAudioChannels = new List<string>();
-
-    public static List<string> ParseCsdFileForAudioChannels(string filename)
-    {
-        if (!File.Exists(filename)) return null;
-
-        string[] fullCsdText = File.ReadAllLines(filename);
-        if (fullCsdText.Length < 1) return null;
-
-        List<string> locaAudioChannels = new List<string>();
-
-        foreach (string line in fullCsdText)
-        {
-            if (!line.Contains("chnset")) continue;
-
-            var lndx = line.IndexOf("chnset");
-            var chnsetEnd = lndx + "chnset".Length + 1;
-            var prms = line.Substring(chnsetEnd, line.Length - chnsetEnd);
-            var ach = prms.Split(',')[1].Replace('\\', ' ').Replace('\"', ' ').Trim();
-            if (!locaAudioChannels.Contains(ach))
-                locaAudioChannels.Add(ach);
-        }
-        return locaAudioChannels;
-    }
+    #region UTILITIES
 
     /// <summary>
-    /// Parse the csd file
+    /// A method that retrieves the current csd file path from its GUID
     /// </summary>
-    /// <param name="filename">the csd file to parse</param>
     /// <returns></returns>
-    public static List<CsoundChannelController> ParseCsdFile(string filename)
+    public string GetFilePath()
     {
-        if (!File.Exists(filename)) return null;
-
-        string[] fullCsdText = File.ReadAllLines(filename);
-        if (fullCsdText.Length < 1) return null;
-
-        List<CsoundChannelController> locaChannelControllers;
-        locaChannelControllers = new List<CsoundChannelController>();
-
-        foreach (string line in fullCsdText)
-        {
-
-            if (line.Contains("</"))
-                break;
-
-            //discard csound comments in cabbage widgets
-            if (line.StartsWith(";"))
-            {
-                //Debug.Log("discarding "+line);
-                continue;
-            }
-            string newLine = line;
-            string control = line.Substring(0, line.IndexOf(" ") > -1 ? line.IndexOf(" ") : 0);
-            if (control.Length > 0)
-                newLine = newLine.Replace(control, "");
-
-            if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox")
-                || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox"))
-            {
-                CsoundChannelController controller = new CsoundChannelController();
-                controller.type = control;
-
-                if (line.IndexOf("caption(") > -1)
-                {
-                    string infoText = line.Substring(line.IndexOf("caption(") + 9);
-                    infoText = infoText.Substring(0, infoText.IndexOf(")") - 1);
-                    controller.caption = infoText;
-                }
-
-                if (line.IndexOf("text(") > -1)
-                {
-                    string text = line.Substring(line.IndexOf("text(") + 6);
-                    text = text.Substring(0, text.IndexOf(")") - 1);
-                    controller.text = text.Replace("\"", "");
-                    if (controller.type == "combobox") //if combobox, create a range
-                    {
-                        char[] delimiterChars = { ',' };
-                        string[] tokens = text.Split(delimiterChars);
-                        controller.SetRange(1, tokens.Length, 0);
-                    }
-                }
-
-                if (line.IndexOf("channel(") > -1)
-                {
-                    string channel = line.Substring(line.IndexOf("channel(") + 9);
-                    channel = channel.Substring(0, channel.IndexOf(")") - 1);
-                    controller.channel = channel;
-                }
-
-                if (line.IndexOf("range(") > -1)
-                {
-                    string range = line.Substring(line.IndexOf("range(") + 6);
-                    range = range.Substring(0, range.IndexOf(")"));
-                    char[] delimiterChars = { ',' };
-                    string[] tokens = range.Split(delimiterChars);
-                    for (var i = 0; i < tokens.Length; i++)
-                    {
-                        tokens[i] = string.Join("", tokens[i].Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
-                        if (tokens[i].StartsWith("."))
-                        {
-                            tokens[i] = "0" + tokens[i];
-                        }
-                    }
-                    var val = float.Parse(tokens[0]);
-                    var min = float.Parse(tokens[1]);
-                    var max = float.Parse(tokens[2]);
-                    controller.SetRange(val, min, max);
-                }
-
-                if (line.IndexOf("value(") > -1)
-                {
-                    string value = line.Substring(line.IndexOf("value(") + 6);
-                    value = value.Substring(0, value.IndexOf(")"));
-                    controller.value = value.Length > 0 ? float.Parse(value) : 0;
-                    if (control.Contains("combobox"))
-                    {
-                        //Cabbage combobox index starts from 1
-                        controller.value = controller.value - 1;
-                        // Debug.Log("combobox value in parse: " + controller.value);
-                    }
-                }
-                locaChannelControllers.Add(controller);
-            }
-        }
-        return locaChannelControllers;
+        return Path.Combine(Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length), AssetDatabase.GUIDToAssetPath(csoundFileGUID));
     }
 
-    public int CreateTable(int tableNumber, MYFLT[] samples/*, int nChannels*/)
+    public CsoundUnityBridge.CSOUND_PARAMS GetParams()
     {
-        if (samples.Length < 1) return -1;
-
-        var resTable = CreateTableInstrument(tableNumber, samples.Length);
-        if (resTable != 0)
-            return -1;
-        // copy samples to the newly created table
-        CopyTableIn(tableNumber, samples);
-
-        return resTable;
+        return csound.GetParams();
     }
 
-    public void CreateTable(int tableNumber, float[] samples/*, int nChannels*/)
+    public void SetParams(CsoundUnityBridge.CSOUND_PARAMS parms)
     {
-        MYFLT[] fltSamples = new MYFLT[samples.Length];
-        for (var i = 0; i < samples.Length; i++)
-        {
-            fltSamples[i] = (MYFLT)samples[i];
-        }
-        CreateTable(tableNumber, fltSamples/*, nChannels*/);
+        csound.SetParams(parms);
     }
 
-    public int CreateTableInstrument(int tableNumber, int tableLength/*, int nChannels*/)
+    /// <summary>
+    /// Get Environment path
+    /// </summary>
+    /// <param name="envType">the type of the environment to get</param>
+    /// <returns></returns>
+    public string GetEnv(EnvType envType)
     {
-        string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -2, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
-        // Debug.Log("orc to create table: \n" + createTableInstrument);
-        return CompileOrc(createTableInstrument);
+        return csound.GetEnv(envType.ToString());
     }
 
-    public enum SamplesOrigin { Resources, StreamingAssets, External }
+    //#if CSHARP_7_3_OR_NEWER
+    //    /// <summary>
+    //    /// Get the Opcode List, async
+    //    /// </summary>
+    //    /// <returns></returns>
+    //    public async Task<IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>>> GetOpcodeListAsync()
+    //    {
+    //        return await csound.GetOpcodeListAsync();
+    //    }
+    //#endif
 
+    /// <summary>
+    /// Get the Opcode List, blocking
+    /// </summary>
+    /// <returns></returns>
+    public IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>> GetOpcodeList()
+    {
+        return csound.GetOpcodeList();
+    }
+
+    /// <summary>
+    /// Get the number of input channels
+    /// </summary>
+    /// <returns></returns>
+    public uint GetNchnlsInputs()
+    {
+        return csound.GetNchnlsInput();
+    }
+
+    /// <summary>
+    /// Get the number of output channels
+    /// </summary>
+    /// <returns></returns>
+    public uint GetNchnls()
+    {
+        return csound.GetNchnls();
+    }
+
+    /// <summary>
+    /// Get 0 dbfs
+    /// </summary>
+    /// <returns></returns>
+    public MYFLT Get0dbfs()
+    {
+        return csound.Get0dbfs();
+    }
+
+
+    /// <summary>
+    /// map MYFLT within one range to another
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="from1"></param>
+    /// <param name="to1"></param>
+    /// <param name="from2"></param>
+    /// <param name="to2"></param>
+    /// <returns></returns>
+    public static float Remap(float value, float from1, float to1, float from2, float to2)
+    {
+        float retValue = (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+        return Mathf.Clamp(retValue, from2, to2);
+    }
+
+    /// <summary>
+    /// Get Samples from a path, specifying the origin of the path
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="origin"></param>
+    /// <returns></returns>
     public static MYFLT[] GetSamples(string source, SamplesOrigin origin)
     {
         MYFLT[] res = new MYFLT[0];
@@ -1212,10 +1115,184 @@ public class CsoundUnity : MonoBehaviour
                 break;
             case SamplesOrigin.StreamingAssets:
                 break;
-            case SamplesOrigin.External:
+            case SamplesOrigin.Absolute:
                 break;
         }
 
         return res;
     }
+
+#if UNITY_ANDROID
+
+    /**
+     * Android method to write csd file to a location it can be read from Method returns the file path. 
+     */
+    public string GetCsoundFile(string csoundFileContents)
+    {
+        try
+        {
+            Debug.Log("Csound file contents:");
+            Debug.Log(csoundFileContents);
+            string filename = Application.persistentDataPath + "/csoundFile.csd";
+            Debug.Log("Writing to " + filename);
+
+            if (!File.Exists(filename))
+            {
+                Debug.Log("File doesnt exist, creating it");
+                File.Create(filename).Close();
+            }
+
+            if (File.Exists(filename))
+            {
+                Debug.Log("File has been created");
+            }
+
+            File.WriteAllText(filename, csoundFileContents);
+            return filename;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Error writing to file: " + e.ToString());
+        }
+
+        return "";
+    }
+
+    public void GetCsoundAudioFile(byte[] data, string filename)
+    {
+        try
+        {
+            string name = Application.persistentDataPath + "/" + filename;
+            File.Create(name).Close();
+            File.WriteAllBytes(name, data);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Error writing to file: " + e.ToString());
+        }
+    }
+#endif
+
+    #endregion UTILITIES
+
+    #endregion PUBLIC_METHODS
+
+
+    #region PRIVATE_METHODS
+
+    void OnAudioFilterRead(float[] data, int channels)
+    {
+        if (csound != null)
+        {
+            ProcessBlock(data, channels);
+        }
+    }
+
+    /// <summary>
+    /// Processes a block of samples
+    /// </summary>
+    /// <param name="samples"></param>
+    /// <param name="numChannels"></param>
+    private void ProcessBlock(float[] samples, int numChannels)
+    {
+        if (compiledOk)
+        {
+            for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)
+            {
+                for (uint channel = 0; channel < numChannels; channel++)
+                {
+                    if (mute == true)
+                        samples[i + channel] = 0.0f;
+                    else
+                    {
+                        if ((ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
+                        {
+                            PerformKsmps();
+                            ksmpsIndex = 0;
+
+                            foreach (var chanName in availableAudioChannels)
+                            {
+                                if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
+                                namedAudioChannelTempBufferDict[chanName] = GetAudioChannel(chanName);
+                            }
+                        }
+
+                        if (processClipAudio)
+                        {
+                            SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel] * zerdbfs);
+                        }
+
+                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel) / zerdbfs;
+                    }
+                }
+
+                // update the audioChannels just when this instance is not muted
+                if (!mute)
+                    foreach (var chanName in availableAudioChannels)
+                    {
+                        if (!namedAudioChannelDataDict.ContainsKey(chanName) || !namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
+                        namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
+                    }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Print the Csound output to the Unity message console.
+    /// No need to call this manually, it is set up and controlled in the CsoundUnity Awake() function.
+    /// </summary>
+    void LogCsoundMessages()
+    {
+        //print Csound message to Unity console....
+        for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
+            print(csound.GetCsoundMessage());
+    }
+
+    /// <summary>
+    /// A logging routine, checks for Csound messages every 'interval' seconds
+    /// </summary>
+    /// <param name="interval"></param>
+    /// <returns></returns>
+    IEnumerator Logging(float interval)
+    {
+        while (this.logCsoundOutput)
+        {
+            yield return new WaitForSeconds(interval);
+            for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
+                print(csound.GetCsoundMessage());
+        }
+    }
+
+    /// <summary>
+    /// Reset the fields of this instance
+    /// </summary>
+    private void ResetFields()
+    {
+        this._csoundFileName = null;
+        this._csoundString = null;
+        this._csoundFileGUID = string.Empty;
+        this._csoundAsset = null;
+        this._channels.Clear();
+        this._availableAudioChannels.Clear();
+
+        this.namedAudioChannelDataDict.Clear();
+        this.namedAudioChannelTempBufferDict.Clear();
+    }
+
+    /// <summary>
+    /// Called automatically when the game stops. Needed so that Csound stops when your game does
+    /// </summary>
+    void OnApplicationQuit()
+    {
+        if (LoggingCoroutine != null)
+            StopCoroutine(LoggingCoroutine);
+
+        if (csound != null)
+        {
+            csound.StopCsound();
+        }
+        //csound.reset();
+    }
+
+    #endregion PRIVATE_METHODS
 }

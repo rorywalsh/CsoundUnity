@@ -46,7 +46,7 @@ public class CsoundUnityChildEditor : Editor
                     count++;
                 }
 
-                Debug.Log($"{csd.availableAudioChannels.Count} channels found in {csd.csoundFile}!");
+                Debug.Log($"{csd.availableAudioChannels.Count} channels found in {csd.csoundFileName}!");
                 m_selectedAudioChannelIndexByChan.arraySize = csd.availableAudioChannels.Count;
                 for (var i = 0; i < csd.availableAudioChannels.Count; i++)
                 {
@@ -88,7 +88,7 @@ public class CsoundUnityChildEditor : Editor
                     wordWrap = true,
                 };
                 s.normal.textColor = Color.red;
-                EditorGUILayout.LabelField($"No audioChannels available, use the chnset opcode in {csd.csoundFile}", s);
+                EditorGUILayout.LabelField($"No audioChannels available, use the chnset opcode in {csd.csoundFileName}", s);
             }
         }
         serializedObject.ApplyModifiedProperties();

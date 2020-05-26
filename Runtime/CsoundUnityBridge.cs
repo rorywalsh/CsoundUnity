@@ -747,7 +747,7 @@ public class CsoundUnityBridge
         public IntPtr attributes;
     }
 
-    [CLSCompliant(true)]
+    // [CLSCompliant(true)]
     public class ChannelInfo
     {
         public ChannelInfo(string _name, ChannelType _type, ChannelDirection _direction)
@@ -765,7 +765,7 @@ public class CsoundUnityBridge
     /// <summary>
     /// This structure holds the parameter hints for control channels.
     /// </summary>
-    [CLSCompliant(true)]
+//    [CLSCompliant(true)]
     public class ChannelHints
     {
         /// <summary>
@@ -806,11 +806,10 @@ public class CsoundUnityBridge
         public string attributes;
     }
 
-
     /// <summary>
     /// 
     /// </summary>
-    [CLSCompliant(true)]
+    //    [CLSCompliant(true)]
     public enum ChannelBehavior
     {
         None = 0,

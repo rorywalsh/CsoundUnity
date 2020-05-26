@@ -19,19 +19,19 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
+using System;
 
 [CustomEditor(typeof(CsoundUnity))]
 [System.Serializable]
 public class CsoundUnityEditor : Editor
 {
     CsoundUnity csoundUnity;
-    string infoText;
 
     public static CsoundUnityEditor window;
 
-    SerializedProperty m_csoundFile;
-    SerializedProperty m_csoundFileRef;
-    SerializedProperty m_csoundFilePath;
+    SerializedProperty m_csoundFileName;
+    SerializedProperty m_csoundAsset;
+    SerializedProperty m_csoundFileGUID;
     SerializedProperty m_csoundString;
     SerializedProperty m_csoundScore;
     SerializedProperty m_processAudio;
@@ -39,36 +39,73 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_logCsoundOutput;
     SerializedProperty m_channelControllers;
     SerializedProperty m_availableAudioChannels;
-    SerializedProperty m_lastAsset;
 
     void OnEnable()
     {
         csoundUnity = (CsoundUnity)target;
-        //controllerValues = new List<float>();
 
-        m_csoundFile = this.serializedObject.FindProperty("csoundFile");
-        m_csoundFileRef = this.serializedObject.FindProperty("csoundFileRef");
-        m_csoundString = this.serializedObject.FindProperty("csoundString");
-        m_csoundFilePath = this.serializedObject.FindProperty("csoundFilePath");
+        m_csoundFileName = this.serializedObject.FindProperty("_csoundFileName");
+        m_csoundAsset = this.serializedObject.FindProperty("_csoundAsset");
+        m_csoundFileGUID = this.serializedObject.FindProperty("_csoundFileGUID");
+        m_csoundString = this.serializedObject.FindProperty("_csoundString");
+        m_csoundScore = this.serializedObject.FindProperty("csoundScore");
         m_processAudio = this.serializedObject.FindProperty("processClipAudio");
         m_mute = this.serializedObject.FindProperty("mute");
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
-        m_channelControllers = this.serializedObject.FindProperty("channels");
-        m_csoundScore = this.serializedObject.FindProperty("csoundScore");
-        m_availableAudioChannels = this.serializedObject.FindProperty("availableAudioChannels");
-        m_lastAsset = this.serializedObject.FindProperty("lastAsset");
-        //if (m_csoundFile.stringValue.Length > 4)
-        //{
-        //    Debug.Log($"csoundFile is: {m_csoundFile.stringValue} channels size: {m_channelControllers.arraySize} file path: {m_csoundFilePath.stringValue} csoundString: {m_csoundString.stringValue}");
-        //}
+        m_channelControllers = this.serializedObject.FindProperty("_channels");
+        m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
+        if (m_csoundFileName.stringValue.Length > 4)
+        {
+            Debug.Log($"csoundFile is {m_csoundFileName.stringValue} (guid {m_csoundFileGUID.stringValue}), has channels size: {m_channelControllers.arraySize} csoundString: \n{m_csoundString.stringValue}");
+        }
     }
 
     public override void OnInspectorGUI()
     {
         this.serializedObject.Update();
+
+        //get caption info first
+        DrawCaption();
+
+        //create drag and drop area for Csound files
+        DropAreaGUI();
+
+        EditorGUILayout.Space();
+        DrawSettings();
+
+        EditorGUILayout.Space();
+        DrawTestScore();
+
+        EditorGUILayout.Space();
+        DrawChannelControllers();
+
+        EditorGUILayout.Space();
+        DrawAvailableChannelsList();
+
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    private void DrawSettings()
+    {
+        EditorGUILayout.HelpBox("Settings", MessageType.None);
+        EditorGUI.BeginChangeCheck();
+        m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
+        if (EditorGUI.EndChangeCheck())
+        {
+            csoundUnity.ClearSpin();
+        }
+        m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", m_mute.boolValue);
+        m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
+    }
+
+    private void DrawCaption()
+    {
+        var infoText = "";
         if (m_channelControllers != null)
-            //get caption info first
-            for (int i = 0; i < m_channelControllers.arraySize; i++)
+        {
+            //look for caption in channelControllers
+            bool captionFound = false;
+            for (int i = 0; i < m_channelControllers.arraySize && !captionFound; i++)
             {
                 var cc = m_channelControllers.GetArrayElementAtIndex(i);
                 var prop = cc.FindPropertyRelative("type");
@@ -76,26 +113,19 @@ public class CsoundUnityEditor : Editor
                 {
                     var cap = cc.FindPropertyRelative("caption");
                     infoText = cap.stringValue;
+                    captionFound = true;
                 }
             }
+            if (!captionFound) infoText = "No file selected";
+        }
 
         EditorGUILayout.HelpBox(infoText, MessageType.None);
-        GUI.SetNextControlName("CsoundfileTextField");
-        EditorGUILayout.LabelField("Csound file", m_csoundFile.stringValue);
+        EditorGUILayout.LabelField("Csound file", m_csoundFileName.stringValue);
+    }
 
-        EditorGUI.BeginChangeCheck();
-        EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
-        if (EditorGUI.EndChangeCheck())
-        {
-            csoundUnity.ClearSpin();
-        }
-        EditorGUILayout.Toggle("Mute Csound", m_mute.boolValue);
-        m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
-
-        //create drag and drop area for Csound files
-        DropAreaGUI();
-
-        EditorGUILayout.HelpBox("Write test score here", MessageType.None);
+    private void DrawTestScore()
+    {
+        EditorGUILayout.HelpBox("Write test score here, syntax: \ni\tinum\tstart\tdur\tp4...", MessageType.None);
         m_csoundScore.stringValue = EditorGUILayout.TextField(m_csoundScore.stringValue);
 
         if (GUILayout.Button("Send score") && m_csoundScore.stringValue.Length > 3 && Application.isPlaying && csoundUnity != null)
@@ -103,85 +133,71 @@ public class CsoundUnityEditor : Editor
             Debug.Log("sending score: " + m_csoundScore.stringValue);
             csoundUnity.SendScoreEvent(m_csoundScore.stringValue);
         }
-
-        DrawChannelControllers();
-        serializedObject.ApplyModifiedProperties();
     }
 
-    //private static DefaultAsset _lastAsset;
+    private void DrawAvailableChannelsList()
+    {
+        if (m_availableAudioChannels != null)
+        {
+            if (m_availableAudioChannels.arraySize < 1)
+            {
+                EditorGUILayout.HelpBox("No Audio Channels available", MessageType.None);
+                return;
+            }
+
+            EditorGUILayout.HelpBox("Available Audio Channels", MessageType.None);
+            for (int i = 0; i < m_availableAudioChannels.arraySize; i++)
+            {
+                var ac = m_availableAudioChannels.GetArrayElementAtIndex(i);
+                EditorGUILayout.LabelField($"Channel {i}", ac.stringValue);
+            }
+        }
+    }
 
     public void DropAreaGUI()
     {
-        DefaultAsset obj = (DefaultAsset)m_csoundFileRef.objectReferenceValue;
-        obj = (DefaultAsset)EditorGUILayout.ObjectField(obj, typeof(DefaultAsset), false);
-        if (/*_lastAsset == null &&*/ obj != ((DefaultAsset)m_lastAsset.objectReferenceValue))
+        DefaultAsset obj = (DefaultAsset)m_csoundAsset.objectReferenceValue;
+        //
+        EditorGUI.BeginChangeCheck();
+        obj = (DefaultAsset)EditorGUILayout.ObjectField("Csd Asset", obj, typeof(DefaultAsset), false);
+
+        if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(target, "Set Csd");
-            var path = AssetDatabase.GetAssetPath(obj);
             Debug.Log("selected new asset!");
-            if (obj == null || path == null || !path.EndsWith(".csd", true, System.Globalization.CultureInfo.CurrentCulture))
+            if (obj == null ||
+                !AssetDatabase.GetAssetPath(obj).EndsWith(".csd", true, System.Globalization.CultureInfo.CurrentCulture))
             {
-                Debug.Log("asset is not valid, resetting field");
-                m_csoundFileRef.objectReferenceValue = null;
+                Debug.Log("asset is not valid, set Csd NULL");
                 SetCsd(null);
             }
             else
             {
                 Debug.Log("change asset, it is valid! setting csd");
-                m_csoundFileRef.objectReferenceValue = obj;
-                SetCsd(path);
-
-            }
-            m_lastAsset.objectReferenceValue = obj;
-            if (!Application.isPlaying)
-            {
-                EditorUtility.SetDirty(csoundUnity.gameObject);
-                EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-                SceneView.RepaintAll();
-            }
-        }
-
-        Event evt = Event.current;
-
-        //EditorGUIUtility.ShowObjectPicker<DefaultAsset>(obj, false, ".csd", 0);
-        //var testRect = GUILayoutUtility.GetRect(0.0f, 20.0f, GUILayout.ExpandWidth(true));
-        //GUI.Button(testRect, "testCircle", GUI.skin.GetStyle("IN ObjectField"));
-        //Debug.Log("editor event: " + evt.type +" event.commandName: "+evt.commandName);
-        //if (evt.commandName == "ObjectSelectorUpdated")
-        //{
-        //    Debug.Log("clicked selector");
-        //}
-
-        Rect drop_area = GUILayoutUtility.GetRect(0.0f, 20.0f, GUILayout.ExpandWidth(true));
-        GUI.Box(drop_area, "Drag and Drop Csound file here");
-
-        switch (evt.type)
-        {
-            case EventType.DragUpdated:
-            case EventType.DragPerform:
-                if (!drop_area.Contains(evt.mousePosition))
-                    return;
-
-                DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-
-                if (evt.type == EventType.DragPerform)
+                if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out string guid, out long localId))
                 {
-                    DragAndDrop.AcceptDrag();
-
-
-                    foreach (string dragged_object in DragAndDrop.paths)
-                    {
-                        SetCsd(dragged_object);
-
-                        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-                    }
+                    Debug.Log("guid valid: " + guid + " loc " + localId);
+                    SetCsd(guid);
                 }
-                break;
+                else
+                {
+                    Debug.LogWarning("GUID NOT FOUND");
+                    SetCsd(null);
+                }
+            }
+            EditorUtility.SetDirty(csoundUnity.gameObject);
         }
     }
 
     public void DrawChannelControllers()
     {
+        if (m_channelControllers.arraySize < 1)
+        {
+            EditorGUILayout.HelpBox("No Control Channels available", MessageType.None);
+            return;
+        }
+
+        EditorGUILayout.HelpBox("Control Channels", MessageType.None);
         if (m_channelControllers != null)
             //create controls for each Csound channel found in the file descriptor
             for (int i = 0; i < m_channelControllers.arraySize; i++)
@@ -213,9 +229,7 @@ public class CsoundUnityEditor : Editor
                     {
                         options[o] = string.Join("", options[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
                     }
-                    //Debug.Log("combobox editor value = " + (int)chanValue.floatValue);
                     chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, options);
-                    //chanValue.floatValue = EditorGUILayout.IntSlider(label, (int)chanValue.floatValue, min, max);
                     if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
                     {
                         csoundUnity.SetChannel(channel, chanValue.floatValue + 1);
@@ -244,58 +258,8 @@ public class CsoundUnityEditor : Editor
             }
     }
 
-    public void SetCsd(string fileName)
+    public void SetCsd(string guid)
     {
-        //serializedObject.Update();
-        //serializedObject.ApplyModifiedProperties();
-
-        // csoundUnity.SetCsd(fileName);
-        // EditorUtility.SetDirty(csoundUnity);
-
-        // ALL THE NEXT SECTION SHOULD BE DONE WITH THE ABOVE LINES, BUT IT DOESN'T WORK IN ALL CASES!!
-        this.m_channelControllers.ClearArray();
-        this.m_availableAudioChannels.ClearArray();
-
-        if (string.IsNullOrWhiteSpace(fileName))
-        {
-            Debug.Log("CSOUNDUNITY REMOVED CSD! set csd null");
-            this.m_csoundFile.stringValue = null;
-            this.m_csoundFilePath.stringValue = null;
-            this.m_csoundString.stringValue = null;
-        }
-        else
-        {
-            Debug.Log("CSOUNDUNITY NEW CSD! " + this.m_csoundFile.stringValue);
-            this.m_csoundFile.stringValue = Path.GetFileName(fileName);
-            this.m_csoundFilePath.stringValue = Path.GetFullPath(fileName);
-            this.m_csoundString.stringValue = File.ReadAllText(this.m_csoundFilePath.stringValue);
-
-            if (this.m_csoundFile.stringValue.Length > 4)
-            {
-                var channels = CsoundUnity.ParseCsdFile(fileName);
-                var audioChannels = CsoundUnity.ParseCsdFileForAudioChannels(fileName);
-
-                for (var i = 0; i < channels.Count; i++)
-                {
-                    this.m_channelControllers.InsertArrayElementAtIndex(i);
-                    // Debug.Log("m_channelControllersSize: " + m_channelControllers.arraySize);
-                    var cc = this.m_channelControllers.GetArrayElementAtIndex(i);
-                    cc.FindPropertyRelative("value").floatValue = channels[i].value;
-                    cc.FindPropertyRelative("text").stringValue = channels[i].text;
-                    cc.FindPropertyRelative("channel").stringValue = channels[i].channel;
-                    cc.FindPropertyRelative("type").stringValue = channels[i].type;
-                    cc.FindPropertyRelative("min").floatValue = channels[i].min;
-                    cc.FindPropertyRelative("max").floatValue = channels[i].max;
-                }
-
-                for (var i = 0; i < audioChannels.Count; i++)
-                {
-                    this.m_availableAudioChannels.InsertArrayElementAtIndex(i);
-                    var ca = this.m_availableAudioChannels.GetArrayElementAtIndex(i);
-                    ca.stringValue = audioChannels[i];
-                    Debug.Log($"CSOUND UNITY: AUDIOCHANNELS {i}: {audioChannels[i]}");
-                }
-            }
-        }
+        csoundUnity.SetCsd(guid);
     }
 }
