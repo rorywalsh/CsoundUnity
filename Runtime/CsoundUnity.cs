@@ -93,7 +93,7 @@ public class CsoundUnity : MonoBehaviour
     public const string packageVersion = "1.0.0";
 
     /// <summary>
-    /// the unique guid of the file
+    /// the unique guid of the csd file
     /// </summary>
     public string csoundFileGUID { get => _csoundFileGUID; }
 
@@ -327,123 +327,14 @@ public class CsoundUnity : MonoBehaviour
     }
 
 
-    #region ENUMS
-
-    /// <summary>
-    /// The enum representing the Csound Environment Variables
-    /// 
-    /// </summary>
-    public enum EnvType
-    {
-        /// <summary>
-        /// Default directory for sound files.
-        /// Used if no full path is given for sound files.
-        /// </summary>
-        SFDIR,
-
-        /// <summary>
-        /// Default directory for input (source) audio and MIDI files.
-        /// Used if no full path is given for sound files.
-        /// May be used in conjunction with SFDIR to set separate input and output directories.
-        /// Please note that MIDI files as well as audio files are also sought inside SSDIR.
-        /// </summary>
-        SSDIR,
-
-        /// <summary>
-        /// Default directory for analysis files.
-        /// Used if no full path is given for analysis files.
-        /// </summary>
-        SADIR,
-
-        /// <summary>
-        /// Sets the default output file type.
-        /// Currently only 'WAV', 'AIFF' and 'IRCAM' are valid.
-        /// This flag is checked by the csound executable and the utilities and is used if no file output type is specified.
-        /// </summary>
-        SFOUTYP,
-
-        /// <summary>
-        /// Include directory. Specifies the location of files used by #include statements.
-        /// </summary>
-        INCDIR,
-
-        /// <summary>
-        /// Defines the location of csound opcode plugins for the single precision float (32-bit) version.
-        /// </summary>
-        OPCODE6DIR,
-
-        /// <summary>
-        /// Defines the location of csound opcode plugins for the double precision float (64-bit) version.
-        /// </summary>
-        OPCODE6DIR64,
-
-        /// <summary>
-        /// Is used by the FLTK widget opcodes when loading and saving snapshots.
-        /// </summary>
-        SNAPDIR,
-
-        /// <summary>
-        /// Defines the csound resource (or configuration) file.
-        /// A full path and filename containing csound flags must be specified.
-        /// This variable defaults to .csoundrc if not present.
-        /// </summary>
-        CSOUNDRC,
-        /// <summary>
-        /// In Csound 5.00 and later versions,
-        /// the localisation of messages is controlled by two environment variables CSSTRNGS and CS_LANG,
-        /// both of which are optional.
-        /// CSSTRNGS points to a directory containing .xmg files.
-        /// </summary>
-        CSSTRNGS,
-
-        /// <summary>
-        /// Selects a language for csound messages.
-        /// </summary>
-        CS_LANG,
-
-        /// <summary>
-        /// Is used by the STK opcodes to find the raw wave files.
-        /// Only relevant if you are using STK wrapper opcodes like STKBowed or STKBrass.
-        /// </summary>
-        RAWWAVE_PATH,
-
-        /// <summary>
-        /// If this environment variable is set to "yes",
-        /// then any graph displays are closed automatically at the end of performance
-        /// (meaning that you possibly will not see much of them in the case of a short non-realtime render).
-        /// Otherwise, you need to click "Quit" in the FLTK display window to exit,
-        /// allowing for viewing the graphs even after the end of score is reached.
-        /// </summary>
-        CSNOSTOP,
-
-        /// <summary>
-        /// Default directory for MIDI files.
-        /// Used if no full path is given for MIDI files.
-        /// Please note that MIDI files are sought in SSDIR and SFDIR as well.
-        /// </summary>
-        MFDIR,
-
-        /// <summary>
-        /// Allows defining a list of plugin libraries that should be skipped.
-        /// Libraries can be separated with commas, and don't require the "lib" prefix.
-        /// </summary>
-        CS_OMIT_LIBS
-    }
-
-    /// <summary>
-    /// Where the samples to load come from:
-    /// the Resources folder
-    /// the StreamingAssets folder
-    /// An absolute path, can be external of the Unity Project
-    /// </summary>
-    public enum SamplesOrigin { Resources, StreamingAssets, Absolute }
-
-    #endregion ENUMS
-
     #region PUBLIC_METHODS
 
     #region PERFORMANCE
 
+    /// <summary>
+    /// Sets the csd file 
+    /// </summary>
+    /// <param name="guid">the guid of the csd file asset</param>
     public void SetCsd(string guid)
     {
         // Debug.Log($"SET CSD guid: {guid}");
@@ -963,7 +854,6 @@ public class CsoundUnity : MonoBehaviour
 
     #endregion TABLES
 
-
     #region CALLBACKS
 
     public void SetYieldCallback(Action callback)
@@ -988,7 +878,6 @@ public class CsoundUnity : MonoBehaviour
     }
 
     #endregion CALLBACKS
-
 
     #region UTILITIES
 
@@ -1176,6 +1065,120 @@ public class CsoundUnity : MonoBehaviour
     #endregion UTILITIES
 
     #endregion PUBLIC_METHODS
+
+
+    #region ENUMS
+
+    /// <summary>
+    /// The enum representing the Csound Environment Variables
+    /// 
+    /// </summary>
+    public enum EnvType
+    {
+        /// <summary>
+        /// Default directory for sound files.
+        /// Used if no full path is given for sound files.
+        /// </summary>
+        SFDIR,
+
+        /// <summary>
+        /// Default directory for input (source) audio and MIDI files.
+        /// Used if no full path is given for sound files.
+        /// May be used in conjunction with SFDIR to set separate input and output directories.
+        /// Please note that MIDI files as well as audio files are also sought inside SSDIR.
+        /// </summary>
+        SSDIR,
+
+        /// <summary>
+        /// Default directory for analysis files.
+        /// Used if no full path is given for analysis files.
+        /// </summary>
+        SADIR,
+
+        /// <summary>
+        /// Sets the default output file type.
+        /// Currently only 'WAV', 'AIFF' and 'IRCAM' are valid.
+        /// This flag is checked by the csound executable and the utilities and is used if no file output type is specified.
+        /// </summary>
+        SFOUTYP,
+
+        /// <summary>
+        /// Include directory. Specifies the location of files used by #include statements.
+        /// </summary>
+        INCDIR,
+
+        /// <summary>
+        /// Defines the location of csound opcode plugins for the single precision float (32-bit) version.
+        /// </summary>
+        OPCODE6DIR,
+
+        /// <summary>
+        /// Defines the location of csound opcode plugins for the double precision float (64-bit) version.
+        /// </summary>
+        OPCODE6DIR64,
+
+        /// <summary>
+        /// Is used by the FLTK widget opcodes when loading and saving snapshots.
+        /// </summary>
+        SNAPDIR,
+
+        /// <summary>
+        /// Defines the csound resource (or configuration) file.
+        /// A full path and filename containing csound flags must be specified.
+        /// This variable defaults to .csoundrc if not present.
+        /// </summary>
+        CSOUNDRC,
+        /// <summary>
+        /// In Csound 5.00 and later versions,
+        /// the localisation of messages is controlled by two environment variables CSSTRNGS and CS_LANG,
+        /// both of which are optional.
+        /// CSSTRNGS points to a directory containing .xmg files.
+        /// </summary>
+        CSSTRNGS,
+
+        /// <summary>
+        /// Selects a language for csound messages.
+        /// </summary>
+        CS_LANG,
+
+        /// <summary>
+        /// Is used by the STK opcodes to find the raw wave files.
+        /// Only relevant if you are using STK wrapper opcodes like STKBowed or STKBrass.
+        /// </summary>
+        RAWWAVE_PATH,
+
+        /// <summary>
+        /// If this environment variable is set to "yes",
+        /// then any graph displays are closed automatically at the end of performance
+        /// (meaning that you possibly will not see much of them in the case of a short non-realtime render).
+        /// Otherwise, you need to click "Quit" in the FLTK display window to exit,
+        /// allowing for viewing the graphs even after the end of score is reached.
+        /// </summary>
+        CSNOSTOP,
+
+        /// <summary>
+        /// Default directory for MIDI files.
+        /// Used if no full path is given for MIDI files.
+        /// Please note that MIDI files are sought in SSDIR and SFDIR as well.
+        /// </summary>
+        MFDIR,
+
+        /// <summary>
+        /// Allows defining a list of plugin libraries that should be skipped.
+        /// Libraries can be separated with commas, and don't require the "lib" prefix.
+        /// </summary>
+        CS_OMIT_LIBS
+    }
+
+    /// <summary>
+    /// Where the samples to load come from:
+    /// the Resources folder
+    /// the StreamingAssets folder
+    /// An absolute path, can be external of the Unity Project
+    /// </summary>
+    public enum SamplesOrigin { Resources, StreamingAssets, Absolute }
+
+    #endregion ENUMS
 
 
     #region PRIVATE_METHODS

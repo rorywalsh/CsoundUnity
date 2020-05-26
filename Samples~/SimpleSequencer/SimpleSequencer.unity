@@ -254,25 +254,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  csoundFile: Sequencer.csd
-  csoundFileRef: {fileID: 102900000, guid: b0953dd90827ba24896232107c3e0fc4, type: 3}
-  lastAsset: {fileID: 102900000, guid: b0953dd90827ba24896232107c3e0fc4, type: 3}
   logCsoundOutput: 0
   mute: 0
   processClipAudio: 0
-  namedAudioChannelData: []
-  tempBuffer: []
-  channels:
-  - type: form
-    channel: 
-    text: 
-    caption: 
-    min: 0
-    max: 0
-    value: 0
-    skew: 0
-    increment: 0
-  csoundString: "<Cabbage>\r\nform caption(\"Sequencer\"), size(300, 200)\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
+  csoundScore: 
+  _csoundFileGUID: b0953dd90827ba24896232107c3e0fc4
+  _csoundString: "<Cabbage>\r\nform caption(\"Sequencer\"), size(300, 200)\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
     -d -m0d\r\n</CsOptions>\r\n<CsInstruments>\r\nsr \t= \t44100 \r\nksmps \t= \t32\r\nnchnls
     \t= \t2\r\n0dbfs\t=\t1 \r\n\r\n//sequences - right now they just indicate hits,
     but they could alsohold MIDI note numbers\r\ngiTable1 ftgen 1, 0, 16, 2, 1, 0,
@@ -283,16 +270,12 @@ MonoBehaviour:
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\r\ngiTable6 ftgen 6, 0, 16, 2, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\r\ngiTable7 ftgen 7, 0, 16, 2, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\r\ngiTable8 ftgen 8, 0, 16, 2, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\r\n\r\ngSSamples[] init 8;\r\ngiTable[]
-    init 8;\r\n  \r\ninstr SEQUENCER\r\n    kBeat init 0\r\n    kVoice = 0\r\n   
-    kBPM = abs(chnget:k(\"BPM\"))\r\n\r\n    ;gSSamples[0] chnget \"sample1\"\r\n   
-    ;gSSamples[1] chnget \"sample2\"\r\n    ;gSSamples[2] chnget \"sample3\"\r\n   
-    ;gSSamples[3] chnget \"sample4\"\r\n    ;gSSamples[4] chnget \"sample5\"\r\n   
-    ;gSSamples[5] chnget \"sample6\"\r\n    ;gSSamples[6] chnget \"sample7\"\r\n   
-    ;gSSamples[7] chnget \"sample8\"\r\n    \r\n    \r\n    \r\n    if metro(kBPM/60)
-    == 1 then\r\n        chnset kBeat, \"beatNumber\"\r\n        printk2 kBeat\r\n       
-    while kVoice < 8 do\r\n            kValue tablekt kBeat, kVoice+1\r\n           
-    if(kValue == 1) then\r\n                event \"i\", \"PlaySample\", 0, 2, kVoice\r\n               
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\r\n\r\ngSSamples[] init 8\r\ngiTable[]
+    init 8\r\n  \r\ninstr SEQUENCER\r\n    kBeat init 0\r\n    kVoice = 0\r\n   
+    kBPM = abs(chnget:k(\"BPM\"))\r\n    \r\n    if metro(kBPM/60) == 1 then\r\n       
+    chnset kBeat, \"beatNumber\"\r\n        printk2 kBeat\r\n        while kVoice
+    < 8 do\r\n            kValue tablekt kBeat, kVoice+1\r\n            if(kValue
+    == 1) then\r\n                event \"i\", \"PlaySample\", 0, 2, kVoice\r\n               
     prints \"event i %d\", kVoice\r\n            endif\r\n            kVoice += 1\r\n       
     od\r\n        kBeat = (kBeat < 15 ? kBeat+1 : 0)\r\n    endif\r\nendin\r\n\r\ninstr
     PlaySample\r\n        \r\n    giTable[0] chnget \"sampletable900\"\r\n    giTable[1]
@@ -318,11 +301,19 @@ MonoBehaviour:
     birnd(1) > .5 ? 1 : 0, iBeat, iTable\r\n        iBeat += 1\r\n        od\r\n   
     iTable += 1\r\n    od\r\nendin\r\n\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf0
     z\r\ni\"SEQUENCER\" 0 z\r\n;i\"RandomSequencer\" 1 0\r\n</CsScore>\r\n</CsoundSynthesizer>"
-  csoundFilePath: /Users/gb/Desktop/WORKS_&_STUFF/CSOUND/GIT/CsoundUnityPackage/CsoundUnityPackage_DevelopmentProject/Assets/Samples/CsoundUnity/1.0.0/Simple
-    Sequencer/Sequencer.csd
-  csoundScore: 
-  availableAudioChannels:
-  - beatNumber
+  _csoundFileName: Sequencer.csd
+  _csoundAsset: {fileID: 102900000, guid: b0953dd90827ba24896232107c3e0fc4, type: 3}
+  _channels:
+  - type: form
+    channel: 
+    text: 
+    caption: Sequencer
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+  _availableAudioChannels: []
 --- !u!82 &1232899649
 AudioSource:
   m_ObjectHideFlags: 0
