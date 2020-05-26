@@ -446,7 +446,7 @@ public class CsoundUnity : MonoBehaviour
 
     public void SetCsd(string guid)
     {
-        Debug.Log($"SET CSD guid: {guid}");
+        // Debug.Log($"SET CSD guid: {guid}");
         if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out Guid guidResult))
         {
             Debug.LogWarning($"GUID NOT VALID Resetting fields");
@@ -570,7 +570,7 @@ public class CsoundUnity : MonoBehaviour
             var split = prms.Split(',');
             if (!split[0].StartsWith("a") && !split[0].StartsWith("ga"))
                 continue; //discard non audio variables
-            Debug.Log("found audio channel");
+            // Debug.Log("found audio channel");
             var ach = split[1].Replace('\\', ' ').Replace('\"', ' ').Trim();
             if (!locaAudioChannels.Contains(ach))
                 locaAudioChannels.Add(ach);

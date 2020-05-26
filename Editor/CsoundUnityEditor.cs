@@ -54,10 +54,10 @@ public class CsoundUnityEditor : Editor
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
         m_channelControllers = this.serializedObject.FindProperty("_channels");
         m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
-        if (m_csoundFileName.stringValue.Length > 4)
-        {
-            Debug.Log($"csoundFile is {m_csoundFileName.stringValue} (guid {m_csoundFileGUID.stringValue}), has channels size: {m_channelControllers.arraySize} csoundString: \n{m_csoundString.stringValue}");
-        }
+        //if (m_csoundFileName.stringValue.Length > 4)
+        //{
+        //    Debug.Log($"csoundFile is {m_csoundFileName.stringValue} (guid {m_csoundFileGUID.stringValue}), has channels size: {m_channelControllers.arraySize} csoundString: \n{m_csoundString.stringValue}");
+        //}
     }
 
     public override void OnInspectorGUI()
@@ -164,19 +164,19 @@ public class CsoundUnityEditor : Editor
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(target, "Set Csd");
-            Debug.Log("selected new asset!");
+            // Debug.Log("selected new asset!");
             if (obj == null ||
                 !AssetDatabase.GetAssetPath(obj).EndsWith(".csd", true, System.Globalization.CultureInfo.CurrentCulture))
             {
-                Debug.Log("asset is not valid, set Csd NULL");
+                // Debug.Log("asset is not valid, set Csd NULL");
                 SetCsd(null);
             }
             else
             {
-                Debug.Log("change asset, it is valid! setting csd");
+                //Debug.Log("change asset, it is valid! setting csd");
                 if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out string guid, out long localId))
                 {
-                    Debug.Log("guid valid: " + guid + " loc " + localId);
+                    // Debug.Log("guid valid: " + guid + " loc " + localId);
                     SetCsd(guid);
                 }
                 else
