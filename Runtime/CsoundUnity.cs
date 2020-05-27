@@ -165,6 +165,7 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     public event CsoundInitialized OnCsoundInitialized;
 
+    public bool PerformanceFinished { get => performanceFinished; }
     /// <summary>
     /// the score to send via editor
     /// </summary>
@@ -195,6 +196,7 @@ public class CsoundUnity : MonoBehaviour
     private uint ksmpsIndex = 0;
     private float zerdbfs = 1;
     private bool compiledOk = false;
+    private bool performanceFinished;
     private AudioSource audioSource;
     private Coroutine LoggingCoroutine;
     int bufferSize, numBuffers;
@@ -295,7 +297,7 @@ public class CsoundUnity : MonoBehaviour
             }
 
             /// This coroutine prints the Csound output to the Unity console
-            LoggingCoroutine = StartCoroutine(Logging(.01f));
+            LoggingCoroutine = StartCoroutine(Logging(.5f));
 
             compiledOk = csound.CompiledWithoutError();
 
@@ -497,8 +499,8 @@ public class CsoundUnity : MonoBehaviour
                 //Debug.Log("discarding "+line);
                 continue;
             }
-            string newLine = line;
-            string control = line.Substring(0, line.IndexOf(" ") > -1 ? line.IndexOf(" ") : 0);
+            string newLine = trimmd;
+            string control = trimmd.Substring(0, trimmd.IndexOf(" ") > -1 ? trimmd.IndexOf(" ") : 0);
             if (control.Length > 0)
                 newLine = newLine.Replace(control, "");
 
@@ -508,16 +510,16 @@ public class CsoundUnity : MonoBehaviour
                 CsoundChannelController controller = new CsoundChannelController();
                 controller.type = control;
 
-                if (line.IndexOf("caption(") > -1)
+                if (trimmd.IndexOf("caption(") > -1)
                 {
-                    string infoText = line.Substring(line.IndexOf("caption(") + 9);
+                    string infoText = trimmd.Substring(trimmd.IndexOf("caption(") + 9);
                     infoText = infoText.Substring(0, infoText.IndexOf(")") - 1);
                     controller.caption = infoText;
                 }
 
-                if (line.IndexOf("text(") > -1)
+                if (trimmd.IndexOf("text(") > -1)
                 {
-                    string text = line.Substring(line.IndexOf("text(") + 6);
+                    string text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
                     text = text.Substring(0, text.IndexOf(")") - 1);
                     controller.text = text.Replace("\"", "");
                     if (controller.type == "combobox") //if combobox, create a range
@@ -528,36 +530,58 @@ public class CsoundUnity : MonoBehaviour
                     }
                 }
 
-                if (line.IndexOf("channel(") > -1)
+                if (trimmd.IndexOf("items(") > -1)
                 {
-                    string channel = line.Substring(line.IndexOf("channel(") + 9);
+                    string text = trimmd.Substring(trimmd.IndexOf("items(") + 7);
+                    text = text.Substring(0, text.IndexOf(")") - 1);
+                    //TODO THIS OVERRIDES TEXT!
+                    controller.text = text.Replace("\"", "");
+                    if (controller.type == "combobox")
+                    {
+                        char[] delimiterChars = { ',' };
+                        string[] tokens = text.Split(delimiterChars);
+                        controller.SetRange(1, tokens.Length, 0);
+                    }
+                }
+
+                if (trimmd.IndexOf("channel(") > -1)
+                {
+                    string channel = trimmd.Substring(trimmd.IndexOf("channel(") + 9);
                     channel = channel.Substring(0, channel.IndexOf(")") - 1);
                     controller.channel = channel;
                 }
 
-                if (line.IndexOf("range(") > -1)
+                if (trimmd.IndexOf("range(") > -1)
                 {
-                    string range = line.Substring(line.IndexOf("range(") + 6);
-                    range = range.Substring(0, range.IndexOf(")"));
-                    char[] delimiterChars = { ',' };
-                    string[] tokens = range.Split(delimiterChars);
-                    for (var i = 0; i < tokens.Length; i++)
+                    int rangeAt = trimmd.IndexOf("range(");
+                    if (rangeAt != -1)
                     {
-                        tokens[i] = string.Join("", tokens[i].Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
-                        if (tokens[i].StartsWith("."))
+                        string range = trimmd.Substring(rangeAt + 6);
+                        range = range.Substring(0, range.IndexOf(")"));
+                        char[] delimiterChars = { ',' };
+                        string[] tokens = range.Split(delimiterChars);
+                        for (var i = 0; i < tokens.Length; i++)
                         {
-                            tokens[i] = "0" + tokens[i];
+                            tokens[i] = string.Join("", tokens[i].Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
+                            if (tokens[i].StartsWith("."))
+                            {
+                                tokens[i] = "0" + tokens[i];
+                            }
+                            if (tokens[i].StartsWith("-."))
+                            {
+                                tokens[i] = "-0" + tokens[i].Substring(2, tokens[i].Length - 2);
+                            }
                         }
+                        var val = float.Parse(tokens[0]);
+                        var min = float.Parse(tokens[1]);
+                        var max = float.Parse(tokens[2]);
+                        controller.SetRange(val, min, max);
                     }
-                    var val = float.Parse(tokens[0]);
-                    var min = float.Parse(tokens[1]);
-                    var max = float.Parse(tokens[2]);
-                    controller.SetRange(val, min, max);
                 }
 
                 if (line.IndexOf("value(") > -1)
                 {
-                    string value = line.Substring(line.IndexOf("value(") + 6);
+                    string value = trimmd.Substring(trimmd.IndexOf("value(") + 6);
                     value = value.Substring(0, value.IndexOf(")"));
                     controller.value = value.Length > 0 ? float.Parse(value) : 0;
                     if (control.Contains("combobox"))
@@ -1210,7 +1234,8 @@ public class CsoundUnity : MonoBehaviour
                     {
                         if ((ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
                         {
-                            PerformKsmps();
+                            var res = PerformKsmps();
+                            performanceFinished = res == 1;
                             ksmpsIndex = 0;
 
                             foreach (var chanName in availableAudioChannels)
@@ -1262,7 +1287,10 @@ public class CsoundUnity : MonoBehaviour
         {
             yield return new WaitForSeconds(interval);
             for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
+            {
                 print(csound.GetCsoundMessage());
+                yield return null; //avoids Unity stuck on performance end
+            }
         }
     }
 

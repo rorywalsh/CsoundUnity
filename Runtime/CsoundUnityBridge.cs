@@ -75,16 +75,16 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
         //string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "--ksmps=32" };
-        Debug.Log("CsoundUnity is overriding the orchestra sample rate to match that of Unity.");
-        Debug.Log("CsoundUnity is overriding the orchestra ksmps value to best match Unity's audio settings, i.e, 32 ksmps");
+        //Debug.Log("CsoundUnity is overriding the orchestra sample rate to match that of Unity.");
+        //Debug.Log("CsoundUnity is overriding the orchestra ksmps value to best match Unity's audio settings, i.e, 32 ksmps");
         //int ret = Csound6.NativeMethods.csoundCompile(csound, 4, runargs);
         //Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
         //Csound6.NativeMethods.csoundSetOption(csound, "--ksmps=32");
 
-        Csound6.NativeMethods.csoundSetOption(csound, "-n");
+        //Csound6.NativeMethods.csoundSetOption(csound, "-n");
         var parms = GetParams();
-        parms.control_rate_override = 32;
-        parms.sample_rate_override = AudioSettings.outputSampleRate;
+        // parms.control_rate_override = AudioSettings.outputSampleRate;
+        //parms.sample_rate_override = AudioSettings.outputSampleRate;
         parms.e0dbfs_override = 1;
         SetParams(parms);
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
