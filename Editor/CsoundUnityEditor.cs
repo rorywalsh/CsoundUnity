@@ -125,7 +125,7 @@ public class CsoundUnityEditor : Editor
 
     private void DrawTestScore()
     {
-        EditorGUILayout.HelpBox("Write test score here, syntax: \ni\tinum\tstart\tdur\tp4...", MessageType.None);
+        EditorGUILayout.HelpBox("Write test score here, syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...", MessageType.None);
         m_csoundScore.stringValue = EditorGUILayout.TextField(m_csoundScore.stringValue);
 
         if (GUILayout.Button("Send score") && m_csoundScore.stringValue.Length > 3 && Application.isPlaying && csoundUnity != null)

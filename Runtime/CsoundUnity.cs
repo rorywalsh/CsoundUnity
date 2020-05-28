@@ -296,13 +296,30 @@ public class CsoundUnity : MonoBehaviour
                 }
             }
 
+            //creating a fake audioclip doesn't change the number of audio channels passed by OnAudioFilterRead,
+            //see ProcessBlock
+            //var numChannels = csound.GetNchnls();
+            //Debug.Log("Awake - CSOUND AUDIO OUTPUT CHANNELS: " + numChannels);
+            //if (this.audioSource.clip == null)
+            //{
+            //    //create fake audioclip
+            //    AudioClip fake = AudioClip.Create("fake", (int)GetKsmps(), (int)numChannels, (int)GetSr(), false); //TODO CHECK SAMPLE RATE
+            //    Debug.Log("created fake.channels: " + fake.channels);
+            //    this.audioSource.clip = fake;
+            //    this.audioSource.Play();
+            //}
+
             /// This coroutine prints the Csound output to the Unity console
-            LoggingCoroutine = StartCoroutine(Logging(.5f));
+            LoggingCoroutine = StartCoroutine(Logging(.05f));
 
             compiledOk = csound.CompiledWithoutError();
 
             if (compiledOk)
             {
+                zerdbfs = (float)csound.Get0dbfs();
+
+                Debug.Log("zerdbfs "+ zerdbfs);
+
 #if UNITY_EDITOR || UNITY_STANDALONE
                 csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
                 csound.SetStringChannel("AudioPath", Application.dataPath + "/Audio/");
@@ -405,6 +422,15 @@ public class CsoundUnity : MonoBehaviour
     {
         //print(scoreEvent);
         csound.SendScoreEvent(scoreEvent);
+    }
+
+    /// <summary>
+    /// Get the current sample rate
+    /// </summary>
+    /// <returns></returns>
+    public MYFLT GetSr()
+    {
+        return csound.GetSr();
     }
 
     /// <summary>
@@ -1249,8 +1275,9 @@ public class CsoundUnity : MonoBehaviour
                         {
                             SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel] * zerdbfs);
                         }
-
-                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel) / zerdbfs;
+                        //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
+                        var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
+                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
                     }
                 }
 

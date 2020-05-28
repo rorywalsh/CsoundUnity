@@ -96,7 +96,7 @@ public class CsoundUnityBridge
     public void StopCsound()
     {
         Csound6.NativeMethods.csoundStop(csound);
-        //dispose of unmanaged callbacks here?
+        //dispose of unmanaged callbacks here? - can be the cause of the crashes on close - TODO
         if (m_callbacks != null)
         {
             foreach (GCHandle gch in m_callbacks.Values) gch.Free();
@@ -436,6 +436,11 @@ public class CsoundUnityBridge
             pNAMEDGEN = namedGen.next;
         }
         return gens;
+    }
+
+    public MYFLT GetSr()
+    {
+        return Csound6.NativeMethods.csoundGetSr(csound);
     }
 
     public MYFLT GetKr()
