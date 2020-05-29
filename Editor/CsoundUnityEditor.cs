@@ -40,6 +40,11 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_channelControllers;
     SerializedProperty m_availableAudioChannels;
 
+    SerializedProperty  m_drawTestScore ;
+    SerializedProperty m_drawSettings;
+    SerializedProperty m_drawChannels;
+    SerializedProperty m_drawAudioChannels;
+
     void OnEnable()
     {
         csoundUnity = (CsoundUnity)target;
@@ -54,6 +59,11 @@ public class CsoundUnityEditor : Editor
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
         m_channelControllers = this.serializedObject.FindProperty("_channels");
         m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
+
+        m_drawTestScore = this.serializedObject.FindProperty("_drawTestScore");
+        m_drawSettings = this.serializedObject.FindProperty("_drawSettings");
+        m_drawChannels = this.serializedObject.FindProperty("_drawChannels");
+        m_drawAudioChannels = this.serializedObject.FindProperty("_drawAudioChannels");
         //if (m_csoundFileName.stringValue.Length > 4)
         //{
         //    Debug.Log($"csoundFile is {m_csoundFileName.stringValue} (guid {m_csoundFileGUID.stringValue}), has channels size: {m_channelControllers.arraySize} csoundString: \n{m_csoundString.stringValue}");
@@ -87,15 +97,19 @@ public class CsoundUnityEditor : Editor
 
     private void DrawSettings()
     {
-        EditorGUILayout.HelpBox("Settings", MessageType.None);
-        EditorGUI.BeginChangeCheck();
-        m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
-        if (EditorGUI.EndChangeCheck())
+        m_drawSettings.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawSettings.boolValue, "Settings", true);
+        if (m_drawSettings.boolValue)
         {
-            csoundUnity.ClearSpin();
+            EditorGUILayout.HelpBox("Settings", MessageType.None);
+            EditorGUI.BeginChangeCheck();
+            m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
+            if (EditorGUI.EndChangeCheck())
+            {
+                csoundUnity.ClearSpin();
+            }
+            m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", m_mute.boolValue);
+            m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
         }
-        m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", m_mute.boolValue);
-        m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
     }
 
     private void DrawCaption()
@@ -125,31 +139,58 @@ public class CsoundUnityEditor : Editor
 
     private void DrawTestScore()
     {
-        EditorGUILayout.HelpBox("Write test score here, syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...", MessageType.None);
-        m_csoundScore.stringValue = EditorGUILayout.TextField(m_csoundScore.stringValue);
-
-        if (GUILayout.Button("Send score") && m_csoundScore.stringValue.Length > 3 && Application.isPlaying && csoundUnity != null)
+        m_drawTestScore.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawTestScore.boolValue, "Test Score Section", true);
+        if (m_drawTestScore.boolValue)
         {
-            Debug.Log("sending score: " + m_csoundScore.stringValue);
-            csoundUnity.SendScoreEvent(m_csoundScore.stringValue);
+
+            EditorGUILayout.HelpBox("Write test score here, syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...", MessageType.None);
+            m_csoundScore.stringValue = EditorGUILayout.TextField(m_csoundScore.stringValue);
+
+            if (GUILayout.Button("Send score") && m_csoundScore.stringValue.Length > 3 && Application.isPlaying && csoundUnity != null)
+            {
+                Debug.Log("sending score: " + m_csoundScore.stringValue);
+                csoundUnity.SendScoreEvent(m_csoundScore.stringValue);
+            }
         }
+        /*
+        EditorGUI.BeginChangeCheck();
+        _drawTestScore = EditorGUILayout.Foldout(_drawTestScore, "Test Score Section");
+        if (EditorGUI.EndChangeCheck()) {
+            if (_drawTestScore)
+            {
+
+                EditorGUILayout.HelpBox("Write test score here, syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...", MessageType.None);
+                m_csoundScore.stringValue = EditorGUILayout.TextField(m_csoundScore.stringValue);
+
+                if (GUILayout.Button("Send score") && m_csoundScore.stringValue.Length > 3 && Application.isPlaying && csoundUnity != null)
+                {
+                    Debug.Log("sending score: " + m_csoundScore.stringValue);
+                    csoundUnity.SendScoreEvent(m_csoundScore.stringValue);
+                }
+            }
+        }
+        */
     }
 
     private void DrawAvailableChannelsList()
     {
-        if (m_availableAudioChannels != null)
+        m_drawAudioChannels.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawAudioChannels.boolValue, "Audio Channels", true);
+        if (m_drawAudioChannels.boolValue)
         {
-            if (m_availableAudioChannels.arraySize < 1)
+            if (m_availableAudioChannels != null)
             {
-                EditorGUILayout.HelpBox("No Audio Channels available", MessageType.None);
-                return;
-            }
+                if (m_availableAudioChannels.arraySize < 1)
+                {
+                    EditorGUILayout.HelpBox("No Audio Channels available", MessageType.None);
+                    return;
+                }
 
-            EditorGUILayout.HelpBox("Available Audio Channels", MessageType.None);
-            for (int i = 0; i < m_availableAudioChannels.arraySize; i++)
-            {
-                var ac = m_availableAudioChannels.GetArrayElementAtIndex(i);
-                EditorGUILayout.LabelField($"Channel {i}", ac.stringValue);
+                EditorGUILayout.HelpBox("Available Audio Channels", MessageType.None);
+                for (int i = 0; i < m_availableAudioChannels.arraySize; i++)
+                {
+                    var ac = m_availableAudioChannels.GetArrayElementAtIndex(i);
+                    EditorGUILayout.LabelField($"Channel {i}", ac.stringValue);
+                }
             }
         }
     }
@@ -191,71 +232,75 @@ public class CsoundUnityEditor : Editor
 
     public void DrawChannelControllers()
     {
-        if (m_channelControllers.arraySize < 1)
+        m_drawChannels.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawChannels.boolValue, "Control Channels", true);
+        if (m_drawChannels.boolValue)
         {
-            EditorGUILayout.HelpBox("No Control Channels available", MessageType.None);
-            return;
-        }
-
-        EditorGUILayout.HelpBox("Control Channels", MessageType.None);
-        if (m_channelControllers != null)
-            //create controls for each Csound channel found in the file descriptor
-            for (int i = 0; i < m_channelControllers.arraySize; i++)
+            if (m_channelControllers.arraySize < 1)
             {
-                var cc = m_channelControllers.GetArrayElementAtIndex(i);
-                var chanValue = cc.FindPropertyRelative("value");
-                var text = cc.FindPropertyRelative("text").stringValue;
-                var channel = cc.FindPropertyRelative("channel").stringValue;
-                string label = text.Length > 3 ? text : channel;
-                var type = cc.FindPropertyRelative("type").stringValue;
-
-                if (type.Contains("slider"))
-                {
-                    var min = cc.FindPropertyRelative("min").floatValue;
-                    var max = cc.FindPropertyRelative("max").floatValue;
-
-                    EditorGUI.BeginChangeCheck();
-                    chanValue.floatValue = EditorGUILayout.Slider(label, chanValue.floatValue, min, max);
-                    if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
-                    {
-                        csoundUnity.SetChannel(channel, chanValue.floatValue);
-                    }
-                }
-                else if (type.Contains("combobox"))
-                {
-                    EditorGUI.BeginChangeCheck();
-                    var options = text.Split(new char[] { ',' });
-                    for (var o = 0; o < options.Length; o++)
-                    {
-                        options[o] = string.Join("", options[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
-                    }
-                    chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, options);
-                    if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
-                    {
-                        csoundUnity.SetChannel(channel, chanValue.floatValue + 1);
-                    }
-                }
-                else if (type.Contains("button"))
-                {
-                    if (GUILayout.Button(label) && Application.isPlaying && csoundUnity != null)
-                    {
-                        csoundUnity.SetChannel(channel, 1);
-                    }
-                }
-                else if (type.Contains("groupbox"))
-                {
-                    EditorGUILayout.HelpBox(text, MessageType.None);
-                }
-                else if (type.Contains("checkbox"))
-                {
-                    EditorGUI.BeginChangeCheck();
-                    chanValue.floatValue = EditorGUILayout.Toggle(label, chanValue.floatValue == 1 ? true : false) ? 1f : 0f;
-                    if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
-                    {
-                        csoundUnity.SetChannel(channel, chanValue.floatValue);
-                    }
-                }
+                EditorGUILayout.HelpBox("No Control Channels available", MessageType.None);
+                return;
             }
+
+            EditorGUILayout.HelpBox("Control Channels", MessageType.None);
+            if (m_channelControllers != null)
+                //create controls for each Csound channel found in the file descriptor
+                for (int i = 0; i < m_channelControllers.arraySize; i++)
+                {
+                    var cc = m_channelControllers.GetArrayElementAtIndex(i);
+                    var chanValue = cc.FindPropertyRelative("value");
+                    var text = cc.FindPropertyRelative("text").stringValue;
+                    var channel = cc.FindPropertyRelative("channel").stringValue;
+                    string label = text.Length > 3 ? text : channel;
+                    var type = cc.FindPropertyRelative("type").stringValue;
+
+                    if (type.Contains("slider"))
+                    {
+                        var min = cc.FindPropertyRelative("min").floatValue;
+                        var max = cc.FindPropertyRelative("max").floatValue;
+
+                        EditorGUI.BeginChangeCheck();
+                        chanValue.floatValue = EditorGUILayout.Slider(label, chanValue.floatValue, min, max);
+                        if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
+                        {
+                            csoundUnity.SetChannel(channel, chanValue.floatValue);
+                        }
+                    }
+                    else if (type.Contains("combobox"))
+                    {
+                        EditorGUI.BeginChangeCheck();
+                        var options = text.Split(new char[] { ',' });
+                        for (var o = 0; o < options.Length; o++)
+                        {
+                            options[o] = string.Join("", options[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
+                        }
+                        chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, options);
+                        if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
+                        {
+                            csoundUnity.SetChannel(channel, chanValue.floatValue + 1);
+                        }
+                    }
+                    else if (type.Contains("button"))
+                    {
+                        if (GUILayout.Button(label) && Application.isPlaying && csoundUnity != null)
+                        {
+                            csoundUnity.SetChannel(channel, 1);
+                        }
+                    }
+                    else if (type.Contains("groupbox"))
+                    {
+                        EditorGUILayout.HelpBox(text, MessageType.None);
+                    }
+                    else if (type.Contains("checkbox"))
+                    {
+                        EditorGUI.BeginChangeCheck();
+                        chanValue.floatValue = EditorGUILayout.Toggle(label, chanValue.floatValue == 1 ? true : false) ? 1f : 0f;
+                        if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
+                        {
+                            csoundUnity.SetChannel(channel, chanValue.floatValue);
+                        }
+                    }
+                }
+        }
     }
 
     public void SetCsd(string guid)

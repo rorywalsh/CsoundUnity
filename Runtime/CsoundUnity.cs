@@ -190,6 +190,13 @@ public class CsoundUnity : MonoBehaviour
     [SerializeField] private DefaultAsset _csoundAsset;
     [SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
     [SerializeField] private List<string> _availableAudioChannels = new List<string>();
+    /// <summary>
+    /// Inspector foldout settings
+    /// </summary>
+    [SerializeField] private bool _drawTestScore = false;
+    [SerializeField] private bool _drawSettings = false;
+    [SerializeField] private bool _drawChannels = false;
+    [SerializeField] private bool _drawAudioChannels = false;
 
     private bool initialized = false;
     private uint ksmps = 32;
@@ -1275,9 +1282,17 @@ public class CsoundUnity : MonoBehaviour
                         {
                             SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel] * zerdbfs);
                         }
+
                         //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
                         var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
                         samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
+
+                        if(samples[i + channel] > 10f)
+                        {
+                            samples[i + channel] = 0.0f;
+                            Debug.LogWarning("Volume is too high! Clearing output");
+
+                        }
                     }
                 }
 
