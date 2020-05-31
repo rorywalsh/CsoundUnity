@@ -19,11 +19,11 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using System.Collections;
 using System;
 #if UNITY_EDITOR
 using UnityEditor;
-using System.Threading.Tasks;
-using System.Collections;
+//using System.Threading.Tasks;
 #endif
 #if UNITY_ANDROID
 using UnityEngine.Networking;
@@ -187,16 +187,20 @@ public class CsoundUnity : MonoBehaviour
     [SerializeField] private string _csoundFileGUID;
     [SerializeField] private string _csoundString;
     [SerializeField] private string _csoundFileName;
+#if UNITY_EDITOR
     [SerializeField] private DefaultAsset _csoundAsset;
+#endif
     [SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
     [SerializeField] private List<string> _availableAudioChannels = new List<string>();
     /// <summary>
     /// Inspector foldout settings
     /// </summary>
+#pragma warning disable 414
     [SerializeField] private bool _drawTestScore = false;
     [SerializeField] private bool _drawSettings = false;
     [SerializeField] private bool _drawChannels = false;
     [SerializeField] private bool _drawAudioChannels = false;
+#pragma warning restore 414
 
     private bool initialized = false;
     private uint ksmps = 32;
@@ -325,7 +329,7 @@ public class CsoundUnity : MonoBehaviour
             {
                 zerdbfs = (float)csound.Get0dbfs();
 
-                Debug.Log("zerdbfs "+ zerdbfs);
+                Debug.Log("zerdbfs " + zerdbfs);
 
 #if UNITY_EDITOR || UNITY_STANDALONE
                 csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
@@ -363,6 +367,8 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="guid">the guid of the csd file asset</param>
     public void SetCsd(string guid)
     {
+#if UNITY_EDITOR //for now setting csd is permitted from editor only, via asset guid
+
         // Debug.Log($"SET CSD guid: {guid}");
         if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out Guid guidResult))
         {
@@ -370,6 +376,7 @@ public class CsoundUnity : MonoBehaviour
             ResetFields();
             return;
         }
+
         var fileName = AssetDatabase.GUIDToAssetPath(guid);
 
         if (string.IsNullOrWhiteSpace(fileName) ||
@@ -400,6 +407,8 @@ public class CsoundUnity : MonoBehaviour
                 namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
             }
         }
+
+#endif
     }
 
     /// <summary>
@@ -938,6 +947,7 @@ public class CsoundUnity : MonoBehaviour
 
     #region UTILITIES
 
+#if UNITY_EDITOR
     /// <summary>
     /// A method that retrieves the current csd file path from its GUID
     /// </summary>
@@ -946,6 +956,7 @@ public class CsoundUnity : MonoBehaviour
     {
         return Path.Combine(Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length), AssetDatabase.GUIDToAssetPath(csoundFileGUID));
     }
+#endif
 
     public CsoundUnityBridge.CSOUND_PARAMS GetParams()
     {
@@ -1287,7 +1298,7 @@ public class CsoundUnity : MonoBehaviour
                         var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
                         samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
 
-                        if(samples[i + channel] > 10f)
+                        if (samples[i + channel] > 10f)
                         {
                             samples[i + channel] = 0.0f;
                             Debug.LogWarning("Volume is too high! Clearing output");
@@ -1341,10 +1352,14 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     private void ResetFields()
     {
+#if UNITY_EDITOR
+        this._csoundAsset = null;
+#endif
+
         this._csoundFileName = null;
         this._csoundString = null;
         this._csoundFileGUID = string.Empty;
-        this._csoundAsset = null;
+
         this._channels.Clear();
         this._availableAudioChannels.Clear();
 
