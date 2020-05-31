@@ -23,6 +23,7 @@ using System.Collections;
 using System;
 #if UNITY_EDITOR
 using UnityEditor;
+using System.Globalization;
 //using System.Threading.Tasks;
 #endif
 #if UNITY_ANDROID
@@ -614,10 +615,10 @@ public class CsoundUnity : MonoBehaviour
                                 tokens[i] = "-0" + tokens[i].Substring(2, tokens[i].Length - 2);
                             }
                         }
-                        var val = float.Parse(tokens[0]);
-                        var min = float.Parse(tokens[1]);
-                        var max = float.Parse(tokens[2]);
-                        controller.SetRange(val, min, max);
+                        var min = float.Parse(tokens[0], CultureInfo.InvariantCulture);
+                        var max = float.Parse(tokens[1], CultureInfo.InvariantCulture);
+                        var val = float.Parse(tokens[2], CultureInfo.InvariantCulture);
+                        controller.SetRange(min, max, val);
                     }
                 }
 
@@ -625,7 +626,7 @@ public class CsoundUnity : MonoBehaviour
                 {
                     string value = trimmd.Substring(trimmd.IndexOf("value(") + 6);
                     value = value.Substring(0, value.IndexOf(")"));
-                    controller.value = value.Length > 0 ? float.Parse(value) : 0;
+                    controller.value = value.Length > 0 ? float.Parse(value,CultureInfo.InvariantCulture) : 0;
                     if (control.Contains("combobox"))
                     {
                         //Cabbage combobox index starts from 1
