@@ -21,9 +21,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Collections;
 using System;
+using System.Globalization;
 #if UNITY_EDITOR
 using UnityEditor;
-using System.Globalization;
 //using System.Threading.Tasks;
 #endif
 #if UNITY_ANDROID
@@ -197,6 +197,7 @@ public class CsoundUnity : MonoBehaviour
     /// Inspector foldout settings
     /// </summary>
 #pragma warning disable 414
+    [SerializeField] private bool _drawCsoundString = false;
     [SerializeField] private bool _drawTestScore = false;
     [SerializeField] private bool _drawSettings = false;
     [SerializeField] private bool _drawChannels = false;
@@ -243,9 +244,12 @@ public class CsoundUnity : MonoBehaviour
 #endif
 
         string path = System.Environment.GetEnvironmentVariable("Path");
-        string updatedPath = path + ";" + dataPath;
-        print("Updated path:" + updatedPath);
-        System.Environment.SetEnvironmentVariable("Path", updatedPath); // Is this needed for Csound to find libraries?
+        if (string.IsNullOrWhiteSpace(path) || !path.Contains(dataPath))
+        {
+            string updatedPath = path + ";" + dataPath;
+            print("Updated path:" + updatedPath);
+            System.Environment.SetEnvironmentVariable("Path", updatedPath); // Is this needed for Csound to find libraries?
+        }
 
 #if UNITY_ANDROID
         // Copy CSD to persistent data storage
@@ -322,7 +326,7 @@ public class CsoundUnity : MonoBehaviour
             //}
 
             /// This coroutine prints the Csound output to the Unity console
-            LoggingCoroutine = StartCoroutine(Logging(.05f));
+            LoggingCoroutine = StartCoroutine(Logging(.01f));
 
             compiledOk = csound.CompiledWithoutError();
 
@@ -626,7 +630,7 @@ public class CsoundUnity : MonoBehaviour
                 {
                     string value = trimmd.Substring(trimmd.IndexOf("value(") + 6);
                     value = value.Substring(0, value.IndexOf(")"));
-                    controller.value = value.Length > 0 ? float.Parse(value,CultureInfo.InvariantCulture) : 0;
+                    controller.value = value.Length > 0 ? float.Parse(value, CultureInfo.InvariantCulture) : 0;
                     if (control.Contains("combobox"))
                     {
                         //Cabbage combobox index starts from 1

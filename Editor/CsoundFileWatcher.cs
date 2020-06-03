@@ -55,6 +55,11 @@ public class CsoundFileWatcher
     {
         _executeActions = false;
         _quitting = true;
+
+        lock (_actionsQueue) {
+            _actionsQueue.Clear();
+        }
+
         fswInstances.Clear();
         EditorApplication.hierarchyChanged -= OnHierarchyChanged;
         EditorApplication.update -= EditorUpdate;
@@ -77,7 +82,7 @@ public class CsoundFileWatcher
                         var action = _actionsQueue.Dequeue();
                         if (action == null)
                             continue;
-                        Debug.Log("fileWatcher: action!");
+                        //Debug.Log("fileWatcher: action!");
                         action();
                     }
                 _lastUpdate = Time.realtimeSinceStartup;
@@ -181,6 +186,7 @@ public class CsoundFileWatcher
     static void OnHierarchyChanged()
     {
         if (Application.isPlaying) return;
+
 
         // Debug.Log("fileWatcher: OnHierarchyChanged");
         foreach (var fsw in fswInstances)

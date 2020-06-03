@@ -44,7 +44,7 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_drawSettings;
     SerializedProperty m_drawChannels;
     SerializedProperty m_drawAudioChannels;
-
+    SerializedProperty m_drawCsoundString;
     void OnEnable()
     {
         csoundUnity = (CsoundUnity)target;
@@ -60,6 +60,7 @@ public class CsoundUnityEditor : Editor
         m_channelControllers = this.serializedObject.FindProperty("_channels");
         m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
 
+        m_drawCsoundString = this.serializedObject.FindProperty("_drawCsoundString");
         m_drawTestScore = this.serializedObject.FindProperty("_drawTestScore");
         m_drawSettings = this.serializedObject.FindProperty("_drawSettings");
         m_drawChannels = this.serializedObject.FindProperty("_drawChannels");
@@ -82,6 +83,9 @@ public class CsoundUnityEditor : Editor
 
         EditorGUILayout.Space();
         DrawSettings();
+
+        EditorGUILayout.Space();
+        DrawCsdString();
 
         EditorGUILayout.Space();
         DrawTestScore();
@@ -137,6 +141,27 @@ public class CsoundUnityEditor : Editor
         EditorGUILayout.LabelField("Csound file", m_csoundFileName.stringValue);
     }
 
+    private Vector2 scrollPos;
+
+    private void DrawCsdString() {
+
+        m_drawCsoundString.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawCsoundString.boolValue, "Edit Csd Section", true);
+        if (m_drawCsoundString.boolValue) {
+            scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(500));
+
+            m_csoundString.stringValue = EditorGUILayout.TextArea(m_csoundString.stringValue);
+
+            EditorGUILayout.EndScrollView();
+
+            EditorGUILayout.HelpBox("You can modify the csd file content, and you can test the changes pressing play. \nTo save the changes on the csd file, press the button below", MessageType.None);
+
+            if (GUILayout.Button("Save CSD on disk")) {
+                var path = AssetDatabase.GUIDToAssetPath(m_csoundFileGUID.stringValue);
+                Debug.Log($"saving csd at path {path}");
+                File.WriteAllText(path, m_csoundString.stringValue);
+            }
+        }
+    }
     private void DrawTestScore()
     {
         m_drawTestScore.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawTestScore.boolValue, "Test Score Section", true);
