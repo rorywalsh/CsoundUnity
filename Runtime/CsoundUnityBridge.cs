@@ -85,7 +85,7 @@ public class CsoundUnityBridge
         var parms = GetParams();
         // parms.control_rate_override = AudioSettings.outputSampleRate;
         //parms.sample_rate_override = AudioSettings.outputSampleRate;
-        parms.e0dbfs_override = 1;
+        //parms.e0dbfs_override = 1;
         SetParams(parms);
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
         Csound6.NativeMethods.csoundStart(csound);
