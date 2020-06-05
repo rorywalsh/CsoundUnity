@@ -763,7 +763,6 @@ public class CsoundUnity : MonoBehaviour
     public int CreateTable(int tableNumber, MYFLT[] samples/*, int nChannels*/)
     {
         if (samples.Length < 1) return -1;
-
         var resTable = CreateTableInstrument(tableNumber, samples.Length);
         if (resTable != 0)
             return -1;
@@ -785,7 +784,7 @@ public class CsoundUnity : MonoBehaviour
 
     public int CreateTableInstrument(int tableNumber, int tableLength/*, int nChannels*/)
     {
-        string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -2, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
+        string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -7, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
         // Debug.Log("orc to create table: \n" + createTableInstrument);
         return CompileOrc(createTableInstrument);
     }
@@ -1047,7 +1046,8 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Get Samples from a path, specifying the origin of the path
+    /// Get Samples from a path, specifying the origin of the path, max samples length is 6008184, about 68 seconds
+    /// Use the async GetSamples if you have longer audio files
     /// </summary>
     /// <param name="source"></param>
     /// <param name="origin"></param>
@@ -1065,9 +1065,9 @@ public class CsoundUnity : MonoBehaviour
                     res = null;
                     break;
                 }
-                var data = new float[src.samples];
+                var data = new float[src.samples * src.channels];
                 src.GetData(data, 0);
-                res = new MYFLT[src.samples];
+                res = new MYFLT[src.samples * src.channels];
                 var s = 0;
                 foreach (var d in data)
                 {
@@ -1076,12 +1076,71 @@ public class CsoundUnity : MonoBehaviour
                 }
                 break;
             case SamplesOrigin.StreamingAssets:
+                Debug.LogWarning("Not implemented yet");
                 break;
             case SamplesOrigin.Absolute:
+                Debug.LogWarning("Not implemented yet");
                 break;
         }
 
         return res;
+    }
+
+    /// <summary>
+    /// Async version of GetSamples
+    /// example of usage:
+    /// <code>
+    /// yield return CsoundUnity.GetSamples(source.name, CsoundUnity.SamplesOrigin.Resources, (samples) =>
+    /// {
+    ///     Debug.Log("samples loaded: "+samples.Length+", creating table");
+    ///     csound.CreateTable(100, samples);
+    /// });
+    /// </code>
+    /// </summary>
+    /// <param name="source">the name of the AudioClip to load</param>
+    /// <param name="origin">the origin of the path</param>
+    /// <param name="onSamplesLoaded">the callback when samples are loaded</param>
+    /// <returns></returns>
+    public static IEnumerator GetSamples(string source, SamplesOrigin origin, Action<MYFLT[]> onSamplesLoaded)
+    {
+        switch (origin)
+        {
+            case SamplesOrigin.Resources:
+                //var src = Resources.Load<AudioClip>(source);
+                var req = Resources.LoadAsync<AudioClip>(source);
+
+                while (!req.isDone)
+                {
+                    yield return null;
+                }
+                var samples = ((AudioClip)req.asset).samples;
+                if (samples == 0)
+                {
+                    onSamplesLoaded?.Invoke(null);
+                    yield break;
+                }
+                Debug.Log("src.samples: " + samples);
+                var ac = ((AudioClip)req.asset);
+                var data = new float[samples * ac.channels];
+                ac.GetData(data, 0);
+                MYFLT[] res = new MYFLT[samples * ac.channels];
+                var s = 0;
+                foreach (var d in data)
+                {
+                    res[s] = (MYFLT)d;
+                    s++;
+                }
+                onSamplesLoaded?.Invoke(res);
+                break;
+            case SamplesOrigin.StreamingAssets:
+                Debug.LogWarning("Not implemented yet");
+                break;
+            case SamplesOrigin.Absolute:
+                Debug.LogWarning("Not implemented yet");
+                break;
+        }
+
+
     }
 
 #if UNITY_ANDROID
@@ -1341,14 +1400,21 @@ public class CsoundUnity : MonoBehaviour
     /// <returns></returns>
     IEnumerator Logging(float interval)
     {
-        while (this.logCsoundOutput)
+        while (true)
         {
-            yield return new WaitForSeconds(interval);
-            for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
+            while (this.logCsoundOutput)
             {
-                print(csound.GetCsoundMessage());
-                yield return null; //avoids Unity stuck on performance end
+                for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
+                {
+                    if (this.logCsoundOutput)    // exiting when csound messages are very high in number 
+                    {
+                        print(csound.GetCsoundMessage());
+                        yield return null;          //avoids Unity stuck on performance end
+                    }
+                }
+                yield return new WaitForSeconds(interval);
             }
+            yield return null; //wait one frame
         }
     }
 
