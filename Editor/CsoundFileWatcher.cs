@@ -1,8 +1,4 @@
-﻿//#define FILEWATCHER_ON
-
-
-#if FILEWATCHER_ON
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,50 +17,13 @@ public class CsoundFileWatcher
     static Queue<Action> _actionsQueue = new Queue<Action>();
     static float _lastUpdate;
     static float _timeBetweenUpdates = .2f;
-    static bool _executeActions = true;
-    static bool _quitting = false;
 
     static CsoundFileWatcher()
     {
-        //(UN)COMMENT THE FOLLOWING LINES TO RESTORE/DISABLE FILE WATCHING
+        //UNCOMMENT THE FOLLOWING LINES TO RESTORE FILE WATCHING
         FindInstancesAndStartWatching();
         EditorApplication.hierarchyChanged += OnHierarchyChanged;
         EditorApplication.update += EditorUpdate;
-        EditorApplication.quitting += EditorQuitting;
-        EditorApplication.playModeStateChanged += EditorPlayModeStateChanged;
-    }
-
-    private static void EditorPlayModeStateChanged(PlayModeStateChange obj)
-    {
-        switch (obj)
-        {
-            case PlayModeStateChange.EnteredEditMode:
-                _executeActions = true;
-                break;
-            case PlayModeStateChange.ExitingEditMode:
-                _executeActions = false;
-                break;
-            case PlayModeStateChange.EnteredPlayMode:
-                break;
-            case PlayModeStateChange.ExitingPlayMode:
-                break;
-        }
-    }
-
-    private static void EditorQuitting()
-    {
-        _executeActions = false;
-        _quitting = true;
-
-        lock (_actionsQueue) {
-            _actionsQueue.Clear();
-        }
-
-        fswInstances.Clear();
-        EditorApplication.hierarchyChanged -= OnHierarchyChanged;
-        EditorApplication.update -= EditorUpdate;
-        EditorApplication.quitting -= EditorQuitting;
-        EditorApplication.playModeStateChanged -= EditorPlayModeStateChanged;
     }
 
     private static void EditorUpdate()
@@ -73,18 +32,14 @@ public class CsoundFileWatcher
         if (startTime > _lastUpdate + _timeBetweenUpdates)
             lock (_actionsQueue)
             {
-                if (_quitting)
-                    _actionsQueue.Clear();
+                while (_actionsQueue.Count > 0)
+                {
+                    var action = _actionsQueue.Dequeue();
+                    if (action == null)
+                        continue;
 
-                if (_executeActions)
-                    while (_actionsQueue.Count > 0)
-                    {
-                        var action = _actionsQueue.Dequeue();
-                        if (action == null)
-                            continue;
-                        //Debug.Log("fileWatcher: action!");
-                        action();
-                    }
+                    action();
+                }
                 _lastUpdate = Time.realtimeSinceStartup;
             }
     }
@@ -114,7 +69,7 @@ public class CsoundFileWatcher
             var lastChange = _lastFileChangeDict[fileChanged];
             //Debug.Log($"fileWatcher: {fileChanged} last change was at {lastChange}");
             //ignore duplicate calls detected by FileSystemWatcher on file save
-            if (DateTime.Now.Subtract(lastChange).TotalMilliseconds < 1000)
+            if (DateTime.Now.Subtract(lastChange).TotalMilliseconds < 500)
             {
                 //Debug.Log($"fileWatcher: IGNORING CHANGE AT {DateTime.Now}");
                 return;
@@ -187,7 +142,6 @@ public class CsoundFileWatcher
     {
         if (Application.isPlaying) return;
 
-
         // Debug.Log("fileWatcher: OnHierarchyChanged");
         foreach (var fsw in fswInstances)
         {
@@ -241,6 +195,4 @@ public class CsoundFileWatcher
         }
     }
 }
-
-#endif 
 #endif

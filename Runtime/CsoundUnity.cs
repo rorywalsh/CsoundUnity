@@ -19,12 +19,11 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
-using System.Collections;
 using System;
-using System.Globalization;
 #if UNITY_EDITOR
 using UnityEditor;
-//using System.Threading.Tasks;
+using System.Threading.Tasks;
+using System.Collections;
 #endif
 #if UNITY_ANDROID
 using UnityEngine.Networking;
@@ -166,7 +165,6 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     public event CsoundInitialized OnCsoundInitialized;
 
-    public bool PerformanceFinished { get => performanceFinished; }
     /// <summary>
     /// the score to send via editor
     /// </summary>
@@ -188,28 +186,15 @@ public class CsoundUnity : MonoBehaviour
     [SerializeField] private string _csoundFileGUID;
     [SerializeField] private string _csoundString;
     [SerializeField] private string _csoundFileName;
-#if UNITY_EDITOR
     [SerializeField] private DefaultAsset _csoundAsset;
-#endif
     [SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
     [SerializeField] private List<string> _availableAudioChannels = new List<string>();
-    /// <summary>
-    /// Inspector foldout settings
-    /// </summary>
-#pragma warning disable 414
-    [SerializeField] private bool _drawCsoundString = false;
-    [SerializeField] private bool _drawTestScore = false;
-    [SerializeField] private bool _drawSettings = false;
-    [SerializeField] private bool _drawChannels = false;
-    [SerializeField] private bool _drawAudioChannels = false;
-#pragma warning restore 414
 
     private bool initialized = false;
     private uint ksmps = 32;
     private uint ksmpsIndex = 0;
     private float zerdbfs = 1;
     private bool compiledOk = false;
-    private bool performanceFinished;
     private AudioSource audioSource;
     private Coroutine LoggingCoroutine;
     int bufferSize, numBuffers;
@@ -244,12 +229,9 @@ public class CsoundUnity : MonoBehaviour
 #endif
 
         string path = System.Environment.GetEnvironmentVariable("Path");
-        if (string.IsNullOrWhiteSpace(path) || !path.Contains(dataPath))
-        {
-            string updatedPath = path + ";" + dataPath;
-            print("Updated path:" + updatedPath);
-            System.Environment.SetEnvironmentVariable("Path", updatedPath); // Is this needed for Csound to find libraries?
-        }
+        string updatedPath = path + ";" + dataPath;
+        print("Updated path:" + updatedPath);
+        System.Environment.SetEnvironmentVariable("Path", updatedPath); // Is this needed for Csound to find libraries?
 
 #if UNITY_ANDROID
         // Copy CSD to persistent data storage
@@ -312,19 +294,6 @@ public class CsoundUnity : MonoBehaviour
                 }
             }
 
-            //creating a fake audioclip doesn't change the number of audio channels passed by OnAudioFilterRead,
-            //see ProcessBlock
-            //var numChannels = csound.GetNchnls();
-            //Debug.Log("Awake - CSOUND AUDIO OUTPUT CHANNELS: " + numChannels);
-            //if (this.audioSource.clip == null)
-            //{
-            //    //create fake audioclip
-            //    AudioClip fake = AudioClip.Create("fake", (int)GetKsmps(), (int)numChannels, (int)GetSr(), false); //TODO CHECK SAMPLE RATE
-            //    Debug.Log("created fake.channels: " + fake.channels);
-            //    this.audioSource.clip = fake;
-            //    this.audioSource.Play();
-            //}
-
             /// This coroutine prints the Csound output to the Unity console
             LoggingCoroutine = StartCoroutine(Logging(.01f));
 
@@ -332,10 +301,6 @@ public class CsoundUnity : MonoBehaviour
 
             if (compiledOk)
             {
-                zerdbfs = (float)csound.Get0dbfs();
-
-                Debug.Log("zerdbfs " + zerdbfs);
-
 #if UNITY_EDITOR || UNITY_STANDALONE
                 csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
                 csound.SetStringChannel("AudioPath", Application.dataPath + "/Audio/");
@@ -372,8 +337,6 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="guid">the guid of the csd file asset</param>
     public void SetCsd(string guid)
     {
-#if UNITY_EDITOR //for now setting csd is permitted from editor only, via asset guid
-
         // Debug.Log($"SET CSD guid: {guid}");
         if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out Guid guidResult))
         {
@@ -381,7 +344,6 @@ public class CsoundUnity : MonoBehaviour
             ResetFields();
             return;
         }
-
         var fileName = AssetDatabase.GUIDToAssetPath(guid);
 
         if (string.IsNullOrWhiteSpace(fileName) ||
@@ -412,8 +374,6 @@ public class CsoundUnity : MonoBehaviour
                 namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
             }
         }
-
-#endif
     }
 
     /// <summary>
@@ -443,15 +403,6 @@ public class CsoundUnity : MonoBehaviour
     {
         //print(scoreEvent);
         csound.SendScoreEvent(scoreEvent);
-    }
-
-    /// <summary>
-    /// Get the current sample rate
-    /// </summary>
-    /// <returns></returns>
-    public MYFLT GetSr()
-    {
-        return csound.GetSr();
     }
 
     /// <summary>
@@ -546,8 +497,8 @@ public class CsoundUnity : MonoBehaviour
                 //Debug.Log("discarding "+line);
                 continue;
             }
-            string newLine = trimmd;
-            string control = trimmd.Substring(0, trimmd.IndexOf(" ") > -1 ? trimmd.IndexOf(" ") : 0);
+            string newLine = line;
+            string control = line.Substring(0, line.IndexOf(" ") > -1 ? line.IndexOf(" ") : 0);
             if (control.Length > 0)
                 newLine = newLine.Replace(control, "");
 
@@ -557,16 +508,16 @@ public class CsoundUnity : MonoBehaviour
                 CsoundChannelController controller = new CsoundChannelController();
                 controller.type = control;
 
-                if (trimmd.IndexOf("caption(") > -1)
+                if (line.IndexOf("caption(") > -1)
                 {
-                    string infoText = trimmd.Substring(trimmd.IndexOf("caption(") + 9);
+                    string infoText = line.Substring(line.IndexOf("caption(") + 9);
                     infoText = infoText.Substring(0, infoText.IndexOf(")") - 1);
                     controller.caption = infoText;
                 }
 
-                if (trimmd.IndexOf("text(") > -1)
+                if (line.IndexOf("text(") > -1)
                 {
-                    string text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
+                    string text = line.Substring(line.IndexOf("text(") + 6);
                     text = text.Substring(0, text.IndexOf(")") - 1);
                     controller.text = text.Replace("\"", "");
                     if (controller.type == "combobox") //if combobox, create a range
@@ -577,60 +528,38 @@ public class CsoundUnity : MonoBehaviour
                     }
                 }
 
-                if (trimmd.IndexOf("items(") > -1)
+                if (line.IndexOf("channel(") > -1)
                 {
-                    string text = trimmd.Substring(trimmd.IndexOf("items(") + 7);
-                    text = text.Substring(0, text.IndexOf(")") - 1);
-                    //TODO THIS OVERRIDES TEXT!
-                    controller.text = text.Replace("\"", "");
-                    if (controller.type == "combobox")
-                    {
-                        char[] delimiterChars = { ',' };
-                        string[] tokens = text.Split(delimiterChars);
-                        controller.SetRange(1, tokens.Length, 0);
-                    }
-                }
-
-                if (trimmd.IndexOf("channel(") > -1)
-                {
-                    string channel = trimmd.Substring(trimmd.IndexOf("channel(") + 9);
+                    string channel = line.Substring(line.IndexOf("channel(") + 9);
                     channel = channel.Substring(0, channel.IndexOf(")") - 1);
                     controller.channel = channel;
                 }
 
-                if (trimmd.IndexOf("range(") > -1)
+                if (line.IndexOf("range(") > -1)
                 {
-                    int rangeAt = trimmd.IndexOf("range(");
-                    if (rangeAt != -1)
+                    string range = line.Substring(line.IndexOf("range(") + 6);
+                    range = range.Substring(0, range.IndexOf(")"));
+                    char[] delimiterChars = { ',' };
+                    string[] tokens = range.Split(delimiterChars);
+                    for (var i = 0; i < tokens.Length; i++)
                     {
-                        string range = trimmd.Substring(rangeAt + 6);
-                        range = range.Substring(0, range.IndexOf(")"));
-                        char[] delimiterChars = { ',' };
-                        string[] tokens = range.Split(delimiterChars);
-                        for (var i = 0; i < tokens.Length; i++)
+                        tokens[i] = string.Join("", tokens[i].Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
+                        if (tokens[i].StartsWith("."))
                         {
-                            tokens[i] = string.Join("", tokens[i].Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
-                            if (tokens[i].StartsWith("."))
-                            {
-                                tokens[i] = "0" + tokens[i];
-                            }
-                            if (tokens[i].StartsWith("-."))
-                            {
-                                tokens[i] = "-0" + tokens[i].Substring(2, tokens[i].Length - 2);
-                            }
+                            tokens[i] = "0" + tokens[i];
                         }
-                        var min = float.Parse(tokens[0], CultureInfo.InvariantCulture);
-                        var max = float.Parse(tokens[1], CultureInfo.InvariantCulture);
-                        var val = float.Parse(tokens[2], CultureInfo.InvariantCulture);
-                        controller.SetRange(min, max, val);
                     }
+                    var val = float.Parse(tokens[0]);
+                    var min = float.Parse(tokens[1]);
+                    var max = float.Parse(tokens[2]);
+                    controller.SetRange(val, min, max);
                 }
 
                 if (line.IndexOf("value(") > -1)
                 {
-                    string value = trimmd.Substring(trimmd.IndexOf("value(") + 6);
+                    string value = line.Substring(line.IndexOf("value(") + 6);
                     value = value.Substring(0, value.IndexOf(")"));
-                    controller.value = value.Length > 0 ? float.Parse(value, CultureInfo.InvariantCulture) : 0;
+                    controller.value = value.Length > 0 ? float.Parse(value) : 0;
                     if (control.Contains("combobox"))
                     {
                         //Cabbage combobox index starts from 1
@@ -763,6 +692,7 @@ public class CsoundUnity : MonoBehaviour
     public int CreateTable(int tableNumber, MYFLT[] samples/*, int nChannels*/)
     {
         if (samples.Length < 1) return -1;
+
         var resTable = CreateTableInstrument(tableNumber, samples.Length);
         if (resTable != 0)
             return -1;
@@ -784,7 +714,7 @@ public class CsoundUnity : MonoBehaviour
 
     public int CreateTableInstrument(int tableNumber, int tableLength/*, int nChannels*/)
     {
-        string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -7, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
+        string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -2, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
         // Debug.Log("orc to create table: \n" + createTableInstrument);
         return CompileOrc(createTableInstrument);
     }
@@ -951,7 +881,6 @@ public class CsoundUnity : MonoBehaviour
 
     #region UTILITIES
 
-#if UNITY_EDITOR
     /// <summary>
     /// A method that retrieves the current csd file path from its GUID
     /// </summary>
@@ -960,7 +889,6 @@ public class CsoundUnity : MonoBehaviour
     {
         return Path.Combine(Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length), AssetDatabase.GUIDToAssetPath(csoundFileGUID));
     }
-#endif
 
     public CsoundUnityBridge.CSOUND_PARAMS GetParams()
     {
@@ -1046,8 +974,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Get Samples from a path, specifying the origin of the path, max samples length is 6008184, about 68 seconds
-    /// Use the async GetSamples if you have longer audio files
+    /// Get Samples from a path, specifying the origin of the path
     /// </summary>
     /// <param name="source"></param>
     /// <param name="origin"></param>
@@ -1065,9 +992,9 @@ public class CsoundUnity : MonoBehaviour
                     res = null;
                     break;
                 }
-                var data = new float[src.samples * src.channels];
+                var data = new float[src.samples];
                 src.GetData(data, 0);
-                res = new MYFLT[src.samples * src.channels];
+                res = new MYFLT[src.samples];
                 var s = 0;
                 foreach (var d in data)
                 {
@@ -1076,71 +1003,12 @@ public class CsoundUnity : MonoBehaviour
                 }
                 break;
             case SamplesOrigin.StreamingAssets:
-                Debug.LogWarning("Not implemented yet");
                 break;
             case SamplesOrigin.Absolute:
-                Debug.LogWarning("Not implemented yet");
                 break;
         }
 
         return res;
-    }
-
-    /// <summary>
-    /// Async version of GetSamples
-    /// example of usage:
-    /// <code>
-    /// yield return CsoundUnity.GetSamples(source.name, CsoundUnity.SamplesOrigin.Resources, (samples) =>
-    /// {
-    ///     Debug.Log("samples loaded: "+samples.Length+", creating table");
-    ///     csound.CreateTable(100, samples);
-    /// });
-    /// </code>
-    /// </summary>
-    /// <param name="source">the name of the AudioClip to load</param>
-    /// <param name="origin">the origin of the path</param>
-    /// <param name="onSamplesLoaded">the callback when samples are loaded</param>
-    /// <returns></returns>
-    public static IEnumerator GetSamples(string source, SamplesOrigin origin, Action<MYFLT[]> onSamplesLoaded)
-    {
-        switch (origin)
-        {
-            case SamplesOrigin.Resources:
-                //var src = Resources.Load<AudioClip>(source);
-                var req = Resources.LoadAsync<AudioClip>(source);
-
-                while (!req.isDone)
-                {
-                    yield return null;
-                }
-                var samples = ((AudioClip)req.asset).samples;
-                if (samples == 0)
-                {
-                    onSamplesLoaded?.Invoke(null);
-                    yield break;
-                }
-                Debug.Log("src.samples: " + samples);
-                var ac = ((AudioClip)req.asset);
-                var data = new float[samples * ac.channels];
-                ac.GetData(data, 0);
-                MYFLT[] res = new MYFLT[samples * ac.channels];
-                var s = 0;
-                foreach (var d in data)
-                {
-                    res[s] = (MYFLT)d;
-                    s++;
-                }
-                onSamplesLoaded?.Invoke(res);
-                break;
-            case SamplesOrigin.StreamingAssets:
-                Debug.LogWarning("Not implemented yet");
-                break;
-            case SamplesOrigin.Absolute:
-                Debug.LogWarning("Not implemented yet");
-                break;
-        }
-
-
     }
 
 #if UNITY_ANDROID
@@ -1342,8 +1210,7 @@ public class CsoundUnity : MonoBehaviour
                     {
                         if ((ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
                         {
-                            var res = PerformKsmps();
-                            performanceFinished = res == 1;
+                            PerformKsmps();
                             ksmpsIndex = 0;
 
                             foreach (var chanName in availableAudioChannels)
@@ -1358,16 +1225,7 @@ public class CsoundUnity : MonoBehaviour
                             SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel] * zerdbfs);
                         }
 
-                        //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
-                        var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
-                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
-
-                        if (samples[i + channel] > 10f)
-                        {
-                            samples[i + channel] = 0.0f;
-                            Debug.LogWarning("Volume is too high! Clearing output");
-
-                        }
+                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)channel) / zerdbfs;
                     }
                 }
 
@@ -1400,21 +1258,11 @@ public class CsoundUnity : MonoBehaviour
     /// <returns></returns>
     IEnumerator Logging(float interval)
     {
-        while (true)
+        while (this.logCsoundOutput)
         {
-            while (this.logCsoundOutput)
-            {
-                for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
-                {
-                    if (this.logCsoundOutput)    // exiting when csound messages are very high in number 
-                    {
-                        print(csound.GetCsoundMessage());
-                        yield return null;          //avoids Unity stuck on performance end
-                    }
-                }
-                yield return new WaitForSeconds(interval);
-            }
-            yield return null; //wait one frame
+            yield return new WaitForSeconds(interval);
+            for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
+                print(csound.GetCsoundMessage());
         }
     }
 
@@ -1423,14 +1271,10 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     private void ResetFields()
     {
-#if UNITY_EDITOR
-        this._csoundAsset = null;
-#endif
-
         this._csoundFileName = null;
         this._csoundString = null;
         this._csoundFileGUID = string.Empty;
-
+        this._csoundAsset = null;
         this._channels.Clear();
         this._availableAudioChannels.Clear();
 
