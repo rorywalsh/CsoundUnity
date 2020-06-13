@@ -81,10 +81,11 @@ public class CsoundUnityBridge
         //Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
         //Csound6.NativeMethods.csoundSetOption(csound, "--ksmps=32");
 
-        //Csound6.NativeMethods.csoundSetOption(csound, "-n");
+        Csound6.NativeMethods.csoundSetOption(csound, "-n");
+        Csound6.NativeMethods.csoundSetOption(csound, "-d");
         var parms = GetParams();
-        // parms.control_rate_override = AudioSettings.outputSampleRate;
-        //parms.sample_rate_override = AudioSettings.outputSampleRate;
+        parms.control_rate_override = AudioSettings.outputSampleRate;
+        parms.sample_rate_override = AudioSettings.outputSampleRate;
         //parms.e0dbfs_override = 1;
         SetParams(parms);
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);

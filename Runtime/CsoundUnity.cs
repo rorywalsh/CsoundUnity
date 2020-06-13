@@ -1046,16 +1046,32 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Get Samples from a path, specifying the origin of the path, max samples length is 6008184, about 68 seconds
-    /// Use the async GetSamples if you have longer audio files
+    /// Get Samples from a path, specifying the origin of the path. This will return an interleaved
+    /// array of samples, with the first index used to specify the number of channels. This array can
+    /// be passed to the CsoundUnity.CreateTable() method for processing by Csound. Use async versions to
+    /// to load very large files.
+    /// 
+    /// Note: You need to be careful that your AudioClips match the SR of the 
+    /// project. If not, you will hear some re-pitching issues with your audio when
+    /// you play it back with a table reader opcode. 
     /// </summary>
     /// <param name="source"></param>
     /// <param name="origin"></param>
+    /// <param name="async"></param>
     /// <returns></returns>
-    public static MYFLT[] GetSamples(string source, SamplesOrigin origin)
+    /// 
+    public static MYFLT[] GetStereoSamples(string source, SamplesOrigin origin)
+    {
+        return GetSamples(source, origin, 0, true);
+    }
+
+    public static MYFLT[] GetMonoSamples(string source, SamplesOrigin origin, int channelNumber)
+    {
+        return GetSamples(source, origin, channelNumber, true);
+    }
+    public static MYFLT[] GetSamples(string source, SamplesOrigin origin, int channelNumber = 1, bool writeChannelData = false)
     {
         MYFLT[] res = new MYFLT[0];
-
         switch (origin)
         {
             case SamplesOrigin.Resources:
@@ -1067,12 +1083,29 @@ public class CsoundUnity : MonoBehaviour
                 }
                 var data = new float[src.samples * src.channels];
                 src.GetData(data, 0);
-                res = new MYFLT[src.samples * src.channels];
-                var s = 0;
-                foreach (var d in data)
+
+
+                if (writeChannelData)
                 {
-                    res[s] = (MYFLT)d;
-                    s++;
+                    res = new MYFLT[src.samples * src.channels + 1];
+                    res[0] = src.channels;
+                    var s = 1;
+                    for (var i = 0; i < data.Length; i++)
+                    {
+                        res[s] = data[i];
+                        s++;
+                    }
+
+                }
+                else
+                {
+                    var s = 0;
+                    res = new MYFLT[src.samples];
+
+                    for( var i = 0; i < data.Length; i+=src.channels, s++)
+                    {
+                        res[s] = data[i+ (channelNumber-1)];
+                    }
                 }
                 break;
             case SamplesOrigin.StreamingAssets:
