@@ -24,6 +24,11 @@
       "displayName": "Simple Sequencer",
       "description": "A sequencer to play with!",
       "path": "Samples~/SimpleSequencer"
+    },
+    {
+      "displayName": "AudioClip Reader",
+      "description": "Example of reading from AdioClips!",
+      "path": "Samples~/AudioClipToTable"
     }
   ]
 }
