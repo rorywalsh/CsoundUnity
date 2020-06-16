@@ -1,6 +1,5 @@
 ﻿//#define FILEWATCHER_ON
 
-
 #if FILEWATCHER_ON
 #if UNITY_EDITOR
 using System;
@@ -56,7 +55,8 @@ public class CsoundFileWatcher
         _executeActions = false;
         _quitting = true;
 
-        lock (_actionsQueue) {
+        lock (_actionsQueue)
+        {
             _actionsQueue.Clear();
         }
 
@@ -82,7 +82,7 @@ public class CsoundFileWatcher
                         var action = _actionsQueue.Dequeue();
                         if (action == null)
                             continue;
-                        //Debug.Log("fileWatcher: action!");
+                        // Debug.Log("fileWatcher: action!");
                         action();
                     }
                 _lastUpdate = Time.realtimeSinceStartup;
@@ -106,8 +106,8 @@ public class CsoundFileWatcher
     {
         if (e.ChangeType == WatcherChangeTypes.Changed)
         {
-            var fileChanged = e.FullPath;
-            //Debug.Log("fileWatcher: fileChanged! " + fileChanged);
+            var fileChanged = e.FullPath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            // Debug.Log("fileWatcher: fileChanged! " + fileChanged);
 
             if (!_lastFileChangeDict.ContainsKey(fileChanged)) return;
 
@@ -120,7 +120,7 @@ public class CsoundFileWatcher
                 return;
             }
 
-            Debug.Log($"fileWatcher: CHANGE! {e.Name} changed at {DateTime.Now}, last change was {lastChange}");
+            //Debug.Log($"fileWatcher: CHANGE! {e.Name} changed at {DateTime.Now}, last change was {lastChange}");
             _lastFileChangeDict[fileChanged] = DateTime.Now;
 
             var result = TestCsoundForErrors(fileChanged);
@@ -225,7 +225,7 @@ public class CsoundFileWatcher
             //Debug.Log("fileWatcher: found a csd asset at path: " + filePath);
             if (_pathsCsdListDict.ContainsKey(filePath))
             {
-                // Debug.Log("fileWatcher: csd is already watched, add the csound script to the list of CsoundUnity instances to update");
+                //  Debug.Log("fileWatcher: csd is already watched, add the csound script to the list of CsoundUnity instances to update");
                 _pathsCsdListDict[filePath].Add(csd);
                 _lastFileChangeDict[filePath] = DateTime.Now;
             }

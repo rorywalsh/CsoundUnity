@@ -253,7 +253,7 @@ public class CsoundUnity : MonoBehaviour
 
 #if UNITY_ANDROID
         // Copy CSD to persistent data storage
-        string csoundFileTmp = "jar:file://" + Application.dataPath + "!/assets/CsoundFiles/" + csoundFile;
+     /*   string csoundFileTmp = "jar:file://" + Application.dataPath + "!/assets/CsoundFiles/" + csoundFile;
         UnityWebRequest webrequest = UnityWebRequest.Get(csoundFileTmp);
         webrequest.SendWebRequest();
         while (!webrequest.isDone) { }
@@ -280,6 +280,7 @@ public class CsoundUnity : MonoBehaviour
                 }
             }
         }
+        */
 #endif
 
         audioSource = GetComponent<AudioSource>();
@@ -771,17 +772,17 @@ public class CsoundUnity : MonoBehaviour
 
         return resTable;
     }
-
-    public void CreateTable(int tableNumber, float[] samples/*, int nChannels*/)
+    /*
+    public int CreateTable(int tableNumber, float[] samples)
     {
         MYFLT[] fltSamples = new MYFLT[samples.Length];
         for (var i = 0; i < samples.Length; i++)
         {
             fltSamples[i] = (MYFLT)samples[i];
         }
-        CreateTable(tableNumber, fltSamples/*, nChannels*/);
+        return CreateTable(tableNumber, fltSamples);
     }
-
+*/
     public int CreateTableInstrument(int tableNumber, int tableLength/*, int nChannels*/)
     {
         string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -7, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
