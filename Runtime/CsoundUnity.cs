@@ -53,6 +53,7 @@ public class CsoundChannelController
     [SerializeField] public float value;
     [SerializeField] public float skew;
     [SerializeField] public float increment;
+    [SerializeField] public string[] options;
 
     public void SetRange(float uMin, float uMax, float uValue)
     {
@@ -447,6 +448,26 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
+    /// Rewinds a compiled Csound score to the time specified with SetScoreOffsetSeconds().
+    /// </summary>
+    public void RewindScore()
+    {
+        csound.RewindScore();
+    }
+
+    /// <summary>
+    /// Csound score events prior to the specified time are not performed,
+    /// and performance begins immediately at the specified time
+    /// (real-time events will continue to be performed as they are received).
+    /// Can be used by external software, such as a VST host, to begin score performance midway through a Csound score,
+    /// for example to repeat a loop in a sequencer, or to synchronize other events with the Csound score.
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetScoreOffsetSeconds(MYFLT value) {
+        csound.csoundSetScoreOffsetSeconds(value);
+    }
+
+    /// <summary>
     /// Get the current sample rate
     /// </summary>
     /// <returns></returns>
@@ -569,12 +590,19 @@ public class CsoundUnity : MonoBehaviour
                 {
                     string text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
                     text = text.Substring(0, text.IndexOf(")") - 1);
-                    controller.text = text.Replace("\"", "");
+                    text = text.Replace("\"", "");
+                    text = text.Replace('"', new char());
                     if (controller.type == "combobox") //if combobox, create a range
                     {
                         char[] delimiterChars = { ',' };
                         string[] tokens = text.Split(delimiterChars);
                         controller.SetRange(1, tokens.Length, 0);
+                        
+                        for (var o = 0; o < tokens.Length; o++)
+                        {
+                            tokens[o] = string.Join("", tokens[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
+                        }
+                        controller.options = tokens;
                     }
                 }
 
@@ -583,12 +611,19 @@ public class CsoundUnity : MonoBehaviour
                     string text = trimmd.Substring(trimmd.IndexOf("items(") + 7);
                     text = text.Substring(0, text.IndexOf(")") - 1);
                     //TODO THIS OVERRIDES TEXT!
-                    controller.text = text.Replace("\"", "");
+                      text = text.Replace("\"", "");
+                    text = text.Replace('"', new char());
                     if (controller.type == "combobox")
                     {
                         char[] delimiterChars = { ',' };
                         string[] tokens = text.Split(delimiterChars);
                         controller.SetRange(1, tokens.Length, 0);
+
+                        for (var o = 0; o < tokens.Length; o++)
+                        {
+                            tokens[o] = string.Join("", tokens[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
+                        }
+                        controller.options = tokens;
                     }
                 }
 
@@ -658,6 +693,19 @@ public class CsoundUnity : MonoBehaviour
     public void SetInputSample(int frame, int channel, MYFLT sample)
     {
         csound.SetSpinSample(frame, channel, sample);
+    }
+
+    /// <summary>
+    /// Adds the indicated sample into the audio input working buffer (spin);
+    /// this only ever makes sense before calling PerformKsmps().
+    /// The frame and channel must be in bounds relative to ksmps and nchnls.
+    /// NB: the spin buffer needs to be cleared at every k-cycle by calling ClearSpin().
+    /// </summary>
+    /// <param name="frame"></param>
+    /// <param name="channel"></param>
+    /// <param name="sample"></param>
+    public void AddInputSample(int frame, int channel, MYFLT sample) {
+        csound.AddSpinSample(frame, channel, sample);
     }
 
     /// <summary>

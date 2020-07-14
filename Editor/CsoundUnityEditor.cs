@@ -293,12 +293,17 @@ public class CsoundUnityEditor : Editor
                     else if (type.Contains("combobox"))
                     {
                         EditorGUI.BeginChangeCheck();
-                        var options = text.Split(new char[] { ',' });
-                        for (var o = 0; o < options.Length; o++)
-                        {
-                            options[o] = string.Join("", options[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
+                        //var options = text.Split(new char[] { ',' });
+                        //for (var o = 0; o < options.Length; o++)
+                        //{
+                        //    options[o] = string.Join("", options[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
+                        //}
+                        var options = cc.FindPropertyRelative("options");
+                        var strings = new string[options.arraySize];
+                        for (var s = 0; s < strings.Length; s++) {
+                            strings[s] = options.GetArrayElementAtIndex(s).stringValue;
                         }
-                        chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, options);
+                        chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, strings);
                         if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
                         {
                             csoundUnity.SetChannel(channel, chanValue.floatValue + 1);

@@ -138,7 +138,14 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundInputMessage(csound, scoreEvent);
     }
 
+    public void RewindScore()
+    {
+        Csound6.NativeMethods.csoundRewindScore(csound);
+    }
 
+    public void csoundSetScoreOffsetSeconds(MYFLT value) {
+        Csound6.NativeMethods.csoundSetScoreOffsetSeconds(csound, value);
+    }
 
     public void SetChannel(string channel, MYFLT value)
     {
@@ -461,6 +468,10 @@ public class CsoundUnityBridge
     public MYFLT GetSpoutSample(int frame, int channel)
     {
         return Csound6.NativeMethods.csoundGetSpoutSample(csound, frame, channel);
+    }
+
+    public void AddSpinSample(int frame, int channel, MYFLT sample) {
+        Csound6.NativeMethods.csoundAddSpinSample(csound, frame, channel, sample);
     }
 
     /// <summary>
