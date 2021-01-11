@@ -157,27 +157,27 @@ public class CsoundFileWatcher
     static int TestCsoundForErrors(string file)
     {
 #if UNITY_EDITOR_WIN
-        var csoundProcess = new System.Diagnostics.Process
-        {
-            StartInfo = new System.Diagnostics.ProcessStartInfo
-            {
-                FileName = "csound.exe",
-                Arguments = file,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true
-            }
-        };
+        //var csoundProcess = new System.Diagnostics.Process
+        //{
+        //    StartInfo = new System.Diagnostics.ProcessStartInfo
+        //    {
+        //        FileName = "csound.exe",
+        //        Arguments = file,
+        //        UseShellExecute = false,
+        //        RedirectStandardOutput = true,
+        //        CreateNoWindow = true
+        //    }
+        //};
 
-        csoundProcess.Start();
-        while (!csoundProcess.StandardOutput.EndOfStream)
-        {
-            string line = csoundProcess.StandardOutput.ReadLine();
-            Debug.Log(line);// do something with line
-        }
+        //csoundProcess.Start();
+        //while (!csoundProcess.StandardOutput.EndOfStream)
+        //{
+        //    string line = csoundProcess.StandardOutput.ReadLine();
+        //    Debug.Log(line);// do something with line
+        //}
 
-        return csoundProcess.ExitCode;
-
+        //return csoundProcess.ExitCode;
+        return 0;
 #elif UNITY_EDITOR_OSX
         return 0;
 #endif
