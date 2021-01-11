@@ -7,13 +7,11 @@ public class CsoundTest : MonoBehaviour
     CsoundUnity csound;
 
     // Start is called before the first frame update
-    async void Start()
+    void Start()
     {
         csound = this.GetComponent<CsoundUnity>();
 
-        var opcodeListTask = csound.GetOpcodeListAsync();
-        var opcodeList = await opcodeListTask;
-        //var opcodeList = csound.GetOpcodeList();
+        var opcodeList = csound.GetOpcodeList();
 
         var count = 0;
         foreach (var opcode in opcodeList)
