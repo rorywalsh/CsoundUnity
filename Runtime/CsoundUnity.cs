@@ -1078,6 +1078,14 @@ public class CsoundUnity : MonoBehaviour
         return csound.Get0dbfs();
     }
 
+    /// <summary>
+    /// Returns the current performance time in samples
+    /// </summary>
+    /// <returns></returns>
+    public long GetCurrentTimeSamples()
+    {
+        return csound.GetCurrentTimeSamples();
+    }
 
     /// <summary>
     /// map MYFLT within one range to another

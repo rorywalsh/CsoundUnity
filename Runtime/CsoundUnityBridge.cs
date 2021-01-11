@@ -133,6 +133,11 @@ public class CsoundUnityBridge
         return Csound6.NativeMethods.csoundGet0dBFS(csound);
     }
 
+    public long GetCurrentTimeSamples()
+    {
+        return Csound6.NativeMethods.csoundGetCurrentTimeSamples(csound);
+    }
+
     public void SendScoreEvent(string scoreEvent)
     {
         Csound6.NativeMethods.csoundInputMessage(csound, scoreEvent);
