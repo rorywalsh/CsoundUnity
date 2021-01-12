@@ -90,6 +90,8 @@ public class CsoundUnityBridge
         SetParams(parms);
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
         Csound6.NativeMethods.csoundStart(csound);
+        var res = PerformKsmps();
+        Debug.Log("PerformKsmps: " + res);
         compiledOk = ret == 0 ? true : false;
         Debug.Log("csoundCompile: " + compiledOk);
     }

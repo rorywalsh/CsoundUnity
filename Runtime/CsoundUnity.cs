@@ -860,7 +860,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Stores values to function table 'tableNum' in tableValues, and returns the table length (not including the guard point).
+    /// Stores values to function table 'numTable' in tableValues, and returns the table length (not including the guard point).
     /// If the table does not exist, tableValues is set to NULL and -1 is returned.
     /// </summary>
     /// <param name="tableValues"></param>
@@ -1450,8 +1450,9 @@ public class CsoundUnity : MonoBehaviour
 
                         //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
                         var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
-                        var rand = new System.Random();
-                        samples[i + channel] = (float)rand.NextDouble();//(float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
+                        //var rand = new System.Random();
+                        //samples[i + channel] = (float)rand.NextDouble();
+                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
 
                         if (samples[i + channel] > 10f)
                         {
