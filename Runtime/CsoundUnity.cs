@@ -1450,7 +1450,8 @@ public class CsoundUnity : MonoBehaviour
 
                         //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
                         var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
-                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
+                        var rand = new System.Random();
+                        samples[i + channel] = (float)rand.NextDouble();//(float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
 
                         if (samples[i + channel] > 10f)
                         {
