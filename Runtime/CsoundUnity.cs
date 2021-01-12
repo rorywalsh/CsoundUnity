@@ -1420,7 +1420,7 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="numChannels"></param>
     private void ProcessBlock(float[] samples, int numChannels)
     {
-        if (compiledOk)
+        if (compiledOk && initialized)
         {
             for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)
             {
