@@ -234,10 +234,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  csoundFile: TestCsound.csd
   logCsoundOutput: 0
   mute: 0
   processClipAudio: 0
+  csoundScore: 
+  _csoundFileGUID: 305abd9f8c6e040e29534c9762169d2c
+  _csoundString: "<Cabbage>\r\nform caption (\"Basic Test\"), size(300, 100)\r\n\r\nhslider
+    bounds(0, 0, 300, 50) range(20, 16000, 440, 1, 0.001) valuetextbox(1) channel(\"freqSlider\")
+    value(440) velocity(50)\r\n</Cabbage>\r\n\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n;-n
+    -d -m0d \r\n;-odac\r\n-n ; -m0d\r\n</CsOptions>\r\n<CsInstruments> \r\nsr \t=
+    \t44100 \r\nksmps \t= \t64\r\nnchnls \t= \t2\r\n0dbfs\t=\t1 \r\n\r\ninstr 1\r\na1
+    oscil .2, chnget:k(\"freqSlider\"), 1\r\nouts a1, a1\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf0
+    3600\r\nf1 0 4096 10 1\r\ni1 0 5\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n<bsbPanel>\r\n
+    <label>Widgets</label>\r\n <objectName/>\r\n <x>100</x>\r\n <y>100</y>\r\n <width>320</width>\r\n
+    <height>240</height>\r\n <visible>true</visible>\r\n <uuid/>\r\n <bgcolor mode=\"nobackground\">\r\n 
+    <r>255</r>\r\n  <g>255</g>\r\n  <b>255</b>\r\n </bgcolor>\r\n</bsbPanel>\r\n<bsbPresets>\r\n</bsbPresets>\r\n"
+  _csoundFileName: BasicTest.csd
+  _csoundAsset: {fileID: 102900000, guid: 305abd9f8c6e040e29534c9762169d2c, type: 3}
+  _channels:
+  - type: form
+    channel: 
+    text: 
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: hslider
+    channel: freqSlider
+    text: 
+    caption: 
+    min: 20
+    max: 16000
+    value: 440
+    skew: 0
+    increment: 0
+    options: []
+  _availableAudioChannels: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawChannels: 0
+  _drawAudioChannels: 0
 --- !u!82 &128889234
 AudioSource:
   m_ObjectHideFlags: 0
