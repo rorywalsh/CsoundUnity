@@ -245,10 +245,7 @@ MonoBehaviour:
     -d -m0d \r\n;-odac\r\n-n ; -m0d\r\n</CsOptions>\r\n<CsInstruments> \r\nsr \t=
     \t44100 \r\nksmps \t= \t64\r\nnchnls \t= \t2\r\n0dbfs\t=\t1 \r\n\r\ninstr 1\r\na1
     oscil .2, chnget:k(\"freqSlider\"), 1\r\nouts a1, a1\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf0
-    3600\r\nf1 0 4096 10 1\r\ni1 0 5\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n<bsbPanel>\r\n
-    <label>Widgets</label>\r\n <objectName/>\r\n <x>100</x>\r\n <y>100</y>\r\n <width>320</width>\r\n
-    <height>240</height>\r\n <visible>true</visible>\r\n <uuid/>\r\n <bgcolor mode=\"nobackground\">\r\n 
-    <r>255</r>\r\n  <g>255</g>\r\n  <b>255</b>\r\n </bgcolor>\r\n</bsbPanel>\r\n<bsbPresets>\r\n</bsbPresets>\r\n"
+    3600\r\nf1 0 4096 10 1\r\ni1 0 5\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: BasicTest.csd
   _csoundAsset: {fileID: 102900000, guid: 305abd9f8c6e040e29534c9762169d2c, type: 3}
   _channels:
