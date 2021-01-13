@@ -366,6 +366,27 @@ public class CsoundUnity : MonoBehaviour
 
     #region PUBLIC_METHODS
 
+    #region INSTANTIATION
+    /// <summary>
+    /// Returns the API version number times 100 (1.00 = 100).
+    /// </summary>
+    /// <returns></returns>
+    public int GetAPIVersion()
+    {
+        return csound.GetAPIVersion();
+    }
+
+    /// <summary>
+    /// Returns the version number times 1000 (5.00.0 = 5000).
+    /// </summary>
+    /// <returns></returns>
+    public int GetVersion()
+    {
+        return csound.GetVersion();
+    }
+
+    #endregion INSTANTIATION
+    
     #region PERFORMANCE
 
     /// <summary>

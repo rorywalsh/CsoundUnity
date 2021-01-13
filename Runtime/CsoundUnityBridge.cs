@@ -96,6 +96,16 @@ public class CsoundUnityBridge
         Debug.Log("csoundCompile: " + compiledOk);
     }
 
+    public int GetAPIVersion()
+    {
+        return Csound6.NativeMethods.csoundGetAPIVersion();
+    }
+
+    public int GetVersion()
+    {
+        return Csound6.NativeMethods.csoundGetVersion();
+    }
+
     public void StopCsound()
     {
         Csound6.NativeMethods.csoundStop(csound);
