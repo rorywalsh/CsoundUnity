@@ -72,6 +72,7 @@ public class CsoundUnityChild : MonoBehaviour
     {
         this.csoundUnity = csound;
         this.csoundUnityGameObject = csound.gameObject;
+        zerodbfs = csoundUnity.Get0dbfs();
     }
 
     public void SetAudioChannel(int channel, int audioChannel)
@@ -86,7 +87,7 @@ public class CsoundUnityChild : MonoBehaviour
             namedAudioChannelData.Add(new MYFLT[bufferSize]);
         }
 
-        zerodbfs = csoundUnity.Get0dbfs();
+        if(csoundUnity) zerodbfs = csoundUnity.Get0dbfs();
     }
 
     void OnAudioFilterRead(float[] data, int channels)
