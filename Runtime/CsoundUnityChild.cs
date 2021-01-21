@@ -65,6 +65,17 @@ public class CsoundUnityChild : MonoBehaviour
         // audioSource.dopplerLevel = 0;
     }
 
+    public void Init(CsoundUnity csound)
+    {
+        this.csoundUnity = csound;
+        this.csoundUnityGameObject = csound.gameObject;
+    }
+
+    public void SetAudioChannel(int channel, int audioChannel)
+    {
+        selectedAudioChannelIndexByChannel[channel] = audioChannel;
+    }
+
     void Start()
     {
         for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
