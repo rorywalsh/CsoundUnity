@@ -49,9 +49,12 @@ public class CsoundUnityChild : MonoBehaviour
 
     private void Awake()
     {
-        csoundUnity = csoundUnityGameObject.GetComponent<CsoundUnity>();
-        if (!csoundUnity)
-            Debug.LogError("CsoundUnity was not found?");
+        if (csoundUnityGameObject)
+        {
+            csoundUnity = csoundUnityGameObject.GetComponent<CsoundUnity>();
+            if (!csoundUnity)
+                Debug.LogError("CsoundUnity was not found?");
+        }
 
         AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
 
