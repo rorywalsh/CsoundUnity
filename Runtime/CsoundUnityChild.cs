@@ -123,10 +123,10 @@ public class CsoundUnityChild : MonoBehaviour
                     case AudioChannels.MONO:
                         // sample is multiplied by 0.5f to obtain the same volume as the original audio file, 
                         // since the mono channel is duplicated between the channels
-                        samples[i + channel] = (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs * audioSource.volume * 0.5f);
+                        samples[i + channel] = (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs * 0.5f);
                         break;
                     case AudioChannels.STEREO:
-                        samples[i + channel] = (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs * audioSource.volume);
+                        samples[i + channel] = (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
                         break;
                 }
             }
