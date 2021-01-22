@@ -68,10 +68,16 @@ public class CsoundUnityBridge
 #endif
         Csound6.NativeMethods.csoundInitialize(1);
         csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero);
+        if (csound == null)
+        {
+            Debug.LogError("Couldn't create csound!");
+            return;
+        }
         int systemBufferSize;
         int systemNumBuffers;
         AudioSettings.GetDSPBufferSize(out systemBufferSize, out systemNumBuffers);
         Debug.Log("System buffer size: " + systemBufferSize + ", buffer count: " + systemNumBuffers + " , samplerate: " + AudioSettings.outputSampleRate);
+        
         Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
         //string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "--ksmps=32" };
@@ -94,6 +100,16 @@ public class CsoundUnityBridge
         Debug.Log("PerformKsmps: " + res);
         compiledOk = ret == 0 ? true : false;
         Debug.Log("csoundCompile: " + compiledOk);
+    }
+
+    public int GetVersion()
+    {
+        return Csound6.NativeMethods.csoundGetVersion();
+    }
+
+    public int GetAPIVersion()
+    {
+        return Csound6.NativeMethods.csoundGetAPIVersion();
     }
 
     public void StopCsound()

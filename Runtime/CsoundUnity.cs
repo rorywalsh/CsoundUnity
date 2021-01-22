@@ -366,6 +366,21 @@ public class CsoundUnity : MonoBehaviour
 
     #region PUBLIC_METHODS
 
+    public int GetVersion()
+    {
+        return csound.GetVersion();
+    }
+
+    public int GetAPIVersion()
+    {
+        return csound.GetAPIVersion();
+    }
+
+    public bool CompiledWithoutError()
+    {
+        return compiledOk;   
+    }
+
     #region PERFORMANCE
 
     /// <summary>
