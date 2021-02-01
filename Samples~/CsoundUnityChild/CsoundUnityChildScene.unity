@@ -335,10 +335,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 695097449}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09ffb47a82f4285478ae5ddf60580653, type: 3}
+  m_Script: {fileID: 11500000, guid: 8971323e8cb11e146ae6d4729f8f9aa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ballSpeed: 200
+  ballSpeed: 50
 --- !u!1 &863776702
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,7 +398,7 @@ AudioSource:
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0
@@ -642,7 +642,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8121a5c4dc158a84b951c7929458cf49, type: 3}
+  m_Script: {fileID: 11500000, guid: 07df6577b6d522343b01d2476a57e9f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 695097449}
@@ -768,78 +768,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  csoundFile: SimpleSynth.csd
-  csoundFileRef: {fileID: 102900000, guid: eb6b98765ce5d468d820ad49ec2a57d0, type: 3}
   logCsoundOutput: 0
   mute: 0
   processClipAudio: 0
-  namedAudioChannelData: []
-  tempBuffer: []
-  channels:
-  - type: form
-    channel: 
-    text: 
-    caption: 
-    min: 0
-    max: 0
-    value: 0
-    skew: 0
-    increment: 0
-  - type: rslider
-    channel: gain
-    text: Gain
-    caption: 
-    min: 0
-    max: 1
-    value: 0.4
-    skew: 0
-    increment: 0
-  - type: rslider
-    channel: hrm1
-    text: 
-    caption: 
-    min: 0
-    max: 1
-    value: 1
-    skew: 0
-    increment: 0
-  - type: rslider
-    channel: hrm2
-    text: 
-    caption: 
-    min: 0
-    max: 1
-    value: 0
-    skew: 0
-    increment: 0
-  - type: rslider
-    channel: hrm3
-    text: 
-    caption: 
-    min: 0
-    max: 1
-    value: 0
-    skew: 0
-    increment: 0
-  - type: rslider
-    channel: hrm4
-    text: 
-    caption: 
-    min: 0
-    max: 1
-    value: 0
-    skew: 0
-    increment: 0
-  - type: combobox
-    channel: waveform
-    text: W1, W2, W3
-    caption: 
-    min: 1
-    max: 3
-    value: 0
-    skew: 0
-    increment: 0
-  csoundString: "<Cabbage>\r\nform caption(\"Untitled\") size(400, 300), colour(58,
+  csoundScore: 
+  _csoundFileGUID: da91c0dc4a6f9ba48add7590dd8f7792
+  _csoundString: "<Cabbage>\r\nform caption(\"Untitled\") size(400, 300), colour(58,
     110, 182), pluginid(\"def1\")\r\nrslider bounds(296, 162, 100, 100), channel(\"gain\"),
     range(0, 1, .4, 1, .01), text(\"Gain\"), trackercolour(\"lime\"), outlinecolour(0,
     0, 0, 50), textcolour(\"black\")\r\n\r\nrslider bounds(10, 10, 60, 60) range(0,
@@ -853,16 +787,94 @@ MonoBehaviour:
     ftgen 1, 0, 4096, 10, 1\r\ngiWave2 ftgen 1, 0, 4096, 10, 1, .5, .25, .17\r\n\r\n;this
     instrument sends audio to two named channels\r\n;this audio can be picked up
     by any CsoundUnityNode component..\r\ninstr ChildSounds\r\n    a1 oscili 1, 440,
-    giWave1\r\n    chnset a1, \"sound1\"\r\n    a2 oscili 1, 440, giWave2\r\n   
+    giWave1\r\n    chnset a1, \"sound1\"\r\n    a2 oscili 1, 840, giWave1\r\n   
     chnset a2, \"sound2\"\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
     Csound to run for about 7000 years...\r\nf0 z\r\ni\"ChildSounds\" 0 z\r\n;starts
     instrument 1 and runs it for a week\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
-  csoundFilePath: C:\Users\rory\sourcecode\CsoundUnityPackage\Assets\Scenes\CsoundUnityChild\SimpleSynth.csd
-  csoundScore: 
-  lastAsset: {fileID: 102900000, guid: eb6b98765ce5d468d820ad49ec2a57d0, type: 3}
-  availableAudioChannels:
+  _csoundFileName: SimpleSynth.csd
+  _csoundAsset: {fileID: 102900000, guid: da91c0dc4a6f9ba48add7590dd8f7792, type: 3}
+  _channels:
+  - type: form
+    channel: 
+    text: 
+    caption: Untitled
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: gain
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0.4
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm1
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm2
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm3
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm4
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: combobox
+    channel: waveform
+    text: 
+    caption: 
+    min: 1
+    max: 3
+    value: 0
+    skew: 0
+    increment: 0
+    options:
+    - W1
+    - W2
+    - W3
+  _availableAudioChannels:
   - sound1
   - sound2
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawChannels: 0
+  _drawAudioChannels: 1
 --- !u!82 &1326809725
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1032,7 +1044,7 @@ AudioSource:
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0
