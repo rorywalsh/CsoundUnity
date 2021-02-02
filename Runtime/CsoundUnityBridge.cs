@@ -36,9 +36,7 @@ using MYFLT = System.Single;
 public class CsoundUnityBridge
 {
     public IntPtr csound;
-    //ManualResetEvent manualReset;
     public string baseDir;
-    //volatile bool shouldFinish=false;
     bool compiledOk = false;
 
     private IDictionary<string, GCHandle> m_callbacks = new Dictionary<string, GCHandle>();  //a map of GCHandles pinned callbacks in memory: kept for unpinning during Dispose()
@@ -49,12 +47,12 @@ public class CsoundUnityBridge
 	*/
     public CsoundUnityBridge(string csoundDir, string csdFile)
     {
-        Debug.Log("CsoundUnityBridge constructor from dir: " + csoundDir + " csdFile: " + csdFile);
+        Debug.Log($"CsoundUnityBridge constructor from dir: {csoundDir}\ncsdFile: \n{csdFile}");
 #if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-        Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.streamingAssetsPath + "/CsoundFiles");
-        Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.streamingAssetsPath + "/CsoundFiles");
-        Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.streamingAssetsPath + "/CsoundFiles");
+        //Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.streamingAssetsPath + "/CsoundFiles");
+        //Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.streamingAssetsPath + "/CsoundFiles");
+        //Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.streamingAssetsPath + "/CsoundFiles");
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
         //if (Directory.Exists(csoundDir+"/CsoundLib64.framework/Resources/Opcodes64"))
         var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.framework/Resources/Opcodes64"));
@@ -62,21 +60,21 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
 #elif UNITY_ANDROID
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-        Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.persistentDataPath);
-        Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.persistentDataPath);
-        Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.persistentDataPath);
+        //Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.persistentDataPath);
+        //Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.persistentDataPath);
+        //Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.persistentDataPath);
 #endif
         Csound6.NativeMethods.csoundInitialize(1);
         csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero);
         if (csound == null)
         {
-            Debug.LogError("Couldn't create csound!");
+            Debug.LogError("Couldn't create Csound!");
             return;
         }
         int systemBufferSize;
         int systemNumBuffers;
         AudioSettings.GetDSPBufferSize(out systemBufferSize, out systemNumBuffers);
-        Debug.Log("System buffer size: " + systemBufferSize + ", buffer count: " + systemNumBuffers + " , samplerate: " + AudioSettings.outputSampleRate);
+        Debug.Log($"System buffer size: {systemBufferSize}, buffer count: {systemNumBuffers}, samplerate: {AudioSettings.outputSampleRate}");
         
         Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
@@ -97,9 +95,9 @@ public class CsoundUnityBridge
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
         Csound6.NativeMethods.csoundStart(csound);
         var res = PerformKsmps();
-        Debug.Log("PerformKsmps: " + res);
+        Debug.Log($"PerformKsmps: {res}");
         compiledOk = ret == 0 ? true : false;
-        Debug.Log("csoundCompile: " + compiledOk);
+        Debug.Log($"CsoundCompile: {compiledOk}");
     }
 
     public int GetVersion()
@@ -166,7 +164,7 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundRewindScore(csound);
     }
 
-    public void csoundSetScoreOffsetSeconds(MYFLT value) {
+    public void CsoundSetScoreOffsetSeconds(MYFLT value) {
         Csound6.NativeMethods.csoundSetScoreOffsetSeconds(csound, value);
     }
 

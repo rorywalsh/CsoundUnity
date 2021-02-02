@@ -232,7 +232,7 @@ public class CsoundUnity : MonoBehaviour
     {
         initialized = false;
 
-        Debug.Log("AudioSettings.outputSampleRate: " + AudioSettings.outputSampleRate);
+        Debug.Log($"AudioSettings.outputSampleRate: {AudioSettings.outputSampleRate}");
 
         AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
 
@@ -244,56 +244,19 @@ public class CsoundUnity : MonoBehaviour
         dataPath = Path.Combine(dataPath, "macOS");
 #endif
 
-        string path = System.Environment.GetEnvironmentVariable("Path");
-        if (string.IsNullOrWhiteSpace(path) || !path.Contains(dataPath))
-        {
-            string updatedPath = path + ";" + dataPath;
-            print("Updated path:" + updatedPath);
-            System.Environment.SetEnvironmentVariable("Path", updatedPath); // Is this needed for Csound to find libraries?
-        }
-
-#if UNITY_ANDROID
-        // Copy CSD to persistent data storage
-     /*   string csoundFileTmp = "jar:file://" + Application.dataPath + "!/assets/CsoundFiles/" + csoundFile;
-        UnityWebRequest webrequest = UnityWebRequest.Get(csoundFileTmp);
-        webrequest.SendWebRequest();
-        while (!webrequest.isDone) { }
-        csoundFilePath = GetCsoundFile(webrequest.downloadHandler.text);
-        dataPath = Path.Combine(dataPath, "Android");//"not needed for Android";
-        // Copy all audio files to persistent data storage
-        csoundFileTmp = "jar:file://" + Application.dataPath + "!/assets/CsoundFiles/csoundFiles.json";
-        webrequest = UnityWebRequest.Get(csoundFileTmp);
-        webrequest.SendWebRequest();
-        while (!webrequest.isDone) { }
-        if (!webrequest.isHttpError && !webrequest.isNetworkError)
-        {
-            CsoundFilesInfo filesObj = JsonUtility.FromJson<CsoundFilesInfo>(webrequest.downloadHandler.text);
-            foreach (var item in filesObj.fileNames)
-            {
-                if (!item.EndsWith(".json") && !item.EndsWith(".meta") && !item.EndsWith(".csd") && !item.EndsWith(".orc"))
-                {
-                    csoundFileTmp = "jar:file://" + Application.dataPath + "!/assets/CsoundFiles/" + item;
-                    webrequest = UnityWebRequest.Get(csoundFileTmp);
-                    webrequest.SendWebRequest();
-                    while (!webrequest.isDone) { }
-                    if (!webrequest.isHttpError && !webrequest.isNetworkError)
-                        GetCsoundAudioFile(webrequest.downloadHandler.data, item);
-                }
-            }
-        }
-        */
-#endif
+        //string path = System.Environment.GetEnvironmentVariable("Path");
+        //if (string.IsNullOrWhiteSpace(path) || !path.Contains(dataPath))
+        //{
+        //    string updatedPath = path + ";" + dataPath;
+        //    print("Updated path:" + updatedPath);
+        //    System.Environment.SetEnvironmentVariable("Path", updatedPath); // Is this needed for Csound to find libraries?
+        //}
 
         audioSource = GetComponent<AudioSource>();
-
-        //Debug.Log(csoundString);
 
         /// the CsoundUnityBridge constructor takes a path to the package Runtime folder, and a string with the csound code.
         /// It then calls createCsound() to create an instance of Csound and compile the csd string.
         /// After this we start the performance of Csound.
-        /// TODO CHECK THIS: ->
-        /// After this, we send the streaming assets path to Csound on a string channel.
-        /// This means we can then load samples contained within that folder.
         csound = new CsoundUnityBridge(dataPath, _csoundString);
         if (csound != null)
         {
@@ -314,19 +277,6 @@ public class CsoundUnity : MonoBehaviour
                 }
             }
 
-            //creating a fake audioclip doesn't change the number of audio channels passed by OnAudioFilterRead,
-            //see ProcessBlock
-            //var numChannels = csound.GetNchnls();
-            //Debug.Log("Awake - CSOUND AUDIO OUTPUT CHANNELS: " + numChannels);
-            //if (this.audioSource.clip == null)
-            //{
-            //    //create fake audioclip
-            //    AudioClip fake = AudioClip.Create("fake", (int)GetKsmps(), (int)numChannels, (int)GetSr(), false); //TODO CHECK SAMPLE RATE
-            //    Debug.Log("created fake.channels: " + fake.channels);
-            //    this.audioSource.clip = fake;
-            //    this.audioSource.Play();
-            //}
-
             /// This coroutine prints the Csound output to the Unity console
             LoggingCoroutine = StartCoroutine(Logging(.01f));
 
@@ -338,18 +288,18 @@ public class CsoundUnity : MonoBehaviour
 
                 Debug.Log("zerdbfs " + zerdbfs);
 
-#if UNITY_EDITOR || UNITY_STANDALONE
-                csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
-                csound.SetStringChannel("AudioPath", Application.dataPath + "/Audio/");
-                if (Application.isEditor)
-                    csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
-                else
-                    csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
-                csound.SetStringChannel("StreamingAssets", Application.streamingAssetsPath);
-#elif UNITY_ANDROID
-                string persistentPath = Application.persistentDataPath + "/CsoundFiles/"; // TODO ??
-                csound.SetStringChannel("CsoundFilesPath", Application.dataPath);
-#endif
+//#if UNITY_EDITOR || UNITY_STANDALONE
+//                csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
+//                csound.SetStringChannel("AudioPath", Application.dataPath + "/Audio/");
+//                if (Application.isEditor)
+//                    csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
+//                else
+//                    csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
+//                csound.SetStringChannel("StreamingAssets", Application.streamingAssetsPath);
+//#elif UNITY_ANDROID
+//                string persistentPath = Application.persistentDataPath + "/CsoundFiles/"; // TODO ??
+//                csound.SetStringChannel("CsoundFilesPath", Application.dataPath);
+//#endif
                 initialized = true;
                 OnCsoundInitialized?.Invoke();
             }
@@ -366,16 +316,28 @@ public class CsoundUnity : MonoBehaviour
 
     #region PUBLIC_METHODS
 
+    /// <summary>
+    /// Returns the version number times 1000 (5.00.0 = 5000).
+    /// </summary>
+    /// <returns></returns>
     public int GetVersion()
     {
         return csound.GetVersion();
     }
 
+    /// <summary>
+    /// Returns the API version number times 100 (1.00 = 100).
+    /// </summary>
+    /// <returns></returns>
     public int GetAPIVersion()
     {
         return csound.GetAPIVersion();
     }
 
+    /// <summary>
+    /// Returns true if the csd file was compiled without errors.
+    /// </summary>
+    /// <returns></returns>
     public bool CompiledWithoutError()
     {
         return compiledOk;   
@@ -394,7 +356,7 @@ public class CsoundUnity : MonoBehaviour
         // Debug.Log($"SET CSD guid: {guid}");
         if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out Guid guidResult))
         {
-            Debug.LogWarning($"GUID NOT VALID Resetting fields");
+            Debug.LogWarning($"GUID NOT VALID, Resetting fields");
             ResetFields();
             return;
         }
@@ -479,7 +441,7 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     /// <param name="value"></param>
     public void SetScoreOffsetSeconds(MYFLT value) {
-        csound.csoundSetScoreOffsetSeconds(value);
+        csound.CsoundSetScoreOffsetSeconds(value);
     }
 
     /// <summary>
@@ -824,6 +786,13 @@ public class CsoundUnity : MonoBehaviour
 
     #region TABLES
 
+    /// <summary>
+    /// Creates a table with the supplied samples.
+    /// Can be called during performance.
+    /// </summary>
+    /// <param name="tableNumber">The table number</param>
+    /// <param name="samples"></param>
+    /// <returns></returns>
     public int CreateTable(int tableNumber, MYFLT[] samples/*, int nChannels*/)
     {
         if (samples.Length < 1) return -1;
@@ -835,17 +804,15 @@ public class CsoundUnity : MonoBehaviour
 
         return resTable;
     }
-    /*
-    public int CreateTable(int tableNumber, float[] samples)
-    {
-        MYFLT[] fltSamples = new MYFLT[samples.Length];
-        for (var i = 0; i < samples.Length; i++)
-        {
-            fltSamples[i] = (MYFLT)samples[i];
-        }
-        return CreateTable(tableNumber, fltSamples);
-    }
-*/
+    
+    /// <summary>
+    /// Creates an empty table, to be filled with samples later. 
+    /// Please note that trying to read the samples from an empty folder will produce a crash.
+    /// Can be called during performance.
+    /// </summary>
+    /// <param name="tableNumber">The number of the newly created table</param>
+    /// <param name="tableLength">The length of the table in samples</param>
+    /// <returns>0 If the table could be created</returns>
     public int CreateTableInstrument(int tableNumber, int tableLength/*, int nChannels*/)
     {
         string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -7, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
@@ -1156,7 +1123,6 @@ public class CsoundUnity : MonoBehaviour
                 var data = new float[src.samples * src.channels];
                 src.GetData(data, 0);
 
-
                 if (writeChannelData)
                 {
                     res = new MYFLT[src.samples * src.channels + 1];
@@ -1167,7 +1133,6 @@ public class CsoundUnity : MonoBehaviour
                         res[s] = data[i];
                         s++;
                     }
-
                 }
                 else
                 {
@@ -1224,7 +1189,7 @@ public class CsoundUnity : MonoBehaviour
                     onSamplesLoaded?.Invoke(null);
                     yield break;
                 }
-                Debug.Log("src.samples: " + samples);
+                //Debug.Log("src.samples: " + samples);
                 var ac = ((AudioClip)req.asset);
                 var data = new float[samples * ac.channels];
                 ac.GetData(data, 0);
