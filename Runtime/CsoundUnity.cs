@@ -1491,6 +1491,25 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
+    /// Resets all internal memory and state in preparation for a new performance. 
+    /// Enables external software to run successive Csound performances without reloading Csound. 
+    /// Implies csoundCleanup(), unless already called.
+    /// </summary>
+    public void CsoundReset()
+    {
+        csound.Reset();        
+    }
+
+    /// <summary>
+    /// Prints information about the end of a performance, and closes audio and MIDI devices. 
+    /// Note: after calling csoundCleanup(), the operation of the perform functions is undefined.
+    /// </summary>
+    public void Cleanup()
+    {
+        csound.Cleanup();
+    }
+
+    /// <summary>
     /// Reset the fields of this instance
     /// </summary>
     private void ResetFields()
@@ -1520,9 +1539,8 @@ public class CsoundUnity : MonoBehaviour
 
         if (csound != null)
         {
-            csound.StopCsound();
+            csound.OnApplicationQuit();
         }
-        //csound.reset();
     }
 
     #endregion PRIVATE_METHODS

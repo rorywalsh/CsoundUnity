@@ -122,11 +122,22 @@ public class CsoundUnityBridge
         }
     }
 
-    public void Reset()
+    public void OnApplicationQuit()
     {
         Csound6.NativeMethods.csoundStop(csound);
+        Csound6.NativeMethods.csoundCleanup(csound);
         Csound6.NativeMethods.csoundDestroyMessageBuffer(csound);
         Csound6.NativeMethods.csoundDestroy(csound);
+    }
+
+    public void Cleanup()
+    {
+        Csound6.NativeMethods.csoundCleanup(csound);
+    }
+
+    public void Reset()
+    {
+        Csound6.NativeMethods.csoundReset(csound);
     }
 
     public bool CompiledWithoutError()
