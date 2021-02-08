@@ -125,7 +125,7 @@ public class CsoundUnityBridge
     public void OnApplicationQuit()
     {
         Csound6.NativeMethods.csoundStop(csound);
-        Csound6.NativeMethods.csoundCleanup(csound);
+        //Csound6.NativeMethods.csoundCleanup(csound);
         Csound6.NativeMethods.csoundDestroyMessageBuffer(csound);
         Csound6.NativeMethods.csoundDestroy(csound);
     }
