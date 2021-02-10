@@ -65,7 +65,7 @@ public class CsoundUnityChild : MonoBehaviour
         audioSource.velocityUpdateMode = AudioVelocityUpdateMode.Fixed;
         audioSource.spatialBlend = 1.0f;
 
-        if(selectedAudioChannelIndexByChannel == null) selectedAudioChannelIndexByChannel = new int[2];
+        if (selectedAudioChannelIndexByChannel == null) selectedAudioChannelIndexByChannel = new int[2];
         // TODO: force doppler level of the AudioSource to 0, to avoid audio artefacts ?
         // audioSource.dopplerLevel = 0;
     }
@@ -89,7 +89,7 @@ public class CsoundUnityChild : MonoBehaviour
             namedAudioChannelData.Add(new MYFLT[bufferSize]);
         }
 
-        if(csoundUnity) zerodbfs = csoundUnity.Get0dbfs();
+        if (csoundUnity) zerodbfs = csoundUnity.Get0dbfs();
     }
 
     void OnAudioFilterRead(float[] data, int channels)

@@ -232,8 +232,6 @@ public class CsoundUnity : MonoBehaviour
     {
         initialized = false;
 
-        Debug.Log($"AudioSettings.outputSampleRate: {AudioSettings.outputSampleRate}");
-
         AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
 
         string dataPath = Path.GetFullPath(Path.Combine("Packages", packageName, "Runtime"));
@@ -288,18 +286,18 @@ public class CsoundUnity : MonoBehaviour
 
                 Debug.Log("zerdbfs " + zerdbfs);
 
-//#if UNITY_EDITOR || UNITY_STANDALONE
-//                csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
-//                csound.SetStringChannel("AudioPath", Application.dataPath + "/Audio/");
-//                if (Application.isEditor)
-//                    csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
-//                else
-//                    csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
-//                csound.SetStringChannel("StreamingAssets", Application.streamingAssetsPath);
-//#elif UNITY_ANDROID
-//                string persistentPath = Application.persistentDataPath + "/CsoundFiles/"; // TODO ??
-//                csound.SetStringChannel("CsoundFilesPath", Application.dataPath);
-//#endif
+                //#if UNITY_EDITOR || UNITY_STANDALONE
+                //                csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
+                //                csound.SetStringChannel("AudioPath", Application.dataPath + "/Audio/");
+                //                if (Application.isEditor)
+                //                    csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
+                //                else
+                //                    csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
+                //                csound.SetStringChannel("StreamingAssets", Application.streamingAssetsPath);
+                //#elif UNITY_ANDROID
+                //                string persistentPath = Application.persistentDataPath + "/CsoundFiles/"; // TODO ??
+                //                csound.SetStringChannel("CsoundFilesPath", Application.dataPath);
+                //#endif
                 initialized = true;
                 OnCsoundInitialized?.Invoke();
             }
@@ -340,7 +338,7 @@ public class CsoundUnity : MonoBehaviour
     /// <returns></returns>
     public bool CompiledWithoutError()
     {
-        return compiledOk;   
+        return compiledOk;
     }
 
     #region PERFORMANCE
@@ -440,7 +438,8 @@ public class CsoundUnity : MonoBehaviour
     /// for example to repeat a loop in a sequencer, or to synchronize other events with the Csound score.
     /// </summary>
     /// <param name="value"></param>
-    public void SetScoreOffsetSeconds(MYFLT value) {
+    public void SetScoreOffsetSeconds(MYFLT value)
+    {
         csound.CsoundSetScoreOffsetSeconds(value);
     }
 
@@ -574,7 +573,7 @@ public class CsoundUnity : MonoBehaviour
                         char[] delimiterChars = { ',' };
                         string[] tokens = text.Split(delimiterChars);
                         controller.SetRange(1, tokens.Length, 0);
-                        
+
                         for (var o = 0; o < tokens.Length; o++)
                         {
                             tokens[o] = string.Join("", tokens[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
@@ -588,7 +587,7 @@ public class CsoundUnity : MonoBehaviour
                     string text = trimmd.Substring(trimmd.IndexOf("items(") + 7);
                     text = text.Substring(0, text.IndexOf(")") - 1);
                     //TODO THIS OVERRIDES TEXT!
-                      text = text.Replace("\"", "");
+                    text = text.Replace("\"", "");
                     text = text.Replace('"', new char());
                     if (controller.type == "combobox")
                     {
@@ -681,7 +680,8 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="frame"></param>
     /// <param name="channel"></param>
     /// <param name="sample"></param>
-    public void AddInputSample(int frame, int channel, MYFLT sample) {
+    public void AddInputSample(int frame, int channel, MYFLT sample)
+    {
         csound.AddSpinSample(frame, channel, sample);
     }
 
@@ -804,7 +804,7 @@ public class CsoundUnity : MonoBehaviour
 
         return resTable;
     }
-    
+
     /// <summary>
     /// Creates an empty table, to be filled with samples later. 
     /// Please note that trying to read the samples from an empty folder will produce a crash.
@@ -1139,9 +1139,9 @@ public class CsoundUnity : MonoBehaviour
                     var s = 0;
                     res = new MYFLT[src.samples];
 
-                    for( var i = 0; i < data.Length; i+=src.channels, s++)
+                    for (var i = 0; i < data.Length; i += src.channels, s++)
                     {
-                        res[s] = data[i+ (channelNumber-1)];
+                        res[s] = data[i + (channelNumber - 1)];
                     }
                 }
                 break;
@@ -1497,7 +1497,7 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     public void CsoundReset()
     {
-        csound.Reset();        
+        csound.Reset();
     }
 
     /// <summary>

@@ -12,7 +12,6 @@ public class CsoundUnityChildEditor : Editor
     SerializedProperty m_availableAudioChannels;
     SerializedProperty m_bufferSize;
 
-
     private void OnEnable()
     {
         m_selectedAudioChannelIndexByChan = serializedObject.FindProperty("selectedAudioChannelIndexByChannel");
