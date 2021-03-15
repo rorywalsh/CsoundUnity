@@ -55,7 +55,7 @@ public class CsoundUnityBridge
         //Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.streamingAssetsPath + "/CsoundFiles");
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
         //if (Directory.Exists(csoundDir+"/CsoundLib64.framework/Resources/Opcodes64"))
-        var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.framework/Resources/Opcodes64"));
+        var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.bundle/Contents/MacOS"));
         Debug.Log($"opcodePath {opcodePath} exists? " + Directory.Exists(opcodePath));
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
 #elif UNITY_ANDROID

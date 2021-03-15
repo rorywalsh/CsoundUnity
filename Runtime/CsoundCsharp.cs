@@ -39,7 +39,7 @@ namespace csoundcsharp
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
         internal const string _dllVersion = "csound64.dll";
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        internal const string _dllVersion = "CsoundLib64.framework/CsoundLib64";
+        internal const string _dllVersion = "CsoundLib64.bundle";
 #elif UNITY_ANDROID
         internal const string _dllVersion = "csoundandroid";
 #endif
