@@ -923,6 +923,9 @@ public class CsoundUnityBridge
         public int nchnls_override;     /* overriding number of out channels */
         public int nchnls_i_override;   /* overriding number of in channels */
         public double e0dbfs_override;  /* overriding 0dbfs */
+        public int daemon;              /* daemon mode*/
+        public int ksmps_override;      /* ksmps override */
+        public int FFT_library;         /* fft_lib */
     }
 
 
