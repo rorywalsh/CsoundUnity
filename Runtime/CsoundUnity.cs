@@ -642,6 +642,7 @@ public class CsoundUnity : MonoBehaviour
                 {
                     string value = trimmd.Substring(trimmd.IndexOf("value(") + 6);
                     value = value.Substring(0, value.IndexOf(")"));
+                    value = value.Replace("\"", "");
                     controller.value = value.Length > 0 ? float.Parse(value, CultureInfo.InvariantCulture) : 0;
                     if (control.Contains("combobox"))
                     {
