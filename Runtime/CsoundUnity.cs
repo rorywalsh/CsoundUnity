@@ -1401,7 +1401,7 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="numChannels"></param>
     private void ProcessBlock(float[] samples, int numChannels)
     {
-        if (compiledOk && initialized)
+        if (compiledOk && initialized && !_quitting)
         {
             for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)
             {
@@ -1530,11 +1530,13 @@ public class CsoundUnity : MonoBehaviour
         this.namedAudioChannelTempBufferDict.Clear();
     }
 
+    private bool _quitting = false;
     /// <summary>
     /// Called automatically when the game stops. Needed so that Csound stops when your game does
     /// </summary>
     void OnApplicationQuit()
     {
+        _quitting = true;
         if (LoggingCoroutine != null)
             StopCoroutine(LoggingCoroutine);
 
