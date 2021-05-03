@@ -50,64 +50,64 @@ Before calling any CsoundUnity methods, one must first access the component usin
 See some examples below:
 
 ```cs
-	CsoundUnity csound;
+CsoundUnity csound;
 
-    void Start()
-    {
-        csound = GetComponent<CsoundUnity>();        
-    }
+void Start()
+{
+	csound = GetComponent<CsoundUnity>();        
+}
 
-    void Update()
-    {
-        if (!csound.IsInitialized) return;
-        // your code
-    }
+void Update()
+{
+	if (!csound.IsInitialized) return;
+	// your code
+}
 ```
 
 ```cs
-	CsoundUnity csound;
+CsoundUnity csound;
 
-    IEnumerator Start()
-    {
-        csound = GetComponent<CsoundUnity>();
-        while (!csound.IsInitialized)
-        {
-            yield return null;
-        }
-		
-		// your code
-    }
+IEnumerator Start()
+{
+	csound = GetComponent<CsoundUnity>();
+	while (!csound.IsInitialized)
+	{
+		yield return null;
+	}
+	
+	// your code
+}
 
-    // Update is called once per frame
-    void Update()
-    {
-        // your code
-    }
+// Update is called once per frame
+void Update()
+{
+	// your code
+}
 ```
 
 ```cs
-	CsoundUnity csound;
-    private bool initialized;
+CsoundUnity csound;
+private bool initialized;
 
-    private void Start()
-    {
-        csound = GetComponent<CsoundUnity>();
-        csound.OnCsoundInitialized += Csound_OnCsoundInitialized;
-    }
+private void Start()
+{
+	csound = GetComponent<CsoundUnity>();
+	csound.OnCsoundInitialized += Csound_OnCsoundInitialized;
+}
 
-    private void Csound_OnCsoundInitialized()
-    {
-        initialized = true;
-        Debug.Log("Csound initialised!");
-    }
+private void Csound_OnCsoundInitialized()
+{
+	initialized = true;
+	Debug.Log("Csound initialised!");
+}
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (!initialized) return;
+// Update is called once per frame
+void Update()
+{
+	if (!initialized) return;
 
-        // your code
-    }
+	// your code
+}
 ```
 
 
