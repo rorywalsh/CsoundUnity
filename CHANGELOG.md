@@ -13,8 +13,8 @@ Started development!
 - Updated libraries to **Csound 6.15**.
 - Implemented most of the Csound API.
 - Several improvements of the Editor inspector: 
-	- Now the changes made in the csd Control Channels are correctly serialised and saved in the Scene, and are fully compatible with Unity Inspector presets.
-	- Added Edit Csd Section, to be able to edit the csd from Unity, and save its content.
+	- Now the changes made in the csd's *Control Channels* are correctly serialised and saved in the Scene, and are fully compatible with Unity Inspector presets.
+	- Added Edit Csd Section, to be able to edit the csd from Unity, and save its content on disk.
 	- Added Test Score Section, to be able to send score to Unity when testing in Editor.
 	- Added **AudioChannels**: the csd file is scanned for *chnseta* opcodes, and the resulting Audio Channels can be seen in the inspector, and publicly accessed from a dictionary.
 	- Added folded groups:
