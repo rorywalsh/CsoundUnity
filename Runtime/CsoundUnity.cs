@@ -120,7 +120,7 @@ public class CsoundUnity : MonoBehaviour
 #endif
 
     /// <summary>
-    /// When it is set to true, all Csound output messages will be sent to the 
+    /// If true, all Csound output messages will be sent to the 
     /// Unity output console.
     /// Note that this can slow down performance if there is a
     /// lot of information being printed.
@@ -128,15 +128,27 @@ public class CsoundUnity : MonoBehaviour
     public bool logCsoundOutput = false;
 
     /// <summary>
-    /// When it is set to true, no audio is sent to output
+    /// If true no audio is sent to output
     /// </summary>
     public bool mute = false;
 
     /// <summary>
-    /// When set to true Csound uses as an input the AudioClip attached to this AudioSource
+    /// If true Csound uses as an input the AudioClip attached to this AudioSource
     /// If false, no processing occurs on the attached AudioClip
     /// </summary>
     public bool processClipAudio;
+
+    /// <summary>
+    /// If true it will print warnings in the console when the output volume is too high, 
+    /// and mute all the samples above the loudWarningThreshold value
+    /// </summary>
+    public bool loudVolumeWarning = true;
+
+    /// <summary>
+    /// The volume threshold at which a warning is output to the console, 
+    /// and audio output is filtered
+    /// </summary>
+    public float loudWarningThreshold = 10f;
 
     /// <summary>
     /// list to hold channel data
@@ -308,7 +320,7 @@ public class CsoundUnity : MonoBehaviour
             compiledOk = false;
         }
 
-        Debug.Log("CsoundUnity done init");
+        Debug.Log("CsoundUnity done init, compiledOk? " + compiledOk);
     }
 
 
@@ -1435,11 +1447,10 @@ public class CsoundUnity : MonoBehaviour
                         //samples[i + channel] = (float)rand.NextDouble();
                         samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
 
-                        if (samples[i + channel] > 10f)
+                        if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
                         {
                             samples[i + channel] = 0.0f;
                             Debug.LogWarning("Volume is too high! Clearing output");
-
                         }
                     }
                 }

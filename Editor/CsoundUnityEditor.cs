@@ -37,6 +37,8 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_processAudio;
     SerializedProperty m_mute;
     SerializedProperty m_logCsoundOutput;
+    SerializedProperty m_loudVolumeWarning;
+    SerializedProperty m_loudWarningThreshold;
     SerializedProperty m_channelControllers;
     SerializedProperty m_availableAudioChannels;
 
@@ -57,6 +59,8 @@ public class CsoundUnityEditor : Editor
         m_processAudio = this.serializedObject.FindProperty("processClipAudio");
         m_mute = this.serializedObject.FindProperty("mute");
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
+        m_loudVolumeWarning = this.serializedObject.FindProperty("loudVolumeWarning");
+        m_loudWarningThreshold = this.serializedObject.FindProperty("loudWarningThreshold");
         m_channelControllers = this.serializedObject.FindProperty("_channels");
         m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
 
@@ -101,10 +105,10 @@ public class CsoundUnityEditor : Editor
 
     private void DrawSettings()
     {
-        m_drawSettings.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawSettings.boolValue, "Settings", true);
+        m_drawSettings.boolValue = EditorGUILayout.Foldout(m_drawSettings.boolValue, "Settings", true);
         if (m_drawSettings.boolValue)
         {
-            EditorGUILayout.HelpBox("Settings", MessageType.None);
+            // EditorGUILayout.HelpBox("Settings", MessageType.None);
             EditorGUI.BeginChangeCheck();
             m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
             if (EditorGUI.EndChangeCheck())
@@ -113,6 +117,9 @@ public class CsoundUnityEditor : Editor
             }
             m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", m_mute.boolValue);
             m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
+            m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle("Loud Volume Warning", m_loudVolumeWarning.boolValue);
+            if (m_loudVolumeWarning.boolValue)
+                m_loudWarningThreshold.floatValue = EditorGUILayout.FloatField("Warning Threshold", m_loudWarningThreshold.floatValue, GUILayout.MaxWidth(Screen.width / 2 + 20));
         }
     }
 
@@ -145,7 +152,7 @@ public class CsoundUnityEditor : Editor
 
     private void DrawCsdString() {
 
-        m_drawCsoundString.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawCsoundString.boolValue, "Edit Csd Section", true);
+        m_drawCsoundString.boolValue = EditorGUILayout.Foldout(m_drawCsoundString.boolValue, "Edit Csd Section", true);
         if (m_drawCsoundString.boolValue) {
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(500));
 
@@ -164,7 +171,7 @@ public class CsoundUnityEditor : Editor
     }
     private void DrawTestScore()
     {
-        m_drawTestScore.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawTestScore.boolValue, "Test Score Section", true);
+        m_drawTestScore.boolValue = EditorGUILayout.Foldout(m_drawTestScore.boolValue, "Test Score Section", true);
         if (m_drawTestScore.boolValue)
         {
 
@@ -199,7 +206,7 @@ public class CsoundUnityEditor : Editor
 
     private void DrawAvailableChannelsList()
     {
-        m_drawAudioChannels.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawAudioChannels.boolValue, "Audio Channels", true);
+        m_drawAudioChannels.boolValue = EditorGUILayout.Foldout(m_drawAudioChannels.boolValue, "Audio Channels", true);
         if (m_drawAudioChannels.boolValue)
         {
             if (m_availableAudioChannels != null)
@@ -257,7 +264,7 @@ public class CsoundUnityEditor : Editor
 
     public void DrawChannelControllers()
     {
-        m_drawChannels.boolValue = EditorGUI.Foldout(EditorGUILayout.GetControlRect(), m_drawChannels.boolValue, "Control Channels", true);
+        m_drawChannels.boolValue = EditorGUILayout.Foldout(m_drawChannels.boolValue, "Control Channels", true);
         if (m_drawChannels.boolValue)
         {
             if (m_channelControllers.arraySize < 1)
