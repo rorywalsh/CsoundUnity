@@ -4,7 +4,7 @@ Started development!
 
 ## [3.0.0] - 2021-05-03
 
-#Release of version 3.0#
+##Release of version 3.0##
 
 **Changes from 2.3**
 
