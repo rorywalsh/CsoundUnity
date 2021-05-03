@@ -327,7 +327,7 @@ public class CsoundUnity : MonoBehaviour
     #region PUBLIC_METHODS
 
     /// <summary>
-    /// Returns the version number times 1000 (5.00.0 = 5000).
+    /// Returns the Csound version number times 1000 (5.00.0 = 5000).
     /// </summary>
     /// <returns></returns>
     public int GetVersion()
@@ -336,7 +336,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns the API version number times 100 (1.00 = 100).
+    /// Returns the Csound API version number times 100 (1.00 = 100).
     /// </summary>
     /// <returns></returns>
     public int GetAPIVersion()
