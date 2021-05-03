@@ -4,7 +4,7 @@ Started development!
 
 ## [3.0.0] - 2021-05-03
 
-**Release of version 3.0**
+#Release of version 3.0#
 
 **Changes from 2.3**
 
@@ -28,13 +28,13 @@ Started development!
 - Added Android libraries, builds working on **Android 64bit**.
 - Added an utility method to load samples from AudioClips (currently from Resources folder only).
 - Added CreateTable methods, to be able to create Csound tables from float arrays.
-- Added a toggle to show warnings and hard filtering output samples with values higher than a threshold
-- **Cabbage widgets**: Added support for *ComboBoxes* 
+- Added a toggle to show warnings and hard filtering output samples with values higher than a threshold.
+- **Cabbage widgets**: Added support for *ComboBoxes*.
 - Added IsInitialized property and OnCsoundInitialized event.
 - Added PerformanceFinished property.
-- Added Samples: *Csound Test*, *Basic Test*, *CsoundUnityChild Test*, *Simple Sequencer*, *AudioClip Reader*
-- Overriding the sample rate and control rate of the csd using Unity Audio Project Settings
-- Improved Logging
+- Added Samples: *Csound Test*, *Basic Test*, *CsoundUnityChild Test*, *Simple Sequencer*, *AudioClip Reader*.
+- Overriding the sample rate and control rate of the csd using Unity Audio Project Settings.
+- Improved Logging.
 - Updated **macOS library** to use a .bundle instead of a .framework, to be able to build for macOS straight out of the box.
 - Totally removed the need to use the StreamingAssets folder to store csds, libraries and audio files, the csd is saved into the CsoundUnity instance as soon as it is dragged in the *Csd Asset* inspector field.
 - Removed the overwriting of the *Path* variable of the operating system.
@@ -42,4 +42,4 @@ Started development!
 **Fixes**
 - Crash on exit.
 - Fixes for distorted audio output when reading mono files.
-- Build/Editor *DLLNotFound* issues on macOS
+- Build/Editor *DLLNotFound* issues on macOS.
