@@ -26,7 +26,7 @@ To open the Package Manager in Unity, select **Window/PackageManager** from the 
 - option 1: clone https://github.com/rorywalsh/CsoundUnity.git#develop or download the [Source Code.zip](https://github.com/rorywalsh/CsoundUnity/archive/refs/tags/v3.0.zip) on your local disk, extract its content, press + in the Package Manager, *Add package from disk...*, and select the package.json inside the extracted folder.  
 - option 2: download the [Source Code tar.gz](https://github.com/rorywalsh/CsoundUnity/archive/refs/tags/v3.0.tar.gz) from the release page, press + in the Package Manager,  *Add package from tarball...*, and select the downloaded tar.gz.
 
-## V3 Docs
+## Documentation
 
 [Here you can find the v3 docs](http://rorywalsh.github.io/CsoundUnity/docs/3.0/html/index.html)
 
