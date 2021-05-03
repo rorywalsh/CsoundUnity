@@ -9,7 +9,7 @@ This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If 
 use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
 http://csound6net.codeplex.com
   
-** New Version: 3.0 **
+## New Version: 3.0 ##
 
 Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/1ba0e447e26c05094bf9324e633c6a527524bc5f/CHANGELOG.md) for more details.  
 
