@@ -63,14 +63,14 @@ public class CsoundChannelController
     }
 }
 
-/// <summary>
-/// Utility class for CsoundFiles to copy 
-/// </summary>
-[Serializable]
-public struct CsoundFilesInfo
-{
-    public string[] fileNames;
-}
+///// <summary>
+///// Utility class for CsoundFiles to copy 
+///// </summary>
+//[Serializable]
+//public struct CsoundFilesInfo
+//{
+//    public string[] fileNames;
+//}
 
 #endregion PUBLIC_CLASSES
 
