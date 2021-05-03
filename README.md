@@ -28,7 +28,7 @@ To open the Package Manager in Unity, select **Window/PackageManager** from the 
 
 ## Documentation
 
-[Here you can find the v3 docs](http://rorywalsh.github.io/CsoundUnity/docs/3.0/html/index.html)
+[Here you can find the v3 docs](https://github.com/rorywalsh/CsoundUnity/blob/develop/Documentation~/index.md)
 
 ## Contributors ✨
 
