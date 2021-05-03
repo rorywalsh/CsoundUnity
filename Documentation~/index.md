@@ -207,10 +207,12 @@ There you can choose the AudioChannels that this CsoundUnityChild will play and 
 If AudioChannelsSetting is set to MONO, the selected AudioChannel will be played in both LEFT and RIGHT channel, at half volume, to have it perfectly centered.
 If AudioChannelsSetting is set to STEREO, the selected AudioChannels will use the respective output channel.
 
+<img src="images/setupCsoundUnityChild_v3.gif" alt="CsoundUnityChild"/>
+
 <a name=csound_filewatcher></a>
 ## CsoundFileWatcher
 
-From version 3.0 CsoundUnity can detect the changes made to the *csd* file while modifying it in an external editor. For this to work add **FILEWATCHER_ON** in your project Scripting Define Symbols. Note this is an experimental feature: please report any issue [on Github](https://github.com/rorywalsh/CsoundUnity/issues).
+From version 3.0 CsoundUnity can detect the changes made to the *csd* file while modifying it in an external editor. For this to work add **FILEWATCHER_ON** in your project Scripting Define Symbols. **This is an experimental feature**: please report any issue [on Github](https://github.com/rorywalsh/CsoundUnity/issues).
 
 <a name=platforms></a>
 ## Supported Platforms
