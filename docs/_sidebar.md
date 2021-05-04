@@ -8,6 +8,6 @@
   * [CsoundUnityChild](csoundunity_child.md)
   * [CsoundFileWatcher](csound_file_watcher.md)
   *	[Supported Platforms](platforms.md)
-* [API Docs](./html/index.html)
+* [API Docs](http://rorywalsh.github.io/CsoundUnity/html/index.html)
 
 
