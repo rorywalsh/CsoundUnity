@@ -1,0 +1,34 @@
+{
+  "name": "com.csound.csoundunity",
+  "displayName": "CsoundUnity",
+  "version": "3.0.0",
+  "unity": "2018.1",
+  "description": "CsoundUnity is a fully integrated audio middleware. It extends Unity's audio API by creating Csound-based AudioSource objects that can interact and exist alongside regular AudioSource objects. \nWith CsoundUnity, games developers have at their fingertips one of the most powerful synthesis systems in existence. \n\nPlease visit homepage: http://rorywalsh.github.io/CsoundUnity/ \n\nThis interface would not have been possible without Richard Henninger's .NET interface to the Csound API.",
+  "samples": [
+    {
+      "displayName": "Csound Test",
+      "description": "CsoundUnity scene to test opcodes and environment variables",
+      "path": "Samples~/CsoundTest"
+    },
+    {
+      "displayName": "Basic Test",
+      "description": "Basic CsoundUnity scene to test a simple csd with a slider",
+      "path": "Samples~/BasicTest"
+    },
+    {
+      "displayName": "CsoundUnity Child Test",
+      "description": "Reading data from Named AudioChannels",
+      "path": "Samples~/CsoundUnityChild"
+    },
+    {
+      "displayName": "Simple Sequencer",
+      "description": "A sequencer to play with!",
+      "path": "Samples~/SimpleSequencer"
+    },
+    {
+      "displayName": "AudioClip Reader",
+      "description": "Example of reading from AdioClips!",
+      "path": "Samples~/AudioClipToTable"
+    }
+  ]
+}

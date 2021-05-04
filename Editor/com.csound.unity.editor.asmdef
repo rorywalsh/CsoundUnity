@@ -1,0 +1,17 @@
+{
+    "name": "com.csound.unity.editor",
+    "references": [
+        "GUID:0f8a96c3990a549aebde74c2a0c21938"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
