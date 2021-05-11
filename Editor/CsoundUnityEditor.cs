@@ -153,8 +153,9 @@ public class CsoundUnityEditor : Editor
     private void DrawCsdString() {
 
         m_drawCsoundString.boolValue = EditorGUILayout.Foldout(m_drawCsoundString.boolValue, "Edit Csd Section", true);
-        if (m_drawCsoundString.boolValue) {
-            scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(500));
+        if (m_drawCsoundString.boolValue && m_csoundString.stringValue.Length > 30) {
+            var lines = m_csoundString.stringValue.Split('\n').Length;
+            scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(Mathf.Min(Mathf.Max(30, lines * 30), 500f)));
 
             m_csoundString.stringValue = EditorGUILayout.TextArea(m_csoundString.stringValue);
 
