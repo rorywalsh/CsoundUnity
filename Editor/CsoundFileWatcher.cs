@@ -1,4 +1,4 @@
-﻿//#define FILEWATCHER_ON
+﻿#define FILEWATCHER_ON
 
 #if FILEWATCHER_ON
 #if UNITY_EDITOR
@@ -168,7 +168,7 @@ public class CsoundFileWatcher
                         }
                         else
                         {
-                            Debug.Log($"<color=green>[CsoundFileWatcher] Updating Csd for csd: {csound.csoundFileName} in GameObject: {csound.gameObject.name}</color>");
+                            Debug.Log($"<color=green>[CsoundFileWatcher] Updating csd: {csound.csoundFileName} in GameObject: {csound.gameObject.name}</color>");
                             csound.enabled = true;
                             //file changed but guid stays the same
                             csound.SetCsd(csound.csoundFileGUID);
@@ -247,9 +247,11 @@ public class CsoundFileWatcher
                 var csdString = File.ReadAllText(filePath);
                 // check if the csdString in the asset file is different from the one we have serialised in CsoundUnity
                 if (!csd.csoundString.Equals(csdString))
+                {
+                    Debug.Log($"<color=green>[CsoundFileWatcher] Updating csd: {csd.csoundFileName} in GameObject: {csd.gameObject.name}</color>");
                     // content changed but guid stays the same
                     csd.SetCsd(csd.csoundFileGUID);
-
+                }
                 csd.enabled = true;
             }
 
