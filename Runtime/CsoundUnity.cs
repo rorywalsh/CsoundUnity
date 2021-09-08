@@ -227,6 +227,10 @@ public class CsoundUnity : MonoBehaviour
     private Coroutine LoggingCoroutine;
     int bufferSize, numBuffers;
 
+    /* FIX ATTEMPT SPATIALIZATION ISSUES
+    float[] audioClipData = new float[2];
+    */
+
     /// <summary>
     /// the temp buffer, ksmps sized 
     /// </summary>
@@ -263,11 +267,25 @@ public class CsoundUnity : MonoBehaviour
         //}
 
         audioSource = GetComponent<AudioSource>();
+        audioSource.spatializePostEffects = true;
+        
+        /* FIX ATTEMPT SPATIALIZATION ISSUES
+        if (audioSource.clip == null)
+        {
+            var ac = AudioClip.Create("DummyClip", 1, 2, AudioSettings.outputSampleRate, false);
+            ac.SetData(new float[] { 1, 1 }, 0);
 
-        /// the CsoundUnityBridge constructor takes a path to the package Runtime folder, and a string with the csound code.
-        /// It then calls createCsound() to create an instance of Csound and compile the csd string.
-        /// After this we start the performance of Csound.
-        csound = new CsoundUnityBridge(dataPath, _csoundString);
+            audioSource.clip = ac;
+            audioSource.loop = true;
+            ac.GetData(audioClipData, 0);
+            audioSource.Play();
+        }
+        */
+
+    /// the CsoundUnityBridge constructor takes a path to the package Runtime folder, and a string with the csound code.
+    /// It then calls createCsound() to create an instance of Csound and compile the csd string.
+    /// After this we start the performance of Csound.
+    csound = new CsoundUnityBridge(dataPath, _csoundString);
         if (csound != null)
         {
             /// channels are created when a csd file is selected in the inspector
@@ -1419,6 +1437,10 @@ public class CsoundUnity : MonoBehaviour
             {
                 for (uint channel = 0; channel < numChannels; channel++)
                 {
+                    // necessary to avoid calling csound functions when quitting while reading this block of samples
+                    // always remember OnAudioFilterRead runs on a different thread
+                    if (_quitting) return;
+
                     if (mute == true)
                         samples[i + channel] = 0.0f;
                     else
@@ -1443,9 +1465,7 @@ public class CsoundUnity : MonoBehaviour
 
                         //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
                         var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
-                        //var rand = new System.Random();
-                        //samples[i + channel] = (float)rand.NextDouble();
-                        samples[i + channel] = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
+                        samples[i + channel] = /*audioClipData[channel] * */ (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
 
                         if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
                         {
