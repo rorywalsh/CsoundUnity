@@ -227,17 +227,12 @@ public class CsoundUnity : MonoBehaviour
     private Coroutine LoggingCoroutine;
     int bufferSize, numBuffers;
 
-    /* FIX ATTEMPT SPATIALIZATION ISSUES
-    float[] audioClipData = new float[2];
-    */
-
     /// <summary>
     /// the temp buffer, ksmps sized 
     /// </summary>
     private Dictionary<string, MYFLT[]> namedAudioChannelTempBufferDict = new Dictionary<string, MYFLT[]>();
 
     #endregion
-
 
     /// <summary>
     /// CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
@@ -268,24 +263,24 @@ public class CsoundUnity : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
         audioSource.spatializePostEffects = true;
-        
-        /* FIX ATTEMPT SPATIALIZATION ISSUES
+
+        // FIX SPATIALIZATION ISSUES
         if (audioSource.clip == null)
         {
-            var ac = AudioClip.Create("DummyClip", 1, 2, AudioSettings.outputSampleRate, false);
-            ac.SetData(new float[] { 1, 1 }, 0);
+            var ac = AudioClip.Create("DummyClip", 32, 1, AudioSettings.outputSampleRate, false);
+            var data = new float[32];
+            for (var i = 0; i < data.Length; i++) data[i] = 1;
+            ac.SetData(data, 0);
 
             audioSource.clip = ac;
             audioSource.loop = true;
-            ac.GetData(audioClipData, 0);
             audioSource.Play();
         }
-        */
 
-    /// the CsoundUnityBridge constructor takes a path to the package Runtime folder, and a string with the csound code.
-    /// It then calls createCsound() to create an instance of Csound and compile the csd string.
-    /// After this we start the performance of Csound.
-    csound = new CsoundUnityBridge(dataPath, _csoundString);
+        /// the CsoundUnityBridge constructor takes a path to the package Runtime folder, and a string with the csound code.
+        /// It then calls createCsound() to create an instance of Csound and compile the csd string.
+        /// After this we start the performance of Csound.
+        csound = new CsoundUnityBridge(dataPath, _csoundString);
         if (csound != null)
         {
             /// channels are created when a csd file is selected in the inspector
@@ -1465,7 +1460,7 @@ public class CsoundUnity : MonoBehaviour
 
                         //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
                         var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
-                        samples[i + channel] = /*audioClipData[channel] * */ (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
+                        samples[i + channel] = samples[i + channel] * (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
 
                         if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
                         {

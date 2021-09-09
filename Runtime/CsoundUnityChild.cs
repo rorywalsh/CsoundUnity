@@ -45,9 +45,11 @@ public class CsoundUnityChild : MonoBehaviour
     // private uint ksmpsIndex = 0;
 
     /* FIX ATTEMPT SPATIALIZATION ISSUES
-    float[] audioClipData = new float[2];
-    */
-
+     * */
+    //float[] audioClipData = new float[2];
+    //float[] audioSourceDataLeft = new float[1024];
+    //float[] audioSourceDataRight = new float[1024];
+    //float[] audioSourceData = new float[2048];
     #endregion PRIVATE_FIELDS
 
 
@@ -75,22 +77,23 @@ public class CsoundUnityChild : MonoBehaviour
         // normal----mono----reverse
         // audioSource.spread = 360.0f; 
 
-        /* FIX ATTEMPT SPATIALIZATION ISSUES
+        /* FIX SPATIALIZATION ISSUES
+        */
         if (audioSource.clip == null)
         {
-            var ac = AudioClip.Create("DummyClip", 1, 2, AudioSettings.outputSampleRate, false);
-            ac.SetData(new float[] { 1, 1 }, 0);
+            var ac = AudioClip.Create("DummyClip", 32, 1, AudioSettings.outputSampleRate, false);
+            var data = new float[32];
+            for (var i = 0; i < data.Length; i++)
+            {
+                data[i] = 1;
+            }
+            ac.SetData(data, 0);
 
             audioSource.clip = ac;
             audioSource.loop = true;
-            ac.GetData(audioClipData, 0);
-            foreach (var data in audioClipData)
-            {
-                Debug.Log("audioClipData: " + data);
-            }
             audioSource.Play();
         }
-        */
+
 
         if (selectedAudioChannelIndexByChannel == null) selectedAudioChannelIndexByChannel = new int[2];
         // TODO: force doppler level of the AudioSource to 0, to avoid audio artefacts ?
@@ -113,13 +116,6 @@ public class CsoundUnityChild : MonoBehaviour
         zerodbfs = csoundUnity.Get0dbfs();
     }
 
-    /* FIX ATTEMPT SPATIALIZATION ISSUES
-    private void Update()
-    {
-        audioSource.clip.GetData(audioClipData, 0);
-    }
-    */
-
     public void SetAudioChannel(int channel, int audioChannel)
     {
         //Debug.Log($"CsoundUnityChild SetAudioChannel channel: {channel}, audioChannel: {audioChannel}");
@@ -128,7 +124,7 @@ public class CsoundUnityChild : MonoBehaviour
 
     void Start()
     {
-        if(namedAudioChannelData.Count == 0)
+        if (namedAudioChannelData.Count == 0)
             for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
             {
                 namedAudioChannelData.Add(new MYFLT[bufferSize]);
@@ -145,7 +141,7 @@ public class CsoundUnityChild : MonoBehaviour
         }
     }
 
-    public void ProcessBlock(float[] samples, int numChannels)
+    void ProcessBlock(float[] samples, int numChannels)
     {
         // print("CsoundUnityChild DSP Time - " + AudioSettings.dspTime * 48000);
         if (availableAudioChannels == null || availableAudioChannels.Count < 1 || !csoundUnity.IsInitialized)
@@ -170,11 +166,10 @@ public class CsoundUnityChild : MonoBehaviour
                     case AudioChannels.MONO:
                         // sample is multiplied by 0.5f to obtain the same volume as the original audio file, 
                         // since the mono channel is duplicated between the channels
-                        samples[i + channel] = /*audioClipData[channel] * */
-    (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs * 0.5f);
+                        samples[i + channel] = samples[i + channel] * (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs * 0.5f);
                         break;
                     case AudioChannels.STEREO:
-                        samples[i + channel] = /*audioClipData[channel] * */(float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
+                        samples[i + channel] = samples[i + channel] * (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
                         break;
                 }
             }
