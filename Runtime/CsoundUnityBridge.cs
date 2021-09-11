@@ -47,7 +47,7 @@ public class CsoundUnityBridge
 	*/
     public CsoundUnityBridge(string csoundDir, string csdFile)
     {
-        Debug.Log($"CsoundUnityBridge constructor from dir: {csoundDir}\ncsdFile: \n{csdFile}");
+        Debug.Log($"CsoundUnityBridge constructor from dir: {csoundDir}");//\ncsdFile: \n{csdFile}");
 #if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
         //Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.streamingAssetsPath + "/CsoundFiles");
