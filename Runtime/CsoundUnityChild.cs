@@ -100,7 +100,7 @@ public class CsoundUnityChild : MonoBehaviour
         // audioSource.dopplerLevel = 0;
     }
 
-    public void Init(CsoundUnity csound, AudioChannels audioChannels)
+    public void Init(CsoundUnity csound, AudioChannels audioChannels = AudioChannels.MONO)
     {
         AudioChannelsSetting = audioChannels;
 
