@@ -223,6 +223,8 @@ public class CsoundUnityEditor : Editor
                 {
                     var ac = m_availableAudioChannels.GetArrayElementAtIndex(i);
                     EditorGUILayout.LabelField($"Channel {i}", ac.stringValue);
+
+                    // TODO DRAW A VU METER FOR EVERY CHANNEL?
                 }
             }
         }
@@ -319,9 +321,13 @@ public class CsoundUnityEditor : Editor
                     }
                     else if (type.Contains("button"))
                     {
-                        if (GUILayout.Button(label) && Application.isPlaying && csoundUnity != null)
+                        if (Application.isPlaying && csoundUnity != null)
                         {
-                            csoundUnity.SetChannel(channel, 1);
+                            if (GUILayout.Button(label))
+                            {
+                                chanValue.floatValue = chanValue.floatValue == 1 ? 0 : 1;
+                                csoundUnity.SetChannel(channel, chanValue.floatValue);
+                            }
                         }
                     }
                     else if (type.Contains("groupbox"))
