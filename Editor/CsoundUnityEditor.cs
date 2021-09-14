@@ -321,9 +321,9 @@ public class CsoundUnityEditor : Editor
                     }
                     else if (type.Contains("button"))
                     {
-                        if (Application.isPlaying && csoundUnity != null)
+                        if (GUILayout.Button(label))
                         {
-                            if (GUILayout.Button(label))
+                            if (Application.isPlaying && csoundUnity != null)
                             {
                                 chanValue.floatValue = chanValue.floatValue == 1 ? 0 : 1;
                                 csoundUnity.SetChannel(channel, chanValue.floatValue);
