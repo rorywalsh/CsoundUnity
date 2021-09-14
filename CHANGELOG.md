@@ -1,3 +1,11 @@
+## [3.0.1] - 2021-09-14
+
+- Spatialization issue fix
+- Some little changes in how CsoundUnityChild is initialized, to be able to create children from code
+- Small editor fixes for Cabbage buttons
+- Removed csd content from logs
+- CsoundFileWatcher enabled by default
+
 ## [3.0.0] - 2021-05-03
 
 ## Release of version 3.0 ##
