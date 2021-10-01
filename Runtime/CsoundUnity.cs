@@ -265,7 +265,7 @@ public class CsoundUnity : MonoBehaviour
         audioSource.spatializePostEffects = true;
 
         // FIX SPATIALIZATION ISSUES
-        if (audioSource.clip == null)
+        if (audioSource.clip == null && !processClipAudio)
         {
             var ac = AudioClip.Create("DummyClip", 32, 1, AudioSettings.outputSampleRate, false);
             var data = new float[32];
