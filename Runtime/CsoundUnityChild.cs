@@ -94,6 +94,13 @@ public class CsoundUnityChild : MonoBehaviour
             audioSource.Play();
         }
 
+        if (namedAudioChannelData.Count == 0)
+            for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
+            {
+                namedAudioChannelData.Add(new MYFLT[bufferSize]);
+            }
+
+        if (csoundUnity) zerodbfs = csoundUnity.Get0dbfs();
 
         if (selectedAudioChannelIndexByChannel == null) selectedAudioChannelIndexByChannel = new int[2];
         // TODO: force doppler level of the AudioSource to 0, to avoid audio artefacts ?
@@ -124,13 +131,7 @@ public class CsoundUnityChild : MonoBehaviour
 
     void Start()
     {
-        if (namedAudioChannelData.Count == 0)
-            for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
-            {
-                namedAudioChannelData.Add(new MYFLT[bufferSize]);
-            }
-
-        if (csoundUnity) zerodbfs = csoundUnity.Get0dbfs();
+        
     }
 
     void OnAudioFilterRead(float[] data, int channels)
