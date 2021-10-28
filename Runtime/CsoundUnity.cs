@@ -288,7 +288,10 @@ public class CsoundUnity : MonoBehaviour
                 // initialise channels if found in xml descriptor..
                 for (int i = 0; i < channels.Count; i++)
                 {
-                    csound.SetChannel(channels[i].channel, channels[i].value);
+                    if (channels[i].type.Contains("combobox"))
+                        csound.SetChannel(channels[i].channel, channels[i].value + 1);
+                    else
+                        csound.SetChannel(channels[i].channel, channels[i].value);
                 }
 
             foreach (var name in availableAudioChannels)
