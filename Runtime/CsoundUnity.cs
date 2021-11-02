@@ -251,6 +251,8 @@ public class CsoundUnity : MonoBehaviour
         dataPath = Path.Combine(dataPath, "Win64"); // Csound plugin libraries in Windows Editor
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
         dataPath = Path.Combine(dataPath, "macOS");
+#elif UNITY_ANDROID
+        dataPath = Path.Combine(dataPath, "Android");
 #endif
 
         //string path = System.Environment.GetEnvironmentVariable("Path");
@@ -499,7 +501,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Get the current control rate
+    /// Get the number of audio sample frames per control sample.
     /// </summary>
     /// <returns></returns>
     public uint GetKsmps()
@@ -1463,7 +1465,10 @@ public class CsoundUnity : MonoBehaviour
 
                         //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
                         var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
-                        samples[i + channel] = samples[i + channel] * (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
+                        var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / zerdbfs;
+                        // multiply Csound output by the sample value to maintain spatialization set by Unity. 
+                        // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
+                        samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
 
                         if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
                         {
