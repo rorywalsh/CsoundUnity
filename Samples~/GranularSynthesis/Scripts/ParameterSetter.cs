@@ -33,7 +33,7 @@ namespace Csound.GranularSynthesis.Partikkel
             this._maxPos = maxPos;
             this._caption.text = $"x: {xChannel.channel}: {xChannel.value:0.00}\n" +
                 $"z: {(zChannel != null ? zChannel.channel : string.Empty)} : {(zChannel != null ? zChannel.value : float.NaN):0.00}";
-            this.name = $"{xChannel.channel}\nz: {(zChannel != null ? zChannel.channel : string.Empty)}";
+            this.name = $"x: {xChannel.channel} - z: {(zChannel != null ? zChannel.channel : string.Empty)}";
             var xPos = CsoundUnity.Remap(xChannel.value, xChannel.min, xChannel.max, minPos.x, maxPos.x);
             var zPos = zChannel != null ? CsoundUnity.Remap(zChannel.value, zChannel.min, zChannel.max, minPos.y, maxPos.y) : 0;
             this.transform.position = new Vector3(xPos, this.transform.localScale.y / 2, zPos);
