@@ -35,6 +35,11 @@
       "displayName": "AudioClip Reader",
       "description": "Example of reading from AudioClips!",
       "path": "Samples~/AudioClipToTable"
+    },
+    {
+      "displayName": "Granular Synthesis",
+      "description": "Examples of using granular synthesis opcodes",
+      "path": "Samples~/GranularSynthesis"
     }
   ]
 }
