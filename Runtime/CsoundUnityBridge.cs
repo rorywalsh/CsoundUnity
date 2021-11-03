@@ -682,15 +682,25 @@ public class CsoundUnityBridge
     public IDictionary<string, ChannelInfo> GetChannelList()
     {
         IDictionary<string, ChannelInfo> channels = new SortedDictionary<string, ChannelInfo>();
+        Debug.LogWarning("This method still has some issues and makes Unity crash, " +
+            "probably because of something wrong in the definition of the ChannelInfoProxy structure." +
+            "It will return an empty dictionary. " +
+            "Use CsoundUnity.channels to grab a list of the current CsoundChannelControllers.");
+        return channels;
+
+        /*
         IntPtr ppChannels = IntPtr.Zero;
         int size = Csound6.NativeMethods.csoundListChannels(csound, out ppChannels);
-        if ((ppChannels != IntPtr.Zero) && (size >= 0))
+        if ((size > 0) && (ppChannels != IntPtr.Zero))
         {
             int proxySize = Marshal.SizeOf(typeof(ChannelInfoProxy));
             for (int i = 0; i < size; i++)
             {
                 var proxy = Marshal.PtrToStructure(ppChannels + (i * proxySize), typeof(ChannelInfoProxy)) as ChannelInfoProxy;
-                string chanName = Marshal.PtrToStringAnsi(proxy.name);
+                string chanName = string.Empty;
+                if (proxy.name != IntPtr.Zero)
+                    chanName = Marshal.PtrToStringAuto(proxy.name);
+
                 ChannelInfo info = new ChannelInfo(chanName, (ChannelType)(proxy.type & 15), (ChannelDirection)(proxy.type >> 4));
                 var hintProxy = proxy.hints;
                 var hints = new ChannelHints((ChannelBehavior)hintProxy.behav, hintProxy.dflt, hintProxy.min, hintProxy.max)
@@ -699,7 +709,7 @@ public class CsoundUnityBridge
                     y = hintProxy.y,
                     height = hintProxy.height,
                     width = hintProxy.width,
-                    attributes = (hintProxy.attributes != IntPtr.Zero) ? Marshal.PtrToStringAnsi(hintProxy.attributes) : null
+                    attributes = (hintProxy.attributes != IntPtr.Zero) ? Marshal.PtrToStringAuto(hintProxy.attributes) : null
                 };
                 info.Hints = hints;
                 channels.Add(chanName, info);
@@ -708,6 +718,7 @@ public class CsoundUnityBridge
         }
 
         return channels;
+        */
     }
 
     /// <summary>
@@ -762,9 +773,10 @@ public class CsoundUnityBridge
     /// <summary>
     /// Private proxy class used during marshalling of actual ChannelInfo 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     private class ChannelInfoProxy
     {
+        [MarshalAs(UnmanagedType.AnsiBStr)]
         public IntPtr name;
         public int type;
         [MarshalAs(UnmanagedType.Struct)]
