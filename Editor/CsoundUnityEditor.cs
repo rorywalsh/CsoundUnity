@@ -226,6 +226,9 @@ public class CsoundUnityEditor : Editor
 
                     // TODO DRAW A VU METER FOR EVERY CHANNEL?
                 }
+
+                if (EditorApplication.isPlaying)
+                    Repaint();
             }
         }
     }

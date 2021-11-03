@@ -205,6 +205,10 @@ public class CsoundUnity : MonoBehaviour
     [SerializeField] private DefaultAsset _csoundAsset;
 #endif
     [SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
+    /// <summary>
+    /// An utility dictionary to store the index of every channel in the _channels list
+    /// </summary>
+    private Dictionary<string, int> _channelsIndexDict = new Dictionary<string, int>();
     [SerializeField] private List<string> _availableAudioChannels = new List<string>();
     /// <summary>
     /// Inspector foldout settings
@@ -294,6 +298,9 @@ public class CsoundUnity : MonoBehaviour
                         csound.SetChannel(channels[i].channel, channels[i].value + 1);
                     else
                         csound.SetChannel(channels[i].channel, channels[i].value);
+                    // update channels index dictionary
+                    if (!_channelsIndexDict.ContainsKey(channels[i].channel))
+                        _channelsIndexDict.Add(channels[i].channel, i);
                 }
 
             foreach (var name in availableAudioChannels)
@@ -407,6 +414,10 @@ public class CsoundUnity : MonoBehaviour
         this._csoundAsset = (DefaultAsset)(AssetDatabase.LoadAssetAtPath(fileName, typeof(DefaultAsset)));
         this._csoundString = File.ReadAllText(csoundFilePath);
         this._channels = ParseCsdFile(fileName);
+        var count = 0;
+        foreach (var chan in this._channels)
+            if(!_channelsIndexDict.ContainsKey(chan.channel))
+                _channelsIndexDict.Add(chan.channel, count++);
         this._availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
 
         foreach (var name in availableAudioChannels)
@@ -767,6 +778,8 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="val"></param>
     public void SetChannel(string channel, MYFLT val)
     {
+        if(_channelsIndexDict.ContainsKey(channel))
+            channels[_channelsIndexDict[channel]].value = (float)val;
         csound.SetChannel(channel, val);
     }
 
