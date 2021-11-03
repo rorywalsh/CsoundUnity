@@ -1109,10 +1109,13 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="from2"></param>
     /// <param name="to2"></param>
     /// <returns></returns>
-    public static float Remap(float value, float from1, float to1, float from2, float to2)
+    public static float Remap(float value, float from1, float to1, float from2, float to2, bool clamp = false)
     {
         float retValue = (value - from1) / (to1 - from1) * (to2 - from2) + from2;
-        return Mathf.Clamp(retValue, from2, to2);
+        if (float.IsNaN(retValue)) return from2;
+        if (float.IsPositiveInfinity(retValue)) return to2;
+        if (float.IsNegativeInfinity(retValue)) return from2;
+        return clamp ? Mathf.Clamp(retValue, from2, to2) : retValue;
     }
 
     /// <summary>
