@@ -1,9 +1,10 @@
 <Cabbage>
 form caption("Input Analyzer") size(400, 300)
 rslider bounds(0, 0, 100, 100), channel("gain"), range(0, 10, 1.0, 1, .01), text("Gain")
-hslider bounds(100, 50, 300, 10), channel("update"), range(0.001, 0.5, 0.01, 1, 0.001), text("Update")
-rslider bounds(0, 100, 100, 100), channel("threshold"), range(0.0005, 10, 0.1, 1, 0.0005), text("Threshold")
-hslider bounds(100, 150, 300, 10), channel("wait"), range(0.1, 5, 2, .5, 0.1), text("Wait")
+rslider bounds(100, 0, 100, 100), channel("update"), range(0.001, 0.5, 0.01, 1, 0.001), text("Update")
+rslider bounds(0, 100, 100, 100), channel("threshold"), range(0, 130, 40, 1, 0.0005), text("Threshold")
+rslider bounds(100, 100, 100, 100), channel("minFreq"), range(0, 127, 30, 1, 0.0005), text("Min Freq")
+rslider bounds(200, 100, 100, 100), channel("maxFreq"), range(0, 127, 80, 1, 0.0005), text("Max Freq")
 </Cabbage>
 <CsoundSynthesizer>
 <CsOptions>
@@ -39,10 +40,10 @@ iupdte chnget "update" ; init 0.01 ;
 
 ; these values can be tuned to achieve better tracking
 ; range in which pitch is detected, expressed in octave point decimal
-ilo = octmidinn(0)
-ihi = octmidinn(127)
+ilo = octmidinn(chnget("minFreq"))
+ihi = octmidinn(chnget("maxFreq"))
 ; amplitude, expressed in decibels, necessary for the pitch to be detected. Once started it continues until it is 6 dB down.
-idbthresh = 40
+idbthresh = chnget("threshold")
 ; number of divisons of an octave. Default is 12 and is limited to 120.
 ifrqs = 12
 ; the number of conformations needed for an octave jump. Default is 10.

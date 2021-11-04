@@ -423,11 +423,13 @@ MonoBehaviour:
   csoundScore: 
   _csoundFileGUID: a98db2c8369ab1e4abd514032f5005b2
   _csoundString: "<Cabbage>\r\nform caption(\"Input Analyzer\") size(400, 300)\r\nrslider
-    bounds(0, 0, 100, 100), channel(\"gain\"), range(0, 10, 1.0, 1, .01), text(\"Gain\")\r\nhslider
-    bounds(100, 50, 300, 10), channel(\"update\"), range(0.001, 0.5, 0.01, 1, 0.001),
+    bounds(0, 0, 100, 100), channel(\"gain\"), range(0, 10, 1.0, 1, .01), text(\"Gain\")\r\nrslider
+    bounds(100, 0, 100, 100), channel(\"update\"), range(0.001, 0.5, 0.01, 1, 0.001),
     text(\"Update\")\r\nrslider bounds(0, 100, 100, 100), channel(\"threshold\"),
-    range(0.0005, 10, 0.1, 1, 0.0005), text(\"Threshold\")\r\nhslider bounds(100,
-    150, 300, 10), channel(\"wait\"), range(0.1, 5, 2, .5, 0.1), text(\"Wait\")\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
+    range(0.0005, 10, 0.1, 1, 0.0005), text(\"Threshold\")\r\nrslider bounds(100,
+    100, 100, 100), channel(\"minFreq\"), range(0, 127, 30, 1, 0.0005), text(\"Min
+    Freq\")\r\nrslider bounds(200, 100, 100, 100), channel(\"maxFreq\"), range(0,
+    127, 80, 1, 0.0005), text(\"Max Freq\")\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
     -d\r\n</CsOptions>\r\n<CsInstruments>\r\n; Initialize the global variables. \r\nksmps
     = 32\r\nnchnls = 2\r\nnchnls_i = 1\r\n0dbfs = 1\r\n\r\nopcode vuMeter, k, a\r\nain
     xin\r\nametera1\tfollow \t\tain, .01\t\t;CREATE AN AMPLITUDE FOLLOWING UNIPOLAR
@@ -439,19 +441,20 @@ MonoBehaviour:
     with the gain\r\na1 *= kGain\r\n\r\n;printks \"a1: %d\\n\", 0.1, a1\r\niupdte
     chnget \"update\" ; init 0.01 ;\r\n\r\n; these values can be tuned to achieve
     better tracking\r\n; range in which pitch is detected, expressed in octave point
-    decimal\r\nilo = octmidinn(0)\r\nihi = octmidinn(127)\r\n; amplitude, expressed
-    in decibels, necessary for the pitch to be detected. Once started it continues
-    until it is 6 dB down.\r\nidbthresh = 40\r\n; number of divisons of an octave.
-    Default is 12 and is limited to 120.\r\nifrqs = 12\r\n; the number of conformations
-    needed for an octave jump. Default is 10.\r\niconf = 20\r\n; starting pitch for
-    tracker. Default value is (ilo + ihi)/2.\r\nistrt = 7.5\r\n\r\n;lowpass input
-    to achieve better tracking\r\na1 tone a1, 11000\r\n\r\n;pitch and amp estimation\r\nkoct,
-    kamp pitch a1, iupdte, ilo, ihi, idbthresh, ifrqs, iconf, istrt\r\n\r\n;also
-    estimate the rms value \r\nkrms rms a1\r\n\r\nkhertz = cpspch(koct)\r\n;printks
-    \"freq: %f %f\\n\", 0.1, khertz, koct \r\n\r\nchnset koct, \"oct\" \r\nchnset
-    khertz, \"hertz\"\r\nchnset kamp, \"amp\" \r\nchnset krms, \"rms\"\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
-    Csound to run for about 7000 years...\r\nf0 z\r\n;starts instrument 1 and runs
-    it for 7000 years too!\r\ni1 0.1 z \r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+    decimal\r\nilo = octmidinn(chnget(\"minFreq\"))\r\nihi = octmidinn(chnget(\"maxFreq\"))\r\n;
+    amplitude, expressed in decibels, necessary for the pitch to be detected. Once
+    started it continues until it is 6 dB down.\r\nidbthresh = 40\r\n; number of
+    divisons of an octave. Default is 12 and is limited to 120.\r\nifrqs = 12\r\n;
+    the number of conformations needed for an octave jump. Default is 10.\r\niconf
+    = 20\r\n; starting pitch for tracker. Default value is (ilo + ihi)/2.\r\nistrt
+    = 7.5\r\n\r\n;lowpass input to achieve better tracking\r\na1 tone a1, 11000\r\n\r\n;pitch
+    and amp estimation\r\nkoct, kamp pitch a1, iupdte, ilo, ihi, idbthresh, ifrqs,
+    iconf, istrt\r\n\r\n;also estimate the rms value \r\nkrms rms a1\r\n\r\nkhertz
+    = cpspch(koct)\r\n;printks \"freq: %f %f\\n\", 0.1, khertz, koct \r\n\r\nchnset
+    koct, \"oct\" \r\nchnset khertz, \"hertz\"\r\nchnset kamp, \"amp\" \r\nchnset
+    krms, \"rms\"\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes Csound
+    to run for about 7000 years...\r\nf0 z\r\n;starts instrument 1 and runs it for
+    7000 years too!\r\ni1 0.1 z \r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: InputAnalyzer.csd
   _csoundAsset: {fileID: 102900000, guid: a98db2c8369ab1e4abd514032f5005b2, type: 3}
   _channels:
@@ -475,7 +478,7 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
-  - type: hslider
+  - type: rslider
     channel: update
     text: 
     caption: 
@@ -495,13 +498,23 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
-  - type: hslider
-    channel: wait
+  - type: rslider
+    channel: minFreq
     text: 
     caption: 
-    min: 0.1
-    max: 5
-    value: 2
+    min: 0
+    max: 127
+    value: 30
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: maxFreq
+    text: 
+    caption: 
+    min: 0
+    max: 127
+    value: 80
     skew: 0
     increment: 0
     options: []
@@ -525,7 +538,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
