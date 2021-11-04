@@ -40,6 +40,11 @@
       "displayName": "Granular Synthesis",
       "description": "Examples of using granular synthesis opcodes",
       "path": "Samples~/GranularSynthesis"
+    },
+    {
+      "displayName": "Audio Analysis",
+      "description": "Examples of using analysis opcodes",
+      "path": "Samples~/AudioAnalysis"
     }
   ]
 }
