@@ -682,12 +682,6 @@ public class CsoundUnityBridge
     public IDictionary<string, ChannelInfo> GetChannelList()
     {
         IDictionary<string, ChannelInfo> channels = new SortedDictionary<string, ChannelInfo>();
-        Debug.LogWarning("This method still has some issues and makes Unity crash, " +
-            "probably because of something wrong in the definition of the ChannelInfoProxy structure." +
-            "It will return an empty dictionary. " +
-            "Use CsoundUnity.channels to grab a list of the current CsoundChannelControllers.");
-        // return channels;
-
         
         IntPtr ppChannels = IntPtr.Zero;
         int size = Csound6.NativeMethods.csoundListChannels(csound, out ppChannels);
@@ -714,9 +708,7 @@ public class CsoundUnityBridge
             }
             Csound6.NativeMethods.csoundDeleteChannelList(csound, ppChannels);
         }
-
         return channels;
-        
     }
 
     /// <summary>
