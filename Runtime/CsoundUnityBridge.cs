@@ -686,9 +686,9 @@ public class CsoundUnityBridge
             "probably because of something wrong in the definition of the ChannelInfoProxy structure." +
             "It will return an empty dictionary. " +
             "Use CsoundUnity.channels to grab a list of the current CsoundChannelControllers.");
-        return channels;
+        // return channels;
 
-        /*
+        
         IntPtr ppChannels = IntPtr.Zero;
         int size = Csound6.NativeMethods.csoundListChannels(csound, out ppChannels);
         if ((size > 0) && (ppChannels != IntPtr.Zero))
@@ -697,9 +697,7 @@ public class CsoundUnityBridge
             for (int i = 0; i < size; i++)
             {
                 var proxy = Marshal.PtrToStructure(ppChannels + (i * proxySize), typeof(ChannelInfoProxy)) as ChannelInfoProxy;
-                string chanName = string.Empty;
-                if (proxy.name != IntPtr.Zero)
-                    chanName = Marshal.PtrToStringAuto(proxy.name);
+                string chanName = CharPtr2String(proxy.name);
 
                 ChannelInfo info = new ChannelInfo(chanName, (ChannelType)(proxy.type & 15), (ChannelDirection)(proxy.type >> 4));
                 var hintProxy = proxy.hints;
@@ -709,7 +707,7 @@ public class CsoundUnityBridge
                     y = hintProxy.y,
                     height = hintProxy.height,
                     width = hintProxy.width,
-                    attributes = (hintProxy.attributes != IntPtr.Zero) ? Marshal.PtrToStringAuto(hintProxy.attributes) : null
+                    attributes = CharPtr2String(proxy.name)
                 };
                 info.Hints = hints;
                 channels.Add(chanName, info);
@@ -718,7 +716,7 @@ public class CsoundUnityBridge
         }
 
         return channels;
-        */
+        
     }
 
     /// <summary>
@@ -798,9 +796,9 @@ public class CsoundUnityBridge
         }
 
         public int behav;
-        public double dflt;
-        public double min;
-        public double max;
+        public MYFLT dflt;
+        public MYFLT min;
+        public MYFLT max;
         public int x;
         public int y;
         public int width;
