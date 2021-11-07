@@ -763,7 +763,7 @@ public class CsoundUnityBridge
     /// <summary>
     /// Private proxy class used during marshalling of actual ChannelInfo 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     private class ChannelInfoProxy
     {
         [MarshalAs(UnmanagedType.AnsiBStr)]
@@ -795,6 +795,7 @@ public class CsoundUnityBridge
         public int y;
         public int width;
         public int height;
+        [MarshalAs(UnmanagedType.AnsiBStr)]
         public IntPtr attributes;
     }
 
