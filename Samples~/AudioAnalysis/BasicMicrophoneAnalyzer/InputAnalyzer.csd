@@ -31,7 +31,7 @@ instr 1
 kGain chnget "gain"
 
 ; get input channel
-a1 in 1
+a1 in
 ; scale the input with the gain
 a1 *= kGain
 
