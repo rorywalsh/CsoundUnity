@@ -7,7 +7,7 @@ namespace Csound.TableMorph.Theremin
     [RequireComponent(typeof(CsoundUnity))]
     public class Theremin : MonoBehaviour
     {
-        [SerializeField] Vector2 _freqRange = new Vector2(20, 1000);
+        [SerializeField] Vector2 _freqRange = new Vector2(20, 1100);
 
         CsoundUnity _csound;
 
