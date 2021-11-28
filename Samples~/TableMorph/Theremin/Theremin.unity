@@ -485,10 +485,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1652255175}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56f69ec2b4081cc42a12266076ef51fa, type: 3}
+  m_Script: {fileID: 11500000, guid: 6204448b6b277644d88bda679643fc9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _freqRange: {x: 220, y: 1100}
+  _freqRange: {x: 20, y: 1100}
 --- !u!114 &1652255177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -539,16 +539,16 @@ MonoBehaviour:
     1\r\n\r\nkcps     lineto2    kfreq, kPortTime * kport    \r\nkenv     lineto2   
     kamp, kEnvTime * kat \r\nkff      lineto2    kfiltf, 0.01\r\nkfr      lineto2   
     kfiltres, 0.01\r\n\r\nalfo lfo klfoamp, klfo, 0\r\nftmorf ktable, 99, 100\r\naosc
-    oscili kenv, kcps + alfo, 100\r\n\r\naOut moogladder aosc, kff, kfr\r\n\r\nouts
-    aOut*kgain, aOut*kgain\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
-    Csound to run for about 7000 years...\r\nf0 z\r\nf1 0 16384 10 1                                         
+    oscili kenv, kcps + alfo, 100\r\naout moogladder aosc, kff, kfr\r\n\r\nouts aout*kgain,
+    aout*kgain\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes Csound to
+    run for about 7000 years...\r\nf0 z\r\nf1 0 16384 10 1                                         
     ; Sine\r\nf2 0 16384 10 1 0.5 0.3 0.25 0.2 0.167 0.14 0.125 .111   ; Sawtooth\r\nf3
     0 16384 10 1 0   0.3 0    0.2 0     0.14 0     .111   ; Square\r\nf4 0 16384
     10 1 1   1   1    0.7 0.5   0.3  0.1          ; Pulse\r\nf5 0 16384 10 1 0.3
-    0.05 0.1 0.01                        ; Custom\r\nf99  0 5 -2 1 2 3 4 5\r\nf100
-    0 16384 10 1\r\ni1 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n; the table that
-    contains the numbers of tables used by ftmorf\r\n ; the table that will be written
-    by ftmorf"
+    0.05 0.1 0.01                        ; Custom\r\nf99  0 5 -2 1 2 3 4 5                                   
+    ; the table that contains the numbers of tables used by ftmorf\r\nf100 0 16384
+    10 1                                        ; the table that will be written
+    by ftmorf\r\ni1 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n\r\n"
   _csoundFileName: Theremin.csd
   _csoundAsset: {fileID: 102900000, guid: 01ca48f4df517224d808d6d3145508e9, type: 3}
   _channels:
