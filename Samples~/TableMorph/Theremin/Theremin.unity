@@ -488,7 +488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6204448b6b277644d88bda679643fc9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _freqRange: {x: 20, y: 1100}
+  _freqRange: {x: 220, y: 1100}
 --- !u!114 &1652255177
 MonoBehaviour:
   m_ObjectHideFlags: 0
