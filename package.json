@@ -45,6 +45,11 @@
       "displayName": "Audio Analysis",
       "description": "Examples of using analysis opcodes",
       "path": "Samples~/AudioAnalysis"
+    },
+    {
+      "displayName": "Table Morphing",
+      "description": "Examples of using table morphing opcodes",
+      "path": "Samples~/TableMorph"
     }
   ]
 }
