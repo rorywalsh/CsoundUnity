@@ -834,7 +834,7 @@ public class CsoundUnityBridge
         /// <param name="idflt"></param>
         /// <param name="imin"></param>
         /// <param name="imax"></param>
-        public ChannelHints(ChannelBehavior ibehav, double idflt, double imin, double imax)
+        public ChannelHints(ChannelBehavior ibehav, MYFLT idflt, MYFLT imin, MYFLT imax)
         {
             behav = ibehav;
             dflt = idflt;
@@ -848,9 +848,9 @@ public class CsoundUnityBridge
         }
 
         public ChannelBehavior behav;
-        public double dflt;
-        public double min;
-        public double max;
+        public MYFLT dflt;
+        public MYFLT min;
+        public MYFLT max;
         public int x;
         public int y;
         public int width;
