@@ -11,7 +11,7 @@ hslider bounds(0, 0, 300, 50) range(20, 16000, 440, 1, 0.001) valuetextbox(1) ch
 -n ; -m0d
 </CsOptions>
 <CsInstruments> 
-sr 	= 	44100 
+sr 	= 	48000 
 ksmps 	= 	64
 nchnls 	= 	2
 0dbfs	=	1 

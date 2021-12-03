@@ -17,8 +17,8 @@ namespace Csound.TableMorph.Theremin
             while (!_csound.IsInitialized)
                 yield return null;
 
-            _csound.SetChannel("Frequency", 440);
-            _csound.SetChannel("Amplitude", 0.7);
+            _csound.SetChannel("Frequency", 440f);
+            _csound.SetChannel("Amplitude", 0.7f);
         }
 
         void Update()

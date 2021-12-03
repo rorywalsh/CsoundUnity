@@ -1,5 +1,5 @@
 <Cabbage> bounds(0, 0, 0, 0)
-form caption("Theremin") size(700, 300), guiMode("queue"), pluginId("Theremin1")
+form caption("Theremin") size(700, 300), guiMode("queue"), pluginId("thm1")
 rslider    bounds(  0, 40, 80, 80), valueTextBox(1), textBox(1), text("Att."), channel("Attack"),  range(0,  5, 0.15)
 rslider    bounds(100, 40, 80, 80), valueTextBox(1), textBox(1), text("Gain"), channel("Gain"),  range(0,  1, 0.65)
 rslider    bounds(200, 40, 80, 80), valueTextBox(1), textBox(1), text("Glide"), channel("Glide"),  range(0,  1, 0.15)
@@ -14,6 +14,8 @@ rslider    bounds(600, 40, 80, 80), valueTextBox(1), textBox(1), text("Table"), 
 -n -d 
 </CsOptions>
 <CsInstruments>
+sr = 48000
+ksmps = 64
 nchnls = 2
 0dbfs = 1
 
@@ -70,7 +72,7 @@ endin
 </CsInstruments>
 <CsScore>
 ;causes Csound to run for about 7000 years...
-f0 z
+f0 3600
 f1 0 16384 10 1                                          ; Sine
 f2 0 16384 10 1 0.5 0.3 0.25 0.2 0.167 0.14 0.125 .111   ; Sawtooth
 f3 0 16384 10 1 0   0.3 0    0.2 0     0.14 0     .111   ; Square
@@ -78,7 +80,7 @@ f4 0 16384 10 1 1   1   1    0.7 0.5   0.3  0.1          ; Pulse
 f5 0 16384 10 1 0.3 0.05 0.1 0.01                        ; Custom
 f99  0 5 -2 1 2 3 4 5                                    ; the table that contains the numbers of tables used by ftmorf
 f100 0 16384 10 1                                        ; the table that will be written by ftmorf
-i1 0 z
+i1 0 3600
 </CsScore>
 </CsoundSynthesizer>
 

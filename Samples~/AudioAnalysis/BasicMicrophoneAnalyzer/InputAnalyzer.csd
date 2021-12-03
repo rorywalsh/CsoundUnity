@@ -12,6 +12,8 @@ rslider bounds(200, 100, 100, 100), channel("maxFreq"), range(0, 127, 80, 1, 0.0
 </CsOptions>
 <CsInstruments>
 ; Initialize the global variables. 
+sr = 48000
+ksmps = 64
 ksmps = 32
 nchnls = 2
 nchnls_i = 1

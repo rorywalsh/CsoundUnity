@@ -7,6 +7,8 @@ rslider bounds(0, 0, 77, 87) channel("gain") range(0, 2, 1, 1, 0.001)  valueText
 -n -d 
 </CsOptions>
 <CsInstruments>
+sr = 48000
+ksmps = 64
 nchnls = 2
 nchnls_i = 1
 0dbfs = 1

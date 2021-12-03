@@ -7,8 +7,8 @@ keyboard bounds(8, 158, 381, 95)
 -n -d
 </CsOptions>
 <CsInstruments>
-; Initialize the global variables. 
-ksmps = 32
+sr = 48000
+ksmps = 64
 nchnls = 2
 0dbfs = 1
 
