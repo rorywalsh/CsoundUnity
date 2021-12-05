@@ -62,7 +62,7 @@ koct, kamp pitch a1, iupdte, ilo, ihi, idbthresh, ifrqs, iconf, istrt
 ;also estimate the rms value 
 krms rms a1
 
-khertz = cpspch(koct)
+khertz = cpsoct(koct)
 ;printks "freq: %f %f\n", 0.1, khertz, koct 
 
 chnset koct, "oct" 
