@@ -50,6 +50,11 @@
       "displayName": "Table Morphing",
       "description": "Examples of using table morphing opcodes",
       "path": "Samples~/TableMorph"
+    },
+    {
+      "displayName": "FM Synthesis",
+      "description": "Examples using FM Synthesis",
+      "path": "Samples~/FM"
     }
   ]
 }
