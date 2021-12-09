@@ -674,7 +674,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 988761395}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acff231552d4f144f9a9bdea9a9fc858, type: 3}
+  m_Script: {fileID: 11500000, guid: 84f6664e5c6d0204eade03faa22592a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1270168714
@@ -704,10 +704,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1270168714}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6dcf918e3a59b704db050e372ce9b300, type: 3}
+  m_Script: {fileID: 11500000, guid: eb451614cd7063f4b9657c94fe4d5a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sizeMult: {x: 0.08, y: 0.1}
+  _sizeMult: {x: 0.08, y: 0.4}
   _maxHeight: 80
 --- !u!120 &1270168716
 LineRenderer:
