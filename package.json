@@ -55,6 +55,11 @@
       "displayName": "FM Synthesis",
       "description": "Examples using FM Synthesis",
       "path": "Samples~/FM"
-    }
+    },
+	{
+	  "displayName":"Collisions",
+	  "description": "Using collisions to trigger instruments",
+	  "path": "Samples~/Collisions"
+	}
   ]
 }
