@@ -1,3 +1,24 @@
+## [3.1.1] - 2022-01-28
+
+- updated changelog
+- updated version in package.json
+
+## [3.1.0] - 2022-01-27
+
+- added support for Android x86_64;
+- added dripwater sample;
+- added Basic Collision sample;
+- added Basic FM Synth sample;
+- added first Table morphing sample;
+- added Basic Microphone Analyzer scene;
+- added Partikkel sample;
+- added ProcessClipAudio sample;
+- fix for crash in GetChannelList;
+- fix for comboboxes channels not initialized correctly on Start;
+- fix for CsoundUnity being null on CsoundUnityChild Awake;
+- fix for namedAudioChannelData of CsoundUnityChild not initialized;
+- fix to avoid setting a dummy clip when processClipAudio is selected;
+
 ## [3.0.1] - 2021-09-14
 
 - Spatialization issue fix
