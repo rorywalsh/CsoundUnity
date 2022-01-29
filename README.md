@@ -13,7 +13,7 @@ http://csound6net.codeplex.com
   
 ## New Version: 3.0 ##
 
-Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/develop/CHANGELOG.md) for more details.  
+Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/CHANGELOG.md) for more details.  
 
 ## How To Install ##
 
