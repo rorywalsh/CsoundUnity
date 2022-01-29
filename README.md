@@ -1,6 +1,6 @@
 [![openupm](https://img.shields.io/npm/v/com.csound.csoundunity?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.csound.csoundunity/)
 
-#### Csound wrapper for the Unity3d game engine.
+#### Csound wrapper for the Unity game engine.
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
