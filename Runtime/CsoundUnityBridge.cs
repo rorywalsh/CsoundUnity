@@ -47,23 +47,20 @@ public class CsoundUnityBridge
 	*/
     public CsoundUnityBridge(string csoundDir, string csdFile)
     {
-        Debug.Log($"CsoundUnityBridge constructor from dir: {csoundDir}");//\ncsdFile: \n{csdFile}");
+        Debug.Log($"CsoundUnityBridge constructor from dir: {csoundDir}");
 #if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-        //Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.streamingAssetsPath + "/CsoundFiles");
-        //Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.streamingAssetsPath + "/CsoundFiles");
-        //Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.streamingAssetsPath + "/CsoundFiles");
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        //if (Directory.Exists(csoundDir+"/CsoundLib64.framework/Resources/Opcodes64"))
         var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.bundle/Contents/MacOS"));
         Debug.Log($"opcodePath {opcodePath} exists? " + Directory.Exists(opcodePath));
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
 #elif UNITY_ANDROID
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-        //Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.persistentDataPath);
-        //Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.persistentDataPath);
-        //Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.persistentDataPath);
 #endif
+        Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.persistentDataPath + "/CsoundFiles");
+        Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.persistentDataPath + "/CsoundFiles");
+        Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.persistentDataPath + "/CsoundFiles");
+
         Csound6.NativeMethods.csoundInitialize(1);
         csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero);
         if (csound == null)
