@@ -50,10 +50,16 @@ public class CsoundUnityBridge
         Debug.Log($"CsoundUnityBridge constructor from dir: {csoundDir}");
 #if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
+        Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.streamingAssetsPath + "/CsoundFiles");
+        Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.streamingAssetsPath + "/CsoundFiles");
+        Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.streamingAssetsPath + "/CsoundFiles");
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
         var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.bundle/Contents/MacOS"));
         Debug.Log($"opcodePath {opcodePath} exists? " + Directory.Exists(opcodePath));
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
+        Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.streamingAssetsPath + "/CsoundFiles");
+        Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.streamingAssetsPath + "/CsoundFiles");
+        Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.streamingAssetsPath + "/CsoundFiles");
 #elif UNITY_ANDROID
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
 #endif
@@ -939,6 +945,19 @@ public class CsoundUnityBridge
     public string GetEnv(string key)
     {
         return CharPtr2String(Csound6.NativeMethods.csoundGetEnv(csound, key));
+    }
+
+    /// <summary>
+    /// Set the global value of environment variable 'name' to 'value', or delete variable if 'value' is NULL. 
+    /// It is not safe to call this function while any Csound instances are active. 
+    /// See https://csound.com/docs/manual/CommandEnvironment.html for a list of the variables that can be used.
+    /// </summary>
+    /// <param name="name">The name of the environment variable to set</param>
+    /// <param name="value">The value to set, ie a path</param>
+    /// <returns>Returns zero on success.</returns>
+    public int SetGlobalEnv(string name, string value)
+    {
+        return Csound6.NativeMethods.csoundSetGlobalEnv(name, value);
     }
 
     /// <summary>

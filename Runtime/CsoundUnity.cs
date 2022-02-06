@@ -1057,6 +1057,19 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetEnv(envType.ToString());
     }
 
+    /// <summary>
+    /// Set the global value of environment variable 'name' to 'value', or delete variable if 'value' is NULL. 
+    /// It is not safe to call this function while any Csound instances are active. 
+    /// See https://csound.com/docs/manual/CommandEnvironment.html for a list of the variables that can be used.
+    /// </summary>
+    /// <param name="name">The name of the environment variable to set</param>
+    /// <param name="value">The value to set, ie a path</param>
+    /// <returns>Returns zero on success.</returns>
+    public int SetGlobalEnv(string name, string value)
+    {
+        return csound.SetGlobalEnv(name, value);
+    }
+
     //#if CSHARP_7_3_OR_NEWER
     //    /// <summary>
     //    /// Get the Opcode List, async
