@@ -36,7 +36,6 @@ using MYFLT = System.Single;
 public class CsoundUnityBridge
 {
     public IntPtr csound;
-    public string baseDir;
     bool compiledOk = false;
 
     private IDictionary<string, GCHandle> m_callbacks = new Dictionary<string, GCHandle>();  //a map of GCHandles pinned callbacks in memory: kept for unpinning during Dispose()
@@ -62,10 +61,10 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.streamingAssetsPath + "/CsoundFiles");
 #elif UNITY_ANDROID
         Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-#endif
         Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.persistentDataPath + "/CsoundFiles");
         Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.persistentDataPath + "/CsoundFiles");
         Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.persistentDataPath + "/CsoundFiles");
+#endif
 
         Csound6.NativeMethods.csoundInitialize(1);
         csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero);
