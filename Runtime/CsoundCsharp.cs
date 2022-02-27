@@ -56,10 +56,12 @@ namespace csoundcsharp
         internal delegate void SenseEventCallbackProxy(IntPtr csound, IntPtr userdata);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate int YieldCallback(IntPtr csound);
+        internal delegate int YieldCallbackProxy(IntPtr csound);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        internal delegate void ChannelCallbackProxy(IntPtr csound, string channelName, IntPtr pData, IntPtr pCsType);
 
-        // Csound API 6.11
+        // Csound API 6.17
         public class NativeMethods
         {
             #region Instantiation
@@ -436,17 +438,20 @@ namespace csoundcsharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern void csoundSetAudioChannel([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] string name, IntPtr samples);
 
-
             // PUBLIC void csoundGetStringChannel (CSOUND *csound, const char *name, char *string)
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern IntPtr csoundSetStringChannel([In] IntPtr csound, [In] String str, [In] String value);
 
             // PUBLIC int csoundGetChannelDatasize (CSOUND *csound, const char *name)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern int csoundGetChannelDatasize([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] string name);
 
-            // PUBLIC void csoundSetInputChannelCallback (CSOUND *csound, channelCallback_t inputChannelCalback)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundSetInputChannelCallback([In] IntPtr csound, [In] ChannelCallbackProxy channelCB);
 
-            // PUBLIC void csoundSetOutputChannelCallback (CSOUND *csound, channelCallback_t outputChannelCalback)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundSetOutputChannelCallback([In] IntPtr csound, [In] ChannelCallbackProxy channelCB);
 
             // PUBLIC int csoundSetPvsChannel (CSOUND *, const PVSDATEXT *fin, const char *name)
 
@@ -467,10 +472,8 @@ namespace csoundcsharp
 
             // PUBLIC int csoundKillInstance (CSOUND *csound, MYFLT instr, char *instrName, int mode, int allow_release)
 
-            // PUBLIC int csoundRegisterSenseEventCallback (CSOUND *, void(*func)(CSOUND *, void *), void *userData)
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
             internal static extern int csoundRegisterSenseEventCallback([In] IntPtr csound, SenseEventCallbackProxy senseEventProxy);
-
 
             // PUBLIC void csoundKeyPress (CSOUND *, char c)
 
@@ -554,7 +557,7 @@ namespace csoundcsharp
 
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-            internal static extern void csoundSetYieldCallback([In] IntPtr csound, YieldCallback yieldCallback);
+            internal static extern void csoundSetYieldCallback([In] IntPtr csound, YieldCallbackProxy yieldCallback);
 
             // PUBLIC void * csoundCreateThread (uintptr_t(*threadRoutine)(void *), void *userdata)
 

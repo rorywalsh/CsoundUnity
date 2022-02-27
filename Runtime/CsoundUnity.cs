@@ -1001,25 +1001,78 @@ public class CsoundUnity : MonoBehaviour
 
     #region CALLBACKS
 
-    public void SetYieldCallback(Action callback)
+    /// <summary>
+    /// Called by external software to set a function for checking system events, 
+    /// yielding cpu time for coopertative multitasking, etc. 
+    /// This function is optional. 
+    /// It is often used as a way to 'turn off' Csound, allowing it to exit gracefully. 
+    /// In addition, some operations like utility analysis routines are not reentrant and you should use this function to do any kind of updating during the operation. 
+    /// Returns an 'OK to continue' boolean.
+    /// </summary>
+    /// <param name="callbackHandler"></param>
+    public void AddYieldCallback(CsoundUnityBridge.YieldCallbackHandler callbackHandler)
     {
-
-        csound.SetYieldCallback(callback);
+        csound.YieldCallback += callbackHandler;
     }
 
-    public void SetSenseEventCallback<T>(Action<T> action, T type) where T : class
+    public void RemoveYieldCallback(CsoundUnityBridge.YieldCallbackHandler callbackHandler)
     {
-        csound.SetSenseEventCallback(action, type);
+        csound.YieldCallback -= callbackHandler;
     }
 
-    public void AddSenseEventCallback(CsoundUnityBridge.Csound6SenseEventCallbackHandler callbackHandler)
+    // Register a function to be called once in every control period by sensevents().
+    // Any number of functions may be registered, and will be called in the order of registration.
+    // The callback function takes two arguments: the Csound instance pointer, and the userData pointer as passed to this function.
+    // This facility can be used to ensure a function is called synchronously before every csound control buffer processing.
+    // It is important to make sure no blocking operations are performed in the callback.
+    // The callbacks are cleared on csoundCleanup().
+    // Returns zero on success.
+    public void AddSenseEventCallback(CsoundUnityBridge.SenseEventCallbackHandler callbackHandler)
     {
-        csound.SenseEventsCallback += callbackHandler;//Csound_SenseEventsCallback;
+        csound.SenseEventsCallback += callbackHandler;
     }
 
-    public void RemoveSenseEventCallback(CsoundUnityBridge.Csound6SenseEventCallbackHandler callbackHandler)
+    public void RemoveSenseEventCallback(CsoundUnityBridge.SenseEventCallbackHandler callbackHandler)
     {
         csound.SenseEventsCallback -= callbackHandler;
+    }
+
+    /// <summary>
+    /// Adds Input Channel Callback.
+    /// Fires whenever an "invalue" opcode is executed in an instrument.
+    /// "invalue" only supports sending control values (k-value) and strings (S-value)
+    /// via InputChannelCallbacks.
+    /// Audio, PVC and var bus values have no csound opcode support for InputChannelCallbacks.
+    /// </summary>
+    /// <param name="callbackHandler"></param>
+    public void AddInputChannelCallback(CsoundUnityBridge.ChannelEventHandler callbackHandler)
+    {
+        csound.InputChannelCallback += callbackHandler;
+    }
+
+    public void RemoveInputChannelCallback(CsoundUnityBridge.ChannelEventHandler callbackHandler)
+    {
+        csound.InputChannelCallback -= callbackHandler;
+    }
+
+    /// <summary>
+    /// Fires whenever an "outvalue" opcode is executed in an instrument.
+    /// "outvalue" only supports sending control values (k-value) and strings (S-value)
+    /// via OutputChannelCallbacks.
+    /// Audio, PVC and var bus values have no csound opcode support for OutputChannelCallbacks.
+    /// </summary>
+    public void AddOutputChannelCallback(CsoundUnityBridge.ChannelEventHandler callbackHandler)
+    {
+        csound.OutputChannelCallback += callbackHandler;
+    }
+
+    /// <summary>
+    /// Removes the OutputChannelCallback
+    /// </summary>
+    /// <param name="callbackHandler"></param>
+    public void RemoveOutputChannelCallback(CsoundUnityBridge.ChannelEventHandler callbackHandler)
+    {
+        csound.OutputChannelCallback -= callbackHandler;
     }
 
     #endregion CALLBACKS

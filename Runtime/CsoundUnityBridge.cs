@@ -41,6 +41,10 @@ public class CsoundUnityBridge
 
     private IDictionary<string, GCHandle> m_callbacks = new Dictionary<string, GCHandle>();  //a map of GCHandles pinned callbacks in memory: kept for unpinning during Dispose()
 
+    private object _inputChannelEventKey = new object();
+    private object _outputChannelEventKey = new object();
+    private object _senseEventKey = new object();
+    private object _yieldCallbackKey = new object();
     /* 
 		constructor sets up the OPCODE6DIR64 directory that holds the Csound plugins. 
 		also creates an instance of Csound and compiles it
@@ -75,7 +79,7 @@ public class CsoundUnityBridge
         int systemNumBuffers;
         AudioSettings.GetDSPBufferSize(out systemBufferSize, out systemNumBuffers);
         Debug.Log($"System buffer size: {systemBufferSize}, buffer count: {systemNumBuffers}, samplerate: {AudioSettings.outputSampleRate}");
-        
+
         Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
         //string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "--ksmps=32" };
@@ -175,7 +179,8 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundRewindScore(csound);
     }
 
-    public void CsoundSetScoreOffsetSeconds(MYFLT value) {
+    public void CsoundSetScoreOffsetSeconds(MYFLT value)
+    {
         Csound6.NativeMethods.csoundSetScoreOffsetSeconds(csound, value);
     }
 
@@ -209,52 +214,41 @@ public class CsoundUnityBridge
         return dest;
     }
 
-    public class Csound6SenseEventsArgs : EventArgs
+    #region EVENTS
+
+    public class SenseEventArgs : EventArgs
     {
         public object UserData;
     }
 
-    public delegate void Csound6SenseEventCallbackHandler(object sender, Csound6SenseEventsArgs e);
+    public delegate void SenseEventCallbackHandler(object sender, SenseEventArgs e);
 
-    public void RawSenseEventsCallback(IntPtr csound, IntPtr userdata) { }
+    public void RawSenseEventCallback(IntPtr csound, IntPtr userdata) { }
 
-    /// <summary>
-    /// Registers a callback proxy (below) that transforms csound callbacks into .net events.
-    /// </summary>
-    /// <param name="callback"></param>
-    /// <returns></returns>
-    internal void SetSenseEventCallback<T>(Action<T> callback, T userData) where T : class
+    public class YieldEventArgs : EventArgs
     {
-        Csound6.SenseEventCallbackProxy cb = new Csound6.SenseEventCallbackProxy((csd, ptr) =>
-        {
-            GCHandle handle = GCHandle.Alloc(userData, GCHandleType.Pinned);
-            IntPtr p = (IntPtr)handle;
-            ptr = p;
-            callback?.Invoke(userData);
-            handle.Free();
-        });
-
-        GCHandle gch = FreezeCallbackInHeap(callback);
-        Csound6.NativeMethods.csoundRegisterSenseEventCallback(csound, cb);
-        //return gch;
+        public object UserData;
     }
 
-    protected EventHandlerList m_callbackHandlers;
+    public delegate void YieldCallbackHandler(object sender, YieldEventArgs e);
 
-    public event CsoundUnityBridge.Csound6SenseEventCallbackHandler SenseEventsCallback
+    public int RawYieldCallback(IntPtr csound) { return 0; }
+
+    protected EventHandlerList m_callbackHandlers = new EventHandlerList();
+
+    public event SenseEventCallbackHandler SenseEventsCallback
     {
         add
         {
-            //  CsoundUnityBridge.Csound6SenseEventCallbackHandler handler = m_callbackHandlers[_inputChannelEventKey] as Csound6SenseEventCallbackHandler;
-            //if (handler == null)
-            SetSenseEventCallback(RawSenseEventsCallback);
-            //  m_callbackHandlers.AddHandler(_senseEventKey, value);
+            SenseEventCallbackHandler handler = m_callbackHandlers[_inputChannelEventKey] as SenseEventCallbackHandler;
+            if (handler == null) SetSenseEventCallback(RawSenseEventCallback);
+            m_callbackHandlers.AddHandler(_senseEventKey, value);
         }
         remove
         {
-            //  m_callbackHandlers.RemoveHandler(_senseEventKey, value);
+            m_callbackHandlers.RemoveHandler(_senseEventKey, value);
+            ClearCallbackFromHeap(value);
         }
-
     }
 
     internal GCHandle SetSenseEventCallback(Csound6.SenseEventCallbackProxy callback)
@@ -264,21 +258,207 @@ public class CsoundUnityBridge
         return gch;
     }
 
-    internal void SetYieldCallback(Action callback)
+    public event YieldCallbackHandler YieldCallback
     {
-        Csound6.YieldCallback cb = new Csound6.YieldCallback((csd) =>
+        add
         {
-            // Debug.Log("callback " + (callback == null ? "is null" : "is not null"));
-            if (callback == null) return -1;
-            callback?.Invoke();
-            return 1;
-        });
+            YieldCallbackHandler handler = m_callbackHandlers[_yieldCallbackKey] as YieldCallbackHandler;
+            if (handler == null) SetYieldCallback(RawYieldCallback);
+            m_callbackHandlers.AddHandler(_yieldCallbackKey, value);
+        }
+        remove
+        {
+            m_callbackHandlers.RemoveHandler(_yieldCallbackKey, value);
+            ClearCallbackFromHeap(value);
+        }
+    }
 
-        //string name = callback.Method.GetHashCode().ToString();
-        //Debug.Log("method name: " + name);
-        //if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(cb));
-        var gchandle = FreezeCallbackInHeap(callback);
-        Csound6.NativeMethods.csoundSetYieldCallback(csound, cb);
+    internal GCHandle SetYieldCallback(Csound6.YieldCallbackProxy callback)
+    {
+        GCHandle gch = FreezeCallbackInHeap(callback);
+        Csound6.NativeMethods.csoundSetYieldCallback(csound, callback);
+        return gch;
+    }
+
+    public class ChannelEventArgs : EventArgs
+    {
+        private IntPtr m_pObject;
+        public string Name;
+        public object Value;
+        public ChannelType Type;
+        public ChannelDirection Direction;
+
+        public ChannelEventArgs() { }
+        public ChannelEventArgs(string name, ChannelType type, ChannelDirection direction) : this(name, type, direction, IntPtr.Zero) { }
+        public ChannelEventArgs(string name, ChannelType type, ChannelDirection direction, IntPtr pObject)
+        {
+            Name = name;
+            Type = type;
+            Direction = direction;
+            m_pObject = pObject;
+        }
+
+        public void SetCsoundValue(IntPtr csound, object value)
+        {
+            if (m_pObject != IntPtr.Zero)
+            {
+                switch (Type)
+                {
+                    case ChannelType.Control:
+                        Marshal.StructureToPtr((MYFLT)value, m_pObject, false);
+                        break;
+                    case ChannelType.String:
+                        byte[] buf = new byte[Csound6.NativeMethods.csoundGetChannelDatasize(csound, Name)];
+                        string s = value.ToString();
+                        if (s.Length + 1 > buf.Length) s = s.Substring(0, buf.Length - 1);
+                        ASCIIEncoding.ASCII.GetBytes(s, 0, s.Length, buf, 0);
+                        buf[s.Length + 1] = 0;
+                        Marshal.Copy(buf, 0, m_pObject, buf.Length);
+                        break;
+                    default: // other types not supported in csound: pvs, audio, var
+                        break;
+                }
+            }
+        }
+    }
+
+    public delegate void ChannelEventHandler(object sender, ChannelEventArgs e);
+
+    /// <summary>
+    /// Fires whenever an "invalue" opcode is executed in an instrument.
+    /// 
+    /// </summary>
+    public event ChannelEventHandler InputChannelCallback
+    {
+        add
+        {
+            ChannelEventHandler handler = m_callbackHandlers[_inputChannelEventKey] as ChannelEventHandler;
+            if (handler == null) SetInputChannelCallback(RawInputChannelEventCallback);
+            m_callbackHandlers.AddHandler(_inputChannelEventKey, value);
+        }
+        remove
+        {
+            ClearCallbackFromHeap(value);
+            m_callbackHandlers.RemoveHandler(_inputChannelEventKey, value);
+        }
+    }
+
+    /// <summary>
+    /// Fires whenever an "outvalue" opcode is executed in an instrument.
+    /// "outvalue" only supports sending control values (k-value) and strings (S-value)
+    /// via OutputChannelCallbacks.
+    /// Audio, PVC and var bus values have no csound opcode support for OutputChannelCallbacks.
+    /// </summary>
+    public event ChannelEventHandler OutputChannelCallback
+    {
+        add
+        {
+            ChannelEventHandler handler = m_callbackHandlers[_outputChannelEventKey] as ChannelEventHandler;
+            if (handler == null) SetOutputChannelCallback(RawOutputChannelEventCallback);
+            m_callbackHandlers.AddHandler(_outputChannelEventKey, value);
+        }
+        remove
+        {
+            m_callbackHandlers.RemoveHandler(_outputChannelEventKey, value);
+            ClearCallbackFromHeap(value);
+        }
+    }
+
+    internal GCHandle SetInputChannelCallback(Csound6.ChannelCallbackProxy callback)
+    {
+        GCHandle gch = FreezeCallbackInHeap(callback);
+        Csound6.NativeMethods.csoundSetInputChannelCallback(csound, callback);
+        return gch;
+    }
+
+    internal GCHandle SetOutputChannelCallback(Csound6.ChannelCallbackProxy callback)
+    {
+        GCHandle gch = FreezeCallbackInHeap(callback);
+        Csound6.NativeMethods.csoundSetOutputChannelCallback(csound, callback);
+        return gch;
+    }
+
+    private void RawInputChannelEventCallback(IntPtr csound, string name, IntPtr pValue, IntPtr pChannelType)
+    {
+        var cstype = (CS_TYPE)Marshal.PtrToStructure(pChannelType, typeof(CS_TYPE));
+        ChannelEventArgs args = null;
+        ChannelDirection dir = (ChannelDirection)((cstype.argtype != 0) ? cstype.argtype : 3);
+        switch (cstype.varTypeName[0])
+        {
+            case 'k':
+                args = new ChannelEventArgs(name, ChannelType.Control, dir, pValue);
+                args.Value = (double)Marshal.PtrToStructure(pValue, typeof(double));
+                break;
+            case 'S':
+                args = new ChannelEventArgs(name, ChannelType.String, dir, pValue);
+                args.Value = Marshal.PtrToStringAnsi(pValue);
+                break;
+            case 'a': //audio ksmps buffer: not supported by csound input callbacks
+            case 'p': //pvs: not supported by csound input callbacks
+            case 'v': //var??? no csound code supports this yet
+            default:
+                //only S and k should be sending input channel callbacks.  Ignore for now and implement as csound adds
+                break;
+        }
+
+        if (m_callbackHandlers == null || _inputChannelEventKey == null) return;
+        var ch = m_callbackHandlers[_inputChannelEventKey];
+        if (ch == null) return;
+
+        ChannelEventHandler handler = ch as ChannelEventHandler;
+        if ((args != null) && (handler != null))
+        {
+            handler(this, args);
+        }
+    }
+
+    private void RawOutputChannelEventCallback(IntPtr csound, string name, IntPtr pValue, IntPtr pChannelType)
+    {
+        var cstype = (CS_TYPE)Marshal.PtrToStructure(pChannelType, typeof(CS_TYPE));
+        ChannelEventArgs args = null;
+        ChannelDirection dir = (ChannelDirection)((cstype.argtype != 0) ? cstype.argtype : 3);
+        switch (cstype.varTypeName[0])
+        {
+            case 'k':
+                args = new ChannelEventArgs(name, ChannelType.Control, dir);
+                args.Value = (double)Marshal.PtrToStructure(pValue, typeof(double));
+                break;
+            case 'S':
+                args = new ChannelEventArgs(name, ChannelType.String, dir);
+                args.Value = Marshal.PtrToStringAnsi(pValue);
+                break;
+            case 'a': //audio ksmps buffer: not supported by csound output callbacks
+            case 'p': //pvs: not supported by csound output callbacks
+            case 'v': //var??? no csound code supports this yet
+            default:
+                //only S and k should be sending output channel callbacks.  Ignore: someday csound might be supporting some of these
+                break;
+        }
+
+        if (m_callbackHandlers == null || _outputChannelEventKey == null) return;
+        var ch = m_callbackHandlers[_outputChannelEventKey];
+        if (ch == null) return;
+
+        ChannelEventHandler handler = ch as ChannelEventHandler;
+        if ((args != null) && (handler != null))
+        {
+            handler(this, args);
+        }
+    }
+
+    /// <summary>
+    /// Used in inval and outval callbacks
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public class CS_TYPE
+    {
+        [MarshalAs(UnmanagedType.LPStr)]
+        public string varTypeName;
+        [MarshalAs(UnmanagedType.LPStr)]
+        public string varDescription;
+        public int argtype;         // used to denote if allowed as in-arg=1, out-arg=2, or both=0 (we'll see both usually)
+        internal IntPtr csvariable;   // struct csvariable* (*createVariable)(void*, void*); used to create variables - we can ignore
+        internal IntPtr cstype;       // struct cstype** unionTypes;  will be NULL for anything we get
     }
 
     /// <summary>
@@ -291,12 +471,26 @@ public class CsoundUnityBridge
     /// <returns>the handle pinning the callback in the heap.  Usually can be ignores.</returns>
     internal GCHandle FreezeCallbackInHeap(Delegate callback)
     {
-        //string name = callback.Method.Name;
-        string name = callback.Method.GetHashCode().ToString();
-        // Debug.Log("method name: " + name);
+        //string name = callback.Method.GetHashCode().ToString(); // hash code is not guaranteed to be the same for the same method
+        string name = callback.Target.ToString() + "." + callback.Method.Name;
+        Debug.Log("FreezeCallbackInHeap: name: " + name);
         if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(callback));
         return m_callbacks[name];
     }
+
+    internal void ClearCallbackFromHeap(Delegate callback)
+    {
+        //string name = callback.Method.GetHashCode().ToString(); // hash code is not guaranteed to be the same for the same method
+        string name = callback.Target.ToString() + "." + callback.Method.Name;
+        Debug.Log("ClearCallbackFromHeap: name: " + name);
+        if (!m_callbacks.ContainsKey(name)) return;
+        m_callbacks[name].Free();
+        m_callbacks.Remove(name);
+    }
+
+    #endregion EVENTS
+
+    #region TABLES
 
     /// <summary>
     /// Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
@@ -431,6 +625,8 @@ public class CsoundUnityBridge
         return len;
     }
 
+    #endregion TABLES
+
     /// <summary>
     /// Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char) 
     /// Otherwise it returns 0.
@@ -502,7 +698,8 @@ public class CsoundUnityBridge
         return Csound6.NativeMethods.csoundGetSpoutSample(csound, frame, channel);
     }
 
-    public void AddSpinSample(int frame, int channel, MYFLT sample) {
+    public void AddSpinSample(int frame, int channel, MYFLT sample)
+    {
         Csound6.NativeMethods.csoundAddSpinSample(csound, frame, channel, sample);
     }
 
@@ -682,7 +879,7 @@ public class CsoundUnityBridge
     public IDictionary<string, ChannelInfo> GetChannelList()
     {
         IDictionary<string, ChannelInfo> channels = new SortedDictionary<string, ChannelInfo>();
-        
+
         IntPtr ppChannels = IntPtr.Zero;
         int size = Csound6.NativeMethods.csoundListChannels(csound, out ppChannels);
         if ((size > 0) && (ppChannels != IntPtr.Zero))
@@ -930,7 +1127,6 @@ public class CsoundUnityBridge
         public int ksmps_override;      /* ksmps override */
         public int FFT_library;         /* fft_lib */
     }
-
 
     /// <summary>
     /// Gets a string value from csound's environment values.
