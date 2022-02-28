@@ -103,7 +103,7 @@ public class EnvironmentSettings
         return platform.ToString();
     }
 
-    public string GetFullPath()
+    public string GetPathDescriptor()
     {
         return $"[{GetPlatformString()}]:[{GetTypeString()}]: {GetPath()}";
     }

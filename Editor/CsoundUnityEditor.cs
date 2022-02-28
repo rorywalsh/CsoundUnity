@@ -137,7 +137,7 @@ public class CsoundUnityEditor : Editor
                 EditorGUILayout.LabelField("Added Environment Variables: ");
                 foreach (var env in csoundUnity.environmentSettings)
                 {
-                    EditorGUILayout.LabelField(env.GetFullPath());
+                    EditorGUILayout.LabelField(env.GetPathDescriptor());
                 }
                 EditorGUI.indentLevel--;
             }
