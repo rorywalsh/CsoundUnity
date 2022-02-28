@@ -39,14 +39,18 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_logCsoundOutput;
     SerializedProperty m_loudVolumeWarning;
     SerializedProperty m_loudWarningThreshold;
+    SerializedProperty m_enviromentSettings;
     SerializedProperty m_channelControllers;
     SerializedProperty m_availableAudioChannels;
 
-    SerializedProperty  m_drawTestScore ;
+    SerializedProperty m_drawTestScore;
     SerializedProperty m_drawSettings;
     SerializedProperty m_drawChannels;
     SerializedProperty m_drawAudioChannels;
     SerializedProperty m_drawCsoundString;
+
+    bool drawEnvSettings;
+
     void OnEnable()
     {
         csoundUnity = (CsoundUnity)target;
@@ -61,6 +65,7 @@ public class CsoundUnityEditor : Editor
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
         m_loudVolumeWarning = this.serializedObject.FindProperty("loudVolumeWarning");
         m_loudWarningThreshold = this.serializedObject.FindProperty("loudWarningThreshold");
+        m_enviromentSettings = this.serializedObject.FindProperty("environmentSettings");
         m_channelControllers = this.serializedObject.FindProperty("_channels");
         m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
 
@@ -120,6 +125,23 @@ public class CsoundUnityEditor : Editor
             m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle("Loud Volume Warning", m_loudVolumeWarning.boolValue);
             if (m_loudVolumeWarning.boolValue)
                 m_loudWarningThreshold.floatValue = EditorGUILayout.FloatField("Warning Threshold", m_loudWarningThreshold.floatValue, GUILayout.MaxWidth(Screen.width / 2 + 20));
+
+            EditorGUILayout.Space(10);
+            EditorGUI.indentLevel++;
+            drawEnvSettings = EditorGUILayout.Foldout(drawEnvSettings, "Csound Global Environment Folders");
+            if(drawEnvSettings)
+            {
+                EditorGUI.indentLevel++;
+                EditorGUILayout.PropertyField(m_enviromentSettings);
+                EditorGUILayout.Space(10);
+                EditorGUILayout.LabelField("Added Environment Variables: ");
+                foreach (var env in csoundUnity.environmentSettings)
+                {
+                    EditorGUILayout.LabelField(env.GetFullPath());
+                }
+                EditorGUI.indentLevel--;
+            }
+            EditorGUI.indentLevel--;
         }
     }
 

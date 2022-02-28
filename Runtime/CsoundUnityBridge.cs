@@ -40,31 +40,60 @@ public class CsoundUnityBridge
 
     private IDictionary<string, GCHandle> m_callbacks = new Dictionary<string, GCHandle>();  //a map of GCHandles pinned callbacks in memory: kept for unpinning during Dispose()
 
-    /* 
-		constructor sets up the OPCODE6DIR64 directory that holds the Csound plugins. 
-		also creates an instance of Csound and compiles it
-	*/
-    public CsoundUnityBridge(string csoundDir, string csdFile)
+    private void SetEnvironmentSettings(List<EnvironmentSettings> environmentSettings)
     {
-        Debug.Log($"CsoundUnityBridge constructor from dir: {csoundDir}");
-#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
-        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-        Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.streamingAssetsPath + "/CsoundFiles");
-        Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.streamingAssetsPath + "/CsoundFiles");
-        Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.streamingAssetsPath + "/CsoundFiles");
-#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.bundle/Contents/MacOS"));
-        Debug.Log($"opcodePath {opcodePath} exists? " + Directory.Exists(opcodePath));
-        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
-        Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.streamingAssetsPath + "/CsoundFiles");
-        Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.streamingAssetsPath + "/CsoundFiles");
-        Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.streamingAssetsPath + "/CsoundFiles");
-#elif UNITY_ANDROID
-        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-        Csound6.NativeMethods.csoundSetGlobalEnv("SFDIR", Application.persistentDataPath + "/CsoundFiles");
-        Csound6.NativeMethods.csoundSetGlobalEnv("SSDIR", Application.persistentDataPath + "/CsoundFiles");
-        Csound6.NativeMethods.csoundSetGlobalEnv("SADIR", Application.persistentDataPath + "/CsoundFiles");
-#endif
+        if (environmentSettings == null || environmentSettings.Count == 0) return;
+        foreach (var env in environmentSettings)
+        {
+            switch (Application.platform)
+            {
+                case RuntimePlatform.OSXEditor:
+                case RuntimePlatform.OSXPlayer:
+                    if (env.platform.Equals(SupportedPlatform.MacOS))
+                    {
+                        Debug.Log($"Setting Global Environment for MacOS to: {env.GetFullPath()}");
+                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), env.GetFullPath());
+                    }
+                    break;
+                case RuntimePlatform.WindowsPlayer:
+                case RuntimePlatform.WindowsEditor:
+                    if (env.platform.Equals(SupportedPlatform.Windows))
+                    {
+                        Debug.Log($"Setting Global Environment for Windows to: {env.GetFullPath()}");
+                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), env.GetFullPath());
+                    }
+                    break;
+                case RuntimePlatform.Android:
+                    if (env.platform.Equals(SupportedPlatform.Android))
+                    {
+                        Debug.Log($"Setting Global Environment for Android to: {env.GetFullPath()}");
+                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), env.GetFullPath());
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /* 
+		constructor sets up the Csound Global Environment Variables set by the user. 
+		also creates an instance of Csound from the full csdFile passed as a string and compiles it
+	*/
+    public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
+    {
+        SetEnvironmentSettings(environmentSettings);
+
+// KEEP THIS FOR REFERENCE ;)
+//#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
+//        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
+//#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+//        var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.bundle/Contents/MacOS"));
+//        //Debug.Log($"opcodePath {opcodePath} exists? " + Directory.Exists(opcodePath));
+//        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
+//#elif UNITY_ANDROID
+//        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
+//#endif
 
         Csound6.NativeMethods.csoundInitialize(1);
         csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero);

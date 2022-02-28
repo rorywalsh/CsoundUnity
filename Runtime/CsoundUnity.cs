@@ -63,14 +63,60 @@ public class CsoundChannelController
     }
 }
 
-///// <summary>
-///// Utility class for CsoundFiles to copy 
-///// </summary>
-//[Serializable]
-//public struct CsoundFilesInfo
-//{
-//    public string[] fileNames;
-//}
+/// <summary>
+/// This class describes a setting that is meant to be used to set Csound's Global Environment Variables
+/// </summary>
+[Serializable]
+public class EnvironmentSettings
+{
+    [SerializeField] public SupportedPlatform platform;
+    [SerializeField] public CsoundUnity.EnvType type;
+    [SerializeField] public EnvironmentPathOrigin baseFolder;
+    [SerializeField] public string suffix;
+    
+    public string GetPath()
+    {
+        var path = string.Empty;
+        switch (baseFolder)
+        {
+            case EnvironmentPathOrigin.PersistentDataPath:
+                path = Application.persistentDataPath;
+                break;
+            case EnvironmentPathOrigin.StreamingAssets:
+                path = Application.streamingAssetsPath;
+                break;
+            case EnvironmentPathOrigin.Absolute:
+            default:
+                break;
+        }
+        path = Path.Combine(path, suffix);
+        return path;
+    }
+    
+    public string GetTypeString()
+    {
+        return type.ToString();
+    }
+
+    public string GetPlatformString()
+    {
+        return platform.ToString();
+    }
+
+    public string GetFullPath()
+    {
+        return $"[{GetPlatformString()}]:[{GetTypeString()}]: {GetPath()}";
+    }
+}
+
+[Serializable]
+public enum SupportedPlatform { MacOS, Windows, Android }
+
+/// <summary>
+/// The base folder where to set the Environment Variables
+/// </summary>
+[Serializable]
+public enum EnvironmentPathOrigin { PersistentDataPath, StreamingAssets, Absolute }
 
 #endregion PUBLIC_CLASSES
 
@@ -185,6 +231,14 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     public string csoundScore;
 
+    /// <summary>
+    /// The list of the Environment Settings that will be set on start, using csoundSetGlobalEnv.
+    /// Each setting can be used to specify the path of an environment variable.
+    /// These settings will be applied to this CsoundUnity instance when the CsoundUnityBridge is created.
+    /// </summary>
+    [SerializeField]
+    public List<EnvironmentSettings> environmentSettings = new List<EnvironmentSettings>();
+
     #endregion PUBLIC_FIELDS
 
     #region PRIVATE_FIELDS
@@ -249,24 +303,6 @@ public class CsoundUnity : MonoBehaviour
 
         AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
 
-        string dataPath = Path.GetFullPath(Path.Combine("Packages", packageName, "Runtime"));
-
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-        dataPath = Path.Combine(dataPath, "Win64"); // Csound plugin libraries in Windows Editor
-#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        dataPath = Path.Combine(dataPath, "macOS");
-#elif UNITY_ANDROID
-        dataPath = Path.Combine(dataPath, "Android");
-#endif
-
-        //string path = System.Environment.GetEnvironmentVariable("Path");
-        //if (string.IsNullOrWhiteSpace(path) || !path.Contains(dataPath))
-        //{
-        //    string updatedPath = path + ";" + dataPath;
-        //    print("Updated path:" + updatedPath);
-        //    System.Environment.SetEnvironmentVariable("Path", updatedPath); // Is this needed for Csound to find libraries?
-        //}
-
         audioSource = GetComponent<AudioSource>();
         audioSource.spatializePostEffects = true;
 
@@ -283,10 +319,10 @@ public class CsoundUnity : MonoBehaviour
             audioSource.Play();
         }
 
-        /// the CsoundUnityBridge constructor takes a path to the package Runtime folder, and a string with the csound code.
+        /// the CsoundUnityBridge constructor the string with the csound code and a list of the Global Environment Variables Settings.
         /// It then calls createCsound() to create an instance of Csound and compile the csd string.
         /// After this we start the performance of Csound.
-        csound = new CsoundUnityBridge(dataPath, _csoundString);
+        csound = new CsoundUnityBridge(_csoundString, environmentSettings);
         if (csound != null)
         {
             /// channels are created when a csd file is selected in the inspector
@@ -323,18 +359,6 @@ public class CsoundUnity : MonoBehaviour
 
                 Debug.Log("zerdbfs " + zerdbfs);
 
-                //#if UNITY_EDITOR || UNITY_STANDALONE
-                //                csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
-                //                csound.SetStringChannel("AudioPath", Application.dataPath + "/Audio/");
-                //                if (Application.isEditor)
-                //                    csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
-                //                else
-                //                    csound.SetStringChannel("CsoundFiles", Application.streamingAssetsPath + "/CsoundFiles/");
-                //                csound.SetStringChannel("StreamingAssets", Application.streamingAssetsPath);
-                //#elif UNITY_ANDROID
-                //                string persistentPath = Application.persistentDataPath + "/CsoundFiles/"; // TODO ??
-                //                csound.SetStringChannel("CsoundFilesPath", Application.dataPath);
-                //#endif
                 initialized = true;
                 OnCsoundInitialized?.Invoke();
             }
@@ -1330,7 +1354,7 @@ public class CsoundUnity : MonoBehaviour
 
 
     #region ENUMS
-
+    [Serializable]
     /// <summary>
     /// The enum representing the Csound Environment Variables
     /// 
@@ -1439,6 +1463,8 @@ public class CsoundUnity : MonoBehaviour
     /// An absolute path, can be external of the Unity Project
     /// </summary>
     public enum SamplesOrigin { Resources, StreamingAssets, Absolute }
+
+    
 
     #endregion ENUMS
 
