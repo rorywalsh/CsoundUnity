@@ -60,6 +60,11 @@
 	  "displayName":"Collisions",
 	  "description": "Using collisions to trigger instruments",
 	  "path": "Samples~/Collisions"
+	},
+	{
+	  "displayName":"Environment Vars",
+	  "description": "Using Global Environment Vars to customize Csound",
+	  "path": "Samples~/EnvironmentVars"
 	}
   ]
 }
