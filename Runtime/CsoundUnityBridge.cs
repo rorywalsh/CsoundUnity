@@ -70,6 +70,13 @@ public class CsoundUnityBridge
                         Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), env.GetPath());
                     }
                     break;
+                case RuntimePlatform.IPhonePlayer:
+                    if (env.platform.Equals(SupportedPlatform.iOS))
+                    {
+                        Debug.Log($"Setting {env.GetTypeString()} for iOS to: {env.GetPath()}");
+                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), env.GetPath());
+                    }
+                    break;
                 default:
                     break;
             }

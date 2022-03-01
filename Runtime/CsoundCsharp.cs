@@ -42,7 +42,10 @@ namespace csoundcsharp
         internal const string _dllVersion = "CsoundLib64.bundle";
 #elif UNITY_ANDROID
         internal const string _dllVersion = "csoundandroid";
+#elif UNITY_IOS
+        internal const string _dllVersion = "__Internal";
 #endif
+
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void MessageCallbackProxy(IntPtr csound, Int32 attr, string format, IntPtr valist);
 
@@ -59,7 +62,7 @@ namespace csoundcsharp
         internal delegate int YieldCallback(IntPtr csound);
 
 
-        // Csound API 6.11
+        // Csound API 6.17
         public class NativeMethods
         {
             #region Instantiation

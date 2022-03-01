@@ -110,7 +110,7 @@ public class EnvironmentSettings
 }
 
 [Serializable]
-public enum SupportedPlatform { MacOS, Windows, Android }
+public enum SupportedPlatform { MacOS, Windows, Android, iOS }
 
 /// <summary>
 /// The base folder where to set the Environment Variables
