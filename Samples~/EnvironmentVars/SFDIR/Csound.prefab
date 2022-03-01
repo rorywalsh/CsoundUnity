@@ -140,32 +140,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logCsoundOutput: 0
+  logCsoundOutput: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   csoundScore: 
   environmentSettings:
-  - type: 0
+  - platform: 0
+    type: 0
     baseFolder: 0
     suffix: CsoundFiles
-    platform: 0
-  - type: 0
+  - platform: 1
+    type: 0
     baseFolder: 0
     suffix: CsoundFiles
-    platform: 1
-  - type: 0
+  - platform: 2
+    type: 0
     baseFolder: 0
     suffix: CsoundFiles
-    platform: 2
   _csoundFileGUID: 5a709faad364585448f780bdb9069960
-  _csoundString: "<CsoundSynthesizer>\r\n<CsOptions>\r\n; Select audio/midi flags
-    here according to platform\r\n;-odac ;;;realtime audio out, virtual midi in\r\n;-iadc   
-    ;;;uncomment -iadc if RT audio input is needed too\r\n; For Non-realtime ouput
-    leave only the line below:\r\n; -o sfload.wav -W ;;; for file output any platform\r\n-n
-    -d \r\n</CsOptions>\r\n<CsInstruments>\r\n\r\n; By  Menno Knevel - 2020\r\n\r\nsr
-    = 48000\r\nksmps = 64\r\nnchnls = 2\r\n0dbfs  = 1\r\n\r\n; load in two soundfonts\r\nisf\tsfload\t\"sf_GMbank.sf2\"\r\nir\tsfload\t\"07AcousticGuitar.sf2\"\r\n\tsfplist
+  _csoundString: "<CsoundSynthesizer>\r\n<CsOptions>\r\n-n -d \r\n</CsOptions>\r\n<CsInstruments>\r\n\r\n;
+    By  Menno Knevel - 2020\r\n\r\nsr = 48000\r\nksmps = 64\r\nnchnls = 2\r\n0dbfs 
+    = 1\r\n\r\n; load in two soundfonts\r\nisf\tsfload\t\"sf_GMbank.sf2\"\r\nir\tsfload\t\"07AcousticGuitar.sf2\"\r\n\tsfplist
     isf\r\n\tsfplist ir\r\n; first sf_GMbank.sf2 is loaded and assigned to start
     at 0 and counting up to 328\r\n; as there are 329 presets in sf_GMbank.sf2 (0-328).\r\n;
     then 07AcousticGuitar.sf2 is loaded and assigned to replace the 10th preset of

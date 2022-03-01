@@ -26,7 +26,12 @@ namespace Csound.EnvironmentVars
                 {
                     var sf = Resources.Load<TextAsset>(sfName);
                     Debug.Log($"Writing sf file at path: {destinationPath}");
-                    File.WriteAllText(destinationPath, sf.text);
+                    Stream s = new MemoryStream(sf.bytes);
+                    BinaryReader br = new BinaryReader(s);
+                    using (BinaryWriter bw = new BinaryWriter(File.Open(destinationPath, FileMode.OpenOrCreate)))
+                    {
+                        bw.Write(br.ReadBytes(sf.bytes.Length));
+                    }
                 }
             }
             // if you need to do something with Csound, use this instance!
