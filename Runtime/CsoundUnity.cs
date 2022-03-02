@@ -31,7 +31,7 @@ using UnityEngine.Networking;
 #endif
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID // and maybe iOS?
+#elif UNITY_ANDROID || UNITY_IOS
 using MYFLT = System.Single;
 #endif
 
