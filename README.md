@@ -1,5 +1,6 @@
 [![openupm](https://img.shields.io/npm/v/com.csound.csoundunity?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.csound.csoundunity/)
 
+# CsoundUnity #
 #### Csound wrapper for the Unity game engine.
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
@@ -9,13 +10,13 @@ Please visit [homepage](http://rorywalsh.github.io/CsoundUnity/)
 
 This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If you wish to 
 use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
-http://csound6net.codeplex.com
+http://csound6net.codeplex.com (unfortunately the site is not reachable at the moment)
   
-## New Version: 3.0 ##
+## New Version: 3.2.0 ##
 
 Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md) for more details.  
 
-## How To Install ##
+## How To Import it into Unity ##
 
 **From version 3.0 CsoundUnity is in the form of a Unity Package**. See the [Unity Manual](https://docs.unity3d.com/Manual/PackagesList.html) for more information.  
 
@@ -24,13 +25,11 @@ To open the Package Manager in Unity, select **Window/PackageManager** from the 
 
 **If you have git installed**: press +, *Add package from git url...*, paste this url https://github.com/rorywalsh/CsoundUnity.git, and press Add.
 
-**If you don’t have git**: 
-- option 1: clone https://github.com/rorywalsh/CsoundUnity.git or download the [Source Code.zip](https://github.com/rorywalsh/CsoundUnity/archive/refs/tags/v3.0.zip) on your local disk, extract its content, press + in the Package Manager, *Add package from disk...*, and select the package.json inside the extracted folder.  
-- option 2: download the [Source Code tar.gz](https://github.com/rorywalsh/CsoundUnity/archive/refs/tags/v3.0.tar.gz) from the release page, press + in the Package Manager,  *Add package from tarball...*, and select the downloaded tar.gz.
+**If you don’t have git**: Download the Source Code (zip or tar.gz) of the [Latest Release](https://github.com/rorywalsh/CsoundUnity/releases/latest) on your local disk, extract its content, press + in the Package Manager, *Add package from disk...*, and select the package.json inside the extracted folder.  
 
-## Documentation
+## Documentation ##
 
-[Here you can find the v3 docs](https://github.com/rorywalsh/CsoundUnity/blob/develop/Documentation~/index.md)
+[Here you can find the docs](https://github.com/rorywalsh/CsoundUnity/blob/develop/Documentation~/index.md)
 
 ## Contributors ✨
 

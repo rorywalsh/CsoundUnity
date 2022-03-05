@@ -1,3 +1,13 @@
+## [3.2.0] - 2022-03-06
+
+- added iOS support;
+- updated Csound libs to version 6.17;
+- added customizable EnvironmentSettings, to set Csound Environment Variables;
+- added SFDIR sample;
+- heavy cleaning;
+- updated documentation with newest features;
+- updated README;
+
 ## [3.1.1] - 2022-01-28
 
 - updated changelog
