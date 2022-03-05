@@ -1,6 +1,17 @@
 /*
-Copyright (c) <2016> Rory Walsh. 
-Android support and asset management changes by Hector Centeno
+Copyright (C) 2015 Rory Walsh. 
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+This interface would not have been possible without Richard Henninger's .NET interface to the Csound API.
+
+Contributors:
+
+Bernt Isak Wærstad
+Charles Berman
+Giovanni Bedetti
+Hector Centeno
+NPatch
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -16,14 +27,9 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using UnityEngine;
 using System;
-using System.IO;
-using System.Net;
-using System.Text;
 using System.Runtime.InteropServices;
 using csoundcsharp;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.ComponentModel;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
 #elif UNITY_ANDROID || UNITY_IOS
@@ -37,8 +43,6 @@ public class CsoundUnityBridge
 {
     public IntPtr csound;
     bool compiledOk = false;
-
-    private IDictionary<string, GCHandle> m_callbacks = new Dictionary<string, GCHandle>();  //a map of GCHandles pinned callbacks in memory: kept for unpinning during Dispose()
 
     private void SetEnvironmentSettings(List<EnvironmentSettings> environmentSettings)
     {
@@ -83,10 +87,13 @@ public class CsoundUnityBridge
         }
     }
 
-    /* 
-		constructor sets up the Csound Global Environment Variables set by the user. 
-		also creates an instance of Csound from the full csdFile passed as a string and compiles it
-	*/
+    /// <summary>
+    /// The CsoundUnityBridge constructor sets up the Csound Global Environment Variables set by the user. 
+    /// Then it creates an instance of Csound and compiles the full csdFile passed as a string.
+    /// Then it starts Csound.
+    /// </summary>
+    /// <param name="csdFile">The Csound (.csd) file content as a string</param>
+    /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
     public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
     {
          SetEnvironmentSettings(environmentSettings);
@@ -109,35 +116,29 @@ public class CsoundUnityBridge
             Debug.LogError("Couldn't create Csound!");
             return;
         }
-        int systemBufferSize;
-        int systemNumBuffers;
-        AudioSettings.GetDSPBufferSize(out systemBufferSize, out systemNumBuffers);
-        Debug.Log($"System buffer size: {systemBufferSize}, buffer count: {systemNumBuffers}, samplerate: {AudioSettings.outputSampleRate}");
         
         Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
-        //string[] runargs = new string[] { "csound", csdFile, "--sample-rate=" + AudioSettings.outputSampleRate, "--ksmps=32" };
-        //Debug.Log("CsoundUnity is overriding the orchestra sample rate to match that of Unity.");
-        //Debug.Log("CsoundUnity is overriding the orchestra ksmps value to best match Unity's audio settings, i.e, 32 ksmps");
-        //int ret = Csound6.NativeMethods.csoundCompile(csound, 4, runargs);
-        //Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
-        //Csound6.NativeMethods.csoundSetOption(csound, "--ksmps=32");
 
         Csound6.NativeMethods.csoundSetOption(csound, "-n");
         Csound6.NativeMethods.csoundSetOption(csound, "-d");
+
         var parms = GetParams();
         parms.control_rate_override = AudioSettings.outputSampleRate;
         parms.sample_rate_override = AudioSettings.outputSampleRate;
-        //parms.e0dbfs_override = 1;
         SetParams(parms);
+
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
         Csound6.NativeMethods.csoundStart(csound);
-        var res = PerformKsmps();
-        Debug.Log($"PerformKsmps: {res}");
+        //var res = PerformKsmps();
+        //Debug.Log($"PerformKsmps: {res}");
         compiledOk = ret == 0 ? true : false;
-        Debug.Log($"CsoundCompile: {compiledOk}");
+        //Debug.Log($"CsoundCompile: {compiledOk}");
     }
 
+    #region Instantiation
+
+    #endregion
     public int GetVersion()
     {
         return Csound6.NativeMethods.csoundGetVersion();
@@ -151,18 +152,11 @@ public class CsoundUnityBridge
     public void StopCsound()
     {
         Csound6.NativeMethods.csoundStop(csound);
-        //dispose of unmanaged callbacks here? - can be the cause of the crashes on close - TODO
-        if (m_callbacks != null)
-        {
-            foreach (GCHandle gch in m_callbacks.Values) gch.Free();
-            m_callbacks.Clear();
-            m_callbacks = null;
-        }
     }
 
     public void OnApplicationQuit()
     {
-        Csound6.NativeMethods.csoundStop(csound);
+        StopCsound();
         //Csound6.NativeMethods.csoundCleanup(csound);
         Csound6.NativeMethods.csoundDestroyMessageBuffer(csound);
         Csound6.NativeMethods.csoundDestroy(csound);
@@ -245,95 +239,6 @@ public class CsoundUnityBridge
         Marshal.Copy(buffer, dest, 0, dest.Length);
         Marshal.FreeHGlobal(buffer);
         return dest;
-    }
-
-    public class Csound6SenseEventsArgs : EventArgs
-    {
-        public object UserData;
-    }
-
-    public delegate void Csound6SenseEventCallbackHandler(object sender, Csound6SenseEventsArgs e);
-
-    public void RawSenseEventsCallback(IntPtr csound, IntPtr userdata) { }
-
-    /// <summary>
-    /// Registers a callback proxy (below) that transforms csound callbacks into .net events.
-    /// </summary>
-    /// <param name="callback"></param>
-    /// <returns></returns>
-    internal void SetSenseEventCallback<T>(Action<T> callback, T userData) where T : class
-    {
-        Csound6.SenseEventCallbackProxy cb = new Csound6.SenseEventCallbackProxy((csd, ptr) =>
-        {
-            GCHandle handle = GCHandle.Alloc(userData, GCHandleType.Pinned);
-            IntPtr p = (IntPtr)handle;
-            ptr = p;
-            callback?.Invoke(userData);
-            handle.Free();
-        });
-
-        GCHandle gch = FreezeCallbackInHeap(callback);
-        Csound6.NativeMethods.csoundRegisterSenseEventCallback(csound, cb);
-        //return gch;
-    }
-
-    protected EventHandlerList m_callbackHandlers;
-
-    public event CsoundUnityBridge.Csound6SenseEventCallbackHandler SenseEventsCallback
-    {
-        add
-        {
-            //  CsoundUnityBridge.Csound6SenseEventCallbackHandler handler = m_callbackHandlers[_inputChannelEventKey] as Csound6SenseEventCallbackHandler;
-            //if (handler == null)
-            SetSenseEventCallback(RawSenseEventsCallback);
-            //  m_callbackHandlers.AddHandler(_senseEventKey, value);
-        }
-        remove
-        {
-            //  m_callbackHandlers.RemoveHandler(_senseEventKey, value);
-        }
-
-    }
-
-    internal GCHandle SetSenseEventCallback(Csound6.SenseEventCallbackProxy callback)
-    {
-        GCHandle gch = FreezeCallbackInHeap(callback);
-        Csound6.NativeMethods.csoundRegisterSenseEventCallback(csound, callback);
-        return gch;
-    }
-
-    internal void SetYieldCallback(Action callback)
-    {
-        Csound6.YieldCallback cb = new Csound6.YieldCallback((csd) =>
-        {
-            // Debug.Log("callback " + (callback == null ? "is null" : "is not null"));
-            if (callback == null) return -1;
-            callback?.Invoke();
-            return 1;
-        });
-
-        //string name = callback.Method.GetHashCode().ToString();
-        //Debug.Log("method name: " + name);
-        //if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(cb));
-        var gchandle = FreezeCallbackInHeap(callback);
-        Csound6.NativeMethods.csoundSetYieldCallback(csound, cb);
-    }
-
-    /// <summary>
-    /// Pins a callback in memory for the duration of the life of this csound instance.
-    /// Csound expects a callback to be valid as long as it references it whereas pInvoke
-    /// callbacks can get garbage collected when no references to it are detected.
-    /// Callbacks are unpinned automatically by the Dispose() method when called
-    /// </summary>
-    /// <param name="callback">the callback to pin</param>
-    /// <returns>the handle pinning the callback in the heap.  Usually can be ignores.</returns>
-    internal GCHandle FreezeCallbackInHeap(Delegate callback)
-    {
-        //string name = callback.Method.Name;
-        string name = callback.Method.GetHashCode().ToString();
-        // Debug.Log("method name: " + name);
-        if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(callback));
-        return m_callbacks[name];
     }
 
     /// <summary>
@@ -444,9 +349,6 @@ public class CsoundUnityBridge
         if (res != -1)
             Marshal.Copy(tablePtr, tableValues, 0, len);
         else tableValues = null;
-        //Marshal.FreeCoTaskMem(tablePtr);
-        //Marshal.FreeHGlobal(tablePtr);
-        //tablePtr = IntPtr.Zero;
         GCHandle gc = GCHandle.FromIntPtr(tablePtr);
         gc.Free();
         return res;
@@ -530,7 +432,6 @@ public class CsoundUnityBridge
     {
         return Csound6.NativeMethods.csoundGetKsmps(csound);
     }
-
 
     /// <summary>
     /// Get a sample from Csound's audio output buffer
@@ -627,27 +528,7 @@ public class CsoundUnityBridge
     public static string GetMessageText(IntPtr message)
     {
         return CharPtr2String(message);
-        //int len = 0;
-        //while (Marshal.ReadByte(message, len) != 0) ++len;
-        //byte[] buffer = new byte[len];
-        //Marshal.Copy(message, buffer, 0, buffer.Length);
-        //return Encoding.UTF8.GetString(buffer);
     }
-
-    //#if CSHARP_7_3_OR_NEWER
-
-    //    /// <summary>
-    //    /// Async version of GetOpcodeList()
-    //    /// </summary>
-    //    /// <returns>A sorted Dictionary keyed by all opcodes which are active in the current instance of csound.</returns>
-    //    public async Task<IDictionary<string, IList<OpcodeArgumentTypes>>> GetOpcodeListAsync()
-    //    {
-    //        return await Task.Run(() =>
-    //        {
-    //            return GetOpcodeList();
-    //        });
-    //    }
-    //#endif
 
     /// <summary>
     /// Returns a sorted Dictionary keyed by all opcodes which are active in the current instance of csound.
@@ -689,26 +570,6 @@ public class CsoundUnityBridge
         }
         return opcodes;
     }
-
-    /// <summary>
-    /// Legacy channel access method.  Should be avoided in favor of csound 6's new thread-safe
-    /// access methods as used in subclasses.
-    /// Used internally by Get/SetValueDirect methods in subclasses ideally called from
-    /// within the same thread between calls to PerformKsmps or PerformBuffer.
-    /// If used between different threads (not recommended - use threadsafe property "Value" instead),
-    /// you should acquire and use a lock (see GetLock method) to arbitrate potential race conditions.
-    /// </summary>
-    /// <returns>a pointer to unmanaged memory where the channel's data begins</returns>
-    //internal IntPtr GetChannelPointer()
-    //{
-
-    //        int flags = (sizeof(int)) + (int)(((uint)Direction) << 4);
-    //        CsoundStatus result = Csound6Net.Int2StatusEnum(NativeMethods.csoundGetChannelPtr(csound, out m_pChannel, Name, flags));
-    //        if (((int)result) < 0) throw new Csound6NetException(Csound6NetException.ChannelAccessFailed, Name, result);
-    //    }
-
-    //    return m_pChannel;
-    //}
 
     /// <summary>
     /// Provides a dictionary of all currently defined channels resulting from compilation of an orchestra
@@ -837,7 +698,6 @@ public class CsoundUnityBridge
         public IntPtr attributes;
     }
 
-    // [CLSCompliant(true)]
     public class ChannelInfo
     {
         public ChannelInfo(string _name, ChannelType _type, ChannelDirection _direction)
@@ -855,7 +715,6 @@ public class CsoundUnityBridge
     /// <summary>
     /// This structure holds the parameter hints for control channels.
     /// </summary>
-//    [CLSCompliant(true)]
     public class ChannelHints
     {
         /// <summary>
@@ -899,7 +758,6 @@ public class CsoundUnityBridge
     /// <summary>
     /// 
     /// </summary>
-    //    [CLSCompliant(true)]
     public enum ChannelBehavior
     {
         None = 0,

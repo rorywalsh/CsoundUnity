@@ -1,3 +1,34 @@
+/*
+
+C S O U N D for C#
+
+Simple wrapper building C# hosts for Csound 6 via the Csound API
+and is licensed under the same terms and disclaimers as Csound described below.
+
+Copyright (C) 2013 Richard Henninger, Rory Walsh
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Contributors:
+
+Bernt Isak Wærstad
+Charles Berman
+Giovanni Bedetti
+Hector Centeno
+NPatch
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using System;
 using System.Runtime.InteropServices;
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -6,33 +37,13 @@ using MYFLT = System.Double;
 using MYFLT = System.Single;
 #endif
 
-/*
- * C S O U N D for C#
- * Simple wrapper building C# hosts for Csound 6 via the Csound API
- * and is licensed under the same terms and disclaimers as Csound described below.
- * Copyright (C) 2013 Richard Henninger, Rory Walsh
- * Android support and asset management changes by Hector Centeno
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
- * to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
- * ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
- * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- */
-
 namespace csoundcsharp
 {
     // This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If you wish to 
     // use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
-    // http://csound6net.codeplex.com
+    // http://csound6net.codeplex.com  // this site is not reachable anymore
 
-    // This lightweight wrapper was created to provide an interface to the Unity3d game engine
+    // This lightweight wrapper was created to provide an interface to the Unity game engine
     public partial class Csound6
     {
 
@@ -49,18 +60,19 @@ namespace csoundcsharp
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void MessageCallbackProxy(IntPtr csound, Int32 attr, string format, IntPtr valist);
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void FileOpenCallbackProxy(IntPtr csound, string pathname, int csFileType, int writing, int temporary);
+        // Callbacks will be probably removed in Csound 7
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void RtcloseCallbackProxy(IntPtr csound);
+        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        //internal delegate void FileOpenCallbackProxy(IntPtr csound, string pathname, int csFileType, int writing, int temporary);
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        internal delegate void SenseEventCallbackProxy(IntPtr csound, IntPtr userdata);
+        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        //internal delegate void RtcloseCallbackProxy(IntPtr csound);
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate int YieldCallback(IntPtr csound);
+        //[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        //internal delegate void SenseEventCallbackProxy(IntPtr csound, IntPtr userdata);
 
+        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        //internal delegate int YieldCallback(IntPtr csound);
 
         // Csound API 6.17
         public class NativeMethods
@@ -236,8 +248,8 @@ namespace csoundcsharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern void csoundSetMIDIFileOutput([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] string name);
 
-            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
-            internal static extern void csoundSetFileOpenCallback([In] IntPtr csound, FileOpenCallbackProxy processMessage);
+            //[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            //internal static extern void csoundSetFileOpenCallback([In] IntPtr csound, FileOpenCallbackProxy processMessage);
 
             #endregion
 
@@ -470,10 +482,8 @@ namespace csoundcsharp
 
             // PUBLIC int csoundKillInstance (CSOUND *csound, MYFLT instr, char *instrName, int mode, int allow_release)
 
-            // PUBLIC int csoundRegisterSenseEventCallback (CSOUND *, void(*func)(CSOUND *, void *), void *userData)
-            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-            internal static extern int csoundRegisterSenseEventCallback([In] IntPtr csound, SenseEventCallbackProxy senseEventProxy);
-
+            //[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            //internal static extern int csoundRegisterSenseEventCallback([In] IntPtr csound, SenseEventCallbackProxy senseEventProxy);
 
             // PUBLIC void csoundKeyPress (CSOUND *, char c)
 
@@ -555,9 +565,8 @@ namespace csoundcsharp
 
             #region Threading and concurrency
 
-
-            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-            internal static extern void csoundSetYieldCallback([In] IntPtr csound, YieldCallback yieldCallback);
+            //[DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            //internal static extern void csoundSetYieldCallback([In] IntPtr csound, YieldCallback yieldCallback);
 
             // PUBLIC void * csoundCreateThread (uintptr_t(*threadRoutine)(void *), void *userdata)
 

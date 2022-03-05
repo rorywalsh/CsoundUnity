@@ -1,9 +1,18 @@
 /*
 Copyright (C) 2015 Rory Walsh. 
-Android support and asset management changes by Hector Centeno
 
-This interface would not have been possible without Richard Henninger's .NET interface to the Csound API. 
- 
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+This interface would not have been possible without Richard Henninger's .NET interface to the Csound API.
+
+Contributors:
+
+Bernt Isak Wærstad
+Charles Berman
+Giovanni Bedetti
+Hector Centeno
+NPatch
+
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -24,10 +33,8 @@ using System;
 using System.Globalization;
 #if UNITY_EDITOR
 using UnityEditor;
-//using System.Threading.Tasks;
 #endif
 #if UNITY_ANDROID
-using UnityEngine.Networking;
 #endif
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
@@ -138,7 +145,7 @@ public class CsoundUnity : MonoBehaviour
     /// <summary>
     /// The version of this package
     /// </summary>
-    public const string packageVersion = "3.0.0";
+    public const string packageVersion = "3.2.0";
 
     /// <summary>
     /// the unique guid of the csd file
@@ -295,7 +302,9 @@ public class CsoundUnity : MonoBehaviour
     /// <summary>
     /// CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
     /// This functions behaves in more or less the same way as a class constructor. When creating references to the
-    /// CsoundUnity object make sure to create them in the scripts Awake() function.
+    /// CsoundUnity object make sure to create them in the scripts Start() function.
+    /// Notice that this function will execute regardless the CsoundUnity Component is enabled or not.
+    /// It won't be executed if the CsoundUnity GameObject is not active.
     /// </summary>
     void Awake()
     {
@@ -309,7 +318,7 @@ public class CsoundUnity : MonoBehaviour
         // FIX SPATIALIZATION ISSUES
         if (audioSource.clip == null && !processClipAudio)
         {
-            var ac = AudioClip.Create("DummyClip", 32, 1, AudioSettings.outputSampleRate, false);
+            var ac = AudioClip.Create("CsoundUnitySpatializerClip", 32, 1, AudioSettings.outputSampleRate, false);
             var data = new float[32];
             for (var i = 0; i < data.Length; i++) data[i] = 1;
             ac.SetData(data, 0);
@@ -357,7 +366,7 @@ public class CsoundUnity : MonoBehaviour
             {
                 zerdbfs = (float)csound.Get0dbfs();
 
-                Debug.Log("zerdbfs " + zerdbfs);
+                Debug.Log($"Csound zerdbfs: {zerdbfs}");
 
                 initialized = true;
                 OnCsoundInitialized?.Invoke();
@@ -369,7 +378,7 @@ public class CsoundUnity : MonoBehaviour
             compiledOk = false;
         }
 
-        Debug.Log("CsoundUnity done init, compiledOk? " + compiledOk);
+        Debug.Log($"CsoundUnity done init, compiledOk? {compiledOk}");
     }
 
 
@@ -1023,31 +1032,6 @@ public class CsoundUnity : MonoBehaviour
 
     #endregion TABLES
 
-    #region CALLBACKS
-
-    public void SetYieldCallback(Action callback)
-    {
-
-        csound.SetYieldCallback(callback);
-    }
-
-    public void SetSenseEventCallback<T>(Action<T> action, T type) where T : class
-    {
-        csound.SetSenseEventCallback(action, type);
-    }
-
-    public void AddSenseEventCallback(CsoundUnityBridge.Csound6SenseEventCallbackHandler callbackHandler)
-    {
-        csound.SenseEventsCallback += callbackHandler;//Csound_SenseEventsCallback;
-    }
-
-    public void RemoveSenseEventCallback(CsoundUnityBridge.Csound6SenseEventCallbackHandler callbackHandler)
-    {
-        csound.SenseEventsCallback -= callbackHandler;
-    }
-
-    #endregion CALLBACKS
-
     #region UTILITIES
 
 #if UNITY_EDITOR
@@ -1093,17 +1077,6 @@ public class CsoundUnity : MonoBehaviour
     {
         return csound.SetGlobalEnv(name, value);
     }
-
-    //#if CSHARP_7_3_OR_NEWER
-    //    /// <summary>
-    //    /// Get the Opcode List, async
-    //    /// </summary>
-    //    /// <returns></returns>
-    //    public async Task<IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>>> GetOpcodeListAsync()
-    //    {
-    //        return await csound.GetOpcodeListAsync();
-    //    }
-    //#endif
 
     /// <summary>
     /// Get the Opcode List, blocking
@@ -1293,60 +1266,26 @@ public class CsoundUnity : MonoBehaviour
                 Debug.LogWarning("Not implemented yet");
                 break;
         }
-
-
     }
 
-#if UNITY_ANDROID
-
-    /**
-     * Android method to write csd file to a location it can be read from Method returns the file path. 
-     */
-    public string GetCsoundFile(string csoundFileContents)
+    /// <summary>
+    /// Resets all internal memory and state in preparation for a new performance. 
+    /// Enables external software to run successive Csound performances without reloading Csound. 
+    /// Implies csoundCleanup(), unless already called.
+    /// </summary>
+    public void CsoundReset()
     {
-        try
-        {
-            Debug.Log("Csound file contents:");
-            Debug.Log(csoundFileContents);
-            string filename = Application.persistentDataPath + "/csoundFile.csd";
-            Debug.Log("Writing to " + filename);
-
-            if (!File.Exists(filename))
-            {
-                Debug.Log("File doesnt exist, creating it");
-                File.Create(filename).Close();
-            }
-
-            if (File.Exists(filename))
-            {
-                Debug.Log("File has been created");
-            }
-
-            File.WriteAllText(filename, csoundFileContents);
-            return filename;
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Error writing to file: " + e.ToString());
-        }
-
-        return "";
+        csound.Reset();
     }
 
-    public void GetCsoundAudioFile(byte[] data, string filename)
+    /// <summary>
+    /// Prints information about the end of a performance, and closes audio and MIDI devices. 
+    /// Note: after calling csoundCleanup(), the operation of the perform functions is undefined.
+    /// </summary>
+    public void Cleanup()
     {
-        try
-        {
-            string name = Application.persistentDataPath + "/" + filename;
-            File.Create(name).Close();
-            File.WriteAllBytes(name, data);
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Error writing to file: " + e.ToString());
-        }
+        csound.Cleanup();
     }
-#endif
 
     #endregion UTILITIES
 
@@ -1354,10 +1293,9 @@ public class CsoundUnity : MonoBehaviour
 
 
     #region ENUMS
-    [Serializable]
+
     /// <summary>
     /// The enum representing the Csound Environment Variables
-    /// 
     /// </summary>
     public enum EnvType
     {
@@ -1462,9 +1400,7 @@ public class CsoundUnity : MonoBehaviour
     /// the StreamingAssets folder
     /// An absolute path, can be external of the Unity Project
     /// </summary>
-    public enum SamplesOrigin { Resources, StreamingAssets, Absolute }
-
-    
+    public enum SamplesOrigin { Resources, StreamingAssets, Absolute } // TODO Add PersistentDataPath and URL
 
     #endregion ENUMS
 
@@ -1580,25 +1516,7 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Resets all internal memory and state in preparation for a new performance. 
-    /// Enables external software to run successive Csound performances without reloading Csound. 
-    /// Implies csoundCleanup(), unless already called.
-    /// </summary>
-    public void CsoundReset()
-    {
-        csound.Reset();
-    }
-
-    /// <summary>
-    /// Prints information about the end of a performance, and closes audio and MIDI devices. 
-    /// Note: after calling csoundCleanup(), the operation of the perform functions is undefined.
-    /// </summary>
-    public void Cleanup()
-    {
-        csound.Cleanup();
-    }
-
+    
     /// <summary>
     /// Reset the fields of this instance
     /// </summary>

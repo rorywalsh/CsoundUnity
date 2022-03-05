@@ -1,6 +1,17 @@
 ﻿/*
-Copyright (c) <2016> Rory Walsh
-Android support and asset management changes by Hector Centeno
+Copyright (C) 2015 Rory Walsh. 
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+This interface would not have been possible without Richard Henninger's .NET interface to the Csound API.
+
+Contributors:
+
+Bernt Isak Wærstad
+Charles Berman
+Giovanni Bedetti
+Hector Centeno
+NPatch
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -17,9 +28,6 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using UnityEngine;
 using System.IO;
 using UnityEditor;
-using UnityEditor.SceneManagement;
-using System.Collections.Generic;
-using System;
 
 [CustomEditor(typeof(CsoundUnity))]
 [System.Serializable]
@@ -74,20 +82,15 @@ public class CsoundUnityEditor : Editor
         m_drawSettings = this.serializedObject.FindProperty("_drawSettings");
         m_drawChannels = this.serializedObject.FindProperty("_drawChannels");
         m_drawAudioChannels = this.serializedObject.FindProperty("_drawAudioChannels");
-        //if (m_csoundFileName.stringValue.Length > 4)
-        //{
-        //    Debug.Log($"csoundFile is {m_csoundFileName.stringValue} (guid {m_csoundFileGUID.stringValue}), has channels size: {m_channelControllers.arraySize} csoundString: \n{m_csoundString.stringValue}");
-        //}
+
     }
 
     public override void OnInspectorGUI()
     {
         this.serializedObject.Update();
 
-        //get caption info first
         DrawCaption();
 
-        //create drag and drop area for Csound files
         DropAreaGUI();
 
         EditorGUILayout.Space();
@@ -113,7 +116,6 @@ public class CsoundUnityEditor : Editor
         m_drawSettings.boolValue = EditorGUILayout.Foldout(m_drawSettings.boolValue, "Settings", true);
         if (m_drawSettings.boolValue)
         {
-            // EditorGUILayout.HelpBox("Settings", MessageType.None);
             EditorGUI.BeginChangeCheck();
             m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
             if (EditorGUI.EndChangeCheck())
@@ -197,7 +199,6 @@ public class CsoundUnityEditor : Editor
         m_drawTestScore.boolValue = EditorGUILayout.Foldout(m_drawTestScore.boolValue, "Test Score Section", true);
         if (m_drawTestScore.boolValue)
         {
-
             EditorGUILayout.HelpBox("Write test score here, syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...", MessageType.None);
             m_csoundScore.stringValue = EditorGUILayout.TextField(m_csoundScore.stringValue);
 
@@ -206,25 +207,7 @@ public class CsoundUnityEditor : Editor
                 Debug.Log("sending score: " + m_csoundScore.stringValue);
                 csoundUnity.SendScoreEvent(m_csoundScore.stringValue);
             }
-        }
-        /*
-        EditorGUI.BeginChangeCheck();
-        _drawTestScore = EditorGUILayout.Foldout(_drawTestScore, "Test Score Section");
-        if (EditorGUI.EndChangeCheck()) {
-            if (_drawTestScore)
-            {
-
-                EditorGUILayout.HelpBox("Write test score here, syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...", MessageType.None);
-                m_csoundScore.stringValue = EditorGUILayout.TextField(m_csoundScore.stringValue);
-
-                if (GUILayout.Button("Send score") && m_csoundScore.stringValue.Length > 3 && Application.isPlaying && csoundUnity != null)
-                {
-                    Debug.Log("sending score: " + m_csoundScore.stringValue);
-                    csoundUnity.SendScoreEvent(m_csoundScore.stringValue);
-                }
-            }
-        }
-        */
+        }     
     }
 
     private void DrawAvailableChannelsList()
@@ -328,11 +311,6 @@ public class CsoundUnityEditor : Editor
                     else if (type.Contains("combobox"))
                     {
                         EditorGUI.BeginChangeCheck();
-                        //var options = text.Split(new char[] { ',' });
-                        //for (var o = 0; o < options.Length; o++)
-                        //{
-                        //    options[o] = string.Join("", options[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
-                        //}
                         var options = cc.FindPropertyRelative("options");
                         var strings = new string[options.arraySize];
                         for (var s = 0; s < strings.Length; s++) {
