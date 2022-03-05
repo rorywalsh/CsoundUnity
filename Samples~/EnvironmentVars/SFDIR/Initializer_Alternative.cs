@@ -3,16 +3,15 @@ using UnityEngine;
 
 namespace Csound.EnvironmentVars
 {
-    public class Initializer : MonoBehaviour
+    public class Initializer_Alternative : MonoBehaviour
     {
         [Tooltip("The names of the sound font files to copy from Resources to the Persistent Data Path folder. " +
             "Don't specify the extension. In this example will be added the '.sf2' extension to the copied files.")]
         [SerializeField] private string[] _soundFontsNames;
-        [Tooltip("The CsoundUnity prefab that will be instantiated. " +
-            "The GameObject is assumed to be active, so if you want to do other things before activating it, you will have to activate the CsoundUnityInstance GameObject by yourself")]
-        [SerializeField] private CsoundUnity _csoundUnityPrefab;
-        [Tooltip("The CsoundUnity instance that you can reference in other scripts")]
-        public CsoundUnity CsoundUnityInstance;
+        [Tooltip("Ensure this CsoundUnity GameObject is inactive when hitting play, " +
+            "otherwise the CsoundUnity initialization will run. " +
+            "Setting the Environment Variables on a running Csound instance can have unintended effects.")]
+        public CsoundUnity CsoundUnity;
 
         // Start is called before the first frame update
         void Start()
@@ -36,8 +35,8 @@ namespace Csound.EnvironmentVars
                     }
                 }
             }
-            // if you need to do something with Csound, use this instance!
-            CsoundUnityInstance = Instantiate(_csoundUnityPrefab);
+            // activate CsoundUnity!
+            CsoundUnity.gameObject.SetActive(true);
         }
     }
 }
