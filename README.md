@@ -8,19 +8,19 @@
 
 Please visit [homepage](http://rorywalsh.github.io/CsoundUnity/)
 
-This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If you wish to 
-use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
+This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. 
+If you wish to use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
 http://csound6net.codeplex.com (unfortunately the site is not reachable at the moment)
   
 ## New Version: 3.2.0 ##
 
 Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md) for more details.  
 
-## How To Import it into Unity ##
+## How to import ##
 
 **From version 3.0 CsoundUnity is in the form of a Unity Package**. See the [Unity Manual](https://docs.unity3d.com/Manual/PackagesList.html) for more information.  
 
-You should use the **Unity Package Manager** to install the CsoundUnity package.  
+You should use the **Unity Package Manager** to import the CsoundUnity package in your project.  
 To open the Package Manager in Unity, select **Window/PackageManager** from the top menu.
 
 **If you have git installed**: press +, *Add package from git url...*, paste this url https://github.com/rorywalsh/CsoundUnity.git, and press Add.
