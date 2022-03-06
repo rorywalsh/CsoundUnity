@@ -42,19 +42,38 @@ public class CsoundUnityChild : MonoBehaviour
 {
     #region PUBLIC_FIELDS
 
+    /// <summary>
+    /// The gameObject with the CsoundUnity component to load Audio Channels from
+    /// </summary>
     [Tooltip("The gameObject with the CsoundUnity component to load Audio Channels from")]
     [SerializeField]
     public GameObject csoundUnityGameObject;
 
     public enum AudioChannels { MONO = 1, STEREO = 2/*, QUAD?, FIVE_PLUS_ONE???*/}
+
+    /// <summary>
+    /// Defines if this CsoundUnityChild will use one (MONO) or two (STEREO) channels. 
+    /// In the case of a MONO setting, each sample is multiplied by 0.5f and sent to both output channels, 
+    /// to obtain the same volume as the original audio file, 
+    /// </summary>
     [Tooltip("Audio Output settings")]
     public AudioChannels AudioChannelsSetting = AudioChannels.MONO;
 
+    /// <summary>
+    /// An array containing the selected audiochannel indexes by channel: MONO = 0, STEREO = 1
+    /// </summary>
     [SerializeField, HideInInspector]
     public int[] selectedAudioChannelIndexByChannel;
 
+    /// <summary>
+    /// A list to hold available audioChannels names
+    /// </summary>
     [SerializeField, HideInInspector]
     public List<string> availableAudioChannels;
+
+    /// <summary>
+    /// A list to hold the current audio buffer data for each channel
+    /// </summary>
     [SerializeField]
     public List<MYFLT[]> namedAudioChannelData = new List<MYFLT[]>();
 
@@ -70,7 +89,6 @@ public class CsoundUnityChild : MonoBehaviour
     private CsoundUnity csoundUnity;
     
     #endregion PRIVATE_FIELDS
-
 
     private void Awake()
     {
@@ -124,6 +142,9 @@ public class CsoundUnityChild : MonoBehaviour
         // audioSource.dopplerLevel = 0;
     }
 
+    /// <summary>
+    /// Initializes this CsoundUnityChild instance setting the CsoundUnity reference and the audioChannels settings.
+    /// </summary>
     public void Init(CsoundUnity csound, AudioChannels audioChannels = AudioChannels.MONO)
     {
         AudioChannelsSetting = audioChannels;
@@ -140,6 +161,11 @@ public class CsoundUnityChild : MonoBehaviour
         zerodbfs = csoundUnity.Get0dbfs();
     }
 
+    /// <summary>
+    /// Used after Init(), sets the audioChannel index from the CsoundUnity.availableAudioChannels for each channel
+    /// </summary>
+    /// <param name="channel">The channel this setting refers to: 0 = LEFT, 1 = RIGHT</param>
+    /// <param name="audioChannel">The CsoundUnity audioChannel index in the CsoundUnity.availableAudioChannels list</param>
     public void SetAudioChannel(int channel, int audioChannel)
     {
         //Debug.Log($"CsoundUnityChild SetAudioChannel channel: {channel}, audioChannel: {audioChannel}");
