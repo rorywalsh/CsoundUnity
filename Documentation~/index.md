@@ -2,12 +2,17 @@
 
 -   [How to import](#importing)
 -   [Getting started](#getting_started)
--   [Controlling Csound from Unity](#controlling_csound_from_unity)
+-   [Controlling Csound from Unity Scripts](#controlling_csound_from_unity)
+
+	- [Csound's channel system]()
+	- [Starting / Stopping Instruments]()
+	
 -   [Controlling Csound from the Unity Editor](#controlling_csound_from_unity_editor)
 -   [CsoundUnityChild](#csoundunity_child)
 -   [CsoundFileWatcher](#csound_filewatcher)
 -	[Supported Platforms](#platforms)
 
+[[TOC]]
 
 <a name="importing"></a>
 ## How to import ##
