@@ -1,18 +1,15 @@
 # Documentation v3.2.0 #
 
--   [How to import](#importing)
--   [Getting started](#getting_started)
--   [Controlling Csound from Unity Scripts](#controlling_csound_from_unity)
+  * [How to import](#how-to-import)
+  * [Getting Started](#getting-started)
+  * [Controlling Csound from Unity Scripts](#controlling-csound-from-unity-scripts)
+    + [Csound's channel system](#csound-s-channel-system)
+    + [Starting / Stopping Instruments](#starting---stopping-instruments)
+  * [Controlling Csound from the Unity Editor](#controlling-csound-from-the-unity-editor)
+  * [CsoundUnityChild](#csoundunitychild)
+  * [CsoundFileWatcher](#csoundfilewatcher)
+  * [Supported Platforms](#supported-platforms)
 
-	- [Csound's channel system]()
-	- [Starting / Stopping Instruments]()
-	
--   [Controlling Csound from the Unity Editor](#controlling_csound_from_unity_editor)
--   [CsoundUnityChild](#csoundunity_child)
--   [CsoundFileWatcher](#csound_filewatcher)
--	[Supported Platforms](#platforms)
-
-[[TOC]]
 
 <a name="importing"></a>
 ## How to import ##
@@ -114,7 +111,7 @@ void Update()
 }
 ```
 
-
+<a name="csound-s-channel-system"></a>
 ### Csound's channel system ###
  
  Csound allows data to be sent and received over its channel system. To access data in Csound, one must use the **chnget** opcode. In the following code example, we access data being sent from Unity to Csoud on a channel named *speed*. The variable kSpeed will constantly update according to the value stored on the channel named *speed*. 
@@ -164,6 +161,7 @@ if (csoundUnity)
 kBPM = abs(chnget:k("BPM"))
 ```
 
+<a name="starting---stopping-instruments"></a>
 ### Starting / Stopping Instruments ###
 
 
