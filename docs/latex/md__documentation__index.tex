@@ -1,0 +1,450 @@
+
+\begin{DoxyItemize}
+\item How to import
+\item Getting Started
+\item Controlling Csound from Unity Scripts
+\begin{DoxyItemize}
+\item Csound\textquotesingle{}s channel system
+\item Starting / Stopping Instruments
+\item Keeping Csound performance running
+\end{DoxyItemize}
+\item Controlling Csound from the Unity Editor
+\item Csound\+Unity\+Child
+\item Csound\+File\+Watcher
+\item Supported Platforms
+\end{DoxyItemize}
+
+\label{_importing}%
+ \hypertarget{md__documentation__index_autotoc_md18}{}\doxysection{How to import}\label{md__documentation__index_autotoc_md18}
+{\bfseries{From version 3.\+0 \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} is in the form of a Unity Package}}. See the \href{https://docs.unity3d.com/Manual/PackagesList.html}{\texttt{ Unity Manual}} for more information. ~\newline
+
+
+You should use the {\bfseries{Unity Package Manager}} to import the \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} package in your project. ~\newline
+ To open the Package Manager in Unity, select {\bfseries{Window/\+Package\+Manager}} from the top menu.
+
+{\bfseries{If you have git installed}}\+: press +, {\itshape Add package from git url...}, paste this url \href{https://github.com/rorywalsh/CsoundUnity.git}{\texttt{ https\+://github.\+com/rorywalsh/\+Csound\+Unity.\+git}}, and press Add.
+
+{\bfseries{If you don’t have git}}\+: Download the Source Code (zip or tar.\+gz) of the \href{https://github.com/rorywalsh/CsoundUnity/releases/latest}{\texttt{ Latest Release}} on your local disk, extract its content, press + in the Package Manager, {\itshape Add package from disk...}, and select the package.\+json inside the extracted folder. ~\newline
+
+
+\label{_getting_started}%
+ \hypertarget{md__documentation__index_autotoc_md19}{}\doxysection{Getting Started}\label{md__documentation__index_autotoc_md19}
+\mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} is a simple component that can be added to any Game\+Object in a scene. To do so simple hit {\bfseries{Add\+Component}} in the inspector, then click {\bfseries{Audio}} and add {\bfseries{\mbox{\hyperlink{class_csound_unity}{Csound\+Unity}}}}.
+
+
+
+\mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} requires the presence of an Audio\+Source. If the Game\+Object you are trying to attach a \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component to does not already have an Audio\+Source attached, one will be added automatically.
+
+Once a \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component has been added to a Game\+Object, you will need to attach a \mbox{\hyperlink{namespace_csound}{Csound}} file to it. \mbox{\hyperlink{namespace_csound}{Csound}} files can be placed anywhere inside the Assets folder. To attach a \mbox{\hyperlink{namespace_csound}{Csound}} file to a \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component, simply drag it from the Assets folder to the \textquotesingle{}Csd Asset\textquotesingle{} field in the \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component inspector. When your game starts, \mbox{\hyperlink{namespace_csound}{Csound}} will feed audio from its output buffer into the Audio\+Source. Any audio produced by \mbox{\hyperlink{namespace_csound}{Csound}} can be accessed through the Audio\+Source component. It works for any amount of channels. See \href{https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs\#L1423}{\texttt{ {\bfseries{Csound\+Unity.\+Process\+Block()}}}}
+
+
+
+\label{_controlling_csound_from_unity}%
+ \hypertarget{md__documentation__index_autotoc_md20}{}\doxysection{Controlling Csound from Unity Scripts}\label{md__documentation__index_autotoc_md20}
+Once you have attached a \mbox{\hyperlink{namespace_csound}{Csound}} file to a \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component, you may wish to control aspects of that instrument in realtime. ~\newline
+ Before calling any \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} methods, one must first access the component using the {\bfseries{Get\+Component()}} method. This can be seen in the sample scripts that follow. ~\newline
+ One usually calls Get\+Component() in your script\textquotesingle{}s {\bfseries{Awake()}} or {\bfseries{Start()}} methods. ~\newline
+ You should wait for \mbox{\hyperlink{namespace_csound}{Csound}} to be initialised before executing your code. Once the \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component has been accessed, any of its member methods can be called.
+
+See some examples below\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_csound_unity}{CsoundUnity}} csound;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Start()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    csound = GetComponent<CsoundUnity>();        }
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Update()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (!csound.\mbox{\hyperlink{class_csound_unity_ae2c648d0f6245fb84c5f9ec5176079ff}{IsInitialized}}) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{    \textcolor{comment}{// your code}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_csound_unity}{CsoundUnity}} csound;}
+\DoxyCodeLine{}
+\DoxyCodeLine{IEnumerator Start()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    csound = GetComponent<CsoundUnity>();}
+\DoxyCodeLine{    \textcolor{keywordflow}{while} (!csound.\mbox{\hyperlink{class_csound_unity_ae2c648d0f6245fb84c5f9ec5176079ff}{IsInitialized}})}
+\DoxyCodeLine{    \{}
+\DoxyCodeLine{        yield \textcolor{keywordflow}{return} \textcolor{keyword}{null};}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// your code}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Update is called once per frame}}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Update()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (!csound.\mbox{\hyperlink{class_csound_unity_ae2c648d0f6245fb84c5f9ec5176079ff}{IsInitialized}}) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{    \textcolor{comment}{// your code}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_csound_unity}{CsoundUnity}} csound;}
+\DoxyCodeLine{\textcolor{keyword}{private} \textcolor{keywordtype}{bool} initialized;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private} \textcolor{keywordtype}{void} Start()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    csound = GetComponent<CsoundUnity>();}
+\DoxyCodeLine{    csound.\mbox{\hyperlink{class_csound_unity_a066fb6573f60c343aebb79f7a202cac5}{OnCsoundInitialized}} += OnCsoundInitialized;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private} \textcolor{keywordtype}{void} OnCsoundInitialized()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    initialized = \textcolor{keyword}{true};}
+\DoxyCodeLine{    Debug.Log(\textcolor{stringliteral}{"{}Csound initialised!"{}});}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// your code}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Update is called once per frame}}
+\DoxyCodeLine{\textcolor{keywordtype}{void} Update()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (!initialized) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{comment}{// your code}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\label{_csound-s-channel-system}%
+ \hypertarget{md__documentation__index_autotoc_md21}{}\doxysubsection{Csound\textquotesingle{}s channel system}\label{md__documentation__index_autotoc_md21}
+\mbox{\hyperlink{namespace_csound}{Csound}} allows data to be sent and received over its channel system. To access data in \mbox{\hyperlink{namespace_csound}{Csound}}, one must use the {\bfseries{chnget}} opcode. In the following code example, we access data being sent from Unity to Csoud on a channel named {\itshape speed}. The variable k\+Speed will constantly update according to the value stored on the channel named {\itshape speed}.
+
+
+
+In order to send data from Unity to \mbox{\hyperlink{namespace_csound}{Csound}} we must use the \href{https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs\#L812}{\texttt{ {\bfseries{Csound\+Unity.\+Set\+Channel(string channel, MYFLT value)}}}} method. See the {\bfseries{Update()}} method of the script below\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// C\# code}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using} UnityEngine;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{public} \textcolor{keyword}{class }\mbox{\hyperlink{class_cube_controller}{CubeController}} : MonoBehaviour }
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \textcolor{keyword}{private} \mbox{\hyperlink{class_csound_unity}{CsoundUnity}} csoundUnity;}
+\DoxyCodeLine{    \textcolor{keyword}{private} CharacterController controller;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void} Start()}
+\DoxyCodeLine{    \{}
+\DoxyCodeLine{        csoundUnity = GetComponent<CsoundUnity>();}
+\DoxyCodeLine{        controller = GetComponent<CharacterController>();}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordtype}{void} Update()}
+\DoxyCodeLine{    \{}
+\DoxyCodeLine{        transform.Rotate(0, Input.GetAxis(\textcolor{stringliteral}{"{}Horizontal"{}}) * 100, 0);}
+\DoxyCodeLine{        var forward = transform.TransformDirection(Vector3.forward);}
+\DoxyCodeLine{        var curSpeed = 10 * Input.GetAxis(\textcolor{stringliteral}{"{}Vertical"{}});}
+\DoxyCodeLine{        controller.Simplemove(forward * curSpeed);}
+\DoxyCodeLine{        csoundUnity.\mbox{\hyperlink{class_csound_unity_a3dda8229f389f764b916d80d9d136c57}{SetChannel}}(\textcolor{stringliteral}{"{}speed"{}}, controller.velocity.magnitude / 3f);}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Other examples\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// C\# code}}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (csoundUnity)}
+\DoxyCodeLine{    csoundUnity.\mbox{\hyperlink{class_csound_unity_a3dda8229f389f764b916d80d9d136c57}{SetChannel}}(\textcolor{stringliteral}{"{}BPM"{}}, BPM);}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{;csd file}
+\DoxyCodeLine{kBPM = abs(chnget:k(\textcolor{stringliteral}{"{}BPM"{}}))}
+
+\end{DoxyCode}
+
+
+\label{_starting---stopping-instruments}%
+ \hypertarget{md__documentation__index_autotoc_md22}{}\doxysubsection{Starting / Stopping Instruments}\label{md__documentation__index_autotoc_md22}
+You can start an instrument to play at any time using the \href{https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs\#L493}{\texttt{ {\bfseries{Csound\+Unity.\+Send\+Score\+Event(string score\+Event)}}}} method\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// C\# code}}
+\DoxyCodeLine{\textcolor{comment}{// this will instantly play instrument \#1 for 10 seconds}}
+\DoxyCodeLine{csoundUnity.\mbox{\hyperlink{class_csound_unity_a67eb0ef59ebe2b06a17cbfe362d03122}{SendScoreEvent}}(\textcolor{stringliteral}{"{}i1 0 10"{}});}
+
+\end{DoxyCode}
+
+
+You can specify the time to wait before starting the instrument\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// C\# code}}
+\DoxyCodeLine{\textcolor{comment}{// start instrument \#1 after 5 seconds, with 10 seconds duration}}
+\DoxyCodeLine{csoundUnity.\mbox{\hyperlink{class_csound_unity_a67eb0ef59ebe2b06a17cbfe362d03122}{SendScoreEvent}}(\textcolor{stringliteral}{"{}i1 5 10"{}});}
+
+\end{DoxyCode}
+
+
+You can also stop a running instrument, but only if it has been started with indefinite duration (so it will keep running until you stop it), setting the duration parameter to -\/1\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// C\# code}}
+\DoxyCodeLine{\textcolor{comment}{// instantly start instrument \#1 with an indefinite duration}}
+\DoxyCodeLine{csoundUnity.\mbox{\hyperlink{class_csound_unity_a67eb0ef59ebe2b06a17cbfe362d03122}{SendScoreEvent}}(\textcolor{stringliteral}{"{}i1 0 -\/1"{}});}
+
+\end{DoxyCode}
+
+
+To stop an instrument, set its number negative\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// C\# code}}
+\DoxyCodeLine{\textcolor{comment}{// instantly stop instrument \#1}}
+\DoxyCodeLine{csoundUnity.\mbox{\hyperlink{class_csound_unity_a67eb0ef59ebe2b06a17cbfe362d03122}{SendScoreEvent}}(\textcolor{stringliteral}{"{}i-\/1 0 -\/1"{}});}
+
+\end{DoxyCode}
+
+
+\label{_keeping-csound-performance-running}%
+ \hypertarget{md__documentation__index_autotoc_md23}{}\doxysubsection{Keeping Csound performance running}\label{md__documentation__index_autotoc_md23}
+Be aware that \mbox{\hyperlink{namespace_csound}{Csound}} will stop its performance if all the instruments (the ones listed in the score and the ones started from Unity) have stopped playing. ~\newline
+ You won\textquotesingle{}t be able to restart the \mbox{\hyperlink{namespace_csound}{Csound}} performance with the current implementation of \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}}. ~\newline
+ Instead, if you want to keep the performance active for all the time your application is running, be sure to add one of those lines to the \mbox{\hyperlink{namespace_csound}{Csound}} score\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{<CsScore>}
+\DoxyCodeLine{;causes Csound to run for about 7000 years...}
+\DoxyCodeLine{f0 z }
+\DoxyCodeLine{</CsScore>}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{<CsScore>}
+\DoxyCodeLine{;causes instrument 1 to run for about 7000 years...}
+\DoxyCodeLine{i1 0 z}
+\DoxyCodeLine{</CsScore>}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{<CsScore>}
+\DoxyCodeLine{;causes instrument 1 to run for a day}
+\DoxyCodeLine{i1 0 [24*60*60]}
+\DoxyCodeLine{</CsScore>}
+
+\end{DoxyCode}
+
+
+More information about scores here\+: ~\newline
+ \href{https://csound.com/docs/manual/ScoreTop.html}{\texttt{ https\+://csound.\+com/docs/manual/\+Score\+Top.\+html}} ~\newline
+ \href{https://csound.com/docs/manual/ScoreEval.html}{\texttt{ https\+://csound.\+com/docs/manual/\+Score\+Eval.\+html}}
+
+\label{_controlling_csound_from_unity_editor}%
+ \hypertarget{md__documentation__index_autotoc_md24}{}\doxysection{Controlling Csound from the Unity Editor}\label{md__documentation__index_autotoc_md24}
+You can control \mbox{\hyperlink{namespace_csound}{Csound}} channels using the Unity Editor while you are developing your game\textquotesingle{}s sounds. ~\newline
+ To do so, you must provide a short $<$\+Cabbage$>$$<$/\+Cabbage$>$ descriptor at the top of your \mbox{\hyperlink{namespace_csound}{Csound}} files describing the channels that are needed. ~\newline
+ This simple descriptor section uses a single line of code to describe each channel. ~\newline
+ Each line starts with the given channel\textquotesingle{}s controller type and is then followed by combination of other identifiers such as {\itshape channel()}, {\itshape text()}, and {\itshape range()}. ~\newline
+ The following descriptor sets up 3 channel controllers. A slider, a button and a checkbox(toggle). 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{;csd file}
+\DoxyCodeLine{<Cabbage>}
+\DoxyCodeLine{form caption("{}SimpleFreq"{})}
+\DoxyCodeLine{hslider channel("{}freq1"{}), text("{}Frequency Slider"{}), range(0, 10000, 0)}
+\DoxyCodeLine{button channel("{}trigger"{}), text("{}Push me"{})}
+\DoxyCodeLine{checkbox channel("{}mute"{})}
+\DoxyCodeLine{</Cabbage>}
+
+\end{DoxyCode}
+
+
+Each control MUST specify a channel. ~\newline
+ The {\itshape {\bfseries{range()}}} identifier must be used if the controller type is a slider. ~\newline
+ The {\itshape {\bfseries{text()}}} identifier can be used to display unique text beside a control but it is not required. If it is left out, the channel() name will be used as the control\textquotesingle{}s label. The caption() identifier, used with form, is used to display some simple help text to the user.
+
+See \href{https://cabbageaudio.com/docs/cabbage_syntax/}{\texttt{ {\bfseries{Cabbage Widgets}}}} for more information about the syntax to use. \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} aims to support most of the (relevant) Widgets available in Cabbage. ~\newline
+ \href{https://cabbageaudio.com/}{\texttt{ Cabbage}} is a framework for audio software development, with it you can create wonderful VST/\+AU plugins based on \mbox{\hyperlink{namespace_csound}{Csound}}. ~\newline
+ And of course it is a great \mbox{\hyperlink{namespace_csound}{Csound}} IDE! ~\newline
+ You will find a lot of examples inside it\+: be aware that most of them are not supported at the moment in \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}}, since the Widgets support is still limited. But they\textquotesingle{}re worth a try! ~\newline
+ Feel free to ask on the \href{https://forum.cabbageaudio.com/}{\texttt{ {\bfseries{Cabbage Forum}}}} for any Cabbage example that you would like to be added to \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} as a sample.
+
+When a \mbox{\hyperlink{namespace_csound}{Csound}} file which contains a valid \texorpdfstring{$<$}{<} Cabbage \texorpdfstring{$>$}{>} section is dragged to a \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component, Unity will generate controls for each channel. ~\newline
+ These controls can be tweaked when your game is running. Each time a control is modified, its value is sent to \mbox{\hyperlink{namespace_csound}{Csound}} from Unity on the associated channel. In this way it works the same as the method above, only we don\textquotesingle{}t have to code anything in order to test our sound. ~\newline
+ If you change a channel value via C\# code, you will see its value updated in the editor. ~\newline
+ For now, \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} support only four types of controller\+: {\itshape slider}, {\itshape checkbox(toggle)}, {\itshape button} and {\itshape comboboxes}.
+
+\label{_csoundunity_child}%
+ \hypertarget{md__documentation__index_autotoc_md25}{}\doxysection{Csound\+Unity\+Child}\label{md__documentation__index_autotoc_md25}
+New in version 3.\+0, the \mbox{\hyperlink{class_csound_unity_child}{Csound\+Unity\+Child}} component lets you read the Audio\+Channels found in a \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} instance. You can have as many audio channels you want in your Csd. ~\newline
+ You can set them with the {\itshape chnset} opcode. ~\newline
+ See the example below\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{;csd file}
+\DoxyCodeLine{<Cabbage>}
+\DoxyCodeLine{form caption("{}Test CsoundUnityChild"{}) }
+\DoxyCodeLine{rslider channel("{}gain"{}), range(0, 1, .4, 1, .01), text("{}Gain"{})}
+\DoxyCodeLine{rslider range(0, 1, 1, 1, 0.001), channel("{}hrm1"{})}
+\DoxyCodeLine{rslider range(0, 1, 0, 1, 0.001), channel("{}hrm2"{})}
+\DoxyCodeLine{rslider range(0, 1, 0, 1, 0.001), channel("{}hrm3"{})}
+\DoxyCodeLine{rslider range(0, 1, 0, 1, 0.001), channel("{}hrm4"{})}
+\DoxyCodeLine{</Cabbage>}
+\DoxyCodeLine{<CsoundSynthesizer>}
+\DoxyCodeLine{<CsOptions>}
+\DoxyCodeLine{-\/n -\/d }
+\DoxyCodeLine{</CsOptions>}
+\DoxyCodeLine{<CsInstruments>}
+\DoxyCodeLine{; Initialize the global variables. }
+\DoxyCodeLine{ksmps = 32}
+\DoxyCodeLine{nchnls = 2}
+\DoxyCodeLine{0dbfs = 1}
+\DoxyCodeLine{}
+\DoxyCodeLine{giWave1 ftgen 1, 0, 4096, 10, 1}
+\DoxyCodeLine{giWave2 ftgen 1, 0, 4096, 10, 1, .5, .25, .17}
+\DoxyCodeLine{}
+\DoxyCodeLine{;this instrument sends audio to two named channels}
+\DoxyCodeLine{;this audio can be picked up by any CsoundUnityChild component..}
+\DoxyCodeLine{instr ChildSounds}
+\DoxyCodeLine{    a1 oscili 1, 440, giWave1}
+\DoxyCodeLine{    chnset a1, "{}sound1"{}}
+\DoxyCodeLine{    a2 oscili 1, 840, giWave1}
+\DoxyCodeLine{    chnset a2, "{}sound2"{}}
+\DoxyCodeLine{endin}
+\DoxyCodeLine{}
+\DoxyCodeLine{</CsInstruments>}
+\DoxyCodeLine{<CsScore>}
+\DoxyCodeLine{;causes Csound to run for about 7000 years...}
+\DoxyCodeLine{f0 z}
+\DoxyCodeLine{i"{}ChildSounds"{} 0 z}
+\DoxyCodeLine{</CsScore>}
+\DoxyCodeLine{</CsoundSynthesizer>}
+
+\end{DoxyCode}
+
+
+To be able to pick those named channels, create a Game\+Object and add the \mbox{\hyperlink{class_csound_unity_child}{Csound\+Unity\+Child}} component. An Audio\+Source will be added if there is none. ~\newline
+ There you can choose the Audio\+Channels that this \mbox{\hyperlink{class_csound_unity_child}{Csound\+Unity\+Child}} will play and in which configuration. ~\newline
+ If Audio\+Channels\+Setting is set to MONO, the selected Audio\+Channel will be played in both LEFT and RIGHT channel, at half volume, to have it perfectly centered. ~\newline
+ If Audio\+Channels\+Setting is set to STEREO, the selected Audio\+Channels will use the respective output channel.
+
+
+
+{\bfseries{Be aware that the support for audio channels is still limited}}\+: they\textquotesingle{}re parsed from the csd file, meaning that if you\textquotesingle{}re using variables the \mbox{\hyperlink{class_csound_unity_editor}{Csound\+Unity\+Editor}} parser won\textquotesingle{}t recognize them. ~\newline
+ The following example will find an audio\+Channel named \char`\"{}$\ast$\+Sname$\ast$\char`\"{}, instead of its expected value of \char`\"{}$\ast$audio\+Channel\+\_\+1$\ast$\char`\"{}\+: ~\newline
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{;csd file}
+\DoxyCodeLine{instr 1}
+\DoxyCodeLine{kEnv madsr .1, .2, .6, .4}
+\DoxyCodeLine{aOut vco2 p5, p4}
+\DoxyCodeLine{inumber = 1}
+\DoxyCodeLine{Sname sprintf "{}audioChannel\_\%02d"{}, inumber}
+\DoxyCodeLine{chnset aOut, Sname }
+\DoxyCodeLine{outs aOut*kEnv, aOut*kEnv}
+\DoxyCodeLine{endin}
+
+\end{DoxyCode}
+
+
+You can also create the \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} children with code, for more advanced setups. You can get the available audio channels from \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} with\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//C\# code}}
+\DoxyCodeLine{var audioChannels = csoundUnity.\mbox{\hyperlink{class_csound_unity_ae00b36e523ed56c3d80c1930bec1a30e}{availableAudioChannels}};}
+
+\end{DoxyCode}
+
+
+To be able to initialize a child, you should call \href{https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnityChild.cs\#L127}{\texttt{ Csound\+Unity\+Children.\+Init(\+Csound\+Unity csound, Audio\+Channels audio\+Channels)}}, to set the reference to the \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} instance that has available audio channels, and to define the channel setup to use (MONO or STEREO). Then you must specify the audio channel you want to use with \href{https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnityChild.cs\#L143}{\texttt{ Set\+Audio\+Channel(int channel, int audio\+Channel)}}\+: the channel parameter is the LEFT (0) or RIGHT (1) channel, the audio\+Channel parameter is the index of the {\itshape Csound\+Unity.\+available\+Audio\+Channel} you want to use. See the example that follows\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// C\# code  }}
+\DoxyCodeLine{  }
+\DoxyCodeLine{[Tooltip(\textcolor{stringliteral}{"{}The radius of the circle where the children will be placed, starting from the position of this GameObject"{}})]}
+\DoxyCodeLine{[SerializeField] \textcolor{keyword}{private} \textcolor{keywordtype}{float} \_radius = 200f;}
+\DoxyCodeLine{[Tooltip(\textcolor{stringliteral}{"{}How many meters more the sources will be audible from. This value will be summed to the radius. "{}} +}
+\DoxyCodeLine{  \textcolor{stringliteral}{"{}It is to make sure that there will be some sound when the player is equidistant from the sources"{}})]}
+\DoxyCodeLine{[SerializeField] \textcolor{keyword}{private} \textcolor{keywordtype}{float} \_rollofTolerance = 100f;}
+\DoxyCodeLine{[Tooltip(\textcolor{stringliteral}{"{}The CsoundUnity children prefab"{}})]}
+\DoxyCodeLine{[SerializeField] \textcolor{keyword}{private} GameObject \_childPrefab;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{private} \mbox{\hyperlink{class_csound_unity}{CsoundUnity}} \_csound;}
+\DoxyCodeLine{}
+\DoxyCodeLine{IEnumerator Start()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \_csound = GetComponent<CsoundUnity>();}
+\DoxyCodeLine{    \textcolor{keywordflow}{while} (!\_csound.\mbox{\hyperlink{class_csound_unity_ae2c648d0f6245fb84c5f9ec5176079ff}{IsInitialized}})}
+\DoxyCodeLine{        yield \textcolor{keywordflow}{return} \textcolor{keyword}{null};}
+\DoxyCodeLine{}
+\DoxyCodeLine{    var n = \_csound.\mbox{\hyperlink{class_csound_unity_ae00b36e523ed56c3d80c1930bec1a30e}{availableAudioChannels}}.Count;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (var i = 0; i < n; i++)}
+\DoxyCodeLine{    \{}
+\DoxyCodeLine{        var angle = i * Mathf.PI * 2 / n;}
+\DoxyCodeLine{        var pos = \textcolor{keyword}{new} Vector3(Mathf.Cos(angle), 0,  Mathf.Sin(angle)) * \_radius;}
+\DoxyCodeLine{        var go = Instantiate(\_childPrefab, this.transform);}
+\DoxyCodeLine{}
+\DoxyCodeLine{        go.transform.position = pos;}
+\DoxyCodeLine{        var child = go.AddComponent<\mbox{\hyperlink{class_csound_unity_child}{CsoundUnityChild}}>();}
+\DoxyCodeLine{        child.\mbox{\hyperlink{class_csound_unity_child_af687ae511d8bdcae7970f12b5b49c058}{Init}}(\_csound, \mbox{\hyperlink{class_csound_unity_child}{CsoundUnityChild}}.\mbox{\hyperlink{class_csound_unity_child_a327fcfb29d015b5607f6222853b6438c}{AudioChannels}}.MONO);}
+\DoxyCodeLine{        child.SetAudioChannel(0, i);}
+\DoxyCodeLine{        child.name = \_csound.\mbox{\hyperlink{class_csound_unity_ae00b36e523ed56c3d80c1930bec1a30e}{availableAudioChannels}}[i];}
+\DoxyCodeLine{        var aS = go.GetComponent<AudioSource>();}
+\DoxyCodeLine{        \textcolor{comment}{// set doppler level to 0 to avoid artefacts when the camera moves}}
+\DoxyCodeLine{        aS.dopplerLevel = 0;}
+\DoxyCodeLine{        aS.rolloffMode = AudioRolloffMode.Custom;}
+\DoxyCodeLine{        \textcolor{comment}{// when the audio listener is 'radius' meters far from the audio source, there will be no sound, }}
+\DoxyCodeLine{        \textcolor{comment}{// since the rolloff function will lower the volume accordingly to the custom curve, and at maxDistance the volume will be 0. }}
+\DoxyCodeLine{        \textcolor{comment}{// Let's add 'rollofTolerance' meters more to have some sound when the listener is equidistant from the created sources}}
+\DoxyCodeLine{        aS.maxDistance = \_radius + \_rollofTolerance;}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\label{_csound_filewatcher}%
+ \hypertarget{md__documentation__index_autotoc_md26}{}\doxysection{Csound\+File\+Watcher}\label{md__documentation__index_autotoc_md26}
+From version 3.\+0 \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} can detect the changes made to the {\itshape csd} file while modifying it in an external editor. ~\newline
+ You will see in the Unity Console messages like this\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{[CsoundFileWatcher] Updating csd: sfload.csd in GameObject: Csound}
+
+\end{DoxyCode}
+
+
+when this happens. This means that you don\textquotesingle{}t need to drag the Csd Asset in \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} everytime you make a change on it in an external editor.
+
+\label{_platforms}%
+ \hypertarget{md__documentation__index_autotoc_md27}{}\doxysection{Supported Platforms}\label{md__documentation__index_autotoc_md27}
+\mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} supports building for Windows, mac\+OS, Android 64bit (it has successfully been tested on Oculus Quest) and i\+OS 64bit. ~\newline
+ We are planning to add Web\+GL support, but unfortunately Unity Web\+GL doesn\textquotesingle{}t support Audio\+Source.\+On\+Audio\+Filter\+Read callback, meaning that we are not able to use the same approach we\textquotesingle{}re using for the other platforms. ~\newline
+ This means that adding Web\+GL support could take a while! 

@@ -1,0 +1,456 @@
+/// Send a score event to \mbox{\hyperlink{namespace_csound}{Csound}} in the form of \char`\"{}i1 0 10 .... /// $<$/summary$>$  $<$tt$>$public int Get\+Version()$<$/tt$>$  \+Returns the Csound version number times 1000 (5.\+00.\+0 = 5000).  $<$tt$>$public int Get\+APIVersion()$<$/tt$>$  \+Returns the Csound API version number times 100 (1.\+00 = 100).  $<$tt$>$public bool Compiled\+Without\+Error()$<$/tt$>$  \+Returns true if the csd file was compiled without errors.  $<$tt$>$public void Set\+Csd(string guid)$<$/tt$>$  \+Sets the csd file  $<$tt$>$public int Compile\+Orc(string orc\+Str)$<$/tt$>$  \+Parse, and compile the given orchestra from an ASCII string, also evaluating any global space code (i-\/time only) this can be called during performance to compile a new orchestra.  \+This sample shows how to use Compile\+Orc  @code\{cs\}  string orc = \char`\"{}instr 1 ~\newline
+ a1 rand 0dbfs/4 ~\newline
+ out a1 \textbackslash{}nendin~\newline
+\char`\"{}; \+Compile\+Orc(orc); @endcode   /// /// $<$param name=\char`\"{}score\+Event\char`\"{}$>$the score string to send$<$/param$>$ public void Send\+Score\+Event(string score\+Event) \{     //print(score\+Event);     csound.\+Send\+Score\+Event(score\+Event); \}  ///  $<$summary$>$ /// Rewinds a compiled Csound score to the time specified with Set\+Score\+Offset\+Seconds(). /// $<$/summary$>$ public void Rewind\+Score() \{     csound.\+Rewind\+Score(); \}  ///  $<$summary$>$ /// Csound score events prior to the specified time are not performed, /// and performance begins immediately at the specified time /// (real-\/time events will continue to be performed as they are received). /// Can be used by external software, such as a VST host, to begin score performance midway through a Csound score, /// for example to repeat a loop in a sequencer, or to synchronize other events with the Csound score. /// $<$/summary$>$ /// $<$param name=\char`\"{}value\char`\"{}$>$$<$/param$>$ public void Set\+Score\+Offset\+Seconds(\+MYFLT value) \{     csound.\+Csound\+Set\+Score\+Offset\+Seconds(value); \}  ///  $<$summary$>$ /// Get the current sample rate /// $<$/summary$>$ /// $<$returns$>$$<$/returns$>$ public MYFLT Get\+Sr() \{     return csound.\+Get\+Sr(); \}  ///  $<$summary$>$ /// Get the current control rate /// $<$/summary$>$ /// $<$returns$>$$<$/returns$>$ public MYFLT Get\+Kr() \{     return csound.\+Get\+Kr(); \}  ///  $<$summary$>$ /// Process a ksmps-\/sized block of samples /// $<$/summary$>$ /// $<$returns$>$$<$/returns$>$ public int Perform\+Ksmps() \{     return csound.\+Perform\+Ksmps(); \}  ///  $<$summary$>$ /// Get the current control rate /// $<$/summary$>$ /// $<$returns$>$$<$/returns$>$ public uint Get\+Ksmps() \{     return csound.\+Get\+Ksmps(); \}  \#endregion PERFORMANCE  \#region CSD\+\_\+\+PARSE  ///  $<$summary$>$ /// Parse the csd and returns available audio channels (set in csd via\+: $<$code$>$chnset avar, \char`\"{}audio channel name\char`\"{}) $<$/code$>$ /// $<$/summary$>$ /// $<$param name=\char`\"{}filename\char`\"{}$>$$<$/param$>$ /// $<$returns$>$$<$/returns$>$ public static List$<$string$>$ Parse\+Csd\+File\+For\+Audio\+Channels(string filename) \{     if (!\+File.\+Exists(filename)) return null;      string\mbox{[}$\,$\mbox{]} full\+Csd\+Text = File.\+Read\+All\+Lines(filename);     if (full\+Csd\+Text.\+Length $<$ 1) return null;      List$<$string$>$ loca\+Audio\+Channels = new List$<$string$>$();      foreach (string line in full\+Csd\+Text)     \{         var trimmd = line.\+Trim\+Start();         if (!trimmd.\+Contains(\char`\"{}chnset\char`\"{})) continue;         if (trimmd.\+Starts\+With(\char`\"{};\char`\"{})) continue;         var lndx = trimmd.\+Index\+Of(\char`\"{}chnset\char`\"{});         var chnset\+End = lndx + \char`\"{}chnset\char`\"{}.\+Length + 1;         var prms = trimmd.\+Substring(chnset\+End, trimmd.\+Length -\/ chnset\+End);         var split = prms.\+Split(\textquotesingle{},\textquotesingle{});         if (!split\mbox{[}0\mbox{]}.\+Starts\+With(\char`\"{}a\char`\"{}) \&\& !split\mbox{[}0\mbox{]}.\+Starts\+With(\char`\"{}ga\char`\"{}))             continue; //discard non audio variables         // Debug.\+Log(\char`\"{}found audio channel\char`\"{});         var ach = split\mbox{[}1\mbox{]}.\+Replace(\textquotesingle{}\textbackslash{}\textbackslash{}\textquotesingle{}, \textquotesingle{} \textquotesingle{}).\+Replace(\textquotesingle{}\textbackslash{}\char`\"{}\textquotesingle{}, \textquotesingle{} \textquotesingle{}).\+Trim();         if (!loca\+Audio\+Channels.\+Contains(ach))             loca\+Audio\+Channels.\+Add(ach);     \}     return loca\+Audio\+Channels; \}  ///  $<$summary$>$ /// Parse the csd file /// $<$/summary$>$ /// $<$param name=\char`\"{}filename\char`\"{}$>$the csd file to parse$<$/param$>$ /// $<$returns$>$$<$/returns$>$ public static List$<$\+Csound\+Channel\+Controller$>$ Parse\+Csd\+File(string filename) \{     if (!\+File.\+Exists(filename)) return null;      string\mbox{[}$\,$\mbox{]} full\+Csd\+Text = File.\+Read\+All\+Lines(filename);     if (full\+Csd\+Text.\+Length $<$ 1) return null;      List$<$\+Csound\+Channel\+Controller$>$ loca\+Channel\+Controllers;     loca\+Channel\+Controllers = new List$<$\+Csound\+Channel\+Controller$>$();      foreach (string line in full\+Csd\+Text)     \{ @verbatim  if (line.\+Contains(\char`\"{}\texorpdfstring{$<$}{<}/\char`\"{}))     break;  var trimmd = line.\+Trim\+Start(); //discard csound comments in cabbage widgets if (trimmd.\+Starts\+With(\char`\"{};\char`\"{})) \{     //\+Debug.\+Log(\char`\"{}discarding \char`\"{}+line);     continue; \} string new\+Line = trimmd; string control = trimmd.\+Substring(0, trimmd.\+Index\+Of(\char`\"{} \char`\"{}) $>$ -\/1 ? trimmd.\+Index\+Of(\char`\"{} \char`\"{}) \+: 0); if (control.\+Length $>$ 0)     new\+Line = new\+Line.\+Replace(control, \char`\"{}\char`\"{});  if (control.\+Contains(\char`\"{}slider\char`\"{}) $\vert$$\vert$ control.\+Contains(\char`\"{}button\char`\"{}) $\vert$$\vert$ control.\+Contains(\char`\"{}checkbox\char`\"{})     $\vert$$\vert$ control.\+Contains(\char`\"{}groupbox\char`\"{}) $\vert$$\vert$ control.\+Contains(\char`\"{}form\char`\"{}) $\vert$$\vert$ control.\+Contains(\char`\"{}combobox\char`\"{})) \{     Csound\+Channel\+Controller controller = new Csound\+Channel\+Controller();     controller.\+type = control;      if (trimmd.\+Index\+Of(\char`\"{}caption(\char`\"{}) $>$ -\/1)     \{         string info\+Text = trimmd.\+Substring(trimmd.\+Index\+Of(\char`\"{}caption(\char`\"{}) + 9);         info\+Text = info\+Text.\+Substring(0, info\+Text.\+Index\+Of(\char`\"{})\char`\"{}) -\/ 1);         controller.\+caption = info\+Text;     \}      if (trimmd.\+Index\+Of(\char`\"{}text(\char`\"{}) $>$ -\/1)     \{         string text = trimmd.\+Substring(trimmd.\+Index\+Of(\char`\"{}text(\char`\"{}) + 6);         text = text.\+Substring(0, text.\+Index\+Of(\char`\"{})\char`\"{}) -\/ 1);         text = text.\+Replace(\char`\"{}"{}\char`\"{}, \char`\"{}\char`\"{});         text = text.\+Replace(\textquotesingle{}\char`\"{}\textquotesingle{}, new char()); if (controller.\+type == \char`\"{}combobox\char`\"{}) //if combobox, create a range \{ char\mbox{[}\mbox{]} delimiter\+Chars = \{ \textquotesingle{},\textquotesingle{} \}; string\mbox{[}\mbox{]} tokens = text.\+Split(delimiter\+Chars); controller.\+Set\+Range(1, tokens.\+Length, 0);
+
+for (var o = 0; o \texorpdfstring{$<$}{<} tokens.\+Length; o++) \{ tokens\mbox{[}o\mbox{]} = string.\+Join(\char`\"{}\char`\"{}, tokens\mbox{[}o\mbox{]}.Split(default(string\mbox{[}$\,$\mbox{]}), System.\+String\+Split\+Options.\+Remove\+Empty\+Entries)); \} controller.\+options = tokens; \} \}
+
+if (trimmd.\+Index\+Of(\char`\"{}items(\char`\"{}) \texorpdfstring{$>$}{>} -\/1) \{ string text = trimmd.\+Substring(trimmd.\+Index\+Of(\char`\"{}items(\char`\"{}) + 7); text = text.\+Substring(0, text.\+Index\+Of(\char`\"{})\char`\"{}) -\/ 1); //\+TODO THIS OVERRIDES TEXT! text = text.\+Replace(\char`\"{}\textbackslash{}\char`\"{}\char`\"{}, \char`\"{}\char`\"{}); text = text.\+Replace(\textquotesingle{}\char`\"{}\textquotesingle{}, new char()); if (controller.\+type == \char`\"{}combobox\char`\"{}) \{ char\mbox{[}\mbox{]} delimiter\+Chars = \{ \textquotesingle{},\textquotesingle{} \}; string\mbox{[}\mbox{]} tokens = text.\+Split(delimiter\+Chars); controller.\+Set\+Range(1, tokens.\+Length, 0);
+
+for (var o = 0; o \texorpdfstring{$<$}{<} tokens.\+Length; o++) \{ tokens\mbox{[}o\mbox{]} = string.\+Join(\char`\"{}\char`\"{}, tokens\mbox{[}o\mbox{]}.Split(default(string\mbox{[}$\,$\mbox{]}), System.\+String\+Split\+Options.\+Remove\+Empty\+Entries)); \} controller.\+options = tokens; \} \}
+
+if (trimmd.\+Index\+Of(\char`\"{}channel(\char`\"{}) \texorpdfstring{$>$}{>} -\/1) \{ string channel = trimmd.\+Substring(trimmd.\+Index\+Of(\char`\"{}channel(\char`\"{}) + 9); channel = channel.\+Substring(0, channel.\+Index\+Of(\char`\"{})\char`\"{}) -\/ 1); controller.\+channel = channel; \}
+
+if (trimmd.\+Index\+Of(\char`\"{}range(\char`\"{}) \texorpdfstring{$>$}{>} -\/1) \{ int range\+At = trimmd.\+Index\+Of(\char`\"{}range(\char`\"{}); if (range\+At != -\/1) \{ string range = trimmd.\+Substring(range\+At + 6); range = range.\+Substring(0, range.\+Index\+Of(\char`\"{})\char`\"{})); char\mbox{[}\mbox{]} delimiter\+Chars = \{ \textquotesingle{},\textquotesingle{} \}; string\mbox{[}\mbox{]} tokens = range.\+Split(delimiter\+Chars); for (var i = 0; i \texorpdfstring{$<$}{<} tokens.\+Length; i++) \{ tokens\mbox{[}i\mbox{]} = string.\+Join(\char`\"{}\char`\"{}, tokens\mbox{[}i\mbox{]}.Split(default(string\mbox{[}$\,$\mbox{]}), String\+Split\+Options.\+Remove\+Empty\+Entries)); if (tokens\mbox{[}i\mbox{]}.Starts\+With(\char`\"{}.\char`\"{})) \{ tokens\mbox{[}i\mbox{]} = \char`\"{}0\char`\"{} + tokens\mbox{[}i\mbox{]}; \} if (tokens\mbox{[}i\mbox{]}.Starts\+With(\char`\"{}-\/.\char`\"{})) \{ tokens\mbox{[}i\mbox{]} = \char`\"{}-\/0\char`\"{} + tokens\mbox{[}i\mbox{]}.Substring(2, tokens\mbox{[}i\mbox{]}.Length -\/ 2); \} \} var min = float.\+Parse(tokens\mbox{[}0\mbox{]}, Culture\+Info.\+Invariant\+Culture); var max = float.\+Parse(tokens\mbox{[}1\mbox{]}, Culture\+Info.\+Invariant\+Culture); var val = float.\+Parse(tokens\mbox{[}2\mbox{]}, Culture\+Info.\+Invariant\+Culture); controller.\+Set\+Range(min, max, val); \} \}
+
+if (line.\+Index\+Of(\char`\"{}value(\char`\"{}) \texorpdfstring{$>$}{>} -\/1) \{ string value = trimmd.\+Substring(trimmd.\+Index\+Of(\char`\"{}value(\char`\"{}) + 6); value = value.\+Substring(0, value.\+Index\+Of(\char`\"{})\char`\"{})); value = value.\+Replace(\char`\"{}\textbackslash{}\char`\"{}\char`\"{}, \char`\"{}\char`\"{}); controller.\+value = value.\+Length \texorpdfstring{$>$}{>} 0 ? float.\+Parse(value, Culture\+Info.\+Invariant\+Culture) \+: 0; if (control.\+Contains(\char`\"{}combobox\char`\"{})) \{ //\+Cabbage combobox index starts from 1 controller.\+value = controller.\+value -\/ 1; // Debug.\+Log(\char`\"{}combobox value in parse\+: \char`\"{} + controller.\+value); \} \} loca\+Channel\+Controllers.\+Add(controller); \}  \} return loca\+Channel\+Controllers; \}
+
+\#endregion CSD\+\_\+\+PARSE
+
+\#region IO\+\_\+\+BUFFERS
+
+/// 
+
+/// Set a sample in \mbox{\hyperlink{namespace_csound}{Csound}}\textquotesingle{}s input buffer /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em frame} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em channel} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em sample} & \\
+\hline
+\end{DoxyParams}
+public void Set\+Input\+Sample(int frame, int channel, MYFLT sample) \{ csound.\+Set\+Spin\+Sample(frame, channel, sample); \}
+
+/// 
+
+/// Adds the indicated sample into the audio input working buffer (spin); /// this only ever makes sense before calling Perform\+Ksmps(). /// The frame and channel must be in bounds relative to ksmps and nchnls. /// NB\+: the spin buffer needs to be cleared at every k-\/cycle by calling Clear\+Spin(). /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em frame} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em channel} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em sample} & \\
+\hline
+\end{DoxyParams}
+public void Add\+Input\+Sample(int frame, int channel, MYFLT sample) \{ csound.\+Add\+Spin\+Sample(frame, channel, sample); \}
+
+/// 
+
+/// Clears the input buffer (spin). /// 
+
+public void Clear\+Spin() \{ if (csound != null) \{ Debug.\+Log(\char`\"{}clear spin\char`\"{}); csound.\+Clear\+Spin(); \} \}
+
+/// 
+
+/// Get a sample from \mbox{\hyperlink{namespace_csound}{Csound}}\textquotesingle{}s audio output buffer /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em frame} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em channel} & \\
+\hline
+\end{DoxyParams}
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public MYFLT Get\+Output\+Sample(int frame, int channel) \{ return csound.\+Get\+Spout\+Sample(frame, channel); \}
+
+/// 
+
+/// Get \mbox{\hyperlink{namespace_csound}{Csound}}\textquotesingle{}s audio input buffer /// 
+
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public MYFLT\mbox{[}\mbox{]} Get\+Spin() \{ return csound.\+Get\+Spin(); \}
+
+/// 
+
+/// Get \mbox{\hyperlink{namespace_csound}{Csound}}\textquotesingle{}s audio output buffer /// 
+
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public MYFLT\mbox{[}\mbox{]} Get\+Spout() \{ return csound.\+Get\+Spout(); \}
+
+\#endregion IO\+\_\+\+BUFFERS
+
+\#region CONTROL\+\_\+\+CHANNELS /// 
+
+/// Sets a \mbox{\hyperlink{namespace_csound}{Csound}} channel. Used in connection with a chnget opcode in your \mbox{\hyperlink{namespace_csound}{Csound}} instrument. /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em channel} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em val} & \\
+\hline
+\end{DoxyParams}
+public void Set\+Channel(string channel, MYFLT val) \{ csound.\+Set\+Channel(channel, val); \}
+
+/// 
+
+/// Sets a string channel in \mbox{\hyperlink{namespace_csound}{Csound}}. Used in connection with a chnget opcode in your \mbox{\hyperlink{namespace_csound}{Csound}} instrument. /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em channel} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em val} & \\
+\hline
+\end{DoxyParams}
+public void Set\+String\+Channel(string channel, string val) \{ csound.\+Set\+String\+Channel(channel, val); \}
+
+/// 
+
+/// Gets a \mbox{\hyperlink{namespace_csound}{Csound}} channel. Used in connection with a chnset opcode in your \mbox{\hyperlink{namespace_csound}{Csound}} instrument. /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em channel} & \\
+\hline
+\end{DoxyParams}
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public MYFLT Get\+Channel(string channel) \{ return csound.\+Get\+Channel(channel); \}
+
+/// 
+
+/// blocking method to get a list of the channels from \mbox{\hyperlink{namespace_csound}{Csound}}, not from the serialized list of this instance /// 
+
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public IDictionary$<$string, Csound\+Unity\+Bridge.\+Channel\+Info$>$ Get\+Channel\+List() \{ return csound.\+Get\+Channel\+List(); \}
+
+\#endregion CONTROL\+\_\+\+CHANNELS
+
+\#region AUDIO\+\_\+\+CHANNELS
+
+/// 
+
+/// Gets a \mbox{\hyperlink{namespace_csound}{Csound}} Audio channel. Used in connection with a chnset opcode in your \mbox{\hyperlink{namespace_csound}{Csound}} instrument. /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em channel} & \\
+\hline
+\end{DoxyParams}
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public MYFLT\mbox{[}\mbox{]} Get\+Audio\+Channel(string channel) \{ return csound.\+Get\+Audio\+Channel(channel); \}
+
+\#endregion AUDIO\+\_\+\+CHANNELS
+
+\#region TABLES
+
+/// 
+
+/// Creates a table with the supplied samples. /// Can be called during performance. /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em table\+Number} & The table number\\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em samples} & \\
+\hline
+\end{DoxyParams}
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public int Create\+Table(int table\+Number, MYFLT\mbox{[}\mbox{]} samples/$\ast$, int n\+Channels$\ast$/) \{ if (samples.\+Length \texorpdfstring{$<$}{<} 1) return -\/1; var res\+Table = Create\+Table\+Instrument(table\+Number, samples.\+Length); if (res\+Table != 0) return -\/1; // copy samples to the newly created table Copy\+Table\+In(table\+Number, samples);
+
+return res\+Table; \}
+
+/// 
+
+/// Creates an empty table, to be filled with samples later. /// Please note that trying to read the samples from an empty folder will produce a crash. /// Can be called during performance. /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em table\+Number} & The number of the newly created table\\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em table\+Length} & The length of the table in samples\\
+\hline
+\end{DoxyParams}
+/// \begin{DoxyReturn}{Returns}
+0 If the table could be created
+\end{DoxyReturn}
+public int Create\+Table\+Instrument(int table\+Number, int table\+Length/$\ast$, int n\+Channels$\ast$/) \{ string create\+Table\+Instrument = String.\+Format("{}gisampletable\{0\} ftgen \{0\}, 0, \{1\}, -\/7, 0, 0\char`\"{}, table\+Number, -\/table\+Length /$\ast$$\ast$ Audio\+Settings.\+output\+Sample\+Rate$\ast$/);     // Debug.\+Log(\char`\"{}orc to create table\+: ~\newline
+\char`\"{} + create\+Table\+Instrument);     return Compile\+Orc(create\+Table\+Instrument); \}  ///  $<$summary$>$ /// Returns the length of a function table (not including the guard point), or -\/1 if the table does not exist. /// $<$/summary$>$ /// $<$param name=\char`\"{}table\char`\"{}$>$$<$/param$>$ /// $<$returns$>$$<$/returns$>$ public int Get\+Table\+Length(int table) \{     return csound.\+Table\+Length(table); \}  ///  $<$summary$>$ /// Retrieves a single sample from a Csound function table. /// $<$/summary$>$ /// $<$param name=\char`\"{}table\+Number\char`\"{}$>$$<$/param$>$ /// $<$param name=\char`\"{}index\char`\"{}$>$$<$/param$>$ /// $<$returns$>$$<$/returns$>$ public MYFLT Get\+Table\+Sample(int table\+Number, int index) \{     return csound.\+Get\+Table(table\+Number, index); \}  ///  $<$summary$>$ /// Stores values to function table \textquotesingle{}num\+Table\textquotesingle{} in table\+Values, and returns the table length (not including the guard point). /// If the table does not exist, table\+Values is set to NULL and -\/1 is returned. /// $<$/summary$>$ /// $<$param name=\char`\"{}table\+Values\char`\"{}$>$$<$/param$>$ /// $<$param name=\char`\"{}num\+Table\char`\"{}$>$$<$/param$>$ /// $<$returns$>$$<$/returns$>$ public int Get\+Table(out MYFLT\mbox{[}$\,$\mbox{]} table\+Values, int num\+Table) \{     return csound.\+Get\+Table(out table\+Values, num\+Table); \}  ///  $<$summary$>$ /// Stores the arguments used to generate function table \textquotesingle{}table\+Num\textquotesingle{} in args, and returns the number of arguments used. /// If the table does not exist, args is set to NULL and -\/1 is returned. /// NB\+: the argument list starts with the GEN number and is followed by its parameters. /// eg. f 1 0 1024 10 1 0.\+5 yields the list \{10.\+0,1.\+0,0.\+5\} /// $<$/summary$>$ /// $<$param name=\char`\"{}args\char`\"{}$>$$<$/param$>$ /// $<$param name=\char`\"{}index\char`\"{}$>$$<$/param$>$ /// $<$returns$>$$<$/returns$>$ public int Get\+Table\+Args(out MYFLT\mbox{[}$\,$\mbox{]} args, int index) \{     return csound.\+Get\+Table\+Args(out args, index); \}  ///  $<$summary$>$ /// Sets the value of a slot in a function table. The table number and index are assumed to be valid. /// $<$/summary$>$ /// $<$param name=\char`\"{}table\char`\"{}$>$$<$/param$>$ /// $<$param name=\char`\"{}index\char`\"{}$>$$<$/param$>$ /// $<$param name=\char`\"{}value\char`\"{}$>$$<$/param$>$ public void Set\+Table(int table, int index, MYFLT value) \{     csound.\+Set\+Table(table, index, value); \}  ///  $<$summary$>$ /// Copy the contents of a function table into a supplied array dest /// The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents. /// $<$/summary$>$ /// $<$param name=\char`\"{}table\char`\"{}$>$$<$/param$>$ /// $<$param name=\char`\"{}dest\char`\"{}$>$$<$/param$>$ public void Copy\+Table\+Out(int table, out MYFLT\mbox{[}$\,$\mbox{]} dest) \{     csound.\+Table\+Copy\+Out(table, out dest); \}  ///  $<$summary$>$ /// Asynchronous version of copy\+Table\+Out /// $<$/summary$>$ /// $<$param name=\char`\"{}table\char`\"{}$>$$<$/param$>$ /// $<$param name=\char`\"{}dest\char`\"{}$>$$<$/param$>$ public void Copy\+Table\+Out\+Async(int table, out MYFLT\mbox{[}$\,$\mbox{]} dest) \{     csound.\+Table\+Copy\+Out\+Async(table, out dest); \}  ///  $<$summary$>$ /// Copy the contents of a supplied array into a function table /// The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents. /// $<$/summary$>$ /// $<$param name=\char`\"{}table\char`\"{}$>$the number of the table$<$/param$>$ /// $<$param name=\char`\"{}source\char`\"{}$>$the supplied array$<$/param$>$ public void Copy\+Table\+In(int table, MYFLT\mbox{[}$\,$\mbox{]} source) \{     csound.\+Table\+Copy\+In(table, source); \}  ///  $<$summary$>$ /// Asynchronous version of copy\+Table\+Out /// $<$/summary$>$ /// $<$param name=\char`\"{}table\char`\"{}$>$$<$/param$>$ /// $<$param name=\char`\"{}source\char`\"{}$>$$<$/param$>$ public void Copy\+Table\+In\+Async(int table, MYFLT\mbox{[}$\,$\mbox{]} source) \{     csound.\+Table\+Copy\+In\+Async(table, source); \}  ///  $<$summary$>$ /// Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char) /// Otherwise it returns 0. /// $<$/summary$>$ /// $<$param name=\char`\"{}num\char`\"{}$>$$<$/param$>$ /// $<$returns$>$$<$/returns$>$ public int Is\+Named\+GEN(int num) \{     return csound.\+Is\+Named\+GEN(num); \}  ///  $<$summary$>$ /// Gets the GEN name from a number num, if this is a named GEN /// The final parameter is the max len of the string (excluding termination) /// $<$/summary$>$ /// $<$param name=\char`\"{}num\char`\"{}$>$$<$/param$>$ /// $<$param name=\char`\"{}name\char`\"{}$>$$<$/param$>$ /// $<$param name=\char`\"{}len"{}\texorpdfstring{$>$}{>}
+
+public void Get\+Named\+GEN(int num, out string name, int len) \{ csound.\+Get\+Named\+GEN(num, out name, len); \}
+
+/// 
+
+/// Returns a Dictionary keyed by the names of all named table generators. /// Each name is paired with its internal function number. /// 
+
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public IDictionary$<$string, int$>$ Get\+Named\+Gens() \{ return csound.\+Get\+Named\+Gens(); \}
+
+\#endregion TABLES
+
+\#region CALLBACKS
+
+public void Set\+Yield\+Callback(\+Action callback) \{ \begin{DoxyVerb}csound.SetYieldCallback(callback);
+\end{DoxyVerb}
+ \}
+
+public void Set\+Sense\+Event\+Callback$<$\+T$>$(\+Action$<$\+T$>$ action, T type) where T \+: class \{ csound.\+Set\+Sense\+Event\+Callback(action, type); \}
+
+public void Add\+Sense\+Event\+Callback(Csound\+Unity\+Bridge.\+Csound6\+Sense\+Event\+Callback\+Handler callback\+Handler) \{ csound.\+Sense\+Events\+Callback += callback\+Handler;//\+Csound\+\_\+\+Sense\+Events\+Callback; \}
+
+public void Remove\+Sense\+Event\+Callback(Csound\+Unity\+Bridge.\+Csound6\+Sense\+Event\+Callback\+Handler callback\+Handler) \{ csound.\+Sense\+Events\+Callback -\/= callback\+Handler; \}
+
+\#endregion CALLBACKS
+
+\#region UTILITIES
+
+\#if UNITY\+\_\+\+EDITOR /// 
+
+/// A method that retrieves the current csd file path from its GUID /// 
+
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public string Get\+File\+Path() \{ return Path.\+Combine(Application.\+data\+Path.\+Substring(0, Application.\+data\+Path.\+Length -\/ \char`\"{}\+Assets\char`\"{}.Length), Asset\+Database.\+GUIDTo\+Asset\+Path(csound\+File\+GUID)); \} \#endif
+
+public \mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{Csound\+Unity\+Bridge.\+CSOUND\+\_\+\+PARAMS}} Get\+Params() \{ return csound.\+Get\+Params(); \}
+
+public void Set\+Params(\mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{Csound\+Unity\+Bridge.\+CSOUND\+\_\+\+PARAMS}} parms) \{ csound.\+Set\+Params(parms); \}
+
+/// 
+
+/// Get Environment path /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em env\+Type} & the type of the environment to get\\
+\hline
+\end{DoxyParams}
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public string Get\+Env(\+Env\+Type env\+Type) \{ return csound.\+Get\+Env(env\+Type.\+To\+String()); \}
+
+//\#if CSHARP\+\_\+7\+\_\+3\+\_\+\+OR\+\_\+\+NEWER // /// 
+
+// /// Get the Opcode List, async // /// 
+
+// /// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+// public async Task$<$\+IDictionary$<$string, IList$<$\+Csound\+Unity\+Bridge.\+Opcode\+Argument\+Types$>$$>$$>$ Get\+Opcode\+List\+Async() // \{ // return await csound.\+Get\+Opcode\+List\+Async(); // \} //\#endif
+
+/// 
+
+/// Get the Opcode List, blocking /// 
+
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public IDictionary$<$string, IList$<$\+Csound\+Unity\+Bridge.\+Opcode\+Argument\+Types$>$$>$ Get\+Opcode\+List() \{ return csound.\+Get\+Opcode\+List(); \}
+
+/// 
+
+/// Get the number of input channels /// 
+
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public uint Get\+Nchnls\+Inputs() \{ return csound.\+Get\+Nchnls\+Input(); \}
+
+/// 
+
+/// Get the number of output channels /// 
+
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public uint Get\+Nchnls() \{ return csound.\+Get\+Nchnls(); \}
+
+/// 
+
+/// Get 0 dbfs /// 
+
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public MYFLT Get0dbfs() \{ return csound.\+Get0dbfs(); \}
+
+/// 
+
+/// Returns the current performance time in samples /// 
+
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public long Get\+Current\+Time\+Samples() \{ return csound.\+Get\+Current\+Time\+Samples(); \}
+
+/// 
+
+/// map MYFLT within one range to another /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em value} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em from1} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em to1} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em from2} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em to2} & \\
+\hline
+\end{DoxyParams}
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public static float Remap(float value, float from1, float to1, float from2, float to2) \{ float ret\+Value = (value -\/ from1) / (to1 -\/ from1) $\ast$ (to2 -\/ from2) + from2; return Mathf.\+Clamp(ret\+Value, from2, to2); \}
+
+/// 
+
+/// Get Samples from a path, specifying the origin of the path. This will return an interleaved /// array of samples, with the first index used to specify the number of channels. This array can /// be passed to the \mbox{\hyperlink{class_csound_unity_a02fad33460f51f304ead99509a7bd69d}{Csound\+Unity.\+Create\+Table()}} method for processing by \mbox{\hyperlink{namespace_csound}{Csound}}. Use async versions to /// to load very large files. /// /// Note\+: You need to be careful that your Audio\+Clips match the SR of the /// project. If not, you will hear some re-\/pitching issues with your audio when /// you play it back with a table reader opcode. /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em source} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em origin} & \\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em async} & \\
+\hline
+\end{DoxyParams}
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+/// public static MYFLT\mbox{[}\mbox{]} Get\+Stereo\+Samples(string source, Samples\+Origin origin) \{ return Get\+Samples(source, origin, 0, true); \}
+
+public static MYFLT\mbox{[}\mbox{]} Get\+Mono\+Samples(string source, Samples\+Origin origin, int channel\+Number) \{ return Get\+Samples(source, origin, channel\+Number, true); \} public static MYFLT\mbox{[}\mbox{]} Get\+Samples(string source, Samples\+Origin origin, int channel\+Number = 1, bool write\+Channel\+Data = false) \{ MYFLT\mbox{[}\mbox{]} res = new MYFLT\mbox{[}0\mbox{]}; switch (origin) \{ case Samples\+Origin.\+Resources\+: var src = Resources.\+Load$<$\+Audio\+Clip$>$(source); if (src == null) \{ res = null; break; \} var data = new float\mbox{[}src.\+samples $\ast$ src.\+channels\mbox{]}; src.\+Get\+Data(data, 0);
+
+if (write\+Channel\+Data) \{ res = new MYFLT\mbox{[}src.\+samples $\ast$ src.\+channels + 1\mbox{]}; res\mbox{[}0\mbox{]} = src.\+channels; var s = 1; for (var i = 0; i \texorpdfstring{$<$}{<} data.\+Length; i++) \{ res\mbox{[}s\mbox{]} = data\mbox{[}i\mbox{]}; s++; \} \} else \{ var s = 0; res = new MYFLT\mbox{[}src.\+samples\mbox{]};
+
+for (var i = 0; i \texorpdfstring{$<$}{<} data.\+Length; i += src.\+channels, s++) \{ res\mbox{[}s\mbox{]} = data\mbox{[}i + (channel\+Number -\/ 1)\mbox{]}; \} \} break; case Samples\+Origin.\+Streaming\+Assets\+: Debug.\+Log\+Warning(\char`\"{}\+Not implemented yet\char`\"{}); break; case Samples\+Origin.\+Absolute\+: Debug.\+Log\+Warning(\char`\"{}\+Not implemented yet\char`\"{}); break; \}
+
+return res; \}
+
+/// 
+
+/// Async version of Get\+Samples /// example of usage\+: /// 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{/// yield return CsoundUnity.GetSamples(source.name, CsoundUnity.SamplesOrigin.Resources, (samples) =>}
+\DoxyCodeLine{/// \{}
+\DoxyCodeLine{///     Debug.Log("{}samples loaded: "{}+samples.Length+"{}, creating table"{});}
+\DoxyCodeLine{///     csound.CreateTable(100, samples);}
+\DoxyCodeLine{/// \});}
+\DoxyCodeLine{/// }
+
+\end{DoxyCode}
+ /// 
+
+/// 
+\begin{DoxyParams}{Parameters}
+{\em source} & the name of the Audio\+Clip to load\\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em origin} & the origin of the path\\
+\hline
+\end{DoxyParams}
+/// 
+\begin{DoxyParams}{Parameters}
+{\em on\+Samples\+Loaded} & the callback when samples are loaded\\
+\hline
+\end{DoxyParams}
+/// \begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+public static IEnumerator Get\+Samples(string source, Samples\+Origin origin, Action$<$\+MYFLT\mbox{[}$\,$\mbox{]}$>$ on\+Samples\+Loaded) \{ switch (origin) \{ case Samples\+Origin.\+Resources\+: //var src = Resources.\+Load$<$\+Audio\+Clip$>$(source); var req = Resources.\+Load\+Async$<$\+Audio\+Clip$>$(source);
+
+while (!req.is\+Done) \{ yield return null; \} var samples = ((Audio\+Clip)req.\+asset).samples; if (samples == 0) \{ on\+Samples\+Loaded?.Invoke(null); yield break; \} //\+Debug.Log(\char`\"{}src.\+samples\+: \char`\"{} + samples); var ac = ((Audio\+Clip)req.\+asset); var data = new float\mbox{[}samples $\ast$ ac.\+channels\mbox{]}; ac.\+Get\+Data(data, 0); MYFLT\mbox{[}\mbox{]} res = new MYFLT\mbox{[}samples $\ast$ ac.\+channels\mbox{]}; var s = 0; foreach (var d in data) \{ res\mbox{[}s\mbox{]} = (MYFLT)d; s++; \} on\+Samples\+Loaded?.Invoke(res); break; case Samples\+Origin.\+Streaming\+Assets\+: Debug.\+Log\+Warning(\char`\"{}\+Not implemented yet\char`\"{}); break; case Samples\+Origin.\+Absolute\+: Debug.\+Log\+Warning(\char`\"{}\+Not implemented yet\char`\"{}); break; \}
+
+\}
+
+\#if UNITY\+\_\+\+ANDROID
+
+/$\ast$$\ast$
+\begin{DoxyItemize}
+\item Android method to write csd file to a location it can be read from Method returns the file path. $\ast$/ public string Get\+Csound\+File(string csound\+File\+Contents) \{ try \{ Debug.\+Log(\char`\"{}\+Csound file contents\+:\char`\"{}); Debug.\+Log(csound\+File\+Contents); string filename = Application.\+persistent\+Data\+Path + \char`\"{}/csound\+File.\+csd\char`\"{}; Debug.\+Log(\char`\"{}\+Writing to \char`\"{} + filename);
+
+if (!\+File.Exists(filename)) \{ Debug.\+Log(\char`\"{}\+File doesnt exist, creating it\char`\"{}); File.\+Create(filename).Close(); \}
+
+if (File.\+Exists(filename)) \{ Debug.\+Log(\char`\"{}\+File has been created\char`\"{}); \}
+
+File.\+Write\+All\+Text(filename, csound\+File\+Contents); return filename; \} catch (System.\+Exception e) \{ Debug.\+Log\+Error(\char`\"{}\+Error writing to file\+: \char`\"{} + e.\+To\+String()); \}
+\end{DoxyItemize}
+
+return \char`\"{}\char`\"{}; \}
+
+public void Get\+Csound\+Audio\+File(byte\mbox{[}$\,$\mbox{]} data, string filename) \{ try \{ string name = Application.\+persistent\+Data\+Path + \char`\"{}/\char`\"{} + filename; File.\+Create(name).Close(); File.\+Write\+All\+Bytes(name, data); \} catch (System.\+Exception e) \{ Debug.\+Log\+Error(\char`\"{}\+Error writing to file\+: \char`\"{} + e.\+To\+String()); \} \} 

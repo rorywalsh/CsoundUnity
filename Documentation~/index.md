@@ -1,6 +1,6 @@
 # Documentation v3.2.0 #
 
-  * [How to import](#how-to-import)
+  * [How to import CsoundUnity](#how-to-import)
   * [Getting Started](#getting-started)
   * [Controlling Csound from Unity Scripts](#controlling-csound-from-unity-scripts)
     + [Csound's channel system](#csound-s-channel-system)
@@ -13,7 +13,7 @@
 
 
 <a name="importing"></a>
-## How to import ##
+## How to import CsoundUnity ##
 
 **From version 3.0 CsoundUnity is in the form of a Unity Package**. See the [Unity Manual](https://docs.unity3d.com/Manual/PackagesList.html) for more information.  
 
@@ -390,7 +390,7 @@ IEnumerator Start()
 ```
 
 <a name=csound_filewatcher></a>
-## CsoundFileWatcher
+## CsoundFileWatcher ##
 
 From version 3.0 CsoundUnity can detect the changes made to the *csd* file while modifying it in an external editor.  
 You will see in the Unity Console messages like this:
@@ -403,7 +403,7 @@ when this happens.
 This means that you don't need to drag the Csd Asset in CsoundUnity everytime you make a change on it in an external editor.
 
 <a name=platforms></a>
-## Supported Platforms
+## Supported Platforms ##
 
 CsoundUnity supports building for Windows, macOS, Android 64bit (it has successfully been tested on Oculus Quest) and iOS 64bit.   
 We are planning to add WebGL support, but unfortunately Unity WebGL doesn't support AudioSource.OnAudioFilterRead callback, meaning that we are not able to use the same approach we're using for the other platforms.  

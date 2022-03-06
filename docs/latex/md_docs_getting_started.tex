@@ -1,0 +1,11 @@
+\mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} is a simple component that can be added to any Game\+Object in a scene. To do so simple hit {\bfseries{Add\+Component}} in the inspector, then click {\bfseries{Audio}} and add {\bfseries{\mbox{\hyperlink{class_csound_unity}{Csound\+Unity}}}}.
+
+
+
+\mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} requires the presence of an Audio\+Source. If the Game\+Object you are trying to attach a \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component to does not already have an Audio\+Source attached, one will be added automatically.
+
+Once a \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component has been added to a Game\+Object, you will need to attach a \mbox{\hyperlink{namespace_csound}{Csound}} file to it. \mbox{\hyperlink{namespace_csound}{Csound}} files can be placed anywhere inside the Assets folder. To attach a \mbox{\hyperlink{namespace_csound}{Csound}} file to a \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component, simply drag it from the Assets folder to the \textquotesingle{}Csd Asset\textquotesingle{} field in the \mbox{\hyperlink{class_csound_unity}{Csound\+Unity}} component inspector. When your game starts, \mbox{\hyperlink{namespace_csound}{Csound}} will feed audio from its output buffer into the Audio\+Source. Any audio produced by \mbox{\hyperlink{namespace_csound}{Csound}} can be accessed through the Audio\+Source component.
+
+See \href{https://github.com/rorywalsh/CsoundUnity/blob/c288e9054c39f8bb0e200f6a67338f6d2dbc6837/Runtime/CsoundUnity.cs\#L1414}{\texttt{ {\bfseries{Csound\+Unity.\+Process\+Block()}}}}
+
+\texorpdfstring{$<$}{<}img src=\char`\"{}images/add\+Csound\+File\+\_\+v3.\+gif\char`\"{} alt=\char`\"{}\+Add Csound file\char`\"{}\char`\"{}/$>$   \+You can start an instrument to play at any time using the $<$a href=\char`\"{}\href{https://github.com/rorywalsh/CsoundUnity/blob/c288e9054c39f8bb0e200f6a67338f6d2dbc6837/Runtime/CsoundUnity.cs\#L431}{\texttt{ https\+://github.\+com/rorywalsh/\+Csound\+Unity/blob/c288e9054c39f8bb0e200f6a67338f6d2dbc6837/\+Runtime/\+Csound\+Unity.\+cs\#\+L431}}"{} \texorpdfstring{$>$}{>}{\bfseries{\mbox{\hyperlink{class_csound_unity_a67eb0ef59ebe2b06a17cbfe362d03122}{Csound\+Unity.\+Send\+Score\+Event()}}}} method. 

@@ -1,0 +1,696 @@
+\hypertarget{_csound_csharp_8cs_source}{}\doxysection{Csound\+Csharp.\+cs}
+\label{_csound_csharp_8cs_source}\index{Runtime/CsoundCsharp.cs@{Runtime/CsoundCsharp.cs}}
+\mbox{\hyperlink{_csound_csharp_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00001}00001 \textcolor{comment}{/*}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00002}00002 \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00003}00003 \textcolor{comment}{C S O U N D for C\#}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00004}00004 \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00005}00005 \textcolor{comment}{Simple wrapper building C\# hosts for Csound 6 via the Csound API}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00006}00006 \textcolor{comment}{and is licensed under the same terms and disclaimers as Csound described below.}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00007}00007 \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00008}00008 \textcolor{comment}{Copyright (C) 2013 Richard Henninger, Rory Walsh}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00009}00009 \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00010}00010 \textcolor{comment}{This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00011}00011 \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00012}00012 \textcolor{comment}{Contributors:}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00013}00013 \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00014}00014 \textcolor{comment}{Bernt Isak Wærstad}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00015}00015 \textcolor{comment}{Charles Berman}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00016}00016 \textcolor{comment}{Giovanni Bedetti}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00017}00017 \textcolor{comment}{Hector Centeno}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00018}00018 \textcolor{comment}{NPatch}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00019}00019 \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00020}00020 \textcolor{comment}{Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "{}Software"{}), }}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00021}00021 \textcolor{comment}{to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00022}00022 \textcolor{comment}{and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00023}00023 \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00024}00024 \textcolor{comment}{The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00025}00025 \textcolor{comment}{}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00026}00026 \textcolor{comment}{THE SOFTWARE IS PROVIDED "{}AS IS"{}, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF }}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00027}00027 \textcolor{comment}{MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR }}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00028}00028 \textcolor{comment}{ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH }}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00029}00029 \textcolor{comment}{THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00030}00030 \textcolor{comment}{*/}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00031}00031 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00032}00032 \textcolor{keyword}{using} System;}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00033}00033 \textcolor{keyword}{using} System.Runtime.InteropServices;}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00034}00034 \textcolor{preprocessor}{\#if UNITY\_EDITOR || UNITY\_STANDALONE}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00035}00035 \textcolor{keyword}{using} MYFLT = System.Double;}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00036}00036 \textcolor{preprocessor}{\#elif UNITY\_ANDROID || UNITY\_IOS}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00037}00037 \textcolor{keyword}{using} MYFLT = System.Single;}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00038}00038 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00039}00039 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00040}\mbox{\hyperlink{namespacecsoundcsharp}{00040}} \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacecsoundcsharp}{csoundcsharp}}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00041}00041 \{}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00042}00042     \textcolor{comment}{// This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper. If you wish to }}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00043}00043     \textcolor{comment}{// use the Csound API in a model that is idiomatic to .net please use his wrapper instead. }}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00044}00044     \textcolor{comment}{// http://csound6net.codeplex.com  // this site is not reachable anymore}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00045}00045 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00046}00046     \textcolor{comment}{// This lightweight wrapper was created to provide an interface to the Unity game engine}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00047}\mbox{\hyperlink{classcsoundcsharp_1_1_csound6}{00047}}     \textcolor{keyword}{public} \textcolor{keyword}{partial class }\mbox{\hyperlink{classcsoundcsharp_1_1_csound6}{Csound6}}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00048}00048     \{}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00049}00049 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00050}00050 \textcolor{preprocessor}{\#if UNITY\_EDITOR\_WIN || UNITY\_STANDALONE\_WIN}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00051}00051         \textcolor{keyword}{internal} \textcolor{keyword}{const} \textcolor{keywordtype}{string} \_dllVersion = \textcolor{stringliteral}{"{}csound64.dll"{}};}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00052}00052 \textcolor{preprocessor}{\#elif UNITY\_EDITOR\_OSX || UNITY\_STANDALONE\_OSX}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00053}00053         \textcolor{keyword}{internal} \textcolor{keyword}{const} \textcolor{keywordtype}{string} \_dllVersion = \textcolor{stringliteral}{"{}CsoundLib64.bundle"{}};}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00054}00054 \textcolor{preprocessor}{\#elif UNITY\_ANDROID}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00055}00055         \textcolor{keyword}{internal} \textcolor{keyword}{const} \textcolor{keywordtype}{string} \_dllVersion = \textcolor{stringliteral}{"{}csoundandroid"{}};}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00056}00056 \textcolor{preprocessor}{\#elif UNITY\_IOS}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00057}00057         \textcolor{keyword}{internal} \textcolor{keyword}{const} \textcolor{keywordtype}{string} \_dllVersion = \textcolor{stringliteral}{"{}\_\_Internal"{}};}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00058}00058 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00059}00059 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00060}00060         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00061}00061         \textcolor{keyword}{internal} delegate \textcolor{keywordtype}{void} MessageCallbackProxy(IntPtr csound, Int32 attr, \textcolor{keywordtype}{string} format, IntPtr valist);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00062}00062 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00063}00063         \textcolor{comment}{// Callbacks will be probably removed in Csound 7}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00064}00064 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00065}00065         \textcolor{comment}{//[UnmanagedFunctionPointer(CallingConvention.Cdecl)]}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00066}00066         \textcolor{comment}{//internal delegate void FileOpenCallbackProxy(IntPtr csound, string pathname, int csFileType, int writing, int temporary);}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00067}00067 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00068}00068         \textcolor{comment}{//[UnmanagedFunctionPointer(CallingConvention.Cdecl)]}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00069}00069         \textcolor{comment}{//internal delegate void RtcloseCallbackProxy(IntPtr csound);}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00070}00070 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00071}00071         \textcolor{comment}{//[UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00072}00072         \textcolor{comment}{//internal delegate void SenseEventCallbackProxy(IntPtr csound, IntPtr userdata);}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00073}00073 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00074}00074         \textcolor{comment}{//[UnmanagedFunctionPointer(CallingConvention.Cdecl)]}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00075}00075         \textcolor{comment}{//internal delegate int YieldCallback(IntPtr csound);}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00076}00076 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00077}00077         \textcolor{comment}{// Csound API 6.17}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00078}\mbox{\hyperlink{classcsoundcsharp_1_1_csound6_1_1_native_methods}{00078}}         \textcolor{keyword}{public} \textcolor{keyword}{class }\mbox{\hyperlink{classcsoundcsharp_1_1_csound6_1_1_native_methods}{NativeMethods}}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00079}00079         \{}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00080}00080 \textcolor{preprocessor}{            \#region Instantiation}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00081}00081 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00082}00082             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00083}00083             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundInitialize([In] \textcolor{keywordtype}{int} flags);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00084}00084 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00085}00085             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00086}00086             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundCreate(IntPtr hostdata);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00087}00087 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00088}00088             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00089}00089             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundDestroy([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00090}00090 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00091}00091             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00092}00092             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetVersion();}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00093}00093 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00094}00094             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00095}00095             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetAPIVersion();}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00096}00096 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00097}00097 \textcolor{preprocessor}{            \#endregion Instantiation}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00098}00098 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00099}00099 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00100}00100 \textcolor{preprocessor}{            \#region Performance}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00101}00101 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00102}00102             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00103}00103             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundParseOrc([In] IntPtr csound, [In] String str);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00104}00104 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00105}00105             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00106}00106             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundCompileTree([In] IntPtr csound, [In] IntPtr root);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00107}00107 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00108}00108             \textcolor{comment}{// PUBLIC int csoundCompileTreeAsync (CSOUND *csound, TREE *root)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00109}00109 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00110}00110             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00111}00111             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundDeleteTree([In] IntPtr csound, [In] IntPtr root);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00112}00112 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00113}00113             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00114}00114             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundCompileOrc([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String orchStr);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00115}00115 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00116}00116             \textcolor{comment}{// PUBLIC int csoundCompileOrcAsync (CSOUND *csound, const char *str)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00117}00117 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00118}00118             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00119}00119             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} MYFLT csoundEvalCode([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String orchStr);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00120}00120 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00121}00121             \textcolor{comment}{// PUBLIC int csoundInitializeCscore (CSOUND *, FILE *insco, FILE *outsco)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00122}00122 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00123}00123             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00124}00124             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundCompileArgs([In] IntPtr csound, [In] Int32 argc, [In] \textcolor{keywordtype}{string}[] argv);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00125}00125 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00126}00126             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00127}00127             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundStart([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00128}00128 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00129}00129             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00130}00130             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundCompile([In] IntPtr csound, [In] Int32 argc, [In] \textcolor{keywordtype}{string}[] argv);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00131}00131 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00132}00132             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00133}00133             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundCompileCsd([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String csdFilename);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00134}00134 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00135}00135             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00136}00136             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundCompileCsdText([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String csdText);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00137}00137 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00138}00138             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00139}00139             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{int} csoundPerform([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00140}00140 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00141}00141             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00142}00142             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundPerformKsmps([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00143}00143 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00144}00144             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00145}00145             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundPerformBuffer([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00146}00146 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00147}00147             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00148}00148             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundStop([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00149}00149 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00150}00150             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00151}00151             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundCleanup([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00152}00152 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00153}00153             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00154}00154             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundReset([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00155}00155 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00156}00156 \textcolor{preprocessor}{            \#endregion Performance}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00157}00157 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00158}00158 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00159}00159 \textcolor{preprocessor}{            \#region UDP server}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00160}00160 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00161}00161             \textcolor{comment}{// PUBLIC int csoundUDPServerStart(CSOUND* csound, unsigned int port)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00162}00162 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00163}00163             \textcolor{comment}{// PUBLIC int csoundUDPServerStatus(CSOUND* csound)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00164}00164 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00165}00165             \textcolor{comment}{// PUBLIC int csoundUDPServerClose(CSOUND* csound)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00166}00166 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00167}00167             \textcolor{comment}{// PUBLIC int csoundUDPConsole(CSOUND* csound, const char* addr, int port, int mirror)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00168}00168 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00169}00169             \textcolor{comment}{// PUBLIC void csoundStopUDPConsole(CSOUND* csound)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00170}00170 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00171}00171 \textcolor{preprocessor}{            \#endregion UDP server}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00172}00172 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00173}00173 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00174}00174 \textcolor{preprocessor}{            \#region Attributes}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00175}00175 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00176}00176             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00177}00177             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} MYFLT csoundGetSr([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00178}00178 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00179}00179             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00180}00180             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} MYFLT csoundGetKr([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00181}00181 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00182}00182             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00183}00183             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} UInt32 csoundGetKsmps([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00184}00184 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00185}00185             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00186}00186             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} UInt32 csoundGetNchnls([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00187}00187 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00188}00188             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00189}00189             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} UInt32 csoundGetNchnlsInput([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00190}00190 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00191}00191             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00192}00192             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} MYFLT csoundGet0dBFS([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00193}00193 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00194}00194             \textcolor{comment}{// PUBLIC MYFLT csoundGetA4 (CSOUND *)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00195}00195 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00196}00196             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00197}00197             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int64 csoundGetCurrentTimeSamples([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00198}00198 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00199}00199             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00200}00200             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetSizeOfMYFLT();}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00201}00201 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00202}00202             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00203}00203             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundGetHostData([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00204}00204 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00205}00205             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00206}00206             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetHostData([In] IntPtr csound, IntPtr hostData);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00207}00207 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00208}00208             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00209}00209             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundSetOption([In] IntPtr csound, [In] \textcolor{keywordtype}{string} option);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00210}00210 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00211}00211             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00212}00212             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundGetParams(IntPtr csound, [Out, MarshalAs(UnmanagedType.LPStruct)] \mbox{\hyperlink{class_csound_unity_bridge}{CsoundUnityBridge}}.\mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\_PARAMS}} parms);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00213}00213 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00214}00214             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00215}00215             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetParams(IntPtr csound, [In, MarshalAs(UnmanagedType.LPStruct)] \mbox{\hyperlink{class_csound_unity_bridge}{CsoundUnityBridge}}.\mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\_PARAMS}} parms);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00216}00216 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00217}00217             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00218}00218             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetDebug([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00219}00219 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00220}00220             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00221}00221             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetDebug([In] IntPtr csound, [In] Int32 debug);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00222}00222 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00223}00223 \textcolor{preprocessor}{            \#endregion Attributes}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00224}00224 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00225}00225 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00226}00226 \textcolor{preprocessor}{            \#region General Input/Output}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00227}00227 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00228}00228             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00229}00229             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundGetOutputName([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00230}00230 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00231}00231             \textcolor{comment}{// PUBLIC const char *  csoundGetInputName (CSOUND *)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00232}00232 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00233}00233             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00234}00234             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetOutput([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} name, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} type, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} format);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00235}00235 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00236}00236             \textcolor{comment}{// PUBLIC void  csoundGetOutputFormat (CSOUND *csound, char *type, char *format)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00237}00237 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00238}00238             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00239}00239             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetInput([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} name);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00240}00240 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00241}00241             \textcolor{comment}{// csoundSetMIDIInput (CSOUND *csound, char *name)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00242}00242 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00243}00243             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00244}00244             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetMIDIFileInput([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} name);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00245}00245 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00246}00246             \textcolor{comment}{// csoundSetMIDIOutput (CSOUND *csound, char *name)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00247}00247 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00248}00248             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00249}00249             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetMIDIFileOutput([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} name);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00250}00250 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00251}00251             \textcolor{comment}{//[DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00252}00252             \textcolor{comment}{//internal static extern void csoundSetFileOpenCallback([In] IntPtr csound, FileOpenCallbackProxy processMessage);}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00253}00253 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00254}00254 \textcolor{preprocessor}{            \#endregion}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00255}00255 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00256}00256 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00257}00257 \textcolor{preprocessor}{            \#region Realtime Audio I/O}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00258}00258 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00259}00259             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00260}00260             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetRTAudioModule([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} module);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00261}00261 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00262}00262             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00263}00263             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{int} csoundGetModule([In] IntPtr csound, \textcolor{keywordtype}{int} number, ref IntPtr name, ref IntPtr type);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00264}00264 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00265}00265             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00266}00266             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetInputBufferSize([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00267}00267 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00268}00268             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00269}00269             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetOutputBufferSize([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00270}00270 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00271}00271             \textcolor{comment}{// PUBLIC MYFLT * csoundGetInputBuffer (CSOUND *)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00272}00272 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00273}00273             \textcolor{comment}{// PUBLIC MYFLT * csoundGetOutputBuffer (CSOUND *)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00274}00274 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00275}00275             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00276}00276             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundGetSpin([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00277}00277 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00278}00278             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00279}00279             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundClearSpin([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00280}00280 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00281}00281             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00282}00282             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundAddSpinSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel, [In] MYFLT sample);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00283}00283 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00284}00284             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00285}00285             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetSpinSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel, [In] MYFLT value);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00286}00286 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00287}00287             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00288}00288             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundGetSpout([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00289}00289 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00290}00290             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00291}00291             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} MYFLT csoundGetSpoutSample([In] IntPtr csound, [In] Int32 frame, [In] Int32 channel);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00292}00292 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00293}00293             \textcolor{comment}{// PUBLIC void ** csoundGetRtRecordUserData (CSOUND *)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00294}00294 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00295}00295             \textcolor{comment}{// PUBLIC void ** csoundGetRtPlayUserData (CSOUND *)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00296}00296 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00297}00297             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00298}00298             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetHostImplementedAudioIO([In] IntPtr csound, [In] \textcolor{keywordtype}{int} state, [In] \textcolor{keywordtype}{int} buffSize);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00299}00299 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00300}00300             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00301}00301             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetAudioDevList([In] IntPtr csound, [Out] IntPtr list, [In] Int32 isOutput);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00302}00302 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00303}00303             \textcolor{comment}{// PUBLIC void csoundSetPlayopenCallback(CSOUND*, int(* playopen\_\_)(CSOUND*, const csRtAudioParams* parm))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00304}00304 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00305}00305             \textcolor{comment}{// PUBLIC void csoundSetRtplayCallback (CSOUND *, void(*rtplay\_\_)(CSOUND *, const MYFLT *outBuf, int nbytes))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00306}00306 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00307}00307             \textcolor{comment}{// PUBLIC void csoundSetRecopenCallback(CSOUND*, int(* recopen\_)(CSOUND*, const csRtAudioParams* parm))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00308}00308 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00309}00309             \textcolor{comment}{// PUBLIC void csoundSetRtrecordCallback (CSOUND *, int(*rtrecord\_\_)(CSOUND *, MYFLT *inBuf, int nbytes))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00310}00310 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00311}00311             \textcolor{comment}{// PUBLIC void csoundSetRtcloseCallback (CSOUND *, void(*rtclose\_\_)(CSOUND *))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00312}00312 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00313}00313             \textcolor{comment}{// PUBLIC void csoundSetAudioDeviceListCallback (CSOUND *csound, int(*audiodevlist\_\_)(CSOUND *, CS\_AUDIODEVICE *list, int isOutput))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00314}00314 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00315}00315 \textcolor{preprocessor}{            \#endregion Realtime Audio I/O}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00316}00316 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00317}00317 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00318}00318 \textcolor{preprocessor}{            \#region Realtime Midi I/O}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00319}00319 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00320}00320             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00321}00321             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetMIDIModule([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} module);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00322}00322 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00323}00323             \textcolor{comment}{// PUBLIC void csoundSetHostImplementedMIDIIO (CSOUND *csound, int state)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00324}00324 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00325}00325             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00326}00326             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetMIDIDevList([In] IntPtr csound, [Out] IntPtr list, [In] Int32 isOutput);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00327}00327 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00328}00328             \textcolor{comment}{// PUBLIC void csoundSetExternalMidiInOpenCallback (CSOUND *, int(*func)(CSOUND *, void **userData, const char *devName))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00329}00329 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00330}00330             \textcolor{comment}{// PUBLIC void csoundSetExternalMidiReadCallback (CSOUND *, int(*func)(CSOUND *, void *userData, unsigned char *buf, int nBytes))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00331}00331 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00332}00332             \textcolor{comment}{// PUBLIC void csoundSetExternalMidiInCloseCallback (CSOUND *, int(*func)(CSOUND *, void *userData))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00333}00333 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00334}00334             \textcolor{comment}{// PUBLIC void csoundSetExternalMidiOutOpenCallback (CSOUND *, int(*func)(CSOUND *, void **userData, const char *devName))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00335}00335 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00336}00336             \textcolor{comment}{// PUBLIC void csoundSetExternalMidiWriteCallback (CSOUND *, int(*func)(CSOUND *, void *userData, const unsigned char *buf, int nBytes))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00337}00337 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00338}00338             \textcolor{comment}{// PUBLIC void csoundSetExternalMidiOutCloseCallback (CSOUND *, int(*func)(CSOUND *, void *userData))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00339}00339 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00340}00340             \textcolor{comment}{// PUBLIC void csoundSetExternalMidiErrorStringCallback (CSOUND *, const char *(*func)(int))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00341}00341 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00342}00342             \textcolor{comment}{// PUBLIC void csoundSetMIDIDeviceListCallback (CSOUND *csound, int(*mididevlist\_\_)(CSOUND *, CS\_MIDIDEVICE *list, int isOutput))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00343}00343 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00344}00344 \textcolor{preprocessor}{            \#endregion Realtime Midi I/O}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00345}00345 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00346}00346 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00347}00347 \textcolor{preprocessor}{            \#region Score Handling}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00348}00348 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00349}00349             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00350}00350             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundReadScore([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} score);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00351}00351 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00352}00352             \textcolor{comment}{// PUBLIC void csoundReadScoreAsync (CSOUND *csound, const char *str)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00353}00353 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00354}00354             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00355}00355             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} MYFLT csoundGetScoreTime([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00356}00356 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00357}00357             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00358}00358             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{int} csoundIsScorePending([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00359}00359 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00360}00360             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00361}00361             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetScorePending([In] IntPtr csound, [In] Int32 pending);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00362}00362 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00363}00363             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00364}00364             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} MYFLT csoundGetScoreOffsetSeconds([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00365}00365 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00366}00366             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00367}00367             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetScoreOffsetSeconds([In] IntPtr csound, [In] MYFLT time);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00368}00368 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00369}00369             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00370}00370             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundRewindScore([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00371}00371 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00372}00372             \textcolor{comment}{// PUBLIC void csoundSetCscoreCallback (CSOUND *, void(*cscoreCallback\_)(CSOUND *))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00373}00373 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00374}00374             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00375}00375             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{int} csoundScoreSort([In] IntPtr csound, [In] IntPtr inFile, [In] IntPtr outFile);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00376}00376 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00377}00377             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00378}00378             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{int} csoundScoreExtract(IntPtr csound, IntPtr inFile, IntPtr outFile, IntPtr extractFile);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00379}00379 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00380}00380 \textcolor{preprocessor}{            \#endregion Score Handling}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00381}00381 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00382}00382 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00383}00383 \textcolor{preprocessor}{            \#region Messages and Text}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00384}00384 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00385}00385             \textcolor{comment}{// PUBLIC CS\_PRINTF2 void csoundMessage (CSOUND *, const char *format,...)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00386}00386 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00387}00387             \textcolor{comment}{// PUBLIC CS\_PRINTF3 void csoundMessageS (CSOUND *, int attr, const char *format,...)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00388}00388 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00389}00389             \textcolor{comment}{// PUBLIC void csoundMessageV (CSOUND *, int attr, const char *format, va\_list args)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00390}00390 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00391}00391             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00392}00392             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetDefaultMessageCallback(MessageCallbackProxy processMessage);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00393}00393 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00394}00394             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00395}00395             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetMessageCallback([In] IntPtr csound, MessageCallbackProxy processMessage);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00396}00396 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00397}00397             \textcolor{comment}{// PUBLIC void csoundSetMessageStringCallback (CSOUND *csound, void(*csoundMessageStrCallback)(CSOUND *csound, int attr, const char *str))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00398}00398 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00399}00399             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00400}00400             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetMessageLevel([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00401}00401 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00402}00402             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00403}00403             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetMessageLevel([In] IntPtr csound, [In] Int32 messageLevel);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00404}00404 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00405}00405             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00406}00406             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundCreateMessageBuffer([In] IntPtr csound, [In] \textcolor{keywordtype}{int} toStdOut);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00407}00407 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00408}00408             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00409}00409             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundGetFirstMessage([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00410}00410 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00411}00411             \textcolor{comment}{// PUBLIC int csoundGetFirstMessageAttr (CSOUND *csound)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00412}00412 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00413}00413             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00414}00414             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundPopFirstMessage([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00415}00415 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00416}00416             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00417}00417             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{int} csoundGetMessageCnt([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00418}00418 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00419}00419             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00420}00420             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundDestroyMessageBuffer([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00421}00421 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00422}00422 \textcolor{preprocessor}{            \#endregion Messages and Text}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00423}00423 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00424}00424 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00425}00425 \textcolor{preprocessor}{            \#region Channels, Control and Events}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00426}00426 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00427}00427             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00428}00428             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{int} csoundGetChannelPtr([In] IntPtr csound, out IntPtr pChannel, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} name, [In] Int32 flags);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00429}00429 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00430}00430             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00431}00431             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundListChannels([In] IntPtr csound, [Out] out IntPtr ppChannels);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00432}00432 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00433}00433             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00434}00434             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundDeleteChannelList([In] IntPtr csound, [In] IntPtr ppChannels);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00435}00435 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00436}00436             \textcolor{comment}{// PUBLIC int csoundSetControlChannelHints (CSOUND *, const char *name, controlChannelHints\_t hints)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00437}00437 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00438}00438             \textcolor{comment}{// PUBLIC int csoundGetControlChannelHints (CSOUND *, const char *name, controlChannelHints\_t *hints)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00439}00439 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00440}00440             \textcolor{comment}{// PUBLIC int * csoundGetChannelLock (CSOUND *, const char *name)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00441}00441 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00442}00442             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00443}00443             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} MYFLT csoundGetControlChannel([In] IntPtr csound, [In] String str, [In] IntPtr err);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00444}00444 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00445}00445             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00446}00446             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundSetControlChannel([In] IntPtr csound, [In] String str, [In] MYFLT value);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00447}00447 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00448}00448             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00449}00449             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundGetAudioChannel([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} name, IntPtr samples);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00450}00450 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00451}00451             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00452}00452             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSetAudioChannel([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} name, IntPtr samples);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00453}00453 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00454}00454 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00455}00455             \textcolor{comment}{// PUBLIC void csoundGetStringChannel (CSOUND *csound, const char *name, char *string)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00456}00456 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00457}00457             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00458}00458             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundSetStringChannel([In] IntPtr csound, [In] String str, [In] String value);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00459}00459 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00460}00460             \textcolor{comment}{// PUBLIC int csoundGetChannelDatasize (CSOUND *csound, const char *name)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00461}00461 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00462}00462             \textcolor{comment}{// PUBLIC void csoundSetInputChannelCallback (CSOUND *csound, channelCallback\_t inputChannelCalback)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00463}00463 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00464}00464             \textcolor{comment}{// PUBLIC void csoundSetOutputChannelCallback (CSOUND *csound, channelCallback\_t outputChannelCalback)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00465}00465 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00466}00466             \textcolor{comment}{// PUBLIC int csoundSetPvsChannel (CSOUND *, const PVSDATEXT *fin, const char *name)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00467}00467 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00468}00468             \textcolor{comment}{// PUBLIC int csoundGetPvsChannel (CSOUND *csound, PVSDATEXT *fout, const char *name)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00469}00469 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00470}00470             \textcolor{comment}{// PUBLIC int csoundScoreEvent (CSOUND *, char type, const MYFLT *pFields, long numFields)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00471}00471 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00472}00472             \textcolor{comment}{// PUBLIC void csoundScoreEventAsync (CSOUND *, char type, const MYFLT *pFields, long numFields)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00473}00473 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00474}00474             \textcolor{comment}{// PUBLIC int csoundScoreEventAbsolute (CSOUND *, char type, const MYFLT *pfields, long numFields, double time\_ofs)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00475}00475 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00476}00476             \textcolor{comment}{// PUBLIC void  csoundScoreEventAbsoluteAsync (CSOUND *, char type, const MYFLT *pfields, long numFields, double time\_ofs)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00477}00477 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00478}00478             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00479}00479             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundInputMessage([In] IntPtr csound, [In] String str);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00480}00480 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00481}00481             \textcolor{comment}{// PUBLIC void csoundInputMessageAsync (CSOUND *, const char *message)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00482}00482 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00483}00483             \textcolor{comment}{// PUBLIC int csoundKillInstance (CSOUND *csound, MYFLT instr, char *instrName, int mode, int allow\_release)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00484}00484 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00485}00485             \textcolor{comment}{//[DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00486}00486             \textcolor{comment}{//internal static extern int csoundRegisterSenseEventCallback([In] IntPtr csound, SenseEventCallbackProxy senseEventProxy);}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00487}00487 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00488}00488             \textcolor{comment}{// PUBLIC void csoundKeyPress (CSOUND *, char c)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00489}00489 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00490}00490             \textcolor{comment}{// PUBLIC int csoundRegisterKeyboardCallback (CSOUND *, int(*func)(void *userData, void *p, unsigned int type), void *userData, unsigned int type)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00491}00491 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00492}00492             \textcolor{comment}{// PUBLIC void csoundRemoveKeyboardCallback (CSOUND *csound, int(*func)(void *, void *, unsigned int))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00493}00493 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00494}00494 \textcolor{preprocessor}{            \#endregion Channels, Control and Events}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00495}00495 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00496}00496 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00497}00497 \textcolor{preprocessor}{            \#region Tables}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00498}00498 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00499}00499             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00500}00500             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundTableLength([In] IntPtr csound, [In] Int32 table);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00501}00501 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00502}00502             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00503}00503             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} MYFLT csoundTableGet([In] IntPtr csound, [In] Int32 table, [In] Int32 index);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00504}00504 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00505}00505             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00506}00506             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundTableSet([In] IntPtr csound, [In] Int32 table, [In] Int32 index, [In] MYFLT value);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00507}00507 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00508}00508             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00509}00509             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundTableCopyOut([In] IntPtr csound, Int32 table, IntPtr dest);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00510}00510 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00511}00511             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00512}00512             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundTableCopyOutAsync([In] IntPtr csound, Int32 table, IntPtr dest);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00513}00513 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00514}00514             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00515}00515             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundTableCopyIn([In] IntPtr csound, [In] Int32 table, IntPtr source);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00516}00516 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00517}00517             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00518}00518             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundTableCopyInAsync([In] IntPtr csound, [In] Int32 table, IntPtr source);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00519}00519 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00520}00520             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00521}00521             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetTable([In] IntPtr csound, out IntPtr tablePtr, [In] Int32 index);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00522}00522 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00523}00523             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00524}00524             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundGetTableArgs([In] IntPtr csound, out IntPtr argsPtr, [In] Int32 index);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00525}00525 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00526}00526             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00527}00527             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundIsNamedGEN([In] IntPtr csound, [In] Int32 num);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00528}00528 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00529}00529             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00530}00530             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundGetNamedGEN([In] IntPtr csound, [In] Int32 num, out \textcolor{keywordtype}{string} name, Int32 len);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00531}00531 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00532}00532 \textcolor{preprocessor}{            \#endregion Tables}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00533}00533 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00534}00534 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00535}00535 \textcolor{preprocessor}{            \#region Function table display}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00536}00536 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00537}00537             \textcolor{comment}{// PUBLIC int csoundSetIsGraphable(CSOUND*, int isGraphable)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00538}00538 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00539}00539             \textcolor{comment}{// PUBLIC void csoundSetMakeGraphCallback (CSOUND *, void(*makeGraphCallback\_)(CSOUND *, WINDAT *windat, const char *name))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00540}00540 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00541}00541             \textcolor{comment}{// PUBLIC void csoundSetDrawGraphCallback (CSOUND *, void(*drawGraphCallback\_)(CSOUND *, WINDAT *windat))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00542}00542 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00543}00543             \textcolor{comment}{// PUBLIC void csoundSetKillGraphCallback (CSOUND *, void(*killGraphCallback\_)(CSOUND *, WINDAT *windat))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00544}00544 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00545}00545             \textcolor{comment}{// PUBLIC void csoundSetExitGraphCallback (CSOUND *, int(*exitGraphCallback\_)(CSOUND *))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00546}00546 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00547}00547 \textcolor{preprocessor}{            \#endregion Function table display}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00548}00548 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00549}00549 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00550}00550 \textcolor{preprocessor}{            \#region Opcodes}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00551}00551 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00552}00552             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00553}00553             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundGetNamedGens([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00554}00554 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00555}00555             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00556}00556             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundNewOpcodeList([In] IntPtr csound, [Out] out IntPtr ppOpcodeList);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00557}00557 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00558}00558             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00559}00559             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundDisposeOpcodeList([In] IntPtr csound, [In] IntPtr ppOpcodeList);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00560}00560 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00561}00561             \textcolor{comment}{// PUBLIC int csoundAppendOpcode (CSOUND *, const char *opname, int dsblksiz, int flags, int thread, const char *outypes, const char *intypes, int(*iopadr)(CSOUND *, void *), int(*kopadr)(CSOUND *, void *), int(*aopadr)(CSOUND *, void *))}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00562}00562 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00563}00563 \textcolor{preprocessor}{            \#endregion Opcodes}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00564}00564 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00565}00565 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00566}00566 \textcolor{preprocessor}{            \#region Threading and concurrency}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00567}00567 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00568}00568             \textcolor{comment}{//[DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00569}00569             \textcolor{comment}{//internal static extern void csoundSetYieldCallback([In] IntPtr csound, YieldCallback yieldCallback);}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00570}00570 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00571}00571             \textcolor{comment}{// PUBLIC void * csoundCreateThread (uintptr\_t(*threadRoutine)(void *), void *userdata)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00572}00572 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00573}00573             \textcolor{comment}{// PUBLIC void * csoundGetCurrentThreadId (void)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00574}00574 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00575}00575             \textcolor{comment}{// PUBLIC uintptr\_t csoundJoinThread (void *thread)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00576}00576 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00577}00577             \textcolor{comment}{// PUBLIC void * csoundCreateThreadLock (void)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00578}00578 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00579}00579             \textcolor{comment}{// PUBLIC int csoundWaitThreadLock (void *lock, size\_t milliseconds)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00580}00580 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00581}00581             \textcolor{comment}{// PUBLIC void csoundWaitThreadLockNoTimeout (void *lock)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00582}00582 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00583}00583             \textcolor{comment}{// PUBLIC void csoundNotifyThreadLock (void *lock)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00584}00584 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00585}00585             \textcolor{comment}{// PUBLIC void csoundDestroyThreadLock (void *lock)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00586}00586 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00587}00587             \textcolor{comment}{// PUBLIC void * csoundCreateMutex (int isRecursive)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00588}00588 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00589}00589             \textcolor{comment}{// PUBLIC void csoundLockMutex (void *mutex\_)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00590}00590 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00591}00591             \textcolor{comment}{// PUBLIC int csoundLockMutexNoWait (void *mutex\_)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00592}00592 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00593}00593             \textcolor{comment}{// PUBLIC void csoundUnlockMutex (void *mutex\_)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00594}00594 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00595}00595             \textcolor{comment}{// PUBLIC void csoundDestroyMutex (void *mutex\_)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00596}00596 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00597}00597             \textcolor{comment}{// PUBLIC void * csoundCreateBarrier (unsigned int max)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00598}00598 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00599}00599             \textcolor{comment}{// PUBLIC int csoundDestroyBarrier (void *barrier)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00600}00600 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00601}00601             \textcolor{comment}{// PUBLIC int csoundWaitBarrier (void *barrier)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00602}00602 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00603}00603             \textcolor{comment}{// PUBLIC void * csoundCreateCondVar ()}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00604}00604 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00605}00605             \textcolor{comment}{// PUBLIC void csoundCondWait (void *condVar, void *mutex)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00606}00606 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00607}00607             \textcolor{comment}{// PUBLIC void csoundCondSignal (void *condVar)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00608}00608 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00609}00609             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00610}00610             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundSleep(uint milleseconds);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00611}00611 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00612}00612             \textcolor{comment}{// PUBLIC int csoundSpinLockInit (spin\_lock\_t *spinlock)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00613}00613 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00614}00614             \textcolor{comment}{// PUBLIC void csoundSpinLock (spin\_lock\_t *spinlock)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00615}00615 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00616}00616             \textcolor{comment}{// PUBLIC int csoundSpinTryLock (spin\_lock\_t *spinlock)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00617}00617 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00618}00618             \textcolor{comment}{// PUBLIC void csoundSpinUnLock (spin\_lock\_t *spinlock)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00619}00619 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00620}00620 \textcolor{preprocessor}{            \#endregion Threading and concurrency}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00621}00621 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00622}00622 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00623}00623 \textcolor{preprocessor}{            \#region Miscellaneous functions}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00624}00624 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00625}00625             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00626}00626             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{long} csoundRunCommand([In] \textcolor{keywordtype}{string}[] argv, [In] \textcolor{keywordtype}{int} nowait);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00627}00627 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00628}00628             \textcolor{comment}{// PUBLIC void csoundInitTimerStruct(RTCLOCK*)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00629}00629 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00630}00630             \textcolor{comment}{// PUBLIC double csoundGetRealTime (RTCLOCK *)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00631}00631 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00632}00632             \textcolor{comment}{// PUBLIC double csoundGetCPUTime (RTCLOCK *)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00633}00633 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00634}00634             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00635}00635             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} UInt32 csoundGetRandomSeedFromTime();}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00636}00636 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00637}00637             \textcolor{comment}{// PUBLIC void csoundSetLanguage(cslanguage\_t lang\_code)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00638}00638 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00639}00639             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00640}00640             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundGetEnv([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String key);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00641}00641 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00642}00642             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = \textcolor{keyword}{false}, ThrowOnUnmappableChar = \textcolor{keyword}{true})]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00643}00643             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} Int32 csoundSetGlobalEnv([In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} name, [In, MarshalAs(UnmanagedType.LPStr)] \textcolor{keywordtype}{string} value);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00644}00644 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00645}00645             \textcolor{comment}{// PUBLIC int csoundCreateGlobalVariable (CSOUND *, const char *name, size\_t nbytes)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00646}00646 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00647}00647             \textcolor{comment}{// PUBLIC void * csoundQueryGlobalVariable (CSOUND *, const char *name)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00648}00648 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00649}00649             \textcolor{comment}{// PUBLIC void * csoundQueryGlobalVariableNoCheck (CSOUND *, const char *name)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00650}00650 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00651}00651             \textcolor{comment}{// PUBLIC int csoundDestroyGlobalVariable (CSOUND *, const char *name)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00652}00652 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00653}00653             \textcolor{comment}{// PUBLIC int csoundRunUtility (CSOUND *, const char *name, int argc, char **argv)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00654}00654 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00655}00655             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00656}00656             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} IntPtr csoundListUtilities([In] IntPtr csound);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00657}00657 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00658}00658             [DllImport(\_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00659}00659             \textcolor{keyword}{internal} \textcolor{keyword}{static} \textcolor{keyword}{extern} \textcolor{keywordtype}{void} csoundDeleteUtilityList([In] IntPtr csound, IntPtr list);}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00660}00660 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00661}00661             \textcolor{comment}{// PUBLIC const char *csoundGetUtilityDescription(CSOUND*, const char* utilName)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00662}00662 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00663}00663             \textcolor{comment}{// PUBLIC int csoundRand31 (int *seedVal)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00664}00664 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00665}00665             \textcolor{comment}{// PUBLIC void csoundSeedRandMT (CsoundRandMTState *p, const uint32\_t *initKey, uint32\_t keyLength)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00666}00666 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00667}00667             \textcolor{comment}{// PUBLIC uint32\_t csoundRandMT (CsoundRandMTState *p)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00668}00668 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00669}00669             \textcolor{comment}{// PUBLIC void * csoundCreateCircularBuffer (CSOUND *csound, int numelem, int elemsize)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00670}00670 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00671}00671             \textcolor{comment}{// PUBLIC int csoundReadCircularBuffer (CSOUND *csound, void *circular\_buffer, void *out, int items)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00672}00672 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00673}00673             \textcolor{comment}{// PUBLIC int csoundPeekCircularBuffer (CSOUND *csound, void *circular\_buffer, void *out, int items)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00674}00674 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00675}00675             \textcolor{comment}{// PUBLIC int csoundWriteCircularBuffer (CSOUND *csound, void *p, const void *inp, int items)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00676}00676 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00677}00677             \textcolor{comment}{// PUBLIC void csoundFlushCircularBuffer (CSOUND *csound, void *p)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00678}00678 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00679}00679             \textcolor{comment}{// PUBLIC void csoundDestroyCircularBuffer (CSOUND *csound, void *circularbuffer)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00680}00680 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00681}00681             \textcolor{comment}{// PUBLIC int csoundOpenLibrary (void **library, const char *libraryPath)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00682}00682 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00683}00683             \textcolor{comment}{// PUBLIC int csoundCloseLibrary (void *library)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00684}00684 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00685}00685             \textcolor{comment}{// PUBLIC void * csoundGetLibrarySymbol (void *library, const char *symbolName)}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00686}00686 }
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00687}00687 \textcolor{preprocessor}{            \#endregion Miscellaneous functions}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00688}00688         \}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00689}00689     \}}
+\DoxyCodeLine{\Hypertarget{_csound_csharp_8cs_source_l00690}00690 \}}
+
+\end{DoxyCode}

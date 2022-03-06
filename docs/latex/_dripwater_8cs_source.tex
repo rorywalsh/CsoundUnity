@@ -1,0 +1,100 @@
+\hypertarget{_dripwater_8cs_source}{}\doxysection{Dripwater.\+cs}
+\label{_dripwater_8cs_source}\index{Samples$\sim$/Collisions/Dripwater/Dripwater.cs@{Samples$\sim$/Collisions/Dripwater/Dripwater.cs}}
+\mbox{\hyperlink{_dripwater_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00001}00001 \textcolor{keyword}{using} System;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00002}00002 \textcolor{keyword}{using} System.Collections;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00003}00003 \textcolor{keyword}{using} System.Collections.Generic;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00004}00004 \textcolor{keyword}{using} UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00005}00005 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00006}\mbox{\hyperlink{namespace_csound_1_1_samples_1_1_collisions_1_1_dripwater}{00006}} \textcolor{keyword}{namespace }\mbox{\hyperlink{namespace_csound_1_1_samples_1_1_collisions_1_1_dripwater}{Csound.Samples.Collisions.Dripwater}}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00007}00007 \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00008}00008     [RequireComponent(typeof(Rigidbody))]}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00009}\mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater}{00009}}     \textcolor{keyword}{public} \textcolor{keyword}{class }\mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater}{Dripwater}} : MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00010}00010     \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00011}00011         [SerializeField] \mbox{\hyperlink{class_csound_unity}{CsoundUnity}} \_csound;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00012}00012         [SerializeField] \textcolor{keywordtype}{float} \_autoDestroyTime = 10f; \textcolor{comment}{// destroy anyway after 10 seconds}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00013}00013         [SerializeField] \textcolor{keywordtype}{bool} \_autoDestroy = \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00014}00014 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00015}\mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a2ee0f85ec5fb6607617ad78afe478db0}{00015}}         \textcolor{keyword}{public} \textcolor{keyword}{event} Action \mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a2ee0f85ec5fb6607617ad78afe478db0}{OnCollision}};}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00016}00016 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00017}00017         Vector3 \_startingPos;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00018}00018         Coroutine \_autoDestroyCor;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00019}00019         Rigidbody \_rb;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00020}00020 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00021}\mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a236645972c010e2f9a394dd54e4e0404}{00021}}         \textcolor{keyword}{public} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a236645972c010e2f9a394dd54e4e0404}{SetCsound}}(\mbox{\hyperlink{class_csound_unity}{CsoundUnity}} csound)}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00022}00022         \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00023}00023             \_csound = csound;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00024}00024         \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00025}00025 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00026}\mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a80ff27484e5b031e2d0b0767a5914247}{00026}}         \textcolor{keyword}{public} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a80ff27484e5b031e2d0b0767a5914247}{SetAutoDestroy}}(\textcolor{keywordtype}{bool} enable)}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00027}00027         \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00028}00028             \_autoDestroy = enable;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00029}00029         \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00030}00030 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00031}\mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a99e35f52af6149638cdccfe1d5bb35f0}{00031}}         \textcolor{keyword}{public} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a99e35f52af6149638cdccfe1d5bb35f0}{SetPosition}}(Vector3 position)}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00032}00032         \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00033}00033             \_rb.velocity = Vector3.zero;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00034}00034             this.transform.position = position;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00035}00035         \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00036}00036 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00037}\mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a5d9fab5060c3a82775e0a7de5918396f}{00037}}         \textcolor{keyword}{public} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a5d9fab5060c3a82775e0a7de5918396f}{Init}}(\mbox{\hyperlink{class_csound_unity}{CsoundUnity}} csound, \textcolor{keywordtype}{bool} autoDestroy)}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00038}00038         \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00039}00039             \_rb = GetComponent<Rigidbody>();}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00040}00040             \_startingPos = this.transform.localPosition;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00041}00041             \mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a80ff27484e5b031e2d0b0767a5914247}{SetAutoDestroy}}(autoDestroy);}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00042}00042             \mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a236645972c010e2f9a394dd54e4e0404}{SetCsound}}(csound);}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00043}00043         \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00044}00044 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00045}00045         \textcolor{comment}{// Start is called before the first frame update}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00046}00046         \textcolor{keywordtype}{void} Start()}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00047}00047         \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00048}00048             \_rb = GetComponent<Rigidbody>();}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00049}00049             \textcolor{keywordflow}{if} (\_autoDestroy)}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00050}00050                 \_autoDestroyCor = StartCoroutine(WaitForAutoDestroy());}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00051}00051         \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00052}00052 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00053}00053         \textcolor{comment}{// Update is called once per frame}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00054}00054         \textcolor{keywordtype}{void} Update()}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00055}00055         \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00056}00056             \textcolor{keywordflow}{if} (!\_csound || !\_csound.\mbox{\hyperlink{class_csound_unity_ae2c648d0f6245fb84c5f9ec5176079ff}{IsInitialized}}) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00057}00057 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00058}00058             \textcolor{keywordflow}{if} (Input.GetMouseButtonUp(0))}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00059}00059             \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00060}00060                 this.transform.localPosition = \_startingPos;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00061}00061                 this.GetComponent<Rigidbody>().velocity = Vector3.zero;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00062}00062             \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00063}00063         \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00064}00064 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00065}00065         IEnumerator WaitForAutoDestroy()}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00066}00066         \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00067}00067             yield \textcolor{keywordflow}{return} \textcolor{keyword}{new} WaitForSeconds(\_autoDestroyTime);}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00068}00068             Destroy(this.gameObject);}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00069}00069         \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00070}00070 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00071}00071         \textcolor{keyword}{private} \textcolor{keywordtype}{void} OnCollisionEnter(Collision collision)}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00072}00072         \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00073}00073             \textcolor{comment}{// filter collisions with other dripwaters}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00074}00074             \textcolor{keywordflow}{if} (collision.gameObject.GetComponent<Dripwater>()) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00075}00075 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00076}00076             \mbox{\hyperlink{class_csound_1_1_samples_1_1_collisions_1_1_dripwater_1_1_dripwater_a2ee0f85ec5fb6607617ad78afe478db0}{OnCollision}}?.Invoke();}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00077}00077 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00078}00078             \textcolor{keywordflow}{if} (!\_csound || !\_csound.\mbox{\hyperlink{class_csound_unity_ae2c648d0f6245fb84c5f9ec5176079ff}{IsInitialized}}) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00079}00079 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00080}00080             var p4 = \mbox{\hyperlink{class_csound_unity}{CsoundUnity}}.\mbox{\hyperlink{class_csound_unity_a9079e8fbbe4b3a018a1f4a23b9ababf8}{Remap}}(collision.GetContact(0).point.x, -\/3, 3, 330, 440);}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00081}00081             var p5 = \mbox{\hyperlink{class_csound_unity}{CsoundUnity}}.\mbox{\hyperlink{class_csound_unity_a9079e8fbbe4b3a018a1f4a23b9ababf8}{Remap}}(collision.GetContact(0).point.y, -\/3, 3, 880, 1200);}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00082}00082             \textcolor{comment}{// get an intermediate frequency}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00083}00083             var p6 = (p4 + p5) / 2;}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00084}00084             var score = \$\textcolor{stringliteral}{"{}i 2 0 1 \{p4\} \{p5\} \{p6\}"{}};}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00085}00085             \textcolor{comment}{//Debug.Log(\$"{}OnCollisionEnter, Sending Score : \{score\}"{});}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00086}00086             \_csound.\mbox{\hyperlink{class_csound_unity_a67eb0ef59ebe2b06a17cbfe362d03122}{SendScoreEvent}}(score);}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00087}00087         \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00088}00088 }
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00089}00089         \textcolor{keyword}{private} \textcolor{keywordtype}{void} OnDestroy()}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00090}00090         \{}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00091}00091             \textcolor{keywordflow}{if} (\_autoDestroyCor != \textcolor{keyword}{null}) StopCoroutine(\_autoDestroyCor);}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00092}00092         \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00093}00093     \}}
+\DoxyCodeLine{\Hypertarget{_dripwater_8cs_source_l00094}00094 \}}
+
+\end{DoxyCode}

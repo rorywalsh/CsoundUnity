@@ -1,0 +1,727 @@
+\hypertarget{class_csound_unity_bridge}{}\doxysection{Csound\+Unity\+Bridge Class Reference}
+\label{class_csound_unity_bridge}\index{CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_csound_unity_bridge_1_1_channel_hints}{Channel\+Hints}}
+\begin{DoxyCompactList}\small\item\em This structure holds the parameter hints for control channels. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_csound_unity_bridge_1_1_channel_info}{Channel\+Info}}
+\item 
+class \mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}}
+\item 
+class \mbox{\hyperlink{class_csound_unity_bridge_1_1_opcode_argument_types}{Opcode\+Argument\+Types}}
+\begin{DoxyCompactList}\small\item\em Defines a class to hold out and in types, and flags \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5b}{Channel\+Behavior}} \{ \mbox{\hyperlink{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5ba6adf97f83acf6453d4a6a4b1070f3754}{None}} = 0
+, \mbox{\hyperlink{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5baa0faef0851b4294c06f2b94bb1cb2044}{Integer}} = 1
+, \mbox{\hyperlink{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5ba32a843da6ea40ab3b17a3421ccdf671b}{Linear}} = 2
+, \mbox{\hyperlink{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5bac1e19c09f700938f0ff7f1fd4722a3ac}{Exponential}} = 3
+ \}
+\item 
+enum \mbox{\hyperlink{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943}{Channel\+Type}} \{ \newline
+\mbox{\hyperlink{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943a6adf97f83acf6453d4a6a4b1070f3754}{None}} = 0
+, \mbox{\hyperlink{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943aa1595abbb4c3a326636dd178757cd6c1}{Control}} = 1
+, \mbox{\hyperlink{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943ab22f0418e8ac915eb66f829d262d14a2}{Audio}} = 2
+, \mbox{\hyperlink{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943a27118326006d3829667a400ad23d5d98}{String}} = 3
+, \newline
+\mbox{\hyperlink{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943af41e40dd5dd0044690126994274ab0b6}{Pvs}} = 4
+, \mbox{\hyperlink{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943a5a92344ee95acf10c31901b36418be77}{Var}} = 5
+ \}
+\item 
+enum \mbox{\hyperlink{class_csound_unity_bridge_a63a342fe5e4cca958fa01e56216350e4}{Channel\+Direction}} \{ \mbox{\hyperlink{class_csound_unity_bridge_a63a342fe5e4cca958fa01e56216350e4a324118a6721dd6b8a9b9f4e327df2bf5}{Input}} = 1
+, \mbox{\hyperlink{class_csound_unity_bridge_a63a342fe5e4cca958fa01e56216350e4a29c2c02a361c9d7028472e5d92cd4a54}{Output}} = 2
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_csound_unity_bridge_aceaa66119aeb755d609b32e213b33a22}{Csound\+Unity\+Bridge}} (string csd\+File, List$<$ \mbox{\hyperlink{class_environment_settings}{Environment\+Settings}} $>$ environment\+Settings)
+\begin{DoxyCompactList}\small\item\em The \mbox{\hyperlink{class_csound_unity_bridge}{Csound\+Unity\+Bridge}} constructor sets up the Csound Global Environment Variables set by the user. Then it creates an instance of Csound and compiles the full csd\+File passed as a string. Then it starts Csound. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_csound_unity_bridge_a1beb5eeb971c59d068257c9eee9e0d9f}{Get\+Version}} ()
+\item 
+int \mbox{\hyperlink{class_csound_unity_bridge_a1a519b9ea814abe3924cd3359bcf8445}{Get\+APIVersion}} ()
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a98b78711784f65efb6686aa09f50203c}{Stop\+Csound}} ()
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a3d194b329d56c22913d080e4e23c6e69}{On\+Application\+Quit}} ()
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_acd3dc5eb05043fae4437526b121c254d}{Cleanup}} ()
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_aafc8fafcb4fef15135348d6efd94419f}{Reset}} ()
+\item 
+bool \mbox{\hyperlink{class_csound_unity_bridge_ac963fa84c88fe8588183ba3bc64d01f6}{Compiled\+Without\+Error}} ()
+\item 
+int \mbox{\hyperlink{class_csound_unity_bridge_a0836ab27e7583bdcad4119da4691745a}{Compile\+Orc}} (string orch\+Str)
+\item 
+int \mbox{\hyperlink{class_csound_unity_bridge_aea1bb4546d4bf50b1947a12e7eebfe9c}{Perform\+Ksmps}} ()
+\item 
+MYFLT \mbox{\hyperlink{class_csound_unity_bridge_a092341b11cd5cb06fd6940fd5d0a40b9}{Get0dbfs}} ()
+\item 
+long \mbox{\hyperlink{class_csound_unity_bridge_a1930c068d50d0486d7746f6aad124bdb}{Get\+Current\+Time\+Samples}} ()
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a7526b52392ed51490364881b94f2581d}{Send\+Score\+Event}} (string score\+Event)
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_aa54c98cd4d0c8a7b9756543ce192a5f7}{Rewind\+Score}} ()
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_ae141e6cbf1fc7050955f5ada9a23ce85}{Csound\+Set\+Score\+Offset\+Seconds}} (MYFLT value)
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_aeb5333a58d88adec7230f8ada7b94a7f}{Set\+Channel}} (string channel, MYFLT value)
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a8202dc4ffff22c6da15f331782381b58}{Set\+String\+Channel}} (string channel, string value)
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a6c41828afd669723b8ce2ca1a733d241}{Set\+Audio\+Channel}} (string name, MYFLT\mbox{[}$\,$\mbox{]} audio)
+\item 
+MYFLT\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_csound_unity_bridge_a5e78b3aa5afc2ca2ff4c0a6792cc4d55}{Get\+Audio\+Channel}} (string name)
+\item 
+int \mbox{\hyperlink{class_csound_unity_bridge_af1efa0e6843e2eab79876aa5cac45cfd}{Table\+Length}} (int table)
+\begin{DoxyCompactList}\small\item\em Returns the length of a function table (not including the guard point), or -\/1 if the table does not exist. \end{DoxyCompactList}\item 
+MYFLT \mbox{\hyperlink{class_csound_unity_bridge_a64c50983d56b208737b1f22afd0de37d}{Get\+Table}} (int table, int index)
+\begin{DoxyCompactList}\small\item\em Returns the value of a slot in a function table. The table number and index are assumed to be valid. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a0d89a0f520b71c9f4c241296d9225509}{Set\+Table}} (int table, int index, MYFLT value)
+\begin{DoxyCompactList}\small\item\em Sets the value of a slot in a function table. The table number and index are assumed to be valid. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_ae8cfee773d95a8c4f56e2f130ca784c0}{Table\+Copy\+Out}} (int table, out MYFLT\mbox{[}$\,$\mbox{]} dest)
+\begin{DoxyCompactList}\small\item\em Copy the contents of a function table into a supplied array dest The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a7f7c34f727875a771caf00a66a6cad0a}{Table\+Copy\+Out\+Async}} (int table, out MYFLT\mbox{[}$\,$\mbox{]} dest)
+\begin{DoxyCompactList}\small\item\em Asynchronous version of table\+Copy\+Out() \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a74a054e464e2d6793e21dd0a9d03fcf4}{Table\+Copy\+In}} (int table, MYFLT\mbox{[}$\,$\mbox{]} source)
+\begin{DoxyCompactList}\small\item\em Copy the contents of an array source into a given function table The table number is assumed to be valid, and the table needs to have sufficient space to receive all the array contents. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_ad45b0eb3442ff35e2558620c791cadc1}{Table\+Copy\+In\+Async}} (int table, MYFLT\mbox{[}$\,$\mbox{]} source)
+\begin{DoxyCompactList}\small\item\em Asynchronous version of csound\+Table\+Copy\+In() \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_csound_unity_bridge_a14b1145ffc6ac4578e0337ea6ddf44e4}{Get\+Table}} (out MYFLT\mbox{[}$\,$\mbox{]} table\+Values, int num\+Table)
+\begin{DoxyCompactList}\small\item\em Stores values to function table \textquotesingle{}table\+Num\textquotesingle{} in table\+Values, and returns the table length (not including the guard point). If the table does not exist, table\+Values is set to NULL and -\/1 is returned. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_csound_unity_bridge_a5f65c0b07bc46018c58ede314d643be3}{Get\+Table\+Args}} (out MYFLT\mbox{[}$\,$\mbox{]} args, int index)
+\begin{DoxyCompactList}\small\item\em Stores the arguments used to generate function table \textquotesingle{}table\+Num\textquotesingle{} in args, and returns the number of arguments used. If the table does not exist, args is set to NULL and -\/1 is returned. NB\+: the argument list starts with the GEN number and is followed by its parameters. eg. f 1 0 1024 10 1 0.\+5 yields the list \{10.\+0,1.\+0,0.\+5\} \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_csound_unity_bridge_adba0d98762cce0b5a3516ff54a1cabdd}{Is\+Named\+GEN}} (int num)
+\begin{DoxyCompactList}\small\item\em Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char) Otherwise it returns 0. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a4bd4224210079d56c19068445dd8b28c}{Get\+Named\+GEN}} (int num, out string name, int len)
+\begin{DoxyCompactList}\small\item\em Gets the GEN name from a number num, if this is a named GEN The final parameter is the max len of the string (excluding termination) \end{DoxyCompactList}\item 
+IDictionary$<$ string, int $>$ \mbox{\hyperlink{class_csound_unity_bridge_a175d18ad55fda42df19e4a0986d6f47d}{Get\+Named\+Gens}} ()
+\begin{DoxyCompactList}\small\item\em Returns a Dictionary keyed by the names of all named table generators. Each name is paired with its internal function number. \end{DoxyCompactList}\item 
+MYFLT \mbox{\hyperlink{class_csound_unity_bridge_a7e307ad5f6defe8b03fabc20d14b6bd5}{Get\+Sr}} ()
+\item 
+MYFLT \mbox{\hyperlink{class_csound_unity_bridge_a239ad3fb2433fa966522a0b94494049c}{Get\+Kr}} ()
+\item 
+uint \mbox{\hyperlink{class_csound_unity_bridge_abc74adedd070619cefccb295eeb91380}{Get\+Ksmps}} ()
+\item 
+MYFLT \mbox{\hyperlink{class_csound_unity_bridge_ac9f2d0b5b976208d33d58990f9eca4ce}{Get\+Spout\+Sample}} (int frame, int channel)
+\begin{DoxyCompactList}\small\item\em Get a sample from Csound\textquotesingle{}s audio output buffer \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_aa0b5db8a3d696983480ed7a758540c14}{Add\+Spin\+Sample}} (int frame, int channel, MYFLT sample)
+\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a4394f6e650694ff609f6575abacf22ad}{Set\+Spin\+Sample}} (int frame, int channel, MYFLT sample)
+\begin{DoxyCompactList}\small\item\em Set a sample from Csound\textquotesingle{}s audio output buffer \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a5fa5bf4e81c733303d938579f29fc112}{Clear\+Spin}} ()
+\begin{DoxyCompactList}\small\item\em Clears the input buffer (spin). \end{DoxyCompactList}\item 
+MYFLT\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_csound_unity_bridge_afbe39a70512674419324a992be75c398}{Get\+Spin}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Csound audio input working buffer (spin) as a MYFLT array. Enables external software to write audio into Csound before calling csound\+Perform\+Ksmps. \end{DoxyCompactList}\item 
+MYFLT\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_csound_unity_bridge_afabf4ef6ff859a4a8128c118279e0086}{Get\+Spout}} ()
+\begin{DoxyCompactList}\small\item\em Returns the Csound audio output working buffer (spout) as a MYFLT array. Enables external software to read audio from Csound after calling csound\+Perform\+Ksmps. \end{DoxyCompactList}\item 
+MYFLT \mbox{\hyperlink{class_csound_unity_bridge_ad268d12ca60cbdbb83e512c373ccb280}{Get\+Channel}} (string channel)
+\begin{DoxyCompactList}\small\item\em Get a a control channel \end{DoxyCompactList}\item 
+uint \mbox{\hyperlink{class_csound_unity_bridge_a615f426eebcd55fa8780f608c7d19d8d}{Get\+Nchnls\+Input}} ()
+\begin{DoxyCompactList}\small\item\em Get number of input channels \end{DoxyCompactList}\item 
+uint \mbox{\hyperlink{class_csound_unity_bridge_a3149ad95cd0a9ac1af63b6352c26b8e8}{Get\+Nchnls}} ()
+\begin{DoxyCompactList}\small\item\em Get number of input channels \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_csound_unity_bridge_a82675179f446704dcd350dd7356b691b}{Get\+Csound\+Message\+Count}} ()
+\item 
+string \mbox{\hyperlink{class_csound_unity_bridge_a94d23fce1c0aae34ca6ebbd035bfc10a}{Get\+Csound\+Message}} ()
+\item 
+IDictionary$<$ string, IList$<$ \mbox{\hyperlink{class_csound_unity_bridge_1_1_opcode_argument_types}{Opcode\+Argument\+Types}} $>$ $>$ \mbox{\hyperlink{class_csound_unity_bridge_a4ab2802fc8bf96d2a23961c8e5bdb17e}{Get\+Opcode\+List}} ()
+\begin{DoxyCompactList}\small\item\em Returns a sorted Dictionary keyed by all opcodes which are active in the current instance of csound. The values contain argument strings representing signatures for an opcode\textquotesingle{}s output and input parameters. The argument strings pairs are stored in a list to accomodate opcodes with multiple signatures. \end{DoxyCompactList}\item 
+IDictionary$<$ string, \mbox{\hyperlink{class_csound_unity_bridge_1_1_channel_info}{Channel\+Info}} $>$ \mbox{\hyperlink{class_csound_unity_bridge_ac8f8f08c88c39fbab2fa0248ae91fda5}{Get\+Channel\+List}} ()
+\begin{DoxyCompactList}\small\item\em Provides a dictionary of all currently defined channels resulting from compilation of an orchestra containing channel definitions. Entries, keyed by name, are polymorphically assigned to their correct data type\+: control, audio, string, pvc. Used by the Csound6\+Software\+Bus class to initialize its contents. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}} \mbox{\hyperlink{class_csound_unity_bridge_aa44995fddb63e205437d4a95552ce214}{Get\+Params}} ()
+\begin{DoxyCompactList}\small\item\em Fills in a provided raw \mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}} object with csounds current parameter settings. This method is used internally to manage this class and is not expected to be used directly by a host program. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_csound_unity_bridge_a78f5e3b0fc25d508793428c2f8857eba}{Set\+Params}} (\mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}} parms)
+\begin{DoxyCompactList}\small\item\em Transfers the contents of the provided raw \mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}} object into csound\textquotesingle{}s internal data structues (chiefly its OPARMS structure). This method is used internally to manage this class and is not expected to be used directly by a host program. Most values are used and reflected in \mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}}. Internally to csound, as of release 6.\+0.\+0, Heartbeat and Is\+Computing\+Opcode\+Weights are ignored and Is\+Using\+Csd\+Line\+Counts can only be set and never reset once set. \end{DoxyCompactList}\item 
+string \mbox{\hyperlink{class_csound_unity_bridge_aa846657ec268a02b10b69e26c79112da}{Get\+Env}} (string key)
+\begin{DoxyCompactList}\small\item\em Gets a string value from csound\textquotesingle{}s environment values. Meaningful values include the contents of Windows\textquotesingle{} OS environment values such as SFDIR or SADIR for path name defaults. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{class_csound_unity_bridge_ad8c25f9d13cc960f34daf9570addc992}{Set\+Global\+Env}} (string name, string value)
+\begin{DoxyCompactList}\small\item\em Set the global value of environment variable \textquotesingle{}name\textquotesingle{} to \textquotesingle{}value\textquotesingle{}, or delete variable if \textquotesingle{}value\textquotesingle{} is NULL. It is not safe to call this function while any Csound instances are active. See \href{https://csound.com/docs/manual/CommandEnvironment.html}{\texttt{ https\+://csound.\+com/docs/manual/\+Command\+Environment.\+html}} for a list of the variables that can be used. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static string \mbox{\hyperlink{class_csound_unity_bridge_afceb5f17547646cafb5820a0f804087e}{Get\+Message\+Text}} (Int\+Ptr message)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Int\+Ptr \mbox{\hyperlink{class_csound_unity_bridge_ab8416410166cf1df6ffa0f9523e787f6}{csound}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Enumeration Documentation}
+\mbox{\Hypertarget{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5b}\label{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5b}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!ChannelBehavior@{ChannelBehavior}}
+\index{ChannelBehavior@{ChannelBehavior}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{ChannelBehavior}{ChannelBehavior}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5b}{Csound\+Unity\+Bridge.\+Channel\+Behavior}}}
+
+
+
+
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{None@{None}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!None@{None}}}\mbox{\Hypertarget{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5ba6adf97f83acf6453d4a6a4b1070f3754}\label{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5ba6adf97f83acf6453d4a6a4b1070f3754}} 
+None&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Integer@{Integer}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!Integer@{Integer}}}\mbox{\Hypertarget{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5baa0faef0851b4294c06f2b94bb1cb2044}\label{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5baa0faef0851b4294c06f2b94bb1cb2044}} 
+Integer&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Linear@{Linear}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!Linear@{Linear}}}\mbox{\Hypertarget{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5ba32a843da6ea40ab3b17a3421ccdf671b}\label{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5ba32a843da6ea40ab3b17a3421ccdf671b}} 
+Linear&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Exponential@{Exponential}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!Exponential@{Exponential}}}\mbox{\Hypertarget{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5bac1e19c09f700938f0ff7f1fd4722a3ac}\label{class_csound_unity_bridge_ab720764b33d700fb122406baf1cf1d5bac1e19c09f700938f0ff7f1fd4722a3ac}} 
+Exponential&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{class_csound_unity_bridge_a63a342fe5e4cca958fa01e56216350e4}\label{class_csound_unity_bridge_a63a342fe5e4cca958fa01e56216350e4}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!ChannelDirection@{ChannelDirection}}
+\index{ChannelDirection@{ChannelDirection}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{ChannelDirection}{ChannelDirection}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_csound_unity_bridge_a63a342fe5e4cca958fa01e56216350e4}{Csound\+Unity\+Bridge.\+Channel\+Direction}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Input@{Input}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!Input@{Input}}}\mbox{\Hypertarget{class_csound_unity_bridge_a63a342fe5e4cca958fa01e56216350e4a324118a6721dd6b8a9b9f4e327df2bf5}\label{class_csound_unity_bridge_a63a342fe5e4cca958fa01e56216350e4a324118a6721dd6b8a9b9f4e327df2bf5}} 
+Input&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Output@{Output}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!Output@{Output}}}\mbox{\Hypertarget{class_csound_unity_bridge_a63a342fe5e4cca958fa01e56216350e4a29c2c02a361c9d7028472e5d92cd4a54}\label{class_csound_unity_bridge_a63a342fe5e4cca958fa01e56216350e4a29c2c02a361c9d7028472e5d92cd4a54}} 
+Output&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943}\label{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!ChannelType@{ChannelType}}
+\index{ChannelType@{ChannelType}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{ChannelType}{ChannelType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943}{Csound\+Unity\+Bridge.\+Channel\+Type}}}
+
+
+
+
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{None@{None}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!None@{None}}}\mbox{\Hypertarget{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943a6adf97f83acf6453d4a6a4b1070f3754}\label{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943a6adf97f83acf6453d4a6a4b1070f3754}} 
+None&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Control@{Control}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!Control@{Control}}}\mbox{\Hypertarget{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943aa1595abbb4c3a326636dd178757cd6c1}\label{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943aa1595abbb4c3a326636dd178757cd6c1}} 
+Control&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Audio@{Audio}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!Audio@{Audio}}}\mbox{\Hypertarget{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943ab22f0418e8ac915eb66f829d262d14a2}\label{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943ab22f0418e8ac915eb66f829d262d14a2}} 
+Audio&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{String@{String}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!String@{String}}}\mbox{\Hypertarget{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943a27118326006d3829667a400ad23d5d98}\label{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943a27118326006d3829667a400ad23d5d98}} 
+String&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Pvs@{Pvs}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!Pvs@{Pvs}}}\mbox{\Hypertarget{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943af41e40dd5dd0044690126994274ab0b6}\label{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943af41e40dd5dd0044690126994274ab0b6}} 
+Pvs&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Var@{Var}!CsoundUnityBridge@{CsoundUnityBridge}}\index{CsoundUnityBridge@{CsoundUnityBridge}!Var@{Var}}}\mbox{\Hypertarget{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943a5a92344ee95acf10c31901b36418be77}\label{class_csound_unity_bridge_a59fc95ae0de70fdf17784c64c9d19943a5a92344ee95acf10c31901b36418be77}} 
+Var&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_csound_unity_bridge_aceaa66119aeb755d609b32e213b33a22}\label{class_csound_unity_bridge_aceaa66119aeb755d609b32e213b33a22}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!CsoundUnityBridge@{CsoundUnityBridge}}
+\index{CsoundUnityBridge@{CsoundUnityBridge}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{CsoundUnityBridge()}{CsoundUnityBridge()}}
+{\footnotesize\ttfamily Csound\+Unity\+Bridge.\+Csound\+Unity\+Bridge (\begin{DoxyParamCaption}\item[{string}]{csd\+File,  }\item[{List$<$ \mbox{\hyperlink{class_environment_settings}{Environment\+Settings}} $>$}]{environment\+Settings }\end{DoxyParamCaption})}
+
+
+
+The \mbox{\hyperlink{class_csound_unity_bridge}{Csound\+Unity\+Bridge}} constructor sets up the Csound Global Environment Variables set by the user. Then it creates an instance of Csound and compiles the full csd\+File passed as a string. Then it starts Csound. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em csd\+File} & The Csound (.csd) file content as a string\\
+\hline
+{\em environment\+Settings} & A list of the Csound Environments settings defined by the user\\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_csound_unity_bridge_aa0b5db8a3d696983480ed7a758540c14}\label{class_csound_unity_bridge_aa0b5db8a3d696983480ed7a758540c14}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!AddSpinSample@{AddSpinSample}}
+\index{AddSpinSample@{AddSpinSample}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{AddSpinSample()}{AddSpinSample()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Add\+Spin\+Sample (\begin{DoxyParamCaption}\item[{int}]{frame,  }\item[{int}]{channel,  }\item[{MYFLT}]{sample }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_acd3dc5eb05043fae4437526b121c254d}\label{class_csound_unity_bridge_acd3dc5eb05043fae4437526b121c254d}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!Cleanup@{Cleanup}}
+\index{Cleanup@{Cleanup}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{Cleanup()}{Cleanup()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Cleanup (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a5fa5bf4e81c733303d938579f29fc112}\label{class_csound_unity_bridge_a5fa5bf4e81c733303d938579f29fc112}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!ClearSpin@{ClearSpin}}
+\index{ClearSpin@{ClearSpin}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{ClearSpin()}{ClearSpin()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Clear\+Spin (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Clears the input buffer (spin). 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_ac963fa84c88fe8588183ba3bc64d01f6}\label{class_csound_unity_bridge_ac963fa84c88fe8588183ba3bc64d01f6}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!CompiledWithoutError@{CompiledWithoutError}}
+\index{CompiledWithoutError@{CompiledWithoutError}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{CompiledWithoutError()}{CompiledWithoutError()}}
+{\footnotesize\ttfamily bool Csound\+Unity\+Bridge.\+Compiled\+Without\+Error (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a0836ab27e7583bdcad4119da4691745a}\label{class_csound_unity_bridge_a0836ab27e7583bdcad4119da4691745a}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!CompileOrc@{CompileOrc}}
+\index{CompileOrc@{CompileOrc}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{CompileOrc()}{CompileOrc()}}
+{\footnotesize\ttfamily int Csound\+Unity\+Bridge.\+Compile\+Orc (\begin{DoxyParamCaption}\item[{string}]{orch\+Str }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_ae141e6cbf1fc7050955f5ada9a23ce85}\label{class_csound_unity_bridge_ae141e6cbf1fc7050955f5ada9a23ce85}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!CsoundSetScoreOffsetSeconds@{CsoundSetScoreOffsetSeconds}}
+\index{CsoundSetScoreOffsetSeconds@{CsoundSetScoreOffsetSeconds}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{CsoundSetScoreOffsetSeconds()}{CsoundSetScoreOffsetSeconds()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Csound\+Set\+Score\+Offset\+Seconds (\begin{DoxyParamCaption}\item[{MYFLT}]{value }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a092341b11cd5cb06fd6940fd5d0a40b9}\label{class_csound_unity_bridge_a092341b11cd5cb06fd6940fd5d0a40b9}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!Get0dbfs@{Get0dbfs}}
+\index{Get0dbfs@{Get0dbfs}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{Get0dbfs()}{Get0dbfs()}}
+{\footnotesize\ttfamily MYFLT Csound\+Unity\+Bridge.\+Get0dbfs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a1a519b9ea814abe3924cd3359bcf8445}\label{class_csound_unity_bridge_a1a519b9ea814abe3924cd3359bcf8445}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetAPIVersion@{GetAPIVersion}}
+\index{GetAPIVersion@{GetAPIVersion}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetAPIVersion()}{GetAPIVersion()}}
+{\footnotesize\ttfamily int Csound\+Unity\+Bridge.\+Get\+APIVersion (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a5e78b3aa5afc2ca2ff4c0a6792cc4d55}\label{class_csound_unity_bridge_a5e78b3aa5afc2ca2ff4c0a6792cc4d55}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetAudioChannel@{GetAudioChannel}}
+\index{GetAudioChannel@{GetAudioChannel}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetAudioChannel()}{GetAudioChannel()}}
+{\footnotesize\ttfamily MYFLT\mbox{[}$\,$\mbox{]} Csound\+Unity\+Bridge.\+Get\+Audio\+Channel (\begin{DoxyParamCaption}\item[{string}]{name }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_ad268d12ca60cbdbb83e512c373ccb280}\label{class_csound_unity_bridge_ad268d12ca60cbdbb83e512c373ccb280}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetChannel@{GetChannel}}
+\index{GetChannel@{GetChannel}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetChannel()}{GetChannel()}}
+{\footnotesize\ttfamily MYFLT Csound\+Unity\+Bridge.\+Get\+Channel (\begin{DoxyParamCaption}\item[{string}]{channel }\end{DoxyParamCaption})}
+
+
+
+Get a a control channel 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_ac8f8f08c88c39fbab2fa0248ae91fda5}\label{class_csound_unity_bridge_ac8f8f08c88c39fbab2fa0248ae91fda5}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetChannelList@{GetChannelList}}
+\index{GetChannelList@{GetChannelList}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetChannelList()}{GetChannelList()}}
+{\footnotesize\ttfamily IDictionary$<$ string, \mbox{\hyperlink{class_csound_unity_bridge_1_1_channel_info}{Channel\+Info}} $>$ Csound\+Unity\+Bridge.\+Get\+Channel\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Provides a dictionary of all currently defined channels resulting from compilation of an orchestra containing channel definitions. Entries, keyed by name, are polymorphically assigned to their correct data type\+: control, audio, string, pvc. Used by the Csound6\+Software\+Bus class to initialize its contents. 
+
+\begin{DoxyReturn}{Returns}
+a dictionary of all currently defined channels keyed by their name to its \mbox{\hyperlink{class_csound_unity_bridge_1_1_channel_info}{Channel\+Info}}
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_csound_unity_bridge_a94d23fce1c0aae34ca6ebbd035bfc10a}\label{class_csound_unity_bridge_a94d23fce1c0aae34ca6ebbd035bfc10a}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetCsoundMessage@{GetCsoundMessage}}
+\index{GetCsoundMessage@{GetCsoundMessage}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetCsoundMessage()}{GetCsoundMessage()}}
+{\footnotesize\ttfamily string Csound\+Unity\+Bridge.\+Get\+Csound\+Message (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a82675179f446704dcd350dd7356b691b}\label{class_csound_unity_bridge_a82675179f446704dcd350dd7356b691b}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetCsoundMessageCount@{GetCsoundMessageCount}}
+\index{GetCsoundMessageCount@{GetCsoundMessageCount}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetCsoundMessageCount()}{GetCsoundMessageCount()}}
+{\footnotesize\ttfamily int Csound\+Unity\+Bridge.\+Get\+Csound\+Message\+Count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a1930c068d50d0486d7746f6aad124bdb}\label{class_csound_unity_bridge_a1930c068d50d0486d7746f6aad124bdb}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetCurrentTimeSamples@{GetCurrentTimeSamples}}
+\index{GetCurrentTimeSamples@{GetCurrentTimeSamples}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetCurrentTimeSamples()}{GetCurrentTimeSamples()}}
+{\footnotesize\ttfamily long Csound\+Unity\+Bridge.\+Get\+Current\+Time\+Samples (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_aa846657ec268a02b10b69e26c79112da}\label{class_csound_unity_bridge_aa846657ec268a02b10b69e26c79112da}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetEnv@{GetEnv}}
+\index{GetEnv@{GetEnv}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetEnv()}{GetEnv()}}
+{\footnotesize\ttfamily string Csound\+Unity\+Bridge.\+Get\+Env (\begin{DoxyParamCaption}\item[{string}]{key }\end{DoxyParamCaption})}
+
+
+
+Gets a string value from csound\textquotesingle{}s environment values. Meaningful values include the contents of Windows\textquotesingle{} OS environment values such as SFDIR or SADIR for path name defaults. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & the name of the Environment Variable to get\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the corresponding value or an empty string if no such key exists
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_csound_unity_bridge_a239ad3fb2433fa966522a0b94494049c}\label{class_csound_unity_bridge_a239ad3fb2433fa966522a0b94494049c}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetKr@{GetKr}}
+\index{GetKr@{GetKr}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetKr()}{GetKr()}}
+{\footnotesize\ttfamily MYFLT Csound\+Unity\+Bridge.\+Get\+Kr (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_abc74adedd070619cefccb295eeb91380}\label{class_csound_unity_bridge_abc74adedd070619cefccb295eeb91380}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetKsmps@{GetKsmps}}
+\index{GetKsmps@{GetKsmps}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetKsmps()}{GetKsmps()}}
+{\footnotesize\ttfamily uint Csound\+Unity\+Bridge.\+Get\+Ksmps (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_afceb5f17547646cafb5820a0f804087e}\label{class_csound_unity_bridge_afceb5f17547646cafb5820a0f804087e}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetMessageText@{GetMessageText}}
+\index{GetMessageText@{GetMessageText}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetMessageText()}{GetMessageText()}}
+{\footnotesize\ttfamily static string Csound\+Unity\+Bridge.\+Get\+Message\+Text (\begin{DoxyParamCaption}\item[{Int\+Ptr}]{message }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a4bd4224210079d56c19068445dd8b28c}\label{class_csound_unity_bridge_a4bd4224210079d56c19068445dd8b28c}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetNamedGEN@{GetNamedGEN}}
+\index{GetNamedGEN@{GetNamedGEN}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetNamedGEN()}{GetNamedGEN()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Get\+Named\+GEN (\begin{DoxyParamCaption}\item[{int}]{num,  }\item[{out string}]{name,  }\item[{int}]{len }\end{DoxyParamCaption})}
+
+
+
+Gets the GEN name from a number num, if this is a named GEN The final parameter is the max len of the string (excluding termination) 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a175d18ad55fda42df19e4a0986d6f47d}\label{class_csound_unity_bridge_a175d18ad55fda42df19e4a0986d6f47d}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetNamedGens@{GetNamedGens}}
+\index{GetNamedGens@{GetNamedGens}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetNamedGens()}{GetNamedGens()}}
+{\footnotesize\ttfamily IDictionary$<$ string, int $>$ Csound\+Unity\+Bridge.\+Get\+Named\+Gens (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns a Dictionary keyed by the names of all named table generators. Each name is paired with its internal function number. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_csound_unity_bridge_a3149ad95cd0a9ac1af63b6352c26b8e8}\label{class_csound_unity_bridge_a3149ad95cd0a9ac1af63b6352c26b8e8}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetNchnls@{GetNchnls}}
+\index{GetNchnls@{GetNchnls}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetNchnls()}{GetNchnls()}}
+{\footnotesize\ttfamily uint Csound\+Unity\+Bridge.\+Get\+Nchnls (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get number of input channels 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a615f426eebcd55fa8780f608c7d19d8d}\label{class_csound_unity_bridge_a615f426eebcd55fa8780f608c7d19d8d}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetNchnlsInput@{GetNchnlsInput}}
+\index{GetNchnlsInput@{GetNchnlsInput}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetNchnlsInput()}{GetNchnlsInput()}}
+{\footnotesize\ttfamily uint Csound\+Unity\+Bridge.\+Get\+Nchnls\+Input (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Get number of input channels 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a4ab2802fc8bf96d2a23961c8e5bdb17e}\label{class_csound_unity_bridge_a4ab2802fc8bf96d2a23961c8e5bdb17e}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetOpcodeList@{GetOpcodeList}}
+\index{GetOpcodeList@{GetOpcodeList}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetOpcodeList()}{GetOpcodeList()}}
+{\footnotesize\ttfamily IDictionary$<$ string, IList$<$ \mbox{\hyperlink{class_csound_unity_bridge_1_1_opcode_argument_types}{Opcode\+Argument\+Types}} $>$ $>$ Csound\+Unity\+Bridge.\+Get\+Opcode\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns a sorted Dictionary keyed by all opcodes which are active in the current instance of csound. The values contain argument strings representing signatures for an opcode\textquotesingle{}s output and input parameters. The argument strings pairs are stored in a list to accomodate opcodes with multiple signatures. 
+
+\begin{DoxyReturn}{Returns}
+A sorted Dictionary keyed by all opcodes which are active in the current instance of csound.
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_csound_unity_bridge_aa44995fddb63e205437d4a95552ce214}\label{class_csound_unity_bridge_aa44995fddb63e205437d4a95552ce214}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetParams@{GetParams}}
+\index{GetParams@{GetParams}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetParams()}{GetParams()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}} Csound\+Unity\+Bridge.\+Get\+Params (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Fills in a provided raw \mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}} object with csounds current parameter settings. This method is used internally to manage this class and is not expected to be used directly by a host program. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em oparms} & a \mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}} structure to be filled in by csound\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The same parameter structure that was provided but filled in with csounds current internal contents
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_csound_unity_bridge_afbe39a70512674419324a992be75c398}\label{class_csound_unity_bridge_afbe39a70512674419324a992be75c398}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetSpin@{GetSpin}}
+\index{GetSpin@{GetSpin}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetSpin()}{GetSpin()}}
+{\footnotesize\ttfamily MYFLT\mbox{[}$\,$\mbox{]} Csound\+Unity\+Bridge.\+Get\+Spin (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns the Csound audio input working buffer (spin) as a MYFLT array. Enables external software to write audio into Csound before calling csound\+Perform\+Ksmps. 
+
+\begin{DoxyReturn}{Returns}
+a MYFLT array representing the Csound audio input buffer
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_csound_unity_bridge_afabf4ef6ff859a4a8128c118279e0086}\label{class_csound_unity_bridge_afabf4ef6ff859a4a8128c118279e0086}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetSpout@{GetSpout}}
+\index{GetSpout@{GetSpout}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetSpout()}{GetSpout()}}
+{\footnotesize\ttfamily MYFLT\mbox{[}$\,$\mbox{]} Csound\+Unity\+Bridge.\+Get\+Spout (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Returns the Csound audio output working buffer (spout) as a MYFLT array. Enables external software to read audio from Csound after calling csound\+Perform\+Ksmps. 
+
+\begin{DoxyReturn}{Returns}
+a MYFLT array representing the Csound audio output buffer
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_csound_unity_bridge_ac9f2d0b5b976208d33d58990f9eca4ce}\label{class_csound_unity_bridge_ac9f2d0b5b976208d33d58990f9eca4ce}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetSpoutSample@{GetSpoutSample}}
+\index{GetSpoutSample@{GetSpoutSample}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetSpoutSample()}{GetSpoutSample()}}
+{\footnotesize\ttfamily MYFLT Csound\+Unity\+Bridge.\+Get\+Spout\+Sample (\begin{DoxyParamCaption}\item[{int}]{frame,  }\item[{int}]{channel }\end{DoxyParamCaption})}
+
+
+
+Get a sample from Csound\textquotesingle{}s audio output buffer 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a7e307ad5f6defe8b03fabc20d14b6bd5}\label{class_csound_unity_bridge_a7e307ad5f6defe8b03fabc20d14b6bd5}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetSr@{GetSr}}
+\index{GetSr@{GetSr}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetSr()}{GetSr()}}
+{\footnotesize\ttfamily MYFLT Csound\+Unity\+Bridge.\+Get\+Sr (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a64c50983d56b208737b1f22afd0de37d}\label{class_csound_unity_bridge_a64c50983d56b208737b1f22afd0de37d}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetTable@{GetTable}}
+\index{GetTable@{GetTable}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetTable()}{GetTable()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily MYFLT Csound\+Unity\+Bridge.\+Get\+Table (\begin{DoxyParamCaption}\item[{int}]{table,  }\item[{int}]{index }\end{DoxyParamCaption})}
+
+
+
+Returns the value of a slot in a function table. The table number and index are assumed to be valid. 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a14b1145ffc6ac4578e0337ea6ddf44e4}\label{class_csound_unity_bridge_a14b1145ffc6ac4578e0337ea6ddf44e4}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetTable@{GetTable}}
+\index{GetTable@{GetTable}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetTable()}{GetTable()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily int Csound\+Unity\+Bridge.\+Get\+Table (\begin{DoxyParamCaption}\item[{out MYFLT\mbox{[}$\,$\mbox{]}}]{table\+Values,  }\item[{int}]{num\+Table }\end{DoxyParamCaption})}
+
+
+
+Stores values to function table \textquotesingle{}table\+Num\textquotesingle{} in table\+Values, and returns the table length (not including the guard point). If the table does not exist, table\+Values is set to NULL and -\/1 is returned. 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a5f65c0b07bc46018c58ede314d643be3}\label{class_csound_unity_bridge_a5f65c0b07bc46018c58ede314d643be3}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetTableArgs@{GetTableArgs}}
+\index{GetTableArgs@{GetTableArgs}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetTableArgs()}{GetTableArgs()}}
+{\footnotesize\ttfamily int Csound\+Unity\+Bridge.\+Get\+Table\+Args (\begin{DoxyParamCaption}\item[{out MYFLT\mbox{[}$\,$\mbox{]}}]{args,  }\item[{int}]{index }\end{DoxyParamCaption})}
+
+
+
+Stores the arguments used to generate function table \textquotesingle{}table\+Num\textquotesingle{} in args, and returns the number of arguments used. If the table does not exist, args is set to NULL and -\/1 is returned. NB\+: the argument list starts with the GEN number and is followed by its parameters. eg. f 1 0 1024 10 1 0.\+5 yields the list \{10.\+0,1.\+0,0.\+5\} 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a1beb5eeb971c59d068257c9eee9e0d9f}\label{class_csound_unity_bridge_a1beb5eeb971c59d068257c9eee9e0d9f}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!GetVersion@{GetVersion}}
+\index{GetVersion@{GetVersion}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{GetVersion()}{GetVersion()}}
+{\footnotesize\ttfamily int Csound\+Unity\+Bridge.\+Get\+Version (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_adba0d98762cce0b5a3516ff54a1cabdd}\label{class_csound_unity_bridge_adba0d98762cce0b5a3516ff54a1cabdd}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!IsNamedGEN@{IsNamedGEN}}
+\index{IsNamedGEN@{IsNamedGEN}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{IsNamedGEN()}{IsNamedGEN()}}
+{\footnotesize\ttfamily int Csound\+Unity\+Bridge.\+Is\+Named\+GEN (\begin{DoxyParamCaption}\item[{int}]{num }\end{DoxyParamCaption})}
+
+
+
+Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char) Otherwise it returns 0. 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a3d194b329d56c22913d080e4e23c6e69}\label{class_csound_unity_bridge_a3d194b329d56c22913d080e4e23c6e69}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!OnApplicationQuit@{OnApplicationQuit}}
+\index{OnApplicationQuit@{OnApplicationQuit}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{OnApplicationQuit()}{OnApplicationQuit()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+On\+Application\+Quit (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_aea1bb4546d4bf50b1947a12e7eebfe9c}\label{class_csound_unity_bridge_aea1bb4546d4bf50b1947a12e7eebfe9c}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!PerformKsmps@{PerformKsmps}}
+\index{PerformKsmps@{PerformKsmps}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{PerformKsmps()}{PerformKsmps()}}
+{\footnotesize\ttfamily int Csound\+Unity\+Bridge.\+Perform\+Ksmps (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_aafc8fafcb4fef15135348d6efd94419f}\label{class_csound_unity_bridge_aafc8fafcb4fef15135348d6efd94419f}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!Reset@{Reset}}
+\index{Reset@{Reset}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{Reset()}{Reset()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_aa54c98cd4d0c8a7b9756543ce192a5f7}\label{class_csound_unity_bridge_aa54c98cd4d0c8a7b9756543ce192a5f7}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!RewindScore@{RewindScore}}
+\index{RewindScore@{RewindScore}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{RewindScore()}{RewindScore()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Rewind\+Score (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a7526b52392ed51490364881b94f2581d}\label{class_csound_unity_bridge_a7526b52392ed51490364881b94f2581d}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!SendScoreEvent@{SendScoreEvent}}
+\index{SendScoreEvent@{SendScoreEvent}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{SendScoreEvent()}{SendScoreEvent()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Send\+Score\+Event (\begin{DoxyParamCaption}\item[{string}]{score\+Event }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a6c41828afd669723b8ce2ca1a733d241}\label{class_csound_unity_bridge_a6c41828afd669723b8ce2ca1a733d241}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!SetAudioChannel@{SetAudioChannel}}
+\index{SetAudioChannel@{SetAudioChannel}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{SetAudioChannel()}{SetAudioChannel()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Set\+Audio\+Channel (\begin{DoxyParamCaption}\item[{string}]{name,  }\item[{MYFLT\mbox{[}$\,$\mbox{]}}]{audio }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_aeb5333a58d88adec7230f8ada7b94a7f}\label{class_csound_unity_bridge_aeb5333a58d88adec7230f8ada7b94a7f}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!SetChannel@{SetChannel}}
+\index{SetChannel@{SetChannel}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{SetChannel()}{SetChannel()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Set\+Channel (\begin{DoxyParamCaption}\item[{string}]{channel,  }\item[{MYFLT}]{value }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_ad8c25f9d13cc960f34daf9570addc992}\label{class_csound_unity_bridge_ad8c25f9d13cc960f34daf9570addc992}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!SetGlobalEnv@{SetGlobalEnv}}
+\index{SetGlobalEnv@{SetGlobalEnv}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{SetGlobalEnv()}{SetGlobalEnv()}}
+{\footnotesize\ttfamily int Csound\+Unity\+Bridge.\+Set\+Global\+Env (\begin{DoxyParamCaption}\item[{string}]{name,  }\item[{string}]{value }\end{DoxyParamCaption})}
+
+
+
+Set the global value of environment variable \textquotesingle{}name\textquotesingle{} to \textquotesingle{}value\textquotesingle{}, or delete variable if \textquotesingle{}value\textquotesingle{} is NULL. It is not safe to call this function while any Csound instances are active. See \href{https://csound.com/docs/manual/CommandEnvironment.html}{\texttt{ https\+://csound.\+com/docs/manual/\+Command\+Environment.\+html}} for a list of the variables that can be used. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the environment variable to set\\
+\hline
+{\em value} & The value to set, ie a path\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns zero on success.
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_csound_unity_bridge_a78f5e3b0fc25d508793428c2f8857eba}\label{class_csound_unity_bridge_a78f5e3b0fc25d508793428c2f8857eba}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!SetParams@{SetParams}}
+\index{SetParams@{SetParams}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{SetParams()}{SetParams()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Set\+Params (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}}}]{parms }\end{DoxyParamCaption})}
+
+
+
+Transfers the contents of the provided raw \mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}} object into csound\textquotesingle{}s internal data structues (chiefly its OPARMS structure). This method is used internally to manage this class and is not expected to be used directly by a host program. Most values are used and reflected in \mbox{\hyperlink{class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s}{CSOUND\+\_\+\+PARAMS}}. Internally to csound, as of release 6.\+0.\+0, Heartbeat and Is\+Computing\+Opcode\+Weights are ignored and Is\+Using\+Csd\+Line\+Counts can only be set and never reset once set. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parms} & a \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_csound_unity_bridge_a4394f6e650694ff609f6575abacf22ad}\label{class_csound_unity_bridge_a4394f6e650694ff609f6575abacf22ad}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!SetSpinSample@{SetSpinSample}}
+\index{SetSpinSample@{SetSpinSample}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{SetSpinSample()}{SetSpinSample()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Set\+Spin\+Sample (\begin{DoxyParamCaption}\item[{int}]{frame,  }\item[{int}]{channel,  }\item[{MYFLT}]{sample }\end{DoxyParamCaption})}
+
+
+
+Set a sample from Csound\textquotesingle{}s audio output buffer 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a8202dc4ffff22c6da15f331782381b58}\label{class_csound_unity_bridge_a8202dc4ffff22c6da15f331782381b58}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!SetStringChannel@{SetStringChannel}}
+\index{SetStringChannel@{SetStringChannel}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{SetStringChannel()}{SetStringChannel()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Set\+String\+Channel (\begin{DoxyParamCaption}\item[{string}]{channel,  }\item[{string}]{value }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a0d89a0f520b71c9f4c241296d9225509}\label{class_csound_unity_bridge_a0d89a0f520b71c9f4c241296d9225509}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!SetTable@{SetTable}}
+\index{SetTable@{SetTable}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{SetTable()}{SetTable()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Set\+Table (\begin{DoxyParamCaption}\item[{int}]{table,  }\item[{int}]{index,  }\item[{MYFLT}]{value }\end{DoxyParamCaption})}
+
+
+
+Sets the value of a slot in a function table. The table number and index are assumed to be valid. 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a98b78711784f65efb6686aa09f50203c}\label{class_csound_unity_bridge_a98b78711784f65efb6686aa09f50203c}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!StopCsound@{StopCsound}}
+\index{StopCsound@{StopCsound}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{StopCsound()}{StopCsound()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Stop\+Csound (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a74a054e464e2d6793e21dd0a9d03fcf4}\label{class_csound_unity_bridge_a74a054e464e2d6793e21dd0a9d03fcf4}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!TableCopyIn@{TableCopyIn}}
+\index{TableCopyIn@{TableCopyIn}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{TableCopyIn()}{TableCopyIn()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Table\+Copy\+In (\begin{DoxyParamCaption}\item[{int}]{table,  }\item[{MYFLT\mbox{[}$\,$\mbox{]}}]{source }\end{DoxyParamCaption})}
+
+
+
+Copy the contents of an array source into a given function table The table number is assumed to be valid, and the table needs to have sufficient space to receive all the array contents. 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_ad45b0eb3442ff35e2558620c791cadc1}\label{class_csound_unity_bridge_ad45b0eb3442ff35e2558620c791cadc1}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!TableCopyInAsync@{TableCopyInAsync}}
+\index{TableCopyInAsync@{TableCopyInAsync}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{TableCopyInAsync()}{TableCopyInAsync()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Table\+Copy\+In\+Async (\begin{DoxyParamCaption}\item[{int}]{table,  }\item[{MYFLT\mbox{[}$\,$\mbox{]}}]{source }\end{DoxyParamCaption})}
+
+
+
+Asynchronous version of csound\+Table\+Copy\+In() 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_ae8cfee773d95a8c4f56e2f130ca784c0}\label{class_csound_unity_bridge_ae8cfee773d95a8c4f56e2f130ca784c0}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!TableCopyOut@{TableCopyOut}}
+\index{TableCopyOut@{TableCopyOut}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{TableCopyOut()}{TableCopyOut()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Table\+Copy\+Out (\begin{DoxyParamCaption}\item[{int}]{table,  }\item[{out MYFLT\mbox{[}$\,$\mbox{]}}]{dest }\end{DoxyParamCaption})}
+
+
+
+Copy the contents of a function table into a supplied array dest The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents. 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_a7f7c34f727875a771caf00a66a6cad0a}\label{class_csound_unity_bridge_a7f7c34f727875a771caf00a66a6cad0a}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!TableCopyOutAsync@{TableCopyOutAsync}}
+\index{TableCopyOutAsync@{TableCopyOutAsync}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{TableCopyOutAsync()}{TableCopyOutAsync()}}
+{\footnotesize\ttfamily void Csound\+Unity\+Bridge.\+Table\+Copy\+Out\+Async (\begin{DoxyParamCaption}\item[{int}]{table,  }\item[{out MYFLT\mbox{[}$\,$\mbox{]}}]{dest }\end{DoxyParamCaption})}
+
+
+
+Asynchronous version of table\+Copy\+Out() 
+
+\mbox{\Hypertarget{class_csound_unity_bridge_af1efa0e6843e2eab79876aa5cac45cfd}\label{class_csound_unity_bridge_af1efa0e6843e2eab79876aa5cac45cfd}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!TableLength@{TableLength}}
+\index{TableLength@{TableLength}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{TableLength()}{TableLength()}}
+{\footnotesize\ttfamily int Csound\+Unity\+Bridge.\+Table\+Length (\begin{DoxyParamCaption}\item[{int}]{table }\end{DoxyParamCaption})}
+
+
+
+Returns the length of a function table (not including the guard point), or -\/1 if the table does not exist. 
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_csound_unity_bridge_ab8416410166cf1df6ffa0f9523e787f6}\label{class_csound_unity_bridge_ab8416410166cf1df6ffa0f9523e787f6}} 
+\index{CsoundUnityBridge@{CsoundUnityBridge}!csound@{csound}}
+\index{csound@{csound}!CsoundUnityBridge@{CsoundUnityBridge}}
+\doxysubsubsection{\texorpdfstring{csound}{csound}}
+{\footnotesize\ttfamily Int\+Ptr Csound\+Unity\+Bridge.\+csound}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_csound_unity_bridge_8cs}{Csound\+Unity\+Bridge.\+cs}}\end{DoxyCompactItemize}

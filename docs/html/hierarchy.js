@@ -6,9 +6,7 @@ var hierarchy =
     [ "CsoundUnityBridge.CSOUND_PARAMS", "class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s.html", null ],
     [ "CsoundChannelController", "class_csound_channel_controller.html", null ],
     [ "CsoundUnityBridge", "class_csound_unity_bridge.html", null ],
-    [ "EventArgs", null, [
-      [ "CsoundUnityBridge.Csound6SenseEventsArgs", "class_csound_unity_bridge_1_1_csound6_sense_events_args.html", null ]
-    ] ],
+    [ "EnvironmentSettings", "class_environment_settings.html", null ],
     [ "MonoBehaviour", null, [
       [ "CsoundUnity", "class_csound_unity.html", null ],
       [ "CsoundUnityChild", "class_csound_unity_child.html", null ]

@@ -1,0 +1,66 @@
+\hypertarget{_basic_microphone_analyzer_8cs_source}{}\doxysection{Basic\+Microphone\+Analyzer.\+cs}
+\label{_basic_microphone_analyzer_8cs_source}\index{Samples$\sim$/AudioAnalysis/BasicMicrophoneAnalyzer/BasicMicrophoneAnalyzer.cs@{Samples$\sim$/AudioAnalysis/BasicMicrophoneAnalyzer/BasicMicrophoneAnalyzer.cs}}
+\mbox{\hyperlink{_basic_microphone_analyzer_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00001}00001 \textcolor{keyword}{using} UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00002}00002 \textcolor{keyword}{using} UnityEngine.UI;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00003}00003 }
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00004}\mbox{\hyperlink{namespace_csound}{00004}} \textcolor{keyword}{namespace }\mbox{\hyperlink{namespace_csound_1_1_audio_analysis}{Csound.AudioAnalysis}}}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00005}00005 \{}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00006}00006     [RequireComponent(typeof(\mbox{\hyperlink{class_csound_unity}{CsoundUnity}}))]}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00007}\mbox{\hyperlink{class_csound_1_1_audio_analysis_1_1_basic_microphone_analyzer}{00007}}     \textcolor{keyword}{public} \textcolor{keyword}{class }\mbox{\hyperlink{class_csound_1_1_audio_analysis_1_1_basic_microphone_analyzer}{BasicMicrophoneAnalyzer}} : MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00008}00008     \{}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00009}00009         [SerializeField] \textcolor{keyword}{private} Text \_octText;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00010}00010         [SerializeField] \textcolor{keyword}{private} Text \_hertzText;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00011}00011         [SerializeField] \textcolor{keyword}{private} Text \_ampText;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00012}00012         [SerializeField] \textcolor{keyword}{private} Text \_rmsText;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00013}00013 }
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00014}00014         \textcolor{keyword}{private} \textcolor{keywordtype}{string}[] \_names;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00015}00015         \textcolor{keyword}{private} AudioSource \_audioSource;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00016}00016 }
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00017}00017         \textcolor{keyword}{private} \mbox{\hyperlink{class_csound_unity}{CsoundUnity}} \_csound;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00018}00018 }
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00019}00019         \textcolor{keywordtype}{void} Start()}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00020}00020         \{}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00021}00021             \_csound = GetComponent<CsoundUnity>();}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00022}00022 }
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00023}00023             \_names = \textcolor{keyword}{new} \textcolor{keywordtype}{string}[Microphone.devices.Length];}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00024}00024             var count = 0;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00025}00025             \textcolor{keywordflow}{foreach} (var device \textcolor{keywordflow}{in} Microphone.devices)}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00026}00026             \{}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00027}00027                 \_names[count] = device;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00028}00028                 Debug.Log(\$\textcolor{stringliteral}{"{}Name[\{count\}]: \{device\}"{}});}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00029}00029                 count++;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00030}00030             \}}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00031}00031 }
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00032}00032             Microphone.GetDeviceCaps(\_names[0], out \textcolor{keywordtype}{int} minFreq, out \textcolor{keywordtype}{int} maxFreq);}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00033}00033             var dur = 999;}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00034}00034 }
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00035}00035             \_audioSource = GetComponent<AudioSource>();}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00036}00036             \_audioSource.clip = Microphone.Start(\_names[0], \textcolor{keyword}{true}, dur, minFreq);}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00037}00037             \_audioSource.Play();}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00038}00038         \}}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00039}00039 }
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00040}00040         \textcolor{keywordtype}{void} Update()}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00041}00041         \{}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00042}00042             \textcolor{keywordflow}{if} (!\_csound) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00043}00043 }
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00044}00044             var oct = \_csound.\mbox{\hyperlink{class_csound_unity_adf9230e5932b098bacc1ee87369707e9}{GetChannel}}(\textcolor{stringliteral}{"{}oct"{}});}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00045}00045             var hertz = \_csound.\mbox{\hyperlink{class_csound_unity_adf9230e5932b098bacc1ee87369707e9}{GetChannel}}(\textcolor{stringliteral}{"{}hertz"{}});}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00046}00046             var amp = \_csound.\mbox{\hyperlink{class_csound_unity_adf9230e5932b098bacc1ee87369707e9}{GetChannel}}(\textcolor{stringliteral}{"{}amp"{}});}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00047}00047             var rms = \_csound.\mbox{\hyperlink{class_csound_unity_adf9230e5932b098bacc1ee87369707e9}{GetChannel}}(\textcolor{stringliteral}{"{}rms"{}});}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00048}00048             \textcolor{comment}{//Debug.Log(\$"{}oct: \{oct\}, hertz: \{hertz\}, amp: \{amp\}, rms: \{rms\}"{});}}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00049}00049             \_octText.text = \$\textcolor{stringliteral}{"{}oct: \{oct:0.000\}"{}};}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00050}00050             \_hertzText.text = \$\textcolor{stringliteral}{"{}hz: \{hertz:0.000\}"{}};}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00051}00051             \_ampText.text = \$\textcolor{stringliteral}{"{}amp: \{amp:0.000\}"{}};}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00052}00052             \_rmsText.text = \$\textcolor{stringliteral}{"{}rms: \{rms:0.000\}"{}};}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00053}00053         \}}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00054}00054 }
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00055}00055         \textcolor{keyword}{private} \textcolor{keywordtype}{void} OnApplicationQuit()}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00056}00056         \{}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00057}00057             Microphone.End(\_names[0]);}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00058}00058         \}}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00059}00059     \}}
+\DoxyCodeLine{\Hypertarget{_basic_microphone_analyzer_8cs_source_l00060}00060 \}}
+
+\end{DoxyCode}

@@ -1,9 +1,11 @@
 <!-- docs/_sidebar.md -->
 
 * [CsoundUnity](/)
-  * [Installing](installing.md)
+  * [How to import CsoundUnity](importing.md)
   * [Getting started](getting_started.md)
   * [Controlling Csound from Unity](controlling_csound_from_unity.md)
+    + [Csound's channel system](controlling_csound_from_unity.md#csound-s-channel-system)
+    + [Starting / Stopping Instruments](controlling_csound_from_unity.md#starting---stopping-instruments)
   * [Controlling Csound from the Unity Editor](controlling_csound_from_the_unity_editor.md)
   * [CsoundUnityChild](csoundunity_child.md)
   * [CsoundFileWatcher](csound_file_watcher.md)

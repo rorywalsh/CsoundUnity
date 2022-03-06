@@ -1,0 +1,172 @@
+\hypertarget{_sequencer_8cs_source}{}\doxysection{Sequencer.\+cs}
+\label{_sequencer_8cs_source}\index{Samples$\sim$/SimpleSequencer/Scripts/Sequencer.cs@{Samples$\sim$/SimpleSequencer/Scripts/Sequencer.cs}}
+\mbox{\hyperlink{_sequencer_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00001}00001 \textcolor{keyword}{using} System.Collections;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00002}00002 \textcolor{keyword}{using} System.Collections.Generic;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00003}00003 \textcolor{keyword}{using} UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00004}00004 \textcolor{keyword}{using} System.IO;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00005}00005 \textcolor{keyword}{using} System;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00006}00006 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00007}00007 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00008}\mbox{\hyperlink{class_sequencer}{00008}} \textcolor{keyword}{public} \textcolor{keyword}{class }\mbox{\hyperlink{class_sequencer}{Sequencer}} : MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00009}00009 \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00010}00010     \textcolor{keyword}{private} \textcolor{keywordtype}{int} numpads = 16 * 8;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00011}\mbox{\hyperlink{class_sequencer_adb8723dd0e561cea3c4ef8c582c45041}{00011}}     \textcolor{keyword}{public} \textcolor{keywordtype}{int} \mbox{\hyperlink{class_sequencer_adb8723dd0e561cea3c4ef8c582c45041}{numberOfVoices}} = 8;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00012}\mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{00012}}     \textcolor{keyword}{public} \textcolor{keywordtype}{int} \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}} = 16;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00013}00013     \textcolor{keyword}{private} GameObject[] pads;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00014}\mbox{\hyperlink{class_sequencer_a76e058e3dfb9ad12f3a2a678a07d95c7}{00014}}     \textcolor{keyword}{public} AudioClip[] \mbox{\hyperlink{class_sequencer_a76e058e3dfb9ad12f3a2a678a07d95c7}{clips}};}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00015}00015     \textcolor{keyword}{private} \mbox{\hyperlink{class_csound_unity}{CsoundUnity}} csoundUnity;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00016}00016     \textcolor{keyword}{private} \textcolor{keywordtype}{int} beatNumber = -\/1;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00017}\mbox{\hyperlink{class_sequencer_a5cda3f4f7ba809a6e99505cb17d189a5}{00017}}     \textcolor{keyword}{public} \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_sequencer_a5cda3f4f7ba809a6e99505cb17d189a5}{showSequencerGUI}} = \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00018}\mbox{\hyperlink{class_sequencer_a6dbb01888283603e69b9fa32facf320e}{00018}}     \textcolor{keyword}{public} \textcolor{keywordtype}{int} \mbox{\hyperlink{class_sequencer_a6dbb01888283603e69b9fa32facf320e}{BPM}} = 60;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00019}00019     \textcolor{keyword}{private} \textcolor{keywordtype}{int} padIndex = 0;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00020}00020     \textcolor{comment}{//private Vector3 padScale;}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00021}00021     \textcolor{keyword}{private} \textcolor{keywordtype}{bool} isInitialized;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00022}00022 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00023}00023     \textcolor{keywordtype}{void} Awake()}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00024}00024     \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00025}00025         \textcolor{comment}{//assign CsoundUnity component}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00026}00026         csoundUnity = GetComponent<CsoundUnity>();}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00027}00027         \textcolor{keywordflow}{if} (!csoundUnity)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00028}00028             Debug.LogError(\textcolor{stringliteral}{"{}Can't find CsoundUnity"{}});}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00029}00029     \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00030}00030     }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00031}00031     IEnumerator Start()}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00032}00032     \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00033}00033         isInitialized = \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00034}00034 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00035}00035         \textcolor{comment}{// wait for csound to be initialized}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00036}00036         \textcolor{keywordflow}{while} (!csoundUnity.\mbox{\hyperlink{class_csound_unity_ae2c648d0f6245fb84c5f9ec5176079ff}{IsInitialized}}) \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00037}00037             yield \textcolor{keywordflow}{return} \textcolor{keyword}{null};}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00038}00038         \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00039}00039 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00040}00040         csoundUnity.\mbox{\hyperlink{class_csound_unity_a3dda8229f389f764b916d80d9d136c57}{SetChannel}}(\textcolor{stringliteral}{"{}BPM"{}}, \mbox{\hyperlink{class_sequencer_a6dbb01888283603e69b9fa32facf320e}{BPM}});}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00041}00041 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00042}00042         var count = 0;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00043}00043         \textcolor{keywordflow}{foreach} (var clip \textcolor{keywordflow}{in} \mbox{\hyperlink{class_sequencer_a76e058e3dfb9ad12f3a2a678a07d95c7}{clips}})}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00044}00044         \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00045}00045             var name = \textcolor{stringliteral}{"{}Samples/"{}} + clip.name;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00046}00046 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00047}00047             Debug.Log(\textcolor{stringliteral}{"{}loading clip "{}} + name);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00048}00048             var samples = \mbox{\hyperlink{class_csound_unity}{CsoundUnity}}.\mbox{\hyperlink{class_csound_unity_a7c1bf18317f33df52f9520a5913bd5df}{GetSamples}}(name, \mbox{\hyperlink{class_csound_unity}{CsoundUnity}}.\mbox{\hyperlink{class_csound_unity_a541b29144ff702a17b79777bd4702f3e}{SamplesOrigin}}.Resources);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00049}00049             Debug.Log(\textcolor{stringliteral}{"{}samples read: "{}} + samples.Length);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00050}00050             \textcolor{keywordflow}{if} (samples.Length > 0)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00051}00051             \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00052}00052                 var nChan = clip.channels;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00053}00053                 var tn = 900 + count;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00054}00054                 var res = csoundUnity.\mbox{\hyperlink{class_csound_unity_a02fad33460f51f304ead99509a7bd69d}{CreateTable}}(tn, samples);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00055}00055                 \textcolor{comment}{//Debug.Log(\$"{}creating table: sampletable\{tn\}"{});}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00056}00056                 csoundUnity.\mbox{\hyperlink{class_csound_unity_a3dda8229f389f764b916d80d9d136c57}{SetChannel}}(\$\textcolor{stringliteral}{"{}sampletable\{tn\}"{}}, tn);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00057}00057                 Debug.Log(res == 0 ? \$\textcolor{stringliteral}{"{}<color=green>Table \{tn\} created, set channel sampletable\{tn\} = \{tn\} </color>"{}} : \$\textcolor{stringliteral}{"{}<color=red>Error: Couldn't create Table \{tn\} </color>"{}});}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00058}00058                 count++;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00059}00059             \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00060}00060             yield \textcolor{keywordflow}{return} \textcolor{keyword}{new} WaitForEndOfFrame();}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00061}00061         \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00062}00062         }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00063}00063         \textcolor{keywordflow}{if} (\mbox{\hyperlink{class_sequencer_a5cda3f4f7ba809a6e99505cb17d189a5}{showSequencerGUI}})}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00064}00064         \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00065}00065             pads = \textcolor{keyword}{new} GameObject[numpads];}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00066}00066             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} voice = 0; voice < \mbox{\hyperlink{class_sequencer_adb8723dd0e561cea3c4ef8c582c45041}{numberOfVoices}}; voice++)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00067}00067             \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00068}00068                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} beat = 0; beat < \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}}; beat++)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00069}00069                 \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00070}00070                     GameObject gObj = GameObject.CreatePrimitive(PrimitiveType.Cube);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00071}00071                     gObj.transform.position = \textcolor{keyword}{new} Vector3(beat -\/ \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}} + 8f, \mbox{\hyperlink{class_sequencer_adb8723dd0e561cea3c4ef8c582c45041}{numberOfVoices}} -\/ voice -\/ 4f, 0);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00072}00072                     gObj.transform.localScale = \textcolor{keyword}{new} Vector3(0.5f, 0.5f, 0.1f);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00073}00073                     \textcolor{keywordtype}{double} enabled = csoundUnity.\mbox{\hyperlink{class_csound_unity_acb06c78a5c5fac008b6b8f32c0a6d358}{GetTableSample}}(voice + 1, beat);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00074}00074                     gObj.GetComponent<Renderer>().material.color = (enabled == 1 ? \textcolor{keyword}{new} Color(1, 0, 0) : \textcolor{keyword}{new} Color(.5f, .5f, .5f));}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00075}00075                     gObj.AddComponent<\mbox{\hyperlink{class_pad_controller}{PadController}}>();}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00076}00076                     gObj.name = padIndex++.ToString();}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00077}00077                     pads[beat + (voice * \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}})] = gObj;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00078}00078                 \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00079}00079             \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00080}00080         \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00081}00081         \textcolor{comment}{//padScale = pads[0].transform.localScale;}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00082}00082 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00083}00083         isInitialized = \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00084}00084         Debug.Log(\textcolor{stringliteral}{"{}start end!"{}});}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00085}00085     \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00086}00086 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00087}00087 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00088}00088     \textcolor{keywordtype}{void} Update()}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00089}00089     \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00090}00090         \textcolor{keywordflow}{if} (!isInitialized || !csoundUnity.\mbox{\hyperlink{class_csound_unity_ae2c648d0f6245fb84c5f9ec5176079ff}{IsInitialized}}) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00091}00091 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00092}00092         \textcolor{keywordflow}{if} (Input.GetKeyDown(\textcolor{stringliteral}{"{}1"{}}))}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00093}00093         \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00094}00094             csoundUnity.\mbox{\hyperlink{class_csound_unity_a67eb0ef59ebe2b06a17cbfe362d03122}{SendScoreEvent}}(\textcolor{stringliteral}{"{}i\(\backslash\)"{}ClearSequencer\(\backslash\)"{} 0 0 "{}});}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00095}00095             Invoke(\textcolor{stringliteral}{"{}updateSequencerGUI"{}}, .1f);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00096}00096         \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00097}00097 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00098}00098         \textcolor{keywordflow}{if} (Input.GetKeyDown(\textcolor{stringliteral}{"{}2"{}}))}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00099}00099         \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00100}00100             csoundUnity.\mbox{\hyperlink{class_csound_unity_a67eb0ef59ebe2b06a17cbfe362d03122}{SendScoreEvent}}(\textcolor{stringliteral}{"{}i\(\backslash\)"{}RandomSequencer\(\backslash\)"{} 0 0 "{}});}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00101}00101             Invoke(\textcolor{stringliteral}{"{}updateSequencerGUI"{}}, .1f);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00102}00102         \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00103}00103 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00104}00104 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00105}00105         \textcolor{keywordflow}{if} (csoundUnity)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00106}00106             csoundUnity.\mbox{\hyperlink{class_csound_unity_a3dda8229f389f764b916d80d9d136c57}{SetChannel}}(\textcolor{stringliteral}{"{}BPM"{}}, \mbox{\hyperlink{class_sequencer_a6dbb01888283603e69b9fa32facf320e}{BPM}});}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00107}00107 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00108}00108         \textcolor{keywordflow}{if} (beatNumber != csoundUnity.\mbox{\hyperlink{class_csound_unity_adf9230e5932b098bacc1ee87369707e9}{GetChannel}}(\textcolor{stringliteral}{"{}beatNumber"{}}))}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00109}00109         \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00110}00110             beatNumber = (int)csoundUnity.\mbox{\hyperlink{class_csound_unity_adf9230e5932b098bacc1ee87369707e9}{GetChannel}}(\textcolor{stringliteral}{"{}beatNumber"{}});}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00111}00111 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00112}00112             \textcolor{keywordflow}{if} (\mbox{\hyperlink{class_sequencer_a5cda3f4f7ba809a6e99505cb17d189a5}{showSequencerGUI}})}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00113}00113             \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00114}00114                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} voice = 0; voice < \mbox{\hyperlink{class_sequencer_adb8723dd0e561cea3c4ef8c582c45041}{numberOfVoices}}; voice++)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00115}00115                 \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00116}00116                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} beat = 0; beat < \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}}; beat++)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00117}00117                     \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00118}00118                         \textcolor{keywordflow}{if} (beat == beatNumber)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00119}00119                         \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00120}00120                             pads[beat + (voice * \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}})].transform.localScale = \textcolor{keyword}{new} Vector3(0.8f, 0.8f, 0.1f);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00121}00121                         \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00122}00122 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00123}00123                         \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00124}00124                         \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00125}00125                             pads[beat + (voice * \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}})].transform.localScale = \textcolor{keyword}{new} Vector3(0.5f, 0.5f, 0.1f);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00126}00126                         \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00127}00127 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00128}00128                     \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00129}00129                 \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00130}00130             \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00131}00131         \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00132}00132     \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00133}00133 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00134}00134     \textcolor{keywordtype}{void} UpdateSequencerGUI()}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00135}00135     \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00136}00136         \textcolor{comment}{//now update the GUI}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00137}00137         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} voice = 0; voice < \mbox{\hyperlink{class_sequencer_adb8723dd0e561cea3c4ef8c582c45041}{numberOfVoices}}; voice++)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00138}00138         \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00139}00139             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} beat = 0; beat < \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}}; beat++)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00140}00140             \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00141}00141                 \textcolor{keywordtype}{double} enabled = csoundUnity.\mbox{\hyperlink{class_csound_unity_acb06c78a5c5fac008b6b8f32c0a6d358}{GetTableSample}}(voice + 1, beat);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00142}00142                 GameObject pad = pads[beat + (voice * \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}})];}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00143}00143                 pad.GetComponent<Renderer>().material.color = (enabled == 1 ? \textcolor{keyword}{new} Color(1, 0, 0) : \textcolor{keyword}{new} Color(.5f, .5f, .5f));}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00144}00144             \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00145}00145         \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00146}00146     \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00147}00147 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00148}\mbox{\hyperlink{class_sequencer_af9253d49020aae18bd9d9b8a9db55a82}{00148}}     \textcolor{keyword}{public} \textcolor{keywordtype}{void} \mbox{\hyperlink{class_sequencer_af9253d49020aae18bd9d9b8a9db55a82}{UpdateSequencerPad}}(\textcolor{keywordtype}{int} index)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00149}00149     \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00150}00150         var currentPad = index;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00151}00151         var currentCol = (currentPad \% \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}});}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00152}00152         \textcolor{keywordtype}{int} currentRow = 0;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00153}00153 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00154}00154         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i <= \mbox{\hyperlink{class_sequencer_adb8723dd0e561cea3c4ef8c582c45041}{numberOfVoices}}; i++)}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00155}00155         \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00156}00156             \textcolor{keywordflow}{if} (currentPad < i * \mbox{\hyperlink{class_sequencer_a3c920be236d88b0b6908fda8c7327e1e}{numberOfBeats}})}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00157}00157             \{}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00158}00158                 currentRow = i;}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00159}00159                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00160}00160             \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00161}00161         \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00162}00162         csoundUnity.\mbox{\hyperlink{class_csound_unity_a67eb0ef59ebe2b06a17cbfe362d03122}{SendScoreEvent}}(\textcolor{stringliteral}{"{}i\(\backslash\)"{}UpdateSequencer\(\backslash\)"{} 0 0 "{}} + currentCol.ToString() + \textcolor{stringliteral}{"{} "{}} + (currentRow).ToString());}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00163}00163 }
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00164}00164         Invoke(\textcolor{stringliteral}{"{}UpdateSequencerGUI"{}}, .1f);}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00165}00165     \}}
+\DoxyCodeLine{\Hypertarget{_sequencer_8cs_source_l00166}00166 \}}
+
+\end{DoxyCode}

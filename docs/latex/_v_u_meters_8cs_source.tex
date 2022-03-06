@@ -1,0 +1,52 @@
+\hypertarget{_v_u_meters_8cs_source}{}\doxysection{VUMeters.\+cs}
+\label{_v_u_meters_8cs_source}\index{Samples$\sim$/GranularSynthesis/Scripts/VUMeters.cs@{Samples$\sim$/GranularSynthesis/Scripts/VUMeters.cs}}
+\mbox{\hyperlink{_v_u_meters_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00001}00001 \textcolor{keyword}{using} System.Collections;}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00002}00002 \textcolor{keyword}{using} System.Collections.Generic;}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00003}00003 \textcolor{keyword}{using} UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00004}00004 \textcolor{keyword}{using} UnityEngine.UI;}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00005}00005 }
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00006}00006 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespace_csound_1_1_granular_synthesis_1_1_partikkel}{Csound.GranularSynthesis.Partikkel}}}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00007}00007 \{}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00008}00008     [RequireComponent(typeof(\mbox{\hyperlink{class_csound_unity}{CsoundUnity}}))]}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00009}\mbox{\hyperlink{class_csound_1_1_granular_synthesis_1_1_partikkel_1_1_v_u_meters}{00009}}     \textcolor{keyword}{public} \textcolor{keyword}{class }\mbox{\hyperlink{class_csound_1_1_granular_synthesis_1_1_partikkel_1_1_v_u_meters}{VUMeters}} : MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00010}00010     \{}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00011}00011         [Tooltip(\textcolor{stringliteral}{"{}The prefab that will be used as a VUMeter. It requires a Slider component"{}})]}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00012}00012         [SerializeField] \textcolor{keyword}{private} GameObject \_VUMeterUIPrefab;}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00013}00013         [Tooltip(\textcolor{stringliteral}{"{}The transform where the VUMeters will be parented to"{}})]}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00014}00014         [SerializeField] \textcolor{keyword}{private} Transform \_VUMetersContainer;}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00015}00015 }
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00016}00016         \textcolor{keyword}{private} \mbox{\hyperlink{class_csound_unity}{CsoundUnity}} \_csound;}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00017}00017         \textcolor{keyword}{private} Dictionary<string, Slider> \_vuMeters;}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00018}00018 }
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00019}00019         IEnumerator Start()}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00020}00020         \{}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00021}00021             \_csound = this.GetComponent<CsoundUnity>();}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00022}00022             \textcolor{keywordflow}{while} (!\_csound.\mbox{\hyperlink{class_csound_unity_ae2c648d0f6245fb84c5f9ec5176079ff}{IsInitialized}})}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00023}00023             \{}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00024}00024                 yield \textcolor{keywordflow}{return} \textcolor{keyword}{null};}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00025}00025             \}}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00026}00026 }
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00027}00027             \_vuMeters = \textcolor{keyword}{new} Dictionary<string, Slider>();}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00028}00028 }
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00029}00029             \textcolor{keywordflow}{foreach} (var ac \textcolor{keywordflow}{in} \_csound.\mbox{\hyperlink{class_csound_unity_ae00b36e523ed56c3d80c1930bec1a30e}{availableAudioChannels}})}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00030}00030             \{}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00031}00031                 var go = Instantiate(\_VUMeterUIPrefab, \_VUMetersContainer, \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00032}00032                 var slider = go.GetComponent<Slider>();}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00033}00033                 \textcolor{keywordflow}{if} (slider != \textcolor{keyword}{null}) \_vuMeters.Add(ac, slider);}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00034}00034                 \textcolor{keywordflow}{else} Debug.LogWarning(\textcolor{stringliteral}{"{}Please add a slider in the VU Meter Prefab"{}});}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00035}00035             \}}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00036}00036         \}}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00037}00037 }
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00038}00038         \textcolor{keywordtype}{void} Update()}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00039}00039         \{}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00040}00040             \textcolor{keywordflow}{foreach} (var meter \textcolor{keywordflow}{in} \_vuMeters)}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00041}00041             \{}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00042}00042                 meter.Value.value = (float)\_csound.\mbox{\hyperlink{class_csound_unity_adf9230e5932b098bacc1ee87369707e9}{GetChannel}}(meter.Key + \textcolor{stringliteral}{"{}Vol"{}}) / (float)\_csound.\mbox{\hyperlink{class_csound_unity_a703b9f858fc381d38886fbdec0b6d8fc}{Get0dbfs}}();}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00043}00043             \}}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00044}00044         \}}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00045}00045     \}}
+\DoxyCodeLine{\Hypertarget{_v_u_meters_8cs_source_l00046}00046 \}}
+
+\end{DoxyCode}
