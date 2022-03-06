@@ -5,6 +5,7 @@
   * [Controlling Csound from Unity Scripts](#controlling-csound-from-unity-scripts)
     + [Csound's channel system](#csound-s-channel-system)
     + [Starting / Stopping Instruments](#starting---stopping-instruments)
+    + [Keeping Csound performance running](#keeping-csound-performance-running)
   * [Controlling Csound from the Unity Editor](#controlling-csound-from-the-unity-editor)
   * [CsoundUnityChild](#csoundunitychild)
   * [CsoundFileWatcher](#csoundfilewatcher)
@@ -164,8 +165,7 @@ kBPM = abs(chnget:k("BPM"))
 <a name="starting---stopping-instruments"></a>
 ### Starting / Stopping Instruments ###
 
-
-You can start an instrument to play at any time using the [**CsoundUnity.SendScoreEvent()**](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs#L493) method: 
+You can start an instrument to play at any time using the [**CsoundUnity.SendScoreEvent(string scoreEvent)**](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs#L493) method: 
 
 ```cs
 // C# code
@@ -181,7 +181,7 @@ You can specify the time to wait before starting the instrument:
 csoundUnity.SendScoreEvent("i1 5 10");
 ```
 
-You can also stop a runnning instrument, but only if it has been started with indefinite duration, setting the duration parameter to -1:
+You can also stop a running instrument, but only if it has been started with indefinite duration (so it will keep running until you stop it), setting the duration parameter to -1:
 
 ```cs
 // C# code
@@ -196,6 +196,38 @@ To stop an instrument, set its number negative:
 // instantly stop instrument #1
 csoundUnity.SendScoreEvent("i-1 0 -1");
 ```
+
+<a name="keeping-csound-performance-running"></a>
+### Keeping Csound performance running ###
+
+Be aware that Csound will stop its performance if all the instruments (the ones listed in the score and the ones started from Unity) have stopped playing.   
+You won't be able to restart the Csound performance with the current implementation of CsoundUnity.  
+Instead, if you want to keep the performance active for all the time your application is running, be sure to add one of those lines to the Csound score:
+
+```csound
+<CsScore>
+;causes Csound to run for about 7000 years...
+f0 z 
+</CsScore>
+```
+
+```csound
+<CsScore>
+;causes instrument 1 to run for about 7000 years...
+i1 0 z
+</CsScore>
+```
+
+```csound
+<CsScore>
+;causes instrument 1 to run for a day
+i1 0 [24*60*60]
+</CsScore>
+```
+
+More information about scores here:  
+[https://csound.com/docs/manual/ScoreTop.html](https://csound.com/docs/manual/ScoreTop.html)  
+[https://csound.com/docs/manual/ScoreEval.html](https://csound.com/docs/manual/ScoreEval.html)
 
 <a name=controlling_csound_from_unity_editor></a>
 ## Controlling Csound from the Unity Editor
