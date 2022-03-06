@@ -185,7 +185,7 @@ You can also stop a running instrument, but only if it has been started with ind
 
 ```cs
 // C# code
-// immediately start instrument #1 with an indefinite duration
+// instantly start instrument #1 with an indefinite duration
 csoundUnity.SendScoreEvent("i1 0 -1");
 ```
 
@@ -235,7 +235,7 @@ More information about scores here:
 You can control Csound channels using the Unity Editor while you are developing your game's sounds.  
 To do so, you must provide a short <Cabbage></Cabbage> descriptor at the top of your Csound files describing the channels that are needed.  
 This simple descriptor section uses a single line of code to describe each channel.  
-Each line starts with the given channel's controller type and is then followed by combination of other identifiers such as ***channel()***, ***text()***, and ***range()***.  
+Each line starts with the given channel's controller type and is then followed by combination of other identifiers such as *channel()*, *text()*, and *range()*.  
 The following descriptor sets up 3 channel controllers. A slider, a button and a checkbox(toggle).
 ```csound
 ;csd file
@@ -251,25 +251,24 @@ Each control MUST specify a channel.
 The ***range()*** identifier must be used if the controller type is a slider.  
 The ***text()*** identifier can be used to display unique text beside a control but it is not required. If it is left out, the channel() name will be used as the control's label. The caption() identifier, used with form, is used to display some simple help text to the user.
 
-See [Cabbage Widgets](https://cabbageaudio.com/docs/cabbage_syntax/) for more information about the syntax to use.
+See [**Cabbage Widgets**](https://cabbageaudio.com/docs/cabbage_syntax/) for more information about the syntax to use.
 CsoundUnity aims to support most of the (relevant) Widgets available in Cabbage.  
-[Cabbage](https://cabbageaudio.com/) is a framework for audio software development, with it you can create wonderful VST/AU plugins based on Csound. 
-And of course it is a great Csound IDE!
-You will find a lot of examples inside it: be aware that most of them are not supported at the moment in CsoundUnity, since the  Widgets support is still limited.
-But they're worth a try!   
-Feel free to ask on the [Cabbage Forum](https://forum.cabbageaudio.com/) for any example that you would like to be added to CsoundUnity as a sample.
+[Cabbage](https://cabbageaudio.com/) is a framework for audio software development, with it you can create wonderful VST/AU plugins based on Csound.  
+And of course it is a great Csound IDE!  
+You will find a lot of examples inside it: be aware that most of them are not supported at the moment in CsoundUnity, since the  Widgets support is still limited. But they're worth a try!   
+Feel free to ask on the [**Cabbage Forum**](https://forum.cabbageaudio.com/) for any Cabbage example that you would like to be added to CsoundUnity as a sample.
 
-When a Csound file which contains a valid <Cabbage> section is dragged to a CsoundUnity component, Unity will generate controls for each channel.  
-These controls can be tweaked when your game is running. Each time a control is modified, its value is sent to Csound from Unity on the associated channel. In this way it works the same as the method above, only we don't have to code anything in order to test our sound. 
-If you change a channel value via code, you will see its value updated in the editor. 
-For now, CsoundUnity support only four types of controller: ***slider***, ***checkbox(toggle)***, ***button*** and ***comboboxes***. 
+When a Csound file which contains a valid < Cabbage > section is dragged to a CsoundUnity component, Unity will generate controls for each channel.  
+These controls can be tweaked when your game is running. Each time a control is modified, its value is sent to Csound from Unity on the associated channel. In this way it works the same as the method above, only we don't have to code anything in order to test our sound.  
+If you change a channel value via C# code, you will see its value updated in the editor.  
+For now, CsoundUnity support only four types of controller: *slider*, *checkbox(toggle)*, *button* and *comboboxes*. 
 
 
 <a name=csoundunity_child></a>
 ## CsoundUnityChild ##
 
-New in version 3.0, the CsoundUnityChild component lets you read the AudioChannels found in a CsoundUnity instance. You can have as many audio channels you want in your Csd.
-You can set them with the chnset opcode.
+New in version 3.0, the CsoundUnityChild component lets you read the AudioChannels found in a CsoundUnity instance. You can have as many audio channels you want in your Csd.  
+You can set them with the *chnset* opcode.  
 See the example below:
 ```csound
 ;csd file
@@ -295,7 +294,7 @@ giWave1 ftgen 1, 0, 4096, 10, 1
 giWave2 ftgen 1, 0, 4096, 10, 1, .5, .25, .17
 
 ;this instrument sends audio to two named channels
-;this audio can be picked up by any CsoundUnityNode component..
+;this audio can be picked up by any CsoundUnityChild component..
 instr ChildSounds
     a1 oscili 1, 440, giWave1
     chnset a1, "sound1"
@@ -319,8 +318,8 @@ If AudioChannelsSetting is set to STEREO, the selected AudioChannels will use th
 
 <img src="images/setupCsoundUnityChild_v3.gif" alt="CsoundUnityChild"/>
 
-*Be aware that the support for audio channels is still limited*: they're parsed from the csd file, meaning that if you're using variables it won't recognize them.   
-The following example will find an audioChannel named "***Sname***", instead of its compiled value of "***audioChannel_1***":  
+**Be aware that the support for audio channels is still limited**: they're parsed from the csd file, meaning that if you're using variables the CsoundUnityEditor parser won't recognize them.   
+The following example will find an audioChannel named "*Sname*", instead of its expected value of "*audioChannel_1*":  
 
 ```csound
 ;csd file
@@ -338,11 +337,12 @@ You can also create the CsoundUnity children with code, for more advanced setups
 You can get the available audio channels from CsoundUnity with:
 
 ```cs
+//C# code
 var audioChannels = csoundUnity.availableAudioChannels;
 ```
 
-To be able to initialize a child, you should call [CsoundUnityChildren.Init(CsoundUnity csound, AudioChannels audioChannels)](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnityChild.cs#L127), to pass it the reference to the CsoundUnity instance that has available audio channels, and to define the channels setup to use (MONO or STEREO).
-Then you must specify the audio channel you want to use with [SetAudioChannel(int channel, int audioChannel)](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnityChild.cs#L143): the channel parameter is the LEFT (0) or RIGHT (1) channel, the audioChannel parameter is the index of the CsoundUnity.availableAudioChannel you want to use.
+To be able to initialize a child, you should call [CsoundUnityChildren.Init(CsoundUnity csound, AudioChannels audioChannels)](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnityChild.cs#L127), to set the reference to the CsoundUnity instance that has available audio channels, and to define the channel setup to use (MONO or STEREO).
+Then you must specify the audio channel you want to use with [SetAudioChannel(int channel, int audioChannel)](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnityChild.cs#L143): the channel parameter is the LEFT (0) or RIGHT (1) channel, the audioChannel parameter is the index of the *CsoundUnity.availableAudioChannel* you want to use.
 See the example that follows:
 
 ```csharp
@@ -407,4 +407,4 @@ This means that you don't need to drag the Csd Asset in CsoundUnity everytime yo
 
 CsoundUnity supports building for Windows, macOS, Android 64bit (it has successfully been tested on Oculus Quest) and iOS 64bit.   
 We are planning to add WebGL support, but unfortunately Unity WebGL doesn't support AudioSource.OnAudioFilterRead callback, meaning that we are not able to use the same approach we're using for the other platforms.  
-This means that WebGL support could take a while! 
+This means that adding WebGL support could take a while! 
