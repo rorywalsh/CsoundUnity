@@ -145,7 +145,7 @@ public class CsoundUnity : MonoBehaviour
     /// <summary>
     /// The version of this package
     /// </summary>
-    public const string packageVersion = "3.2.0";
+    public const string packageVersion = "3.2.1";
 
     /// <summary>
     /// the unique guid of the csd file

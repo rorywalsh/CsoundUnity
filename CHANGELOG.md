@@ -1,3 +1,8 @@
+## [3.2.1] - 2022-03-06
+
+- hotfixes for errors on import
+- fix for links in github pages
+
 ## [3.2.0] - 2022-03-06
 
 - added iOS support;
