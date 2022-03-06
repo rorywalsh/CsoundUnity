@@ -16,7 +16,7 @@ http://csound6net.codeplex.com (unfortunately the site is not reachable at the m
 
 Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md) for more details.  
 
-## How to import ##
+## How to import CsoundUnity ##
 
 **From version 3.0 CsoundUnity is in the form of a Unity Package**. See the [Unity Manual](https://docs.unity3d.com/Manual/PackagesList.html) for more information.  
 
