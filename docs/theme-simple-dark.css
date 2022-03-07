@@ -2102,7 +2102,7 @@ body .sidebar {
     --sidebar-border-width: 0;
     --sidebar-padding: 0 25px;
     --sidebar-transition-duration: var(--duration-fast);
-    --sidebar-width: 17rem;
+    --sidebar-width: 24rem;
     --sidebar-name-font-size: var(--font-size-l);
     --sidebar-name-font-weight: normal;
     --sidebar-name-margin: 1.5rem 0 0;
