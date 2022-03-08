@@ -8,6 +8,8 @@ If you wish to use the Csound API in a model that is idiomatic to .net please us
 http://csound6net.codeplex.com (unfortunately the site is not reachable at the moment)
   
   
+Have a look at the official [Csound website](https://csound.com/) and [Csound page on GitHub](https://github.com/csound).
+
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
 ## New Version: 3.2.1 ##
