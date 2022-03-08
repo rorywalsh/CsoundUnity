@@ -9,7 +9,7 @@ You can add as many Environment Variables as you want. Be aware that a duplicate
 
 In the following image, we are setting the *SFDIR* folder for all the supported platforms to the *Application.PersistentDataPath*, inside a *CsoundFiles* folder:
  
-<img src="images/load_sf2_files" alt="Load SF2 files"/>
+<img src="images/load_sf2_files.png" alt="Load SF2 files"/>
 
 Those Environment variables will be set **BEFORE** the **CsoundUnity** instance starts.
 Be sure to copy the needed files in a directory where **CsoundUnity** will have access to.  
