@@ -1,7 +1,7 @@
 ## Environment Variables
 
-New in **CsoundUnity** 3.2.0, it is now possible to set the Csound *Environment Variables* independently for each CsoundUnity instance in your scene.  
-You can use the *Environment Variables* to set the directories where Csound will look for specific files.  
+New in **CsoundUnity** 3.2.0, it is now possible to set the **Csound** *Environment Variables* independently for each **CsoundUnity** instance in your scene.  
+You can use the *Environment Variables* to set the directories where **Csound** will look for specific files.  
 Those files include *audio* files (in any format supported by **Csound**), *sound font* files, *htrf* files, but also plugins and other formats.  
 See the [Csound Environment Variables Page](https://csound.com/docs/manual/CommandEnvironment.html) from the **Csound** manual for more information.  
 
@@ -22,4 +22,4 @@ For the platforms other than **Android** you can safely use the *StreamingAssets
 
 ### Notes ###
 You will see a list (*Added Environment Settings*) of the settings you have made, and the full path of each resulting folder.  
-Please be aware that the reported folders in the list are not correct for some platforms when running on the Unity Editor. That is because we're using the Unity return value for *Application.StreamingAssets* and *Application.PersistentDataPath*. So you will get the same result for every platform, and the value will depend on the platform you're using to develop  (Windows or MacOS). But don't worry, the settings will be correct when you build for that platform. This will be fixed soon in a future version of CsoundUnity.
+Please be aware that the reported folders in the list are not correct for some platforms when running on the Unity Editor. That is because we're using the Unity return value for *Application.StreamingAssets* and *Application.PersistentDataPath*. So you will get the same result for every platform, and the value will depend on the platform you're using to develop  (Windows or MacOS). But don't worry, the settings will be correct when you build for that platform. This will be fixed soon in a future version of **CsoundUnity**.
