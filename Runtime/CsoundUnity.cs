@@ -45,7 +45,6 @@ using MYFLT = System.Single;
 #region PUBLIC_CLASSES
 
 [Serializable]
-[SerializeField]
 /// <summary>
 /// Utility class for controller and channels
 /// </summary>
@@ -80,17 +79,24 @@ public class EnvironmentSettings
     [SerializeField] public CsoundUnity.EnvType type;
     [SerializeField] public EnvironmentPathOrigin baseFolder;
     [SerializeField] public string suffix;
-    
-    public string GetPath()
+    [Tooltip("Utility bool to store if the drawn property is foldout or not")]
+    [SerializeField] public bool foldout;
+
+    /// <summary>
+    /// Set the runtime bool true on Editor for debug purposes only, let Unity detect the correct path with Application.persistentDataPath
+    /// </summary>
+    /// <param name="runtime"></param>
+    /// <returns></returns>
+    public string GetPath(bool runtime = false)
     {
         var path = string.Empty;
         switch (baseFolder)
         {
             case EnvironmentPathOrigin.PersistentDataPath:
-                path = Application.persistentDataPath;
+                path = GetPersistentDataPath(platform, runtime);
                 break;
             case EnvironmentPathOrigin.StreamingAssets:
-                path = Application.streamingAssetsPath;
+                path = GetStreamingAssetsPath(platform, runtime);
                 break;
             case EnvironmentPathOrigin.Absolute:
             default:
@@ -99,7 +105,61 @@ public class EnvironmentSettings
         path = Path.Combine(path, suffix);
         return path;
     }
-    
+
+    /// <summary>
+    /// An helper that shows what will be the path of the PersistentDataPath at runtime for the supplied platform
+    /// Set the runtime bool true on Editor for debug purposes only, let Unity detect the correct path with Application.persistentDataPath
+    /// </summary>
+    private string GetPersistentDataPath(SupportedPlatform supportedPlatform, bool runtime)
+    {
+        var res = Application.persistentDataPath;
+        switch (supportedPlatform)
+        {
+            case SupportedPlatform.MacOS:
+                res = runtime ?
+                    $"~/Library/Application Support/{Application.companyName}/{Application.productName}" :
+                    Application.persistentDataPath;
+                break;
+            case SupportedPlatform.Windows:
+                res = runtime ?
+                    $"%userprofile%\\AppData\\LocalLow\\{Application.companyName}\\{Application.productName}" :
+                    Application.persistentDataPath;
+                break;
+            case SupportedPlatform.Android:
+                res = runtime ?
+                    $"/storage/emulated/0/Android/data/{Application.identifier}/files" : Application.persistentDataPath;
+                break;
+            case SupportedPlatform.iOS:
+                res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Documents" : Application.persistentDataPath;
+                break;
+        }
+        return res;
+    }
+
+    /// <summary>
+    /// An helper that shows what will be the path of the PersistentDataPath at runtime for the supplied platform
+    /// </summary>
+    private string GetStreamingAssetsPath(SupportedPlatform supportedPlatform, bool runtime)
+    {
+        var res = Application.streamingAssetsPath;
+        switch (supportedPlatform)
+        {
+            case SupportedPlatform.MacOS:
+                res = runtime ? $"<path to player app bundle>/Contents/Resources/Data/StreamingAssets" : Application.streamingAssetsPath;
+                break;
+            case SupportedPlatform.Windows:
+                res = runtime ? $"<path to executablename_Data folder>" : Application.streamingAssetsPath;
+                break;
+            case SupportedPlatform.Android:
+                res = $"jar: file://{Application.dataPath}!/assets";
+                break;
+            case SupportedPlatform.iOS:
+                res = $"{Application.dataPath}/Raw";
+                break;
+        }
+        return res;
+    }
+
     public string GetTypeString()
     {
         return type.ToString();
@@ -110,9 +170,9 @@ public class EnvironmentSettings
         return platform.ToString();
     }
 
-    public string GetPathDescriptor()
+    public string GetPathDescriptor(bool runtime)
     {
-        return $"[{GetPlatformString()}]:[{GetTypeString()}]: {GetPath()}";
+        return $"[{GetPlatformString()}]:[{GetTypeString()}]: {GetPath(runtime)}";
     }
 }
 
@@ -178,30 +238,30 @@ public class CsoundUnity : MonoBehaviour
     /// Note that this can slow down performance if there is a
     /// lot of information being printed.
     /// </summary>
-    public bool logCsoundOutput = false;
+    [HideInInspector] public bool logCsoundOutput = false;
 
     /// <summary>
     /// If true no audio is sent to output
     /// </summary>
-    public bool mute = false;
+    [HideInInspector] public bool mute = false;
 
     /// <summary>
     /// If true Csound uses as an input the AudioClip attached to this AudioSource
     /// If false, no processing occurs on the attached AudioClip
     /// </summary>
-    public bool processClipAudio;
+    [HideInInspector] public bool processClipAudio;
 
     /// <summary>
     /// If true it will print warnings in the console when the output volume is too high, 
     /// and mute all the samples above the loudWarningThreshold value
     /// </summary>
-    public bool loudVolumeWarning = true;
+    [HideInInspector] public bool loudVolumeWarning = true;
 
     /// <summary>
     /// The volume threshold at which a warning is output to the console, 
     /// and audio output is filtered
     /// </summary>
-    public float loudWarningThreshold = 10f;
+    [HideInInspector] public float loudWarningThreshold = 10f;
 
     /// <summary>
     /// list to hold channel data
@@ -236,7 +296,7 @@ public class CsoundUnity : MonoBehaviour
     /// <summary>
     /// the score to send via editor
     /// </summary>
-    public string csoundScore;
+    [HideInInspector] public string csoundScore;
 
     /// <summary>
     /// The list of the Environment Settings that will be set on start, using csoundSetGlobalEnv.
@@ -244,6 +304,7 @@ public class CsoundUnity : MonoBehaviour
     /// These settings will be applied to this CsoundUnity instance when the CsoundUnityBridge is created.
     /// </summary>
     [SerializeField]
+    [HideInInspector]
     public List<EnvironmentSettings> environmentSettings = new List<EnvironmentSettings>();
 
     #endregion PUBLIC_FIELDS
@@ -259,27 +320,33 @@ public class CsoundUnity : MonoBehaviour
     /// fuctions, then methods should be added to the CsoundUnity.cs file and CsoundUnityBridge class.
     /// </summary>
     private CsoundUnityBridge csound;
-    [SerializeField] private string _csoundFileGUID;
-    [SerializeField] private string _csoundString;
-    [SerializeField] private string _csoundFileName;
+    [HideInInspector] [SerializeField] private string _csoundFileGUID;
+    [HideInInspector] [SerializeField] private string _csoundString;
+    [HideInInspector] [SerializeField] private string _csoundFileName;
 #if UNITY_EDITOR
-    [SerializeField] private DefaultAsset _csoundAsset;
+    [HideInInspector] [SerializeField] private DefaultAsset _csoundAsset;
 #endif
-    [SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
+    [HideInInspector] [SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
     /// <summary>
     /// An utility dictionary to store the index of every channel in the _channels list
     /// </summary>
     private Dictionary<string, int> _channelsIndexDict = new Dictionary<string, int>();
-    [SerializeField] private List<string> _availableAudioChannels = new List<string>();
+    [HideInInspector] [SerializeField] private List<string> _availableAudioChannels = new List<string>();
     /// <summary>
     /// Inspector foldout settings
     /// </summary>
 #pragma warning disable 414
-    [SerializeField] private bool _drawCsoundString = false;
-    [SerializeField] private bool _drawTestScore = false;
-    [SerializeField] private bool _drawSettings = false;
-    [SerializeField] private bool _drawChannels = false;
-    [SerializeField] private bool _drawAudioChannels = false;
+    [HideInInspector] [SerializeField] private bool _drawCsoundString = false;
+    [HideInInspector] [SerializeField] private bool _drawTestScore = false;
+    [HideInInspector] [SerializeField] private bool _drawSettings = false;
+    [HideInInspector] [SerializeField] private bool _drawChannels = false;
+    [HideInInspector] [SerializeField] private bool _drawAudioChannels = false;
+    /// <summary>
+    /// If true, the path shown in the Csound Global Environments Folders inspector will be
+    /// the one expected at runtime, otherwise it will show the Editor path (for desktop platform). 
+    /// For mobile platforms the path will always be the same.
+    /// </summary>
+    [HideInInspector] [SerializeField] private bool _showRuntimeEnvironmentPath = false;
 #pragma warning restore 414
 
     private bool initialized = false;
@@ -449,7 +516,7 @@ public class CsoundUnity : MonoBehaviour
         this._channels = ParseCsdFile(fileName);
         var count = 0;
         foreach (var chan in this._channels)
-            if(!_channelsIndexDict.ContainsKey(chan.channel))
+            if (!_channelsIndexDict.ContainsKey(chan.channel))
                 _channelsIndexDict.Add(chan.channel, count++);
         this._availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
 
@@ -811,7 +878,7 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="val"></param>
     public void SetChannel(string channel, MYFLT val)
     {
-        if(_channelsIndexDict.ContainsKey(channel))
+        if (_channelsIndexDict.ContainsKey(channel))
             channels[_channelsIndexDict[channel]].value = (float)val;
         csound.SetChannel(channel, val);
     }
@@ -1516,7 +1583,7 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
-    
+
     /// <summary>
     /// Reset the fields of this instance
     /// </summary>

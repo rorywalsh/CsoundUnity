@@ -28,6 +28,8 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using UnityEngine;
 using System.IO;
 using UnityEditor;
+using UnityEditorInternal;
+using System.Collections.Generic;
 
 [CustomEditor(typeof(CsoundUnity))]
 [System.Serializable]
@@ -56,8 +58,11 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_drawChannels;
     SerializedProperty m_drawAudioChannels;
     SerializedProperty m_drawCsoundString;
+    SerializedProperty m_showRuntimeEnvironmentPath;
 
+    private Vector2 scrollPos;
     bool drawEnvSettings;
+    ReorderableList envList;
 
     void OnEnable()
     {
@@ -82,13 +87,24 @@ public class CsoundUnityEditor : Editor
         m_drawSettings = this.serializedObject.FindProperty("_drawSettings");
         m_drawChannels = this.serializedObject.FindProperty("_drawChannels");
         m_drawAudioChannels = this.serializedObject.FindProperty("_drawAudioChannels");
+        m_showRuntimeEnvironmentPath = this.serializedObject.FindProperty("_showRuntimeEnvironmentPath");
 
+        envList = new ReorderableList(serializedObject, m_enviromentSettings, true, true, true, true)
+        {
+            drawElementCallback = DrawEnvListItems,
+            drawHeaderCallback = DrawEnvHeader,
+            onAddCallback = EnvironmentSettingAddCallback,
+            elementHeightCallback = EnvironmentSettingsHeightCallback
+        };
     }
 
     public override void OnInspectorGUI()
     {
+        base.DrawDefaultInspector();
+
         this.serializedObject.Update();
 
+        EditorGUILayout.Space();
         DrawCaption();
 
         DropAreaGUI();
@@ -128,21 +144,16 @@ public class CsoundUnityEditor : Editor
             if (m_loudVolumeWarning.boolValue)
                 m_loudWarningThreshold.floatValue = EditorGUILayout.FloatField("Warning Threshold", m_loudWarningThreshold.floatValue, GUILayout.MaxWidth(Screen.width / 2 + 20));
 
-            EditorGUILayout.Space(10);
+            EditorGUILayout.Space();
             EditorGUI.indentLevel++;
             drawEnvSettings = EditorGUILayout.Foldout(drawEnvSettings, "Csound Global Environment Folders");
-            if(drawEnvSettings)
+            if (drawEnvSettings)
             {
                 EditorGUI.indentLevel++;
-                EditorGUILayout.PropertyField(m_enviromentSettings);
-                EditorGUILayout.Space(10);
-                EditorGUILayout.LabelField("Added Environment Variables: ");
-                foreach (var env in csoundUnity.environmentSettings)
-                {
-                    EditorGUILayout.LabelField(env.GetPathDescriptor());
-                }
+                envList.DoLayoutList();
                 EditorGUI.indentLevel--;
             }
+
             EditorGUI.indentLevel--;
         }
     }
@@ -165,19 +176,20 @@ public class CsoundUnityEditor : Editor
                     captionFound = true;
                 }
             }
-            if (!captionFound) infoText = "No file selected";
+            if (!captionFound) infoText = "No title";
         }
 
         EditorGUILayout.HelpBox(infoText, MessageType.None);
+        EditorGUILayout.Space();
         EditorGUILayout.LabelField("Csound file", m_csoundFileName.stringValue);
     }
 
-    private Vector2 scrollPos;
-
-    private void DrawCsdString() {
+    private void DrawCsdString()
+    {
 
         m_drawCsoundString.boolValue = EditorGUILayout.Foldout(m_drawCsoundString.boolValue, "Edit Csd Section", true);
-        if (m_drawCsoundString.boolValue && m_csoundString.stringValue.Length > 30) {
+        if (m_drawCsoundString.boolValue && m_csoundString.stringValue.Length > 30)
+        {
             var lines = m_csoundString.stringValue.Split('\n').Length;
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(Mathf.Min(Mathf.Max(30, lines * 30), 500f)));
 
@@ -187,13 +199,15 @@ public class CsoundUnityEditor : Editor
 
             EditorGUILayout.HelpBox("You can modify the csd file content, and you can test the changes pressing play. \nTo save the changes on the csd file, press the button below", MessageType.None);
 
-            if (GUILayout.Button("Save CSD on disk")) {
+            if (GUILayout.Button("Save CSD on disk"))
+            {
                 var path = AssetDatabase.GUIDToAssetPath(m_csoundFileGUID.stringValue);
                 Debug.Log($"saving csd at path {path}");
                 File.WriteAllText(path, m_csoundString.stringValue);
             }
         }
     }
+
     private void DrawTestScore()
     {
         m_drawTestScore.boolValue = EditorGUILayout.Foldout(m_drawTestScore.boolValue, "Test Score Section", true);
@@ -207,7 +221,7 @@ public class CsoundUnityEditor : Editor
                 Debug.Log("sending score: " + m_csoundScore.stringValue);
                 csoundUnity.SendScoreEvent(m_csoundScore.stringValue);
             }
-        }     
+        }
     }
 
     private void DrawAvailableChannelsList()
@@ -313,7 +327,8 @@ public class CsoundUnityEditor : Editor
                         EditorGUI.BeginChangeCheck();
                         var options = cc.FindPropertyRelative("options");
                         var strings = new string[options.arraySize];
-                        for (var s = 0; s < strings.Length; s++) {
+                        for (var s = 0; s < strings.Length; s++)
+                        {
                             strings[s] = options.GetArrayElementAtIndex(s).stringValue;
                         }
                         chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, strings);
@@ -348,6 +363,134 @@ public class CsoundUnityEditor : Editor
                     }
                 }
         }
+    }
+
+    void EnvironmentSettingAddCallback(ReorderableList list)
+    {
+        SerializedProperty addedElement;
+        list.serializedProperty.arraySize++;
+        addedElement = list.serializedProperty.GetArrayElementAtIndex(list.serializedProperty.arraySize - 1);
+        addedElement.FindPropertyRelative("foldout").boolValue = true;
+    }
+
+    float EnvironmentSettingsHeightCallback(int index)
+    {
+        var margin = 2;
+        return m_enviromentSettings.GetArrayElementAtIndex(index).FindPropertyRelative("foldout").boolValue ?
+            5 * EditorGUIUtility.singleLineHeight + margin * 4 :
+            EditorGUIUtility.singleLineHeight;
+    }
+
+    void DrawEnvListItems(Rect rect, int index, bool isActive, bool isFocused)
+    {
+        var elem = envList.serializedProperty.GetArrayElementAtIndex(index);
+        var platform = elem.FindPropertyRelative("platform");
+        var envType = elem.FindPropertyRelative("type");
+        var baseFolder = elem.FindPropertyRelative("baseFolder");
+        var suffix = elem.FindPropertyRelative("suffix");
+        var foldout = elem.FindPropertyRelative("foldout");
+        DrawEnvironmentSettingContextMenu(rect, csoundUnity.environmentSettings[index], index);
+
+        var h = EditorGUIUtility.singleLineHeight;
+        var margin = 2;
+
+        var descr = csoundUnity.environmentSettings[index].GetPathDescriptor(m_showRuntimeEnvironmentPath.boolValue);
+        var path = csoundUnity.environmentSettings[index].GetPath(m_showRuntimeEnvironmentPath.boolValue);
+
+        EditorGUI.indentLevel++;
+        {
+            foldout.boolValue = EditorGUI.Foldout(new Rect(rect.x, rect.y, 10, h), foldout.boolValue, "", false);
+            if (EditorGUI.LinkButton(new Rect(rect.x + 25, rect.y, rect.width - 27, h), descr))
+            {
+                Application.OpenURL($"file://{path}");
+            }
+
+            if (foldout.boolValue)
+            {
+                EditorGUI.PropertyField(
+                    new Rect(rect.x, rect.y + h + margin, rect.width, h),
+                    platform
+                    );
+                EditorGUI.PropertyField(
+                    new Rect(rect.x, rect.y + h * 2 + margin * 2, rect.width, h),
+                    envType
+                    );
+                EditorGUI.PropertyField(
+                    new Rect(rect.x, rect.y + h * 3 + margin * 3, rect.width, h),
+                    baseFolder
+                    );
+                EditorGUI.PropertyField(
+                    new Rect(rect.x, rect.y + h * 4 + margin * 4, rect.width, h),
+                    suffix
+                    );
+            }
+        }
+        EditorGUI.indentLevel--;
+    }
+
+    void DrawEnvHeader(Rect rect)
+    {
+        m_showRuntimeEnvironmentPath.boolValue = EditorGUI.Toggle(rect, "Runtime paths", m_showRuntimeEnvironmentPath.boolValue);
+    }
+
+    void DrawEnvironmentSettingContextMenu(Rect rect, object settings, int index)
+    {
+        Event current = Event.current;
+
+        if (rect.Contains(current.mousePosition) && current.type == EventType.ContextClick)
+        {
+            GenericMenu menu = new GenericMenu();
+            menu.AddItem(new GUIContent("Copy"), false, CopyEnvSetting, settings);
+            menu.AddItem(new GUIContent("Paste"), false, PasteEnvSetting, index);
+            menu.AddSeparator("");
+            menu.AddItem(new GUIContent("Copy all Settings"), false, CopyEnvSettings);
+            menu.AddItem(new GUIContent("Paste all Settings"), false, PasteEnvSettings);
+            menu.ShowAsContext();
+            current.Use();
+        }
+    }
+
+    void CopyEnvSetting(object setting)
+    {
+        var data = setting as EnvironmentSettings;
+        EditorGUIUtility.systemCopyBuffer = JsonUtility.ToJson(data);
+        //Debug.Log($"Copied {JsonUtility.ToJson(data)}");
+    }
+
+    void PasteEnvSetting(object settingIndex)
+    {
+        if (string.IsNullOrWhiteSpace(EditorGUIUtility.systemCopyBuffer)) return;
+        var clipboardData = JsonUtility.FromJson<EnvironmentSettings>(EditorGUIUtility.systemCopyBuffer);
+        if (clipboardData == null) return;
+
+        csoundUnity.environmentSettings[(int)settingIndex] = clipboardData;
+        //Debug.Log($"Pasted {JsonUtility.ToJson(clipboardData)}");
+    }
+
+    void CopyEnvSettings()
+    {
+        var container = new EnvironmentSettingsContainer();
+        container.environmentSettings = csoundUnity.environmentSettings;
+        var data = JsonUtility.ToJson(container);
+
+        EditorGUIUtility.systemCopyBuffer = data;
+        //Debug.Log($"Copied {data}");
+    }
+
+    void PasteEnvSettings()
+    {
+        if (string.IsNullOrWhiteSpace(EditorGUIUtility.systemCopyBuffer)) return;
+        var clipboardData = JsonUtility.FromJson<EnvironmentSettingsContainer>(EditorGUIUtility.systemCopyBuffer);
+        if (clipboardData == null) return;
+        csoundUnity.environmentSettings = clipboardData.environmentSettings;
+    }
+
+    /// <summary>
+    /// An utility class to be able to serialize the environmentSettings list
+    /// </summary>
+    class EnvironmentSettingsContainer
+    {
+        public List<EnvironmentSettings> environmentSettings;
     }
 
     public void SetCsd(string guid)
