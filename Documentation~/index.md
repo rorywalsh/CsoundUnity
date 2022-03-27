@@ -1,4 +1,4 @@
-# Documentation v3.2.0 #
+# Documentation v3.3.0 #
 
   * [How to import CsoundUnity](#how-to-import)
   * [Getting Started](#getting-started)
