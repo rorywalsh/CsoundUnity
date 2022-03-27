@@ -1,6 +1,6 @@
 # Documentation v3.3.0 #
 
-  * [How to import CsoundUnity](#how-to-import)
+  * [How to import CsoundUnity](importing.md)
   * [Getting Started](#getting-started)
   * [Controlling Csound from Unity Scripts](#controlling-csound-from-unity-scripts)
     + [Csound's channel system](#csound-s-channel-system)
