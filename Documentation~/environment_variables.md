@@ -9,7 +9,7 @@ You can add as many Environment Variables as you want. Be aware that a duplicate
 
 In the following image, we are setting the *SFDIR* folder for all the supported platforms to the *Application.PersistentDataPath*, inside a *CsoundFiles* folder:
  
-<img src="images/load_sf2_files.png" alt="Load SF2 files"/>
+<img src="images/sfdir.png" alt="Load SF2 files"/>
 
 Those Environment variables will be set **BEFORE** the **CsoundUnity** instance starts.
 Be sure to copy the needed files in a directory where **CsoundUnity** will have access to.  
@@ -20,6 +20,6 @@ Look at the [EnvironmentVars](https://github.com/rorywalsh/CsoundUnity/tree/mast
 
 For the platforms other than **Android** you can safely use the *StreamingAssets* folder.
 
-### Notes ###
-You will see a list (*Added Environment Settings*) of the settings you have made, and the full path of each resulting folder.  
-Please be aware that the reported folders in the list are not correct for some platforms when running on the Unity Editor. That is because we're using the Unity return value for *Application.StreamingAssets* and *Application.PersistentDataPath*. So you will get the same result for every platform, and the value will depend on the platform you're using to develop  (Windows or MacOS). But don't worry, the settings will be correct when you build for that platform. This will be fixed soon in a future version of **CsoundUnity**.
+You can preview the paths that will be used at runtime for each platform selecting the "Runtime paths" toggle. This setting won't have any active effect, but this info can be helpful during development.  
+When this toggle is not selected you will be able to open the folder related to your development platform just by clicking the shown path.  
+The environment settings have copy-paste support.
