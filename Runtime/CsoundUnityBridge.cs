@@ -94,7 +94,7 @@ public class CsoundUnityBridge
     /// </summary>
     /// <param name="csdFile">The Csound (.csd) file content as a string</param>
     /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
-    public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
+    public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings, int sampleRate)
     {
          SetEnvironmentSettings(environmentSettings);
 
@@ -124,8 +124,8 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundSetOption(csound, "-d");
 
         var parms = GetParams();
-        parms.control_rate_override = AudioSettings.outputSampleRate;
-        parms.sample_rate_override = AudioSettings.outputSampleRate;
+        parms.control_rate_override = sampleRate;
+        parms.sample_rate_override = sampleRate;
         SetParams(parms);
 
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);

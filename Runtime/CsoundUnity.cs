@@ -250,6 +250,13 @@ public class CsoundUnity : MonoBehaviour
     /// If false, no processing occurs on the attached AudioClip
     /// </summary>
     [HideInInspector] public bool processClipAudio;
+	
+	/// <summary>
+    /// Sample Rate of the Csound instance
+    /// Used to calculate AudioSource pitch offset
+	/// Ensures that OnAudioFilterRead runs at/near the same rate as Csound
+    /// </summary>
+	[HideInInspector] public int sampleRate = 48000;
 
     /// <summary>
     /// If true it will print warnings in the console when the output volume is too high, 
@@ -398,7 +405,8 @@ public class CsoundUnity : MonoBehaviour
         /// the CsoundUnityBridge constructor the string with the csound code and a list of the Global Environment Variables Settings.
         /// It then calls createCsound() to create an instance of Csound and compile the csd string.
         /// After this we start the performance of Csound.
-        csound = new CsoundUnityBridge(_csoundString, environmentSettings);
+        csound = new CsoundUnityBridge(_csoundString, environmentSettings, sampleRate);
+		SetAudioSourcePitch();
         if (csound != null)
         {
             /// channels are created when a csd file is selected in the inspector
@@ -1473,6 +1481,20 @@ public class CsoundUnity : MonoBehaviour
 
 
     #region PRIVATE_METHODS
+	
+	private void SetAudioSourcePitch()
+	{
+		if (!audioSource)
+		{
+			audioSource = GetComponent<AudioSource>();
+		}
+		audioSource.pitch = ((float)sampleRate / AudioSettings.outputSampleRate);
+	}
+
+	private void OnValidate()
+	{
+		SetAudioSourcePitch();
+	}
 
     void OnAudioFilterRead(float[] data, int channels)
     {
