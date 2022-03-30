@@ -45,7 +45,7 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_csoundString;
     SerializedProperty m_csoundScore;
     SerializedProperty m_processAudio;
-	SerializedProperty m_sampleRate;
+    SerializedProperty m_sampleRate;
     SerializedProperty m_mute;
     SerializedProperty m_logCsoundOutput;
     SerializedProperty m_loudVolumeWarning;
@@ -75,7 +75,7 @@ public class CsoundUnityEditor : Editor
         m_csoundString = this.serializedObject.FindProperty("_csoundString");
         m_csoundScore = this.serializedObject.FindProperty("csoundScore");
         m_processAudio = this.serializedObject.FindProperty("processClipAudio");
-		m_sampleRate = this.serializedObject.FindProperty("sampleRate");
+        m_sampleRate = this.serializedObject.FindProperty("sampleRate");
         m_mute = this.serializedObject.FindProperty("mute");
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
         m_loudVolumeWarning = this.serializedObject.FindProperty("loudVolumeWarning");
@@ -135,7 +135,7 @@ public class CsoundUnityEditor : Editor
         if (m_drawSettings.boolValue)
         {
             EditorGUI.BeginChangeCheck();
-			m_sampleRate.intValue = EditorGUILayout.IntField("Sample Rate", m_sampleRate.intValue);
+            m_sampleRate.intValue = EditorGUILayout.IntField("Sample Rate", m_sampleRate.intValue);
             m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
             if (EditorGUI.EndChangeCheck())
             {

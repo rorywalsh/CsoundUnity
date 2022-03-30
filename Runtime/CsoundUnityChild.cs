@@ -108,7 +108,7 @@ public class CsoundUnityChild : MonoBehaviour
         audioSource.velocityUpdateMode = AudioVelocityUpdateMode.Fixed;
         audioSource.spatialBlend = 1.0f;
         audioSource.spatializePostEffects = true;
-		audioSource.pitch = ((float)csoundUnity.sampleRate / AudioSettings.outputSampleRate);
+        audioSource.pitch = ((float)csoundUnity.sampleRate / AudioSettings.outputSampleRate);
 
         // this will invert the audio channels
         // 0---------180-----360
