@@ -49,6 +49,8 @@ public class CsoundUnityBridge
         if (environmentSettings == null || environmentSettings.Count == 0) return;
         foreach (var env in environmentSettings)
         {
+            if (env == null || string.IsNullOrWhiteSpace(env.GetPath())) continue;
+
             switch (Application.platform)
             {
                 case RuntimePlatform.OSXEditor:
