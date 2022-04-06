@@ -400,11 +400,14 @@ public class CsoundUnityEditor : Editor
         EditorGUI.indentLevel++;
         {
             foldout.boolValue = EditorGUI.Foldout(new Rect(rect.x, rect.y, 10, h), foldout.boolValue, "", false);
+#if UNITY_2021_1_OR_NEWER
             if (EditorGUI.LinkButton(new Rect(rect.x + 25, rect.y, rect.width - 27, h), descr))
             {
                 Application.OpenURL($"file://{path}");
             }
-
+#else
+           EditorGUI.LabelField(new Rect(rect.x + 25, rect.y, rect.width - 27, h), descr);
+#endif
             if (foldout.boolValue)
             {
                 EditorGUI.PropertyField(
