@@ -24,37 +24,12 @@
 */
 var NAVTREE =
 [
-  [ "CsoundUnity", "index.html", [
-    [ "Packages", "namespaces.html", [
-      [ "Packages", "namespaces.html", "namespaces_dup" ]
-    ] ],
-    [ "Classes", "annotated.html", [
-      [ "Class List", "annotated.html", "annotated_dup" ],
-      [ "Class Index", "classes.html", null ],
-      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
-      [ "Class Members", "functions.html", [
-        [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", null ],
-        [ "Variables", "functions_vars.html", null ],
-        [ "Enumerations", "functions_enum.html", null ],
-        [ "Properties", "functions_prop.html", null ],
-        [ "Events", "functions_evnt.html", null ]
-      ] ]
-    ] ],
-    [ "Files", "files.html", [
-      [ "File List", "files.html", "files_dup" ],
-      [ "File Members", "globals.html", [
-        [ "All", "globals.html", null ],
-        [ "Enumerations", "globals_enum.html", null ]
-      ] ]
-    ] ]
-  ] ]
+  [ "CsoundUnity", "index.html", ]
 ];
 
 var NAVTREEINDEX =
 [
-"_csound_csharp_8cs.html",
-"class_environment_settings.html#a8de029ef327a9ba80a673a73338aca78"
+"index.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
