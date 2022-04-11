@@ -1,3 +1,7 @@
+## [3.3.1] - 2022-04-11
+
+- fix for LinkButton not available in Unity versions < 2021.1
+
 ## [3.3.0] - 2022-03-27
 
 - added VU Meters to the inspector;
