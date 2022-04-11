@@ -406,7 +406,7 @@ public class CsoundUnityEditor : Editor
                 Application.OpenURL($"file://{path}");
             }
 #else
-           EditorGUI.LabelField(new Rect(rect.x + 25, rect.y, rect.width - 27, h), descr);
+           EditorGUI.TextField(new Rect(rect.x + 25, rect.y, rect.width - 27, h), descr);
 #endif
             if (foldout.boolValue)
             {
