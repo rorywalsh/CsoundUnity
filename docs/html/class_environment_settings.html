@@ -25,7 +25,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;3.2.0</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;3.3.1</span>
    </div>
    <div id="projectbrief">Csound wrapper for the Unity game engine.</div>
   </td>
@@ -96,14 +96,15 @@ $(document).ready(function(){initNavTree('class_environment_settings.html',''); 
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abb061f0c65c25a6983191078f0ff42f7"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment_settings.html#abb061f0c65c25a6983191078f0ff42f7">GetPath</a> ()</td></tr>
-<tr class="separator:abb061f0c65c25a6983191078f0ff42f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e9fccddf736c1389b31c59c41ca3298"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment_settings.html#a2e9fccddf736c1389b31c59c41ca3298">GetPath</a> (bool runtime=false)</td></tr>
+<tr class="memdesc:a2e9fccddf736c1389b31c59c41ca3298"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the runtime bool true on Editor for debug purposes only, let Unity detect the correct path with Application.persistentDataPath  <a href="class_environment_settings.html#a2e9fccddf736c1389b31c59c41ca3298">More...</a><br /></td></tr>
+<tr class="separator:a2e9fccddf736c1389b31c59c41ca3298"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0d43f4ab90e05020a795bf4656d96f7"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment_settings.html#af0d43f4ab90e05020a795bf4656d96f7">GetTypeString</a> ()</td></tr>
 <tr class="separator:af0d43f4ab90e05020a795bf4656d96f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9edca74445c4aa03938a24a55d7a494"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment_settings.html#af9edca74445c4aa03938a24a55d7a494">GetPlatformString</a> ()</td></tr>
 <tr class="separator:af9edca74445c4aa03938a24a55d7a494"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fc5c90924d9e123e2806f9145a32527"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment_settings.html#a1fc5c90924d9e123e2806f9145a32527">GetPathDescriptor</a> ()</td></tr>
-<tr class="separator:a1fc5c90924d9e123e2806f9145a32527"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2d5303d457fb18cc5955df8c0680d5d"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment_settings.html#ac2d5303d457fb18cc5955df8c0680d5d">GetPathDescriptor</a> (bool runtime)</td></tr>
+<tr class="separator:ac2d5303d457fb18cc5955df8c0680d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -115,12 +116,14 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ab91c24240141cd5a62c38678558aaa7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9ecd09f5500c5646ba86911b3626f48"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment_settings.html#ac9ecd09f5500c5646ba86911b3626f48">suffix</a></td></tr>
 <tr class="separator:ac9ecd09f5500c5646ba86911b3626f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44f81b074838bb1459a68448b4be0cc8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_environment_settings.html#a44f81b074838bb1459a68448b4be0cc8">foldout</a></td></tr>
+<tr class="separator:a44f81b074838bb1459a68448b4be0cc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >This class describes a setting that is meant to be used to set Csound's Global Environment Variables </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="abb061f0c65c25a6983191078f0ff42f7" name="abb061f0c65c25a6983191078f0ff42f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb061f0c65c25a6983191078f0ff42f7">&#9670;&nbsp;</a></span>GetPath()</h2>
+<a id="a2e9fccddf736c1389b31c59c41ca3298" name="a2e9fccddf736c1389b31c59c41ca3298"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e9fccddf736c1389b31c59c41ca3298">&#9670;&nbsp;</a></span>GetPath()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -128,16 +131,26 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">string EnvironmentSettings.GetPath </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>runtime</em> = <code>false</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Set the runtime bool true on Editor for debug purposes only, let Unity detect the correct path with Application.persistentDataPath </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">runtime</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
 </div>
 </div>
-<a id="a1fc5c90924d9e123e2806f9145a32527" name="a1fc5c90924d9e123e2806f9145a32527"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1fc5c90924d9e123e2806f9145a32527">&#9670;&nbsp;</a></span>GetPathDescriptor()</h2>
+<a id="ac2d5303d457fb18cc5955df8c0680d5d" name="ac2d5303d457fb18cc5955df8c0680d5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2d5303d457fb18cc5955df8c0680d5d">&#9670;&nbsp;</a></span>GetPathDescriptor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -145,7 +158,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">string EnvironmentSettings.GetPathDescriptor </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>runtime</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -202,6 +216,20 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a44f81b074838bb1459a68448b4be0cc8" name="a44f81b074838bb1459a68448b4be0cc8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44f81b074838bb1459a68448b4be0cc8">&#9670;&nbsp;</a></span>foldout</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool EnvironmentSettings.foldout</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a8de029ef327a9ba80a673a73338aca78" name="a8de029ef327a9ba80a673a73338aca78"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8de029ef327a9ba80a673a73338aca78">&#9670;&nbsp;</a></span>platform</h2>
 
@@ -245,7 +273,7 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li><a class="el" href="_csound_unity_8cs.html">CsoundUnity.cs</a></li>
+<li>CsoundUnity_DevelopmentProject/Packages/CsoundUnity/Runtime/<a class="el" href="_csound_unity_8cs.html">CsoundUnity.cs</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

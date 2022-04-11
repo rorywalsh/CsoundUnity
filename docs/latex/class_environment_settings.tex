@@ -8,13 +8,13 @@ This class describes a setting that is meant to be used to set Csound\textquotes
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-string \mbox{\hyperlink{class_environment_settings_abb061f0c65c25a6983191078f0ff42f7}{Get\+Path}} ()
-\item 
+string \mbox{\hyperlink{class_environment_settings_a2e9fccddf736c1389b31c59c41ca3298}{Get\+Path}} (bool runtime=false)
+\begin{DoxyCompactList}\small\item\em Set the runtime bool true on Editor for debug purposes only, let Unity detect the correct path with Application.\+persistent\+Data\+Path \end{DoxyCompactList}\item 
 string \mbox{\hyperlink{class_environment_settings_af0d43f4ab90e05020a795bf4656d96f7}{Get\+Type\+String}} ()
 \item 
 string \mbox{\hyperlink{class_environment_settings_af9edca74445c4aa03938a24a55d7a494}{Get\+Platform\+String}} ()
 \item 
-string \mbox{\hyperlink{class_environment_settings_a1fc5c90924d9e123e2806f9145a32527}{Get\+Path\+Descriptor}} ()
+string \mbox{\hyperlink{class_environment_settings_ac2d5303d457fb18cc5955df8c0680d5d}{Get\+Path\+Descriptor}} (bool runtime)
 \end{DoxyCompactItemize}
 \doxysubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -26,6 +26,8 @@ string \mbox{\hyperlink{class_environment_settings_a1fc5c90924d9e123e2806f9145a3
 \mbox{\hyperlink{_csound_unity_8cs_adf147fc136a7bd08a036a1399fdbe4fd}{Environment\+Path\+Origin}} \mbox{\hyperlink{class_environment_settings_ab91c24240141cd5a62c38678558aaa7a}{base\+Folder}}
 \item 
 string \mbox{\hyperlink{class_environment_settings_ac9ecd09f5500c5646ba86911b3626f48}{suffix}}
+\item 
+bool \mbox{\hyperlink{class_environment_settings_a44f81b074838bb1459a68448b4be0cc8}{foldout}}
 \end{DoxyCompactItemize}
 
 
@@ -33,17 +35,29 @@ string \mbox{\hyperlink{class_environment_settings_ac9ecd09f5500c5646ba86911b362
 This class describes a setting that is meant to be used to set Csound\textquotesingle{}s Global Environment Variables 
 
 \doxysubsection{Member Function Documentation}
-\mbox{\Hypertarget{class_environment_settings_abb061f0c65c25a6983191078f0ff42f7}\label{class_environment_settings_abb061f0c65c25a6983191078f0ff42f7}} 
+\mbox{\Hypertarget{class_environment_settings_a2e9fccddf736c1389b31c59c41ca3298}\label{class_environment_settings_a2e9fccddf736c1389b31c59c41ca3298}} 
 \index{EnvironmentSettings@{EnvironmentSettings}!GetPath@{GetPath}}
 \index{GetPath@{GetPath}!EnvironmentSettings@{EnvironmentSettings}}
 \doxysubsubsection{\texorpdfstring{GetPath()}{GetPath()}}
-{\footnotesize\ttfamily string Environment\+Settings.\+Get\+Path (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily string Environment\+Settings.\+Get\+Path (\begin{DoxyParamCaption}\item[{bool}]{runtime = {\ttfamily false} }\end{DoxyParamCaption})}
 
-\mbox{\Hypertarget{class_environment_settings_a1fc5c90924d9e123e2806f9145a32527}\label{class_environment_settings_a1fc5c90924d9e123e2806f9145a32527}} 
+
+
+Set the runtime bool true on Editor for debug purposes only, let Unity detect the correct path with Application.\+persistent\+Data\+Path 
+
+
+\begin{DoxyParams}{Parameters}
+{\em runtime} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_environment_settings_ac2d5303d457fb18cc5955df8c0680d5d}\label{class_environment_settings_ac2d5303d457fb18cc5955df8c0680d5d}} 
 \index{EnvironmentSettings@{EnvironmentSettings}!GetPathDescriptor@{GetPathDescriptor}}
 \index{GetPathDescriptor@{GetPathDescriptor}!EnvironmentSettings@{EnvironmentSettings}}
 \doxysubsubsection{\texorpdfstring{GetPathDescriptor()}{GetPathDescriptor()}}
-{\footnotesize\ttfamily string Environment\+Settings.\+Get\+Path\+Descriptor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+{\footnotesize\ttfamily string Environment\+Settings.\+Get\+Path\+Descriptor (\begin{DoxyParamCaption}\item[{bool}]{runtime }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{class_environment_settings_af9edca74445c4aa03938a24a55d7a494}\label{class_environment_settings_af9edca74445c4aa03938a24a55d7a494}} 
 \index{EnvironmentSettings@{EnvironmentSettings}!GetPlatformString@{GetPlatformString}}
@@ -65,6 +79,12 @@ This class describes a setting that is meant to be used to set Csound\textquotes
 \index{baseFolder@{baseFolder}!EnvironmentSettings@{EnvironmentSettings}}
 \doxysubsubsection{\texorpdfstring{baseFolder}{baseFolder}}
 {\footnotesize\ttfamily \mbox{\hyperlink{_csound_unity_8cs_adf147fc136a7bd08a036a1399fdbe4fd}{Environment\+Path\+Origin}} Environment\+Settings.\+base\+Folder}
+
+\mbox{\Hypertarget{class_environment_settings_a44f81b074838bb1459a68448b4be0cc8}\label{class_environment_settings_a44f81b074838bb1459a68448b4be0cc8}} 
+\index{EnvironmentSettings@{EnvironmentSettings}!foldout@{foldout}}
+\index{foldout@{foldout}!EnvironmentSettings@{EnvironmentSettings}}
+\doxysubsubsection{\texorpdfstring{foldout}{foldout}}
+{\footnotesize\ttfamily bool Environment\+Settings.\+foldout}
 
 \mbox{\Hypertarget{class_environment_settings_a8de029ef327a9ba80a673a73338aca78}\label{class_environment_settings_a8de029ef327a9ba80a673a73338aca78}} 
 \index{EnvironmentSettings@{EnvironmentSettings}!platform@{platform}}
@@ -88,4 +108,4 @@ This class describes a setting that is meant to be used to set Csound\textquotes
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{_csound_unity_8cs}{Csound\+Unity.\+cs}}\end{DoxyCompactItemize}
+Csound\+Unity\+\_\+\+Development\+Project/\+Packages/\+Csound\+Unity/\+Runtime/\mbox{\hyperlink{_csound_unity_8cs}{Csound\+Unity.\+cs}}\end{DoxyCompactItemize}
