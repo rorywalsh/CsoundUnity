@@ -395,10 +395,22 @@ public class CsoundUnity : MonoBehaviour
             audioSource.Play();
         }
 
+        string csoundDir = Path.GetFullPath(Path.Combine("Packages", packageName, "Runtime"));
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+        csoundDir = Path.Combine(csoundDir, "Win64"); // Csound plugin libraries in Windows Editor
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
+        csoundDir = Path.Combine(dataPath, "macOS");
+#elif UNITY_ANDROID
+        csoundDir = Path.Combine(dataPath, "Android");
+#elif UNITY_IOS
+        csoundDir = Path.Combine(dataPath, "iOS");
+#endif
+
         /// the CsoundUnityBridge constructor the string with the csound code and a list of the Global Environment Variables Settings.
         /// It then calls createCsound() to create an instance of Csound and compile the csd string.
         /// After this we start the performance of Csound.
-        csound = new CsoundUnityBridge(_csoundString, environmentSettings);
+        csound = new CsoundUnityBridge(_csoundString, csoundDir, environmentSettings);
         if (csound != null)
         {
             /// channels are created when a csd file is selected in the inspector

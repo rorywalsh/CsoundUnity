@@ -96,20 +96,21 @@ public class CsoundUnityBridge
     /// </summary>
     /// <param name="csdFile">The Csound (.csd) file content as a string</param>
     /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
-    public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
+    public CsoundUnityBridge(string csdFile, string csoundDir, List<EnvironmentSettings> environmentSettings)
     {
-         SetEnvironmentSettings(environmentSettings);
 
-        // KEEP THIS FOR REFERENCE ;)
-        //#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
-        //        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-        //#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        //        var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.bundle/Contents/MacOS"));
-        //        //Debug.Log($"opcodePath {opcodePath} exists? " + Directory.Exists(opcodePath));
-        //        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
-        //#elif UNITY_ANDROID
-        //        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-        //#endif
+#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
+        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
+#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS
+        var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.bundle/Contents/MacOS"));
+        //Debug.Log($"opcodePath {opcodePath} exists? " + Directory.Exists(opcodePath));
+        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
+#elif UNITY_ANDROID
+        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
+#endif
+
+        // the above setting could be overridden by the EnvironmentSettings
+        SetEnvironmentSettings(environmentSettings);
 
         Csound6.NativeMethods.csoundInitialize(1);
         csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero);
