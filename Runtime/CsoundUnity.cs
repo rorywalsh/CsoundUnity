@@ -400,11 +400,11 @@ public class CsoundUnity : MonoBehaviour
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
         csoundDir = Path.Combine(csoundDir, "Win64"); // Csound plugin libraries in Windows Editor
 #elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-        csoundDir = Path.Combine(dataPath, "macOS");
+        csoundDir = Path.Combine(csoundDir, "macOS");
 #elif UNITY_ANDROID
-        csoundDir = Path.Combine(dataPath, "Android");
+        csoundDir = Path.Combine(csoundDir, "Android");
 #elif UNITY_IOS
-        csoundDir = Path.Combine(dataPath, "iOS");
+        csoundDir = Path.Combine(csoundDir, "iOS");
 #endif
 
         /// the CsoundUnityBridge constructor the string with the csound code and a list of the Global Environment Variables Settings.
