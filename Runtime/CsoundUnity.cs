@@ -1524,10 +1524,10 @@ public class CsoundUnity : MonoBehaviour
         var presetName = Path.GetFileName(path);
 
 #if UNITY_ANDROID || UNITY_IOS
-        StartCoroutine(LoadingPreset(path, (data) => 
+        StartCoroutine(LoadingPreset(path, (data) =>
         {
             SetPreset(presetName, data);
-        });
+        }));
 #else
         if (!File.Exists(path))
         {
@@ -1550,10 +1550,10 @@ public class CsoundUnity : MonoBehaviour
         var presetName = Path.GetFileName(path);
 
 #if UNITY_ANDROID || UNITY_IOS
-        StartCoroutine(LoadingPreset(path, (data) => 
+        StartCoroutine(LoadingPreset(path, (data) =>
         {
-            SetGlobalPreset(presetName, data);
-        });
+            SetPreset(presetName, data);
+        }));
 #else
         if (!File.Exists(path))
         {
