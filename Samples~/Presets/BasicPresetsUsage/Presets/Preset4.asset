@@ -1,0 +1,204 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc83b726b41f0c4ba68dac38255a4dd, type: 3}
+  m_Name: Preset4
+  m_EditorClassIdentifier: 
+  presetName: Preset4
+  csoundFileName: BasicPresetsUsage.csd
+  channels:
+  - type: form
+    channel: 
+    text: 
+    caption: BasicPresetsUsage
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: gain
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+  - type: hslider
+    channel: freq
+    text: 
+    caption: 
+    min: 10
+    max: 2200
+    value: 55
+    skew: 0
+    increment: 0
+    options: []
+  - type: hslider
+    channel: modFreq
+    text: 
+    caption: 
+    min: 0
+    max: 200
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm1
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm2
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0.678
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm3
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0.803
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm4
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0.762
+    skew: 0
+    increment: 0
+    options: []
+  - type: combobox
+    channel: carWaveform
+    text: 
+    caption: 
+    min: 1
+    max: 3
+    value: 2
+    skew: 0
+    increment: 0
+    options:
+    - carW1
+    - carW2
+    - carW3
+  - type: combobox
+    channel: modWaveform
+    text: 
+    caption: 
+    min: 1
+    max: 3
+    value: 1
+    skew: 0
+    increment: 0
+    options:
+    - modW1
+    - modW2
+    - modW3
+  - type: rslider
+    channel: modIndex
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: lfoAmp
+    text: 
+    caption: 
+    min: 0
+    max: 0.99
+    value: 0.648
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: lfoFreq
+    text: 
+    caption: 
+    min: 0
+    max: 30
+    value: 1.7
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: lfoAmpRand
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0.752
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: lfoFreqRand
+    text: 
+    caption: 
+    min: 0
+    max: 30
+    value: 17.8
+    skew: 0
+    increment: 0
+    options: []
+  - type: checkbox
+    channel: filtOn
+    text: 
+    caption: 
+    min: 0
+    max: 0
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: filtFreq
+    text: 
+    caption: 
+    min: 0
+    max: 16000
+    value: 5902
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: filtRes
+    text: 
+    caption: 
+    min: 0
+    max: 1.99
+    value: 0.931
+    skew: 0
+    increment: 0
+    options: []
+  _drawChannels: 1

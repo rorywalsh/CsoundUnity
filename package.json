@@ -65,6 +65,11 @@
 	  "displayName":"Environment Vars",
 	  "description": "Using Global Environment Vars to customize Csound",
 	  "path": "Samples~/EnvironmentVars"
+	},
+	{
+	  "displayName":"Presets",
+	  "description": "Using Presets",
+	  "path": "Samples~/Presets"
 	}
   ]
 }

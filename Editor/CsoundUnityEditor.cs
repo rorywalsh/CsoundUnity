@@ -40,6 +40,7 @@ public class CsoundUnityEditor : Editor
     public static CsoundUnityEditor window;
 
     SerializedProperty m_csoundFileName;
+    SerializedProperty m_currentPreset;
     SerializedProperty m_csoundAsset;
     SerializedProperty m_csoundFileGUID;
     SerializedProperty m_csoundString;
@@ -58,17 +59,22 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_drawChannels;
     SerializedProperty m_drawAudioChannels;
     SerializedProperty m_drawCsoundString;
+    SerializedProperty m_drawPresets;
     SerializedProperty m_showRuntimeEnvironmentPath;
 
     private Vector2 scrollPos;
     bool drawEnvSettings;
     ReorderableList envList;
+    private string _presetName;
+    private string[] _csoundUnityPresetAssetsGUIDs;
+    private List<CsoundUnityPreset> _assignablePresets;
 
     void OnEnable()
     {
         csoundUnity = (CsoundUnity)target;
 
         m_csoundFileName = this.serializedObject.FindProperty("_csoundFileName");
+        m_currentPreset = this.serializedObject.FindProperty("_currentPreset");
         m_csoundAsset = this.serializedObject.FindProperty("_csoundAsset");
         m_csoundFileGUID = this.serializedObject.FindProperty("_csoundFileGUID");
         m_csoundString = this.serializedObject.FindProperty("_csoundString");
@@ -87,6 +93,7 @@ public class CsoundUnityEditor : Editor
         m_drawSettings = this.serializedObject.FindProperty("_drawSettings");
         m_drawChannels = this.serializedObject.FindProperty("_drawChannels");
         m_drawAudioChannels = this.serializedObject.FindProperty("_drawAudioChannels");
+        m_drawPresets = this.serializedObject.FindProperty("_drawPresets");
         m_showRuntimeEnvironmentPath = this.serializedObject.FindProperty("_showRuntimeEnvironmentPath");
 
         envList = new ReorderableList(serializedObject, m_enviromentSettings, true, true, true, true)
@@ -96,6 +103,8 @@ public class CsoundUnityEditor : Editor
             onAddCallback = EnvironmentSettingAddCallback,
             elementHeightCallback = EnvironmentSettingsHeightCallback
         };
+
+        UpdateAssignablePresets();
     }
 
     public override void OnInspectorGUI()
@@ -123,6 +132,9 @@ public class CsoundUnityEditor : Editor
 
         EditorGUILayout.Space();
         DrawAvailableChannelsList();
+
+        EditorGUILayout.Space();
+        DrawPresets();
 
         serializedObject.ApplyModifiedProperties();
     }
@@ -406,7 +418,7 @@ public class CsoundUnityEditor : Editor
                 Application.OpenURL($"file://{path}");
             }
 #else
-           EditorGUI.TextField(new Rect(rect.x + 25, rect.y, rect.width - 27, h), descr);
+            EditorGUI.TextField(new Rect(rect.x + 25, rect.y, rect.width - 27, h), descr);
 #endif
             if (foldout.boolValue)
             {
@@ -496,8 +508,112 @@ public class CsoundUnityEditor : Editor
         public List<EnvironmentSettings> environmentSettings;
     }
 
+    void DrawPresets()
+    {
+        m_drawPresets.boolValue = EditorGUILayout.Foldout(m_drawPresets.boolValue, "Presets", true);
+        if (m_drawPresets.boolValue)
+        {
+            EditorGUILayout.HelpBox($"CURRENT PRESET: {m_currentPreset.stringValue}", MessageType.None);
+            EditorGUILayout.Space();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("LOAD", EditorStyles.boldLabel);
+            if (GUILayout.Button("Refresh Assignable Presets"))
+            {
+                UpdateAssignablePresets();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            foreach (var preset in _assignablePresets)
+            {
+                if (GUILayout.Button(preset.presetName))
+                {
+                    if (m_channelControllers.arraySize != preset.channels.Count)
+                    {
+                        Debug.LogError("Cannot set preset, the number of channels has changed! Was this created with an old version?");
+                        break;
+                    }
+
+                    for (var i = 0; i < m_channelControllers.arraySize; i++)
+                    {
+                        var chan = m_channelControllers.GetArrayElementAtIndex(i);
+                        SetChannelPropertyValue(chan, preset.channels[i]);
+
+                    }
+
+                    m_currentPreset.stringValue = preset.presetName;
+
+                }
+            }
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("SAVE", EditorStyles.boldLabel);
+            _presetName = EditorGUILayout.TextField("Preset Name: ", _presetName);
+            if (GUILayout.Button("Save Preset as ScriptableObject"))
+            {
+                csoundUnity.SavePresetAsScriptableObject(_presetName);
+                EditorUtility.SetDirty(csoundUnity.gameObject);
+                Repaint();
+                EditorApplication.update += WaitOneFrameToUpdatePresets;
+            }
+            if (GUILayout.Button("Save Preset As JSON"))
+            {
+                csoundUnity.SavePresetAsJSON(_presetName);
+            }
+            if (GUILayout.Button("Save Global Preset as JSON"))
+            {
+                csoundUnity.SaveGlobalPreset(_presetName);
+            }
+        }
+    }
+
+    private void SetChannelPropertyValue(SerializedProperty property, CsoundChannelController channel)
+    {
+        var chan = property.FindPropertyRelative("channel");
+        if (chan.stringValue != channel.channel) return;
+
+        var chanValue = property.FindPropertyRelative("value");
+        // Debug.Log($"CsoundUnityEditor.SetChannelPropertyValue for channel: {chan.stringValue} to value: {channel.value}");
+
+        chanValue.floatValue = channel.value;
+
+        if (Application.isPlaying && csoundUnity != null)
+        {
+            csoundUnity.SetChannel(channel.channel, chanValue.floatValue);
+        }
+    }
+
     public void SetCsd(string guid)
     {
         csoundUnity.SetCsd(guid);
+        EditorUtility.SetDirty(csoundUnity.gameObject);
+        Repaint();
+        EditorApplication.update += WaitOneFrameToUpdatePresets;
+    }
+
+    // this is needed because it takes two Editor frames to update the serialized object
+    private void WaitOneFrameToUpdatePresets()
+    {
+        EditorApplication.update -= WaitOneFrameToUpdatePresets;
+        EditorApplication.update += UpdatePresets;
+    }
+
+    // finally update the Assignable Presets
+    private void UpdatePresets()
+    {
+        EditorApplication.update -= UpdatePresets;
+        UpdateAssignablePresets();
+        m_currentPreset.stringValue = "";
+    }
+
+    private void UpdateAssignablePresets()
+    {
+        _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset");
+        _assignablePresets = new List<CsoundUnityPreset>();
+        foreach (var guid in _csoundUnityPresetAssetsGUIDs)
+        {
+            var asset = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guid), typeof(CsoundUnityPreset)) as CsoundUnityPreset;
+            Debug.Log($"Checking {guid}, preset name: {asset.presetName}, preset fileName: {asset.csoundFileName} this filename: {m_csoundFileName.stringValue}");
+            if (asset.csoundFileName != m_csoundFileName.stringValue) continue;
+            _assignablePresets.Add(asset);
+        }
     }
 }

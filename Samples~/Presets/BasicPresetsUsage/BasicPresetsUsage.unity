@@ -1,0 +1,709 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 9
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 11
+  m_GIWorkflowMode: 1
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_FinalGather: 0
+    m_FinalGatherFiltering: 1
+    m_FinalGatherRayCount: 256
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 1
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 5
+    m_PVRFilteringGaussRadiusAO: 2
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 0}
+  m_UseShadowmask: 1
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 2
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    accuratePlacement: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &1305705470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1305705472}
+  - component: {fileID: 1305705471}
+  m_Layer: 0
+  m_Name: Directional Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!108 &1305705471
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305705470}
+  m_Enabled: 1
+  serializedVersion: 10
+  m_Type: 1
+  m_Shape: 0
+  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Intensity: 1
+  m_Range: 10
+  m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 2
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+--- !u!4 &1305705472
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305705470}
+  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1923268638
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1923268641}
+  - component: {fileID: 1923268640}
+  - component: {fileID: 1923268639}
+  - component: {fileID: 1923268642}
+  m_Layer: 0
+  m_Name: Csound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1923268639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923268638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logCsoundOutput: 0
+  mute: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 190ad55f07f1b9b4b872319d2792c74f
+  _csoundString: "<Cabbage>\r\nform caption(\"BasicPresetsUsage\") size(400, 300),
+    colour(58, 110, 182)\r\nrslider bounds(288, 174, 100, 100), channel(\"gain\"),
+    range(0, 1, 0.4, 1, 0.01), text(\"Gain\")\r\nhslider bounds(10, 70, 270, 20),
+    channel(\"freq\"), range(10, 2200, 440, 1, 0.001), text(\"Carrier Frequency\")\r\nhslider
+    bounds(10, 90, 270, 20), channel(\"modFreq\"), range(0, 200, 10), text(\"Mod
+    Frequency\")\r\nrslider bounds(10, 10, 60, 60) range(0, 1, 1, 1, 0.001), channel(\"hrm1\")\r\nrslider
+    bounds(80, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm2\")\r\nrslider
+    bounds(150, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm3\")\r\nrslider
+    bounds(220, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm4\")\r\ncombobox
+    bounds(290, 14, 100, 30), channel(\"carWaveform\"), text(\"car W1\", \"car W2\",
+    \"car W3\")\r\ncombobox bounds(290, 54, 100, 30), channel(\"modWaveform\"), text(\"mod
+    W1\", \"mod W2\", \"mod W3\")\r\nrslider bounds(310, 90, 60, 60) channel(\"modIndex\")
+    range(0, 1, 0, 1, 0.001), text(\"mod Index\")\r\nrslider bounds(150, 130, 60,
+    60) channel(\"lfoAmp\") range(0, 0.99, 0, 1, 0.001) text(\"LFO Amp\")\r\nrslider
+    bounds(220, 130, 60, 60) channel(\"lfoFreq\") range(0, 30, 0, 1, 0.001) text(\"LFO
+    Freq\")\r\nrslider bounds(150, 200, 60, 60) channel(\"lfoAmpRand\") range(0,
+    1, 0, 1, 0.001) text(\"LFO Amp Rand\")\r\nrslider bounds(220, 200, 60, 60) channel(\"lfoFreqRand\")
+    range(0, 30, 0, 1, 0.001) text(\"LFO Freq Rand\")\r\n\r\ncheckbox bounds(16,
+    160, 100, 26) channel(\"filtOn\") text(\"filter on\")\r\nrslider bounds(10, 200,
+    60, 60) channel(\"filtFreq\") range(0, 16000, 0, 1, 0.001) text(\"Filter Freq\")\r\nrslider
+    bounds(70, 200, 60, 60) channel(\"filtRes\") range(0, 1.99, 0, 1, 0.001) text(\"Filter
+    Res\")\r\n\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n -d\r\n</CsOptions>\r\n<CsInstruments>\r\n;
+    Initialize the global variables. \r\nsr = 48000\r\nksmps = 32\r\nnchnls = 2\r\n0dbfs
+    = 1\r\n\r\ngiWave1 ftgen 1, 0, 4096, 10, 1\r\ngiWave2 ftgen 2, 0, 4096, 10, 1,
+    .5, .25, .17\r\ngiWave3 ftgen 3, 0, 4096, 10, 1, 0, .333, 0, .2, 0, .143, 0,
+    .111, 0, .0909, 0, .077, 0, .0666, 0, .0588\r\n\r\ninstr 1\r\n\r\n    kEnv madsr
+    0.1, .5, .6, 1\r\n    \r\n    kLFOAmpRand = chnget:k(\"lfoAmpRand\")\r\n    kLFOFreqRand
+    = chnget:k(\"lfoFreqRand\")\r\n    \r\n    kLFOAmpRand1 random -kLFOAmpRand,
+    kLFOAmpRand\r\n    kLFOAmpRand2 random -kLFOAmpRand, kLFOAmpRand\r\n    kLFOAmpRand3
+    random -kLFOAmpRand, kLFOAmpRand\r\n    kLFOAmpRand4 random -kLFOAmpRand, kLFOAmpRand\r\n   
+    kLFOFreqRand1 random -kLFOFreqRand, kLFOFreqRand\r\n    kLFOFreqRand2 random
+    -kLFOFreqRand, kLFOFreqRand\r\n    kLFOFreqRand3 random -kLFOFreqRand, kLFOFreqRand\r\n   
+    kLFOFreqRand4 random -kLFOFreqRand, kLFOFreqRand\r\n    \r\n    aModOsc oscilikt
+    chnget:k(\"modIndex\") * chnget:k(\"modFreq\"), chnget:k(\"modFreq\"), chnget:k(\"modWaveform\")\r\n   
+    \r\n    aLFO1 lfo chnget:k(\"lfoAmp\") + kLFOAmpRand1, chnget:k(\"lfoFreq\")
+    + kLFOFreqRand1, 0\r\n    aLFO2 lfo chnget:k(\"lfoAmp\") + kLFOAmpRand2, chnget:k(\"lfoFreq\")
+    + kLFOFreqRand2, 0\r\n    aLFO3 lfo chnget:k(\"lfoAmp\") + kLFOAmpRand3, chnget:k(\"lfoFreq\")
+    + kLFOFreqRand3, 0\r\n    aLFO4 lfo chnget:k(\"lfoAmp\") + kLFOAmpRand4, chnget:k(\"lfoFreq\")
+    + kLFOFreqRand4, 0\r\n\r\n    a1  oscilikt kEnv*chnget:k(\"hrm1\"), chnget:k(\"freq\")  
+    + aLFO1 + aModOsc, chnget:k(\"carWaveform\")\r\n    a2  oscilikt kEnv*chnget:k(\"hrm2\"),
+    chnget:k(\"freq\")*2 + aLFO2 + aModOsc, chnget:k(\"carWaveform\")\r\n    a3 
+    oscilikt kEnv*chnget:k(\"hrm3\"), chnget:k(\"freq\")*3 + aLFO3 + aModOsc, chnget:k(\"carWaveform\")\r\n   
+    a4  oscilikt kEnv*chnget:k(\"hrm4\"), chnget:k(\"freq\")*4 + aLFO4 + aModOsc,
+    chnget:k(\"carWaveform\")\r\n    aMix = a1+a2+a3+a4\r\n    \r\n    kFiltOn =
+    chnget(\"filtOn\")\r\n    ;kFiltOn cabbageGetValue \"filtOn\"\r\n    \r\n   
+    printk 0.1, kFiltOn \r\n    \r\n    if kFiltOn == 1 then   \r\n        aOut moogladder
+    aMix, chnget:k(\"filtFreq\"), chnget:k(\"filtRes\")\r\n    else\r\n        aOut
+    = aMix\r\n    endif\r\n    \r\n    outs aOut*kEnv*chnget:k(\"gain\"), aOut*kEnv*chnget:k(\"gain\")\r\n   
+    \r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes Csound to run for about
+    7000 years...\r\nf0 z\r\ni1 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+  _csoundFileName: BasicPresetsUsage.csd
+  _csoundAsset: {fileID: 102900000, guid: 190ad55f07f1b9b4b872319d2792c74f, type: 3}
+  _channels:
+  - type: form
+    channel: 
+    text: 
+    caption: BasicPresetsUsage
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: gain
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0.4
+    skew: 0
+    increment: 0
+    options: []
+  - type: hslider
+    channel: freq
+    text: 
+    caption: 
+    min: 10
+    max: 2200
+    value: 440
+    skew: 0
+    increment: 0
+    options: []
+  - type: hslider
+    channel: modFreq
+    text: 
+    caption: 
+    min: 0
+    max: 200
+    value: 10
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm1
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm2
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm3
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: hrm4
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: combobox
+    channel: carWaveform
+    text: 
+    caption: 
+    min: 1
+    max: 3
+    value: 0
+    skew: 0
+    increment: 0
+    options:
+    - carW1
+    - carW2
+    - carW3
+  - type: combobox
+    channel: modWaveform
+    text: 
+    caption: 
+    min: 1
+    max: 3
+    value: 0
+    skew: 0
+    increment: 0
+    options:
+    - modW1
+    - modW2
+    - modW3
+  - type: rslider
+    channel: modIndex
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: lfoAmp
+    text: 
+    caption: 
+    min: 0
+    max: 0.99
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: lfoFreq
+    text: 
+    caption: 
+    min: 0
+    max: 30
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: lfoAmpRand
+    text: 
+    caption: 
+    min: 0
+    max: 1
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: lfoFreqRand
+    text: 
+    caption: 
+    min: 0
+    max: 30
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: checkbox
+    channel: filtOn
+    text: 
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: filtFreq
+    text: 
+    caption: 
+    min: 0
+    max: 16000
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: filtRes
+    text: 
+    caption: 
+    min: 0
+    max: 1.99
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  _availableAudioChannels: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 0
+  _drawChannels: 1
+  _drawAudioChannels: 1
+  _drawPresets: 1
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: Preset1
+--- !u!82 &1923268640
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923268638}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1923268641
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923268638}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1923268642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923268638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6953558b92a34344a60a113d9180f01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  csound: {fileID: 1923268639}
+  testPreset: {fileID: 11400000, guid: 3120b792debebae459aa671a291ff0c4, type: 2}
+--- !u!1 &1951274432
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1951274435}
+  - component: {fileID: 1951274434}
+  - component: {fileID: 1951274433}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &1951274433
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951274432}
+  m_Enabled: 1
+--- !u!20 &1951274434
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951274432}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: -1
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1951274435
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951274432}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
