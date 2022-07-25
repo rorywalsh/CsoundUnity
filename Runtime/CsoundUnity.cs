@@ -1406,6 +1406,7 @@ public class CsoundUnity : MonoBehaviour
     public void SavePresetAsScriptableObject(string presetName)
     {
 #if UNITY_EDITOR
+        
         var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();// (typeof(CsoundUnityPreset));
         //preset.channels = this.channels;
         preset.channels = new List<CsoundChannelController>();
@@ -1417,11 +1418,12 @@ public class CsoundUnity : MonoBehaviour
         preset.presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
         preset.csoundFileName = this.csoundFileName;
         var path = $"Assets/{preset.presetName}.asset";
-        if (AssetDatabase.LoadAssetAtPath(path, typeof(CsoundUnityPreset)) != null)
+
+        if (AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(path) != null)
         {
             var assetLength = ".asset".Length;
-            var newName = $"{path.Substring(0, path.Length - assetLength)} (clone).asset";
-
+            var basePath = $"{path.Substring(0, path.Length - assetLength)}";
+            var baseName = preset.presetName;
             var overwriteAction = new Action(() =>
             {
                 AssetDatabase.DeleteAsset(path);
@@ -1430,12 +1432,19 @@ public class CsoundUnity : MonoBehaviour
             });
             var renameAction = new Action(() =>
             {
-                Debug.Log($"Saving CsoundUnityPreset at path {newName}");
-                preset.presetName = preset.presetName + " (clone)";
-                AssetDatabase.CreateAsset(preset, newName);
+                var count = 0;
+                while (AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(path) != null)
+                {
+                    preset.presetName = $"{baseName}_{count}";
+                    path = $"{basePath}_{count}.asset";
+                    count++;
+                }
+                
+                Debug.Log($"Saving CsoundUnityPreset at path {path}");
+                AssetDatabase.CreateAsset(preset, path);
             });
 
-            var message = $"CsoundUnityPreset at {path} already exists, overwrite or rename to {newName}?";
+            var message = $"CsoundUnityPreset at {path} already exists, overwrite or rename?";
             var res = EditorUtility.DisplayDialogComplex("Overwrite?", message, "Overwrite", "Cancel", "Rename");
             switch (res)
             {
@@ -1448,7 +1457,6 @@ public class CsoundUnity : MonoBehaviour
                 case 2:
                     renameAction.Invoke();
                     break;
-
             }
         }
         else

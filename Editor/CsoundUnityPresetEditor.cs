@@ -70,7 +70,11 @@ public class CsoundUnityPresetEditor : Editor
                             {
                                 strings[s] = options.GetArrayElementAtIndex(s).stringValue;
                             }
+                            
+                            EditorGUILayout.BeginHorizontal();
+                            EditorGUILayout.LabelField(channel);
                             chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, strings);
+                            EditorGUILayout.EndHorizontal();
                         }
                         //else if (type.Contains("button"))
                         //{

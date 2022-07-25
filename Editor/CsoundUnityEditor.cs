@@ -343,7 +343,10 @@ public class CsoundUnityEditor : Editor
                         {
                             strings[s] = options.GetArrayElementAtIndex(s).stringValue;
                         }
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField(channel);
                         chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, strings);
+                        EditorGUILayout.EndHorizontal();
                         if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
                         {
                             csoundUnity.SetChannel(channel, chanValue.floatValue + 1);
@@ -537,11 +540,9 @@ public class CsoundUnityEditor : Editor
                     {
                         var chan = m_channelControllers.GetArrayElementAtIndex(i);
                         SetChannelPropertyValue(chan, preset.channels[i]);
-
                     }
 
                     m_currentPreset.stringValue = preset.presetName;
-
                 }
             }
             EditorGUILayout.Space();
@@ -577,7 +578,8 @@ public class CsoundUnityEditor : Editor
 
         if (Application.isPlaying && csoundUnity != null)
         {
-            csoundUnity.SetChannel(channel.channel, chanValue.floatValue);
+            var value = (channel.type.Contains("combobox")) ? chanValue.floatValue + 1 : chanValue.floatValue;
+            csoundUnity.SetChannel(channel.channel, value);
         }
     }
 
