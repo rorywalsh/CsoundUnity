@@ -31,9 +31,9 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 using System.Globalization;
+using UnityEngine.Networking;
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEngine.Networking;
 #endif
 #if UNITY_ANDROID
 #endif
