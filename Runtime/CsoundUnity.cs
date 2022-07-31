@@ -355,6 +355,7 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     [HideInInspector] [SerializeField] private bool _showRuntimeEnvironmentPath = false;
     [HideInInspector] [SerializeField] private string _currentPreset;
+    [HideInInspector] [SerializeField] private string _currentPresetSaveFolder;
 
 #pragma warning restore 414
 
@@ -903,10 +904,12 @@ public class CsoundUnity : MonoBehaviour
         csound.SetChannel(channelController.channel, channelController.value);
     }
 
-    public void SetChannels(List<CsoundChannelController> channelControllers)
+    public void SetChannels(List<CsoundChannelController> channelControllers, bool excludeButtons = true)
     {
         for (var i = 0; i < channelControllers.Count; i++)
         {
+            if (excludeButtons && channelControllers[i].type.Contains("button")) continue;
+
             SetChannel(channelControllers[i]);
         }
     }
@@ -1403,12 +1406,11 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
-    public void SavePresetAsScriptableObject(string presetName)
+    public void SavePresetAsScriptableObject(string presetName, string path = null)
     {
 #if UNITY_EDITOR
-        
-        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();// (typeof(CsoundUnityPreset));
-        //preset.channels = this.channels;
+
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
         preset.channels = new List<CsoundChannelController>();
         foreach (var chan in this.channels)
         {
@@ -1417,34 +1419,59 @@ public class CsoundUnity : MonoBehaviour
         }
         preset.presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
         preset.csoundFileName = this.csoundFileName;
-        var path = $"Assets/{preset.presetName}.asset";
+        // Debug.Log("Preset Name " + preset.presetName);
 
-        if (AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(path) != null)
+        // create target directory if it doesn't exist, defaulting to "Assets"
+        if (!path.Contains("Assets") || string.IsNullOrWhiteSpace(path))
+        {
+            Debug.LogWarning("CsoundUnityPreset scriptable object cannot be created outside of the project folder, " +
+                "defaulting to 'Assets'. Use the JSON format to save it outside of the Application.dataPath folder.");
+            path = Application.dataPath;
+        }
+
+        // convert to a path inside the project
+        var assetsIndex = path.IndexOf("Assets");
+
+        if (assetsIndex < "Assets".Length)
+        {
+            Debug.LogError("Error, couldn't find the Assets folder!");
+            return;
+        }
+
+        path = path.Substring(assetsIndex, path.Length - assetsIndex);
+
+        if (!File.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        var fullPath = Path.Combine(path, $"{preset.presetName}.asset");//path + $"{preset.presetName}.asset";//
+        if (AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(fullPath) != null)
         {
             var assetLength = ".asset".Length;
-            var basePath = $"{path.Substring(0, path.Length - assetLength)}";
+            var basePath = $"{fullPath.Substring(0, fullPath.Length - assetLength)}";
             var baseName = preset.presetName;
             var overwriteAction = new Action(() =>
             {
-                AssetDatabase.DeleteAsset(path);
-                AssetDatabase.CreateAsset(preset, path);
-                Debug.Log($"Overwriting CsoundUnityPreset at path {path}");
+                AssetDatabase.DeleteAsset(fullPath);
+                AssetDatabase.CreateAsset(preset, fullPath);
+                Debug.Log($"Overwriting CsoundUnityPreset at path {fullPath}");
             });
             var renameAction = new Action(() =>
             {
                 var count = 0;
-                while (AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(path) != null)
+                while (AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(fullPath) != null)
                 {
                     preset.presetName = $"{baseName}_{count}";
-                    path = $"{basePath}_{count}.asset";
+                    fullPath = $"{basePath}_{count}.asset";
                     count++;
                 }
-                
-                Debug.Log($"Saving CsoundUnityPreset at path {path}");
-                AssetDatabase.CreateAsset(preset, path);
+
+                Debug.Log($"Saving CsoundUnityPreset at path {fullPath}");
+                AssetDatabase.CreateAsset(preset, fullPath);
             });
 
-            var message = $"CsoundUnityPreset at {path} already exists, overwrite or rename?";
+            var message = $"CsoundUnityPreset at {fullPath} already exists, overwrite or rename?";
             var res = EditorUtility.DisplayDialogComplex("Overwrite?", message, "Overwrite", "Cancel", "Rename");
             switch (res)
             {
@@ -1461,32 +1488,42 @@ public class CsoundUnity : MonoBehaviour
         }
         else
         {
-            AssetDatabase.CreateAsset(preset, path);
+            Debug.Log($"Asset not found, creating new preset at {fullPath}!");
+            AssetDatabase.CreateAsset(preset, fullPath);
         }
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 #endif
     }
 
-    public void SavePresetAsJSON(string presetName)
+    public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
     {
-        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();// (typeof(CsoundUnityPreset));
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
         preset.channels = this.channels;
-        preset.presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+        presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+        preset.presetName = presetName;
         preset.csoundFileName = this.csoundFileName;
-        var path = $"{Application.persistentDataPath}/{presetName}.json";
-        var count = 0;
-        while (File.Exists(path))
+        path = string.IsNullOrWhiteSpace(path) ?
+            Application.persistentDataPath
+            : path;
+        if (!char.IsSeparator(path[path.Length - 1]))
         {
-            path = $"{Application.persistentDataPath}/{presetName}_{count++}.json";
-            Debug.Log($"path is now {path}");
+            path = $"{path}/";
         }
 
-        var presetData = JsonUtility.ToJson(preset);
+        var fullPath = Path.Combine(path, presetName + ".json");
+        var count = 0;
+
+        while (File.Exists(fullPath) && !overwriteIfExisting)
+        {
+            fullPath = Path.Combine(path, $"{presetName}_{count++}.json"); //$"{Application.persistentDataPath}/{presetName}_{count++}.json";
+            //Debug.Log($"path is now {path}");
+        }
+        var presetData = JsonUtility.ToJson(preset, true);
         try
         {
-            Debug.Log($"Saving preset at {path}");
-            File.WriteAllText($"{path}", presetData);
+            Debug.Log($"Saving preset at {fullPath}");
+            File.WriteAllText($"{fullPath}", presetData);
         }
         catch (IOException ex)
         {
