@@ -62,13 +62,19 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_drawPresets;
     SerializedProperty m_showRuntimeEnvironmentPath;
     SerializedProperty m_currentPresetSaveFolder;
+    SerializedProperty m_currentPresetLoadFolder;
+    SerializedProperty m_drawPresetsLoad;
+    SerializedProperty m_drawPresetsSave;
+
     private Vector2 scrollPos;
     private Vector2 presetsScrollPos;
     bool drawEnvSettings;
     ReorderableList envList;
     private string _presetName;
     private string[] _csoundUnityPresetAssetsGUIDs;
+    private string[] _jsonPresetsPaths;
     private List<CsoundUnityPreset> _assignablePresets;
+    private int _numPlayersToShow;
 
     void OnEnable()
     {
@@ -97,7 +103,10 @@ public class CsoundUnityEditor : Editor
         m_drawPresets = this.serializedObject.FindProperty("_drawPresets");
         m_showRuntimeEnvironmentPath = this.serializedObject.FindProperty("_showRuntimeEnvironmentPath");
         m_currentPresetSaveFolder = this.serializedObject.FindProperty("_currentPresetSaveFolder");
-        
+        m_currentPresetLoadFolder = this.serializedObject.FindProperty("_currentPresetLoadFolder");
+        m_drawPresetsLoad = this.serializedObject.FindProperty("_drawPresetsLoad");
+        m_drawPresetsSave = this.serializedObject.FindProperty("_drawPresetsSave");
+
         envList = new ReorderableList(serializedObject, m_enviromentSettings, true, true, true, true)
         {
             drawElementCallback = DrawEnvListItems,
@@ -268,6 +277,12 @@ public class CsoundUnityEditor : Editor
 
     public void DropAreaGUI()
     {
+        if( m_csoundAsset.objectReferenceValue as DefaultAsset == null)
+        {
+            // reset the m_csoundAsset.objectReferenceValue in case something goes wrong when setting global presets
+            m_csoundAsset.objectReferenceValue = null;
+        }
+
         DefaultAsset obj = (DefaultAsset)m_csoundAsset.objectReferenceValue;
         //
         EditorGUI.BeginChangeCheck();
@@ -520,52 +535,123 @@ public class CsoundUnityEditor : Editor
         {
             EditorGUILayout.HelpBox($"CURRENT PRESET: {m_currentPreset.stringValue}", MessageType.None);
             EditorGUILayout.Space();
+
+            EditorGUI.indentLevel++;
+
+            DrawPresetLoad();
+
+            EditorGUILayout.Space();
+
+            DrawPresetsSave();
+
+            EditorGUI.indentLevel--;
+        }
+    }
+
+    private void DrawPresetLoad()
+    {
+        m_drawPresetsLoad.boolValue = EditorGUILayout.Foldout(m_drawPresetsLoad.boolValue, "LOAD", true);
+
+        if (m_drawPresetsLoad.boolValue)
+        {
+            EditorGUI.indentLevel--;
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("LOAD", EditorStyles.boldLabel);
-            if (GUILayout.Button("Refresh Assignable Presets"))
+            EditorGUILayout.LabelField("Load a Preset", EditorStyles.helpBox);
+            if (GUILayout.Button("Refresh"))
             {
                 UpdateAssignablePresets();
             }
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            var inputBtnLabel = $"Select Presets folder";
+            if (GUILayout.Button(inputBtnLabel))
+            {
+                m_currentPresetLoadFolder.stringValue = EditorUtility.OpenFolderPanel("Select Presets output folder", m_currentPresetSaveFolder.stringValue, "");
+                RefreshPresets();
+            }
+            if (GUILayout.Button("DataPath"))
+            {
+                m_currentPresetLoadFolder.stringValue = Application.dataPath;
+                RefreshPresets();
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Persistent Data Path"))
+            {
+                m_currentPresetLoadFolder.stringValue = Application.persistentDataPath;
+                RefreshPresets();
+            }
+            if (GUILayout.Button("StreamingAssets"))
+            {
+                m_currentPresetLoadFolder.stringValue = Application.streamingAssetsPath;
+                RefreshPresets();
+            }
+            EditorGUILayout.EndHorizontal();
+            var relativeToAssetsPath = ExtractAssetsFolderFromPath(m_currentPresetLoadFolder);
+            EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {relativeToAssetsPath}", $"{relativeToAssetsPath}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
 
+            EditorGUILayout.Space();
+
+            EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Assignable Presets:", EditorStyles.boldLabel);
-            presetsScrollPos = EditorGUILayout.BeginScrollView(presetsScrollPos, GUILayout.Height(Mathf.Min(Mathf.Max(30, _assignablePresets.Count * 30), 230f)));
+            _numPlayersToShow = EditorGUILayout.IntSlider(_numPlayersToShow, 3, 20);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space();
+
+            presetsScrollPos = EditorGUILayout.BeginScrollView(presetsScrollPos, GUILayout.Height(Mathf.Min(Mathf.Max(21, 21 * _numPlayersToShow), 420f)));
+            EditorGUILayout.LabelField($"ScriptableObject Presets: ({_assignablePresets.Count})", EditorStyles.boldLabel);
             foreach (var preset in _assignablePresets)
             {
                 if (GUILayout.Button(preset.presetName))
                 {
-                    if (m_channelControllers.arraySize != preset.channels.Count)
-                    {
-                        Debug.LogError("Cannot set preset, the number of channels has changed! Was this created with an old version?");
-                        break;
-                    }
-
-                    for (var i = 0; i < m_channelControllers.arraySize; i++)
-                    {
-                        var chan = m_channelControllers.GetArrayElementAtIndex(i);
-                        SetChannelPropertyValue(chan, preset.channels[i]);
-                    }
-
-                    m_currentPreset.stringValue = preset.presetName;
+                    SetPreset(preset);
+                }
+            }
+            EditorGUILayout.LabelField($"JSON Presets: ({_jsonPresetsPaths.Length})", EditorStyles.boldLabel);
+            foreach (var path in _jsonPresetsPaths)
+            {
+                if (GUILayout.Button(new GUIContent(Path.GetFileName(path), $"{path}")))
+                {
+                    LoadPreset(path);
                 }
             }
             EditorGUILayout.EndScrollView();
+        }
+    }
 
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("SAVE", EditorStyles.boldLabel);
+    private void DrawPresetsSave()
+    {
+        m_drawPresetsSave.boolValue = EditorGUILayout.Foldout(m_drawPresetsSave.boolValue, "SAVE", true);
+
+        if (m_drawPresetsSave.boolValue)
+        {
+            EditorGUI.indentLevel--;
+            EditorGUILayout.LabelField("Save a Preset", EditorStyles.helpBox);
+            EditorGUILayout.BeginHorizontal();
             var outputBtnLabel = $"Select Presets output folder";
             if (GUILayout.Button(outputBtnLabel))//, GUILayout.Width(500), GUILayout.Height(75)))
             {
                 m_currentPresetSaveFolder.stringValue = EditorUtility.OpenFolderPanel("Select Presets output folder", m_currentPresetSaveFolder.stringValue, "");
+                RefreshPresets();
             }
+            if (GUILayout.Button("DataPath"))
+            {
+                m_currentPresetSaveFolder.stringValue = Application.dataPath;
+                RefreshPresets();
+            }
+            EditorGUILayout.EndHorizontal();
+
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Persistent Data Path"))
             {
                 m_currentPresetSaveFolder.stringValue = Application.persistentDataPath;
+                RefreshPresets();
             }
             if (GUILayout.Button("StreamingAssets"))
             {
                 m_currentPresetSaveFolder.stringValue = Application.streamingAssetsPath;
+                RefreshPresets();
             }
             EditorGUILayout.EndHorizontal();
 
@@ -573,33 +659,77 @@ public class CsoundUnityEditor : Editor
             var fullPath = m_currentPresetSaveFolder.stringValue;
             var assetsIndex = fullPath.IndexOf("Assets");
             var relativeToAssetsPath = assetsIndex > 0 ? fullPath.Substring(assetsIndex, fullPath.Length - assetsIndex) : fullPath;
-            relativeToAssetsPath = relativeToAssetsPath.Length > "Assets".Length ? relativeToAssetsPath : fullPath;
-            EditorGUILayout.LabelField(new GUIContent($"Save Folder: {relativeToAssetsPath}", $"{fullPath}"), EditorStyles.boldLabel);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
-            
+            relativeToAssetsPath = relativeToAssetsPath.Length >= "Assets".Length ? relativeToAssetsPath : fullPath;
+            EditorGUILayout.LabelField(new GUIContent($"Save Folder: {relativeToAssetsPath}", $"{fullPath}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
+
             EditorGUILayout.Space();
             _presetName = EditorGUILayout.TextField("Preset Name: ", _presetName);
-            
+
             EditorGUILayout.Space();
             if (GUILayout.Button("Save Preset as ScriptableObject"))
             {
                 csoundUnity.SavePresetAsScriptableObject(_presetName, fullPath);
-                EditorUtility.SetDirty(csoundUnity.gameObject);
-                Repaint();
-                EditorApplication.update += WaitOneFrameToUpdatePresets;
+                RefreshPresets();
             }
             if (GUILayout.Button("Save Preset As JSON"))
             {
                 csoundUnity.SavePresetAsJSON(_presetName, fullPath);
+                RefreshPresets();
             }
             if (GUILayout.Button("Save Global Preset as JSON"))
             {
-                csoundUnity.SaveGlobalPreset(_presetName);
+                csoundUnity.SaveGlobalPreset(_presetName, fullPath);
+                RefreshPresets();
             }
         }
     }
 
+    private void RefreshPresets()
+    {
+        AssetDatabase.Refresh();
+        EditorUtility.SetDirty(csoundUnity.gameObject);
+        Repaint();
+        EditorApplication.update += WaitOneFrameToUpdatePresets;
+    }
+
+    private void LoadPreset(string path)
+    {
+        var fileName = Path.GetFileName(path);
+
+        if (fileName.ToLower().Contains("global"))
+        {
+            csoundUnity.LoadGlobalPreset(path);
+            return;
+        }
+
+        csoundUnity.LoadPreset(path, (preset) =>
+        {
+            SetPreset(preset);
+        });
+    }
+
+    private void SetPreset(CsoundUnityPreset preset)
+    {
+        if (m_channelControllers.arraySize != preset.channels.Count)
+        {
+            Debug.LogError("Cannot set preset, the number of channels has changed! Was this created with an old version?");
+            return;
+        }
+
+        for (var i = 0; i < m_channelControllers.arraySize; i++)
+        {
+            var chan = m_channelControllers.GetArrayElementAtIndex(i);
+            SetChannelPropertyValue(chan, preset.channels[i]);
+        }
+
+        m_currentPreset.stringValue = preset.presetName;
+    }
+
     private void SetChannelPropertyValue(SerializedProperty property, CsoundChannelController channel)
     {
+        // don't set buttons when copying channels to the serialized property
+        if (channel.type.Contains("button")) return;
+
         var chan = property.FindPropertyRelative("channel");
         if (chan.stringValue != channel.channel) return;
 
@@ -615,7 +745,7 @@ public class CsoundUnityEditor : Editor
         }
     }
 
-    public void SetCsd(string guid)
+    private void SetCsd(string guid)
     {
         csoundUnity.SetCsd(guid);
         EditorUtility.SetDirty(csoundUnity.gameObject);
@@ -640,14 +770,62 @@ public class CsoundUnityEditor : Editor
 
     private void UpdateAssignablePresets()
     {
-        _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset");
+        var assetsFolderPath = ExtractAssetsFolderFromPath(m_currentPresetLoadFolder);
+        //Debug.Log($"UpdateAssignablePresets, folder: {m_currentPresetLoadFolder.stringValue}, assetsFolderPath: {assetsFolderPath}");
+
+        _jsonPresetsPaths = new string[] { };
+        _csoundUnityPresetAssetsGUIDs = new string[] { };
         _assignablePresets = new List<CsoundUnityPreset>();
+
+        // look in the whole project for CsoundUnityPreset scriptable objects
+        if (string.IsNullOrWhiteSpace(m_currentPresetLoadFolder.stringValue))
+        {
+            _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset");
+        }
+        else
+        {
+            // instead if the load folder is set look inside this folder only
+            //Debug.Log($"Looking into {assetsFolderPath}");
+            if (assetsFolderPath.Contains("Assets") && !assetsFolderPath.Contains("StreamingAssets"))
+            {
+                //Debug.Log("Using Assets Database for the search");
+                _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset", new string[] { assetsFolderPath });
+                //foreach (var guid in _csoundUnityPresetAssetsGUIDs)
+                //{
+                //    Debug.Log($"FOUND {guid}");
+                //}
+            }
+            else
+            {
+                //Debug.Log($"Directory.GetFiles( m_currentPresetLoadFolder.stringValue): {m_currentPresetLoadFolder.stringValue}");
+                _jsonPresetsPaths = Directory.GetFiles(m_currentPresetLoadFolder.stringValue, "*.json");//, "*.json|*.JSON");
+                //foreach (var file in _jsonPresetsPaths)
+                //{
+                //    Debug.Log($"found file: {file}");
+                //}
+            }
+        }
+
         foreach (var guid in _csoundUnityPresetAssetsGUIDs)
         {
             var asset = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guid), typeof(CsoundUnityPreset)) as CsoundUnityPreset;
-            //Debug.Log($"Checking {guid}, preset name: {asset.presetName}, preset fileName: {asset.csoundFileName} this filename: {m_csoundFileName.stringValue}");
+            // Debug.Log($"Checking {guid}, preset name: {asset.presetName}, preset fileName: {asset.csoundFileName} this filename: {m_csoundFileName.stringValue}");
             if (asset.csoundFileName != m_csoundFileName.stringValue) continue;
             _assignablePresets.Add(asset);
         }
+    }
+
+    private string ExtractAssetsFolderFromPath(SerializedProperty pathProperty)
+    {
+        var path = pathProperty.stringValue;
+        if (string.IsNullOrWhiteSpace(path) || path.Length < 4)
+        {
+            Debug.LogWarning($"Couldn't extract Asset path from path: {path}, defaulting to {Application.dataPath}");
+            path = pathProperty.stringValue = Application.dataPath;
+        }
+        var assetsIndex = path.IndexOf("Assets");
+        var relativeToAssetsPath = assetsIndex >= 0 ? path.Substring(assetsIndex, path.Length - assetsIndex) : path;
+        relativeToAssetsPath = relativeToAssetsPath.Length >= "Assets".Length ? relativeToAssetsPath : path;
+        return relativeToAssetsPath;
     }
 }

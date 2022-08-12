@@ -348,6 +348,8 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector] [SerializeField] private bool _drawChannels = false;
     [HideInInspector] [SerializeField] private bool _drawAudioChannels = false;
     [HideInInspector] [SerializeField] private bool _drawPresets = false;
+    [HideInInspector] [SerializeField] private bool _drawPresetsLoad = false;
+    [HideInInspector] [SerializeField] private bool _drawPresetsSave = false;
     /// <summary>
     /// If true, the path shown in the Csound Global Environments Folders inspector will be
     /// the one expected at runtime, otherwise it will show the Editor path (for desktop platform). 
@@ -356,6 +358,7 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector] [SerializeField] private bool _showRuntimeEnvironmentPath = false;
     [HideInInspector] [SerializeField] private string _currentPreset;
     [HideInInspector] [SerializeField] private string _currentPresetSaveFolder;
+    [HideInInspector] [SerializeField] private string _currentPresetLoadFolder;
 
 #pragma warning restore 414
 
@@ -368,6 +371,8 @@ public class CsoundUnity : MonoBehaviour
     private AudioSource audioSource;
     private Coroutine LoggingCoroutine;
     int bufferSize, numBuffers;
+
+    private const string GLOBAL_TAG = "(GLOBAL)";
 
     /// <summary>
     /// the temp buffer, ksmps sized 
@@ -901,6 +906,7 @@ public class CsoundUnity : MonoBehaviour
     {
         if (_channelsIndexDict.ContainsKey(channelController.channel))
             channels[_channelsIndexDict[channelController.channel]] = channelController;
+        if (csound == null) return;
         csound.SetChannel(channelController.channel, channelController.value);
     }
 
@@ -1392,18 +1398,21 @@ public class CsoundUnity : MonoBehaviour
     /// Similar behaviour as saving a Unity Preset from the inspector, but this can be used at runtime
     /// </summary>
     /// <param name="presetName"></param>
-    public void SaveGlobalPreset(string presetName)
+    public void SaveGlobalPreset(string presetName, string path = null, bool overwriteIfExisting = false)
     {
-        var presetData = JsonUtility.ToJson(this);
+        var presetData = JsonUtility.ToJson(this, true);
         try
         {
-            Debug.Log($"Saving preset at {Application.persistentDataPath}/{presetName}.json");
-            File.WriteAllText($"{Application.persistentDataPath}/{presetName}.json", presetData);
+            var name = $"{presetName} {GLOBAL_TAG}";
+            var fullPath = CheckPathForExistence(path, name, overwriteIfExisting);
+            Debug.Log($"Saving global preset at {fullPath}");
+            File.WriteAllText(fullPath, presetData);
         }
         catch (IOException ex)
         {
             Debug.Log(ex.Message);
         }
+        AssetDatabase.Refresh();
     }
 
     public void SavePresetAsScriptableObject(string presetName, string path = null)
@@ -1503,22 +1512,8 @@ public class CsoundUnity : MonoBehaviour
         presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
         preset.presetName = presetName;
         preset.csoundFileName = this.csoundFileName;
-        path = string.IsNullOrWhiteSpace(path) ?
-            Application.persistentDataPath
-            : path;
-        if (!char.IsSeparator(path[path.Length - 1]))
-        {
-            path = $"{path}/";
-        }
+        var fullPath = CheckPathForExistence(path, presetName, overwriteIfExisting);
 
-        var fullPath = Path.Combine(path, presetName + ".json");
-        var count = 0;
-
-        while (File.Exists(fullPath) && !overwriteIfExisting)
-        {
-            fullPath = Path.Combine(path, $"{presetName}_{count++}.json"); //$"{Application.persistentDataPath}/{presetName}_{count++}.json";
-            //Debug.Log($"path is now {path}");
-        }
         var presetData = JsonUtility.ToJson(preset, true);
         try
         {
@@ -1529,14 +1524,53 @@ public class CsoundUnity : MonoBehaviour
         {
             Debug.Log(ex.Message);
         }
+        AssetDatabase.Refresh();
     }
 
-    public void SetPreset(string presetName, string presetData)
+    private string CheckPathForExistence(string path, string presetName, bool overwriteIfExisting)
+    {
+        path = string.IsNullOrWhiteSpace(path) ?
+            Application.persistentDataPath
+            : path;
+        if (!char.IsSeparator(path[path.Length - 1]))
+        {
+            path = $"{path}/";
+        }
+
+        if (!Directory.Exists(path))
+        {
+            try 
+            { 
+                Directory.CreateDirectory(path);
+            }
+            catch (IOException ex)
+            {
+                Debug.LogError($"Couldn't create folder at: {path}, {ex.Message}");
+            }
+        }
+
+        var fullPath = Path.Combine(path, presetName + ".json");
+
+        var count = 0;
+        while (File.Exists(fullPath) && !overwriteIfExisting)
+        {
+            fullPath = Path.Combine(path, $"{presetName}_{count++}.json"); 
+        }
+        return fullPath;
+    }
+
+    public CsoundUnityPreset SetPreset(string presetName, string presetData)
     {
         // first try to create a CsoundUnityPreset from presetData
         var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
         JsonUtility.FromJsonOverwrite(presetData, preset);
         SetPreset(preset);
+        return preset;
+    }
+
+    public CsoundUnityPreset SetPreset(string presetData)
+    {
+        return SetPreset("", presetData);
     }
 
     public void SetPreset(CsoundUnityPreset preset)
@@ -1547,15 +1581,17 @@ public class CsoundUnity : MonoBehaviour
         }
 
         _currentPreset = preset.presetName;
-        SetChannels(preset.channels);
+        SetChannels(preset.channels, true);
     }
 
-    public void SetGlobalPreset(string presetName, string presetData)
+    public CsoundUnity SetGlobalPreset(string presetName, string presetData)
     {
         JsonUtility.FromJsonOverwrite(presetData, this);
         // update the serialized channels 
-        SetChannels(this.channels);
-        _currentPreset = $"{presetName} (GLOBAL)";
+        SetChannels(this.channels, true);
+        var current = string.IsNullOrWhiteSpace(presetName) ? this._currentPreset : presetName;
+        _currentPreset = $"{current} {GLOBAL_TAG}";
+        return this;
     }
 
     /// <summary>
@@ -1563,7 +1599,7 @@ public class CsoundUnity : MonoBehaviour
     /// The JSON file should represent a CsoundUnityPreset.
     /// </summary>
     /// <param name="path">The path must point to an existing JSON file</param>
-    public void LoadPreset(string path)
+    public void LoadPreset(string path, Action<CsoundUnityPreset> onPresetLoaded = null)
     {
         var data = "";
         var presetName = Path.GetFileName(path);
@@ -1571,7 +1607,8 @@ public class CsoundUnity : MonoBehaviour
 #if UNITY_ANDROID || UNITY_IOS
         StartCoroutine(LoadingPreset(path, (data) =>
         {
-            SetPreset(presetName, data);
+            var preset = SetPreset(presetName, data);
+            onPresetLoaded?.Invoke(preset);
         }));
 #else
         if (!File.Exists(path))
@@ -1580,7 +1617,8 @@ public class CsoundUnity : MonoBehaviour
             return;
         }
         data = File.ReadAllText(path);
-        SetPreset(presetName, data);
+        var preset = SetPreset(presetName, data);
+        onPresetLoaded?.Invoke(preset);
 #endif
     }
 
@@ -1589,7 +1627,7 @@ public class CsoundUnity : MonoBehaviour
     /// The JSON file should represent a Global Preset, ie a complete CsoundUnity instance.
     /// </summary>
     /// <param name="path">The path must point to an existing JSON file</param>
-    public void LoadGlobalPreset(string path)
+    public void LoadGlobalPreset(string path, Action<CsoundUnity> onPresetLoaded = null)
     {
         var data = "";
         var presetName = Path.GetFileName(path);
@@ -1597,7 +1635,8 @@ public class CsoundUnity : MonoBehaviour
 #if UNITY_ANDROID || UNITY_IOS
         StartCoroutine(LoadingPreset(path, (data) =>
         {
-            SetPreset(presetName, data);
+            var preset = SetGlobalPreset(presetName, data);
+            onPresetLoaded?.Invoke(preset);
         }));
 #else
         if (!File.Exists(path))
@@ -1606,7 +1645,8 @@ public class CsoundUnity : MonoBehaviour
             return;
         }
         data = File.ReadAllText(path);
-        SetGlobalPreset(presetName, data);
+        var preset = SetGlobalPreset(presetName, data);
+        onPresetLoaded?.Invoke(preset);
 #endif
     }
 
