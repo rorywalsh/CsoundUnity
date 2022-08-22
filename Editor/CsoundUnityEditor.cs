@@ -366,7 +366,8 @@ public class CsoundUnityEditor : Editor
                         EditorGUILayout.EndHorizontal();
                         if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
                         {
-                            csoundUnity.SetChannel(channel, chanValue.floatValue + 1);
+                            var value = Mathf.Clamp((chanValue.floatValue + 1), 1, options.arraySize);
+                            csoundUnity.SetChannel(channel, value);
                         }
                     }
                     else if (type.Contains("button"))

@@ -7,7 +7,7 @@ This interface would not have been possible without Richard Henninger's .NET int
 
 Contributors:
 
-Bernt Isak Wærstad
+Bernt Isak Wï¿½rstad
 Charles Berman
 Giovanni Bedetti
 Hector Centeno
@@ -700,17 +700,12 @@ public class CsoundUnity : MonoBehaviour
                 //Debug.Log("discarding "+line);
                 continue;
             }
-            string newLine = trimmd;
-            string control = trimmd.Substring(0, trimmd.IndexOf(" ") > -1 ? trimmd.IndexOf(" ") : 0);
-            if (control.Length > 0)
-                newLine = newLine.Replace(control, "");
-
+            var control = trimmd.Substring(0, trimmd.IndexOf(" ") > -1 ? trimmd.IndexOf(" ") : 0);
             if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox")
                 || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox"))
             {
                 CsoundChannelController controller = new CsoundChannelController();
                 controller.type = control;
-
                 if (trimmd.IndexOf("caption(") > -1)
                 {
                     string infoText = trimmd.Substring(trimmd.IndexOf("caption(") + 9);
@@ -724,6 +719,7 @@ public class CsoundUnity : MonoBehaviour
                     text = text.Substring(0, text.IndexOf(")") - 1);
                     text = text.Replace("\"", "");
                     text = text.Replace('"', new char());
+                    controller.text = text;
                     if (controller.type == "combobox") //if combobox, create a range
                     {
                         char[] delimiterChars = { ',' };
@@ -893,9 +889,20 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="val"></param>
     public void SetChannel(string channel, MYFLT val)
     {
-        if (_channelsIndexDict.ContainsKey(channel))
-            channels[_channelsIndexDict[channel]].value = (float)val;
         csound.SetChannel(channel, val);
+
+        // The dictionary below is used to update the serialized channels on the editor
+        // Please note that on Cabbage comboboxes values go from 1-n, since 0 refers to no current selection,
+        // instead on the Unity Editor their values start from 0
+        // so the value on the serialized channel will be decreased by one 
+        if (_channelsIndexDict.ContainsKey(channel))
+        {
+            if (channels[_channelsIndexDict[channel]].type.Contains("combobox"))
+            {
+                val--;
+            }
+            channels[_channelsIndexDict[channel]].value = (float)val;
+        }
     }
 
     /// <summary>
