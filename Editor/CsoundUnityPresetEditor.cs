@@ -68,6 +68,7 @@ public class CsoundUnityPresetEditor : Editor
 
                 EditorGUILayout.HelpBox("Control Channels", MessageType.None);
                 if (m_channelControllers != null)
+                {
                     //create controls for each Csound channel found in the file descriptor
                     for (int i = 0; i < m_channelControllers.arraySize; i++)
                     {
@@ -84,7 +85,6 @@ public class CsoundUnityPresetEditor : Editor
                             var max = cc.FindPropertyRelative("max").floatValue;
                             chanValue.floatValue = EditorGUILayout.Slider(label, chanValue.floatValue, min, max);
                             // Debug.Log($"CsoundUnityPresetEditor Slider channel: {channel} value: {chanValue.floatValue}");
-
                         }
                         else if (type.Contains("combobox"))
                         {
@@ -94,7 +94,7 @@ public class CsoundUnityPresetEditor : Editor
                             {
                                 strings[s] = options.GetArrayElementAtIndex(s).stringValue;
                             }
-                            
+
                             EditorGUILayout.BeginHorizontal();
                             EditorGUILayout.LabelField(channel);
                             chanValue.floatValue = EditorGUILayout.Popup((int)chanValue.floatValue, strings);
@@ -113,6 +113,7 @@ public class CsoundUnityPresetEditor : Editor
                             chanValue.floatValue = EditorGUILayout.Toggle(label, chanValue.floatValue == 1 ? true : false) ? 1f : 0f;
                         }
                     }
+                }
             }
         }
     }

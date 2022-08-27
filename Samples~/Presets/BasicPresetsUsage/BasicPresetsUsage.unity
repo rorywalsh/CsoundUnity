@@ -121,6 +121,280 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &698844446
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 698844447}
+  - component: {fileID: 698844449}
+  - component: {fileID: 698844448}
+  m_Layer: 5
+  m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &698844447
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698844446}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1080804928}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &698844448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698844446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: LOAD RANDOM PRESET
+--- !u!222 &698844449
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698844446}
+  m_CullTransparentMesh: 0
+--- !u!1 &823702489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 823702492}
+  - component: {fileID: 823702491}
+  - component: {fileID: 823702490}
+  m_Layer: 0
+  m_Name: EventSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &823702490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 823702489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalAxis: Horizontal
+  m_VerticalAxis: Vertical
+  m_SubmitButton: Submit
+  m_CancelButton: Cancel
+  m_InputActionsPerSecond: 10
+  m_RepeatDelay: 0.5
+  m_ForceModuleActive: 0
+--- !u!114 &823702491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 823702489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
+--- !u!4 &823702492
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 823702489}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1080804927
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1080804928}
+  - component: {fileID: 1080804931}
+  - component: {fileID: 1080804930}
+  - component: {fileID: 1080804929}
+  m_Layer: 5
+  m_Name: RandomButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1080804928
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1080804927}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 698844447}
+  m_Father: {fileID: 2107517378}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -10, y: -10}
+  m_SizeDelta: {x: 160, y: 57.418976}
+  m_Pivot: {x: 1, y: 1}
+--- !u!114 &1080804929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1080804927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1080804930}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1923268642}
+        m_MethodName: LoadRandomPreset
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1080804930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1080804927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1080804931
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1080804927}
+  m_CullTransparentMesh: 0
 --- !u!1 &1305705470
 GameObject:
   m_ObjectHideFlags: 0
@@ -213,6 +487,94 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1840501752
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1840501753}
+  - component: {fileID: 1840501755}
+  - component: {fileID: 1840501754}
+  m_Layer: 5
+  m_Name: InfoText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1840501753
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840501752}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2107517378}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -100, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1840501754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840501752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 3
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: "CsoundUnity Presets Basic Usage Example\n\n\nPRESS:\nThe button to load
+    a random scriptable object test preset from the ones assigned in the inspector\n1
+    - 5: to load scriptable object test presets assigned in the inspector\nG:  to
+    save the whole CsoundUnity object as a JSON in the Persistent Data Path\nS: to
+    save only the Control channels as a JSON in the Persistent Data Path\nD: to Save
+    a CsoundUnityPreset scriptable object in the Persistent Data Path\r\n    this
+    can be used at runtime but it won't be loadable on a build\nL: to load the global
+    preset saved before in the Persistent Data Path\nN: to read the text of the global
+    preset JSON and then set the preset from the data read\nP: to load the CsoundUnityPreset
+    from the JSON saved before in the Persistent Data Path\nO: to read the text of
+    the global preset JSON and then set the preset from the data read\n"
+--- !u!222 &1840501755
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840501752}
+  m_CullTransparentMesh: 0
 --- !u!1 &1923268638
 GameObject:
   m_ObjectHideFlags: 0
@@ -252,54 +614,61 @@ MonoBehaviour:
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 190ad55f07f1b9b4b872319d2792c74f
-  _csoundString: "<Cabbage>\r\nform caption(\"BasicPresetsUsage\") size(400, 300),
-    colour(58, 110, 182)\r\nrslider bounds(288, 174, 100, 100), channel(\"gain\"),
+  _csoundString: "<Cabbage>\r\nform caption(\"BasicPresetsUsage\") size(400, 350),
+    colour(58, 110, 182)\r\nrslider bounds(288, 192, 100, 100), channel(\"gain\"),
     range(0, 1, 0.4, 1, 0.01), text(\"Gain\")\r\nhslider bounds(10, 70, 270, 20),
     channel(\"freq\"), range(10, 2200, 440, 1, 0.001), text(\"Carrier Frequency\")\r\nhslider
     bounds(10, 90, 270, 20), channel(\"modFreq\"), range(0, 200, 10), text(\"Mod
-    Frequency\")\r\nrslider bounds(10, 10, 60, 60) range(0, 1, 1, 1, 0.001), channel(\"hrm1\")\r\nrslider
-    bounds(80, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm2\")\r\nrslider
-    bounds(150, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm3\")\r\nrslider
-    bounds(220, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm4\")\r\ncombobox
-    bounds(290, 14, 100, 30), channel(\"carWaveform\"), text(\"car W1\", \"car W2\",
-    \"car W3\")\r\ncombobox bounds(290, 54, 100, 30), channel(\"modWaveform\"), text(\"mod
-    W1\", \"mod W2\", \"mod W3\")\r\nrslider bounds(310, 90, 60, 60) channel(\"modIndex\")
-    range(0, 1, 0, 1, 0.001), text(\"mod Index\")\r\nrslider bounds(150, 130, 60,
-    60) channel(\"lfoAmp\") range(0, 0.99, 0, 1, 0.001) text(\"LFO Amp\")\r\nrslider
-    bounds(220, 130, 60, 60) channel(\"lfoFreq\") range(0, 30, 0, 1, 0.001) text(\"LFO
-    Freq\")\r\nrslider bounds(150, 200, 60, 60) channel(\"lfoAmpRand\") range(0,
-    1, 0, 1, 0.001) text(\"LFO Amp Rand\")\r\nrslider bounds(220, 200, 60, 60) channel(\"lfoFreqRand\")
-    range(0, 30, 0, 1, 0.001) text(\"LFO Freq Rand\")\r\n\r\ncheckbox bounds(16,
-    160, 100, 26) channel(\"filtOn\") text(\"filter on\")\r\nrslider bounds(10, 200,
-    60, 60) channel(\"filtFreq\") range(0, 16000, 0, 1, 0.001) text(\"Filter Freq\")\r\nrslider
-    bounds(70, 200, 60, 60) channel(\"filtRes\") range(0, 1.99, 0, 1, 0.001) text(\"Filter
-    Res\")\r\n\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n -d\r\n</CsOptions>\r\n<CsInstruments>\r\n;
-    Initialize the global variables. \r\nsr = 48000\r\nksmps = 32\r\nnchnls = 2\r\n0dbfs
-    = 1\r\n\r\ngiWave1 ftgen 1, 0, 4096, 10, 1\r\ngiWave2 ftgen 2, 0, 4096, 10, 1,
-    .5, .25, .17\r\ngiWave3 ftgen 3, 0, 4096, 10, 1, 0, .333, 0, .2, 0, .143, 0,
-    .111, 0, .0909, 0, .077, 0, .0666, 0, .0588\r\n\r\ninstr 1\r\n\r\n    kEnv madsr
-    0.1, .5, .6, 1\r\n    \r\n    kLFOAmpRand = chnget:k(\"lfoAmpRand\")\r\n    kLFOFreqRand
-    = chnget:k(\"lfoFreqRand\")\r\n    \r\n    kLFOAmpRand1 random -kLFOAmpRand,
-    kLFOAmpRand\r\n    kLFOAmpRand2 random -kLFOAmpRand, kLFOAmpRand\r\n    kLFOAmpRand3
-    random -kLFOAmpRand, kLFOAmpRand\r\n    kLFOAmpRand4 random -kLFOAmpRand, kLFOAmpRand\r\n   
-    kLFOFreqRand1 random -kLFOFreqRand, kLFOFreqRand\r\n    kLFOFreqRand2 random
-    -kLFOFreqRand, kLFOFreqRand\r\n    kLFOFreqRand3 random -kLFOFreqRand, kLFOFreqRand\r\n   
-    kLFOFreqRand4 random -kLFOFreqRand, kLFOFreqRand\r\n    \r\n    aModOsc oscilikt
+    Frequency\")\r\nrslider bounds(10, 10, 60, 60) range(0, 1, 1, 1, 0.001), channel(\"hrm1\"),
+    text(\"Base Frequency Amp\")\r\nrslider bounds(80, 10, 60, 60) range(0, 1, 0,
+    1, 0.001), channel(\"hrm2\"), text(\"First Harmonic Amp\")\r\nrslider bounds(150,
+    10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm3\"), text(\"Second Harmonic
+    Amp\")\r\nrslider bounds(220, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel(\"hrm4\"),
+    text(\"Third Harmonic Amp\")\r\ncombobox bounds(290, 14, 100, 30), channel(\"carWaveform\"),
+    text(\"car W1\", \"car W2\", \"car W3\")\r\ncombobox bounds(290, 54, 100, 30),
+    channel(\"modWaveform\"), text(\"mod W1\", \"mod W2\", \"mod W3\")\r\nrslider
+    bounds(310, 90, 60, 60) channel(\"modIndex\") range(0, 15, 0, 1, 0.001), text(\"Mod
+    Index\")\r\ngroupbox bounds(10, 114, 270, 220) channel(\"filterGroupBox\") text(\"FILTER\")\r\ncheckbox
+    bounds(20, 140, 125, 30) channel(\"filtOn\") text(\"Filter ON\")\r\nrslider bounds(14,
+    180, 65, 65) channel(\"filtFreq\") range(0, 16000, 0, 1, 0.001) text(\"F Freq\")\r\nrslider
+    bounds(14, 256, 65, 65) channel(\"filtRandFreq\") range(0, 16000, 0, 1, 0.001)
+    text(\"F Rand Freq\")\r\nrslider bounds(80, 180, 65, 65) channel(\"filtRes\")
+    range(0, 1.99, 0, 1, 0.001) text(\"F Res\")\r\nrslider bounds(80, 256, 65, 65)
+    channel(\"filtRandRes\") range(0, 1.99, 0, 1, 0.001) text(\"F Rand Res\")\r\ncheckbox
+    bounds(150, 140, 120, 30) channel(\"filtLFOOn\") text(\"Filter LFO ON\")\r\ncombobox
+    bounds(150, 176, 119, 30), channel(\"filtLFOShape\"), text(\"sine\", \"triangles\",
+    \"square bi\", \"square uni\", \"saw\", \"saw down\") \r\nrslider bounds(150,
+    270, 60, 60) channel(\"filtLFOAmp\") range(0, 0.99, 0, 1, 0.001), text(\"LFO
+    Amp\")\r\nrslider bounds(150, 210, 60, 60) channel(\"filtLFOFreq\") range(0,
+    30, 0, 1, 0.001) text(\"LFO Freq\") \r\nrslider bounds(210, 270, 60, 60) channel(\"filtLFORandAmp\")
+    range(0, 1, 0, 1, 0.001) text(\"LFO Rand Amp\")\r\nrslider bounds(210, 210, 60,
+    60) channel(\"filtLFORandFreq\") range(0, 30, 0, 1, 0.001) text(\"LFO Rand Freq\")\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
+    -d\r\n</CsOptions>\r\n<CsInstruments>\r\n; Initialize the global variables. \r\nsr
+    = 48000\r\nksmps = 32\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\ngiWave1 ftgen 1, 0, 4096,
+    10, 1\r\ngiWave2 ftgen 2, 0, 4096, 10, 1, .5, .25, .17\r\ngiWave3 ftgen 3, 0,
+    4096, 10, 1, 0, .333, 0, .2, 0, .143, 0, .111, 0, .0909, 0, .077, 0, .0666, 0,
+    .0588\r\n\r\ninstr 1\r\n\r\n    kEnv madsr 0.1, .5, .6, 1\r\n        \r\n   
+    kFiltRandFreq = chnget:k(\"filtRandFreq\")\r\n    kFiltRandRes = chnget:k(\"filtRandRes\")\r\n   
+    kLFORandAmp = chnget:k(\"filtLFORandAmp\")\r\n    kLFORandFreq = chnget:k(\"filtLFORandFreq\")\r\n   
+    \r\n    kFiltRandFreq random -kFiltRandFreq, kFiltRandFreq\r\n    kFiltRandRes
+    random -kFiltRandRes, kFiltRandRes\r\n    kLFORandAmp random -kLFORandAmp, kLFORandAmp\r\n   
+    kLFORandFreq random -kLFORandFreq, kLFORandFreq\r\n        \r\n    aModOsc oscilikt
     chnget:k(\"modIndex\") * chnget:k(\"modFreq\"), chnget:k(\"modFreq\"), chnget:k(\"modWaveform\")\r\n   
-    \r\n    aLFO1 lfo chnget:k(\"lfoAmp\") + kLFOAmpRand1, chnget:k(\"lfoFreq\")
-    + kLFOFreqRand1, 0\r\n    aLFO2 lfo chnget:k(\"lfoAmp\") + kLFOAmpRand2, chnget:k(\"lfoFreq\")
-    + kLFOFreqRand2, 0\r\n    aLFO3 lfo chnget:k(\"lfoAmp\") + kLFOAmpRand3, chnget:k(\"lfoFreq\")
-    + kLFOFreqRand3, 0\r\n    aLFO4 lfo chnget:k(\"lfoAmp\") + kLFOAmpRand4, chnget:k(\"lfoFreq\")
-    + kLFOFreqRand4, 0\r\n\r\n    a1  oscilikt kEnv*chnget:k(\"hrm1\"), chnget:k(\"freq\")  
-    + aLFO1 + aModOsc, chnget:k(\"carWaveform\")\r\n    a2  oscilikt kEnv*chnget:k(\"hrm2\"),
-    chnget:k(\"freq\")*2 + aLFO2 + aModOsc, chnget:k(\"carWaveform\")\r\n    a3 
-    oscilikt kEnv*chnget:k(\"hrm3\"), chnget:k(\"freq\")*3 + aLFO3 + aModOsc, chnget:k(\"carWaveform\")\r\n   
-    a4  oscilikt kEnv*chnget:k(\"hrm4\"), chnget:k(\"freq\")*4 + aLFO4 + aModOsc,
-    chnget:k(\"carWaveform\")\r\n    aMix = a1+a2+a3+a4\r\n    \r\n    kFiltOn =
-    chnget(\"filtOn\")\r\n    ;kFiltOn cabbageGetValue \"filtOn\"\r\n    \r\n   
-    printk 0.1, kFiltOn \r\n    \r\n    if kFiltOn == 1 then   \r\n        aOut moogladder
-    aMix, chnget:k(\"filtFreq\"), chnget:k(\"filtRes\")\r\n    else\r\n        aOut
-    = aMix\r\n    endif\r\n    \r\n    outs aOut*kEnv*chnget:k(\"gain\"), aOut*kEnv*chnget:k(\"gain\")\r\n   
+    \r\n    kShapeChanged changed chnget:k(\"filtLFOShape\")\r\n    if kShapeChanged
+    == 1 then\r\n        reinit lfoShapeInit\r\n    endif\r\n    \r\n    lfoShapeInit:\r\n   
+    afiltLFO lfo chnget:k(\"filtLFOAmp\") + kLFORandAmp, chnget:k(\"filtLFOFreq\")
+    + kLFORandFreq, chnget:i(\"filtLFOShape\")-1\r\n    rireturn\r\n    \r\n    a1 
+    oscilikt kEnv*chnget:k(\"hrm1\"), chnget:k(\"freq\")   + aModOsc, chnget:k(\"carWaveform\")\r\n   
+    a2  oscilikt kEnv*chnget:k(\"hrm2\"), chnget:k(\"freq\")*2 + aModOsc, chnget:k(\"carWaveform\")\r\n   
+    a3  oscilikt kEnv*chnget:k(\"hrm3\"), chnget:k(\"freq\")*3 + aModOsc, chnget:k(\"carWaveform\")\r\n   
+    a4  oscilikt kEnv*chnget:k(\"hrm4\"), chnget:k(\"freq\")*4 + aModOsc, chnget:k(\"carWaveform\")\r\n   
+    aMix = a1+a2+a3+a4\r\n    \r\n    kFiltOn = chnget:k(\"filtOn\")\r\n    kLFOOn
+    = chnget:k(\"filtLFOOn\")\r\n    \r\n    if kFiltOn == 1 then   \r\n        if
+    kLFOOn == 1 then\r\n            aOut moogladder aMix, (chnget:k(\"filtFreq\")
+    + kFiltRandFreq) * abs(afiltLFO), chnget:k(\"filtRes\") + kFiltRandRes\r\n       
+    else\r\n            aOut moogladder aMix, chnget:k(\"filtFreq\") + kFiltRandFreq,
+    chnget:k(\"filtRes\") + kFiltRandRes\r\n        endif\r\n    else\r\n       
+    aOut = aMix\r\n    endif\r\n    \r\n    outs aOut*kEnv*chnget:k(\"gain\"), aOut*kEnv*chnget:k(\"gain\")\r\n   
     \r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes Csound to run for about
     7000 years...\r\nf0 z\r\ni1 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: BasicPresetsUsage.csd
@@ -317,37 +686,37 @@ MonoBehaviour:
     options: []
   - type: rslider
     channel: gain
-    text: 
+    text: Gain
     caption: 
     min: 0
     max: 1
-    value: 0.4
+    value: 0.95
     skew: 0
     increment: 0
     options: []
   - type: hslider
     channel: freq
-    text: 
+    text: Carrier Frequency
     caption: 
     min: 10
     max: 2200
-    value: 440
+    value: 90
     skew: 0
     increment: 0
     options: []
   - type: hslider
     channel: modFreq
-    text: 
+    text: Mod Frequency
     caption: 
     min: 0
     max: 200
-    value: 10
+    value: 7.3
     skew: 0
     increment: 0
     options: []
   - type: rslider
     channel: hrm1
-    text: 
+    text: Base Frequency Amp
     caption: 
     min: 0
     max: 1
@@ -357,41 +726,41 @@ MonoBehaviour:
     options: []
   - type: rslider
     channel: hrm2
-    text: 
+    text: First Harmonic Amp
     caption: 
     min: 0
     max: 1
-    value: 0
+    value: 0.682
     skew: 0
     increment: 0
     options: []
   - type: rslider
     channel: hrm3
-    text: 
+    text: Second Harmonic Amp
     caption: 
     min: 0
     max: 1
-    value: 0
+    value: 0.348
     skew: 0
     increment: 0
     options: []
   - type: rslider
     channel: hrm4
-    text: 
+    text: Third Harmonic Amp
     caption: 
     min: 0
     max: 1
-    value: 0
+    value: 0.422
     skew: 0
     increment: 0
     options: []
   - type: combobox
     channel: carWaveform
-    text: 
+    text: car W1, car W2, car W3
     caption: 
     min: 1
     max: 3
-    value: 0
+    value: 2
     skew: 0
     increment: 0
     options:
@@ -400,11 +769,11 @@ MonoBehaviour:
     - carW3
   - type: combobox
     channel: modWaveform
-    text: 
+    text: mod W1, mod W2, mod W3
     caption: 
     min: 1
     max: 3
-    value: 0
+    value: 2
     skew: 0
     increment: 0
     options:
@@ -413,57 +782,17 @@ MonoBehaviour:
     - modW3
   - type: rslider
     channel: modIndex
-    text: 
+    text: Mod Index
     caption: 
     min: 0
-    max: 1
-    value: 0
+    max: 15
+    value: 9.43
     skew: 0
     increment: 0
     options: []
-  - type: rslider
-    channel: lfoAmp
-    text: 
-    caption: 
-    min: 0
-    max: 0.99
-    value: 0
-    skew: 0
-    increment: 0
-    options: []
-  - type: rslider
-    channel: lfoFreq
-    text: 
-    caption: 
-    min: 0
-    max: 30
-    value: 0
-    skew: 0
-    increment: 0
-    options: []
-  - type: rslider
-    channel: lfoAmpRand
-    text: 
-    caption: 
-    min: 0
-    max: 1
-    value: 0
-    skew: 0
-    increment: 0
-    options: []
-  - type: rslider
-    channel: lfoFreqRand
-    text: 
-    caption: 
-    min: 0
-    max: 30
-    value: 0
-    skew: 0
-    increment: 0
-    options: []
-  - type: checkbox
-    channel: filtOn
-    text: 
+  - type: groupbox
+    channel: filterGroupBox
+    text: FILTER
     caption: 
     min: 0
     max: 0
@@ -471,23 +800,119 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+  - type: checkbox
+    channel: filtOn
+    text: Filter ON
+    caption: 
+    min: 0
+    max: 0
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
   - type: rslider
     channel: filtFreq
-    text: 
+    text: F Freq
     caption: 
     min: 0
     max: 16000
-    value: 0
+    value: 2832
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: filtRandFreq
+    text: F Rand Freq
+    caption: 
+    min: 0
+    max: 16000
+    value: 54
     skew: 0
     increment: 0
     options: []
   - type: rslider
     channel: filtRes
-    text: 
+    text: F Res
     caption: 
     min: 0
     max: 1.99
-    value: 0
+    value: 0.379
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: filtRandRes
+    text: F Rand Res
+    caption: 
+    min: 0
+    max: 1.99
+    value: 0.026
+    skew: 0
+    increment: 0
+    options: []
+  - type: checkbox
+    channel: filtLFOOn
+    text: Filter LFO ON
+    caption: 
+    min: 0
+    max: 0
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+  - type: combobox
+    channel: filtLFOShape
+    text: sine, triangles, square bi, square uni, saw, saw down
+    caption: 
+    min: 1
+    max: 6
+    value: 1
+    skew: 0
+    increment: 0
+    options:
+    - sine
+    - triangles
+    - squarebi
+    - squareuni
+    - saw
+    - sawdown
+  - type: rslider
+    channel: filtLFOAmp
+    text: LFO Amp
+    caption: 
+    min: 0
+    max: 0.99
+    value: 0.903
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: filtLFOFreq
+    text: LFO Freq
+    caption: 
+    min: 0
+    max: 30
+    value: 0.02
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: filtLFORandAmp
+    text: LFO Rand Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0.124
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: filtLFORandFreq
+    text: LFO Rand Freq
+    caption: 
+    min: 0
+    max: 30
+    value: 0.5
     skew: 0
     increment: 0
     options: []
@@ -496,10 +921,14 @@ MonoBehaviour:
   _drawTestScore: 0
   _drawSettings: 0
   _drawChannels: 1
-  _drawAudioChannels: 1
+  _drawAudioChannels: 0
   _drawPresets: 1
+  _drawPresetsLoad: 1
+  _drawPresetsSave: 1
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: Preset1
+  _currentPreset: SlowUpAndDown
+  _currentPresetSaveFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets/Samples/CsoundUnity/3.3.1/Presets/BasicPresetsUsage/Presets/Resources
+  _currentPresetLoadFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets/Samples/CsoundUnity/3.3.1/Presets/BasicPresetsUsage/Presets/Resources
 --- !u!82 &1923268640
 AudioSource:
   m_ObjectHideFlags: 0
@@ -608,7 +1037,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1923268642
 MonoBehaviour:
@@ -623,7 +1052,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   csound: {fileID: 1923268639}
-  testPreset: {fileID: 11400000, guid: 3120b792debebae459aa671a291ff0c4, type: 2}
+  testPresets:
+  - {fileID: 11400000, guid: d44b45dd5793fc54ab8f74c8a702d377, type: 2}
+  - {fileID: 11400000, guid: 5a34657a2d7256747ab20515a16f7108, type: 2}
+  - {fileID: 11400000, guid: 796356226b472c049886973e8e5a3d31, type: 2}
+  - {fileID: 11400000, guid: 647888dce5917084b9864c154750d1bc, type: 2}
+  - {fileID: 11400000, guid: 304e62f05d7d8cd47a3b66400f063234, type: 2}
 --- !u!1 &1951274432
 GameObject:
   m_ObjectHideFlags: 0
@@ -659,8 +1093,8 @@ Camera:
   m_GameObject: {fileID: 1951274432}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.24528301, g: 0.24528301, b: 0.24528301, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -707,3 +1141,103 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2107517374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2107517378}
+  - component: {fileID: 2107517377}
+  - component: {fileID: 2107517376}
+  - component: {fileID: 2107517375}
+  m_Layer: 5
+  m_Name: Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2107517375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107517374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &2107517376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107517374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+--- !u!223 &2107517377
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107517374}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &2107517378
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107517374}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 1840501753}
+  - {fileID: 1080804928}
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}

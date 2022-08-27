@@ -74,7 +74,7 @@ public class CsoundUnityEditor : Editor
     private string[] _csoundUnityPresetAssetsGUIDs;
     private string[] _jsonPresetsPaths;
     private List<CsoundUnityPreset> _assignablePresets;
-    private int _numPlayersToShow;
+    private int _numPresetsToShow = 5;
 
     void OnEnable()
     {
@@ -595,12 +595,12 @@ public class CsoundUnityEditor : Editor
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Assignable Presets:", EditorStyles.boldLabel);
-            _numPlayersToShow = EditorGUILayout.IntSlider(_numPlayersToShow, 3, 20);
+            _numPresetsToShow = EditorGUILayout.IntSlider(_numPresetsToShow, 3, 20);
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
 
-            presetsScrollPos = EditorGUILayout.BeginScrollView(presetsScrollPos, GUILayout.Height(Mathf.Min(Mathf.Max(21, 21 * _numPlayersToShow), 420f)));
+            presetsScrollPos = EditorGUILayout.BeginScrollView(presetsScrollPos, GUILayout.Height(Mathf.Min(Mathf.Max(21, 21 * _numPresetsToShow), 420f)));
             EditorGUILayout.LabelField($"ScriptableObject Presets: ({_assignablePresets.Count})", EditorStyles.boldLabel);
             foreach (var preset in _assignablePresets)
             {
@@ -778,33 +778,17 @@ public class CsoundUnityEditor : Editor
         _csoundUnityPresetAssetsGUIDs = new string[] { };
         _assignablePresets = new List<CsoundUnityPreset>();
 
-        // look in the whole project for CsoundUnityPreset scriptable objects
+        // look in the whole project for CsoundUnityPreset scriptable objects and jsons
         if (string.IsNullOrWhiteSpace(m_currentPresetLoadFolder.stringValue))
         {
             _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset");
+            // this will collect all jsons found in the Application.dataPath, be aware that they could not be CsoundUnityPresets!
+            _jsonPresetsPaths = Directory.GetFiles(Application.dataPath, "*.json", SearchOption.AllDirectories);
         }
         else
         {
-            // instead if the load folder is set look inside this folder only
-            //Debug.Log($"Looking into {assetsFolderPath}");
-            if (assetsFolderPath.Contains("Assets") && !assetsFolderPath.Contains("StreamingAssets"))
-            {
-                //Debug.Log("Using Assets Database for the search");
-                _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset", new string[] { assetsFolderPath });
-                //foreach (var guid in _csoundUnityPresetAssetsGUIDs)
-                //{
-                //    Debug.Log($"FOUND {guid}");
-                //}
-            }
-            else
-            {
-                //Debug.Log($"Directory.GetFiles( m_currentPresetLoadFolder.stringValue): {m_currentPresetLoadFolder.stringValue}");
-                _jsonPresetsPaths = Directory.GetFiles(m_currentPresetLoadFolder.stringValue, "*.json");//, "*.json|*.JSON");
-                //foreach (var file in _jsonPresetsPaths)
-                //{
-                //    Debug.Log($"found file: {file}");
-                //}
-            }
+            _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset", new string[] { assetsFolderPath });
+            _jsonPresetsPaths = Directory.GetFiles(m_currentPresetLoadFolder.stringValue, "*.json");
         }
 
         foreach (var guid in _csoundUnityPresetAssetsGUIDs)

@@ -1504,7 +1504,7 @@ public class CsoundUnity : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Asset not found, creating new preset at {fullPath}!");
+            Debug.Log($"Creating new CsoundUnityPreset at {fullPath}");
             AssetDatabase.CreateAsset(preset, fullPath);
         }
         AssetDatabase.SaveAssets();
@@ -1524,7 +1524,7 @@ public class CsoundUnity : MonoBehaviour
         var presetData = JsonUtility.ToJson(preset, true);
         try
         {
-            Debug.Log($"Saving preset at {fullPath}");
+            Debug.Log($"Saving JSON preset at {fullPath}");
             File.WriteAllText($"{fullPath}", presetData);
         }
         catch (IOException ex)
@@ -1584,7 +1584,7 @@ public class CsoundUnity : MonoBehaviour
     {
         if (preset == null)
         {
-            Debug.LogError("Couldn't load a null preset!");
+            Debug.LogError("Couldn't load a null CsoundUnityPreset!");
         }
 
         _currentPreset = preset.presetName;
