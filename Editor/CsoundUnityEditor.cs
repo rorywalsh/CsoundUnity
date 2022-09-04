@@ -359,6 +359,10 @@ public class CsoundUnityEditor : Editor
                         for (var s = 0; s < strings.Length; s++)
                         {
                             strings[s] = options.GetArrayElementAtIndex(s).stringValue;
+                            // this Replace is needed because Unity creates sub menus with /
+                            // it is ugly seeing fractions like 1/3 as 1\3,
+                            // but otherwise it would appear as 1 -> 3
+                            strings[s] = strings[s].Replace('/', '\\');
                         }
                         EditorGUILayout.BeginHorizontal();
                         EditorGUILayout.LabelField(channel);
@@ -604,20 +608,34 @@ public class CsoundUnityEditor : Editor
             EditorGUILayout.LabelField($"ScriptableObject Presets: ({_assignablePresets.Count})", EditorStyles.boldLabel);
             foreach (var preset in _assignablePresets)
             {
+                EditorGUILayout.BeginHorizontal();
                 if (GUILayout.Button(preset.presetName))
                 {
                     SetPreset(preset);
                 }
+                if (GUILayout.Button("To JSON", GUILayout.Width(80)))
+                {
+                    csoundUnity.ConvertPresetToJSON(preset, m_currentPresetLoadFolder.stringValue);
+                }
+                EditorGUILayout.EndHorizontal();
             }
             EditorGUILayout.LabelField($"JSON Presets: ({_jsonPresetsPaths.Length})", EditorStyles.boldLabel);
             foreach (var path in _jsonPresetsPaths)
             {
+                EditorGUILayout.BeginHorizontal();
+
                 if (GUILayout.Button(new GUIContent(Path.GetFileName(path), $"{path}")))
                 {
                     LoadPreset(path);
                 }
+                if (GUILayout.Button("To SO", GUILayout.Width(80)))
+                {
+                    csoundUnity.ConvertPresetToScriptableObject(path);
+                }
+                EditorGUILayout.EndHorizontal();
             }
             EditorGUILayout.EndScrollView();
+            EditorGUI.indentLevel++;
         }
     }
 
@@ -629,6 +647,8 @@ public class CsoundUnityEditor : Editor
         {
             EditorGUI.indentLevel--;
             EditorGUILayout.LabelField("Save a Preset", EditorStyles.helpBox);
+
+            EditorGUI.indentLevel--;
             EditorGUILayout.BeginHorizontal();
             var outputBtnLabel = $"Select Presets output folder";
             if (GUILayout.Button(outputBtnLabel))//, GUILayout.Width(500), GUILayout.Height(75)))

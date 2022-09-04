@@ -1534,6 +1534,19 @@ public class CsoundUnity : MonoBehaviour
         AssetDatabase.Refresh();
     }
 
+    public void ConvertPresetToScriptableObject(string path)
+    {
+        LoadPreset(path, (preset) => 
+        {
+            SavePresetAsScriptableObject(preset.presetName, Path.GetDirectoryName(path));
+        });
+    }
+
+    public void ConvertPresetToJSON(CsoundUnityPreset preset, string path = null, bool overwriteIfExisting = false)
+    {
+        SavePresetAsJSON(preset.presetName, path, overwriteIfExisting);
+    }
+
     private string CheckPathForExistence(string path, string presetName, bool overwriteIfExisting)
     {
         path = string.IsNullOrWhiteSpace(path) ?
