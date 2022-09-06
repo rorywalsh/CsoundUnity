@@ -1419,7 +1419,9 @@ public class CsoundUnity : MonoBehaviour
         {
             Debug.Log(ex.Message);
         }
+#if UNITY_EDITOR
         AssetDatabase.Refresh();
+#endif
     }
 
     public void SavePresetAsScriptableObject(string presetName, string path = null)
@@ -1531,7 +1533,9 @@ public class CsoundUnity : MonoBehaviour
         {
             Debug.Log(ex.Message);
         }
+#if UNITY_EDITOR
         AssetDatabase.Refresh();
+#endif
     }
 
     public void ConvertPresetToScriptableObject(string path)
