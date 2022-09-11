@@ -1569,7 +1569,8 @@ public class CsoundUnity : MonoBehaviour
             }
             catch (IOException ex)
             {
-                Debug.LogError($"Couldn't create folder at: {path}, {ex.Message}");
+                Debug.LogError($"Couldn't create folder at: {path}, defaulting to {Application.persistentDataPath} {ex.Message}");
+                path = Application.persistentDataPath;
             }
         }
 

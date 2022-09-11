@@ -823,11 +823,16 @@ public class CsoundUnityEditor : Editor
     private string ExtractAssetsFolderFromPath(SerializedProperty pathProperty)
     {
         var path = pathProperty.stringValue;
-        if (string.IsNullOrWhiteSpace(path) || path.Length < 4)
+        try
         {
-            Debug.LogWarning($"Couldn't extract Asset path from path: {path}, defaulting to {Application.dataPath}");
+            var testPath = Path.GetFullPath(path);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning($"Couldn't extract Asset path from path: {path}, defaulting to {Application.dataPath}, {ex.Message}");
             path = pathProperty.stringValue = Application.dataPath;
         }
+
         var assetsIndex = path.IndexOf("Assets");
         var relativeToAssetsPath = assetsIndex >= 0 ? path.Substring(assetsIndex, path.Length - assetsIndex) : path;
         relativeToAssetsPath = relativeToAssetsPath.Length >= "Assets".Length ? relativeToAssetsPath : path;
