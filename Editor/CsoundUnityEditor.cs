@@ -677,6 +677,12 @@ public class CsoundUnityEditor : Editor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
+            
+            if (!Directory.Exists(m_currentPresetSaveFolder.stringValue))
+            {
+                Debug.LogWarning($"Save folder not found, defaulting to {Application.dataPath}");
+                m_currentPresetSaveFolder.stringValue = Application.dataPath;
+            }
             var fullPath = m_currentPresetSaveFolder.stringValue;
             var assetsIndex = fullPath.IndexOf("Assets");
             var relativeToAssetsPath = assetsIndex > 0 ? fullPath.Substring(assetsIndex, fullPath.Length - assetsIndex) : fullPath;
@@ -808,6 +814,11 @@ public class CsoundUnityEditor : Editor
         else
         {
             _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset", new string[] { assetsFolderPath });
+            if (!Directory.Exists(m_currentPresetLoadFolder.stringValue))
+            {
+                Debug.LogWarning($"Load folder not found, defaulting to {Application.dataPath}");
+                m_currentPresetLoadFolder.stringValue = Application.dataPath;
+            }
             _jsonPresetsPaths = Directory.GetFiles(m_currentPresetLoadFolder.stringValue, "*.json");
         }
 
@@ -823,13 +834,9 @@ public class CsoundUnityEditor : Editor
     private string ExtractAssetsFolderFromPath(SerializedProperty pathProperty)
     {
         var path = pathProperty.stringValue;
-        try
+        if (!Directory.Exists(path))
         {
-            var testPath = Path.GetFullPath(path);
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogWarning($"Couldn't extract Asset path from path: {path}, defaulting to {Application.dataPath}, {ex.Message}");
+            Debug.LogWarning($"Couldn't extract Asset path from path: {path}, defaulting to {Application.dataPath}");
             path = pathProperty.stringValue = Application.dataPath;
         }
 

@@ -927,8 +927,8 @@ MonoBehaviour:
   _drawPresetsSave: 1
   _showRuntimeEnvironmentPath: 0
   _currentPreset: SlowUpAndDown
-  _currentPresetSaveFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets/Samples/CsoundUnity/3.3.1/Presets/BasicPresetsUsage/Presets/Resources
-  _currentPresetLoadFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets/Samples/CsoundUnity/3.3.1/Presets/BasicPresetsUsage/Presets/Resources
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
 --- !u!82 &1923268640
 AudioSource:
   m_ObjectHideFlags: 0
