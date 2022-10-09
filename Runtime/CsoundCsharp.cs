@@ -85,6 +85,9 @@ namespace csoundcsharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern IntPtr csoundCreate(IntPtr hostdata);
 
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern Int32 csoundLoadPlugins([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String dir);
+
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern void csoundDestroy([In] IntPtr csound);
 

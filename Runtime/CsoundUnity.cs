@@ -35,8 +35,6 @@ using UnityEngine.Networking;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-#if UNITY_ANDROID
-#endif
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
 #elif UNITY_ANDROID || UNITY_IOS
@@ -1540,7 +1538,7 @@ public class CsoundUnity : MonoBehaviour
 
     public void ConvertPresetToScriptableObject(string path)
     {
-        LoadPreset(path, (preset) => 
+        LoadPreset(path, (preset) =>
         {
             SavePresetAsScriptableObject(preset.presetName, Path.GetDirectoryName(path));
         });
@@ -1563,8 +1561,8 @@ public class CsoundUnity : MonoBehaviour
 
         if (!Directory.Exists(path))
         {
-            try 
-            { 
+            try
+            {
                 Directory.CreateDirectory(path);
             }
             catch (IOException ex)
@@ -1579,7 +1577,7 @@ public class CsoundUnity : MonoBehaviour
         var count = 0;
         while (File.Exists(fullPath) && !overwriteIfExisting)
         {
-            fullPath = Path.Combine(path, $"{presetName}_{count++}.json"); 
+            fullPath = Path.Combine(path, $"{presetName}_{count++}.json");
         }
         return fullPath;
     }
@@ -1626,13 +1624,12 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="path">The path must point to an existing JSON file</param>
     public void LoadPreset(string path, Action<CsoundUnityPreset> onPresetLoaded = null)
     {
-        var data = "";
         var presetName = Path.GetFileName(path);
 
 #if UNITY_ANDROID || UNITY_IOS
-        StartCoroutine(LoadingPreset(path, (data) =>
+        StartCoroutine(LoadingPreset(path, (d) =>
         {
-            var preset = SetPreset(presetName, data);
+            var preset = SetPreset(presetName, d);
             onPresetLoaded?.Invoke(preset);
         }));
 #else
@@ -1641,7 +1638,7 @@ public class CsoundUnity : MonoBehaviour
             Debug.LogError($"Preset JSON not found at path {path}");
             return;
         }
-        data = File.ReadAllText(path);
+        var data = File.ReadAllText(path);
         var preset = SetPreset(presetName, data);
         onPresetLoaded?.Invoke(preset);
 #endif
@@ -1654,13 +1651,12 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="path">The path must point to an existing JSON file</param>
     public void LoadGlobalPreset(string path, Action<CsoundUnity> onPresetLoaded = null)
     {
-        var data = "";
         var presetName = Path.GetFileName(path);
 
 #if UNITY_ANDROID || UNITY_IOS
-        StartCoroutine(LoadingPreset(path, (data) =>
+        StartCoroutine(LoadingPreset(path, (d) =>
         {
-            var preset = SetGlobalPreset(presetName, data);
+            var preset = SetGlobalPreset(presetName, d);
             onPresetLoaded?.Invoke(preset);
         }));
 #else
@@ -1669,7 +1665,7 @@ public class CsoundUnity : MonoBehaviour
             Debug.LogError($"Global Preset JSON not found at path {path}");
             return;
         }
-        data = File.ReadAllText(path);
+        var data = File.ReadAllText(path);
         var preset = SetGlobalPreset(presetName, data);
         onPresetLoaded?.Invoke(preset);
 #endif

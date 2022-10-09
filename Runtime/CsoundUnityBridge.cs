@@ -44,8 +44,41 @@ public class CsoundUnityBridge
     public IntPtr csound;
     bool compiledOk = false;
 
+#if UNITY_ANDROID
+    public static AndroidJavaObject GetUnityActivity()
+    {
+        using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            return unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+        }
+    }
+
+    public static AndroidJavaObject GetUnityContext()
+    {
+        var activity = GetUnityActivity();
+        Debug.Log($"activity null? {activity == null}");
+        return activity.Call<AndroidJavaObject>("getApplicationContext");
+    }
+
+    public static AndroidJavaObject GetApplicationInfo()
+    {
+        var context = GetUnityContext();
+        Debug.Log($"context null? {context == null}");
+        return GetUnityContext().Call<AndroidJavaObject>("getApplicationInfo");
+    }
+
+    public static string GetNativeLibraryDir()
+    {
+        var info = GetApplicationInfo();
+        Debug.Log($"info null? {info == null}");
+        return info.Get<string>("nativeLibraryDir");
+    }
+
+#endif
+
     private void SetEnvironmentSettings(List<EnvironmentSettings> environmentSettings)
     {
+
         if (environmentSettings == null || environmentSettings.Count == 0) return;
         foreach (var env in environmentSettings)
         {
@@ -98,7 +131,7 @@ public class CsoundUnityBridge
     /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
     public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
     {
-         SetEnvironmentSettings(environmentSettings);
+        SetEnvironmentSettings(environmentSettings);
 
         // KEEP THIS FOR REFERENCE ;)
         //#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
@@ -118,7 +151,7 @@ public class CsoundUnityBridge
             Debug.LogError("Couldn't create Csound!");
             return;
         }
-        
+
         Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
 
@@ -129,6 +162,12 @@ public class CsoundUnityBridge
         parms.control_rate_override = AudioSettings.outputSampleRate;
         parms.sample_rate_override = AudioSettings.outputSampleRate;
         SetParams(parms);
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+
+        var loaded = Csound6.NativeMethods.csoundLoadPlugins(csound, GetNativeLibraryDir());
+        Debug.Log($"PLUGINS LOADED? {loaded}");
+#endif
 
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
         Csound6.NativeMethods.csoundStart(csound);
