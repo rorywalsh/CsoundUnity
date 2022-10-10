@@ -96,6 +96,7 @@ public class EnvironmentSettings
     public string GetPath(bool runtime = false)
     {
         var path = string.Empty;
+        Debug.Log($"EnvironmentSettings GetPath from {baseFolder}");
         switch (baseFolder)
         {
             case EnvironmentPathOrigin.PersistentDataPath:
@@ -103,6 +104,9 @@ public class EnvironmentSettings
                 break;
             case EnvironmentPathOrigin.StreamingAssets:
                 path = GetStreamingAssetsPath(platform, runtime);
+                break;
+            case EnvironmentPathOrigin.Plugins:
+                path = GetPluginsPath(platform, runtime);
                 break;
             case EnvironmentPathOrigin.Absolute:
             default:
@@ -157,14 +161,73 @@ public class EnvironmentSettings
                 res = runtime ? $"<path to executablename_Data folder>" : Application.streamingAssetsPath;
                 break;
             case SupportedPlatform.Android:
-                res = $"jar: file://{Application.dataPath}!/assets";
+                res = runtime ? $"jar:file://storage/emulated/0/Android/data/{Application.identifier}/!/assets" : Application.streamingAssetsPath;
                 break;
             case SupportedPlatform.iOS:
-                res = $"{Application.dataPath}/Raw";
+                res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Raw/" : Application.streamingAssetsPath;
                 break;
         }
         return res;
     }
+
+    private string GetPluginsPath(SupportedPlatform supportedPlatform, bool runtime)
+    {
+        Debug.Log($"GetPluginsPath for platform: {supportedPlatform}");
+        var res = Path.Combine(Application.dataPath, "Plugins");
+        switch (supportedPlatform)
+        {
+            case SupportedPlatform.MacOS:
+                res = runtime ? $"<path to player app bundle>/Contents/Resources/Data/Plugins" : res;
+                break;
+            case SupportedPlatform.Windows:
+                res = runtime ? $"<path to executablename_Data folder>" : res;
+                break;
+            case SupportedPlatform.Android:
+#if UNITY_ANDROID && !UNITY_EDITOR
+                Debug.Log("1 - GET ANDROID NATIVE LIBRARY DIR");
+                res = GetAndroidNativeLibraryDir();
+#else
+                res = runtime ? $"/data/app/<random chars>/{Application.identifier}-<random chars>/lib/arm64-v8a" : res;
+#endif
+                break;
+            case SupportedPlatform.iOS:
+                res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Plugins" : res;
+                break;
+        }
+        return res;
+    }
+
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+    public static AndroidJavaObject GetUnityActivity()
+    {
+        using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            return unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+        }
+    }
+
+    public static AndroidJavaObject GetUnityContext()
+    {
+        var activity = GetUnityActivity();
+        Debug.Log($"2 - GetUnityContext, activity null? {activity == null}");
+        return activity.Call<AndroidJavaObject>("getApplicationContext");
+    }
+
+    public static AndroidJavaObject GetApplicationInfo()
+    {
+        var context = GetUnityContext();
+        Debug.Log($"3 - GetApplicationInfo, context null? {context == null}");
+        return GetUnityContext().Call<AndroidJavaObject>("getApplicationInfo");
+    }
+
+    public static string GetAndroidNativeLibraryDir()
+    {
+        var info = GetApplicationInfo();
+        Debug.Log($"4 - GetAndroidNativeLibraryDir, info null? {info == null}");
+        return info.Get<string>("nativeLibraryDir");
+    }
+#endif
 
     public string GetTypeString()
     {
@@ -189,7 +252,7 @@ public enum SupportedPlatform { MacOS, Windows, Android, iOS }
 /// The base folder where to set the Environment Variables
 /// </summary>
 [Serializable]
-public enum EnvironmentPathOrigin { PersistentDataPath, StreamingAssets, Absolute }
+public enum EnvironmentPathOrigin { PersistentDataPath, StreamingAssets, Absolute, Plugins }
 
 #endregion PUBLIC_CLASSES
 
