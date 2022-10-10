@@ -199,7 +199,7 @@ public enum EnvironmentPathOrigin { PersistentDataPath, StreamingAssets, Absolut
 [RequireComponent(typeof(AudioSource))]
 public class CsoundUnity : MonoBehaviour
 {
-    #region PUBLIC_FIELDS
+#region PUBLIC_FIELDS
 
     /// <summary>
     /// The name of this package
@@ -311,9 +311,9 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector]
     public List<EnvironmentSettings> environmentSettings = new List<EnvironmentSettings>();
 
-    #endregion PUBLIC_FIELDS
+#endregion PUBLIC_FIELDS
 
-    #region PRIVATE_FIELDS
+#region PRIVATE_FIELDS
 
     /// <summary>
     /// The private member variable csound provides access to the CsoundUnityBridge class, which 
@@ -377,7 +377,7 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     private Dictionary<string, MYFLT[]> namedAudioChannelTempBufferDict = new Dictionary<string, MYFLT[]>();
 
-    #endregion
+#endregion
 
     /// <summary>
     /// CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
@@ -461,8 +461,12 @@ public class CsoundUnity : MonoBehaviour
         Debug.Log($"CsoundUnity done init, compiledOk? {compiledOk}");
     }
 
+#region PUBLIC_METHODS
 
-    #region PUBLIC_METHODS
+    public int LoadPlugins(string dir)
+    {
+        return csound.LoadPlugins(dir);
+    }
 
     /// <summary>
     /// Returns the Csound version number times 1000 (5.00.0 = 5000).
@@ -491,7 +495,7 @@ public class CsoundUnity : MonoBehaviour
         return compiledOk;
     }
 
-    #region PERFORMANCE
+#region PERFORMANCE
 
     /// <summary>
     /// Sets the csd file 
@@ -633,9 +637,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetKsmps();
     }
 
-    #endregion PERFORMANCE
+#endregion PERFORMANCE
 
-    #region CSD_PARSE
+#region CSD_PARSE
 
     /// <summary>
     /// Parse the csd and returns available audio channels (set in csd via: <code>chnset avar, "audio channel name") </code>
@@ -807,9 +811,9 @@ public class CsoundUnity : MonoBehaviour
         return locaChannelControllers;
     }
 
-    #endregion CSD_PARSE
+#endregion CSD_PARSE
 
-    #region IO_BUFFERS
+#region IO_BUFFERS
 
     /// <summary>
     /// Set a sample in Csound's input buffer
@@ -877,9 +881,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetSpout();
     }
 
-    #endregion IO_BUFFERS
+#endregion IO_BUFFERS
 
-    #region CONTROL_CHANNELS
+#region CONTROL_CHANNELS
     /// <summary>
     /// Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
     /// </summary>
@@ -954,9 +958,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetChannelList();
     }
 
-    #endregion CONTROL_CHANNELS
+#endregion CONTROL_CHANNELS
 
-    #region AUDIO_CHANNELS
+#region AUDIO_CHANNELS
 
     /// <summary>
     /// Gets a Csound Audio channel. Used in connection with a chnset opcode in your Csound instrument.
@@ -1139,9 +1143,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetNamedGens();
     }
 
-    #endregion TABLES
+#endregion TABLES
 
-    #region UTILITIES
+#region UTILITIES
 
 #if UNITY_EDITOR
     /// <summary>
