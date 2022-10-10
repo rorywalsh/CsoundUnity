@@ -31,7 +31,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-[CustomEditor(typeof(CsoundUnity))]
+[CustomEditor(typeof(CsoundUnity)), CanEditMultipleObjects]
 [System.Serializable]
 public class CsoundUnityEditor : Editor
 {
