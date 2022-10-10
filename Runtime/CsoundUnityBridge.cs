@@ -178,6 +178,11 @@ public class CsoundUnityBridge
     }
 
     #region Instantiation
+    
+    public int LoadPlugins(string dir)
+    {
+        return Csound6.NativeMethods.csoundLoadPlugins(csound, dir);
+    }
 
     #endregion
     public int GetVersion()
