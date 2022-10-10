@@ -60,11 +60,13 @@ public class CsoundChannelController
     [SerializeField] public float increment;
     [SerializeField] public string[] options;
 
-    public void SetRange(float uMin, float uMax, float uValue)
+    public void SetRange(float uMin, float uMax, float uValue = 0f, float uSkew = 1f, float uIncrement = 0.01f)
     {
         min = uMin;
         max = uMax;
         value = uValue;
+        skew = uSkew;
+        increment = uIncrement;
     }
 
     public CsoundChannelController Clone()
@@ -787,8 +789,24 @@ public class CsoundUnity : MonoBehaviour
                         }
                         var min = float.Parse(tokens[0], CultureInfo.InvariantCulture);
                         var max = float.Parse(tokens[1], CultureInfo.InvariantCulture);
-                        var val = float.Parse(tokens[2], CultureInfo.InvariantCulture);
-                        controller.SetRange(min, max, val);
+                        var val = 0f;
+                        var skew = 1f;
+                        var increment = 1f;
+
+                        if (tokens.Length > 2)
+                        {
+                            val = float.Parse(tokens[2], CultureInfo.InvariantCulture);
+                        }
+                        if (tokens.Length > 3)
+                        {
+                            skew = float.Parse(tokens[3], CultureInfo.InvariantCulture);
+                        }
+                        if (tokens.Length > 4)
+                        {
+                            increment = float.Parse(tokens[4], CultureInfo.InvariantCulture);
+                        }
+                        // Debug.Log($"{tokens.Length}");
+                        controller.SetRange(min, max, val, skew, increment);
                     }
                 }
 
@@ -1533,7 +1551,7 @@ public class CsoundUnity : MonoBehaviour
         csound.Cleanup();
     }
 
-    #region PRESETS
+#region PRESETS
 
     /// <summary>
     /// Saves a serialized copy of this CsoundUnity instance.
@@ -1825,14 +1843,14 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
-    #endregion PRESETS
+#endregion PRESETS
 
-    #endregion UTILITIES
+#endregion UTILITIES
 
-    #endregion PUBLIC_METHODS
+#endregion PUBLIC_METHODS
 
 
-    #region ENUMS
+#region ENUMS
 
     /// <summary>
     /// The enum representing the Csound Environment Variables
@@ -1942,10 +1960,10 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     public enum SamplesOrigin { Resources, StreamingAssets, Absolute } // TODO Add PersistentDataPath and URL
 
-    #endregion ENUMS
+#endregion ENUMS
 
 
-    #region PRIVATE_METHODS
+#region PRIVATE_METHODS
 
     void OnAudioFilterRead(float[] data, int channels)
     {
@@ -2093,5 +2111,5 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
-    #endregion PRIVATE_METHODS
+#endregion PRIVATE_METHODS
 }
