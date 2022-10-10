@@ -196,7 +196,7 @@ public class CsoundFileWatcher
                         else
                         {
                             Debug.Log($"<color=green>[CsoundFileWatcher] Updating csd: {csound.csoundFileName} in GameObject: {csound.gameObject.name}</color>");
-                            csound.enabled = true;
+                            // csound.enabled = true;
                             //file changed but guid stays the same
                             csound.SetCsd(csound.csoundFileGUID);
                         }
@@ -279,7 +279,7 @@ public class CsoundFileWatcher
                     // content changed but guid stays the same
                     csd.SetCsd(csd.csoundFileGUID);
                 }
-                csd.enabled = true;
+                // csd.enabled = true;
             }
 
             //Debug.Log("fileWatcher: found a csd asset at path: " + filePath);
