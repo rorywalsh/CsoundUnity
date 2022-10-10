@@ -972,9 +972,22 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetAudioChannel(channel);
     }
 
-    #endregion AUDIO_CHANNELS
+#endregion AUDIO_CHANNELS
 
-    #region TABLES
+#region TABLES
+
+    /// <summary>
+    /// Creates a table with the supplied float samples.
+    /// Can be called during performance.
+    /// </summary>
+    /// <param name="tableNumber">The table number</param>
+    /// <param name="samples"></param>
+    /// <returns></returns>
+    public int CreateFloatTable(int tableNumber, float[] samples)
+    {
+        var myFlts = ConvertToMYFLT(samples);
+        return CreateTable(tableNumber, myFlts);
+    }
 
     /// <summary>
     /// Creates a table with the supplied samples.
@@ -983,7 +996,7 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="tableNumber">The table number</param>
     /// <param name="samples"></param>
     /// <returns></returns>
-    public int CreateTable(int tableNumber, MYFLT[] samples/*, int nChannels*/)
+    public int CreateTable(int tableNumber, MYFLT[] samples)
     {
         if (samples.Length < 1) return -1;
         var resTable = CreateTableInstrument(tableNumber, samples.Length);
@@ -1003,7 +1016,7 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="tableNumber">The number of the newly created table</param>
     /// <param name="tableLength">The length of the table in samples</param>
     /// <returns>0 If the table could be created</returns>
-    public int CreateTableInstrument(int tableNumber, int tableLength/*, int nChannels*/)
+    public int CreateTableInstrument(int tableNumber, int tableLength)
     {
         string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -7, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
         // Debug.Log("orc to create table: \n" + createTableInstrument);
@@ -1087,6 +1100,12 @@ public class CsoundUnity : MonoBehaviour
     public void CopyTableOutAsync(int table, out MYFLT[] dest)
     {
         csound.TableCopyOutAsync(table, out dest);
+    }
+
+    public void CopyFloatTableIn(int table, float[] source)
+    {
+        var myFlts = ConvertToMYFLT(source);
+        CopyTableIn(table, myFlts);
     }
 
     /// <summary>
@@ -1254,76 +1273,125 @@ public class CsoundUnity : MonoBehaviour
         return clamp ? Mathf.Clamp(retValue, from2, to2) : retValue;
     }
 
+    public static float ConvertTo0to1(float value, float from, float to, float skew = 1f)
+    {
+        if ((to - from) == 0) return 0;
+
+        var proportion = Mathf.Clamp01((value - from) / (to - from));
+
+        return Mathf.Pow(proportion, skew);
+    }
+
     /// <summary>
-    /// Get Samples from a path, specifying the origin of the path. This will return an interleaved
-    /// array of samples, with the first index used to specify the number of channels. This array can
-    /// be passed to the CsoundUnity.CreateTable() method for processing by Csound. Use async versions to
-    /// to load very large files.
     /// 
+    /// </summary>
+    /// <param name="value">value is 0-1. if it's not it will be clamped</param>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <returns></returns>
+    public static float ConvertFrom0to1(float value, float from, float to, float skew = 1f)
+    {
+        var clamped = Mathf.Clamp01(value);
+        return clamped;
+    }
+
+    public static MYFLT[] ConvertToMYFLT(float[] samples)
+    {
+        if (samples == null || samples.Length == 0) return new MYFLT[0];
+        var myFLT = new MYFLT[samples.Length];
+        for (var i = 0; i < myFLT.Length; i++)
+        {
+            myFLT[i] = (MYFLT)samples[i];
+        }
+        return myFLT;
+    }
+
+    public static float[] ConvertToFloat(MYFLT[] samples)
+    {
+        if (samples == null || samples.Length == 0) return new float[0];
+        var flt = new float[samples.Length];
+        for (var i = 0; i < flt.Length; i++)
+        {
+            flt[i] = (float)samples[i];
+        }
+        return flt;
+    }
+
+    public static MYFLT[] GetStereoSamples(string source)
+    {
+        return GetSamples(source, 0, true);
+    }
+
+    public static float[] GetStereoFloatSamples(string source)
+    {
+        return ConvertToFloat(GetSamples(source, 0, true));
+    }
+
+    public static MYFLT[] GetMonoSamples(string source, int channelNumber)
+    {
+        return GetSamples(source, channelNumber, true);
+    }
+
+    public static float[] GetMonoFloatSamples(string source, int channelNumber)
+    {
+        return ConvertToFloat(GetSamples(source, channelNumber, true));
+    }
+
+    /// <summary>
+    /// Get Samples from a "Resources" path.
+    /// This will return an interleaved array of samples, with the first index used to specify the number of channels. 
+    /// This array can be passed to the CsoundUnity.CreateTable() method for processing by Csound. 
+    /// Use async version to load very large files, or load from external paths
     /// Note: You need to be careful that your AudioClips match the SR of the 
     /// project. If not, you will hear some re-pitching issues with your audio when
     /// you play it back with a table reader opcode. 
     /// </summary>
-    /// <param name="source"></param>
-    /// <param name="origin"></param>
-    /// <param name="async"></param>
+    /// <param name="source">The path of the audio source relative to a "Resources" folder</param>
+    /// <param name="channelNumber">The channel to read from the source</param>
+    /// <param name="writeChannelData"></param>
     /// <returns></returns>
-    /// 
-    public static MYFLT[] GetStereoSamples(string source, SamplesOrigin origin)
-    {
-        return GetSamples(source, origin, 0, true);
-    }
-
-    public static MYFLT[] GetMonoSamples(string source, SamplesOrigin origin, int channelNumber)
-    {
-        return GetSamples(source, origin, channelNumber, true);
-    }
-    public static MYFLT[] GetSamples(string source, SamplesOrigin origin, int channelNumber = 1, bool writeChannelData = false)
+    public static MYFLT[] GetSamples(string source, int channelNumber = 1, bool writeChannelData = false)
     {
         MYFLT[] res = new MYFLT[0];
-        switch (origin)
+
+        var src = Resources.Load<AudioClip>(source);
+        if (src == null)
         {
-            case SamplesOrigin.Resources:
-                var src = Resources.Load<AudioClip>(source);
-                if (src == null)
-                {
-                    res = null;
-                    break;
-                }
-                var data = new float[src.samples * src.channels];
-                src.GetData(data, 0);
+            Debug.LogError($"Couldn't load samples from AudioClip {source}");
+            return res;
+        }
 
-                if (writeChannelData)
-                {
-                    res = new MYFLT[src.samples * src.channels + 1];
-                    res[0] = src.channels;
-                    var s = 1;
-                    for (var i = 0; i < data.Length; i++)
-                    {
-                        res[s] = data[i];
-                        s++;
-                    }
-                }
-                else
-                {
-                    var s = 0;
-                    res = new MYFLT[src.samples];
+        var data = new float[src.samples * src.channels];
+        src.GetData(data, 0);
 
-                    for (var i = 0; i < data.Length; i += src.channels, s++)
-                    {
-                        res[s] = data[i + (channelNumber - 1)];
-                    }
-                }
-                break;
-            case SamplesOrigin.StreamingAssets:
-                Debug.LogWarning("Not implemented yet");
-                break;
-            case SamplesOrigin.Absolute:
-                Debug.LogWarning("Not implemented yet");
-                break;
+        if (writeChannelData)
+        {
+            res = new MYFLT[src.samples * src.channels + 1];
+            res[0] = src.channels;
+            var s = 1;
+            for (var i = 0; i < data.Length; i++)
+            {
+                res[s] = data[i];
+                s++;
+            }
+        }
+        else
+        {
+            var s = 0;
+            res = new MYFLT[src.samples];
+
+            for (var i = 0; i < data.Length; i += src.channels, s++)
+            {
+                res[s] = data[i + (channelNumber - 1)];
+            }
         }
 
         return res;
+    }
+
+    public static float[] GetFloatSamples(string source, int channelNumber = 1, bool writeChannelData = false)
+    {
+        return ConvertToFloat(GetSamples(source, channelNumber, writeChannelData));
     }
 
     /// <summary>
@@ -1346,7 +1414,6 @@ public class CsoundUnity : MonoBehaviour
         switch (origin)
         {
             case SamplesOrigin.Resources:
-                //var src = Resources.Load<AudioClip>(source);
                 var req = Resources.LoadAsync<AudioClip>(source);
 
                 while (!req.isDone)
@@ -1359,25 +1426,91 @@ public class CsoundUnity : MonoBehaviour
                     onSamplesLoaded?.Invoke(null);
                     yield break;
                 }
-                //Debug.Log("src.samples: " + samples);
-                var ac = ((AudioClip)req.asset);
-                var data = new float[samples * ac.channels];
-                ac.GetData(data, 0);
-                MYFLT[] res = new MYFLT[samples * ac.channels];
-                var s = 0;
-                foreach (var d in data)
-                {
-                    res[s] = (MYFLT)d;
-                    s++;
-                }
-                onSamplesLoaded?.Invoke(res);
+                onSamplesLoaded?.Invoke(GetSamples((AudioClip)req.asset));
                 break;
             case SamplesOrigin.StreamingAssets:
-                Debug.LogWarning("Not implemented yet");
+                var path = Path.Combine(Application.streamingAssetsPath, source);
+                yield return LoadingClip(path, (clip) =>
+                {
+                    onSamplesLoaded?.Invoke(GetSamples(clip));
+                });
                 break;
             case SamplesOrigin.Absolute:
-                Debug.LogWarning("Not implemented yet");
+                yield return LoadingClip(source, (clip) =>
+                {
+                    onSamplesLoaded?.Invoke(GetSamples(clip));
+                });
                 break;
+        }
+    }
+
+    public static MYFLT[] GetSamples(AudioClip audioClip)
+    {
+        var data = new float[audioClip.samples * audioClip.channels];
+        audioClip.GetData(data, 0);
+        MYFLT[] res = new MYFLT[data.Length];
+        var s = 0;
+        foreach (var d in data)
+        {
+            res[s] = (MYFLT)d;
+            s++;
+        }
+        return res;
+    }
+
+    static IEnumerator LoadingClip(string path, Action<AudioClip> onEnd)
+    {
+        var ext = Path.GetExtension(path);
+        AudioType type;
+
+        switch (ext)
+        {
+            case "mp3":
+            case "MP3": type = AudioType.MPEG; break;
+            case "ogg":
+            case "OGG": type = AudioType.OGGVORBIS; break;
+            case "wav":
+            case "WAV":
+            default: type = AudioType.WAV; break;
+        }
+
+#if UNITY_ANDROID
+        path = "file://" + path;
+#elif UNITY_IPHONE
+        path = "file:///" + path;
+#endif
+
+        using (var req = UnityWebRequestMultimedia.GetAudioClip(path, type))
+        {
+            yield return req.SendWebRequest();
+
+#if UNITY_2020_1_OR_NEWER
+            if (req.result == UnityWebRequest.Result.ConnectionError ||
+                req.result == UnityWebRequest.Result.DataProcessingError ||
+                req.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.LogError($"Couldn't load file at path: {path} \n{req.error}");
+                onEnd?.Invoke(null);
+                yield break;
+            }
+#else
+            if (req.isHttpError || req.isNetworkError)
+            {
+                Debug.LogError($"Couldn't load file at path: {path} \n{req.error}");
+                onEnd?.Invoke(null);
+                yield break;
+            }
+#endif
+            var clip = DownloadHandlerAudioClip.GetContent(req);
+
+            if (clip == null)
+            {
+                Debug.LogError("The loaded clip is null!");
+                yield break;
+            }
+
+            clip.name = Path.GetFileName(path);
+            onEnd?.Invoke(clip);
         }
     }
 
