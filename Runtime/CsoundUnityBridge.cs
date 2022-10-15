@@ -77,7 +77,7 @@ public class CsoundUnityBridge
                     {
                         Debug.Log($"Setting {env.GetTypeString()} for Android to: {path}");
                         Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
-                        Debug.Log($"baseFolder: {env.baseFolder}");
+                        //Debug.Log($"baseFolder: {env.baseFolder}");
                         if (env.baseFolder.Equals(EnvironmentPathOrigin.Plugins))
                         {
                             if (onCsoundCreated == null || onCsoundCreated.GetInvocationList().Length == 0)

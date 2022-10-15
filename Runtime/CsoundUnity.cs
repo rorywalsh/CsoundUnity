@@ -96,7 +96,7 @@ public class EnvironmentSettings
     public string GetPath(bool runtime = false)
     {
         var path = string.Empty;
-        Debug.Log($"EnvironmentSettings GetPath from {baseFolder}");
+        //Debug.Log($"EnvironmentSettings GetPath from {baseFolder}");
         switch (baseFolder)
         {
             case EnvironmentPathOrigin.PersistentDataPath:
