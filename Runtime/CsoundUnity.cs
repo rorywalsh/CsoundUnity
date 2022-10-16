@@ -1931,7 +1931,7 @@ public class CsoundUnity : MonoBehaviour
     /// <returns></returns>
     public static List<CsoundUnityPreset> ParseSnap(string csdPath, string snapPath)
     {
-        Debug.Log($"Parse snap: csdPath: {csdPath}, snapPath: {snapPath}");
+        //Debug.Log($"Parse snap: csdPath: {csdPath}, snapPath: {snapPath}");
 
         var snap = File.ReadAllText(snapPath);
         var snapStart = snap.IndexOf("{");
@@ -1942,6 +1942,14 @@ public class CsoundUnity : MonoBehaviour
         //Debug.Log($"presets: {presets}");
         var parsedPresets = ParsePresets(csdName, presets);
         var originalChannels = ParseCsdFile(csdPath);
+        if (originalChannels == null || originalChannels.Count == 0)
+        {
+            if (originalChannels == null || originalChannels.Count == 0)
+            {
+                Debug.LogError($"Couldn't fix preset channels for snap {snapPath}, csd path: {csdPath}, aborting");
+                return parsedPresets;
+            }
+        }
         foreach (var preset in parsedPresets)
         {
             FixPresetChannels(originalChannels, preset.channels);
@@ -2014,6 +2022,12 @@ public class CsoundUnity : MonoBehaviour
 
     private static void FixPresetChannels(List<CsoundChannelController> originalChannels, List<CsoundChannelController> channelsToFix)
     {
+        if (originalChannels == null || originalChannels.Count == 0)
+        {
+            Debug.LogError("Couldn't fix preset channels, aborting");
+            return;
+        }
+
         foreach (var chanToFix in channelsToFix)
         {
             foreach (var chan in originalChannels)
