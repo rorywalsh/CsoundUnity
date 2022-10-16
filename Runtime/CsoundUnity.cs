@@ -7,7 +7,7 @@ This interface would not have been possible without Richard Henninger's .NET int
 
 Contributors:
 
-Bernt Isak W�rstad
+Bernt Isak Wærstad
 Charles Berman
 Giovanni Bedetti
 Hector Centeno
@@ -264,7 +264,7 @@ public enum EnvironmentPathOrigin { PersistentDataPath, StreamingAssets, Absolut
 [RequireComponent(typeof(AudioSource))]
 public class CsoundUnity : MonoBehaviour
 {
-#region PUBLIC_FIELDS
+    #region PUBLIC_FIELDS
 
     /// <summary>
     /// The name of this package
@@ -376,9 +376,9 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector]
     public List<EnvironmentSettings> environmentSettings = new List<EnvironmentSettings>();
 
-#endregion PUBLIC_FIELDS
+    #endregion PUBLIC_FIELDS
 
-#region PRIVATE_FIELDS
+    #region PRIVATE_FIELDS
 
     /// <summary>
     /// The private member variable csound provides access to the CsoundUnityBridge class, which 
@@ -413,6 +413,7 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector] [SerializeField] private bool _drawPresets = false;
     [HideInInspector] [SerializeField] private bool _drawPresetsLoad = false;
     [HideInInspector] [SerializeField] private bool _drawPresetsSave = false;
+    [HideInInspector] [SerializeField] private bool _drawPresetsImport = false;
     /// <summary>
     /// If true, the path shown in the Csound Global Environments Folders inspector will be
     /// the one expected at runtime, otherwise it will show the Editor path (for desktop platform). 
@@ -442,7 +443,7 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     private Dictionary<string, MYFLT[]> namedAudioChannelTempBufferDict = new Dictionary<string, MYFLT[]>();
 
-#endregion
+    #endregion
 
     /// <summary>
     /// CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
@@ -526,7 +527,7 @@ public class CsoundUnity : MonoBehaviour
         Debug.Log($"CsoundUnity done init, compiledOk? {compiledOk}");
     }
 
-#region PUBLIC_METHODS
+    #region PUBLIC_METHODS
 
     public int LoadPlugins(string dir)
     {
@@ -560,7 +561,7 @@ public class CsoundUnity : MonoBehaviour
         return compiledOk;
     }
 
-#region PERFORMANCE
+    #region PERFORMANCE
 
     /// <summary>
     /// Sets the csd file 
@@ -702,9 +703,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetKsmps();
     }
 
-#endregion PERFORMANCE
+    #endregion PERFORMANCE
 
-#region CSD_PARSE
+    #region CSD_PARSE
 
     /// <summary>
     /// Parse the csd and returns available audio channels (set in csd via: <code>chnset avar, "audio channel name") </code>
@@ -892,9 +893,9 @@ public class CsoundUnity : MonoBehaviour
         return locaChannelControllers;
     }
 
-#endregion CSD_PARSE
+    #endregion CSD_PARSE
 
-#region IO_BUFFERS
+    #region IO_BUFFERS
 
     /// <summary>
     /// Set a sample in Csound's input buffer
@@ -962,9 +963,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetSpout();
     }
 
-#endregion IO_BUFFERS
+    #endregion IO_BUFFERS
 
-#region CONTROL_CHANNELS
+    #region CONTROL_CHANNELS
     /// <summary>
     /// Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
     /// </summary>
@@ -1039,9 +1040,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetChannelList();
     }
 
-#endregion CONTROL_CHANNELS
+    #endregion CONTROL_CHANNELS
 
-#region AUDIO_CHANNELS
+    #region AUDIO_CHANNELS
 
     /// <summary>
     /// Gets a Csound Audio channel. Used in connection with a chnset opcode in your Csound instrument.
@@ -1053,9 +1054,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetAudioChannel(channel);
     }
 
-#endregion AUDIO_CHANNELS
+    #endregion AUDIO_CHANNELS
 
-#region TABLES
+    #region TABLES
 
     /// <summary>
     /// Creates a table with the supplied float samples.
@@ -1243,9 +1244,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetNamedGens();
     }
 
-#endregion TABLES
+    #endregion TABLES
 
-#region UTILITIES
+    #region UTILITIES
 
 #if UNITY_EDITOR
     /// <summary>
@@ -1614,7 +1615,7 @@ public class CsoundUnity : MonoBehaviour
         csound.Cleanup();
     }
 
-#region PRESETS
+    #region PRESETS
 
     /// <summary>
     /// Saves a serialized copy of this CsoundUnity instance.
@@ -1643,20 +1644,15 @@ public class CsoundUnity : MonoBehaviour
     public void SavePresetAsScriptableObject(string presetName, string path = null)
     {
 #if UNITY_EDITOR
+        var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
+        WritePreset(preset, path);
+#endif
+    }
 
-        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-        preset.channels = new List<CsoundChannelController>();
-        foreach (var chan in this.channels)
-        {
-            var newChan = chan.Clone();
-            preset.channels.Add(newChan);
-        }
-        preset.presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
-        preset.csoundFileName = this.csoundFileName;
-        // Debug.Log("Preset Name " + preset.presetName);
-
+    public void WritePreset(CsoundUnityPreset preset, string path)
+    {
         // create target directory if it doesn't exist, defaulting to "Assets"
-        if (!path.Contains("Assets") || string.IsNullOrWhiteSpace(path))
+        if (string.IsNullOrWhiteSpace(path) || !path.Contains("Assets"))
         {
             Debug.LogWarning("CsoundUnityPreset scriptable object cannot be created outside of the project folder, " +
                 "defaulting to 'Assets'. Use the JSON format to save it outside of the Application.dataPath folder.");
@@ -1727,7 +1723,6 @@ public class CsoundUnity : MonoBehaviour
         }
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-#endif
     }
 
     public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
@@ -1906,14 +1901,155 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
-#endregion PRESETS
+    /// <summary>
+    /// Create a CsoundUnityPreset from a list of CsoundChannelControllers, 
+    /// specifying the presetName and the csoundFileName this preset is related to
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="csoundFileName"></param>
+    /// <param name="channels"></param>
+    /// <returns></returns>
+    public static CsoundUnityPreset CreatePreset(string presetName, string csoundFileName, List<CsoundChannelController> channels)
+    {
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+        preset.name = preset.presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+        preset.csoundFileName = csoundFileName;
+        preset.channels = new List<CsoundChannelController>();
+        foreach (var chan in channels)
+        {
+            var newChan = chan.Clone();
+            preset.channels.Add(newChan);
+        }
+        return preset;
+    }
 
-#endregion UTILITIES
+    /// <summary>
+    /// Parse a Cabbage Snap and return a list of CsoundUnityPresets. 
+    /// </summary>
+    /// <param name="csdPath"></param>
+    /// <param name="snapPath"></param>
+    /// <returns></returns>
+    public static List<CsoundUnityPreset> ParseSnap(string csdPath, string snapPath)
+    {
+        Debug.Log($"Parse snap: csdPath: {csdPath}, snapPath: {snapPath}");
 
-#endregion PUBLIC_METHODS
+        var snap = File.ReadAllText(snapPath);
+        var snapStart = snap.IndexOf("{");
+        var snapEnd = snap.LastIndexOf("}");
+        var presets = snap.Substring(snapStart + 1, snapEnd - snapStart - 2);
+        var csdName = Path.GetFileName(csdPath);
+
+        //Debug.Log($"presets: {presets}");
+        var parsedPresets = ParsePresets(csdName, presets);
+        var originalChannels = ParseCsdFile(csdPath);
+        foreach (var preset in parsedPresets)
+        {
+            FixPresetChannels(originalChannels, preset.channels);
+        }
+        Debug.Log($"originalChannels: {originalChannels.Count}");
+        return parsedPresets;
+    }
+
+    private static List<CsoundUnityPreset> ParsePresets(string snapName, string presets)
+    {
+        var parsedPresets = new List<CsoundUnityPreset>();
+        var splitPresets = presets.Split(new string[] { "}," }, StringSplitOptions.None);
+
+        foreach (var preset in splitPresets)
+        {
+            //Debug.Log($"--> preset: {preset}");
+            parsedPresets.Add(ParsePreset(snapName, preset));
+        }
+
+        //foreach (var preset in parsedPresets)
+        //{
+        //    Debug.Log($"<color=green>Preset: {preset.presetName}, csd: {preset.csoundFileName}, num channels: {preset.channels.Count}</color>");
+        //    foreach (var channel in preset.channels)
+        //    {
+        //        Debug.Log($"<color=orange>Channel: {channel.channel} = {channel.value}</color>");
+        //    }
+        //}
+        return parsedPresets;
+    }
+
+    private static CsoundUnityPreset ParsePreset(string snapName, string preset)
+    {
+        var presetNameStart = preset.IndexOf("\"");
+        var subPreset = preset.Substring(presetNameStart + 1, preset.Length - presetNameStart - 1);
+        //Debug.Log($"SubPreset: {subPreset}");
+        var presetNameEnd = subPreset.IndexOf("\"");
+        var presetName = subPreset.Substring(0, presetNameEnd);
+        //Debug.Log($"--> presetName: {presetName}");
+        var presetContentStart = preset.IndexOf("{");
+        var presetContent = preset.Substring(presetContentStart + 1, preset.Length - presetContentStart - 1);
+        //Debug.Log($"presetContent: {presetContent}");
+        var splitPresetContent = presetContent.Split(new string[] { "," }, StringSplitOptions.None);
+        var presetChannels = new List<CsoundChannelController>();
+        foreach (var chan in splitPresetContent)
+        {
+            //Debug.Log($"chan: {chan}");
+            presetChannels.Add(ParseChannel(chan).Clone());
+        }
+
+        return CreatePreset(presetName, snapName, presetChannels);
+    }
+
+    private static CsoundChannelController ParseChannel(string chan)
+    {
+        var split = chan.Split(new string[] { ":" }, StringSplitOptions.None);
+        var chanName = split[0];//.Replace('"', new char());
+        var chanValue = split[1];
+        //Debug.Log($"Channel Name: {chanName}, Value: {chanValue}");
+        var cleanChanName = chanName.Replace("\"", "").Trim(); //Trim(new char[] { '"' });
+        float.TryParse(chanValue, out float chanValueFloat);
+        //Debug.Log($"Clean chan name: {cleanChanName}, float value: {chanValueFloat}");
+        var cc = new CsoundChannelController()
+        {
+            channel = cleanChanName,
+            value = chanValueFloat
+        };
+        //Debug.Log($"Created channel controller: {cc.channel}, value: {cc.value}");
+        return cc;
+    }
+
+    private static void FixPresetChannels(List<CsoundChannelController> originalChannels, List<CsoundChannelController> channelsToFix)
+    {
+        foreach (var chanToFix in channelsToFix)
+        {
+            foreach (var chan in originalChannels)
+            {
+                if (chan.channel == chanToFix.channel)
+                {
+                    // channel and value come from the Cabbage snap
+                    // but not all the other fields
+                    // set all the missing fields
+                    chanToFix.caption = chan.caption;
+                    chanToFix.increment = chan.increment;
+                    chanToFix.max = chan.max;
+                    chanToFix.min = chan.min;
+                    chanToFix.options = chan.options;
+                    chanToFix.skew = chan.skew;
+                    chanToFix.text = chan.text;
+                    chanToFix.type = chan.type;
+
+                    // also fix the combobox index?
+                    if (chanToFix.type.Equals("combobox"))
+                    {
+                        chanToFix.value -= 1;
+                    }
+                }
+            }
+        }
+    }
+
+    #endregion PRESETS
+
+    #endregion UTILITIES
+
+    #endregion PUBLIC_METHODS
 
 
-#region ENUMS
+    #region ENUMS
 
     /// <summary>
     /// The enum representing the Csound Environment Variables
@@ -2023,10 +2159,10 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     public enum SamplesOrigin { Resources, StreamingAssets, Absolute } // TODO Add PersistentDataPath and URL
 
-#endregion ENUMS
+    #endregion ENUMS
 
 
-#region PRIVATE_METHODS
+    #region PRIVATE_METHODS
 
     void OnAudioFilterRead(float[] data, int channels)
     {
@@ -2174,5 +2310,5 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
-#endregion PRIVATE_METHODS
+    #endregion PRIVATE_METHODS
 }

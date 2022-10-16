@@ -65,6 +65,7 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_currentPresetLoadFolder;
     SerializedProperty m_drawPresetsLoad;
     SerializedProperty m_drawPresetsSave;
+    SerializedProperty m_drawPresetsImport;
 
     private Vector2 scrollPos;
     private Vector2 presetsScrollPos;
@@ -75,6 +76,8 @@ public class CsoundUnityEditor : Editor
     private string[] _jsonPresetsPaths;
     private List<CsoundUnityPreset> _assignablePresets;
     private int _numPresetsToShow = 5;
+    private string _currentPresetImportFolder;
+    private string _currentPresetImportFolderSave;
 
     void OnEnable()
     {
@@ -106,6 +109,7 @@ public class CsoundUnityEditor : Editor
         m_currentPresetLoadFolder = this.serializedObject.FindProperty("_currentPresetLoadFolder");
         m_drawPresetsLoad = this.serializedObject.FindProperty("_drawPresetsLoad");
         m_drawPresetsSave = this.serializedObject.FindProperty("_drawPresetsSave");
+        m_drawPresetsImport = this.serializedObject.FindProperty("_drawPresetsImport");
 
         envList = new ReorderableList(serializedObject, m_enviromentSettings, true, true, true, true)
         {
@@ -549,6 +553,10 @@ public class CsoundUnityEditor : Editor
 
             DrawPresetsSave();
 
+            EditorGUILayout.Space();
+
+            DrawPresetsImport();
+
             EditorGUI.indentLevel--;
         }
     }
@@ -711,6 +719,51 @@ public class CsoundUnityEditor : Editor
         }
     }
 
+    private void DrawPresetsImport()
+    {
+        m_drawPresetsImport.boolValue = EditorGUILayout.Foldout(m_drawPresetsImport.boolValue, "IMPORT", true);
+
+        if (m_drawPresetsImport.boolValue)
+        {
+
+            if (GUILayout.Button("Select Cabbage Snaps folder to import"))
+            {
+                _currentPresetImportFolder = EditorUtility.OpenFolderPanel("Select Cabbage snaps folder", _currentPresetImportFolder, "");
+                
+            }
+            EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {_currentPresetImportFolder}", $"{_currentPresetImportFolder}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
+
+            if (GUILayout.Button("Select parsed presets destination folder"))
+            {
+                _currentPresetImportFolderSave = EditorUtility.OpenFolderPanel("Select parsed presets destination folder", _currentPresetImportFolder, ""); ;
+                
+            }
+            EditorGUILayout.LabelField(new GUIContent($"Save into Folder: {_currentPresetImportFolderSave}", $"{_currentPresetImportFolderSave}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
+
+            if (GUILayout.Button("IMPORT"))
+            {
+                if (string.IsNullOrWhiteSpace(_currentPresetImportFolder))
+                {
+                    _currentPresetImportFolder = Application.dataPath;
+                }
+                var files = Directory.GetFiles(_currentPresetImportFolder, "*.snaps", SearchOption.AllDirectories);
+                //Debug.Log($"Found {files.Length} files");
+                foreach(var file in files)
+                {
+                    Debug.Log($"found snap: {file}");
+                    // assumes to find a csd with the same fileName in the folder
+                    var csdFilePath = Path.ChangeExtension(file, "csd");
+                    var presets = CsoundUnity.ParseSnap(csdFilePath, file);
+                    //Debug.Log($"{presets.Count} presets read");
+                    foreach(var preset in presets)
+                    {
+                        csoundUnity.WritePreset(preset, _currentPresetImportFolderSave);
+                    }
+                }
+            }
+        }
+    }
+
     private void RefreshPresets()
     {
         AssetDatabase.Refresh();
@@ -737,16 +790,25 @@ public class CsoundUnityEditor : Editor
 
     private void SetPreset(CsoundUnityPreset preset)
     {
-        if (m_channelControllers.arraySize != preset.channels.Count)
-        {
-            Debug.LogError("Cannot set preset, the number of channels has changed! Was this created with an old version?");
-            return;
-        }
+        //Debug.Log($"SetPreset {preset.presetName}, " +
+        //    $"this channels size: {m_channelControllers.arraySize}, " +
+        //    $"preset channels count: {preset.channels.Count}");
+        //if (m_channelControllers.arraySize != preset.channels.Count)
+        //{
+        //    Debug.LogError("Cannot set preset, the number of channels has changed! Was this created with an old version?");
+        //    return;
+        //}
 
         for (var i = 0; i < m_channelControllers.arraySize; i++)
         {
             var chan = m_channelControllers.GetArrayElementAtIndex(i);
-            SetChannelPropertyValue(chan, preset.channels[i]);
+            foreach(var presetChan in preset.channels)
+            {
+                if (presetChan.channel == chan.FindPropertyRelative("channel").stringValue)
+                {
+                    SetChannelPropertyValue(chan, presetChan);
+                }
+            }
         }
 
         m_currentPreset.stringValue = preset.presetName;
@@ -758,6 +820,7 @@ public class CsoundUnityEditor : Editor
         if (channel.type.Contains("button")) return;
 
         var chan = property.FindPropertyRelative("channel");
+        //Debug.Log($"Setting Channel {chan.stringValue} from {channel.channel}, new value: {channel.value}");
         if (chan.stringValue != channel.channel) return;
 
         var chanValue = property.FindPropertyRelative("value");
