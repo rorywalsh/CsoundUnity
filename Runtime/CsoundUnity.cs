@@ -1361,6 +1361,9 @@ public class CsoundUnity : MonoBehaviour
 
         var proportion = Mathf.Clamp01((value - from) / (to - from));
 
+        if (skew == 1)
+            return proportion;
+
         return Mathf.Pow(proportion, skew);
     }
 
@@ -1373,8 +1376,14 @@ public class CsoundUnity : MonoBehaviour
     /// <returns></returns>
     public static float ConvertFrom0to1(float value, float from, float to, float skew = 1f)
     {
-        var clamped = Mathf.Clamp01(value);
-        return clamped;
+        if (skew == 0) return to;
+
+        var proportion = Mathf.Clamp01(value);
+
+        if (skew != 1 && proportion > 0)
+            proportion = Mathf.Exp(Mathf.Log(proportion) / skew);
+
+        return from + (to - from) * proportion;
     }
 
     public static MYFLT[] ConvertToMYFLT(float[] samples)
