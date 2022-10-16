@@ -691,6 +691,8 @@ public class CsoundUnityEditor : Editor
                 Debug.LogWarning($"Save folder not found, defaulting to {Application.dataPath}");
                 m_currentPresetSaveFolder.stringValue = Application.dataPath;
             }
+
+            EditorGUI.indentLevel++;
             var fullPath = m_currentPresetSaveFolder.stringValue;
             var assetsIndex = fullPath.IndexOf("Assets");
             var relativeToAssetsPath = assetsIndex > 0 ? fullPath.Substring(assetsIndex, fullPath.Length - assetsIndex) : fullPath;
@@ -699,6 +701,8 @@ public class CsoundUnityEditor : Editor
 
             EditorGUILayout.Space();
             _presetName = EditorGUILayout.TextField("Preset Name: ", _presetName);
+
+            EditorGUI.indentLevel--;
 
             EditorGUILayout.Space();
             if (GUILayout.Button("Save Preset as ScriptableObject"))
@@ -716,6 +720,9 @@ public class CsoundUnityEditor : Editor
                 csoundUnity.SaveGlobalPreset(_presetName, fullPath);
                 RefreshPresets();
             }
+
+            EditorGUI.indentLevel++;
+            EditorGUI.indentLevel++;
         }
     }
 
@@ -731,13 +738,15 @@ public class CsoundUnityEditor : Editor
                 _currentPresetImportFolder = EditorUtility.OpenFolderPanel("Select Cabbage snaps folder", _currentPresetImportFolder, "");
                 
             }
+            EditorGUI.indentLevel--;
             EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {_currentPresetImportFolder}", $"{_currentPresetImportFolder}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
-
+            EditorGUI.indentLevel++;
             if (GUILayout.Button("Select parsed presets destination folder"))
             {
                 _currentPresetImportFolderSave = EditorUtility.OpenFolderPanel("Select parsed presets destination folder", _currentPresetImportFolder, ""); ;
                 
             }
+            EditorGUI.indentLevel--;
             EditorGUILayout.LabelField(new GUIContent($"Save into Folder: {_currentPresetImportFolderSave}", $"{_currentPresetImportFolderSave}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
 
             if (GUILayout.Button("IMPORT"))
