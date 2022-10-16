@@ -1946,7 +1946,9 @@ public class CsoundUnity : MonoBehaviour
         {
             if (originalChannels == null || originalChannels.Count == 0)
             {
-                Debug.LogError($"Couldn't fix preset channels for snap {snapPath}, csd path: {csdPath}, aborting");
+                Debug.LogWarning($"Couldn't fix preset channels for snap {snapPath}, csd path: {csdPath}, preset channels will not be visible on Editor, " +
+                    $"but you should still be able to use them. Be aware that Comboboxes will be broken. " +
+                    $"Please ensure that a '.csd' file with the same name of the '.snaps' file is present at the same location.");
                 return parsedPresets;
             }
         }
