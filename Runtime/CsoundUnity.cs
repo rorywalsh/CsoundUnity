@@ -172,7 +172,7 @@ public class EnvironmentSettings
 
     private string GetPluginsPath(SupportedPlatform supportedPlatform, bool runtime)
     {
-        Debug.Log($"GetPluginsPath for platform: {supportedPlatform}");
+        //Debug.Log($"GetPluginsPath for platform: {supportedPlatform}");
         var res = Path.Combine(Application.dataPath, "Plugins");
         switch (supportedPlatform)
         {
@@ -184,7 +184,7 @@ public class EnvironmentSettings
                 break;
             case SupportedPlatform.Android:
 #if UNITY_ANDROID && !UNITY_EDITOR
-                Debug.Log("1 - GET ANDROID NATIVE LIBRARY DIR");
+                //Debug.Log("1 - GET ANDROID NATIVE LIBRARY DIR");
                 res = GetAndroidNativeLibraryDir();
 #else
                 res = runtime ? $"/data/app/<random chars>/{Application.identifier}-<random chars>/lib/arm64-v8a" : res;
@@ -210,21 +210,21 @@ public class EnvironmentSettings
     public static AndroidJavaObject GetUnityContext()
     {
         var activity = GetUnityActivity();
-        Debug.Log($"2 - GetUnityContext, activity null? {activity == null}");
+        //Debug.Log($"2 - GetUnityContext, activity null? {activity == null}");
         return activity.Call<AndroidJavaObject>("getApplicationContext");
     }
 
     public static AndroidJavaObject GetApplicationInfo()
     {
         var context = GetUnityContext();
-        Debug.Log($"3 - GetApplicationInfo, context null? {context == null}");
+        //Debug.Log($"3 - GetApplicationInfo, context null? {context == null}");
         return GetUnityContext().Call<AndroidJavaObject>("getApplicationInfo");
     }
 
     public static string GetAndroidNativeLibraryDir()
     {
         var info = GetApplicationInfo();
-        Debug.Log($"4 - GetAndroidNativeLibraryDir, info null? {info == null}");
+        //Debug.Log($"4 - GetAndroidNativeLibraryDir, info null? {info == null}");
         return info.Get<string>("nativeLibraryDir");
     }
 #endif
@@ -274,7 +274,7 @@ public class CsoundUnity : MonoBehaviour
     /// <summary>
     /// The version of this package
     /// </summary>
-    public const string packageVersion = "3.3.1";
+    public const string packageVersion = "3.4.0";
 
     /// <summary>
     /// the unique guid of the csd file
