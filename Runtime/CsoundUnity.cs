@@ -1001,6 +1001,11 @@ public class CsoundUnity : MonoBehaviour
         csound.SetChannel(channelController.channel, channelController.value);
     }
 
+    /// <summary>
+    /// Sets a list of Csound channels. 
+    /// </summary>
+    /// <param name="channelControllers"></param>
+    /// <param name="excludeButtons"></param>
     public void SetChannels(List<CsoundChannelController> channelControllers, bool excludeButtons = true)
     {
         for (var i = 0; i < channelControllers.Count; i++)
