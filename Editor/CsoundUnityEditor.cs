@@ -908,7 +908,7 @@ public class CsoundUnityEditor : Editor
         var path = pathProperty.stringValue;
         if (!Directory.Exists(path))
         {
-            Debug.LogWarning($"Couldn't extract Asset path from path: {path}, defaulting to {Application.dataPath}");
+            //Debug.LogWarning($"Couldn't extract Asset path from path: {path}, defaulting to {Application.dataPath}");
             path = pathProperty.stringValue = Application.dataPath;
         }
 
