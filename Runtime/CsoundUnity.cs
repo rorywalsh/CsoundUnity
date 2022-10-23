@@ -1037,6 +1037,17 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
+    /// Get a serialized CsoundChannelController
+    /// </summary>
+    /// <param name="channel">the Channel name</param>
+    /// <returns></returns>
+    public CsoundChannelController GetChannelController(string channel)
+    {
+        if (!_channelsIndexDict.ContainsKey(channel)) return null;
+        var indx = _channelsIndexDict[channel];
+        return this._channels[indx];
+    }
+    /// <summary>
     /// blocking method to get a list of the channels from Csound, not from the serialized list of this instance
     /// </summary>
     /// <returns></returns>
