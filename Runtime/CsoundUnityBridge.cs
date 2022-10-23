@@ -147,6 +147,7 @@ public class CsoundUnityBridge
         SetParams(parms);
 
         onCsoundCreated?.Invoke();
+        onCsoundCreated = null;
 
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
         Csound6.NativeMethods.csoundStart(csound);
