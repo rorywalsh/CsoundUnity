@@ -617,7 +617,7 @@ public class CsoundUnityEditor : Editor
             foreach (var preset in _assignablePresets)
             {
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button(preset.presetName))
+                if (GUILayout.Button(new GUIContent(preset.presetName, $"{AssetDatabase.GetAssetPath(preset)}")))
                 {
                     SetPreset(preset);
                 }
