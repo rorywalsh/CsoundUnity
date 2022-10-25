@@ -7,6 +7,7 @@
     + [Starting / Stopping Instruments](controlling_csound_from_unity.md#starting-stopping-instruments)
     + [Keeping Csound performance running](controlling_csound_from_unity.md#keeping-csound-performance-running)
   * [Controlling Csound from the Unity Editor](controlling_csound_from_the_unity_editor.md)
+  * [Presets](presets.md)
   * [CsoundUnityChild](csoundunity_child.md)
   * [Environment Variables](environment_variables.md)
   * [CsoundFileWatcher](csound_file_watcher.md)
