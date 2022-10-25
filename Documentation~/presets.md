@@ -3,7 +3,7 @@
 New in **CsoundUnity** 3.4.0, it is now possible to save and load **CsoundUnity** presets.
 
 Each preset refers to a csd file, to help keep things clear.  
-It holds a list of **CsoundChannelControllers** with specific values, to be retrieved both at Editor time and Runtime.  
+It holds a list of **CsoundChannelControllers** with specific values, to be retrieved both at Editor time and at Runtime.  
 
 To cover most of the user cases, there are 3 types of presets:
 
@@ -12,9 +12,9 @@ It works both on the Editor and at Runtime.
 
 - **JSON preset**: this is meant to be used at runtime, when you want to save the channels of a **CsoundUnity** instance but you cannot save a *ScriptableObject*. After saving the JSON file in a known location, you will be able to reload it in a **CsoundUnity** instance which uses the same csd.
 
-- **GLOBAL JSON preset**: this kind of preset is meant to be used when you want to save the whole state of a **CsoundUnity** instance. It is very similar as saving a Unity preset, but this works also at runtime, since it comes as JSON file. It is useful when you want to carry over for example the **CsoundUnity** settings like the Environment Settings.
+- **GLOBAL JSON preset**: this kind of preset is meant to be used when you want to save the whole state of a **CsoundUnity** instance. It is very similar as saving a Unity preset, but this works also at runtime, since it comes as a JSON file. It is useful when you want to carry over for example the **CsoundUnity** settings like the *Environment Settings*.
 
-The **CsoundUnity** inspector has a Preset section which you can expand.
+The **CsoundUnity** inspector has a *Preset* section which you can expand.
 
 ### Load
 
