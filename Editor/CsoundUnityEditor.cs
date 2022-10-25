@@ -75,7 +75,7 @@ public class CsoundUnityEditor : Editor
     private string[] _csoundUnityPresetAssetsGUIDs;
     private string[] _jsonPresetsPaths;
     private List<CsoundUnityPreset> _assignablePresets;
-    private int _numPresetsToShow = 5;
+    private int _assignablePresetsSpace = 5;
     private string _currentPresetImportFolder;
     private string _currentPresetImportFolderSave;
 
@@ -607,12 +607,15 @@ public class CsoundUnityEditor : Editor
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Assignable Presets:", EditorStyles.boldLabel);
-            _numPresetsToShow = EditorGUILayout.IntSlider(_numPresetsToShow, 3, 20);
+            _assignablePresetsSpace = EditorGUILayout.IntSlider(_assignablePresetsSpace, 3, 20);
+            var spaceSliderRect = GUILayoutUtility.GetLastRect();
+            GUI.Label(spaceSliderRect, new GUIContent("", "Show < Less | More > Presets"));
+
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
 
-            presetsScrollPos = EditorGUILayout.BeginScrollView(presetsScrollPos, GUILayout.Height(Mathf.Min(Mathf.Max(21, 21 * _numPresetsToShow), 420f)));
+            presetsScrollPos = EditorGUILayout.BeginScrollView(presetsScrollPos, GUILayout.Height(Mathf.Min(Mathf.Max(21, 21 * _assignablePresetsSpace), 420f)));
             EditorGUILayout.LabelField($"ScriptableObject Presets: ({_assignablePresets.Count})", EditorStyles.boldLabel);
             foreach (var preset in _assignablePresets)
             {
@@ -623,7 +626,7 @@ public class CsoundUnityEditor : Editor
                 }
                 if (GUILayout.Button("To JSON", GUILayout.Width(80)))
                 {
-                    csoundUnity.ConvertPresetToJSON(preset, m_currentPresetLoadFolder.stringValue);
+                    CsoundUnity.SavePresetAsJSON(preset, m_currentPresetLoadFolder.stringValue);
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -632,13 +635,13 @@ public class CsoundUnityEditor : Editor
             {
                 EditorGUILayout.BeginHorizontal();
 
-                if (GUILayout.Button(new GUIContent(Path.GetFileName(path), $"{path}")))
+                if (GUILayout.Button(new GUIContent(Path.ChangeExtension(Path.GetFileName(path), null), $"{path}")))
                 {
                     LoadPreset(path);
                 }
                 if (GUILayout.Button("To SO", GUILayout.Width(80)))
                 {
-                    csoundUnity.ConvertPresetToScriptableObject(path);
+                    csoundUnity.ConvertPresetToScriptableObject(path, Path.GetDirectoryName(path));
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -766,7 +769,7 @@ public class CsoundUnityEditor : Editor
                     //Debug.Log($"{presets.Count} presets read");
                     foreach(var preset in presets)
                     {
-                        csoundUnity.WritePreset(preset, _currentPresetImportFolderSave);
+                        CsoundUnity.WritePreset(preset, _currentPresetImportFolderSave);
                     }
                 }
             }
@@ -825,6 +828,7 @@ public class CsoundUnityEditor : Editor
 
     private void SetChannelPropertyValue(SerializedProperty property, CsoundChannelController channel)
     {
+        //Debug.Log($"Setting channel {channel.channel}, value: {channel.value}");
         // don't set buttons when copying channels to the serialized property
         if (channel.type.Contains("button")) return;
 
@@ -833,7 +837,7 @@ public class CsoundUnityEditor : Editor
         if (chan.stringValue != channel.channel) return;
 
         var chanValue = property.FindPropertyRelative("value");
-        // Debug.Log($"CsoundUnityEditor.SetChannelPropertyValue for channel: {chan.stringValue} to value: {channel.value}");
+        //Debug.Log($"CsoundUnityEditor.SetChannelPropertyValue for channel: {chan.stringValue} to value: {channel.value}");
 
         chanValue.floatValue = channel.value;
 

@@ -1503,7 +1503,7 @@ public class CsoundUnity : MonoBehaviour
 
     /// <summary>
     /// Async version of GetSamples
-    /// example of usage:
+    /// Example of usage:
     /// <code>
     /// yield return CsoundUnity.GetSamples(source.name, CsoundUnity.SamplesOrigin.Resources, (samples) =>
     /// {
@@ -1643,39 +1643,67 @@ public class CsoundUnity : MonoBehaviour
     #region PRESETS
 
     /// <summary>
-    /// Saves a serialized copy of this CsoundUnity instance.
-    /// Similar behaviour as saving a Unity Preset from the inspector, but this can be used at runtime
+    /// Create a CsoundUnityPreset from a presetName, csoundFileName and a list of CsoundChannelControllers
     /// </summary>
     /// <param name="presetName"></param>
-    public void SaveGlobalPreset(string presetName, string path = null, bool overwriteIfExisting = false)
+    /// <param name="csoundFileName"></param>
+    /// <param name="channels"></param>
+    /// <returns></returns>
+    public static CsoundUnityPreset CreatePreset(string presetName, string csoundFileName, List<CsoundChannelController> channels)
     {
-        var presetData = JsonUtility.ToJson(this, true);
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+        preset.name = preset.presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+        preset.csoundFileName = csoundFileName;
+        preset.channels = new List<CsoundChannelController>();
+        foreach (var chan in channels)
+        {
+            var newChan = chan.Clone();
+            preset.channels.Add(newChan);
+        }
+        return preset;
+    }
+
+    /// <summary>
+    /// Create a CsoundUnityPreset from a presetName and presetData
+    /// PresetData should be a CsoundUnityPreset in the JSON format.
+    /// <para>It will use the presetName parameter if not empty, 
+    /// if presetName is empty it will use preset.presetName, 
+    /// if also preset.presetName is empty it will use "CsoundUnityPreset" as a default name
+    /// </para>
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="presetData"></param>
+    /// <returns></returns>
+    public static CsoundUnityPreset CreatePreset(string presetName, string presetData)
+    {
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+        
+        // try and create a CsoundUnityPreset from presetData
         try
         {
-            var name = $"{presetName} {GLOBAL_TAG}";
-            var fullPath = CheckPathForExistence(path, name, overwriteIfExisting);
-            Debug.Log($"Saving global preset at {fullPath}");
-            File.WriteAllText(fullPath, presetData);
+            JsonUtility.FromJsonOverwrite(presetData, preset);
         }
-        catch (IOException ex)
+        catch (ArgumentException ex)
         {
-            Debug.Log(ex.Message);
+            Debug.LogError($"Couldn't set Preset {presetName}, {ex.Message}");
+            return null;
         }
-#if UNITY_EDITOR
-        AssetDatabase.Refresh();
-#endif
+        preset.name = preset.presetName = string.IsNullOrWhiteSpace(presetName) ? 
+            string.IsNullOrWhiteSpace(preset.presetName) ? 
+                "CsoundUnityPreset" : preset.presetName : presetName;
+        
+        return preset;
     }
 
-    public void SavePresetAsScriptableObject(string presetName, string path = null)
+    /// <summary>
+    /// Write a CsoundUnityPreset at the specified path inside the Assets folder.
+    /// You can pass a full path, the Assets folder path will be extracted.
+    /// </summary>
+    /// <param name="preset"></param>
+    /// <param name="path"></param>
+    public static void WritePreset(CsoundUnityPreset preset, string path)
     {
 #if UNITY_EDITOR
-        var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
-        WritePreset(preset, path);
-#endif
-    }
-
-    public void WritePreset(CsoundUnityPreset preset, string path)
-    {
         // create target directory if it doesn't exist, defaulting to "Assets"
         if (string.IsNullOrWhiteSpace(path) || !path.Contains("Assets"))
         {
@@ -1748,17 +1776,34 @@ public class CsoundUnity : MonoBehaviour
         }
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+#endif
     }
 
-    public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
+    /// <summary>
+    /// Save a CsoundUnityPreset of this CsoundUnity instance at the specified path, using the specified presetName.
+    /// The current csoundFileName and CsoundChannelControllers will be saved in the preset.
+    /// If no presetName is given, a default one will be used.
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="path"></param>
+    public void SavePresetAsScriptableObject(string presetName, string path = null)
     {
-        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-        preset.channels = this.channels;
-        presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
-        preset.presetName = presetName;
-        preset.csoundFileName = this.csoundFileName;
-        var fullPath = CheckPathForExistence(path, presetName, overwriteIfExisting);
+#if UNITY_EDITOR
+        var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
+        WritePreset(preset, path);
+#endif
+    }
 
+    /// <summary>
+    /// Save the specified CsoundUnityPreset as JSON, at the specified path.
+    /// If a file exists at the specified path, it will be overwritten if overwriteIfExisting is true
+    /// </summary>
+    /// <param name="preset"></param>
+    /// <param name="path"></param>
+    /// <param name="overwriteIfExisting"></param>
+    public static void SavePresetAsJSON(CsoundUnityPreset preset, string path = null, bool overwriteIfExisting = false)
+    {
+        var fullPath = CheckPathForExistence(path, preset.presetName, overwriteIfExisting);
         var presetData = JsonUtility.ToJson(preset, true);
         try
         {
@@ -1774,68 +1819,128 @@ public class CsoundUnity : MonoBehaviour
 #endif
     }
 
-    public void ConvertPresetToScriptableObject(string path)
+    /// <summary>
+    /// Save a preset as JSON from a list of CsoundChannelController, specifying the related CsoundFileName and the presetName.
+    /// </summary>
+    /// <param name="channels"></param>
+    /// <param name="csoundFileName"></param>
+    /// <param name="presetName"></param>
+    /// <param name="path"></param>
+    /// <param name="overwriteIfExisting"></param>
+    public static void SavePresetAsJSON(List<CsoundChannelController> channels, string csoundFileName, string presetName, string path = null, bool overwriteIfExisting = false)
     {
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+        preset.channels = channels;
+        presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+        preset.presetName = presetName;
+        preset.csoundFileName = csoundFileName;
+        SavePresetAsJSON(preset, path, overwriteIfExisting);
+    }
+
+    /// <summary>
+    /// Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this CsoundUnity instance
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="path"></param>
+    /// <param name="overwriteIfExisting"></param>
+    public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
+    {
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+        preset.channels = this.channels;
+        presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+        preset.presetName = presetName;
+        preset.csoundFileName = this.csoundFileName;
+        SavePresetAsJSON(preset, path, overwriteIfExisting);
+    }
+
+    /// <summary>
+    /// Save a serialized copy of this CsoundUnity instance.
+    /// Similar behaviour as saving a Unity Preset from the inspector of the CsoundUnity component, but this can be used at runtime
+    /// </summary>
+    /// <param name="presetName"></param>
+    public void SaveGlobalPreset(string presetName, string path = null, bool overwriteIfExisting = false)
+    {
+        var presetData = JsonUtility.ToJson(this, true);
+        try
+        {
+            var name = $"{presetName} {GLOBAL_TAG}";
+            var fullPath = CheckPathForExistence(path, name, overwriteIfExisting);
+            Debug.Log($"Saving global preset at {fullPath}");
+            File.WriteAllText(fullPath, presetData);
+        }
+        catch (IOException ex)
+        {
+            Debug.Log(ex.Message);
+        }
+#if UNITY_EDITOR
+        AssetDatabase.Refresh();
+#endif
+    }
+
+    /// <summary>
+    /// Convert a JSON preset into a Scriptable Object preset to be written at the specified path.
+    /// If path is empty the converted preset will be saved inside the Assets folder.
+    /// </summary>
+    /// <param name="path"></param>
+    public void ConvertPresetToScriptableObject(string path, string destination)
+    {
+#if UNITY_EDITOR
+        //Debug.Log($"ConvertPresetToScriptableObject at path: {path}, to dest: {destination}");
         LoadPreset(path, (preset) =>
         {
-            SavePresetAsScriptableObject(preset.presetName, Path.GetDirectoryName(path));
+            //Debug.Log($"Loaded Preset Name: {preset.presetName}");
+            WritePreset(preset, destination);
         });
+#endif
     }
 
-    public void ConvertPresetToJSON(CsoundUnityPreset preset, string path = null, bool overwriteIfExisting = false)
-    {
-        SavePresetAsJSON(preset.presetName, path, overwriteIfExisting);
-    }
-
-    private string CheckPathForExistence(string path, string presetName, bool overwriteIfExisting)
-    {
-        path = string.IsNullOrWhiteSpace(path) ?
-            Application.persistentDataPath
-            : path;
-        if (!char.IsSeparator(path[path.Length - 1]))
-        {
-            path = $"{path}/";
-        }
-
-        if (!Directory.Exists(path))
-        {
-            try
-            {
-                Directory.CreateDirectory(path);
-            }
-            catch (IOException ex)
-            {
-                Debug.LogError($"Couldn't create folder at: {path}, defaulting to {Application.persistentDataPath} {ex.Message}");
-                path = Application.persistentDataPath;
-            }
-        }
-
-        var fullPath = Path.Combine(path, presetName + ".json");
-
-        var count = 0;
-        while (File.Exists(fullPath) && !overwriteIfExisting)
-        {
-            fullPath = Path.Combine(path, $"{presetName}_{count++}.json");
-        }
-        return fullPath;
-    }
-
+    /// <summary>
+    /// Set a CsoundUnityPreset to this CsoundUnity instance using a presetName and presetData.
+    /// The set preset will be returned.
+    /// Preset data should represent a CsoundUnityPreset in JSON format
+    /// If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
+    /// the preset will not be set and an error will be logged.
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="presetData"></param>
+    /// <returns></returns>
     public CsoundUnityPreset SetPreset(string presetName, string presetData)
     {
-        // first try to create a CsoundUnityPreset from presetData
-        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-        JsonUtility.FromJsonOverwrite(presetData, preset);
+        var preset = CreatePreset(presetName, presetData);
         SetPreset(preset);
         return preset;
     }
 
+    /// <summary>
+    /// Set a CsoundUnityPreset to this CsoundUnity instance using presetData. 
+    /// The set preset will be returned.
+    /// The name of the preset will be the one found inside presetData, if not empty.
+    /// Otherwise a default presetName will be used.
+    /// Preset data should represent a CsoundUnityPreset in JSON format.
+    /// If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
+    /// the preset will not be set and an error will be logged.
+    /// </summary>
+    /// <param name="presetData"></param>
+    /// <returns></returns>
     public CsoundUnityPreset SetPreset(string presetData)
     {
         return SetPreset("", presetData);
     }
 
+    /// <summary>
+    /// Set a CsoundUnityPreset to this CsoundUnity instance.
+    /// <para>If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
+    /// the preset will not be set and an error will be logged.</para>
+    /// </summary>
+    /// <param name="preset"></param>
     public void SetPreset(CsoundUnityPreset preset)
     {
+        if (this.csoundFileName != preset.csoundFileName)
+        {
+            Debug.LogError($"Couldn't set preset {preset.presetName} to this CsoundUnity instance {this.name}, " +
+                $"this instance uses csd: {this.csoundFileName}, the preset was saved with csd: {preset.csoundFileName} instead");
+            return;
+        }
         if (preset == null)
         {
             Debug.LogError("Couldn't load a null CsoundUnityPreset!");
@@ -1845,6 +1950,17 @@ public class CsoundUnity : MonoBehaviour
         SetChannels(preset.channels, true);
     }
 
+    /// <summary>
+    /// Set a global preset to this CsoundUnity instance using a presetName and presetData.
+    /// <para>Preset data should represent a CsoundUnity instance in JSON format.</para>
+    /// <para>This overrides the current content of this CsoundUnity instance.</para>
+    /// This could have unintended consequences in certain situations. 
+    /// You could need to disable this CsoundUnity GameObject and enable it again to restore the Csound internal state.
+    /// <para>This updated CsoundUnity instance will be returned.</para>
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="presetData"></param>
+    /// <returns></returns>
     public CsoundUnity SetGlobalPreset(string presetName, string presetData)
     {
         JsonUtility.FromJsonOverwrite(presetData, this);
@@ -1858,16 +1974,33 @@ public class CsoundUnity : MonoBehaviour
     /// <summary>
     /// Loads a preset from a JSON file. 
     /// The JSON file should represent a CsoundUnityPreset.
+    /// <para>This doesn't set the preset. </para>
+    /// You should use the Action to get the reference of the loaded preset.
+    /// This is needed because of the async nature of this method, that uses a WebRequest on Android and iOS.
+    /// <para>
+    /// Example of usage:
+    /// 
+    /// <code>
+    /// LoadPreset("myPath/presetName.json", (loadedPreset) => 
+    /// {
+    ///     SetPreset(loadedPreset);
+    /// });
+    /// </code>
+    /// </para>
     /// </summary>
     /// <param name="path">The path must point to an existing JSON file</param>
     public void LoadPreset(string path, Action<CsoundUnityPreset> onPresetLoaded = null)
     {
-        var presetName = Path.GetFileName(path);
+        var presetName = Path.ChangeExtension(Path.GetFileName(path), null);
 
-#if UNITY_ANDROID || UNITY_IOS
-        StartCoroutine(LoadingPreset(path, (d) =>
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+        StartCoroutine(LoadingData(path, (d) =>
         {
-            var preset = SetPreset(presetName, d);
+            if (d == null)
+            {
+                onPresetLoaded?.Invoke(null);
+            }
+            var preset = CreatePreset(presetName, d);
             onPresetLoaded?.Invoke(preset);
         }));
 #else
@@ -1877,25 +2010,33 @@ public class CsoundUnity : MonoBehaviour
             return;
         }
         var data = File.ReadAllText(path);
-        var preset = SetPreset(presetName, data);
+        var preset = CreatePreset(presetName, data);
+        if (preset == null)
+        {
+            Debug.LogError("Couldn't create preset from path: {path}");
+            onPresetLoaded?.Invoke(null);
+            return;
+        }
         onPresetLoaded?.Invoke(preset);
 #endif
     }
 
     /// <summary>
-    /// Loads a preset from a JSON file. 
+    /// Load a global preset on this CsoundUnity instance from a JSON file found at path. 
     /// The JSON file should represent a Global Preset, ie a complete CsoundUnity instance.
+    /// <para>This also sets the global preset, overriding the current content of this CsoundUnity instance.</para>
+    /// This could have unintended consequences in certain situations. 
+    /// You could need to disable this CsoundUnity GameObject and enable it again to restore the Csound internal state.
     /// </summary>
     /// <param name="path">The path must point to an existing JSON file</param>
-    public void LoadGlobalPreset(string path, Action<CsoundUnity> onPresetLoaded = null)
+    public void LoadGlobalPreset(string path)
     {
         var presetName = Path.GetFileName(path);
 
 #if UNITY_ANDROID || UNITY_IOS
-        StartCoroutine(LoadingPreset(path, (d) =>
+        StartCoroutine(LoadingData(path, (d) =>
         {
-            var preset = SetGlobalPreset(presetName, d);
-            onPresetLoaded?.Invoke(preset);
+            SetGlobalPreset(presetName, d);
         }));
 #else
         if (!File.Exists(path))
@@ -1904,50 +2045,10 @@ public class CsoundUnity : MonoBehaviour
             return;
         }
         var data = File.ReadAllText(path);
-        var preset = SetGlobalPreset(presetName, data);
-        onPresetLoaded?.Invoke(preset);
+        SetGlobalPreset(presetName, data);
 #endif
     }
-
-    IEnumerator LoadingPreset(string path, Action<string> onDataLoaded)
-    {
-        Debug.Log($"Loading Preset from path: {path}");
-        using (var request = UnityWebRequest.Get(path))
-        {
-            request.downloadHandler = new DownloadHandlerBuffer();
-            yield return request.SendWebRequest();
-            if (request.isNetworkError || request.isHttpError)
-            {
-                Debug.Log($"Couldn't load preset at path: {path}: {request.error}");
-                yield break;
-            }
-            var data = request.downloadHandler.text;
-            onDataLoaded?.Invoke(data);
-        }
-    }
-
-    /// <summary>
-    /// Create a CsoundUnityPreset from a list of CsoundChannelControllers, 
-    /// specifying the presetName and the csoundFileName this preset is related to
-    /// </summary>
-    /// <param name="presetName"></param>
-    /// <param name="csoundFileName"></param>
-    /// <param name="channels"></param>
-    /// <returns></returns>
-    public static CsoundUnityPreset CreatePreset(string presetName, string csoundFileName, List<CsoundChannelController> channels)
-    {
-        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-        preset.name = preset.presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
-        preset.csoundFileName = csoundFileName;
-        preset.channels = new List<CsoundChannelController>();
-        foreach (var chan in channels)
-        {
-            var newChan = chan.Clone();
-            preset.channels.Add(newChan);
-        }
-        return preset;
-    }
-
+    
     /// <summary>
     /// Parse a Cabbage Snap and return a list of CsoundUnityPresets. 
     /// </summary>
@@ -2081,6 +2182,57 @@ public class CsoundUnity : MonoBehaviour
                 }
             }
         }
+    }
+
+    static IEnumerator LoadingData(string path, Action<string> onDataLoaded)
+    {
+        Debug.Log($"Loading JSON data from path: {path}");
+        using (var request = UnityWebRequest.Get(path))
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            yield return request.SendWebRequest();
+            if (request.isNetworkError || request.isHttpError)
+            {
+                Debug.Log($"Couldn't load data at path: {path}: {request.error}");
+                onDataLoaded?.Invoke(null);
+                yield break;
+            }
+            var data = request.downloadHandler.text;
+            onDataLoaded?.Invoke(data);
+        }
+    }
+
+    private static string CheckPathForExistence(string path, string presetName, bool overwriteIfExisting)
+    {
+        path = string.IsNullOrWhiteSpace(path) ?
+            Application.persistentDataPath
+            : path;
+        if (!char.IsSeparator(path[path.Length - 1]))
+        {
+            path = $"{path}/";
+        }
+
+        if (!Directory.Exists(path))
+        {
+            try
+            {
+                Directory.CreateDirectory(path);
+            }
+            catch (IOException ex)
+            {
+                Debug.LogError($"Couldn't create folder at: {path}, defaulting to {Application.persistentDataPath} {ex.Message}");
+                path = Application.persistentDataPath;
+            }
+        }
+
+        var fullPath = Path.Combine(path, presetName + ".json");
+
+        var count = 0;
+        while (File.Exists(fullPath) && !overwriteIfExisting)
+        {
+            fullPath = Path.Combine(path, $"{presetName}_{count++}.json");
+        }
+        return fullPath;
     }
 
     #endregion PRESETS
