@@ -14,9 +14,11 @@ It works both on the Editor and at Runtime.
 
 - **GLOBAL JSON preset**: this kind of preset is meant to be used when you want to save the whole state of a **CsoundUnity** instance. It is very similar as saving a Unity preset, but this works also at runtime, since it comes as a JSON file. It is useful when you want to carry over for example the **CsoundUnity** settings like the *Environment Settings*.
 
+### The Preset Inspector
+
 The **CsoundUnity** inspector has a *Preset* section which you can expand.
 
-### Load
+#### Load
 
 <img src="images/presets_load.jpg" alt="Presets Load"/>
 
@@ -32,7 +34,7 @@ The *Refresh* button will scan again the selected folder searching for presets.
 
 If no folder is selected it will default to the *Assets* folder.
 
-#### Scriptable Object Presets
+##### Scriptable Object Presets
 
 The presets listed are the ones related with the csd that this **CsoundUnity** instance is using.  
 You can increase the number of the presets displayed acting on the slider on the right of the *Assignable Presets:* label.
@@ -44,7 +46,7 @@ CsoundUnityPresets come with the *.asset* extension.
 
 The *To JSON* button next to each preset name lets you convert that preset in the JSON format.
 
-#### JSON Presets
+##### JSON Presets
 
 The JSON presets listed are **ALL** the json files found inside the project, if no LOAD folder is specified.   
 There is no guarantee that all the listed JSONs are related with this CsoundUnity instance (because it would mean loading all the found JSON files).  
@@ -57,14 +59,14 @@ When you try to load a preset some checks are performed:
 Hovering on the button will show you the path to that preset.  
 You cannot have more than one preset with the same name in the same folder.  
 
-#### Global JSON Presets
+##### Global JSON Presets
 
-A global preset represents a CsoundUnity instance.  
-The available Global presets will be listed in the JSON preset list.
-If their name contains the word *global* it will be loaded as a Global preset, otherwise it will be loaded as a CsoundUnityPreset. Be aware of that if you will need to rename the preset after it was created.  
-The Global JSON presets listed are searched in the entire project, if no LOAD folder is specified.   
+A global preset represents a **CsoundUnity** instance.  
+The available **Global presets** will be listed in the JSON preset list.
+If their name contains the word *global* it will be loaded as a **Global preset**, otherwise it will be loaded as a **CsoundUnityPreset**. Be aware of that if you will need to rename the preset after it was created.  
+The **Global JSON presets** listed are searched in the entire project, if no LOAD folder is specified.   
 
-### Save
+#### Save
 
 <img src="images/presets_save.jpg" alt="Presets Save"/>
 
@@ -74,7 +76,7 @@ You can choose to save the preset in the 3 different formats (*ScriptableObject*
 If a file with the same name is found in the same destination folder, it will ask if overwrite it or rename it (if saving as a ScriptableObject). If rename is chosen it will add a suffix to the name.   
 If saving as a JSON and the JSON file exists at that location, it will simply add a suffix to the name.
 
-### Import Cabbage Snaps
+#### Import Cabbage Snaps
 
 You can import [Cabbage snaps](https://cabbageaudio.com/docs/presets/) and create CsoundUnityPresets from them.
 Simply specify the folder where the *.snaps* files are contained, specify the destination folder where you want to save them and press *IMPORT*.  
@@ -82,3 +84,9 @@ A new **CsoundUnityPreset** will be created for each preset contained in each *.
 
 <img src="images/presets_import.jpg" alt="Presets Import"/>
 
+### Saving / Loading presets using C#
+
+There are lots of methods that can help you save and load presets at runtime.
+Consider that saving a **CsoundUnityPreset** as a *ScriptableObject* won't work at runtime (it is meant to be used in the Editor), so you will have to save it as a JSON.  
+But you can of course load the *ScriptableObjects* presets at runtime. You can assign the CsoundUnityPresets as fields in your scripts like you would do with any other **Unity** asset.  
+Be sure to check the [CsoundUnity API](http://rorywalsh.github.io/CsoundUnity/html/index.html) for the description of each method.
