@@ -44,7 +44,8 @@ Hovering on the button will show you the path to that preset.
 You cannot have more than one preset with the same name in the same folder.  
 CsoundUnityPresets come with the *.asset* extension.
 
-The *To JSON* button next to each preset name lets you convert that preset in the JSON format.
+The *To JSON* button next to each preset name lets you convert that preset in the JSON format.  
+It will be saved in the same folder of the **CsoundUnityPreset** you're trying to convert.
 
 ##### JSON Presets
 
@@ -58,6 +59,8 @@ When you try to load a preset some checks are performed:
 
 Hovering on the button will show you the path to that preset.  
 You cannot have more than one preset with the same name in the same folder.  
+The *To SO* button next to each preset name lets you convert that preset into a CsoundUnityPreset asset.
+It will be saved in the same folder of the JSON you're trying to convert.
 
 ##### Global JSON Presets
 
@@ -73,7 +76,7 @@ The **Global JSON presets** listed are searched in the entire project, if no LOA
 To save a preset, first select your destination folder. If the folder is not set, the *Assets* folder (aka *DataPath*) will be used.  
 Type a preset name: if name is empty a default one (*CsoundUnityPreset*) will be used.  
 You can choose to save the preset in the 3 different formats (*ScriptableObject*, *JSON* or *Global*) pressing the related buttons.  
-If a file with the same name is found in the same destination folder, it will ask if overwrite it or rename it (if saving as a ScriptableObject). If rename is chosen it will add a suffix to the name.   
+If a file with the same name is found in the same destination folder, it will ask if overwrite it or rename it (if saving as a *ScriptableObject*). If rename is chosen it will add a suffix to the name.   
 If saving as a JSON and the JSON file exists at that location, it will simply add a suffix to the name.
 
 #### Import Cabbage Snaps
@@ -88,5 +91,6 @@ A new **CsoundUnityPreset** will be created for each preset contained in each *.
 
 There are lots of methods that can help you save and load presets at runtime.
 Consider that saving a **CsoundUnityPreset** as a *ScriptableObject* won't work at runtime (it is meant to be used in the Editor), so you will have to save it as a JSON.  
-But you can of course load the *ScriptableObjects* presets at runtime. You can assign the CsoundUnityPresets as fields in your scripts like you would do with any other **Unity** asset.  
+But you can of course load the *ScriptableObjects* presets at runtime. You can assign the **CsoundUnityPresets** as fields in your scripts like you would do with any other **Unity** asset.  
+
 Be sure to check the [CsoundUnity API](http://rorywalsh.github.io/CsoundUnity/html/index.html) for the description of each method.
