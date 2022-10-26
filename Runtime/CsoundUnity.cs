@@ -1275,11 +1275,26 @@ public class CsoundUnity : MonoBehaviour
     }
 #endif
 
+    /// <summary>
+    /// Fills in a provided raw CSOUND_PARAMS object with csounds current parameter settings.
+    /// This method is used internally to manage this class and is not expected to be used directly by a host program.
+    /// </summary>
+    /// <param name="oparms">a CSOUND_PARAMS structure to be filled in by csound</param>
+    /// <returns>The same parameter structure that was provided but filled in with csounds current internal contents</returns>
     public CsoundUnityBridge.CSOUND_PARAMS GetParams()
     {
         return csound.GetParams();
     }
 
+    /// <summary>
+    /// Transfers the contents of the provided raw CSOUND_PARAMS object into csound's 
+    /// internal data structues (chiefly its OPARMS structure).
+    /// This method is used internally to manage this class and is not expected to be used directly by a host program.
+    /// Most values are used and reflected in CSOUND_PARAMS.
+    /// Internally to csound, as of release 6.0.0, Heartbeat and IsComputingOpcodeWeights are ignored
+    /// and IsUsingCsdLineCounts can only be set and never reset once set.
+    /// </summary>
+    /// <param name="parms">a </param>
     public void SetParams(CsoundUnityBridge.CSOUND_PARAMS parms)
     {
         csound.SetParams(parms);
@@ -1354,7 +1369,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// map MYFLT within one range to another
+    /// Linear remap floats within one range to another
     /// </summary>
     /// <param name="value"></param>
     /// <param name="from1"></param>
@@ -1371,7 +1386,17 @@ public class CsoundUnity : MonoBehaviour
         return clamp ? Mathf.Clamp(retValue, from2, to2) : retValue;
     }
 
-    public static float ConvertTo0to1(float value, float from, float to, float skew = 1f)
+    /// <summary>
+    /// Remap a value to a normalized (0-1) value specifying its expected "from" and "to" values, 
+    /// and the skew of the exponential curve of the remapping. 
+    /// If skew is 1 the remapping is linear, if 0.5 it's exponential.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <param name="skew"></param>
+    /// <returns></returns>
+    public static float RemapTo0to1(float value, float from, float to, float skew = 1f)
     {
         if ((to - from) == 0) return 0;
 
@@ -1383,14 +1408,18 @@ public class CsoundUnity : MonoBehaviour
         return Mathf.Pow(proportion, skew);
     }
 
+
     /// <summary>
-    /// 
+    /// Remap a normalized (0-1) value to a value in another range, specifying its "from" and "to" values, 
+    /// and the skew of the exponential curve of the remapping. 
+    /// If skew is 1 the remapping is linear, if 0.5 it's exponential.
     /// </summary>
-    /// <param name="value">value is 0-1. if it's not it will be clamped</param>
+    /// <param name="value"></param>
     /// <param name="from"></param>
     /// <param name="to"></param>
+    /// <param name="skew"></param>
     /// <returns></returns>
-    public static float ConvertFrom0to1(float value, float from, float to, float skew = 1f)
+    public static float RemapFrom0to1(float value, float from, float to, float skew = 1f)
     {
         if (skew == 0) return to;
 
@@ -1402,6 +1431,11 @@ public class CsoundUnity : MonoBehaviour
         return from + (to - from) * proportion;
     }
 
+    /// <summary>
+    /// Utility method to create an array of MYFLTs from an array of floats
+    /// </summary>
+    /// <param name="samples"></param>
+    /// <returns></returns>
     public static MYFLT[] ConvertToMYFLT(float[] samples)
     {
         if (samples == null || samples.Length == 0) return new MYFLT[0];
@@ -1413,6 +1447,11 @@ public class CsoundUnity : MonoBehaviour
         return myFLT;
     }
 
+    /// <summary>
+    /// Utility method to create an array of floats from an array of MYFLTs
+    /// </summary>
+    /// <param name="samples"></param>
+    /// <returns></returns>
     public static float[] ConvertToFloat(MYFLT[] samples)
     {
         if (samples == null || samples.Length == 0) return new float[0];
@@ -1424,24 +1463,52 @@ public class CsoundUnity : MonoBehaviour
         return flt;
     }
 
+    /// <summary>
+    /// Get an array of MYFLTs in from the AudioClip source from the Resources folder.
+    /// The first index in the returned array will have its value set as 2 like the number of channels.
+    /// See <see cref="GetSamples">GetSamples</see>
+    /// </summary>
+    /// <param name="source">The name of the source to retrieve</param>
+    /// <returns></returns>
     public static MYFLT[] GetStereoSamples(string source)
     {
         return GetSamples(source, 0, true);
     }
 
+    /// <summary>
+    /// Get an array of floats from the AudioClip source from the Resources folder.
+    /// The first index in the returned array will have its value set as 2 like the number of channels
+    /// See <see cref="GetSamples">GetSamples</see>
+    /// </summary>
+    /// <param name="source">The name of the source to retrieve</param>
+    /// <returns></returns>
     public static float[] GetStereoFloatSamples(string source)
     {
         return ConvertToFloat(GetSamples(source, 0, true));
     }
 
+    /// <summary>
+    /// Get an array of MYFLTs from the AudioClip source from the Resources folder. 
+    /// No information about the channels will be added in the first element of the returned array.
+    /// See <see cref="GetSamples">GetSamples</see>
+    /// </summary>
+    /// <param name="source">The name of the source to retrieve</param>
+    /// <returns></returns>
     public static MYFLT[] GetMonoSamples(string source, int channelNumber)
     {
-        return GetSamples(source, channelNumber, true);
+        return GetSamples(source, channelNumber, false);
     }
 
+    /// <summary>
+    /// Get an array of floats from the AudioClip source from the Resources folder. 
+    /// No information about the channels will be added in the first element of the returned array.
+    /// See <see cref="GetSamples">GetSamples</see>
+    /// </summary>
+    /// <param name="source">The name of the source to retrieve</param>
+    /// <returns></returns>
     public static float[] GetMonoFloatSamples(string source, int channelNumber)
     {
-        return ConvertToFloat(GetSamples(source, channelNumber, true));
+        return ConvertToFloat(GetSamples(source, channelNumber, false));
     }
 
     /// <summary>
@@ -1496,6 +1563,13 @@ public class CsoundUnity : MonoBehaviour
         return res;
     }
 
+    /// <summary>
+    /// Same as <see cref="GetSamples">GetSamples</see> but it will return a float array.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="channelNumber"></param>
+    /// <param name="writeChannelData"></param>
+    /// <returns></returns>
     public static float[] GetFloatSamples(string source, int channelNumber = 1, bool writeChannelData = false)
     {
         return ConvertToFloat(GetSamples(source, channelNumber, writeChannelData));
@@ -1551,6 +1625,11 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Get samples from an AudioClip as a MYFLT array.
+    /// </summary>
+    /// <param name="audioClip"></param>
+    /// <returns></returns>
     public static MYFLT[] GetSamples(AudioClip audioClip)
     {
         var data = new float[audioClip.samples * audioClip.channels];
@@ -1668,7 +1747,7 @@ public class CsoundUnity : MonoBehaviour
     /// PresetData should be a CsoundUnityPreset in the JSON format.
     /// <para>It will use the presetName parameter if not empty, 
     /// if presetName is empty it will use preset.presetName, 
-    /// if also preset.presetName is empty it will use "CsoundUnityPreset" as a default name
+    /// if also preset.presetName is empty it will use "CsoundUnityPreset" as a default name.
     /// </para>
     /// </summary>
     /// <param name="presetName"></param>
@@ -1796,7 +1875,7 @@ public class CsoundUnity : MonoBehaviour
 
     /// <summary>
     /// Save the specified CsoundUnityPreset as JSON, at the specified path.
-    /// If a file exists at the specified path, it will be overwritten if overwriteIfExisting is true
+    /// If a file exists at the specified path, it will be overwritten if overwriteIfExisting is true.
     /// </summary>
     /// <param name="preset"></param>
     /// <param name="path"></param>
@@ -1838,7 +1917,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this CsoundUnity instance
+    /// Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this CsoundUnity instance.
     /// </summary>
     /// <param name="presetName"></param>
     /// <param name="path"></param>
@@ -1855,7 +1934,7 @@ public class CsoundUnity : MonoBehaviour
 
     /// <summary>
     /// Save a serialized copy of this CsoundUnity instance.
-    /// Similar behaviour as saving a Unity Preset from the inspector of the CsoundUnity component, but this can be used at runtime
+    /// Similar behaviour as saving a Unity Preset from the inspector of the CsoundUnity component, but this can be used at runtime.
     /// </summary>
     /// <param name="presetName"></param>
     public void SaveGlobalPreset(string presetName, string path = null, bool overwriteIfExisting = false)
@@ -1897,7 +1976,7 @@ public class CsoundUnity : MonoBehaviour
     /// <summary>
     /// Set a CsoundUnityPreset to this CsoundUnity instance using a presetName and presetData.
     /// The set preset will be returned.
-    /// Preset data should represent a CsoundUnityPreset in JSON format
+    /// <para>Preset data should represent a CsoundUnityPreset in JSON format.</para>
     /// If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
     /// the preset will not be set and an error will be logged.
     /// </summary>
@@ -1913,10 +1992,10 @@ public class CsoundUnity : MonoBehaviour
 
     /// <summary>
     /// Set a CsoundUnityPreset to this CsoundUnity instance using presetData. 
-    /// The set preset will be returned.
+    /// <para>The set preset will be returned.
     /// The name of the preset will be the one found inside presetData, if not empty.
-    /// Otherwise a default presetName will be used.
-    /// Preset data should represent a CsoundUnityPreset in JSON format.
+    /// Otherwise a default presetName will be used.</para>
+    /// <para>Preset data should represent a CsoundUnityPreset in JSON format.</para>
     /// If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
     /// the preset will not be set and an error will be logged.
     /// </summary>
