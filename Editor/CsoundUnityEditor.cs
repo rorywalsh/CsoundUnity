@@ -639,9 +639,12 @@ public class CsoundUnityEditor : Editor
                 {
                     LoadPreset(path);
                 }
-                if (GUILayout.Button("To SO", GUILayout.Width(80)))
-                {
-                    csoundUnity.ConvertPresetToScriptableObject(path, Path.GetDirectoryName(path));
+                if (!path.ToLower().Contains("global"))
+                { 
+                    if (GUILayout.Button("To SO", GUILayout.Width(80)))
+                    {
+                        csoundUnity.ConvertPresetToScriptableObject(path, Path.GetDirectoryName(path));
+                    }
                 }
                 EditorGUILayout.EndHorizontal();
             }
