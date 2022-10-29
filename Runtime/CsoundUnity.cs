@@ -529,10 +529,7 @@ public class CsoundUnity : MonoBehaviour
 
     #region PUBLIC_METHODS
 
-    public int LoadPlugins(string dir)
-    {
-        return csound.LoadPlugins(dir);
-    }
+    #region INSTANTIATION
 
     /// <summary>
     /// Returns the Csound version number times 1000 (5.00.0 = 5000).
@@ -553,6 +550,16 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
+    /// Loads all plugins from a given directory
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <returns></returns>
+    public int LoadPlugins(string dir)
+    {
+        return csound.LoadPlugins(dir);
+    }
+
+    /// <summary>
     /// Returns true if the csd file was compiled without errors.
     /// </summary>
     /// <returns></returns>
@@ -560,6 +567,8 @@ public class CsoundUnity : MonoBehaviour
     {
         return compiledOk;
     }
+
+    #endregion INSTANTIATION
 
     #region PERFORMANCE
 
@@ -1048,7 +1057,11 @@ public class CsoundUnity : MonoBehaviour
         return this._channels[indx];
     }
     /// <summary>
-    /// blocking method to get a list of the channels from Csound, not from the serialized list of this instance
+    /// Blocking method to get a list of the channels from Csound, not from the serialized list of this instance.
+    /// Provides a dictionary of all currently defined channels resulting from compilation of an orchestra
+    /// containing channel definitions.
+    /// Entries, keyed by name, are polymorphically assigned to their correct data type: control, audio, string, pvc.
+    /// <returns>A dictionary of all currently defined channels keyed by their name to its ChannelInfo</returns>
     /// </summary>
     /// <returns></returns>
     public IDictionary<string, CsoundUnityBridge.ChannelInfo> GetChannelList()
@@ -1191,7 +1204,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Asynchronous version of copyTableOut
+    /// Asynchronous version of <see cref="CopyTableOut(int, out MYFLT[])">CopyTableOut</see>.
     /// </summary>
     /// <param name="table"></param>
     /// <param name="dest"></param>
@@ -1200,6 +1213,11 @@ public class CsoundUnity : MonoBehaviour
         csound.TableCopyOutAsync(table, out dest);
     }
 
+    /// <summary>
+    /// Same as <see cref="CopyTableIn(int, MYFLT[])">CopyTableIn</see> but passing a float array.
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="source"></param>
     public void CopyFloatTableIn(int table, float[] source)
     {
         var myFlts = ConvertToMYFLT(source);
@@ -1218,7 +1236,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Asynchronous version of copyTableOut
+    /// Asynchronous version of <see cref="CopyTableIn(int, MYFLT[])">CopyTableIn</see>
     /// </summary>
     /// <param name="table"></param>
     /// <param name="source"></param>
@@ -1301,10 +1319,10 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Get Environment path
+    /// Get Environment path.
     /// </summary>
     /// <param name="envType">the type of the environment to get</param>
-    /// <returns></returns>
+    /// <returns>the corresponding value or an empty string if no such key exists</returns>
     public string GetEnv(EnvType envType)
     {
         return csound.GetEnv(envType.ToString());
@@ -1576,7 +1594,8 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Async version of GetSamples
+    /// Async version of <see cref="GetSamples">GetSamples</see>
+    /// <para>
     /// Example of usage:
     /// <code>
     /// yield return CsoundUnity.GetSamples(source.name, CsoundUnity.SamplesOrigin.Resources, (samples) =>
@@ -1585,6 +1604,7 @@ public class CsoundUnity : MonoBehaviour
     ///     csound.CreateTable(100, samples);
     /// });
     /// </code>
+    /// </para>
     /// </summary>
     /// <param name="source">the name of the AudioClip to load</param>
     /// <param name="origin">the origin of the path</param>
@@ -1743,8 +1763,8 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Create a CsoundUnityPreset from a presetName and presetData
-    /// PresetData should be a CsoundUnityPreset in the JSON format.
+    /// Create a CsoundUnityPreset from a presetName and presetData.
+    /// <para>PresetData should be a CsoundUnityPreset in the JSON format.</para>
     /// <para>It will use the presetName parameter if not empty, 
     /// if presetName is empty it will use preset.presetName, 
     /// if also preset.presetName is empty it will use "CsoundUnityPreset" as a default name.
@@ -1756,7 +1776,7 @@ public class CsoundUnity : MonoBehaviour
     public static CsoundUnityPreset CreatePreset(string presetName, string presetData)
     {
         var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-        
+
         // try and create a CsoundUnityPreset from presetData
         try
         {
@@ -1767,10 +1787,10 @@ public class CsoundUnity : MonoBehaviour
             Debug.LogError($"Couldn't set Preset {presetName}, {ex.Message}");
             return null;
         }
-        preset.name = preset.presetName = string.IsNullOrWhiteSpace(presetName) ? 
-            string.IsNullOrWhiteSpace(preset.presetName) ? 
+        preset.name = preset.presetName = string.IsNullOrWhiteSpace(presetName) ?
+            string.IsNullOrWhiteSpace(preset.presetName) ?
                 "CsoundUnityPreset" : preset.presetName : presetName;
-        
+
         return preset;
     }
 
@@ -1860,7 +1880,7 @@ public class CsoundUnity : MonoBehaviour
 
     /// <summary>
     /// Save a CsoundUnityPreset of this CsoundUnity instance at the specified path, using the specified presetName.
-    /// The current csoundFileName and CsoundChannelControllers will be saved in the preset.
+    /// The current csoundFileName and list of CsoundChannelControllers will be saved in the preset.
     /// If no presetName is given, a default one will be used.
     /// </summary>
     /// <param name="presetName"></param>
@@ -1900,6 +1920,7 @@ public class CsoundUnity : MonoBehaviour
 
     /// <summary>
     /// Save a preset as JSON from a list of CsoundChannelController, specifying the related CsoundFileName and the presetName.
+    /// See <see cref="SavePresetAsJSON(CsoundUnityPreset, string, bool)">SavePresetAsJSON(CsoundUnityPreset, string, bool)</see>
     /// </summary>
     /// <param name="channels"></param>
     /// <param name="csoundFileName"></param>
@@ -1918,6 +1939,7 @@ public class CsoundUnity : MonoBehaviour
 
     /// <summary>
     /// Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this CsoundUnity instance.
+    /// See <see cref="SavePresetAsJSON(CsoundUnityPreset, string, bool)">SavePresetAsJSON(CsoundUnityPreset, string, bool)</see>
     /// </summary>
     /// <param name="presetName"></param>
     /// <param name="path"></param>
@@ -2127,7 +2149,7 @@ public class CsoundUnity : MonoBehaviour
         SetGlobalPreset(presetName, data);
 #endif
     }
-    
+
     /// <summary>
     /// Parse a Cabbage Snap and return a list of CsoundUnityPresets. 
     /// </summary>
@@ -2425,9 +2447,9 @@ public class CsoundUnity : MonoBehaviour
 
     /// <summary>
     /// Where the samples to load come from:
-    /// the Resources folder
-    /// the StreamingAssets folder
-    /// An absolute path, can be external of the Unity Project
+    /// <para>the Resources folder</para>
+    /// <para>the StreamingAssets folder</para>
+    /// <para>An absolute path, can be external of the Unity Project</para>
     /// </summary>
     public enum SamplesOrigin { Resources, StreamingAssets, Absolute } // TODO Add PersistentDataPath and URL
 
