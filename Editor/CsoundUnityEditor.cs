@@ -441,7 +441,7 @@ public class CsoundUnityEditor : Editor
         EditorGUI.indentLevel++;
         {
             foldout.boolValue = EditorGUI.Foldout(new Rect(rect.x, rect.y, 10, h), foldout.boolValue, "", false);
-            if (GUI.Button(new Rect(rect.x + 25, rect.y, rect.width - 27, h), new GUIContent(descr, descr)))
+            if (GUI.Button(new Rect(rect.x + 25, rect.y, rect.width - 27, h), new GUIContent(descr, path)))
             {
                 EditorUtility.RevealInFinder(path);
             }
@@ -567,7 +567,7 @@ public class CsoundUnityEditor : Editor
             EditorGUI.indentLevel--;
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Load a Preset", EditorStyles.helpBox);
-            if (GUILayout.Button("Refresh"))
+            if (GUILayout.Button("Refresh List"))
             {
                 UpdateAssignablePresets();
             }
@@ -888,17 +888,22 @@ public class CsoundUnityEditor : Editor
         if (string.IsNullOrWhiteSpace(m_currentPresetLoadFolder.stringValue))
         {
             _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset");
-            // this will collect all jsons found in the Application.dataPath, be aware that they could not be CsoundUnityPresets!
+            // this will collect all jsons found in the Application.dataPath folder, be aware that they could not be CsoundUnityPresets!
             _jsonPresetsPaths = Directory.GetFiles(Application.dataPath, "*.json", SearchOption.AllDirectories);
         }
         else
         {
-            _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset", new string[] { assetsFolderPath });
             if (!Directory.Exists(m_currentPresetLoadFolder.stringValue))
             {
                 Debug.LogWarning($"Load folder not found, defaulting to {Application.dataPath}");
                 m_currentPresetLoadFolder.stringValue = Application.dataPath;
             }
+
+            if (m_currentPresetLoadFolder.stringValue.Contains("Assets"))
+            {
+                _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset", new string[] { assetsFolderPath });
+            }
+            
             _jsonPresetsPaths = Directory.GetFiles(m_currentPresetLoadFolder.stringValue, "*.json");
         }
 
