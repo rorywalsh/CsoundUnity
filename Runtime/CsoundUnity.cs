@@ -73,6 +73,11 @@ public class CsoundChannelController
     {
         return this.MemberwiseClone() as CsoundChannelController;
     }
+
+    //public static explicit operator UnityEngine.Object(CsoundChannelController v)
+    //{
+    //    return (UnityEngine.Object)v;
+    //}
 }
 
 /// <summary>
@@ -376,6 +381,11 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector]
     public List<EnvironmentSettings> environmentSettings = new List<EnvironmentSettings>();
 
+    /// <summary>
+    /// The current preset name. If empty, no preset has been set.
+    /// </summary>
+    public string CurrentPreset => _currentPreset;
+    
     #endregion PUBLIC_FIELDS
 
     #region PRIVATE_FIELDS
@@ -423,6 +433,8 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector] [SerializeField] private string _currentPreset;
     [HideInInspector] [SerializeField] private string _currentPresetSaveFolder;
     [HideInInspector] [SerializeField] private string _currentPresetLoadFolder;
+
+    
 
 #pragma warning restore 414
 
