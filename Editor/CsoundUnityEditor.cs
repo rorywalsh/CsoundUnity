@@ -281,7 +281,7 @@ public class CsoundUnityEditor : Editor
 
     public void DropAreaGUI()
     {
-        if( m_csoundAsset.objectReferenceValue as DefaultAsset == null)
+        if (m_csoundAsset.objectReferenceValue as DefaultAsset == null)
         {
             // reset the m_csoundAsset.objectReferenceValue in case something goes wrong when setting global presets
             m_csoundAsset.objectReferenceValue = null;
@@ -441,14 +441,11 @@ public class CsoundUnityEditor : Editor
         EditorGUI.indentLevel++;
         {
             foldout.boolValue = EditorGUI.Foldout(new Rect(rect.x, rect.y, 10, h), foldout.boolValue, "", false);
-#if UNITY_2021_1_OR_NEWER
-            if (EditorGUI.LinkButton(new Rect(rect.x + 25, rect.y, rect.width - 27, h), descr))
+            if (GUI.Button(new Rect(rect.x + 25, rect.y, rect.width - 27, h), new GUIContent(descr, descr)))
             {
-                Application.OpenURL($"file://{path}");
+                EditorUtility.RevealInFinder(path);
             }
-#else
-            EditorGUI.TextField(new Rect(rect.x + 25, rect.y, rect.width - 27, h), descr);
-#endif
+            
             if (foldout.boolValue)
             {
                 EditorGUI.PropertyField(
@@ -601,8 +598,14 @@ public class CsoundUnityEditor : Editor
             }
             EditorGUILayout.EndHorizontal();
             var relativeToAssetsPath = ExtractAssetsFolderFromPath(m_currentPresetLoadFolder);
-            EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {relativeToAssetsPath}", $"{relativeToAssetsPath}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
-
+            var fullPath = m_currentPresetLoadFolder.stringValue;
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {relativeToAssetsPath}", $"{fullPath}"), EditorStyles.helpBox);
+            if (GUILayout.Button("Show"))
+            {
+                EditorUtility.RevealInFinder(fullPath);
+            }
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space();
 
             EditorGUILayout.BeginHorizontal();
@@ -640,7 +643,7 @@ public class CsoundUnityEditor : Editor
                     LoadPreset(path);
                 }
                 if (!path.ToLower().Contains("global"))
-                { 
+                {
                     if (GUILayout.Button("To SO", GUILayout.Width(80)))
                     {
                         csoundUnity.ConvertPresetToScriptableObject(path, Path.GetDirectoryName(path));
@@ -665,7 +668,7 @@ public class CsoundUnityEditor : Editor
             EditorGUI.indentLevel--;
             EditorGUILayout.BeginHorizontal();
             var outputBtnLabel = $"Select Presets output folder";
-            if (GUILayout.Button(outputBtnLabel))//, GUILayout.Width(500), GUILayout.Height(75)))
+            if (GUILayout.Button(outputBtnLabel))
             {
                 m_currentPresetSaveFolder.stringValue = EditorUtility.OpenFolderPanel("Select Presets output folder", m_currentPresetSaveFolder.stringValue, "");
                 RefreshPresets();
@@ -691,20 +694,18 @@ public class CsoundUnityEditor : Editor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
-            
-            if (!Directory.Exists(m_currentPresetSaveFolder.stringValue))
-            {
-                Debug.LogWarning($"Save folder not found, defaulting to {Application.dataPath}");
-                m_currentPresetSaveFolder.stringValue = Application.dataPath;
-            }
+
+            var relativeToAssetsPath = ExtractAssetsFolderFromPath(m_currentPresetSaveFolder);
+            var fullPath = m_currentPresetSaveFolder.stringValue;
 
             EditorGUI.indentLevel++;
-            var fullPath = m_currentPresetSaveFolder.stringValue;
-            var assetsIndex = fullPath.IndexOf("Assets");
-            var relativeToAssetsPath = assetsIndex > 0 ? fullPath.Substring(assetsIndex, fullPath.Length - assetsIndex) : fullPath;
-            relativeToAssetsPath = relativeToAssetsPath.Length >= "Assets".Length ? relativeToAssetsPath : fullPath;
+            EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(new GUIContent($"Save Folder: {relativeToAssetsPath}", $"{fullPath}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
-
+            if (GUILayout.Button("Show"))
+            {
+                EditorUtility.RevealInFinder(fullPath);
+            }
+            EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space();
             _presetName = EditorGUILayout.TextField("Preset Name: ", _presetName);
 
@@ -742,7 +743,7 @@ public class CsoundUnityEditor : Editor
             if (GUILayout.Button("Select Cabbage Snaps folder to import"))
             {
                 _currentPresetImportFolder = EditorUtility.OpenFolderPanel("Select Cabbage snaps folder", _currentPresetImportFolder, "");
-                
+
             }
             EditorGUI.indentLevel--;
             EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {_currentPresetImportFolder}", $"{_currentPresetImportFolder}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
@@ -750,7 +751,7 @@ public class CsoundUnityEditor : Editor
             if (GUILayout.Button("Select parsed presets destination folder"))
             {
                 _currentPresetImportFolderSave = EditorUtility.OpenFolderPanel("Select parsed presets destination folder", _currentPresetImportFolder, ""); ;
-                
+
             }
             EditorGUI.indentLevel--;
             EditorGUILayout.LabelField(new GUIContent($"Save into Folder: {_currentPresetImportFolderSave}", $"{_currentPresetImportFolderSave}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
@@ -763,14 +764,14 @@ public class CsoundUnityEditor : Editor
                 }
                 var files = Directory.GetFiles(_currentPresetImportFolder, "*.snaps", SearchOption.AllDirectories);
                 //Debug.Log($"Found {files.Length} files");
-                foreach(var file in files)
+                foreach (var file in files)
                 {
                     Debug.Log($"found snap: {file}");
                     // assumes to find a csd with the same fileName in the folder
                     var csdFilePath = Path.ChangeExtension(file, "csd");
                     var presets = CsoundUnity.ParseSnap(csdFilePath, file);
                     //Debug.Log($"{presets.Count} presets read");
-                    foreach(var preset in presets)
+                    foreach (var preset in presets)
                     {
                         CsoundUnity.WritePreset(preset, _currentPresetImportFolderSave);
                     }
@@ -817,7 +818,7 @@ public class CsoundUnityEditor : Editor
         for (var i = 0; i < m_channelControllers.arraySize; i++)
         {
             var chan = m_channelControllers.GetArrayElementAtIndex(i);
-            foreach(var presetChan in preset.channels)
+            foreach (var presetChan in preset.channels)
             {
                 if (presetChan.channel == chan.FindPropertyRelative("channel").stringValue)
                 {
@@ -915,7 +916,7 @@ public class CsoundUnityEditor : Editor
         var path = pathProperty.stringValue;
         if (!Directory.Exists(path))
         {
-            //Debug.LogWarning($"Couldn't extract Asset path from path: {path}, defaulting to {Application.dataPath}");
+            //Debug.Log($"Directory {path} doesn't exist, defaulting to {Application.dataPath}");
             path = pathProperty.stringValue = Application.dataPath;
         }
 

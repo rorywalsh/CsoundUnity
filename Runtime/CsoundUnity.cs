@@ -180,7 +180,7 @@ public class EnvironmentSettings
                 res = runtime ? $"<path to player app bundle>/Contents/Resources/Data/Plugins" : res;
                 break;
             case SupportedPlatform.Windows:
-                res = runtime ? $"<path to executablename_Data folder>" : res;
+                res = runtime ? $"<path to executablename_Data folder>/Managed" : Path.Combine(Application.dataPath, "Managed");
                 break;
             case SupportedPlatform.Android:
 #if UNITY_ANDROID && !UNITY_EDITOR
