@@ -135,7 +135,7 @@ Public Types</h2></td></tr>
 , <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3ea0b38d14680695e16fe6e41b1959921d0">StreamingAssets</a>
 , <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3eab51ca26c6c89cfc9bec338f7a0d3e0c8">Absolute</a>
  }</td></tr>
-<tr class="memdesc:a541b29144ff702a17b79777bd4702f3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where the samples to load come from: the Resources folder the StreamingAssets folder An absolute path, can be external of the Unity Project  <a href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3e">More...</a><br /></td></tr>
+<tr class="memdesc:a541b29144ff702a17b79777bd4702f3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where the samples to load come from:  <a href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3e">More...</a><br /></td></tr>
 <tr class="separator:a541b29144ff702a17b79777bd4702f3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -143,14 +143,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac3b85fc7cd4671ca7d5504db7a15c0d3"><td class="memItemLeft" align="right" valign="top">delegate void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ac3b85fc7cd4671ca7d5504db7a15c0d3">CsoundInitialized</a> ()</td></tr>
 <tr class="memdesc:ac3b85fc7cd4671ca7d5504db7a15c0d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The delegate of the event OnCsoundInitialized  <a href="class_csound_unity.html#ac3b85fc7cd4671ca7d5504db7a15c0d3">More...</a><br /></td></tr>
 <tr class="separator:ac3b85fc7cd4671ca7d5504db7a15c0d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf922c0583760bd45a827e957f817c54"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aaf922c0583760bd45a827e957f817c54">LoadPlugins</a> (string dir)</td></tr>
-<tr class="separator:aaf922c0583760bd45a827e957f817c54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec12319cc8ddb33c9595ac84bfe32b00"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aec12319cc8ddb33c9595ac84bfe32b00">GetVersion</a> ()</td></tr>
 <tr class="memdesc:aec12319cc8ddb33c9595ac84bfe32b00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Csound version number times 1000 (5.00.0 = 5000).  <a href="class_csound_unity.html#aec12319cc8ddb33c9595ac84bfe32b00">More...</a><br /></td></tr>
 <tr class="separator:aec12319cc8ddb33c9595ac84bfe32b00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53b591bb3a6f23bef90054d024871fda"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a53b591bb3a6f23bef90054d024871fda">GetAPIVersion</a> ()</td></tr>
 <tr class="memdesc:a53b591bb3a6f23bef90054d024871fda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Csound API version number times 100 (1.00 = 100).  <a href="class_csound_unity.html#a53b591bb3a6f23bef90054d024871fda">More...</a><br /></td></tr>
 <tr class="separator:a53b591bb3a6f23bef90054d024871fda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf922c0583760bd45a827e957f817c54"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aaf922c0583760bd45a827e957f817c54">LoadPlugins</a> (string dir)</td></tr>
+<tr class="memdesc:aaf922c0583760bd45a827e957f817c54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads all plugins from a given directory  <a href="class_csound_unity.html#aaf922c0583760bd45a827e957f817c54">More...</a><br /></td></tr>
+<tr class="separator:aaf922c0583760bd45a827e957f817c54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7219da2d280d4ab3784289cdbaeec16"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ad7219da2d280d4ab3784289cdbaeec16">CompiledWithoutError</a> ()</td></tr>
 <tr class="memdesc:ad7219da2d280d4ab3784289cdbaeec16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the csd file was compiled without errors.  <a href="class_csound_unity.html#ad7219da2d280d4ab3784289cdbaeec16">More...</a><br /></td></tr>
 <tr class="separator:ad7219da2d280d4ab3784289cdbaeec16"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -218,7 +219,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a6f2c5c909550dea5562bc49e20a6ea34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a serialized <a class="el" href="class_csound_channel_controller.html" title="Utility class for controller and channels">CsoundChannelController</a>  <a href="class_csound_unity.html#a6f2c5c909550dea5562bc49e20a6ea34">More...</a><br /></td></tr>
 <tr class="separator:a6f2c5c909550dea5562bc49e20a6ea34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac855e3c2de0c3f86df5a2c38376b46d0"><td class="memItemLeft" align="right" valign="top">IDictionary&lt; string, <a class="el" href="class_csound_unity_bridge_1_1_channel_info.html">CsoundUnityBridge.ChannelInfo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ac855e3c2de0c3f86df5a2c38376b46d0">GetChannelList</a> ()</td></tr>
-<tr class="memdesc:ac855e3c2de0c3f86df5a2c38376b46d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">blocking method to get a list of the channels from Csound, not from the serialized list of this instance  <a href="class_csound_unity.html#ac855e3c2de0c3f86df5a2c38376b46d0">More...</a><br /></td></tr>
+<tr class="memdesc:ac855e3c2de0c3f86df5a2c38376b46d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocking method to get a list of the channels from Csound, not from the serialized list of this instance. Provides a dictionary of all currently defined channels resulting from compilation of an orchestra containing channel definitions. Entries, keyed by name, are polymorphically assigned to their correct data type: control, audio, string, pvc. </p><dl class="section return"><dt>Returns</dt><dd>A dictionary of all currently defined channels keyed by their name to its ChannelInfo</dd></dl>
+ <a href="class_csound_unity.html#ac855e3c2de0c3f86df5a2c38376b46d0">More...</a><br /></td></tr>
 <tr class="separator:ac855e3c2de0c3f86df5a2c38376b46d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbe804d347ab8311c6cdd0ab351041f6"><td class="memItemLeft" align="right" valign="top">MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#afbe804d347ab8311c6cdd0ab351041f6">GetAudioChannel</a> (string channel)</td></tr>
 <tr class="memdesc:afbe804d347ab8311c6cdd0ab351041f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a Csound Audio channel. Used in connection with a chnset opcode in your Csound instrument.  <a href="class_csound_unity.html#afbe804d347ab8311c6cdd0ab351041f6">More...</a><br /></td></tr>
@@ -251,15 +253,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aadd9375fe47ffd63b7bb8f1a5e4d190e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy the contents of a function table into a supplied array dest The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.  <a href="class_csound_unity.html#aadd9375fe47ffd63b7bb8f1a5e4d190e">More...</a><br /></td></tr>
 <tr class="separator:aadd9375fe47ffd63b7bb8f1a5e4d190e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13aebbe7775b9a950e7c9cca0ae2569c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a13aebbe7775b9a950e7c9cca0ae2569c">CopyTableOutAsync</a> (int table, out MYFLT[] dest)</td></tr>
-<tr class="memdesc:a13aebbe7775b9a950e7c9cca0ae2569c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronous version of copyTableOut  <a href="class_csound_unity.html#a13aebbe7775b9a950e7c9cca0ae2569c">More...</a><br /></td></tr>
+<tr class="memdesc:a13aebbe7775b9a950e7c9cca0ae2569c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronous version of <a class="el" href="">CopyTableOut</a>.  <a href="class_csound_unity.html#a13aebbe7775b9a950e7c9cca0ae2569c">More...</a><br /></td></tr>
 <tr class="separator:a13aebbe7775b9a950e7c9cca0ae2569c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fb63ff7aafae9a4b2505a8fa69e8dd4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a8fb63ff7aafae9a4b2505a8fa69e8dd4">CopyFloatTableIn</a> (int table, float[] source)</td></tr>
+<tr class="memdesc:a8fb63ff7aafae9a4b2505a8fa69e8dd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="class_csound_unity.html#ae7dca5bb3e6db550b9bcd48ed3406311">CopyTableIn</a> but passing a float array.  <a href="class_csound_unity.html#a8fb63ff7aafae9a4b2505a8fa69e8dd4">More...</a><br /></td></tr>
 <tr class="separator:a8fb63ff7aafae9a4b2505a8fa69e8dd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7dca5bb3e6db550b9bcd48ed3406311"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ae7dca5bb3e6db550b9bcd48ed3406311">CopyTableIn</a> (int table, MYFLT[] source)</td></tr>
 <tr class="memdesc:ae7dca5bb3e6db550b9bcd48ed3406311"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy the contents of a supplied array into a function table The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.  <a href="class_csound_unity.html#ae7dca5bb3e6db550b9bcd48ed3406311">More...</a><br /></td></tr>
 <tr class="separator:ae7dca5bb3e6db550b9bcd48ed3406311"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8261e52eb2028e7d54229fed16059c16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a8261e52eb2028e7d54229fed16059c16">CopyTableInAsync</a> (int table, MYFLT[] source)</td></tr>
-<tr class="memdesc:a8261e52eb2028e7d54229fed16059c16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronous version of copyTableOut  <a href="class_csound_unity.html#a8261e52eb2028e7d54229fed16059c16">More...</a><br /></td></tr>
+<tr class="memdesc:a8261e52eb2028e7d54229fed16059c16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronous version of <a class="el" href="class_csound_unity.html#ae7dca5bb3e6db550b9bcd48ed3406311">CopyTableIn</a>  <a href="class_csound_unity.html#a8261e52eb2028e7d54229fed16059c16">More...</a><br /></td></tr>
 <tr class="separator:a8261e52eb2028e7d54229fed16059c16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad192be8c09682b531a2829b823636567"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ad192be8c09682b531a2829b823636567">IsNamedGEN</a> (int num)</td></tr>
 <tr class="memdesc:ad192be8c09682b531a2829b823636567"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char) Otherwise it returns 0.  <a href="class_csound_unity.html#ad192be8c09682b531a2829b823636567">More...</a><br /></td></tr>
@@ -277,7 +280,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ad93e35599984bc62316f4cbbd95b7002"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transfers the contents of the provided raw CSOUND_PARAMS object into csound's internal data structues (chiefly its OPARMS structure). This method is used internally to manage this class and is not expected to be used directly by a host program. Most values are used and reflected in CSOUND_PARAMS. Internally to csound, as of release 6.0.0, Heartbeat and IsComputingOpcodeWeights are ignored and IsUsingCsdLineCounts can only be set and never reset once set.  <a href="class_csound_unity.html#ad93e35599984bc62316f4cbbd95b7002">More...</a><br /></td></tr>
 <tr class="separator:ad93e35599984bc62316f4cbbd95b7002"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae58cf5eb033a6be19aa5f1fffd1569e5"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ae58cf5eb033a6be19aa5f1fffd1569e5">GetEnv</a> (<a class="el" href="class_csound_unity.html#ab95c43530047bd09f52be72c13de043e">EnvType</a> envType)</td></tr>
-<tr class="memdesc:ae58cf5eb033a6be19aa5f1fffd1569e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Environment path  <a href="class_csound_unity.html#ae58cf5eb033a6be19aa5f1fffd1569e5">More...</a><br /></td></tr>
+<tr class="memdesc:ae58cf5eb033a6be19aa5f1fffd1569e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Environment path.  <a href="class_csound_unity.html#ae58cf5eb033a6be19aa5f1fffd1569e5">More...</a><br /></td></tr>
 <tr class="separator:ae58cf5eb033a6be19aa5f1fffd1569e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85601575e0603341bf7a722eedb463dd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a85601575e0603341bf7a722eedb463dd">SetGlobalEnv</a> (string name, string value)</td></tr>
 <tr class="memdesc:a85601575e0603341bf7a722eedb463dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the global value of environment variable 'name' to 'value', or delete variable if 'value' is NULL. It is not safe to call this function while any Csound instances are active. See <a href="https://csound.com/docs/manual/CommandEnvironment.html">https://csound.com/docs/manual/CommandEnvironment.html</a> for a list of the variables that can be used.  <a href="class_csound_unity.html#a85601575e0603341bf7a722eedb463dd">More...</a><br /></td></tr>
@@ -304,10 +307,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:acd0dd7bbef0339d43997cce83d948503"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints information about the end of a performance, and closes audio and MIDI devices. Note: after calling csoundCleanup(), the operation of the perform functions is undefined.  <a href="class_csound_unity.html#acd0dd7bbef0339d43997cce83d948503">More...</a><br /></td></tr>
 <tr class="separator:acd0dd7bbef0339d43997cce83d948503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae8bc6f5e213b8c6257fd8bd7b4463b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aae8bc6f5e213b8c6257fd8bd7b4463b9">SavePresetAsScriptableObject</a> (string presetName, string path=null)</td></tr>
-<tr class="memdesc:aae8bc6f5e213b8c6257fd8bd7b4463b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance at the specified path, using the specified presetName. The current csoundFileName and CsoundChannelControllers will be saved in the preset. If no presetName is given, a default one will be used.  <a href="class_csound_unity.html#aae8bc6f5e213b8c6257fd8bd7b4463b9">More...</a><br /></td></tr>
+<tr class="memdesc:aae8bc6f5e213b8c6257fd8bd7b4463b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance at the specified path, using the specified presetName. The current csoundFileName and list of CsoundChannelControllers will be saved in the preset. If no presetName is given, a default one will be used.  <a href="class_csound_unity.html#aae8bc6f5e213b8c6257fd8bd7b4463b9">More...</a><br /></td></tr>
 <tr class="separator:aae8bc6f5e213b8c6257fd8bd7b4463b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7869ed5c3602ec3dfc36faeb5f8d275f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a7869ed5c3602ec3dfc36faeb5f8d275f">SavePresetAsJSON</a> (string presetName, string path=null, bool overwriteIfExisting=false)</td></tr>
-<tr class="memdesc:a7869ed5c3602ec3dfc36faeb5f8d275f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance.  <a href="class_csound_unity.html#a7869ed5c3602ec3dfc36faeb5f8d275f">More...</a><br /></td></tr>
+<tr class="memdesc:a7869ed5c3602ec3dfc36faeb5f8d275f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance. See <a class="el" href="class_csound_unity.html#aaa64c7f58ad6bc877d19e85874369e2d">SavePresetAsJSON(CsoundUnityPreset, string, bool)</a>  <a href="class_csound_unity.html#a7869ed5c3602ec3dfc36faeb5f8d275f">More...</a><br /></td></tr>
 <tr class="separator:a7869ed5c3602ec3dfc36faeb5f8d275f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91dd731c93dca87a95079918f5b11631"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a91dd731c93dca87a95079918f5b11631">SaveGlobalPreset</a> (string presetName, string path=null, bool overwriteIfExisting=false)</td></tr>
 <tr class="memdesc:a91dd731c93dca87a95079918f5b11631"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a serialized copy of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance. Similar behaviour as saving a Unity Preset from the inspector of the <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> component, but this can be used at runtime.  <a href="class_csound_unity.html#a91dd731c93dca87a95079918f5b11631">More...</a><br /></td></tr>
@@ -376,7 +379,7 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memdesc:a26403d5ec4a86356b92bd136b206a934"><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a> but it will return a float array.  <a href="class_csound_unity.html#a26403d5ec4a86356b92bd136b206a934">More...</a><br /></td></tr>
 <tr class="separator:a26403d5ec4a86356b92bd136b206a934"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec60a82af7381770db1840b0170cfb4a"><td class="memItemLeft" align="right" valign="top">static IEnumerator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aec60a82af7381770db1840b0170cfb4a">GetSamples</a> (string source, <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3e">SamplesOrigin</a> origin, Action&lt; MYFLT[]&gt; onSamplesLoaded)</td></tr>
-<tr class="memdesc:aec60a82af7381770db1840b0170cfb4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Async version of GetSamples Example of usage:  <a href="class_csound_unity.html#aec60a82af7381770db1840b0170cfb4a">More...</a><br /></td></tr>
+<tr class="memdesc:aec60a82af7381770db1840b0170cfb4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Async version of <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a>  <a href="class_csound_unity.html#aec60a82af7381770db1840b0170cfb4a">More...</a><br /></td></tr>
 <tr class="separator:aec60a82af7381770db1840b0170cfb4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48975719bc9b8be675b970c2a967bf77"><td class="memItemLeft" align="right" valign="top">static MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a48975719bc9b8be675b970c2a967bf77">GetSamples</a> (AudioClip audioClip)</td></tr>
 <tr class="memdesc:a48975719bc9b8be675b970c2a967bf77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get samples from an AudioClip as a MYFLT array.  <a href="class_csound_unity.html#a48975719bc9b8be675b970c2a967bf77">More...</a><br /></td></tr>
@@ -385,7 +388,7 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memdesc:a4cfabf37ec0a2d8fe0f47550749a832f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> from a presetName, csoundFileName and a list of CsoundChannelControllers  <a href="class_csound_unity.html#a4cfabf37ec0a2d8fe0f47550749a832f">More...</a><br /></td></tr>
 <tr class="separator:a4cfabf37ec0a2d8fe0f47550749a832f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abef6b551685f4849205d648eec17f470"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#abef6b551685f4849205d648eec17f470">CreatePreset</a> (string presetName, string presetData)</td></tr>
-<tr class="memdesc:abef6b551685f4849205d648eec17f470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> from a presetName and presetData PresetData should be a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> in the JSON format.  <a href="class_csound_unity.html#abef6b551685f4849205d648eec17f470">More...</a><br /></td></tr>
+<tr class="memdesc:abef6b551685f4849205d648eec17f470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> from a presetName and presetData.  <a href="class_csound_unity.html#abef6b551685f4849205d648eec17f470">More...</a><br /></td></tr>
 <tr class="separator:abef6b551685f4849205d648eec17f470"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaea137cdc8cc68e5b75402d0e7a8c8ff"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aaea137cdc8cc68e5b75402d0e7a8c8ff">WritePreset</a> (<a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> preset, string path)</td></tr>
 <tr class="memdesc:aaea137cdc8cc68e5b75402d0e7a8c8ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> at the specified path inside the Assets folder. You can pass a full path, the Assets folder path will be extracted.  <a href="class_csound_unity.html#aaea137cdc8cc68e5b75402d0e7a8c8ff">More...</a><br /></td></tr>
@@ -394,7 +397,7 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memdesc:aaa64c7f58ad6bc877d19e85874369e2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the specified <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> as JSON, at the specified path. If a file exists at the specified path, it will be overwritten if overwriteIfExisting is true.  <a href="class_csound_unity.html#aaa64c7f58ad6bc877d19e85874369e2d">More...</a><br /></td></tr>
 <tr class="separator:aaa64c7f58ad6bc877d19e85874369e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a637453240e1c4e5d55612b9b0c1cb964"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a637453240e1c4e5d55612b9b0c1cb964">SavePresetAsJSON</a> (List&lt; <a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a> &gt; <a class="el" href="class_csound_unity.html#a24578813ccc8a26ff4df2db4d8f8863b">channels</a>, string <a class="el" href="class_csound_unity.html#a05d54201e7b373b1a95fce9b82dc221d">csoundFileName</a>, string presetName, string path=null, bool overwriteIfExisting=false)</td></tr>
-<tr class="memdesc:a637453240e1c4e5d55612b9b0c1cb964"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a preset as JSON from a list of <a class="el" href="class_csound_channel_controller.html" title="Utility class for controller and channels">CsoundChannelController</a>, specifying the related CsoundFileName and the presetName.  <a href="class_csound_unity.html#a637453240e1c4e5d55612b9b0c1cb964">More...</a><br /></td></tr>
+<tr class="memdesc:a637453240e1c4e5d55612b9b0c1cb964"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a preset as JSON from a list of <a class="el" href="class_csound_channel_controller.html" title="Utility class for controller and channels">CsoundChannelController</a>, specifying the related CsoundFileName and the presetName. See <a class="el" href="class_csound_unity.html#aaa64c7f58ad6bc877d19e85874369e2d">SavePresetAsJSON(CsoundUnityPreset, string, bool)</a>  <a href="class_csound_unity.html#a637453240e1c4e5d55612b9b0c1cb964">More...</a><br /></td></tr>
 <tr class="separator:a637453240e1c4e5d55612b9b0c1cb964"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac559ce014d5769ca3f3e90d275291c2d"><td class="memItemLeft" align="right" valign="top">static List&lt; <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ac559ce014d5769ca3f3e90d275291c2d">ParseSnap</a> (string csdPath, string snapPath)</td></tr>
 <tr class="memdesc:ac559ce014d5769ca3f3e90d275291c2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a Cabbage Snap and return a list of CsoundUnityPresets.  <a href="class_csound_unity.html#ac559ce014d5769ca3f3e90d275291c2d">More...</a><br /></td></tr>
@@ -516,7 +519,7 @@ Events</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02334">2334</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02356">2356</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -532,14 +535,17 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Where the samples to load come from: the Resources folder the StreamingAssets folder An absolute path, can be external of the Unity Project </p>
+<p>Where the samples to load come from: </p>
+<p >the Resources folder</p>
+<p >the StreamingAssets folder</p>
+<p >An absolute path, can be external of the Unity Project</p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a541b29144ff702a17b79777bd4702f3eaddcf50c29294d4414f3f7c1bbc892cb5" name="a541b29144ff702a17b79777bd4702f3eaddcf50c29294d4414f3f7c1bbc892cb5"></a>Resources&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a541b29144ff702a17b79777bd4702f3ea0b38d14680695e16fe6e41b1959921d0" name="a541b29144ff702a17b79777bd4702f3ea0b38d14680695e16fe6e41b1959921d0"></a>StreamingAssets&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a541b29144ff702a17b79777bd4702f3eab51ca26c6c89cfc9bec338f7a0d3e0c8" name="a541b29144ff702a17b79777bd4702f3eab51ca26c6c89cfc9bec338f7a0d3e0c8"></a>Absolute&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02437">2437</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02459">2459</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -586,7 +592,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00925">925</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00934">934</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -607,7 +613,7 @@ Events</h2></td></tr>
 
 <p>Prints information about the end of a performance, and closes audio and MIDI devices. Note: after calling csoundCleanup(), the operation of the perform functions is undefined. </p>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01722">1722</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01742">1742</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -628,7 +634,7 @@ Events</h2></td></tr>
 
 <p>Clears the input buffer (spin). </p>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00933">933</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00942">942</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -650,7 +656,7 @@ Events</h2></td></tr>
 <p>Returns true if the csd file was compiled without errors. </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00564">564</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00571">571</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -680,7 +686,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00639">639</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00648">648</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -718,7 +724,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01969">1969</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01991">1991</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -755,7 +761,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01460">1460</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01478">1478</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -792,7 +798,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01444">1444</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01462">1462</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -822,7 +828,16 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01208">1208</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p>Same as <a class="el" href="class_csound_unity.html#ae7dca5bb3e6db550b9bcd48ed3406311">CopyTableIn</a> but passing a float array. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">table</td><td></td></tr>
+    <tr><td class="paramname">source</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01226">1226</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -861,7 +876,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01220">1220</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01238">1238</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -891,7 +906,7 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Asynchronous version of copyTableOut </p>
+<p>Asynchronous version of <a class="el" href="class_csound_unity.html#ae7dca5bb3e6db550b9bcd48ed3406311">CopyTableIn</a> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">table</td><td></td></tr>
@@ -900,7 +915,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01230">1230</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01248">1248</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -939,7 +954,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01193">1193</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01206">1206</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -969,7 +984,7 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Asynchronous version of copyTableOut </p>
+<p>Asynchronous version of <a class="el" href="">CopyTableOut</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">table</td><td></td></tr>
@@ -978,7 +993,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01203">1203</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01216">1216</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1018,7 +1033,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01089">1089</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01102">1102</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1073,7 +1088,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01736">1736</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01756">1756</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1111,7 +1126,8 @@ Events</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Create a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> from a presetName and presetData PresetData should be a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> in the JSON format. </p>
+<p>Create a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> from a presetName and presetData. </p>
+<p >PresetData should be a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> in the JSON format.</p>
 <p >It will use the presetName parameter if not empty, if presetName is empty it will use preset.presetName, if also preset.presetName is empty it will use "CsoundUnityPreset" as a default name. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1122,7 +1138,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01761">1761</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01781">1781</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1162,7 +1178,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01102">1102</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01115">1115</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1203,7 +1219,7 @@ Events</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>0 If the table could be created</dd></dl>
 <p >AudioSettings.outputSampleRate</p>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01122">1122</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01135">1135</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1243,7 +1259,7 @@ Events</h2></td></tr>
 
 <p>Resets all internal memory and state in preparation for a new performance. Enables external software to run successive Csound performances without reloading Csound. Implies csoundCleanup(), unless already called. </p>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01713">1713</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01733">1733</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1265,7 +1281,7 @@ Events</h2></td></tr>
 <p>Get 0 dbfs </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01362">1362</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01380">1380</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1287,7 +1303,7 @@ Events</h2></td></tr>
 <p>Returns the Csound API version number times 100 (1.00 = 100). </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00555">555</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00552">552</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1316,7 +1332,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01073">1073</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01086">1086</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1345,7 +1361,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01039">1039</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01048">1048</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1374,7 +1390,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01049">1049</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01058">1058</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1393,10 +1409,11 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>blocking method to get a list of the channels from Csound, not from the serialized list of this instance </p>
+<p>Blocking method to get a list of the channels from Csound, not from the serialized list of this instance. Provides a dictionary of all currently defined channels resulting from compilation of an orchestra containing channel definitions. Entries, keyed by name, are polymorphically assigned to their correct data type: control, audio, string, pvc. </p><dl class="section return"><dt>Returns</dt><dd>A dictionary of all currently defined channels keyed by their name to its ChannelInfo</dd></dl>
+</p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01059">1059</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01072">1072</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1418,7 +1435,7 @@ Events</h2></td></tr>
 <p>Returns the current performance time in samples </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01371">1371</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01389">1389</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1438,16 +1455,16 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Get Environment path </p>
+<p>Get Environment path. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">envType</td><td>the type of the environment to get</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the corresponding value or an empty string if no such key exists</dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01313">1313</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01331">1331</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1502,7 +1519,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01578">1578</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01596">1596</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1524,7 +1541,7 @@ Events</h2></td></tr>
 <p>Get the current control rate </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00688">688</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00697">697</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1546,7 +1563,7 @@ Events</h2></td></tr>
 <p>Get the number of audio sample frames per control sample. </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00706">706</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00715">715</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1593,7 +1610,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01514">1514</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01532">1532</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1640,7 +1657,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01502">1502</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01520">1520</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1686,7 +1703,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01253">1253</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01271">1271</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1708,7 +1725,7 @@ Events</h2></td></tr>
 <p>Returns a Dictionary keyed by the names of all named table generators. Each name is paired with its internal function number. </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01263">1263</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01281">1281</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1730,7 +1747,7 @@ Events</h2></td></tr>
 <p>Get the number of output channels </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01353">1353</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01371">1371</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1752,7 +1769,7 @@ Events</h2></td></tr>
 <p>Get the number of input channels </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01344">1344</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01362">1362</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1774,7 +1791,7 @@ Events</h2></td></tr>
 <p>Get the Opcode List, blocking </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01335">1335</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01353">1353</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1814,7 +1831,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00948">948</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00957">957</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1842,7 +1859,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The same parameter structure that was provided but filled in with csounds current internal contents</dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01289">1289</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01307">1307</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1879,7 +1896,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01638">1638</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01658">1658</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1934,7 +1951,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01532">1532</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01550">1550</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1978,8 +1995,8 @@ Events</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Async version of GetSamples Example of usage: </p>
-<p ><code> yield return <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e" title="Get Samples from a &quot;Resources&quot; path. This will return an interleaved array of samples,...">CsoundUnity.GetSamples</a>(source.name, <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3eaddcf50c29294d4414f3f7c1bbc892cb5">CsoundUnity.SamplesOrigin.Resources</a>, (samples) =&gt; { Debug.Log("samples loaded: "+samples.Length+", creating table"); csound.CreateTable(100, samples); }); </code> </p>
+<p>Async version of <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a> </p>
+<p >Example of usage: <code> yield return <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e" title="Get Samples from a &quot;Resources&quot; path. This will return an interleaved array of samples,...">CsoundUnity.GetSamples</a>(source.name, <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3eaddcf50c29294d4414f3f7c1bbc892cb5">CsoundUnity.SamplesOrigin.Resources</a>, (samples) =&gt; { Debug.Log("samples loaded: "+samples.Length+", creating table"); csound.CreateTable(100, samples); }); </code> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">source</td><td>the name of the AudioClip to load</td></tr>
@@ -1990,7 +2007,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01598">1598</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01618">1618</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2012,7 +2029,7 @@ Events</h2></td></tr>
 <p>Get Csound's audio input buffer </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00957">957</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00966">966</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2034,7 +2051,7 @@ Events</h2></td></tr>
 <p>Get Csound's audio output buffer </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00966">966</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00975">975</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2056,7 +2073,7 @@ Events</h2></td></tr>
 <p>Get the current sample rate </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00679">679</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00688">688</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2093,7 +2110,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01490">1490</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01508">1508</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2130,7 +2147,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01478">1478</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01496">1496</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2170,7 +2187,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01157">1157</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01170">1170</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2210,7 +2227,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01171">1171</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01184">1184</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2239,7 +2256,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01134">1134</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01147">1147</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2279,7 +2296,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01145">1145</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01158">1158</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2301,7 +2318,7 @@ Events</h2></td></tr>
 <p>Returns the Csound version number times 1000 (5.00.0 = 5000). </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00546">546</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00543">543</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2330,7 +2347,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01241">1241</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01259">1259</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2360,7 +2377,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02116">2116</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02138">2138</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2380,7 +2397,16 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00537">537</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p>Loads all plugins from a given directory </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dir</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00562">562</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2422,7 +2448,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02076">2076</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02098">2098</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2459,7 +2485,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00753">753</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00762">762</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2497,7 +2523,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00720">720</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00729">729</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2545,7 +2571,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02142">2142</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02164">2164</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2567,7 +2593,7 @@ Events</h2></td></tr>
 <p>Process a ksmps-sized block of samples </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00697">697</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00706">706</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2642,7 +2668,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01385">1385</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01403">1403</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2704,7 +2730,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01427">1427</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01445">1445</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2766,7 +2792,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01404">1404</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01422">1422</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2787,7 +2813,7 @@ Events</h2></td></tr>
 
 <p>Rewinds a compiled Csound score to the time specified with <a class="el" href="class_csound_unity.html#af950ce82e184ee08a01a59e007f25f12" title="Csound score events prior to the specified time are not performed, and performance begins immediately...">SetScoreOffsetSeconds()</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00657">657</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00666">666</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2831,7 +2857,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01945">1945</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01967">1967</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2885,7 +2911,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01888">1888</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01908">1908</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2941,7 +2967,7 @@ Events</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Save a preset as JSON from a list of <a class="el" href="class_csound_channel_controller.html" title="Utility class for controller and channels">CsoundChannelController</a>, specifying the related CsoundFileName and the presetName. </p>
+<p>Save a preset as JSON from a list of <a class="el" href="class_csound_channel_controller.html" title="Utility class for controller and channels">CsoundChannelController</a>, specifying the related CsoundFileName and the presetName. See <a class="el" href="class_csound_unity.html#aaa64c7f58ad6bc877d19e85874369e2d">SavePresetAsJSON(CsoundUnityPreset, string, bool)</a> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">channels</td><td></td></tr>
@@ -2953,7 +2979,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01914">1914</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01935">1935</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2989,7 +3015,7 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance. </p>
+<p>Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance. See <a class="el" href="class_csound_unity.html#aaa64c7f58ad6bc877d19e85874369e2d">SavePresetAsJSON(CsoundUnityPreset, string, bool)</a> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">presetName</td><td></td></tr>
@@ -2999,7 +3025,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01930">1930</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01952">1952</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3029,7 +3055,7 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Save a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance at the specified path, using the specified presetName. The current csoundFileName and CsoundChannelControllers will be saved in the preset. If no presetName is given, a default one will be used. </p>
+<p>Save a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance at the specified path, using the specified presetName. The current csoundFileName and list of CsoundChannelControllers will be saved in the preset. If no presetName is given, a default one will be used. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">presetName</td><td></td></tr>
@@ -3038,7 +3064,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01873">1873</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01893">1893</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3066,7 +3092,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00648">648</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00657">657</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3094,7 +3120,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01001">1001</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01010">1010</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3133,7 +3159,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00979">979</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00988">988</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3172,7 +3198,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01014">1014</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01023">1023</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3200,7 +3226,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00575">575</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00584">584</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3240,7 +3266,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns zero on success.</dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01326">1326</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01344">1344</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3284,7 +3310,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02048">2048</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02070">2070</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3330,7 +3356,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00911">911</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00920">920</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3358,7 +3384,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01303">1303</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01321">1321</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3387,7 +3413,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02020">2020</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02042">2042</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3419,7 +3445,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02009">2009</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02031">2031</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3461,7 +3487,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01991">1991</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02013">2013</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3489,7 +3515,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00670">670</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00679">679</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3528,7 +3554,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01029">1029</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01038">1038</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3574,7 +3600,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01182">1182</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01195">1195</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -3621,7 +3647,7 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01788">1788</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01808">1808</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
