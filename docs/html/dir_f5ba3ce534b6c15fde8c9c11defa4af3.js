@@ -12,7 +12,13 @@ var dir_f5ba3ce534b6c15fde8c9c11defa4af3 =
       [ "CsoundUnityBridge.ChannelHints", "class_csound_unity_bridge_1_1_channel_hints.html", "class_csound_unity_bridge_1_1_channel_hints" ],
       [ "CsoundUnityBridge.CSOUND_PARAMS", "class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s.html", "class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s" ]
     ] ],
+    [ "CsoundUnityChannelProxy.cs", "_csound_unity_channel_proxy_8cs.html", [
+      [ "CsoundUnityChannelProxy", "class_csound_unity_channel_proxy.html", "class_csound_unity_channel_proxy" ]
+    ] ],
     [ "CsoundUnityChild.cs", "_csound_unity_child_8cs.html", [
       [ "CsoundUnityChild", "class_csound_unity_child.html", "class_csound_unity_child" ]
+    ] ],
+    [ "CsoundUnityPreset.cs", "_csound_unity_preset_8cs.html", [
+      [ "CsoundUnityPreset", "class_csound_unity_preset.html", "class_csound_unity_preset" ]
     ] ]
 ];

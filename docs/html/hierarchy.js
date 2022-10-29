@@ -9,8 +9,12 @@ var hierarchy =
     [ "EnvironmentSettings", "class_environment_settings.html", null ],
     [ "MonoBehaviour", null, [
       [ "CsoundUnity", "class_csound_unity.html", null ],
+      [ "CsoundUnityChannelProxy", "class_csound_unity_channel_proxy.html", null ],
       [ "CsoundUnityChild", "class_csound_unity_child.html", null ]
     ] ],
     [ "csoundcsharp.Csound6.NativeMethods", "classcsoundcsharp_1_1_csound6_1_1_native_methods.html", null ],
-    [ "CsoundUnityBridge.OpcodeArgumentTypes", "class_csound_unity_bridge_1_1_opcode_argument_types.html", null ]
+    [ "CsoundUnityBridge.OpcodeArgumentTypes", "class_csound_unity_bridge_1_1_opcode_argument_types.html", null ],
+    [ "ScriptableObject", null, [
+      [ "CsoundUnityPreset", "class_csound_unity_preset.html", null ]
+    ] ]
 ];

@@ -7,5 +7,7 @@ var searchData=
   ['csoundchannelcontroller_4',['CsoundChannelController',['../class_csound_channel_controller.html',1,'']]],
   ['csoundunity_5',['CsoundUnity',['../class_csound_unity.html',1,'']]],
   ['csoundunitybridge_6',['CsoundUnityBridge',['../class_csound_unity_bridge.html',1,'']]],
-  ['csoundunitychild_7',['CsoundUnityChild',['../class_csound_unity_child.html',1,'']]]
+  ['csoundunitychannelproxy_7',['CsoundUnityChannelProxy',['../class_csound_unity_channel_proxy.html',1,'']]],
+  ['csoundunitychild_8',['CsoundUnityChild',['../class_csound_unity_child.html',1,'']]],
+  ['csoundunitypreset_9',['CsoundUnityPreset',['../class_csound_unity_preset.html',1,'']]]
 ];

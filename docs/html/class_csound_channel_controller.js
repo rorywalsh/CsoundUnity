@@ -1,6 +1,7 @@
 var class_csound_channel_controller =
 [
-    [ "SetRange", "class_csound_channel_controller.html#a892800ede3a31d89ec20363dcefa2cba", null ],
+    [ "Clone", "class_csound_channel_controller.html#ae9c69b4886919102da93d95d7063080e", null ],
+    [ "SetRange", "class_csound_channel_controller.html#a228662d8abc06104a907414a23ed9a22", null ],
     [ "caption", "class_csound_channel_controller.html#ace063c82a326bf0b4f6c1b55ac04d571", null ],
     [ "channel", "class_csound_channel_controller.html#a8d3dea89569fe00dd54f61fc28a7cbc1", null ],
     [ "increment", "class_csound_channel_controller.html#a74a5d91444ebc0848b52648e296f896f", null ],

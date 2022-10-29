@@ -25,9 +25,9 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;3.3.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;3.4.0</span>
    </div>
-   <div id="projectbrief">Csound wrapper for the Unity game engine.</div>
+   <div id="projectbrief">https://github.com/rorywalsh/CsoundUnity</div>
   </td>
  </tr>
  </tbody>
@@ -90,15 +90,18 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 <li>GetAPIVersion()&#160;:&#160;<a class="el" href="class_csound_unity.html#a53b591bb3a6f23bef90054d024871fda">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#a1a519b9ea814abe3924cd3359bcf8445">CsoundUnityBridge</a></li>
 <li>GetAudioChannel()&#160;:&#160;<a class="el" href="class_csound_unity.html#afbe804d347ab8311c6cdd0ab351041f6">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#a5e78b3aa5afc2ca2ff4c0a6792cc4d55">CsoundUnityBridge</a></li>
 <li>GetChannel()&#160;:&#160;<a class="el" href="class_csound_unity.html#adf9230e5932b098bacc1ee87369707e9">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#ad268d12ca60cbdbb83e512c373ccb280">CsoundUnityBridge</a></li>
+<li>GetChannelController()&#160;:&#160;<a class="el" href="class_csound_unity.html#a6f2c5c909550dea5562bc49e20a6ea34">CsoundUnity</a></li>
 <li>GetChannelList()&#160;:&#160;<a class="el" href="class_csound_unity.html#ac855e3c2de0c3f86df5a2c38376b46d0">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#ac8f8f08c88c39fbab2fa0248ae91fda5">CsoundUnityBridge</a></li>
 <li>GetCsoundMessage()&#160;:&#160;<a class="el" href="class_csound_unity_bridge.html#a94d23fce1c0aae34ca6ebbd035bfc10a">CsoundUnityBridge</a></li>
 <li>GetCsoundMessageCount()&#160;:&#160;<a class="el" href="class_csound_unity_bridge.html#a82675179f446704dcd350dd7356b691b">CsoundUnityBridge</a></li>
 <li>GetCurrentTimeSamples()&#160;:&#160;<a class="el" href="class_csound_unity.html#a152d6a54964bd9df6ed7808a1f3b7713">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#a1930c068d50d0486d7746f6aad124bdb">CsoundUnityBridge</a></li>
 <li>GetEnv()&#160;:&#160;<a class="el" href="class_csound_unity.html#ae58cf5eb033a6be19aa5f1fffd1569e5">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#aa846657ec268a02b10b69e26c79112da">CsoundUnityBridge</a></li>
+<li>GetFloatSamples()&#160;:&#160;<a class="el" href="class_csound_unity.html#a26403d5ec4a86356b92bd136b206a934">CsoundUnity</a></li>
 <li>GetKr()&#160;:&#160;<a class="el" href="class_csound_unity.html#aef0135a7848cff2e658a8e9430d2704a">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#a239ad3fb2433fa966522a0b94494049c">CsoundUnityBridge</a></li>
 <li>GetKsmps()&#160;:&#160;<a class="el" href="class_csound_unity.html#a50d8394470a4ed55b47523db98b8b353">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#abc74adedd070619cefccb295eeb91380">CsoundUnityBridge</a></li>
 <li>GetMessageText()&#160;:&#160;<a class="el" href="class_csound_unity_bridge.html#afceb5f17547646cafb5820a0f804087e">CsoundUnityBridge</a></li>
-<li>GetMonoSamples()&#160;:&#160;<a class="el" href="class_csound_unity.html#a9ce864ebb56226ccc7ad0909eb2d6b7e">CsoundUnity</a></li>
+<li>GetMonoFloatSamples()&#160;:&#160;<a class="el" href="class_csound_unity.html#a9f02ee1e6458a4b6268f67240e2aa0d9">CsoundUnity</a></li>
+<li>GetMonoSamples()&#160;:&#160;<a class="el" href="class_csound_unity.html#a5a13e06ec9e7563bf229e97e30ed0d65">CsoundUnity</a></li>
 <li>GetNamedGEN()&#160;:&#160;<a class="el" href="class_csound_unity.html#a8b2698f1478653cd59dd122270314b83">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#a4bd4224210079d56c19068445dd8b28c">CsoundUnityBridge</a></li>
 <li>GetNamedGens()&#160;:&#160;<a class="el" href="class_csound_unity.html#ae8438423f89fb66bcea38d66a3e3940f">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#a175d18ad55fda42df19e4a0986d6f47d">CsoundUnityBridge</a></li>
 <li>GetNchnls()&#160;:&#160;<a class="el" href="class_csound_unity.html#a1a08a61eb319551c934464548795a99a">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#a3149ad95cd0a9ac1af63b6352c26b8e8">CsoundUnityBridge</a></li>
@@ -110,12 +113,13 @@ $(document).ready(function(){initNavTree('functions_g.html',''); initResizable()
 <li>GetPath()&#160;:&#160;<a class="el" href="class_environment_settings.html#a2e9fccddf736c1389b31c59c41ca3298">EnvironmentSettings</a></li>
 <li>GetPathDescriptor()&#160;:&#160;<a class="el" href="class_environment_settings.html#ac2d5303d457fb18cc5955df8c0680d5d">EnvironmentSettings</a></li>
 <li>GetPlatformString()&#160;:&#160;<a class="el" href="class_environment_settings.html#af9edca74445c4aa03938a24a55d7a494">EnvironmentSettings</a></li>
-<li>GetSamples()&#160;:&#160;<a class="el" href="class_csound_unity.html#a7c1bf18317f33df52f9520a5913bd5df">CsoundUnity</a></li>
+<li>GetSamples()&#160;:&#160;<a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">CsoundUnity</a></li>
 <li>GetSpin()&#160;:&#160;<a class="el" href="class_csound_unity.html#a1f511eb21e284832cef6e235cdab5cb7">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#afbe39a70512674419324a992be75c398">CsoundUnityBridge</a></li>
 <li>GetSpout()&#160;:&#160;<a class="el" href="class_csound_unity.html#a4657dd74e5a75e8788f2f479021ca768">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#afabf4ef6ff859a4a8128c118279e0086">CsoundUnityBridge</a></li>
 <li>GetSpoutSample()&#160;:&#160;<a class="el" href="class_csound_unity_bridge.html#ac9f2d0b5b976208d33d58990f9eca4ce">CsoundUnityBridge</a></li>
 <li>GetSr()&#160;:&#160;<a class="el" href="class_csound_unity.html#a7b56f08e9c6e4120c3b499b5789074f4">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#a7e307ad5f6defe8b03fabc20d14b6bd5">CsoundUnityBridge</a></li>
-<li>GetStereoSamples()&#160;:&#160;<a class="el" href="class_csound_unity.html#a068d380920f4a368e8b928261d48313d">CsoundUnity</a></li>
+<li>GetStereoFloatSamples()&#160;:&#160;<a class="el" href="class_csound_unity.html#a786ab3f3665a301a5ef8938ecd60f971">CsoundUnity</a></li>
+<li>GetStereoSamples()&#160;:&#160;<a class="el" href="class_csound_unity.html#af178d3142f1dce4c5883e2283f86a7ae">CsoundUnity</a></li>
 <li>GetTable()&#160;:&#160;<a class="el" href="class_csound_unity.html#a785c7606351a9e068172f60fa02e049f">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#a64c50983d56b208737b1f22afd0de37d">CsoundUnityBridge</a></li>
 <li>GetTableArgs()&#160;:&#160;<a class="el" href="class_csound_unity.html#a278665fbb06554089ee4574c0af3d1fe">CsoundUnity</a>, <a class="el" href="class_csound_unity_bridge.html#a5f65c0b07bc46018c58ede314d643be3">CsoundUnityBridge</a></li>
 <li>GetTableLength()&#160;:&#160;<a class="el" href="class_csound_unity.html#a92699c86c96cbd84fcfb9db5c6cc1149">CsoundUnity</a></li>

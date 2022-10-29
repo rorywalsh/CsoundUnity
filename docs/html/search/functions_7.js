@@ -1,16 +1,8 @@
 var searchData=
 [
-  ['sendscoreevent_0',['SendScoreEvent',['../class_csound_unity.html#a67eb0ef59ebe2b06a17cbfe362d03122',1,'CsoundUnity.SendScoreEvent()'],['../class_csound_unity_bridge.html#a7526b52392ed51490364881b94f2581d',1,'CsoundUnityBridge.SendScoreEvent(string scoreEvent)']]],
-  ['setaudiochannel_1',['SetAudioChannel',['../class_csound_unity_bridge.html#a6c41828afd669723b8ce2ca1a733d241',1,'CsoundUnityBridge.SetAudioChannel()'],['../class_csound_unity_child.html#a4bd784076827f3ec0303e6f3ad4f126c',1,'CsoundUnityChild.SetAudioChannel()']]],
-  ['setchannel_2',['SetChannel',['../class_csound_unity.html#a3dda8229f389f764b916d80d9d136c57',1,'CsoundUnity.SetChannel()'],['../class_csound_unity_bridge.html#aeb5333a58d88adec7230f8ada7b94a7f',1,'CsoundUnityBridge.SetChannel()']]],
-  ['setcsd_3',['SetCsd',['../class_csound_unity.html#a415b74e8cb4fe883e08403d53be40cef',1,'CsoundUnity']]],
-  ['setglobalenv_4',['SetGlobalEnv',['../class_csound_unity.html#a85601575e0603341bf7a722eedb463dd',1,'CsoundUnity.SetGlobalEnv()'],['../class_csound_unity_bridge.html#ad8c25f9d13cc960f34daf9570addc992',1,'CsoundUnityBridge.SetGlobalEnv()']]],
-  ['setinputsample_5',['SetInputSample',['../class_csound_unity.html#ac089d927dd5fe1a11859bd050f0c13af',1,'CsoundUnity']]],
-  ['setparams_6',['SetParams',['../class_csound_unity.html#ad93e35599984bc62316f4cbbd95b7002',1,'CsoundUnity.SetParams()'],['../class_csound_unity_bridge.html#a78f5e3b0fc25d508793428c2f8857eba',1,'CsoundUnityBridge.SetParams()']]],
-  ['setrange_7',['SetRange',['../class_csound_channel_controller.html#a892800ede3a31d89ec20363dcefa2cba',1,'CsoundChannelController']]],
-  ['setscoreoffsetseconds_8',['SetScoreOffsetSeconds',['../class_csound_unity.html#af950ce82e184ee08a01a59e007f25f12',1,'CsoundUnity']]],
-  ['setspinsample_9',['SetSpinSample',['../class_csound_unity_bridge.html#a4394f6e650694ff609f6575abacf22ad',1,'CsoundUnityBridge']]],
-  ['setstringchannel_10',['SetStringChannel',['../class_csound_unity.html#a25f8827e2770546797ec6fe9a68d69bc',1,'CsoundUnity.SetStringChannel()'],['../class_csound_unity_bridge.html#a8202dc4ffff22c6da15f331782381b58',1,'CsoundUnityBridge.SetStringChannel()']]],
-  ['settable_11',['SetTable',['../class_csound_unity.html#a66176086e19996aba3f496ff5a125d27',1,'CsoundUnity.SetTable()'],['../class_csound_unity_bridge.html#a0d89a0f520b71c9f4c241296d9225509',1,'CsoundUnityBridge.SetTable(int table, int index, MYFLT value)']]],
-  ['stopcsound_12',['StopCsound',['../class_csound_unity_bridge.html#a98b78711784f65efb6686aa09f50203c',1,'CsoundUnityBridge']]]
+  ['remap_0',['Remap',['../class_csound_unity.html#a9079e8fbbe4b3a018a1f4a23b9ababf8',1,'CsoundUnity']]],
+  ['remapfrom0to1_1',['RemapFrom0to1',['../class_csound_unity.html#a535f6f55373f5b5ee1f0ded6b8b5a3ba',1,'CsoundUnity']]],
+  ['remapto0to1_2',['RemapTo0to1',['../class_csound_unity.html#a60fa9ba65f9a099f6099c8fbc7bdcc88',1,'CsoundUnity']]],
+  ['reset_3',['Reset',['../class_csound_unity_bridge.html#aafc8fafcb4fef15135348d6efd94419f',1,'CsoundUnityBridge']]],
+  ['rewindscore_4',['RewindScore',['../class_csound_unity.html#a866b1a9b2290e6798c62c8d138d70a1d',1,'CsoundUnity.RewindScore()'],['../class_csound_unity_bridge.html#aa54c98cd4d0c8a7b9756543ce192a5f7',1,'CsoundUnityBridge.RewindScore()']]]
 ];

@@ -6,7 +6,8 @@ var _csound_unity_8cs =
     [ "EnvironmentPathOrigin", "_csound_unity_8cs.html#adf147fc136a7bd08a036a1399fdbe4fd", [
       [ "PersistentDataPath", "_csound_unity_8cs.html#adf147fc136a7bd08a036a1399fdbe4fdaa719b7977a39d032029f3567d4499e0b", null ],
       [ "StreamingAssets", "_csound_unity_8cs.html#adf147fc136a7bd08a036a1399fdbe4fda0b38d14680695e16fe6e41b1959921d0", null ],
-      [ "Absolute", "_csound_unity_8cs.html#adf147fc136a7bd08a036a1399fdbe4fdab51ca26c6c89cfc9bec338f7a0d3e0c8", null ]
+      [ "Absolute", "_csound_unity_8cs.html#adf147fc136a7bd08a036a1399fdbe4fdab51ca26c6c89cfc9bec338f7a0d3e0c8", null ],
+      [ "Plugins", "_csound_unity_8cs.html#adf147fc136a7bd08a036a1399fdbe4fdabb38096ab39160dc20d44f3ea6b44507", null ]
     ] ],
     [ "SupportedPlatform", "_csound_unity_8cs.html#a6de4d5f63b18c22ee7531467740da6ce", [
       [ "MacOS", "_csound_unity_8cs.html#a6de4d5f63b18c22ee7531467740da6cea0a5b7edb55b772c60bfa8af868b679cf", null ],

@@ -55,6 +55,7 @@ var class_csound_unity_bridge =
     [ "GetTableArgs", "class_csound_unity_bridge.html#a5f65c0b07bc46018c58ede314d643be3", null ],
     [ "GetVersion", "class_csound_unity_bridge.html#a1beb5eeb971c59d068257c9eee9e0d9f", null ],
     [ "IsNamedGEN", "class_csound_unity_bridge.html#adba0d98762cce0b5a3516ff54a1cabdd", null ],
+    [ "LoadPlugins", "class_csound_unity_bridge.html#ac4f39cac2f4fb2bd42b7dde33b7aeef2", null ],
     [ "OnApplicationQuit", "class_csound_unity_bridge.html#a3d194b329d56c22913d080e4e23c6e69", null ],
     [ "PerformKsmps", "class_csound_unity_bridge.html#aea1bb4546d4bf50b1947a12e7eebfe9c", null ],
     [ "Reset", "class_csound_unity_bridge.html#aafc8fafcb4fef15135348d6efd94419f", null ],

@@ -25,9 +25,9 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;3.3.1</span>
+   <div id="projectname">CsoundUnity<span id="projectnumber">&#160;3.4.0</span>
    </div>
-   <div id="projectbrief">Csound wrapper for the Unity game engine.</div>
+   <div id="projectbrief">https://github.com/rorywalsh/CsoundUnity</div>
   </td>
  </tr>
  </tbody>
@@ -142,6 +142,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac3b85fc7cd4671ca7d5504db7a15c0d3"><td class="memItemLeft" align="right" valign="top">delegate void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ac3b85fc7cd4671ca7d5504db7a15c0d3">CsoundInitialized</a> ()</td></tr>
 <tr class="memdesc:ac3b85fc7cd4671ca7d5504db7a15c0d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The delegate of the event OnCsoundInitialized  <a href="class_csound_unity.html#ac3b85fc7cd4671ca7d5504db7a15c0d3">More...</a><br /></td></tr>
 <tr class="separator:ac3b85fc7cd4671ca7d5504db7a15c0d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf922c0583760bd45a827e957f817c54"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aaf922c0583760bd45a827e957f817c54">LoadPlugins</a> (string dir)</td></tr>
+<tr class="separator:aaf922c0583760bd45a827e957f817c54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec12319cc8ddb33c9595ac84bfe32b00"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aec12319cc8ddb33c9595ac84bfe32b00">GetVersion</a> ()</td></tr>
 <tr class="memdesc:aec12319cc8ddb33c9595ac84bfe32b00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Csound version number times 1000 (5.00.0 = 5000).  <a href="class_csound_unity.html#aec12319cc8ddb33c9595ac84bfe32b00">More...</a><br /></td></tr>
 <tr class="separator:aec12319cc8ddb33c9595ac84bfe32b00"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -199,18 +201,30 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3dda8229f389f764b916d80d9d136c57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a3dda8229f389f764b916d80d9d136c57">SetChannel</a> (string channel, MYFLT val)</td></tr>
 <tr class="memdesc:a3dda8229f389f764b916d80d9d136c57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.  <a href="class_csound_unity.html#a3dda8229f389f764b916d80d9d136c57">More...</a><br /></td></tr>
 <tr class="separator:a3dda8229f389f764b916d80d9d136c57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa98dc25fddc1be0d2545ccfb6036cdc5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aa98dc25fddc1be0d2545ccfb6036cdc5">SetChannel</a> (<a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a> channelController)</td></tr>
+<tr class="memdesc:aa98dc25fddc1be0d2545ccfb6036cdc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a Csound channel. Useful for setting presets at runtime. Used in connection with a chnget opcode in your Csound instrument.  <a href="class_csound_unity.html#aa98dc25fddc1be0d2545ccfb6036cdc5">More...</a><br /></td></tr>
+<tr class="separator:aa98dc25fddc1be0d2545ccfb6036cdc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7becde6ff363aead95abf1449e87704"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ad7becde6ff363aead95abf1449e87704">SetChannels</a> (List&lt; <a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a> &gt; channelControllers, bool excludeButtons=true)</td></tr>
+<tr class="memdesc:ad7becde6ff363aead95abf1449e87704"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a list of Csound channels.  <a href="class_csound_unity.html#ad7becde6ff363aead95abf1449e87704">More...</a><br /></td></tr>
+<tr class="separator:ad7becde6ff363aead95abf1449e87704"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25f8827e2770546797ec6fe9a68d69bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a25f8827e2770546797ec6fe9a68d69bc">SetStringChannel</a> (string channel, string val)</td></tr>
 <tr class="memdesc:a25f8827e2770546797ec6fe9a68d69bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a string channel in Csound. Used in connection with a chnget opcode in your Csound instrument.  <a href="class_csound_unity.html#a25f8827e2770546797ec6fe9a68d69bc">More...</a><br /></td></tr>
 <tr class="separator:a25f8827e2770546797ec6fe9a68d69bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf9230e5932b098bacc1ee87369707e9"><td class="memItemLeft" align="right" valign="top">MYFLT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#adf9230e5932b098bacc1ee87369707e9">GetChannel</a> (string channel)</td></tr>
 <tr class="memdesc:adf9230e5932b098bacc1ee87369707e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a Csound channel. Used in connection with a chnset opcode in your Csound instrument.  <a href="class_csound_unity.html#adf9230e5932b098bacc1ee87369707e9">More...</a><br /></td></tr>
 <tr class="separator:adf9230e5932b098bacc1ee87369707e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f2c5c909550dea5562bc49e20a6ea34"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a6f2c5c909550dea5562bc49e20a6ea34">GetChannelController</a> (string channel)</td></tr>
+<tr class="memdesc:a6f2c5c909550dea5562bc49e20a6ea34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a serialized <a class="el" href="class_csound_channel_controller.html" title="Utility class for controller and channels">CsoundChannelController</a>  <a href="class_csound_unity.html#a6f2c5c909550dea5562bc49e20a6ea34">More...</a><br /></td></tr>
+<tr class="separator:a6f2c5c909550dea5562bc49e20a6ea34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac855e3c2de0c3f86df5a2c38376b46d0"><td class="memItemLeft" align="right" valign="top">IDictionary&lt; string, <a class="el" href="class_csound_unity_bridge_1_1_channel_info.html">CsoundUnityBridge.ChannelInfo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ac855e3c2de0c3f86df5a2c38376b46d0">GetChannelList</a> ()</td></tr>
 <tr class="memdesc:ac855e3c2de0c3f86df5a2c38376b46d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">blocking method to get a list of the channels from Csound, not from the serialized list of this instance  <a href="class_csound_unity.html#ac855e3c2de0c3f86df5a2c38376b46d0">More...</a><br /></td></tr>
 <tr class="separator:ac855e3c2de0c3f86df5a2c38376b46d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbe804d347ab8311c6cdd0ab351041f6"><td class="memItemLeft" align="right" valign="top">MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#afbe804d347ab8311c6cdd0ab351041f6">GetAudioChannel</a> (string channel)</td></tr>
 <tr class="memdesc:afbe804d347ab8311c6cdd0ab351041f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a Csound Audio channel. Used in connection with a chnset opcode in your Csound instrument.  <a href="class_csound_unity.html#afbe804d347ab8311c6cdd0ab351041f6">More...</a><br /></td></tr>
 <tr class="separator:afbe804d347ab8311c6cdd0ab351041f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af24f264801c2b92878f58ea6ffa432e7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#af24f264801c2b92878f58ea6ffa432e7">CreateFloatTable</a> (int tableNumber, float[] samples)</td></tr>
+<tr class="memdesc:af24f264801c2b92878f58ea6ffa432e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a table with the supplied float samples. Can be called during performance.  <a href="class_csound_unity.html#af24f264801c2b92878f58ea6ffa432e7">More...</a><br /></td></tr>
+<tr class="separator:af24f264801c2b92878f58ea6ffa432e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02fad33460f51f304ead99509a7bd69d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a02fad33460f51f304ead99509a7bd69d">CreateTable</a> (int tableNumber, MYFLT[] samples)</td></tr>
 <tr class="memdesc:a02fad33460f51f304ead99509a7bd69d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a table with the supplied samples. Can be called during performance.  <a href="class_csound_unity.html#a02fad33460f51f304ead99509a7bd69d">More...</a><br /></td></tr>
 <tr class="separator:a02fad33460f51f304ead99509a7bd69d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -238,6 +252,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a13aebbe7775b9a950e7c9cca0ae2569c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a13aebbe7775b9a950e7c9cca0ae2569c">CopyTableOutAsync</a> (int table, out MYFLT[] dest)</td></tr>
 <tr class="memdesc:a13aebbe7775b9a950e7c9cca0ae2569c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronous version of copyTableOut  <a href="class_csound_unity.html#a13aebbe7775b9a950e7c9cca0ae2569c">More...</a><br /></td></tr>
 <tr class="separator:a13aebbe7775b9a950e7c9cca0ae2569c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fb63ff7aafae9a4b2505a8fa69e8dd4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a8fb63ff7aafae9a4b2505a8fa69e8dd4">CopyFloatTableIn</a> (int table, float[] source)</td></tr>
+<tr class="separator:a8fb63ff7aafae9a4b2505a8fa69e8dd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7dca5bb3e6db550b9bcd48ed3406311"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ae7dca5bb3e6db550b9bcd48ed3406311">CopyTableIn</a> (int table, MYFLT[] source)</td></tr>
 <tr class="memdesc:ae7dca5bb3e6db550b9bcd48ed3406311"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy the contents of a supplied array into a function table The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.  <a href="class_csound_unity.html#ae7dca5bb3e6db550b9bcd48ed3406311">More...</a><br /></td></tr>
 <tr class="separator:ae7dca5bb3e6db550b9bcd48ed3406311"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -254,8 +270,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ae8438423f89fb66bcea38d66a3e3940f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a Dictionary keyed by the names of all named table generators. Each name is paired with its internal function number.  <a href="class_csound_unity.html#ae8438423f89fb66bcea38d66a3e3940f">More...</a><br /></td></tr>
 <tr class="separator:ae8438423f89fb66bcea38d66a3e3940f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affc870525923db31cd3f04860febc3f9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s.html">CsoundUnityBridge.CSOUND_PARAMS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#affc870525923db31cd3f04860febc3f9">GetParams</a> ()</td></tr>
+<tr class="memdesc:affc870525923db31cd3f04860febc3f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills in a provided raw CSOUND_PARAMS object with csounds current parameter settings. This method is used internally to manage this class and is not expected to be used directly by a host program.  <a href="class_csound_unity.html#affc870525923db31cd3f04860febc3f9">More...</a><br /></td></tr>
 <tr class="separator:affc870525923db31cd3f04860febc3f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad93e35599984bc62316f4cbbd95b7002"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ad93e35599984bc62316f4cbbd95b7002">SetParams</a> (<a class="el" href="class_csound_unity_bridge_1_1_c_s_o_u_n_d___p_a_r_a_m_s.html">CsoundUnityBridge.CSOUND_PARAMS</a> parms)</td></tr>
+<tr class="memdesc:ad93e35599984bc62316f4cbbd95b7002"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transfers the contents of the provided raw CSOUND_PARAMS object into csound's internal data structues (chiefly its OPARMS structure). This method is used internally to manage this class and is not expected to be used directly by a host program. Most values are used and reflected in CSOUND_PARAMS. Internally to csound, as of release 6.0.0, Heartbeat and IsComputingOpcodeWeights are ignored and IsUsingCsdLineCounts can only be set and never reset once set.  <a href="class_csound_unity.html#ad93e35599984bc62316f4cbbd95b7002">More...</a><br /></td></tr>
 <tr class="separator:ad93e35599984bc62316f4cbbd95b7002"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae58cf5eb033a6be19aa5f1fffd1569e5"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ae58cf5eb033a6be19aa5f1fffd1569e5">GetEnv</a> (<a class="el" href="class_csound_unity.html#ab95c43530047bd09f52be72c13de043e">EnvType</a> envType)</td></tr>
 <tr class="memdesc:ae58cf5eb033a6be19aa5f1fffd1569e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Environment path  <a href="class_csound_unity.html#ae58cf5eb033a6be19aa5f1fffd1569e5">More...</a><br /></td></tr>
@@ -284,6 +302,36 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acd0dd7bbef0339d43997cce83d948503"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#acd0dd7bbef0339d43997cce83d948503">Cleanup</a> ()</td></tr>
 <tr class="memdesc:acd0dd7bbef0339d43997cce83d948503"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints information about the end of a performance, and closes audio and MIDI devices. Note: after calling csoundCleanup(), the operation of the perform functions is undefined.  <a href="class_csound_unity.html#acd0dd7bbef0339d43997cce83d948503">More...</a><br /></td></tr>
 <tr class="separator:acd0dd7bbef0339d43997cce83d948503"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae8bc6f5e213b8c6257fd8bd7b4463b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aae8bc6f5e213b8c6257fd8bd7b4463b9">SavePresetAsScriptableObject</a> (string presetName, string path=null)</td></tr>
+<tr class="memdesc:aae8bc6f5e213b8c6257fd8bd7b4463b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance at the specified path, using the specified presetName. The current csoundFileName and CsoundChannelControllers will be saved in the preset. If no presetName is given, a default one will be used.  <a href="class_csound_unity.html#aae8bc6f5e213b8c6257fd8bd7b4463b9">More...</a><br /></td></tr>
+<tr class="separator:aae8bc6f5e213b8c6257fd8bd7b4463b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7869ed5c3602ec3dfc36faeb5f8d275f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a7869ed5c3602ec3dfc36faeb5f8d275f">SavePresetAsJSON</a> (string presetName, string path=null, bool overwriteIfExisting=false)</td></tr>
+<tr class="memdesc:a7869ed5c3602ec3dfc36faeb5f8d275f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance.  <a href="class_csound_unity.html#a7869ed5c3602ec3dfc36faeb5f8d275f">More...</a><br /></td></tr>
+<tr class="separator:a7869ed5c3602ec3dfc36faeb5f8d275f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91dd731c93dca87a95079918f5b11631"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a91dd731c93dca87a95079918f5b11631">SaveGlobalPreset</a> (string presetName, string path=null, bool overwriteIfExisting=false)</td></tr>
+<tr class="memdesc:a91dd731c93dca87a95079918f5b11631"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a serialized copy of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance. Similar behaviour as saving a Unity Preset from the inspector of the <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> component, but this can be used at runtime.  <a href="class_csound_unity.html#a91dd731c93dca87a95079918f5b11631">More...</a><br /></td></tr>
+<tr class="separator:a91dd731c93dca87a95079918f5b11631"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dd8c1faa9abeb1bed722c8411e965a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a2dd8c1faa9abeb1bed722c8411e965a3">ConvertPresetToScriptableObject</a> (string path, string destination)</td></tr>
+<tr class="memdesc:a2dd8c1faa9abeb1bed722c8411e965a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a JSON preset into a Scriptable Object preset to be written at the specified path. If path is empty the converted preset will be saved inside the Assets folder.  <a href="class_csound_unity.html#a2dd8c1faa9abeb1bed722c8411e965a3">More...</a><br /></td></tr>
+<tr class="separator:a2dd8c1faa9abeb1bed722c8411e965a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38745b30d1cfca237d0f7eb63fd7cd4c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a38745b30d1cfca237d0f7eb63fd7cd4c">SetPreset</a> (string presetName, string presetData)</td></tr>
+<tr class="memdesc:a38745b30d1cfca237d0f7eb63fd7cd4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> to this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance using a presetName and presetData. The set preset will be returned.  <a href="class_csound_unity.html#a38745b30d1cfca237d0f7eb63fd7cd4c">More...</a><br /></td></tr>
+<tr class="separator:a38745b30d1cfca237d0f7eb63fd7cd4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34a076d11413059406b5bca65af21c0e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a34a076d11413059406b5bca65af21c0e">SetPreset</a> (string presetData)</td></tr>
+<tr class="memdesc:a34a076d11413059406b5bca65af21c0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> to this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance using presetData.  <a href="class_csound_unity.html#a34a076d11413059406b5bca65af21c0e">More...</a><br /></td></tr>
+<tr class="separator:a34a076d11413059406b5bca65af21c0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e67e48163e7e22c4acf32dd93178aea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a5e67e48163e7e22c4acf32dd93178aea">SetPreset</a> (<a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> preset)</td></tr>
+<tr class="memdesc:a5e67e48163e7e22c4acf32dd93178aea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> to this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance.  <a href="class_csound_unity.html#a5e67e48163e7e22c4acf32dd93178aea">More...</a><br /></td></tr>
+<tr class="separator:a5e67e48163e7e22c4acf32dd93178aea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41107c5577da46666149a6ee9435b88c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_csound_unity.html">CsoundUnity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a41107c5577da46666149a6ee9435b88c">SetGlobalPreset</a> (string presetName, string presetData)</td></tr>
+<tr class="memdesc:a41107c5577da46666149a6ee9435b88c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a global preset to this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance using a presetName and presetData.  <a href="class_csound_unity.html#a41107c5577da46666149a6ee9435b88c">More...</a><br /></td></tr>
+<tr class="separator:a41107c5577da46666149a6ee9435b88c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b23d273d677a6f4e9f2a6fca33cb431"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a7b23d273d677a6f4e9f2a6fca33cb431">LoadPreset</a> (string path, Action&lt; <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> &gt; onPresetLoaded=null)</td></tr>
+<tr class="memdesc:a7b23d273d677a6f4e9f2a6fca33cb431"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a preset from a JSON file. The JSON file should represent a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a>.  <a href="class_csound_unity.html#a7b23d273d677a6f4e9f2a6fca33cb431">More...</a><br /></td></tr>
+<tr class="separator:a7b23d273d677a6f4e9f2a6fca33cb431"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22796df154920b73b0bc42a64dd4e171"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a22796df154920b73b0bc42a64dd4e171">LoadGlobalPreset</a> (string path)</td></tr>
+<tr class="memdesc:a22796df154920b73b0bc42a64dd4e171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a global preset on this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance from a JSON file found at path. The JSON file should represent a Global Preset, ie a complete <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance.  <a href="class_csound_unity.html#a22796df154920b73b0bc42a64dd4e171">More...</a><br /></td></tr>
+<tr class="separator:a22796df154920b73b0bc42a64dd4e171"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -294,18 +342,62 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memdesc:a4355f2110b4c6bdb45ea25a3b9346828"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse the csd file  <a href="class_csound_unity.html#a4355f2110b4c6bdb45ea25a3b9346828">More...</a><br /></td></tr>
 <tr class="separator:a4355f2110b4c6bdb45ea25a3b9346828"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9079e8fbbe4b3a018a1f4a23b9ababf8"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a9079e8fbbe4b3a018a1f4a23b9ababf8">Remap</a> (float value, float from1, float to1, float from2, float to2, bool clamp=false)</td></tr>
-<tr class="memdesc:a9079e8fbbe4b3a018a1f4a23b9ababf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">map MYFLT within one range to another  <a href="class_csound_unity.html#a9079e8fbbe4b3a018a1f4a23b9ababf8">More...</a><br /></td></tr>
+<tr class="memdesc:a9079e8fbbe4b3a018a1f4a23b9ababf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Linear remap floats within one range to another  <a href="class_csound_unity.html#a9079e8fbbe4b3a018a1f4a23b9ababf8">More...</a><br /></td></tr>
 <tr class="separator:a9079e8fbbe4b3a018a1f4a23b9ababf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a068d380920f4a368e8b928261d48313d"><td class="memItemLeft" align="right" valign="top">static MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a068d380920f4a368e8b928261d48313d">GetStereoSamples</a> (string source, <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3e">SamplesOrigin</a> origin)</td></tr>
-<tr class="memdesc:a068d380920f4a368e8b928261d48313d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Samples from a path, specifying the origin of the path. This will return an interleaved array of samples, with the first index used to specify the number of channels. This array can be passed to the <a class="el" href="class_csound_unity.html#a02fad33460f51f304ead99509a7bd69d" title="Creates a table with the supplied samples. Can be called during performance.">CsoundUnity.CreateTable()</a> method for processing by Csound. Use async versions to to load very large files.  <a href="class_csound_unity.html#a068d380920f4a368e8b928261d48313d">More...</a><br /></td></tr>
-<tr class="separator:a068d380920f4a368e8b928261d48313d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ce864ebb56226ccc7ad0909eb2d6b7e"><td class="memItemLeft" align="right" valign="top">static MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a9ce864ebb56226ccc7ad0909eb2d6b7e">GetMonoSamples</a> (string source, <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3e">SamplesOrigin</a> origin, int channelNumber)</td></tr>
-<tr class="separator:a9ce864ebb56226ccc7ad0909eb2d6b7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c1bf18317f33df52f9520a5913bd5df"><td class="memItemLeft" align="right" valign="top">static MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a7c1bf18317f33df52f9520a5913bd5df">GetSamples</a> (string source, <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3e">SamplesOrigin</a> origin, int channelNumber=1, bool writeChannelData=false)</td></tr>
-<tr class="separator:a7c1bf18317f33df52f9520a5913bd5df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60fa9ba65f9a099f6099c8fbc7bdcc88"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a60fa9ba65f9a099f6099c8fbc7bdcc88">RemapTo0to1</a> (float value, float from, float to, float skew=1f)</td></tr>
+<tr class="memdesc:a60fa9ba65f9a099f6099c8fbc7bdcc88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remap a value to a normalized (0-1) value specifying its expected "from" and "to" values, and the skew of the exponential curve of the remapping. If skew is 1 the remapping is linear, if 0.5 it's exponential.  <a href="class_csound_unity.html#a60fa9ba65f9a099f6099c8fbc7bdcc88">More...</a><br /></td></tr>
+<tr class="separator:a60fa9ba65f9a099f6099c8fbc7bdcc88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a535f6f55373f5b5ee1f0ded6b8b5a3ba"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a535f6f55373f5b5ee1f0ded6b8b5a3ba">RemapFrom0to1</a> (float value, float from, float to, float skew=1f)</td></tr>
+<tr class="memdesc:a535f6f55373f5b5ee1f0ded6b8b5a3ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remap a normalized (0-1) value to a value in another range, specifying its "from" and "to" values, and the skew of the exponential curve of the remapping. If skew is 1 the remapping is linear, if 0.5 it's exponential.  <a href="class_csound_unity.html#a535f6f55373f5b5ee1f0ded6b8b5a3ba">More...</a><br /></td></tr>
+<tr class="separator:a535f6f55373f5b5ee1f0ded6b8b5a3ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c123e8626087ad0a48eb5a2cce38ccd"><td class="memItemLeft" align="right" valign="top">static MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a3c123e8626087ad0a48eb5a2cce38ccd">ConvertToMYFLT</a> (float[] samples)</td></tr>
+<tr class="memdesc:a3c123e8626087ad0a48eb5a2cce38ccd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility method to create an array of MYFLTs from an array of floats  <a href="class_csound_unity.html#a3c123e8626087ad0a48eb5a2cce38ccd">More...</a><br /></td></tr>
+<tr class="separator:a3c123e8626087ad0a48eb5a2cce38ccd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc2e89557cb7eb16f6830ec1e251cc2d"><td class="memItemLeft" align="right" valign="top">static float[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#afc2e89557cb7eb16f6830ec1e251cc2d">ConvertToFloat</a> (MYFLT[] samples)</td></tr>
+<tr class="memdesc:afc2e89557cb7eb16f6830ec1e251cc2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility method to create an array of floats from an array of MYFLTs  <a href="class_csound_unity.html#afc2e89557cb7eb16f6830ec1e251cc2d">More...</a><br /></td></tr>
+<tr class="separator:afc2e89557cb7eb16f6830ec1e251cc2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af178d3142f1dce4c5883e2283f86a7ae"><td class="memItemLeft" align="right" valign="top">static MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#af178d3142f1dce4c5883e2283f86a7ae">GetStereoSamples</a> (string source)</td></tr>
+<tr class="memdesc:af178d3142f1dce4c5883e2283f86a7ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an array of MYFLTs in from the AudioClip source from the Resources folder. The first index in the returned array will have its value set as 2 like the number of channels. See <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a>  <a href="class_csound_unity.html#af178d3142f1dce4c5883e2283f86a7ae">More...</a><br /></td></tr>
+<tr class="separator:af178d3142f1dce4c5883e2283f86a7ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a786ab3f3665a301a5ef8938ecd60f971"><td class="memItemLeft" align="right" valign="top">static float[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a786ab3f3665a301a5ef8938ecd60f971">GetStereoFloatSamples</a> (string source)</td></tr>
+<tr class="memdesc:a786ab3f3665a301a5ef8938ecd60f971"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an array of floats from the AudioClip source from the Resources folder. The first index in the returned array will have its value set as 2 like the number of channels See <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a>  <a href="class_csound_unity.html#a786ab3f3665a301a5ef8938ecd60f971">More...</a><br /></td></tr>
+<tr class="separator:a786ab3f3665a301a5ef8938ecd60f971"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a13e06ec9e7563bf229e97e30ed0d65"><td class="memItemLeft" align="right" valign="top">static MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a5a13e06ec9e7563bf229e97e30ed0d65">GetMonoSamples</a> (string source, int channelNumber)</td></tr>
+<tr class="memdesc:a5a13e06ec9e7563bf229e97e30ed0d65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an array of MYFLTs from the AudioClip source from the Resources folder. No information about the channels will be added in the first element of the returned array. See <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a>  <a href="class_csound_unity.html#a5a13e06ec9e7563bf229e97e30ed0d65">More...</a><br /></td></tr>
+<tr class="separator:a5a13e06ec9e7563bf229e97e30ed0d65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f02ee1e6458a4b6268f67240e2aa0d9"><td class="memItemLeft" align="right" valign="top">static float[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a9f02ee1e6458a4b6268f67240e2aa0d9">GetMonoFloatSamples</a> (string source, int channelNumber)</td></tr>
+<tr class="memdesc:a9f02ee1e6458a4b6268f67240e2aa0d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an array of floats from the AudioClip source from the Resources folder. No information about the channels will be added in the first element of the returned array. See <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a>  <a href="class_csound_unity.html#a9f02ee1e6458a4b6268f67240e2aa0d9">More...</a><br /></td></tr>
+<tr class="separator:a9f02ee1e6458a4b6268f67240e2aa0d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33ff97b7263c9fa42ffcf91fc2a7a68e"><td class="memItemLeft" align="right" valign="top">static MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a> (string source, int channelNumber=1, bool writeChannelData=false)</td></tr>
+<tr class="memdesc:a33ff97b7263c9fa42ffcf91fc2a7a68e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get Samples from a "Resources" path. This will return an interleaved array of samples, with the first index used to specify the number of channels. This array can be passed to the <a class="el" href="class_csound_unity.html#a02fad33460f51f304ead99509a7bd69d" title="Creates a table with the supplied samples. Can be called during performance.">CsoundUnity.CreateTable()</a> method for processing by Csound. Use async version to load very large files, or load from external paths Note: You need to be careful that your AudioClips match the SR of the project. If not, you will hear some re-pitching issues with your audio when you play it back with a table reader opcode.  <a href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">More...</a><br /></td></tr>
+<tr class="separator:a33ff97b7263c9fa42ffcf91fc2a7a68e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26403d5ec4a86356b92bd136b206a934"><td class="memItemLeft" align="right" valign="top">static float[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a26403d5ec4a86356b92bd136b206a934">GetFloatSamples</a> (string source, int channelNumber=1, bool writeChannelData=false)</td></tr>
+<tr class="memdesc:a26403d5ec4a86356b92bd136b206a934"><td class="mdescLeft">&#160;</td><td class="mdescRight">Same as <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a> but it will return a float array.  <a href="class_csound_unity.html#a26403d5ec4a86356b92bd136b206a934">More...</a><br /></td></tr>
+<tr class="separator:a26403d5ec4a86356b92bd136b206a934"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec60a82af7381770db1840b0170cfb4a"><td class="memItemLeft" align="right" valign="top">static IEnumerator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aec60a82af7381770db1840b0170cfb4a">GetSamples</a> (string source, <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3e">SamplesOrigin</a> origin, Action&lt; MYFLT[]&gt; onSamplesLoaded)</td></tr>
-<tr class="memdesc:aec60a82af7381770db1840b0170cfb4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Async version of GetSamples example of usage:  <a href="class_csound_unity.html#aec60a82af7381770db1840b0170cfb4a">More...</a><br /></td></tr>
+<tr class="memdesc:aec60a82af7381770db1840b0170cfb4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Async version of GetSamples Example of usage:  <a href="class_csound_unity.html#aec60a82af7381770db1840b0170cfb4a">More...</a><br /></td></tr>
 <tr class="separator:aec60a82af7381770db1840b0170cfb4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48975719bc9b8be675b970c2a967bf77"><td class="memItemLeft" align="right" valign="top">static MYFLT[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a48975719bc9b8be675b970c2a967bf77">GetSamples</a> (AudioClip audioClip)</td></tr>
+<tr class="memdesc:a48975719bc9b8be675b970c2a967bf77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get samples from an AudioClip as a MYFLT array.  <a href="class_csound_unity.html#a48975719bc9b8be675b970c2a967bf77">More...</a><br /></td></tr>
+<tr class="separator:a48975719bc9b8be675b970c2a967bf77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cfabf37ec0a2d8fe0f47550749a832f"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a4cfabf37ec0a2d8fe0f47550749a832f">CreatePreset</a> (string presetName, string <a class="el" href="class_csound_unity.html#a05d54201e7b373b1a95fce9b82dc221d">csoundFileName</a>, List&lt; <a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a> &gt; <a class="el" href="class_csound_unity.html#a24578813ccc8a26ff4df2db4d8f8863b">channels</a>)</td></tr>
+<tr class="memdesc:a4cfabf37ec0a2d8fe0f47550749a832f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> from a presetName, csoundFileName and a list of CsoundChannelControllers  <a href="class_csound_unity.html#a4cfabf37ec0a2d8fe0f47550749a832f">More...</a><br /></td></tr>
+<tr class="separator:a4cfabf37ec0a2d8fe0f47550749a832f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abef6b551685f4849205d648eec17f470"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#abef6b551685f4849205d648eec17f470">CreatePreset</a> (string presetName, string presetData)</td></tr>
+<tr class="memdesc:abef6b551685f4849205d648eec17f470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> from a presetName and presetData PresetData should be a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> in the JSON format.  <a href="class_csound_unity.html#abef6b551685f4849205d648eec17f470">More...</a><br /></td></tr>
+<tr class="separator:abef6b551685f4849205d648eec17f470"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaea137cdc8cc68e5b75402d0e7a8c8ff"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aaea137cdc8cc68e5b75402d0e7a8c8ff">WritePreset</a> (<a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> preset, string path)</td></tr>
+<tr class="memdesc:aaea137cdc8cc68e5b75402d0e7a8c8ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> at the specified path inside the Assets folder. You can pass a full path, the Assets folder path will be extracted.  <a href="class_csound_unity.html#aaea137cdc8cc68e5b75402d0e7a8c8ff">More...</a><br /></td></tr>
+<tr class="separator:aaea137cdc8cc68e5b75402d0e7a8c8ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa64c7f58ad6bc877d19e85874369e2d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aaa64c7f58ad6bc877d19e85874369e2d">SavePresetAsJSON</a> (<a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> preset, string path=null, bool overwriteIfExisting=false)</td></tr>
+<tr class="memdesc:aaa64c7f58ad6bc877d19e85874369e2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the specified <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> as JSON, at the specified path. If a file exists at the specified path, it will be overwritten if overwriteIfExisting is true.  <a href="class_csound_unity.html#aaa64c7f58ad6bc877d19e85874369e2d">More...</a><br /></td></tr>
+<tr class="separator:aaa64c7f58ad6bc877d19e85874369e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a637453240e1c4e5d55612b9b0c1cb964"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#a637453240e1c4e5d55612b9b0c1cb964">SavePresetAsJSON</a> (List&lt; <a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a> &gt; <a class="el" href="class_csound_unity.html#a24578813ccc8a26ff4df2db4d8f8863b">channels</a>, string <a class="el" href="class_csound_unity.html#a05d54201e7b373b1a95fce9b82dc221d">csoundFileName</a>, string presetName, string path=null, bool overwriteIfExisting=false)</td></tr>
+<tr class="memdesc:a637453240e1c4e5d55612b9b0c1cb964"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a preset as JSON from a list of <a class="el" href="class_csound_channel_controller.html" title="Utility class for controller and channels">CsoundChannelController</a>, specifying the related CsoundFileName and the presetName.  <a href="class_csound_unity.html#a637453240e1c4e5d55612b9b0c1cb964">More...</a><br /></td></tr>
+<tr class="separator:a637453240e1c4e5d55612b9b0c1cb964"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac559ce014d5769ca3f3e90d275291c2d"><td class="memItemLeft" align="right" valign="top">static List&lt; <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ac559ce014d5769ca3f3e90d275291c2d">ParseSnap</a> (string csdPath, string snapPath)</td></tr>
+<tr class="memdesc:ac559ce014d5769ca3f3e90d275291c2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a Cabbage Snap and return a list of CsoundUnityPresets.  <a href="class_csound_unity.html#ac559ce014d5769ca3f3e90d275291c2d">More...</a><br /></td></tr>
+<tr class="separator:ac559ce014d5769ca3f3e90d275291c2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -339,7 +431,7 @@ Static Public Attributes</h2></td></tr>
 <tr class="memitem:ae82e1bd484816d7fd82b6ff5280a209b"><td class="memItemLeft" align="right" valign="top">const string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#ae82e1bd484816d7fd82b6ff5280a209b">packageName</a> = &quot;com.csound.csoundunity&quot;</td></tr>
 <tr class="memdesc:ae82e1bd484816d7fd82b6ff5280a209b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The name of this package  <a href="class_csound_unity.html#ae82e1bd484816d7fd82b6ff5280a209b">More...</a><br /></td></tr>
 <tr class="separator:ae82e1bd484816d7fd82b6ff5280a209b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7cb9ff4ce7e639aefbcc55e0bb4ba77"><td class="memItemLeft" align="right" valign="top">const string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aa7cb9ff4ce7e639aefbcc55e0bb4ba77">packageVersion</a> = &quot;3.3.1&quot;</td></tr>
+<tr class="memitem:aa7cb9ff4ce7e639aefbcc55e0bb4ba77"><td class="memItemLeft" align="right" valign="top">const string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_csound_unity.html#aa7cb9ff4ce7e639aefbcc55e0bb4ba77">packageVersion</a> = &quot;3.4.0&quot;</td></tr>
 <tr class="memdesc:aa7cb9ff4ce7e639aefbcc55e0bb4ba77"><td class="mdescLeft">&#160;</td><td class="mdescRight">The version of this package  <a href="class_csound_unity.html#aa7cb9ff4ce7e639aefbcc55e0bb4ba77">More...</a><br /></td></tr>
 <tr class="separator:aa7cb9ff4ce7e639aefbcc55e0bb4ba77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -374,6 +466,8 @@ Events</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Csound Unity Class </p>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00270">270</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="ab95c43530047bd09f52be72c13de043e" name="ab95c43530047bd09f52be72c13de043e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab95c43530047bd09f52be72c13de043e">&#9670;&nbsp;</a></span>EnvType</h2>
@@ -421,6 +515,8 @@ Events</h2></td></tr>
 </td></tr>
 </table>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02334">2334</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a541b29144ff702a17b79777bd4702f3e" name="a541b29144ff702a17b79777bd4702f3e"></a>
@@ -441,6 +537,8 @@ Events</h2></td></tr>
 <tr><td class="fieldname"><a id="a541b29144ff702a17b79777bd4702f3ea0b38d14680695e16fe6e41b1959921d0" name="a541b29144ff702a17b79777bd4702f3ea0b38d14680695e16fe6e41b1959921d0"></a>StreamingAssets&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a541b29144ff702a17b79777bd4702f3eab51ca26c6c89cfc9bec338f7a0d3e0c8" name="a541b29144ff702a17b79777bd4702f3eab51ca26c6c89cfc9bec338f7a0d3e0c8"></a>Absolute&#160;</td><td class="fielddoc"></td></tr>
 </table>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02437">2437</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -487,6 +585,8 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00925">925</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="acd0dd7bbef0339d43997cce83d948503" name="acd0dd7bbef0339d43997cce83d948503"></a>
@@ -505,6 +605,8 @@ Events</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Prints information about the end of a performance, and closes audio and MIDI devices. Note: after calling csoundCleanup(), the operation of the perform functions is undefined. </p>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01722">1722</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -525,6 +627,8 @@ Events</h2></td></tr>
 
 <p>Clears the input buffer (spin). </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00933">933</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="ad7219da2d280d4ab3784289cdbaeec16" name="ad7219da2d280d4ab3784289cdbaeec16"></a>
@@ -544,6 +648,8 @@ Events</h2></td></tr>
 
 <p>Returns true if the csd file was compiled without errors. </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00564">564</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -572,6 +678,150 @@ Events</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00639">639</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a2dd8c1faa9abeb1bed722c8411e965a3" name="a2dd8c1faa9abeb1bed722c8411e965a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dd8c1faa9abeb1bed722c8411e965a3">&#9670;&nbsp;</a></span>ConvertPresetToScriptableObject()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.ConvertPresetToScriptableObject </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>destination</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert a JSON preset into a Scriptable Object preset to be written at the specified path. If path is empty the converted preset will be saved inside the Assets folder. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01969">1969</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="afc2e89557cb7eb16f6830ec1e251cc2d" name="afc2e89557cb7eb16f6830ec1e251cc2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc2e89557cb7eb16f6830ec1e251cc2d">&#9670;&nbsp;</a></span>ConvertToFloat()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static float[] CsoundUnity.ConvertToFloat </td>
+          <td>(</td>
+          <td class="paramtype">MYFLT[]&#160;</td>
+          <td class="paramname"><em>samples</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Utility method to create an array of floats from an array of MYFLTs </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">samples</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01460">1460</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a3c123e8626087ad0a48eb5a2cce38ccd" name="a3c123e8626087ad0a48eb5a2cce38ccd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c123e8626087ad0a48eb5a2cce38ccd">&#9670;&nbsp;</a></span>ConvertToMYFLT()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static MYFLT[] CsoundUnity.ConvertToMYFLT </td>
+          <td>(</td>
+          <td class="paramtype">float[]&#160;</td>
+          <td class="paramname"><em>samples</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Utility method to create an array of MYFLTs from an array of floats </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">samples</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01444">1444</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a8fb63ff7aafae9a4b2505a8fa69e8dd4" name="a8fb63ff7aafae9a4b2505a8fa69e8dd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fb63ff7aafae9a4b2505a8fa69e8dd4">&#9670;&nbsp;</a></span>CopyFloatTableIn()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.CopyFloatTableIn </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>table</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float[]&#160;</td>
+          <td class="paramname"><em>source</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01208">1208</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -610,6 +860,8 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01220">1220</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a8261e52eb2028e7d54229fed16059c16" name="a8261e52eb2028e7d54229fed16059c16"></a>
@@ -646,6 +898,8 @@ Events</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01230">1230</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -684,6 +938,8 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01193">1193</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a13aebbe7775b9a950e7c9cca0ae2569c" name="a13aebbe7775b9a950e7c9cca0ae2569c"></a>
@@ -720,6 +976,152 @@ Events</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01203">1203</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="af24f264801c2b92878f58ea6ffa432e7" name="af24f264801c2b92878f58ea6ffa432e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af24f264801c2b92878f58ea6ffa432e7">&#9670;&nbsp;</a></span>CreateFloatTable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CsoundUnity.CreateFloatTable </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>tableNumber</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float[]&#160;</td>
+          <td class="paramname"><em>samples</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a table with the supplied float samples. Can be called during performance. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tableNumber</td><td>The table number</td></tr>
+    <tr><td class="paramname">samples</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01089">1089</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a4cfabf37ec0a2d8fe0f47550749a832f" name="a4cfabf37ec0a2d8fe0f47550749a832f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cfabf37ec0a2d8fe0f47550749a832f">&#9670;&nbsp;</a></span>CreatePreset() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> CsoundUnity.CreatePreset </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>csoundFileName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">List&lt; <a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a> &gt;&#160;</td>
+          <td class="paramname"><em>channels</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> from a presetName, csoundFileName and a list of CsoundChannelControllers </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">presetName</td><td></td></tr>
+    <tr><td class="paramname">csoundFileName</td><td></td></tr>
+    <tr><td class="paramname">channels</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01736">1736</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="abef6b551685f4849205d648eec17f470" name="abef6b551685f4849205d648eec17f470"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abef6b551685f4849205d648eec17f470">&#9670;&nbsp;</a></span>CreatePreset() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> CsoundUnity.CreatePreset </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetData</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> from a presetName and presetData PresetData should be a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> in the JSON format. </p>
+<p >It will use the presetName parameter if not empty, if presetName is empty it will use preset.presetName, if also preset.presetName is empty it will use "CsoundUnityPreset" as a default name. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">presetName</td><td></td></tr>
+    <tr><td class="paramname">presetData</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01761">1761</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -758,6 +1160,8 @@ Events</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01102">1102</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -798,6 +1202,8 @@ Events</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>0 If the table could be created</dd></dl>
 <p >AudioSettings.outputSampleRate</p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01122">1122</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="ac3b85fc7cd4671ca7d5504db7a15c0d3" name="ac3b85fc7cd4671ca7d5504db7a15c0d3"></a>
@@ -836,6 +1242,8 @@ Events</h2></td></tr>
 
 <p>Resets all internal memory and state in preparation for a new performance. Enables external software to run successive Csound performances without reloading Csound. Implies csoundCleanup(), unless already called. </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01713">1713</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a703b9f858fc381d38886fbdec0b6d8fc" name="a703b9f858fc381d38886fbdec0b6d8fc"></a>
@@ -856,6 +1264,8 @@ Events</h2></td></tr>
 <p>Get 0 dbfs </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01362">1362</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a53b591bb3a6f23bef90054d024871fda" name="a53b591bb3a6f23bef90054d024871fda"></a>
@@ -875,6 +1285,8 @@ Events</h2></td></tr>
 
 <p>Returns the Csound API version number times 100 (1.00 = 100). </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00555">555</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -903,6 +1315,8 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01073">1073</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="adf9230e5932b098bacc1ee87369707e9" name="adf9230e5932b098bacc1ee87369707e9"></a>
@@ -930,6 +1344,37 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01039">1039</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a6f2c5c909550dea5562bc49e20a6ea34" name="a6f2c5c909550dea5562bc49e20a6ea34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f2c5c909550dea5562bc49e20a6ea34">&#9670;&nbsp;</a></span>GetChannelController()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a> CsoundUnity.GetChannelController </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>channel</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a serialized <a class="el" href="class_csound_channel_controller.html" title="Utility class for controller and channels">CsoundChannelController</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">channel</td><td>the Channel name</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01049">1049</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="ac855e3c2de0c3f86df5a2c38376b46d0" name="ac855e3c2de0c3f86df5a2c38376b46d0"></a>
@@ -950,6 +1395,8 @@ Events</h2></td></tr>
 <p>blocking method to get a list of the channels from Csound, not from the serialized list of this instance </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01059">1059</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a152d6a54964bd9df6ed7808a1f3b7713" name="a152d6a54964bd9df6ed7808a1f3b7713"></a>
@@ -969,6 +1416,8 @@ Events</h2></td></tr>
 
 <p>Returns the current performance time in samples </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01371">1371</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -997,6 +1446,63 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01313">1313</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a26403d5ec4a86356b92bd136b206a934" name="a26403d5ec4a86356b92bd136b206a934"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26403d5ec4a86356b92bd136b206a934">&#9670;&nbsp;</a></span>GetFloatSamples()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static float[] CsoundUnity.GetFloatSamples </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>source</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>channelNumber</em> = <code>1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>writeChannelData</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Same as <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a> but it will return a float array. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td></td></tr>
+    <tr><td class="paramname">channelNumber</td><td></td></tr>
+    <tr><td class="paramname">writeChannelData</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01578">1578</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="aef0135a7848cff2e658a8e9430d2704a" name="aef0135a7848cff2e658a8e9430d2704a"></a>
@@ -1016,6 +1522,8 @@ Events</h2></td></tr>
 
 <p>Get the current control rate </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00688">688</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1037,10 +1545,12 @@ Events</h2></td></tr>
 <p>Get the number of audio sample frames per control sample. </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00706">706</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
-<a id="a9ce864ebb56226ccc7ad0909eb2d6b7e" name="a9ce864ebb56226ccc7ad0909eb2d6b7e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ce864ebb56226ccc7ad0909eb2d6b7e">&#9670;&nbsp;</a></span>GetMonoSamples()</h2>
+<a id="a9f02ee1e6458a4b6268f67240e2aa0d9" name="a9f02ee1e6458a4b6268f67240e2aa0d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f02ee1e6458a4b6268f67240e2aa0d9">&#9670;&nbsp;</a></span>GetMonoFloatSamples()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1049,16 +1559,10 @@ Events</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static MYFLT[] CsoundUnity.GetMonoSamples </td>
+          <td class="memname">static float[] CsoundUnity.GetMonoFloatSamples </td>
           <td>(</td>
           <td class="paramtype">string&#160;</td>
           <td class="paramname"><em>source</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3e">SamplesOrigin</a>&#160;</td>
-          <td class="paramname"><em>origin</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1078,6 +1582,64 @@ Events</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Get an array of floats from the AudioClip source from the Resources folder. No information about the channels will be added in the first element of the returned array. See <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td>The name of the source to retrieve</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01514">1514</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a5a13e06ec9e7563bf229e97e30ed0d65" name="a5a13e06ec9e7563bf229e97e30ed0d65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a13e06ec9e7563bf229e97e30ed0d65">&#9670;&nbsp;</a></span>GetMonoSamples()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static MYFLT[] CsoundUnity.GetMonoSamples </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>source</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>channelNumber</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get an array of MYFLTs from the AudioClip source from the Resources folder. No information about the channels will be added in the first element of the returned array. See <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td>The name of the source to retrieve</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01502">1502</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1123,6 +1685,8 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01253">1253</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="ae8438423f89fb66bcea38d66a3e3940f" name="ae8438423f89fb66bcea38d66a3e3940f"></a>
@@ -1142,6 +1706,8 @@ Events</h2></td></tr>
 
 <p>Returns a Dictionary keyed by the names of all named table generators. Each name is paired with its internal function number. </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01263">1263</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1163,6 +1729,8 @@ Events</h2></td></tr>
 <p>Get the number of output channels </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01353">1353</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a5302d21154aaa34533b0e496b4a972f3" name="a5302d21154aaa34533b0e496b4a972f3"></a>
@@ -1183,6 +1751,8 @@ Events</h2></td></tr>
 <p>Get the number of input channels </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01344">1344</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a816a0cff1a4f67af73c72918a4b5792b" name="a816a0cff1a4f67af73c72918a4b5792b"></a>
@@ -1202,6 +1772,8 @@ Events</h2></td></tr>
 
 <p>Get the Opcode List, blocking </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01335">1335</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1241,6 +1813,8 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00948">948</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="affc870525923db31cd3f04860febc3f9" name="affc870525923db31cd3f04860febc3f9"></a>
@@ -1258,10 +1832,113 @@ Events</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Fills in a provided raw CSOUND_PARAMS object with csounds current parameter settings. This method is used internally to manage this class and is not expected to be used directly by a host program. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">oparms</td><td>a CSOUND_PARAMS structure to be filled in by csound</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The same parameter structure that was provided but filled in with csounds current internal contents</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01289">1289</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a48975719bc9b8be675b970c2a967bf77" name="a48975719bc9b8be675b970c2a967bf77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48975719bc9b8be675b970c2a967bf77">&#9670;&nbsp;</a></span>GetSamples() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static MYFLT[] CsoundUnity.GetSamples </td>
+          <td>(</td>
+          <td class="paramtype">AudioClip&#160;</td>
+          <td class="paramname"><em>audioClip</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get samples from an AudioClip as a MYFLT array. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">audioClip</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01638">1638</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a33ff97b7263c9fa42ffcf91fc2a7a68e" name="a33ff97b7263c9fa42ffcf91fc2a7a68e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33ff97b7263c9fa42ffcf91fc2a7a68e">&#9670;&nbsp;</a></span>GetSamples() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static MYFLT[] CsoundUnity.GetSamples </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>source</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>channelNumber</em> = <code>1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>writeChannelData</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get Samples from a "Resources" path. This will return an interleaved array of samples, with the first index used to specify the number of channels. This array can be passed to the <a class="el" href="class_csound_unity.html#a02fad33460f51f304ead99509a7bd69d" title="Creates a table with the supplied samples. Can be called during performance.">CsoundUnity.CreateTable()</a> method for processing by Csound. Use async version to load very large files, or load from external paths Note: You need to be careful that your AudioClips match the SR of the project. If not, you will hear some re-pitching issues with your audio when you play it back with a table reader opcode. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td>The path of the audio source relative to a "Resources" folder</td></tr>
+    <tr><td class="paramname">channelNumber</td><td>The channel to read from the source</td></tr>
+    <tr><td class="paramname">writeChannelData</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01532">1532</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="aec60a82af7381770db1840b0170cfb4a" name="aec60a82af7381770db1840b0170cfb4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec60a82af7381770db1840b0170cfb4a">&#9670;&nbsp;</a></span>GetSamples() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aec60a82af7381770db1840b0170cfb4a">&#9670;&nbsp;</a></span>GetSamples() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1300,8 +1977,8 @@ Events</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Async version of GetSamples example of usage: </p>
-<p ><code> yield return <a class="el" href="class_csound_unity.html#a7c1bf18317f33df52f9520a5913bd5df">CsoundUnity.GetSamples</a>(source.name, <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3eaddcf50c29294d4414f3f7c1bbc892cb5">CsoundUnity.SamplesOrigin.Resources</a>, (samples) =&gt; { Debug.Log("samples loaded: "+samples.Length+", creating table"); csound.CreateTable(100, samples); }); </code> </p>
+<p>Async version of GetSamples Example of usage: </p>
+<p ><code> yield return <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e" title="Get Samples from a &quot;Resources&quot; path. This will return an interleaved array of samples,...">CsoundUnity.GetSamples</a>(source.name, <a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3eaddcf50c29294d4414f3f7c1bbc892cb5">CsoundUnity.SamplesOrigin.Resources</a>, (samples) =&gt; { Debug.Log("samples loaded: "+samples.Length+", creating table"); csound.CreateTable(100, samples); }); </code> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">source</td><td>the name of the AudioClip to load</td></tr>
@@ -1312,53 +1989,7 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-</div>
-</div>
-<a id="a7c1bf18317f33df52f9520a5913bd5df" name="a7c1bf18317f33df52f9520a5913bd5df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c1bf18317f33df52f9520a5913bd5df">&#9670;&nbsp;</a></span>GetSamples() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static MYFLT[] CsoundUnity.GetSamples </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>source</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3e">SamplesOrigin</a>&#160;</td>
-          <td class="paramname"><em>origin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>channelNumber</em> = <code>1</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>writeChannelData</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01598">1598</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1380,6 +2011,8 @@ Events</h2></td></tr>
 <p>Get Csound's audio input buffer </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00957">957</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a4657dd74e5a75e8788f2f479021ca768" name="a4657dd74e5a75e8788f2f479021ca768"></a>
@@ -1399,6 +2032,8 @@ Events</h2></td></tr>
 
 <p>Get Csound's audio output buffer </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00966">966</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1420,10 +2055,49 @@ Events</h2></td></tr>
 <p>Get the current sample rate </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00679">679</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
-<a id="a068d380920f4a368e8b928261d48313d" name="a068d380920f4a368e8b928261d48313d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a068d380920f4a368e8b928261d48313d">&#9670;&nbsp;</a></span>GetStereoSamples()</h2>
+<a id="a786ab3f3665a301a5ef8938ecd60f971" name="a786ab3f3665a301a5ef8938ecd60f971"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a786ab3f3665a301a5ef8938ecd60f971">&#9670;&nbsp;</a></span>GetStereoFloatSamples()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static float[] CsoundUnity.GetStereoFloatSamples </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>source</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get an array of floats from the AudioClip source from the Resources folder. The first index in the returned array will have its value set as 2 like the number of channels See <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td>The name of the source to retrieve</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01490">1490</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="af178d3142f1dce4c5883e2283f86a7ae" name="af178d3142f1dce4c5883e2283f86a7ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af178d3142f1dce4c5883e2283f86a7ae">&#9670;&nbsp;</a></span>GetStereoSamples()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1435,18 +2109,8 @@ Events</h2></td></tr>
           <td class="memname">static MYFLT[] CsoundUnity.GetStereoSamples </td>
           <td>(</td>
           <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>source</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>source</em></td><td>)</td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_csound_unity.html#a541b29144ff702a17b79777bd4702f3e">SamplesOrigin</a>&#160;</td>
-          <td class="paramname"><em>origin</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -1456,17 +2120,16 @@ Events</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Get Samples from a path, specifying the origin of the path. This will return an interleaved array of samples, with the first index used to specify the number of channels. This array can be passed to the <a class="el" href="class_csound_unity.html#a02fad33460f51f304ead99509a7bd69d" title="Creates a table with the supplied samples. Can be called during performance.">CsoundUnity.CreateTable()</a> method for processing by Csound. Use async versions to to load very large files. </p>
-<p >Note: You need to be careful that your AudioClips match the SR of the project. If not, you will hear some re-pitching issues with your audio when you play it back with a table reader opcode. </p>
+<p>Get an array of MYFLTs in from the AudioClip source from the Resources folder. The first index in the returned array will have its value set as 2 like the number of channels. See <a class="el" href="class_csound_unity.html#a33ff97b7263c9fa42ffcf91fc2a7a68e">GetSamples</a> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">source</td><td></td></tr>
-    <tr><td class="paramname">origin</td><td></td></tr>
-    <tr><td class="paramname">async</td><td></td></tr>
+    <tr><td class="paramname">source</td><td>The name of the source to retrieve</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01478">1478</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1506,6 +2169,8 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01157">1157</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a278665fbb06554089ee4574c0af3d1fe" name="a278665fbb06554089ee4574c0af3d1fe"></a>
@@ -1544,6 +2209,8 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01171">1171</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a92699c86c96cbd84fcfb9db5c6cc1149" name="a92699c86c96cbd84fcfb9db5c6cc1149"></a>
@@ -1570,6 +2237,8 @@ Events</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01134">1134</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1609,6 +2278,8 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01145">1145</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="aec12319cc8ddb33c9595ac84bfe32b00" name="aec12319cc8ddb33c9595ac84bfe32b00"></a>
@@ -1628,6 +2299,8 @@ Events</h2></td></tr>
 
 <p>Returns the Csound version number times 1000 (5.00.0 = 5000). </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00546">546</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1655,6 +2328,100 @@ Events</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01241">1241</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a22796df154920b73b0bc42a64dd4e171" name="a22796df154920b73b0bc42a64dd4e171"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22796df154920b73b0bc42a64dd4e171">&#9670;&nbsp;</a></span>LoadGlobalPreset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.LoadGlobalPreset </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Load a global preset on this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance from a JSON file found at path. The JSON file should represent a Global Preset, ie a complete <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance. </p>
+<p >This also sets the global preset, overriding the current content of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance.</p>
+<p >This could have unintended consequences in certain situations. You could need to disable this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> GameObject and enable it again to restore the Csound internal state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>The path must point to an existing JSON file</td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02116">2116</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="aaf922c0583760bd45a827e957f817c54" name="aaf922c0583760bd45a827e957f817c54"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf922c0583760bd45a827e957f817c54">&#9670;&nbsp;</a></span>LoadPlugins()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CsoundUnity.LoadPlugins </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>dir</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00537">537</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a7b23d273d677a6f4e9f2a6fca33cb431" name="a7b23d273d677a6f4e9f2a6fca33cb431"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b23d273d677a6f4e9f2a6fca33cb431">&#9670;&nbsp;</a></span>LoadPreset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.LoadPreset </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Action&lt; <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> &gt;&#160;</td>
+          <td class="paramname"><em>onPresetLoaded</em> = <code>null</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Loads a preset from a JSON file. The JSON file should represent a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a>. </p>
+<p >This doesn't set the preset. </p>
+<p >You should use the Action to get the reference of the loaded preset. This is needed because of the async nature of this method, that uses a WebRequest on Android and iOS. </p>
+<p >Example of usage:</p>
+<p ><code> LoadPreset("myPath/presetName.json", (loadedPreset) =&gt; { SetPreset(loadedPreset); }); </code> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>The path must point to an existing JSON file</td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02076">2076</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1690,6 +2457,8 @@ Events</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00753">753</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1727,6 +2496,56 @@ Events</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00720">720</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="ac559ce014d5769ca3f3e90d275291c2d" name="ac559ce014d5769ca3f3e90d275291c2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac559ce014d5769ca3f3e90d275291c2d">&#9670;&nbsp;</a></span>ParseSnap()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static List&lt; <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> &gt; CsoundUnity.ParseSnap </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>csdPath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>snapPath</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Parse a Cabbage Snap and return a list of CsoundUnityPresets. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">csdPath</td><td></td></tr>
+    <tr><td class="paramname">snapPath</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02142">2142</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a3d37a2c436e021a68d909f91f7ce3b72" name="a3d37a2c436e021a68d909f91f7ce3b72"></a>
@@ -1746,6 +2565,8 @@ Events</h2></td></tr>
 
 <p>Process a ksmps-sized block of samples </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00697">697</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1807,7 +2628,7 @@ Events</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>map MYFLT within one range to another </p>
+<p>Linear remap floats within one range to another </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">value</td><td></td></tr>
@@ -1819,6 +2640,132 @@ Events</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01385">1385</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a535f6f55373f5b5ee1f0ded6b8b5a3ba" name="a535f6f55373f5b5ee1f0ded6b8b5a3ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a535f6f55373f5b5ee1f0ded6b8b5a3ba">&#9670;&nbsp;</a></span>RemapFrom0to1()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static float CsoundUnity.RemapFrom0to1 </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>from</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>to</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>skew</em> = <code>1f</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Remap a normalized (0-1) value to a value in another range, specifying its "from" and "to" values, and the skew of the exponential curve of the remapping. If skew is 1 the remapping is linear, if 0.5 it's exponential. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td></td></tr>
+    <tr><td class="paramname">from</td><td></td></tr>
+    <tr><td class="paramname">to</td><td></td></tr>
+    <tr><td class="paramname">skew</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01427">1427</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a60fa9ba65f9a099f6099c8fbc7bdcc88" name="a60fa9ba65f9a099f6099c8fbc7bdcc88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60fa9ba65f9a099f6099c8fbc7bdcc88">&#9670;&nbsp;</a></span>RemapTo0to1()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static float CsoundUnity.RemapTo0to1 </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>from</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>to</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>skew</em> = <code>1f</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Remap a value to a normalized (0-1) value specifying its expected "from" and "to" values, and the skew of the exponential curve of the remapping. If skew is 1 the remapping is linear, if 0.5 it's exponential. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td></td></tr>
+    <tr><td class="paramname">from</td><td></td></tr>
+    <tr><td class="paramname">to</td><td></td></tr>
+    <tr><td class="paramname">skew</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01404">1404</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1838,6 +2785,259 @@ Events</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Rewinds a compiled Csound score to the time specified with <a class="el" href="class_csound_unity.html#af950ce82e184ee08a01a59e007f25f12" title="Csound score events prior to the specified time are not performed, and performance begins immediately...">SetScoreOffsetSeconds()</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00657">657</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a91dd731c93dca87a95079918f5b11631" name="a91dd731c93dca87a95079918f5b11631"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91dd731c93dca87a95079918f5b11631">&#9670;&nbsp;</a></span>SaveGlobalPreset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.SaveGlobalPreset </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>overwriteIfExisting</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Save a serialized copy of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance. Similar behaviour as saving a Unity Preset from the inspector of the <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> component, but this can be used at runtime. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">presetName</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01945">1945</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="aaa64c7f58ad6bc877d19e85874369e2d" name="aaa64c7f58ad6bc877d19e85874369e2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa64c7f58ad6bc877d19e85874369e2d">&#9670;&nbsp;</a></span>SavePresetAsJSON() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void CsoundUnity.SavePresetAsJSON </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a>&#160;</td>
+          <td class="paramname"><em>preset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>overwriteIfExisting</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Save the specified <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> as JSON, at the specified path. If a file exists at the specified path, it will be overwritten if overwriteIfExisting is true. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">preset</td><td></td></tr>
+    <tr><td class="paramname">path</td><td></td></tr>
+    <tr><td class="paramname">overwriteIfExisting</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01888">1888</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a637453240e1c4e5d55612b9b0c1cb964" name="a637453240e1c4e5d55612b9b0c1cb964"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a637453240e1c4e5d55612b9b0c1cb964">&#9670;&nbsp;</a></span>SavePresetAsJSON() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void CsoundUnity.SavePresetAsJSON </td>
+          <td>(</td>
+          <td class="paramtype">List&lt; <a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a> &gt;&#160;</td>
+          <td class="paramname"><em>channels</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>csoundFileName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>overwriteIfExisting</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Save a preset as JSON from a list of <a class="el" href="class_csound_channel_controller.html" title="Utility class for controller and channels">CsoundChannelController</a>, specifying the related CsoundFileName and the presetName. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">channels</td><td></td></tr>
+    <tr><td class="paramname">csoundFileName</td><td></td></tr>
+    <tr><td class="paramname">presetName</td><td></td></tr>
+    <tr><td class="paramname">path</td><td></td></tr>
+    <tr><td class="paramname">overwriteIfExisting</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01914">1914</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a7869ed5c3602ec3dfc36faeb5f8d275f" name="a7869ed5c3602ec3dfc36faeb5f8d275f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7869ed5c3602ec3dfc36faeb5f8d275f">&#9670;&nbsp;</a></span>SavePresetAsJSON() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.SavePresetAsJSON </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>overwriteIfExisting</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">presetName</td><td></td></tr>
+    <tr><td class="paramname">path</td><td></td></tr>
+    <tr><td class="paramname">overwriteIfExisting</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01930">1930</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="aae8bc6f5e213b8c6257fd8bd7b4463b9" name="aae8bc6f5e213b8c6257fd8bd7b4463b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae8bc6f5e213b8c6257fd8bd7b4463b9">&#9670;&nbsp;</a></span>SavePresetAsScriptableObject()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.SavePresetAsScriptableObject </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em> = <code>null</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Save a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance at the specified path, using the specified presetName. The current csoundFileName and CsoundChannelControllers will be saved in the preset. If no presetName is given, a default one will be used. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">presetName</td><td></td></tr>
+    <tr><td class="paramname">path</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01873">1873</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1865,10 +3065,40 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00648">648</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="aa98dc25fddc1be0d2545ccfb6036cdc5" name="aa98dc25fddc1be0d2545ccfb6036cdc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa98dc25fddc1be0d2545ccfb6036cdc5">&#9670;&nbsp;</a></span>SetChannel() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.SetChannel </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a>&#160;</td>
+          <td class="paramname"><em>channelController</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a Csound channel. Useful for setting presets at runtime. Used in connection with a chnget opcode in your Csound instrument. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">channelController</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01001">1001</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a3dda8229f389f764b916d80d9d136c57" name="a3dda8229f389f764b916d80d9d136c57"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3dda8229f389f764b916d80d9d136c57">&#9670;&nbsp;</a></span>SetChannel()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3dda8229f389f764b916d80d9d136c57">&#9670;&nbsp;</a></span>SetChannel() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1902,6 +3132,47 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00979">979</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="ad7becde6ff363aead95abf1449e87704" name="ad7becde6ff363aead95abf1449e87704"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7becde6ff363aead95abf1449e87704">&#9670;&nbsp;</a></span>SetChannels()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.SetChannels </td>
+          <td>(</td>
+          <td class="paramtype">List&lt; <a class="el" href="class_csound_channel_controller.html">CsoundChannelController</a> &gt;&#160;</td>
+          <td class="paramname"><em>channelControllers</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>excludeButtons</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a list of Csound channels. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">channelControllers</td><td></td></tr>
+    <tr><td class="paramname">excludeButtons</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01014">1014</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a415b74e8cb4fe883e08403d53be40cef" name="a415b74e8cb4fe883e08403d53be40cef"></a>
@@ -1927,6 +3198,8 @@ Events</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00575">575</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -1965,6 +3238,52 @@ Events</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns zero on success.</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01326">1326</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a41107c5577da46666149a6ee9435b88c" name="a41107c5577da46666149a6ee9435b88c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41107c5577da46666149a6ee9435b88c">&#9670;&nbsp;</a></span>SetGlobalPreset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_csound_unity.html">CsoundUnity</a> CsoundUnity.SetGlobalPreset </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetData</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set a global preset to this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance using a presetName and presetData. </p>
+<p >Preset data should represent a <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance in JSON format.</p>
+<p >This overrides the current content of this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance.</p>
+<p >This could have unintended consequences in certain situations. You could need to disable this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> GameObject and enable it again to restore the Csound internal state. </p>
+<p >This updated <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance will be returned.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">presetName</td><td></td></tr>
+    <tr><td class="paramname">presetData</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02048">2048</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2010,6 +3329,8 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00911">911</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="ad93e35599984bc62316f4cbbd95b7002" name="ad93e35599984bc62316f4cbbd95b7002"></a>
@@ -2027,6 +3348,119 @@ Events</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Transfers the contents of the provided raw CSOUND_PARAMS object into csound's internal data structues (chiefly its OPARMS structure). This method is used internally to manage this class and is not expected to be used directly by a host program. Most values are used and reflected in CSOUND_PARAMS. Internally to csound, as of release 6.0.0, Heartbeat and IsComputingOpcodeWeights are ignored and IsUsingCsdLineCounts can only be set and never reset once set. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">parms</td><td>a </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01303">1303</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a5e67e48163e7e22c4acf32dd93178aea" name="a5e67e48163e7e22c4acf32dd93178aea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e67e48163e7e22c4acf32dd93178aea">&#9670;&nbsp;</a></span>SetPreset() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CsoundUnity.SetPreset </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a>&#160;</td>
+          <td class="paramname"><em>preset</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> to this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance. </p>
+<p >If the preset csoundFileName is different from this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance csoundFileName the preset will not be set and an error will be logged.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">preset</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02020">2020</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a34a076d11413059406b5bca65af21c0e" name="a34a076d11413059406b5bca65af21c0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34a076d11413059406b5bca65af21c0e">&#9670;&nbsp;</a></span>SetPreset() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> CsoundUnity.SetPreset </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> to this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance using presetData. </p>
+<p >The set preset will be returned. The name of the preset will be the one found inside presetData, if not empty. Otherwise a default presetName will be used.</p>
+<p >Preset data should represent a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> in JSON format.</p>
+<p >If the preset csoundFileName is different from this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance csoundFileName the preset will not be set and an error will be logged. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">presetData</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l02009">2009</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="a38745b30d1cfca237d0f7eb63fd7cd4c" name="a38745b30d1cfca237d0f7eb63fd7cd4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38745b30d1cfca237d0f7eb63fd7cd4c">&#9670;&nbsp;</a></span>SetPreset() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> CsoundUnity.SetPreset </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>presetData</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> to this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance using a presetName and presetData. The set preset will be returned. </p>
+<p >Preset data should represent a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> in JSON format.</p>
+<p >If the preset csoundFileName is different from this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance csoundFileName the preset will not be set and an error will be logged. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">presetName</td><td></td></tr>
+    <tr><td class="paramname">presetData</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01991">1991</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2053,6 +3487,8 @@ Events</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00670">670</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2090,6 +3526,8 @@ Events</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01029">1029</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2135,6 +3573,55 @@ Events</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01182">1182</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
+</div>
+</div>
+<a id="aaea137cdc8cc68e5b75402d0e7a8c8ff" name="aaea137cdc8cc68e5b75402d0e7a8c8ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaea137cdc8cc68e5b75402d0e7a8c8ff">&#9670;&nbsp;</a></span>WritePreset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void CsoundUnity.WritePreset </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a>&#160;</td>
+          <td class="paramname"><em>preset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Write a <a class="el" href="class_csound_unity_preset.html">CsoundUnityPreset</a> at the specified path inside the Assets folder. You can pass a full path, the Assets folder path will be extracted. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">preset</td><td></td></tr>
+    <tr><td class="paramname">path</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l01788">1788</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -2152,6 +3639,8 @@ Events</h2></td></tr>
 
 <p>the score to send via editor </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00373">373</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a80971a3359912b170510a05a4b8e5e1f" name="a80971a3359912b170510a05a4b8e5e1f"></a>
@@ -2167,6 +3656,8 @@ Events</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The list of the Environment Settings that will be set on start, using csoundSetGlobalEnv. Each setting can be used to specify the path of an environment variable. These settings will be applied to this <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> instance when the <a class="el" href="class_csound_unity_bridge.html">CsoundUnityBridge</a> is created. </p>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00382">382</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2184,6 +3675,8 @@ Events</h2></td></tr>
 
 <p>If true, all Csound output messages will be sent to the Unity output console. Note that this can slow down performance if there is a lot of information being printed. </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00315">315</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a4cd2a3908eb49d96f10ef5fb769ebf13" name="a4cd2a3908eb49d96f10ef5fb769ebf13"></a>
@@ -2199,6 +3692,8 @@ Events</h2></td></tr>
 </div><div class="memdoc">
 
 <p>If true it will print warnings in the console when the output volume is too high, and mute all the samples above the loudWarningThreshold value </p>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00332">332</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2216,6 +3711,8 @@ Events</h2></td></tr>
 
 <p>The volume threshold at which a warning is output to the console, and audio output is filtered </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00338">338</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a8691bf39c69bbb858e8c370461358fe6" name="a8691bf39c69bbb858e8c370461358fe6"></a>
@@ -2232,6 +3729,8 @@ Events</h2></td></tr>
 
 <p>If true no audio is sent to output </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00320">320</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a13a67be11e96a04bd01b5d98869da902" name="a13a67be11e96a04bd01b5d98869da902"></a>
@@ -2247,6 +3746,8 @@ Events</h2></td></tr>
 </div><div class="memdoc">
 
 <p>public named audio Channels shown in <a class="el" href="class_csound_unity_child.html" title="CsoundUnityChild is a component that can output AudioChannels found in the csd of the associated Csou...">CsoundUnityChild</a> inspector </p>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00353">353</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2272,6 +3773,8 @@ Events</h2></td></tr>
 
 <p>The name of this package </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00277">277</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="aa7cb9ff4ce7e639aefbcc55e0bb4ba77" name="aa7cb9ff4ce7e639aefbcc55e0bb4ba77"></a>
@@ -2284,7 +3787,7 @@ Events</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const string CsoundUnity.packageVersion = &quot;3.3.1&quot;</td>
+          <td class="memname">const string CsoundUnity.packageVersion = &quot;3.4.0&quot;</td>
         </tr>
       </table>
   </td>
@@ -2295,6 +3798,8 @@ Events</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The version of this package </p>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00282">282</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2311,6 +3816,8 @@ Events</h2></td></tr>
 </div><div class="memdoc">
 
 <p>If true Csound uses as an input the AudioClip attached to this AudioSource If false, no processing occurs on the attached AudioClip </p>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00326">326</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2337,6 +3844,8 @@ Events</h2></td></tr>
 
 <p>list to hold available audioChannels names </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00348">348</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a24578813ccc8a26ff4df2db4d8f8863b" name="a24578813ccc8a26ff4df2db4d8f8863b"></a>
@@ -2360,6 +3869,8 @@ Events</h2></td></tr>
 </div><div class="memdoc">
 
 <p>list to hold channel data </p>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00343">343</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2385,6 +3896,8 @@ Events</h2></td></tr>
 
 <p>the unique guid of the csd file </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00287">287</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="a05d54201e7b373b1a95fce9b82dc221d" name="a05d54201e7b373b1a95fce9b82dc221d"></a>
@@ -2408,6 +3921,8 @@ Events</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The file <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> will try to load. You can only load one file with each instance of <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a>, but you can use as many instruments within that file as you wish.You may also create as many of <a class="el" href="class_csound_unity.html" title="Csound Unity Class">CsoundUnity</a> objects as you wish. </p>
+
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00294">294</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
 
 </div>
 </div>
@@ -2433,6 +3948,8 @@ Events</h2></td></tr>
 
 <p>a string to hold all the csoundFile content </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00299">299</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="ae2c648d0f6245fb84c5f9ec5176079ff" name="ae2c648d0f6245fb84c5f9ec5176079ff"></a>
@@ -2457,6 +3974,8 @@ Events</h2></td></tr>
 
 <p>Is Csound initialized? </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00358">358</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <a id="ace353e383daabe78e1648989319d2121" name="ace353e383daabe78e1648989319d2121"></a>
@@ -2479,6 +3998,8 @@ Events</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00369">369</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Event Documentation</h2>
@@ -2496,10 +4017,12 @@ Events</h2></td></tr>
 
 <p>An event that will be executed when Csound is initialized </p>
 
+<p class="definition">Definition at line <a class="el" href="_csound_unity_8cs_source.html#l00367">367</a> of file <a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a>.</p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>CsoundUnity_DevelopmentProject/Packages/CsoundUnity/Runtime/<a class="el" href="_csound_unity_8cs.html">CsoundUnity.cs</a></li>
+<li>C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Packages/CsoundUnity/Runtime/<a class="el" href="_csound_unity_8cs_source.html">CsoundUnity.cs</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
