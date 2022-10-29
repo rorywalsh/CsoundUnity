@@ -1495,7 +1495,7 @@ public class CsoundUnity : MonoBehaviour
 
     /// <summary>
     /// Get an array of floats from the AudioClip source from the Resources folder.
-    /// The first index in the returned array will have its value set as 2 like the number of channels
+    /// The first index in the returned array will have its value set as 2 like the number of channels.
     /// See <see cref="GetSamples">GetSamples</see>
     /// </summary>
     /// <param name="source">The name of the source to retrieve</param>
