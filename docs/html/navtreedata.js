@@ -54,7 +54,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_csound_csharp_8cs.html",
-"class_csound_unity_bridge_1_1_channel_hints.html#ab679a5aac2bf1ae297624803d2eb2bcf"
+"class_csound_unity_bridge_1_1_channel_hints.html#aa8a26939387920628c145b2d3e02d538"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

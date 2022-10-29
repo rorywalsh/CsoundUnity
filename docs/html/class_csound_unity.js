@@ -100,6 +100,7 @@ var class_csound_unity =
     [ "csoundFileGUID", "class_csound_unity.html#a828225a90cf09375fb4bff37d8a62c4f", null ],
     [ "csoundFileName", "class_csound_unity.html#a05d54201e7b373b1a95fce9b82dc221d", null ],
     [ "csoundString", "class_csound_unity.html#a1f77017cb5b93fe8f5ec599038dc9869", null ],
+    [ "CurrentPreset", "class_csound_unity.html#aa7be0f5f2f133d7cbac29fe1afd1a0a2", null ],
     [ "IsInitialized", "class_csound_unity.html#ae2c648d0f6245fb84c5f9ec5176079ff", null ],
     [ "PerformanceFinished", "class_csound_unity.html#ace353e383daabe78e1648989319d2121", null ],
     [ "OnCsoundInitialized", "class_csound_unity.html#a066fb6573f60c343aebb79f7a202cac5", null ]

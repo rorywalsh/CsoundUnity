@@ -58,5 +58,6 @@ var searchData=
   ['csoundunitygameobject_55',['csoundUnityGameObject',['../class_csound_unity_child.html#a604463ec4b7eff8965c02aaf96f85102',1,'CsoundUnityChild']]],
   ['csoundunitypreset_56',['CsoundUnityPreset',['../class_csound_unity_preset.html',1,'']]],
   ['csoundunitypreset_2ecs_57',['CsoundUnityPreset.cs',['../_csound_unity_preset_8cs.html',1,'']]],
-  ['csstrngs_58',['CSSTRNGS',['../class_csound_unity.html#ab95c43530047bd09f52be72c13de043ea6d686905f274405587488c2d57d50045',1,'CsoundUnity']]]
+  ['csstrngs_58',['CSSTRNGS',['../class_csound_unity.html#ab95c43530047bd09f52be72c13de043ea6d686905f274405587488c2d57d50045',1,'CsoundUnity']]],
+  ['currentpreset_59',['CurrentPreset',['../class_csound_unity.html#aa7be0f5f2f133d7cbac29fe1afd1a0a2',1,'CsoundUnity']]]
 ];
