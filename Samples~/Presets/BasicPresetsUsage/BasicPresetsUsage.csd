@@ -7,8 +7,8 @@ rslider bounds(10, 10, 60, 60) range(0, 1, 1, 1, 0.001), channel("hrm1"), text("
 rslider bounds(80, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel("hrm2"), text("First Harmonic Amp")
 rslider bounds(150, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel("hrm3"), text("Second Harmonic Amp")
 rslider bounds(220, 10, 60, 60) range(0, 1, 0, 1, 0.001), channel("hrm4"), text("Third Harmonic Amp")
-combobox bounds(290, 14, 100, 30), channel("carWaveform"), text("car W1", "car W2", "car W3")
-combobox bounds(290, 54, 100, 30), channel("modWaveform"), text("mod W1", "mod W2", "mod W3")
+combobox bounds(290, 14, 100, 30), channel("carWaveform"), text("sine", "saw", "square", "triangle","impulse","noise")
+combobox bounds(290, 54, 100, 30), channel("modWaveform"), text("sine", "saw", "square", "triangle","impulse","noise")
 rslider bounds(310, 90, 60, 60) channel("modIndex") range(0, 15, 0, 1, 0.001), text("Mod Index")
 groupbox bounds(10, 114, 270, 220) channel("filterGroupBox") text("FILTER")
 checkbox bounds(20, 140, 125, 30) channel("filtOn") text("Filter ON")
@@ -34,9 +34,17 @@ ksmps = 32
 nchnls = 2
 0dbfs = 1
 
-giWave1 ftgen 1, 0, 4096, 10, 1
-giWave2 ftgen 2, 0, 4096, 10, 1, .5, .25, .17
-giWave3 ftgen 3, 0, 4096, 10, 1, 0, .333, 0, .2, 0, .143, 0, .111, 0, .0909, 0, .077, 0, .0666, 0, .0588
+giSine    ftgen     1, 0, 2^10, 10, 1
+giSaw     ftgen     2, 0, 2^10, 10, 1,-1/2,1/3,-1/4,1/5,-1/6,1/7,-1/8,1/9
+giSquare  ftgen     3, 0, 2^10, 10, 1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9
+giTri     ftgen     4, 0, 2^10, 10, 1, 0, -1/9, 0, 1/25, 0, -1/49, 0, 1/81
+giImp     ftgen     5, 0, 2^10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1
+giNoise   ftgen     6, 0, 2^10, 21, 1
+
+;giWave1 ftgen 1, 0, 4096, 10, 1
+;giWave2 ftgen 2, 0, 4096, 10, 1, .5, .25, .17
+;giWave3 ftgen 3, 0, 4096, 10, 1, 0, .333, 0, .2, 0, .143, 0, .111, 0, .0909, 0, .077, 0, .0666, 0, .0588
+;giNoise ftgen 4, 0, 4096, 21, 1
 
 instr 1
 
@@ -74,9 +82,9 @@ instr 1
     
     if kFiltOn == 1 then   
         if kLFOOn == 1 then
-            aOut moogladder aMix, (chnget:k("filtFreq") + kFiltRandFreq) * abs(afiltLFO), chnget:k("filtRes") + kFiltRandRes
+            aOut moogladder aMix, (chnget:k("filtFreq") + abs(kFiltRandFreq)) * abs(afiltLFO), chnget:k("filtRes") + abs(kFiltRandRes)
         else
-            aOut moogladder aMix, chnget:k("filtFreq") + kFiltRandFreq, chnget:k("filtRes") + kFiltRandRes
+            aOut moogladder aMix, chnget:k("filtFreq") + abs(kFiltRandFreq), chnget:k("filtRes") + abs(kFiltRandRes)
         endif
     else
         aOut = aMix

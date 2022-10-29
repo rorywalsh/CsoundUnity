@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Csound.BasicPresetUsage
 {
@@ -12,7 +13,7 @@ namespace Csound.BasicPresetUsage
     {
         [SerializeField] CsoundUnity csound;
         [SerializeField] CsoundUnityPreset[] testPresets;
-
+        [SerializeField] Text presetText;
         
         void Update()
         {
@@ -51,26 +52,46 @@ namespace Csound.BasicPresetUsage
             }
 
             /// LOAD SCRIPTABLE OBJECT PRESETS
-            if (Input.GetKeyUp(KeyCode.Alpha1))
+            if (Input.GetKeyUp(KeyCode.Alpha0))
             {
                 csound.SetPreset(testPresets[0]);
             }
-            if (Input.GetKeyUp(KeyCode.Alpha2))
+            if (Input.GetKeyUp(KeyCode.Alpha1))
             {
                 csound.SetPreset(testPresets[1]);
             }
-            if (Input.GetKeyUp(KeyCode.Alpha3))
+            if (Input.GetKeyUp(KeyCode.Alpha2))
             {
                 csound.SetPreset(testPresets[2]);
             }
-            if (Input.GetKeyUp(KeyCode.Alpha4))
+            if (Input.GetKeyUp(KeyCode.Alpha3))
             {
                 csound.SetPreset(testPresets[3]);
             }
-            // this CsoundUnityPreset is inside a 'Resources' folder
-            if (Input.GetKeyUp(KeyCode.Alpha5))
+            // these CsoundUnityPresets are inside a 'Resources' folder
+            if (Input.GetKeyUp(KeyCode.Alpha4))
             {
                 csound.SetPreset(testPresets[4]);
+            }
+            if (Input.GetKeyUp(KeyCode.Alpha5))
+            {
+                csound.SetPreset(testPresets[5]);
+            }
+            if (Input.GetKeyUp(KeyCode.Alpha6))
+            {
+                csound.SetPreset(testPresets[6]);
+            }
+            if (Input.GetKeyUp(KeyCode.Alpha7))
+            {
+                csound.SetPreset(testPresets[7]);
+            }
+            if (Input.GetKeyUp(KeyCode.Alpha8))
+            {
+                csound.SetPreset(testPresets[8]);
+            }
+            if (Input.GetKeyUp(KeyCode.Alpha9))
+            {
+                csound.SetPreset(testPresets[9]);
             }
 
             /// LOAD PRESET FROM JSON
@@ -86,6 +107,8 @@ namespace Csound.BasicPresetUsage
                 // this sets the preset data
                 csound.SetPreset("test", data);
             }
+
+            presetText.text = $"Current Preset: {csound.CurrentPreset}";
         }
 
         public void LoadRandomPreset()
