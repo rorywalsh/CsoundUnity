@@ -7,7 +7,8 @@ using UnityEngine.UI;
 namespace Csound.BasicPresetUsage
 {
     /// <summary>
-    /// This example saves presets in the Persistant Data Path, 
+    /// This example saves presets in the Persistent Data Path, 
+    /// and loads presets set in the inspector or from the PersistentDataPath
     /// </summary>
     public class BasicPresetsUsage : MonoBehaviour
     {
