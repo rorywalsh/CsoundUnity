@@ -18,6 +18,7 @@ It works both on the Editor and at Runtime.
 
 The **CsoundUnity** inspector has a *Preset* section which you can expand.
 
+<a name="load"></a>
 #### Load
 
 <img src="images/presets_load.jpg" alt="Presets Load"/>
@@ -69,6 +70,7 @@ The available **Global presets** will be listed in the JSON preset list.
 If their name contains the word *global* it will be loaded as a **Global preset**, otherwise it will be loaded as a **CsoundUnityPreset**. Be aware of that if you will need to rename the preset after it was created.  
 The **Global JSON presets** listed are searched in the entire project, if no LOAD folder is specified.   
 
+<a name="save"></a>
 #### Save
 
 <img src="images/presets_save.jpg" alt="Presets Save"/>
@@ -79,6 +81,7 @@ You can choose to save the preset in the 3 different formats (*ScriptableObject*
 If a file with the same name is found in the same destination folder, it will ask if overwrite it or rename it (if saving as a *ScriptableObject*). If rename is chosen it will add a suffix to the name.   
 If saving as a JSON and the JSON file exists at that location, it will simply add a suffix to the name.
 
+<a name="import"></a>
 #### Import Cabbage Snaps
 
 You can import [Cabbage snaps](https://cabbageaudio.com/docs/presets/) and create CsoundUnityPresets from them.
