@@ -7,14 +7,17 @@ rslider bounds(0, 0, 77, 87) channel("gain") range(0, 2, 1, 1, 0.001)  valueText
 -n -d 
 </CsOptions>
 <CsInstruments>
+sr = 44100
+ksmps = 10
 nchnls = 2
-nchnls_i = 1
+nchnls_i = 2
+
 0dbfs = 1
 
 instr 1
-ain in 1
+ainL, ainR ins
 kGain chnget "gain"
-outs ain*kGain, ain*kGain
+outs ainL*kGain, ainR*kGain
 endin
 </CsInstruments>
 <CsScore>
