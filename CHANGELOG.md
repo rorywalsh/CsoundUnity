@@ -1,4 +1,4 @@
-## [3.4.0] - 2022-10-29
+## [3.4.0] - 2022-10-30
 
 - added CsoundUnityPresets!
 - added Plugin EnvironmentSetting to be able to LoadPlugins on Android
