@@ -6,7 +6,7 @@
 - added the possibility to edit multiple CsoundUnity components at once
 - added skew and increment to ChannelControllers for future implementation on Editor sliders
 - added lots of utilities methods
-- updated Csound libraries to Csound 6.18
+- updated Csound libraries to Csound 6.18 (Silicon support for Mac!)
 - updated GetSamples method to not require the origin
 - updated Samples
 - fix for CsoundUnityWatcher enabling CsoundUnity instance when it's disabled
