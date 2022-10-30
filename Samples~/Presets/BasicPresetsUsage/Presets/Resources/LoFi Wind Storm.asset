@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7cc83b726b41f0c4ba68dac38255a4dd, type: 3}
-  m_Name: Preset4
+  m_Name: LoFi Wind Storm
   m_EditorClassIdentifier: 
-  presetName: Preset4
+  presetName: LoFi Wind Storm
   csoundFileName: BasicPresetsUsage.csd
   channels:
   - type: form
@@ -31,7 +31,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 1
+    value: 0.95
     skew: 1
     increment: 0.01
     options: []
@@ -41,7 +41,7 @@ MonoBehaviour:
     caption: 
     min: 10
     max: 2200
-    value: 55
+    value: 637
     skew: 1
     increment: 0.001
     options: []
@@ -51,7 +51,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 200
-    value: 0
+    value: 95.1
     skew: 1
     increment: 1
     options: []
@@ -61,7 +61,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 1
+    value: 0.592
     skew: 1
     increment: 0.001
     options: []
@@ -71,7 +71,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.678
+    value: 0.101
     skew: 1
     increment: 0.001
     options: []
@@ -81,7 +81,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.803
+    value: 0.159
     skew: 1
     increment: 0.001
     options: []
@@ -91,7 +91,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.762
+    value: 0.422
     skew: 1
     increment: 0.001
     options: []
@@ -101,7 +101,7 @@ MonoBehaviour:
     caption: 
     min: 1
     max: 6
-    value: 2
+    value: 5
     skew: 1
     increment: 0.01
     options:
@@ -117,7 +117,7 @@ MonoBehaviour:
     caption: 
     min: 1
     max: 6
-    value: 1
+    value: 5
     skew: 1
     increment: 0.01
     options:
@@ -133,7 +133,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 15
-    value: 0
+    value: 13.13
     skew: 1
     increment: 0.001
     options: []
@@ -163,7 +163,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 16000
-    value: 5902
+    value: 2959
     skew: 1
     increment: 0.001
     options: []
@@ -173,7 +173,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 16000
-    value: 276
+    value: 4454
     skew: 1
     increment: 0.001
     options: []
@@ -183,7 +183,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 0.931
+    value: 0.182
     skew: 1
     increment: 0.001
     options: []
@@ -193,7 +193,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 0.099
+    value: 0.492
     skew: 1
     increment: 0.001
     options: []
@@ -229,7 +229,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.99
-    value: 0.344
+    value: 0.114
     skew: 1
     increment: 0.001
     options: []
@@ -239,7 +239,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 6.16
+    value: 0.18
     skew: 1
     increment: 0.001
     options: []
@@ -249,7 +249,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.042
+    value: 0.421
     skew: 1
     increment: 0.001
     options: []
@@ -259,8 +259,8 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 4.41
+    value: 17.93
     skew: 1
     increment: 0.001
     options: []
-  _drawChannels: 1
+  _drawChannels: 0

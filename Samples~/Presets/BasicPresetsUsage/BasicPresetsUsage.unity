@@ -38,12 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
+  serializedVersion: 11
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -118,8 +118,6 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
-    maxJobWorkers: 0
-    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -151,7 +149,6 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2107517378}
   m_RootOrder: 2
@@ -176,7 +173,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -231,7 +227,6 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1080804928}
   m_RootOrder: 0
@@ -256,7 +251,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -313,7 +307,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -346,7 +339,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -380,7 +372,6 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 698844447}
   m_Father: {fileID: 2107517378}
@@ -405,7 +396,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
-    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -436,7 +426,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1923268642}
-        m_TargetAssemblyTypeName: 
         m_MethodName: LoadRandomPreset
         m_Mode: 1
         m_Arguments:
@@ -462,7 +451,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -561,7 +549,6 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1305705472
@@ -574,7 +561,6 @@ Transform:
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -607,7 +593,6 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2107517378}
   m_RootOrder: 0
@@ -632,7 +617,6 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -795,7 +779,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.95
+    value: 1
     skew: 1
     increment: 0.01
     options: []
@@ -805,7 +789,7 @@ MonoBehaviour:
     caption: 
     min: 10
     max: 2200
-    value: 90
+    value: 55
     skew: 1
     increment: 0.001
     options: []
@@ -815,7 +799,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 200
-    value: 4.4
+    value: 1.6
     skew: 1
     increment: 1
     options: []
@@ -825,7 +809,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 1
+    value: 0.525
     skew: 1
     increment: 0.001
     options: []
@@ -835,7 +819,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.682
+    value: 0.455
     skew: 1
     increment: 0.001
     options: []
@@ -845,7 +829,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.348
+    value: 0.387
     skew: 1
     increment: 0.001
     options: []
@@ -855,7 +839,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.422
+    value: 0.762
     skew: 1
     increment: 0.001
     options: []
@@ -865,7 +849,7 @@ MonoBehaviour:
     caption: 
     min: 1
     max: 6
-    value: 0
+    value: 2
     skew: 1
     increment: 0.01
     options:
@@ -881,7 +865,7 @@ MonoBehaviour:
     caption: 
     min: 1
     max: 6
-    value: 2
+    value: 5
     skew: 1
     increment: 0.01
     options:
@@ -897,7 +881,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 15
-    value: 3.1
+    value: 0.36
     skew: 1
     increment: 0.001
     options: []
@@ -927,7 +911,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 16000
-    value: 477
+    value: 1256
     skew: 1
     increment: 0.001
     options: []
@@ -947,7 +931,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 1.091
+    value: 0.126
     skew: 1
     increment: 0.001
     options: []
@@ -957,7 +941,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 0
+    value: 1.659
     skew: 1
     increment: 0.001
     options: []
@@ -977,7 +961,7 @@ MonoBehaviour:
     caption: 
     min: 1
     max: 6
-    value: 1
+    value: 0
     skew: 1
     increment: 0.01
     options:
@@ -993,7 +977,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.99
-    value: 0.99
+    value: 0.177
     skew: 1
     increment: 0.001
     options: []
@@ -1003,7 +987,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 0.0125
+    value: 3.18
     skew: 1
     increment: 0.001
     options: []
@@ -1023,7 +1007,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 0
+    value: 0.1
     skew: 1
     increment: 0.001
     options: []
@@ -1038,8 +1022,8 @@ MonoBehaviour:
   _drawPresetsSave: 1
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 1
-  _currentPreset: SlowUpAndDown
-  _currentPresetSaveFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets/Samples/CsoundUnity/3.4.0/Presets/BasicPresetsUsage/Presets
+  _currentPreset: Smoothie
+  _currentPresetSaveFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets
   _currentPresetLoadFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets/Samples/CsoundUnity/3.4.0/Presets/BasicPresetsUsage/Presets
 --- !u!82 &1923268640
 AudioSource:
@@ -1147,7 +1131,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -1171,11 +1154,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 796356226b472c049886973e8e5a3d31, type: 2}
   - {fileID: 11400000, guid: 647888dce5917084b9864c154750d1bc, type: 2}
   - {fileID: 11400000, guid: 8c294ece8197a72479b8599d56b9c627, type: 2}
-  - {fileID: 11400000, guid: 3120b792debebae459aa671a291ff0c4, type: 2}
-  - {fileID: 11400000, guid: d106be1608a430b4c849d2df7d622396, type: 2}
-  - {fileID: 11400000, guid: 1031d79fb81c69c41972ffbdc875bb43, type: 2}
-  - {fileID: 11400000, guid: ee4daf7721153dc418c90219c9b8a799, type: 2}
-  - {fileID: 11400000, guid: 845a9cde74d812046bd645ab9e6ec98b, type: 2}
+  - {fileID: 11400000, guid: 07c43f797312b474d9c88470ecea7f8b, type: 2}
+  - {fileID: 11400000, guid: a9b4e36378e7cb742b8577f3245dbeea, type: 2}
+  - {fileID: 11400000, guid: 5f886f63fa50ce64e8e1b531f6c057df, type: 2}
+  - {fileID: 11400000, guid: 8d3866ff441b08c40896603f9c343f34, type: 2}
+  - {fileID: 11400000, guid: 9656a18938102cd4e99f7ec8b9df3d9f, type: 2}
   presetText: {fileID: 46174689}
 --- !u!1 &1951274432
 GameObject:
@@ -1256,7 +1239,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1319,7 +1301,6 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
 --- !u!223 &2107517377
 Canvas:
   m_ObjectHideFlags: 0
@@ -1351,7 +1332,6 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1840501753}
   - {fileID: 1080804928}

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7cc83b726b41f0c4ba68dac38255a4dd, type: 3}
-  m_Name: Preset5
+  m_Name: Smoothie
   m_EditorClassIdentifier: 
-  presetName: Preset5
+  presetName: Smoothie
   csoundFileName: BasicPresetsUsage.csd
   channels:
   - type: form
@@ -41,7 +41,7 @@ MonoBehaviour:
     caption: 
     min: 10
     max: 2200
-    value: 65
+    value: 55
     skew: 1
     increment: 0.001
     options: []
@@ -51,7 +51,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 200
-    value: 20.8
+    value: 1.6
     skew: 1
     increment: 1
     options: []
@@ -61,7 +61,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.419
+    value: 0.525
     skew: 1
     increment: 0.001
     options: []
@@ -71,7 +71,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.678
+    value: 0.455
     skew: 1
     increment: 0.001
     options: []
@@ -81,7 +81,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.383
+    value: 0.387
     skew: 1
     increment: 0.001
     options: []
@@ -91,7 +91,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.847
+    value: 0.762
     skew: 1
     increment: 0.001
     options: []
@@ -101,7 +101,7 @@ MonoBehaviour:
     caption: 
     min: 1
     max: 6
-    value: 0
+    value: 2
     skew: 1
     increment: 0.01
     options:
@@ -117,7 +117,7 @@ MonoBehaviour:
     caption: 
     min: 1
     max: 6
-    value: 3
+    value: 5
     skew: 1
     increment: 0.01
     options:
@@ -133,7 +133,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 15
-    value: 3.2
+    value: 0.36
     skew: 1
     increment: 0.001
     options: []
@@ -163,7 +163,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 16000
-    value: 5154
+    value: 1256
     skew: 1
     increment: 0.001
     options: []
@@ -173,7 +173,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 16000
-    value: 276
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -183,7 +183,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 0.271
+    value: 0.126
     skew: 1
     increment: 0.001
     options: []
@@ -193,7 +193,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 0.099
+    value: 1.659
     skew: 1
     increment: 0.001
     options: []
@@ -229,7 +229,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.99
-    value: 0.344
+    value: 0.177
     skew: 1
     increment: 0.001
     options: []
@@ -239,7 +239,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 0.91
+    value: 3.18
     skew: 1
     increment: 0.001
     options: []
@@ -249,7 +249,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.042
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -259,8 +259,8 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 16.66
+    value: 0.1
     skew: 1
     increment: 0.001
     options: []
-  _drawChannels: 1
+  _drawChannels: 0
