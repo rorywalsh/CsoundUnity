@@ -15,6 +15,7 @@
 		+ [Global JSON Presets](presets.md#global-json-presets)
 	+ [Save](presets.md#save)
 	+ [Import](presets.md#import-cabbage-snaps)
+	+ [Saving / Loading presets using C#](presets.md#saving-loading-presets-using-c)
   * [CsoundUnityChild](csoundunity_child.md)
   * [Environment Variables](environment_variables.md)
   * [CsoundFileWatcher](csound_file_watcher.md)
