@@ -35,6 +35,7 @@ The *Refresh* button will scan again the selected folder searching for presets.
 
 If no folder is selected it will default to the *Assets* folder.
 
+<a name="scriptable-object-presets"></a>
 ##### Scriptable Object Presets
 
 The presets listed are the ones related with the csd that this **CsoundUnity** instance is using.  
@@ -48,6 +49,7 @@ CsoundUnityPresets come with the *.asset* extension.
 The *To JSON* button next to each preset name lets you convert that preset in the JSON format.  
 It will be saved in the same folder of the **CsoundUnityPreset** you're trying to convert.
 
+<a name="json-presets"></a>
 ##### JSON Presets
 
 The JSON presets listed are **ALL** the json files found inside the project, if no LOAD folder is specified.   
@@ -63,6 +65,7 @@ You cannot have more than one preset with the same name in the same folder.
 The *To SO* button next to each preset name lets you convert that preset into a CsoundUnityPreset asset.
 It will be saved in the same folder of the JSON you're trying to convert.
 
+<a name="global-json-presets"></a>
 ##### Global JSON Presets
 
 A global preset represents a **CsoundUnity** instance.  
@@ -81,7 +84,7 @@ You can choose to save the preset in the 3 different formats (*ScriptableObject*
 If a file with the same name is found in the same destination folder, it will ask if overwrite it or rename it (if saving as a *ScriptableObject*). If rename is chosen it will add a suffix to the name.   
 If saving as a JSON and the JSON file exists at that location, it will simply add a suffix to the name.
 
-<a name="import"></a>
+<a name="import-cabbage-snaps"></a>
 #### Import Cabbage Snaps
 
 You can import [Cabbage snaps](https://cabbageaudio.com/docs/presets/) and create CsoundUnityPresets from them.
