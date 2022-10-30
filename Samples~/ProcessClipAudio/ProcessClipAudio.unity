@@ -238,20 +238,20 @@ MonoBehaviour:
   logCsoundOutput: 0
   mute: 0
   processClipAudio: 1
-  spatialize: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   csoundScore: 
-  _csoundFileGUID: 590ee678e8561144e8e71ae329ee980f
+  environmentSettings: []
+  _csoundFileGUID: 121b5e450d8304d4a9ce04a95c56e12e
   _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\r\nform caption(\"Process Clip\")
     size(400, 300)\r\nrslider bounds(0, 0, 77, 87) channel(\"gain\") range(0, 2,
     1, 1, 0.001)  valueTextBox(1) text(\"gain\") \r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
-    -d \r\n</CsOptions>\r\n<CsInstruments>\r\n; Initialize the global variables.
-    \r\n;ksmps = 64\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\ninstr 1\r\nainL, ainR inch
-    1, 2\r\nkGain chnget \"gain\"\r\nouts ainL*kGain, ainR*kGain\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
-    Csound to run for about 7000 years...\r\nf0 z\r\ni1 0 [24*60*60]\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
-  _csoundFileName: ProcessClip.csd
-  _csoundAsset: {fileID: 102900000, guid: 590ee678e8561144e8e71ae329ee980f, type: 3}
+    -d \r\n</CsOptions>\r\n<CsInstruments>\r\nsr = 44100\r\nksmps = 10\r\nnchnls
+    = 2\r\nnchnls_i = 2\r\n\r\n0dbfs = 1\r\n\r\ninstr 1\r\nainL, ainR ins 1\r\nkGain
+    chnget \"gain\"\r\nouts ain*kGain, ain*kGain\r\nendin\r\n</CsInstruments>\r\n<CsScore>\r\nf0
+    z\r\ni1 0 [24*60*60]\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+  _csoundFileName: ProcessClipStereo.csd
+  _csoundAsset: {fileID: 102900000, guid: 121b5e450d8304d4a9ce04a95c56e12e, type: 3}
   _channels:
   - type: form
     channel: 
@@ -265,13 +265,13 @@ MonoBehaviour:
     options: []
   - type: rslider
     channel: gain
-    text: 
+    text: gain
     caption: 
     min: 0
     max: 2
     value: 1
-    skew: 0
-    increment: 0
+    skew: 1
+    increment: 0.001
     options: []
   _availableAudioChannels: []
   _drawCsoundString: 0
@@ -279,6 +279,14 @@ MonoBehaviour:
   _drawSettings: 1
   _drawChannels: 0
   _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
 --- !u!82 &1218611536
 AudioSource:
   m_ObjectHideFlags: 0

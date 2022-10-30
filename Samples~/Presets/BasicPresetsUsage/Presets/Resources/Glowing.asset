@@ -1,0 +1,266 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc83b726b41f0c4ba68dac38255a4dd, type: 3}
+  m_Name: Glowing
+  m_EditorClassIdentifier: 
+  presetName: Glowing
+  csoundFileName: BasicPresetsUsage.csd
+  channels:
+  - type: form
+    channel: 
+    text: 
+    caption: BasicPresetsUsage
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: gain
+    text: Gain
+    caption: 
+    min: 0
+    max: 1
+    value: 1
+    skew: 1
+    increment: 0.01
+    options: []
+  - type: hslider
+    channel: freq
+    text: Carrier Frequency
+    caption: 
+    min: 10
+    max: 2200
+    value: 91
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: hslider
+    channel: modFreq
+    text: Mod Frequency
+    caption: 
+    min: 0
+    max: 200
+    value: 137.3
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: hrm1
+    text: Base Frequency Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0.19
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: rslider
+    channel: hrm2
+    text: First Harmonic Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0.14
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: rslider
+    channel: hrm3
+    text: Second Harmonic Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0.239
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: rslider
+    channel: hrm4
+    text: Third Harmonic Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0.881
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: combobox
+    channel: carWaveform
+    text: sine, saw, square, triangle,impulse,noise
+    caption: 
+    min: 1
+    max: 6
+    value: 0
+    skew: 1
+    increment: 0.01
+    options:
+    - sine
+    - saw
+    - square
+    - triangle
+    - impulse
+    - noise
+  - type: combobox
+    channel: modWaveform
+    text: sine, saw, square, triangle,impulse,noise
+    caption: 
+    min: 1
+    max: 6
+    value: 1
+    skew: 1
+    increment: 0.01
+    options:
+    - sine
+    - saw
+    - square
+    - triangle
+    - impulse
+    - noise
+  - type: rslider
+    channel: modIndex
+    text: Mod Index
+    caption: 
+    min: 0
+    max: 15
+    value: 4.8
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: groupbox
+    channel: filterGroupBox
+    text: FILTER
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: checkbox
+    channel: filtOn
+    text: Filter ON
+    caption: 
+    min: 0
+    max: 0
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: filtFreq
+    text: F Freq
+    caption: 
+    min: 0
+    max: 16000
+    value: 1762
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: rslider
+    channel: filtRandFreq
+    text: F Rand Freq
+    caption: 
+    min: 0
+    max: 16000
+    value: 136
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: rslider
+    channel: filtRes
+    text: F Res
+    caption: 
+    min: 0
+    max: 1.99
+    value: 0.486
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: rslider
+    channel: filtRandRes
+    text: F Rand Res
+    caption: 
+    min: 0
+    max: 1.99
+    value: 0.04
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: checkbox
+    channel: filtLFOOn
+    text: Filter LFO ON
+    caption: 
+    min: 0
+    max: 0
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+  - type: combobox
+    channel: filtLFOShape
+    text: sine, triangles, square bi, square uni, saw, saw down
+    caption: 
+    min: 1
+    max: 6
+    value: 0
+    skew: 1
+    increment: 0.01
+    options:
+    - sine
+    - triangles
+    - squarebi
+    - squareuni
+    - saw
+    - sawdown
+  - type: rslider
+    channel: filtLFOAmp
+    text: LFO Amp
+    caption: 
+    min: 0
+    max: 0.99
+    value: 0.177
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: rslider
+    channel: filtLFOFreq
+    text: LFO Freq
+    caption: 
+    min: 0
+    max: 30
+    value: 0.07
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: rslider
+    channel: filtLFORandAmp
+    text: LFO Rand Amp
+    caption: 
+    min: 0
+    max: 1
+    value: 0
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: rslider
+    channel: filtLFORandFreq
+    text: LFO Rand Freq
+    caption: 
+    min: 0
+    max: 30
+    value: 0.1
+    skew: 1
+    increment: 0.001
+    options: []
+  _drawChannels: 0

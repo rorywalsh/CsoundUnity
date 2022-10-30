@@ -7,7 +7,7 @@ This interface would not have been possible without Richard Henninger's .NET int
 
 Contributors:
 
-Bernt Isak W�rstad
+Bernt Isak Wærstad
 Charles Berman
 Giovanni Bedetti
 Hector Centeno
@@ -31,10 +31,9 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 using System.Globalization;
+using UnityEngine.Networking;
 #if UNITY_EDITOR
 using UnityEditor;
-#endif
-#if UNITY_ANDROID
 #endif
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
@@ -61,12 +60,24 @@ public class CsoundChannelController
     [SerializeField] public float increment;
     [SerializeField] public string[] options;
 
-    public void SetRange(float uMin, float uMax, float uValue)
+    public void SetRange(float uMin, float uMax, float uValue = 0f, float uSkew = 1f, float uIncrement = 0.01f)
     {
         min = uMin;
         max = uMax;
         value = uValue;
+        skew = uSkew;
+        increment = uIncrement;
     }
+
+    public CsoundChannelController Clone()
+    {
+        return this.MemberwiseClone() as CsoundChannelController;
+    }
+
+    //public static explicit operator UnityEngine.Object(CsoundChannelController v)
+    //{
+    //    return (UnityEngine.Object)v;
+    //}
 }
 
 /// <summary>
@@ -90,6 +101,7 @@ public class EnvironmentSettings
     public string GetPath(bool runtime = false)
     {
         var path = string.Empty;
+        //Debug.Log($"EnvironmentSettings GetPath from {baseFolder}");
         switch (baseFolder)
         {
             case EnvironmentPathOrigin.PersistentDataPath:
@@ -97,6 +109,9 @@ public class EnvironmentSettings
                 break;
             case EnvironmentPathOrigin.StreamingAssets:
                 path = GetStreamingAssetsPath(platform, runtime);
+                break;
+            case EnvironmentPathOrigin.Plugins:
+                path = GetPluginsPath(platform, runtime);
                 break;
             case EnvironmentPathOrigin.Absolute:
             default:
@@ -151,14 +166,73 @@ public class EnvironmentSettings
                 res = runtime ? $"<path to executablename_Data folder>" : Application.streamingAssetsPath;
                 break;
             case SupportedPlatform.Android:
-                res = $"jar: file://{Application.dataPath}!/assets";
+                res = runtime ? $"jar:file://storage/emulated/0/Android/data/{Application.identifier}/!/assets" : Application.streamingAssetsPath;
                 break;
             case SupportedPlatform.iOS:
-                res = $"{Application.dataPath}/Raw";
+                res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Raw/" : Application.streamingAssetsPath;
                 break;
         }
         return res;
     }
+
+    private string GetPluginsPath(SupportedPlatform supportedPlatform, bool runtime)
+    {
+        //Debug.Log($"GetPluginsPath for platform: {supportedPlatform}");
+        var res = Path.Combine(Application.dataPath, "Plugins");
+        switch (supportedPlatform)
+        {
+            case SupportedPlatform.MacOS:
+                res = runtime ? $"<path to player app bundle>/Contents/Resources/Data/Plugins" : res;
+                break;
+            case SupportedPlatform.Windows:
+                res = runtime ? $"<path to executablename_Data folder>/Managed" : Path.Combine(Application.dataPath, "Managed");
+                break;
+            case SupportedPlatform.Android:
+#if UNITY_ANDROID && !UNITY_EDITOR
+                //Debug.Log("1 - GET ANDROID NATIVE LIBRARY DIR");
+                res = GetAndroidNativeLibraryDir();
+#else
+                res = runtime ? $"/data/app/<random chars>/{Application.identifier}-<random chars>/lib/arm64-v8a" : res;
+#endif
+                break;
+            case SupportedPlatform.iOS:
+                res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Plugins" : res;
+                break;
+        }
+        return res;
+    }
+
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+    public static AndroidJavaObject GetUnityActivity()
+    {
+        using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            return unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+        }
+    }
+
+    public static AndroidJavaObject GetUnityContext()
+    {
+        var activity = GetUnityActivity();
+        //Debug.Log($"2 - GetUnityContext, activity null? {activity == null}");
+        return activity.Call<AndroidJavaObject>("getApplicationContext");
+    }
+
+    public static AndroidJavaObject GetApplicationInfo()
+    {
+        var context = GetUnityContext();
+        //Debug.Log($"3 - GetApplicationInfo, context null? {context == null}");
+        return GetUnityContext().Call<AndroidJavaObject>("getApplicationInfo");
+    }
+
+    public static string GetAndroidNativeLibraryDir()
+    {
+        var info = GetApplicationInfo();
+        //Debug.Log($"4 - GetAndroidNativeLibraryDir, info null? {info == null}");
+        return info.Get<string>("nativeLibraryDir");
+    }
+#endif
 
     public string GetTypeString()
     {
@@ -183,7 +257,7 @@ public enum SupportedPlatform { MacOS, Windows, Android, iOS }
 /// The base folder where to set the Environment Variables
 /// </summary>
 [Serializable]
-public enum EnvironmentPathOrigin { PersistentDataPath, StreamingAssets, Absolute }
+public enum EnvironmentPathOrigin { PersistentDataPath, StreamingAssets, Absolute, Plugins }
 
 #endregion PUBLIC_CLASSES
 
@@ -205,7 +279,7 @@ public class CsoundUnity : MonoBehaviour
     /// <summary>
     /// The version of this package
     /// </summary>
-    public const string packageVersion = "3.3.1";
+    public const string packageVersion = "3.4.0";
 
     /// <summary>
     /// the unique guid of the csd file
@@ -307,6 +381,11 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector]
     public List<EnvironmentSettings> environmentSettings = new List<EnvironmentSettings>();
 
+    /// <summary>
+    /// The current preset name. If empty, no preset has been set.
+    /// </summary>
+    public string CurrentPreset => _currentPreset;
+    
     #endregion PUBLIC_FIELDS
 
     #region PRIVATE_FIELDS
@@ -341,12 +420,22 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector] [SerializeField] private bool _drawSettings = false;
     [HideInInspector] [SerializeField] private bool _drawChannels = false;
     [HideInInspector] [SerializeField] private bool _drawAudioChannels = false;
+    [HideInInspector] [SerializeField] private bool _drawPresets = false;
+    [HideInInspector] [SerializeField] private bool _drawPresetsLoad = false;
+    [HideInInspector] [SerializeField] private bool _drawPresetsSave = false;
+    [HideInInspector] [SerializeField] private bool _drawPresetsImport = false;
     /// <summary>
     /// If true, the path shown in the Csound Global Environments Folders inspector will be
     /// the one expected at runtime, otherwise it will show the Editor path (for desktop platform). 
     /// For mobile platforms the path will always be the same.
     /// </summary>
     [HideInInspector] [SerializeField] private bool _showRuntimeEnvironmentPath = false;
+    [HideInInspector] [SerializeField] private string _currentPreset;
+    [HideInInspector] [SerializeField] private string _currentPresetSaveFolder;
+    [HideInInspector] [SerializeField] private string _currentPresetLoadFolder;
+
+    
+
 #pragma warning restore 414
 
     private bool initialized = false;
@@ -358,6 +447,8 @@ public class CsoundUnity : MonoBehaviour
     private AudioSource audioSource;
     private Coroutine LoggingCoroutine;
     int bufferSize, numBuffers;
+
+    private const string GLOBAL_TAG = "(GLOBAL)";
 
     /// <summary>
     /// the temp buffer, ksmps sized 
@@ -448,8 +539,9 @@ public class CsoundUnity : MonoBehaviour
         Debug.Log($"CsoundUnity done init, compiledOk? {compiledOk}");
     }
 
-
     #region PUBLIC_METHODS
+
+    #region INSTANTIATION
 
     /// <summary>
     /// Returns the Csound version number times 1000 (5.00.0 = 5000).
@@ -470,6 +562,16 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
+    /// Loads all plugins from a given directory
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <returns></returns>
+    public int LoadPlugins(string dir)
+    {
+        return csound.LoadPlugins(dir);
+    }
+
+    /// <summary>
     /// Returns true if the csd file was compiled without errors.
     /// </summary>
     /// <returns></returns>
@@ -477,6 +579,8 @@ public class CsoundUnity : MonoBehaviour
     {
         return compiledOk;
     }
+
+    #endregion INSTANTIATION
 
     #region PERFORMANCE
 
@@ -770,8 +874,24 @@ public class CsoundUnity : MonoBehaviour
                         }
                         var min = float.Parse(tokens[0], CultureInfo.InvariantCulture);
                         var max = float.Parse(tokens[1], CultureInfo.InvariantCulture);
-                        var val = float.Parse(tokens[2], CultureInfo.InvariantCulture);
-                        controller.SetRange(min, max, val);
+                        var val = 0f;
+                        var skew = 1f;
+                        var increment = 1f;
+
+                        if (tokens.Length > 2)
+                        {
+                            val = float.Parse(tokens[2], CultureInfo.InvariantCulture);
+                        }
+                        if (tokens.Length > 3)
+                        {
+                            skew = float.Parse(tokens[3], CultureInfo.InvariantCulture);
+                        }
+                        if (tokens.Length > 4)
+                        {
+                            increment = float.Parse(tokens[4], CultureInfo.InvariantCulture);
+                        }
+                        // Debug.Log($"{tokens.Length}");
+                        controller.SetRange(min, max, val, skew, increment);
                     }
                 }
 
@@ -891,6 +1011,33 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets a Csound channel. Useful for setting presets at runtime. Used in connection with a chnget opcode in your Csound instrument.
+    /// </summary>
+    /// <param name="channelController"></param>
+    public void SetChannel(CsoundChannelController channelController)
+    {
+        if (_channelsIndexDict.ContainsKey(channelController.channel))
+            channels[_channelsIndexDict[channelController.channel]] = channelController;
+        if (csound == null) return;
+        csound.SetChannel(channelController.channel, channelController.value);
+    }
+
+    /// <summary>
+    /// Sets a list of Csound channels. 
+    /// </summary>
+    /// <param name="channelControllers"></param>
+    /// <param name="excludeButtons"></param>
+    public void SetChannels(List<CsoundChannelController> channelControllers, bool excludeButtons = true)
+    {
+        for (var i = 0; i < channelControllers.Count; i++)
+        {
+            if (excludeButtons && channelControllers[i].type.Contains("button")) continue;
+
+            SetChannel(channelControllers[i]);
+        }
+    }
+
+    /// <summary>
     /// Sets a string channel in Csound. Used in connection with a chnget opcode in your Csound instrument.
     /// </summary>
     /// <param name="channel"></param>
@@ -911,7 +1058,22 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// blocking method to get a list of the channels from Csound, not from the serialized list of this instance
+    /// Get a serialized CsoundChannelController
+    /// </summary>
+    /// <param name="channel">the Channel name</param>
+    /// <returns></returns>
+    public CsoundChannelController GetChannelController(string channel)
+    {
+        if (!_channelsIndexDict.ContainsKey(channel)) return null;
+        var indx = _channelsIndexDict[channel];
+        return this._channels[indx];
+    }
+    /// <summary>
+    /// Blocking method to get a list of the channels from Csound, not from the serialized list of this instance.
+    /// Provides a dictionary of all currently defined channels resulting from compilation of an orchestra
+    /// containing channel definitions.
+    /// Entries, keyed by name, are polymorphically assigned to their correct data type: control, audio, string, pvc.
+    /// <returns>A dictionary of all currently defined channels keyed by their name to its ChannelInfo</returns>
     /// </summary>
     /// <returns></returns>
     public IDictionary<string, CsoundUnityBridge.ChannelInfo> GetChannelList()
@@ -938,13 +1100,26 @@ public class CsoundUnity : MonoBehaviour
     #region TABLES
 
     /// <summary>
+    /// Creates a table with the supplied float samples.
+    /// Can be called during performance.
+    /// </summary>
+    /// <param name="tableNumber">The table number</param>
+    /// <param name="samples"></param>
+    /// <returns></returns>
+    public int CreateFloatTable(int tableNumber, float[] samples)
+    {
+        var myFlts = ConvertToMYFLT(samples);
+        return CreateTable(tableNumber, myFlts);
+    }
+
+    /// <summary>
     /// Creates a table with the supplied samples.
     /// Can be called during performance.
     /// </summary>
     /// <param name="tableNumber">The table number</param>
     /// <param name="samples"></param>
     /// <returns></returns>
-    public int CreateTable(int tableNumber, MYFLT[] samples/*, int nChannels*/)
+    public int CreateTable(int tableNumber, MYFLT[] samples)
     {
         if (samples.Length < 1) return -1;
         var resTable = CreateTableInstrument(tableNumber, samples.Length);
@@ -964,7 +1139,7 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="tableNumber">The number of the newly created table</param>
     /// <param name="tableLength">The length of the table in samples</param>
     /// <returns>0 If the table could be created</returns>
-    public int CreateTableInstrument(int tableNumber, int tableLength/*, int nChannels*/)
+    public int CreateTableInstrument(int tableNumber, int tableLength)
     {
         string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -7, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
         // Debug.Log("orc to create table: \n" + createTableInstrument);
@@ -1041,13 +1216,24 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Asynchronous version of copyTableOut
+    /// Asynchronous version of <see cref="CopyTableOut(int, out MYFLT[])">CopyTableOut</see>.
     /// </summary>
     /// <param name="table"></param>
     /// <param name="dest"></param>
     public void CopyTableOutAsync(int table, out MYFLT[] dest)
     {
         csound.TableCopyOutAsync(table, out dest);
+    }
+
+    /// <summary>
+    /// Same as <see cref="CopyTableIn(int, MYFLT[])">CopyTableIn</see> but passing a float array.
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="source"></param>
+    public void CopyFloatTableIn(int table, float[] source)
+    {
+        var myFlts = ConvertToMYFLT(source);
+        CopyTableIn(table, myFlts);
     }
 
     /// <summary>
@@ -1062,7 +1248,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Asynchronous version of copyTableOut
+    /// Asynchronous version of <see cref="CopyTableIn(int, MYFLT[])">CopyTableIn</see>
     /// </summary>
     /// <param name="table"></param>
     /// <param name="source"></param>
@@ -1119,21 +1305,36 @@ public class CsoundUnity : MonoBehaviour
     }
 #endif
 
+    /// <summary>
+    /// Fills in a provided raw CSOUND_PARAMS object with csounds current parameter settings.
+    /// This method is used internally to manage this class and is not expected to be used directly by a host program.
+    /// </summary>
+    /// <param name="oparms">a CSOUND_PARAMS structure to be filled in by csound</param>
+    /// <returns>The same parameter structure that was provided but filled in with csounds current internal contents</returns>
     public CsoundUnityBridge.CSOUND_PARAMS GetParams()
     {
         return csound.GetParams();
     }
 
+    /// <summary>
+    /// Transfers the contents of the provided raw CSOUND_PARAMS object into csound's 
+    /// internal data structues (chiefly its OPARMS structure).
+    /// This method is used internally to manage this class and is not expected to be used directly by a host program.
+    /// Most values are used and reflected in CSOUND_PARAMS.
+    /// Internally to csound, as of release 6.0.0, Heartbeat and IsComputingOpcodeWeights are ignored
+    /// and IsUsingCsdLineCounts can only be set and never reset once set.
+    /// </summary>
+    /// <param name="parms">a </param>
     public void SetParams(CsoundUnityBridge.CSOUND_PARAMS parms)
     {
         csound.SetParams(parms);
     }
 
     /// <summary>
-    /// Get Environment path
+    /// Get Environment path.
     /// </summary>
     /// <param name="envType">the type of the environment to get</param>
-    /// <returns></returns>
+    /// <returns>the corresponding value or an empty string if no such key exists</returns>
     public string GetEnv(EnvType envType)
     {
         return csound.GetEnv(envType.ToString());
@@ -1198,7 +1399,7 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// map MYFLT within one range to another
+    /// Linear remap floats within one range to another
     /// </summary>
     /// <param name="value"></param>
     /// <param name="from1"></param>
@@ -1216,80 +1417,198 @@ public class CsoundUnity : MonoBehaviour
     }
 
     /// <summary>
-    /// Get Samples from a path, specifying the origin of the path. This will return an interleaved
-    /// array of samples, with the first index used to specify the number of channels. This array can
-    /// be passed to the CsoundUnity.CreateTable() method for processing by Csound. Use async versions to
-    /// to load very large files.
-    /// 
+    /// Remap a value to a normalized (0-1) value specifying its expected "from" and "to" values, 
+    /// and the skew of the exponential curve of the remapping. 
+    /// If skew is 1 the remapping is linear, if 0.5 it's exponential.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <param name="skew"></param>
+    /// <returns></returns>
+    public static float RemapTo0to1(float value, float from, float to, float skew = 1f)
+    {
+        if ((to - from) == 0) return 0;
+
+        var proportion = Mathf.Clamp01((value - from) / (to - from));
+
+        if (skew == 1)
+            return proportion;
+
+        return Mathf.Pow(proportion, skew);
+    }
+
+
+    /// <summary>
+    /// Remap a normalized (0-1) value to a value in another range, specifying its "from" and "to" values, 
+    /// and the skew of the exponential curve of the remapping. 
+    /// If skew is 1 the remapping is linear, if 0.5 it's exponential.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <param name="skew"></param>
+    /// <returns></returns>
+    public static float RemapFrom0to1(float value, float from, float to, float skew = 1f)
+    {
+        if (skew == 0) return to;
+
+        var proportion = Mathf.Clamp01(value);
+
+        if (skew != 1 && proportion > 0)
+            proportion = Mathf.Exp(Mathf.Log(proportion) / skew);
+
+        return from + (to - from) * proportion;
+    }
+
+    /// <summary>
+    /// Utility method to create an array of MYFLTs from an array of floats
+    /// </summary>
+    /// <param name="samples"></param>
+    /// <returns></returns>
+    public static MYFLT[] ConvertToMYFLT(float[] samples)
+    {
+        if (samples == null || samples.Length == 0) return new MYFLT[0];
+        var myFLT = new MYFLT[samples.Length];
+        for (var i = 0; i < myFLT.Length; i++)
+        {
+            myFLT[i] = (MYFLT)samples[i];
+        }
+        return myFLT;
+    }
+
+    /// <summary>
+    /// Utility method to create an array of floats from an array of MYFLTs
+    /// </summary>
+    /// <param name="samples"></param>
+    /// <returns></returns>
+    public static float[] ConvertToFloat(MYFLT[] samples)
+    {
+        if (samples == null || samples.Length == 0) return new float[0];
+        var flt = new float[samples.Length];
+        for (var i = 0; i < flt.Length; i++)
+        {
+            flt[i] = (float)samples[i];
+        }
+        return flt;
+    }
+
+    /// <summary>
+    /// Get an array of MYFLTs in from the AudioClip source from the Resources folder.
+    /// The first index in the returned array will have its value set as 2 like the number of channels.
+    /// See <see cref="GetSamples">GetSamples</see>
+    /// </summary>
+    /// <param name="source">The name of the source to retrieve</param>
+    /// <returns></returns>
+    public static MYFLT[] GetStereoSamples(string source)
+    {
+        return GetSamples(source, 0, true);
+    }
+
+    /// <summary>
+    /// Get an array of floats from the AudioClip source from the Resources folder.
+    /// The first index in the returned array will have its value set as 2 like the number of channels.
+    /// See <see cref="GetSamples">GetSamples</see>
+    /// </summary>
+    /// <param name="source">The name of the source to retrieve</param>
+    /// <returns></returns>
+    public static float[] GetStereoFloatSamples(string source)
+    {
+        return ConvertToFloat(GetSamples(source, 0, true));
+    }
+
+    /// <summary>
+    /// Get an array of MYFLTs from the AudioClip source from the Resources folder. 
+    /// No information about the channels will be added in the first element of the returned array.
+    /// See <see cref="GetSamples">GetSamples</see>
+    /// </summary>
+    /// <param name="source">The name of the source to retrieve</param>
+    /// <returns></returns>
+    public static MYFLT[] GetMonoSamples(string source, int channelNumber)
+    {
+        return GetSamples(source, channelNumber, false);
+    }
+
+    /// <summary>
+    /// Get an array of floats from the AudioClip source from the Resources folder. 
+    /// No information about the channels will be added in the first element of the returned array.
+    /// See <see cref="GetSamples">GetSamples</see>
+    /// </summary>
+    /// <param name="source">The name of the source to retrieve</param>
+    /// <returns></returns>
+    public static float[] GetMonoFloatSamples(string source, int channelNumber)
+    {
+        return ConvertToFloat(GetSamples(source, channelNumber, false));
+    }
+
+    /// <summary>
+    /// Get Samples from a "Resources" path.
+    /// This will return an interleaved array of samples, with the first index used to specify the number of channels. 
+    /// This array can be passed to the CsoundUnity.CreateTable() method for processing by Csound. 
+    /// Use async version to load very large files, or load from external paths
     /// Note: You need to be careful that your AudioClips match the SR of the 
     /// project. If not, you will hear some re-pitching issues with your audio when
     /// you play it back with a table reader opcode. 
     /// </summary>
-    /// <param name="source"></param>
-    /// <param name="origin"></param>
-    /// <param name="async"></param>
+    /// <param name="source">The path of the audio source relative to a "Resources" folder</param>
+    /// <param name="channelNumber">The channel to read from the source</param>
+    /// <param name="writeChannelData"></param>
     /// <returns></returns>
-    /// 
-    public static MYFLT[] GetStereoSamples(string source, SamplesOrigin origin)
-    {
-        return GetSamples(source, origin, 0, true);
-    }
-
-    public static MYFLT[] GetMonoSamples(string source, SamplesOrigin origin, int channelNumber)
-    {
-        return GetSamples(source, origin, channelNumber, true);
-    }
-    public static MYFLT[] GetSamples(string source, SamplesOrigin origin, int channelNumber = 1, bool writeChannelData = false)
+    public static MYFLT[] GetSamples(string source, int channelNumber = 1, bool writeChannelData = false)
     {
         MYFLT[] res = new MYFLT[0];
-        switch (origin)
+
+        var src = Resources.Load<AudioClip>(source);
+        if (src == null)
         {
-            case SamplesOrigin.Resources:
-                var src = Resources.Load<AudioClip>(source);
-                if (src == null)
-                {
-                    res = null;
-                    break;
-                }
-                var data = new float[src.samples * src.channels];
-                src.GetData(data, 0);
+            Debug.LogError($"Couldn't load samples from AudioClip {source}");
+            return res;
+        }
 
-                if (writeChannelData)
-                {
-                    res = new MYFLT[src.samples * src.channels + 1];
-                    res[0] = src.channels;
-                    var s = 1;
-                    for (var i = 0; i < data.Length; i++)
-                    {
-                        res[s] = data[i];
-                        s++;
-                    }
-                }
-                else
-                {
-                    var s = 0;
-                    res = new MYFLT[src.samples];
+        var data = new float[src.samples * src.channels];
+        src.GetData(data, 0);
 
-                    for (var i = 0; i < data.Length; i += src.channels, s++)
-                    {
-                        res[s] = data[i + (channelNumber - 1)];
-                    }
-                }
-                break;
-            case SamplesOrigin.StreamingAssets:
-                Debug.LogWarning("Not implemented yet");
-                break;
-            case SamplesOrigin.Absolute:
-                Debug.LogWarning("Not implemented yet");
-                break;
+        if (writeChannelData)
+        {
+            res = new MYFLT[src.samples * src.channels + 1];
+            res[0] = src.channels;
+            var s = 1;
+            for (var i = 0; i < data.Length; i++)
+            {
+                res[s] = data[i];
+                s++;
+            }
+        }
+        else
+        {
+            var s = 0;
+            res = new MYFLT[src.samples];
+
+            for (var i = 0; i < data.Length; i += src.channels, s++)
+            {
+                res[s] = data[i + (channelNumber - 1)];
+            }
         }
 
         return res;
     }
 
     /// <summary>
-    /// Async version of GetSamples
-    /// example of usage:
+    /// Same as <see cref="GetSamples">GetSamples</see> but it will return a float array.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="channelNumber"></param>
+    /// <param name="writeChannelData"></param>
+    /// <returns></returns>
+    public static float[] GetFloatSamples(string source, int channelNumber = 1, bool writeChannelData = false)
+    {
+        return ConvertToFloat(GetSamples(source, channelNumber, writeChannelData));
+    }
+
+    /// <summary>
+    /// Async version of <see cref="GetSamples">GetSamples</see>
+    /// <para>
+    /// Example of usage:
     /// <code>
     /// yield return CsoundUnity.GetSamples(source.name, CsoundUnity.SamplesOrigin.Resources, (samples) =>
     /// {
@@ -1297,6 +1616,7 @@ public class CsoundUnity : MonoBehaviour
     ///     csound.CreateTable(100, samples);
     /// });
     /// </code>
+    /// </para>
     /// </summary>
     /// <param name="source">the name of the AudioClip to load</param>
     /// <param name="origin">the origin of the path</param>
@@ -1307,7 +1627,6 @@ public class CsoundUnity : MonoBehaviour
         switch (origin)
         {
             case SamplesOrigin.Resources:
-                //var src = Resources.Load<AudioClip>(source);
                 var req = Resources.LoadAsync<AudioClip>(source);
 
                 while (!req.isDone)
@@ -1320,25 +1639,96 @@ public class CsoundUnity : MonoBehaviour
                     onSamplesLoaded?.Invoke(null);
                     yield break;
                 }
-                //Debug.Log("src.samples: " + samples);
-                var ac = ((AudioClip)req.asset);
-                var data = new float[samples * ac.channels];
-                ac.GetData(data, 0);
-                MYFLT[] res = new MYFLT[samples * ac.channels];
-                var s = 0;
-                foreach (var d in data)
-                {
-                    res[s] = (MYFLT)d;
-                    s++;
-                }
-                onSamplesLoaded?.Invoke(res);
+                onSamplesLoaded?.Invoke(GetSamples((AudioClip)req.asset));
                 break;
             case SamplesOrigin.StreamingAssets:
-                Debug.LogWarning("Not implemented yet");
+                var path = Path.Combine(Application.streamingAssetsPath, source);
+                yield return LoadingClip(path, (clip) =>
+                {
+                    onSamplesLoaded?.Invoke(GetSamples(clip));
+                });
                 break;
             case SamplesOrigin.Absolute:
-                Debug.LogWarning("Not implemented yet");
+                yield return LoadingClip(source, (clip) =>
+                {
+                    onSamplesLoaded?.Invoke(GetSamples(clip));
+                });
                 break;
+        }
+    }
+
+    /// <summary>
+    /// Get samples from an AudioClip as a MYFLT array.
+    /// </summary>
+    /// <param name="audioClip"></param>
+    /// <returns></returns>
+    public static MYFLT[] GetSamples(AudioClip audioClip)
+    {
+        var data = new float[audioClip.samples * audioClip.channels];
+        audioClip.GetData(data, 0);
+        MYFLT[] res = new MYFLT[data.Length];
+        var s = 0;
+        foreach (var d in data)
+        {
+            res[s] = (MYFLT)d;
+            s++;
+        }
+        return res;
+    }
+
+    static IEnumerator LoadingClip(string path, Action<AudioClip> onEnd)
+    {
+        var ext = Path.GetExtension(path);
+        AudioType type;
+
+        switch (ext)
+        {
+            case "mp3":
+            case "MP3": type = AudioType.MPEG; break;
+            case "ogg":
+            case "OGG": type = AudioType.OGGVORBIS; break;
+            case "wav":
+            case "WAV":
+            default: type = AudioType.WAV; break;
+        }
+
+#if UNITY_ANDROID
+        path = "file://" + path;
+#elif UNITY_IPHONE
+        path = "file:///" + path;
+#endif
+
+        using (var req = UnityWebRequestMultimedia.GetAudioClip(path, type))
+        {
+            yield return req.SendWebRequest();
+
+#if UNITY_2020_1_OR_NEWER
+            if (req.result == UnityWebRequest.Result.ConnectionError ||
+                req.result == UnityWebRequest.Result.DataProcessingError ||
+                req.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.LogError($"Couldn't load file at path: {path} \n{req.error}");
+                onEnd?.Invoke(null);
+                yield break;
+            }
+#else
+            if (req.isHttpError || req.isNetworkError)
+            {
+                Debug.LogError($"Couldn't load file at path: {path} \n{req.error}");
+                onEnd?.Invoke(null);
+                yield break;
+            }
+#endif
+            var clip = DownloadHandlerAudioClip.GetContent(req);
+
+            if (clip == null)
+            {
+                Debug.LogError("The loaded clip is null!");
+                yield break;
+            }
+
+            clip.name = Path.GetFileName(path);
+            onEnd?.Invoke(clip);
         }
     }
 
@@ -1360,6 +1750,605 @@ public class CsoundUnity : MonoBehaviour
     {
         csound.Cleanup();
     }
+
+    #region PRESETS
+
+    /// <summary>
+    /// Create a CsoundUnityPreset from a presetName, csoundFileName and a list of CsoundChannelControllers
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="csoundFileName"></param>
+    /// <param name="channels"></param>
+    /// <returns></returns>
+    public static CsoundUnityPreset CreatePreset(string presetName, string csoundFileName, List<CsoundChannelController> channels)
+    {
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+        preset.name = preset.presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+        preset.csoundFileName = csoundFileName;
+        preset.channels = new List<CsoundChannelController>();
+        foreach (var chan in channels)
+        {
+            var newChan = chan.Clone();
+            preset.channels.Add(newChan);
+        }
+        return preset;
+    }
+
+    /// <summary>
+    /// Create a CsoundUnityPreset from a presetName and presetData.
+    /// <para>PresetData should be a CsoundUnityPreset in the JSON format.</para>
+    /// <para>It will use the presetName parameter if not empty, 
+    /// if presetName is empty it will use preset.presetName, 
+    /// if also preset.presetName is empty it will use "CsoundUnityPreset" as a default name.
+    /// </para>
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="presetData"></param>
+    /// <returns></returns>
+    public static CsoundUnityPreset CreatePreset(string presetName, string presetData)
+    {
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+
+        // try and create a CsoundUnityPreset from presetData
+        try
+        {
+            JsonUtility.FromJsonOverwrite(presetData, preset);
+        }
+        catch (ArgumentException ex)
+        {
+            Debug.LogError($"Couldn't set Preset {presetName}, {ex.Message}");
+            return null;
+        }
+        preset.name = preset.presetName = string.IsNullOrWhiteSpace(presetName) ?
+            string.IsNullOrWhiteSpace(preset.presetName) ?
+                "CsoundUnityPreset" : preset.presetName : presetName;
+
+        return preset;
+    }
+
+    /// <summary>
+    /// Write a CsoundUnityPreset at the specified path inside the Assets folder.
+    /// You can pass a full path, the Assets folder path will be extracted.
+    /// </summary>
+    /// <param name="preset"></param>
+    /// <param name="path"></param>
+    public static void WritePreset(CsoundUnityPreset preset, string path)
+    {
+#if UNITY_EDITOR
+        // create target directory if it doesn't exist, defaulting to "Assets"
+        if (string.IsNullOrWhiteSpace(path) || !path.Contains("Assets"))
+        {
+            Debug.LogWarning("CsoundUnityPreset scriptable object cannot be created outside of the project folder, " +
+                "defaulting to 'Assets'. Use the JSON format to save it outside of the Application.dataPath folder.");
+            path = Application.dataPath;
+        }
+
+        // convert to a path inside the project
+        var assetsIndex = path.IndexOf("Assets");
+
+        if (assetsIndex < "Assets".Length)
+        {
+            Debug.LogError("Error, couldn't find the Assets folder!");
+            return;
+        }
+
+        path = path.Substring(assetsIndex, path.Length - assetsIndex);
+
+        if (!File.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        var fullPath = Path.Combine(path, $"{preset.presetName}.asset");//path + $"{preset.presetName}.asset";//
+        if (AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(fullPath) != null)
+        {
+            var assetLength = ".asset".Length;
+            var basePath = $"{fullPath.Substring(0, fullPath.Length - assetLength)}";
+            var baseName = preset.presetName;
+            var overwriteAction = new Action(() =>
+            {
+                AssetDatabase.DeleteAsset(fullPath);
+                AssetDatabase.CreateAsset(preset, fullPath);
+                Debug.Log($"Overwriting CsoundUnityPreset at path {fullPath}");
+            });
+            var renameAction = new Action(() =>
+            {
+                var count = 0;
+                while (AssetDatabase.LoadAssetAtPath<CsoundUnityPreset>(fullPath) != null)
+                {
+                    preset.presetName = $"{baseName}_{count}";
+                    fullPath = $"{basePath}_{count}.asset";
+                    count++;
+                }
+
+                Debug.Log($"Saving CsoundUnityPreset at path {fullPath}");
+                AssetDatabase.CreateAsset(preset, fullPath);
+            });
+
+            var message = $"CsoundUnityPreset at {fullPath} already exists, overwrite or rename?";
+            var res = EditorUtility.DisplayDialogComplex("Overwrite?", message, "Overwrite", "Cancel", "Rename");
+            switch (res)
+            {
+                case 0:
+                    overwriteAction.Invoke();
+                    break;
+                case 1:
+                    // do nothing if cancel
+                    break;
+                case 2:
+                    renameAction.Invoke();
+                    break;
+            }
+        }
+        else
+        {
+            Debug.Log($"Creating new CsoundUnityPreset at {fullPath}");
+            AssetDatabase.CreateAsset(preset, fullPath);
+        }
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+#endif
+    }
+
+    /// <summary>
+    /// Save a CsoundUnityPreset of this CsoundUnity instance at the specified path, using the specified presetName.
+    /// The current csoundFileName and list of CsoundChannelControllers will be saved in the preset.
+    /// If no presetName is given, a default one will be used.
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="path"></param>
+    public void SavePresetAsScriptableObject(string presetName, string path = null)
+    {
+#if UNITY_EDITOR
+        var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
+        WritePreset(preset, path);
+#endif
+    }
+
+    /// <summary>
+    /// Save the specified CsoundUnityPreset as JSON, at the specified path.
+    /// If a file exists at the specified path, it will be overwritten if overwriteIfExisting is true.
+    /// </summary>
+    /// <param name="preset"></param>
+    /// <param name="path"></param>
+    /// <param name="overwriteIfExisting"></param>
+    public static void SavePresetAsJSON(CsoundUnityPreset preset, string path = null, bool overwriteIfExisting = false)
+    {
+        var fullPath = CheckPathForExistence(path, preset.presetName, overwriteIfExisting);
+        var presetData = JsonUtility.ToJson(preset, true);
+        try
+        {
+            Debug.Log($"Saving JSON preset at {fullPath}");
+            File.WriteAllText($"{fullPath}", presetData);
+        }
+        catch (IOException ex)
+        {
+            Debug.Log(ex.Message);
+        }
+#if UNITY_EDITOR
+        AssetDatabase.Refresh();
+#endif
+    }
+
+    /// <summary>
+    /// Save a preset as JSON from a list of CsoundChannelController, specifying the related CsoundFileName and the presetName.
+    /// See <see cref="SavePresetAsJSON(CsoundUnityPreset, string, bool)">SavePresetAsJSON(CsoundUnityPreset, string, bool)</see>
+    /// </summary>
+    /// <param name="channels"></param>
+    /// <param name="csoundFileName"></param>
+    /// <param name="presetName"></param>
+    /// <param name="path"></param>
+    /// <param name="overwriteIfExisting"></param>
+    public static void SavePresetAsJSON(List<CsoundChannelController> channels, string csoundFileName, string presetName, string path = null, bool overwriteIfExisting = false)
+    {
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+        preset.channels = channels;
+        presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+        preset.presetName = presetName;
+        preset.csoundFileName = csoundFileName;
+        SavePresetAsJSON(preset, path, overwriteIfExisting);
+    }
+
+    /// <summary>
+    /// Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this CsoundUnity instance.
+    /// See <see cref="SavePresetAsJSON(CsoundUnityPreset, string, bool)">SavePresetAsJSON(CsoundUnityPreset, string, bool)</see>
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="path"></param>
+    /// <param name="overwriteIfExisting"></param>
+    public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
+    {
+        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+        preset.channels = this.channels;
+        presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+        preset.presetName = presetName;
+        preset.csoundFileName = this.csoundFileName;
+        SavePresetAsJSON(preset, path, overwriteIfExisting);
+    }
+
+    /// <summary>
+    /// Save a serialized copy of this CsoundUnity instance.
+    /// Similar behaviour as saving a Unity Preset from the inspector of the CsoundUnity component, but this can be used at runtime.
+    /// </summary>
+    /// <param name="presetName"></param>
+    public void SaveGlobalPreset(string presetName, string path = null, bool overwriteIfExisting = false)
+    {
+        var presetData = JsonUtility.ToJson(this, true);
+        try
+        {
+            var name = $"{presetName} {GLOBAL_TAG}";
+            var fullPath = CheckPathForExistence(path, name, overwriteIfExisting);
+            Debug.Log($"Saving global preset at {fullPath}");
+            File.WriteAllText(fullPath, presetData);
+        }
+        catch (IOException ex)
+        {
+            Debug.Log(ex.Message);
+        }
+#if UNITY_EDITOR
+        AssetDatabase.Refresh();
+#endif
+    }
+
+    /// <summary>
+    /// Convert a JSON preset into a Scriptable Object preset to be written at the specified path.
+    /// If path is empty the converted preset will be saved inside the Assets folder.
+    /// </summary>
+    /// <param name="path"></param>
+    public void ConvertPresetToScriptableObject(string path, string destination)
+    {
+#if UNITY_EDITOR
+        //Debug.Log($"ConvertPresetToScriptableObject at path: {path}, to dest: {destination}");
+        LoadPreset(path, (preset) =>
+        {
+            //Debug.Log($"Loaded Preset Name: {preset.presetName}");
+            WritePreset(preset, destination);
+        });
+#endif
+    }
+
+    /// <summary>
+    /// Set a CsoundUnityPreset to this CsoundUnity instance using a presetName and presetData.
+    /// The set preset will be returned.
+    /// <para>Preset data should represent a CsoundUnityPreset in JSON format.</para>
+    /// If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
+    /// the preset will not be set and an error will be logged.
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="presetData"></param>
+    /// <returns></returns>
+    public CsoundUnityPreset SetPreset(string presetName, string presetData)
+    {
+        var preset = CreatePreset(presetName, presetData);
+        SetPreset(preset);
+        return preset;
+    }
+
+    /// <summary>
+    /// Set a CsoundUnityPreset to this CsoundUnity instance using presetData. 
+    /// <para>The set preset will be returned.
+    /// The name of the preset will be the one found inside presetData, if not empty.
+    /// Otherwise a default presetName will be used.</para>
+    /// <para>Preset data should represent a CsoundUnityPreset in JSON format.</para>
+    /// If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
+    /// the preset will not be set and an error will be logged.
+    /// </summary>
+    /// <param name="presetData"></param>
+    /// <returns></returns>
+    public CsoundUnityPreset SetPreset(string presetData)
+    {
+        return SetPreset("", presetData);
+    }
+
+    /// <summary>
+    /// Set a CsoundUnityPreset to this CsoundUnity instance.
+    /// <para>If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
+    /// the preset will not be set and an error will be logged.</para>
+    /// </summary>
+    /// <param name="preset"></param>
+    public void SetPreset(CsoundUnityPreset preset)
+    {
+        if (this.csoundFileName != preset.csoundFileName)
+        {
+            Debug.LogError($"Couldn't set preset {preset.presetName} to this CsoundUnity instance {this.name}, " +
+                $"this instance uses csd: {this.csoundFileName}, the preset was saved with csd: {preset.csoundFileName} instead");
+            return;
+        }
+        if (preset == null)
+        {
+            Debug.LogError("Couldn't load a null CsoundUnityPreset!");
+        }
+
+        _currentPreset = preset.presetName;
+        SetChannels(preset.channels, true);
+    }
+
+    /// <summary>
+    /// Set a global preset to this CsoundUnity instance using a presetName and presetData.
+    /// <para>Preset data should represent a CsoundUnity instance in JSON format.</para>
+    /// <para>This overrides the current content of this CsoundUnity instance.</para>
+    /// This could have unintended consequences in certain situations. 
+    /// You could need to disable this CsoundUnity GameObject and enable it again to restore the Csound internal state.
+    /// <para>This updated CsoundUnity instance will be returned.</para>
+    /// </summary>
+    /// <param name="presetName"></param>
+    /// <param name="presetData"></param>
+    /// <returns></returns>
+    public CsoundUnity SetGlobalPreset(string presetName, string presetData)
+    {
+        JsonUtility.FromJsonOverwrite(presetData, this);
+        // update the serialized channels 
+        SetChannels(this.channels, true);
+        var current = string.IsNullOrWhiteSpace(presetName) ? this._currentPreset : presetName;
+        _currentPreset = $"{current} {GLOBAL_TAG}";
+        return this;
+    }
+
+    /// <summary>
+    /// Loads a preset from a JSON file. 
+    /// The JSON file should represent a CsoundUnityPreset.
+    /// <para>This doesn't set the preset. </para>
+    /// You should use the Action to get the reference of the loaded preset.
+    /// This is needed because of the async nature of this method, that uses a WebRequest on Android and iOS.
+    /// <para>
+    /// Example of usage:
+    /// 
+    /// <code>
+    /// LoadPreset("myPath/presetName.json", (loadedPreset) => 
+    /// {
+    ///     SetPreset(loadedPreset);
+    /// });
+    /// </code>
+    /// </para>
+    /// </summary>
+    /// <param name="path">The path must point to an existing JSON file</param>
+    public void LoadPreset(string path, Action<CsoundUnityPreset> onPresetLoaded = null)
+    {
+        var presetName = Path.ChangeExtension(Path.GetFileName(path), null);
+
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+        StartCoroutine(LoadingData(path, (d) =>
+        {
+            if (d == null)
+            {
+                onPresetLoaded?.Invoke(null);
+            }
+            var preset = CreatePreset(presetName, d);
+            onPresetLoaded?.Invoke(preset);
+        }));
+#else
+        if (!File.Exists(path))
+        {
+            Debug.LogError($"Preset JSON not found at path {path}");
+            return;
+        }
+        var data = File.ReadAllText(path);
+        var preset = CreatePreset(presetName, data);
+        if (preset == null)
+        {
+            Debug.LogError("Couldn't create preset from path: {path}");
+            onPresetLoaded?.Invoke(null);
+            return;
+        }
+        onPresetLoaded?.Invoke(preset);
+#endif
+    }
+
+    /// <summary>
+    /// Load a global preset on this CsoundUnity instance from a JSON file found at path. 
+    /// The JSON file should represent a Global Preset, ie a complete CsoundUnity instance.
+    /// <para>This also sets the global preset, overriding the current content of this CsoundUnity instance.</para>
+    /// This could have unintended consequences in certain situations. 
+    /// You could need to disable this CsoundUnity GameObject and enable it again to restore the Csound internal state.
+    /// </summary>
+    /// <param name="path">The path must point to an existing JSON file</param>
+    public void LoadGlobalPreset(string path)
+    {
+        var presetName = Path.GetFileName(path);
+
+#if UNITY_ANDROID || UNITY_IOS
+        StartCoroutine(LoadingData(path, (d) =>
+        {
+            SetGlobalPreset(presetName, d);
+        }));
+#else
+        if (!File.Exists(path))
+        {
+            Debug.LogError($"Global Preset JSON not found at path {path}");
+            return;
+        }
+        var data = File.ReadAllText(path);
+        SetGlobalPreset(presetName, data);
+#endif
+    }
+
+    /// <summary>
+    /// Parse a Cabbage Snap and return a list of CsoundUnityPresets. 
+    /// </summary>
+    /// <param name="csdPath"></param>
+    /// <param name="snapPath"></param>
+    /// <returns></returns>
+    public static List<CsoundUnityPreset> ParseSnap(string csdPath, string snapPath)
+    {
+        //Debug.Log($"Parse snap: csdPath: {csdPath}, snapPath: {snapPath}");
+
+        var snap = File.ReadAllText(snapPath);
+        var snapStart = snap.IndexOf("{");
+        var snapEnd = snap.LastIndexOf("}");
+        var presets = snap.Substring(snapStart + 1, snapEnd - snapStart - 2);
+        var csdName = Path.GetFileName(csdPath);
+
+        //Debug.Log($"presets: {presets}");
+        var parsedPresets = ParsePresets(csdName, presets);
+        var originalChannels = ParseCsdFile(csdPath);
+        if (originalChannels == null || originalChannels.Count == 0)
+        {
+            if (originalChannels == null || originalChannels.Count == 0)
+            {
+                Debug.LogWarning($"Couldn't fix preset channels for snap {snapPath}, csd path: {csdPath}, preset channels will not be visible on Editor, " +
+                    $"but you should still be able to use them. Be aware that Comboboxes will be broken. " +
+                    $"Please ensure that a '.csd' file with the same name of the '.snaps' file is present at the same location.");
+                return parsedPresets;
+            }
+        }
+        foreach (var preset in parsedPresets)
+        {
+            FixPresetChannels(originalChannels, preset.channels);
+        }
+        Debug.Log($"originalChannels: {originalChannels.Count}");
+        return parsedPresets;
+    }
+
+    private static List<CsoundUnityPreset> ParsePresets(string snapName, string presets)
+    {
+        var parsedPresets = new List<CsoundUnityPreset>();
+        var splitPresets = presets.Split(new string[] { "}," }, StringSplitOptions.None);
+
+        foreach (var preset in splitPresets)
+        {
+            //Debug.Log($"--> preset: {preset}");
+            parsedPresets.Add(ParsePreset(snapName, preset));
+        }
+
+        //foreach (var preset in parsedPresets)
+        //{
+        //    Debug.Log($"<color=green>Preset: {preset.presetName}, csd: {preset.csoundFileName}, num channels: {preset.channels.Count}</color>");
+        //    foreach (var channel in preset.channels)
+        //    {
+        //        Debug.Log($"<color=orange>Channel: {channel.channel} = {channel.value}</color>");
+        //    }
+        //}
+        return parsedPresets;
+    }
+
+    private static CsoundUnityPreset ParsePreset(string snapName, string preset)
+    {
+        var presetNameStart = preset.IndexOf("\"");
+        var subPreset = preset.Substring(presetNameStart + 1, preset.Length - presetNameStart - 1);
+        //Debug.Log($"SubPreset: {subPreset}");
+        var presetNameEnd = subPreset.IndexOf("\"");
+        var presetName = subPreset.Substring(0, presetNameEnd);
+        //Debug.Log($"--> presetName: {presetName}");
+        var presetContentStart = preset.IndexOf("{");
+        var presetContent = preset.Substring(presetContentStart + 1, preset.Length - presetContentStart - 1);
+        //Debug.Log($"presetContent: {presetContent}");
+        var splitPresetContent = presetContent.Split(new string[] { "," }, StringSplitOptions.None);
+        var presetChannels = new List<CsoundChannelController>();
+        foreach (var chan in splitPresetContent)
+        {
+            //Debug.Log($"chan: {chan}");
+            presetChannels.Add(ParseChannel(chan).Clone());
+        }
+
+        return CreatePreset(presetName, snapName, presetChannels);
+    }
+
+    private static CsoundChannelController ParseChannel(string chan)
+    {
+        var split = chan.Split(new string[] { ":" }, StringSplitOptions.None);
+        var chanName = split[0];//.Replace('"', new char());
+        var chanValue = split[1];
+        //Debug.Log($"Channel Name: {chanName}, Value: {chanValue}");
+        var cleanChanName = chanName.Replace("\"", "").Trim(); //Trim(new char[] { '"' });
+        float.TryParse(chanValue, out float chanValueFloat);
+        //Debug.Log($"Clean chan name: {cleanChanName}, float value: {chanValueFloat}");
+        var cc = new CsoundChannelController()
+        {
+            channel = cleanChanName,
+            value = chanValueFloat
+        };
+        //Debug.Log($"Created channel controller: {cc.channel}, value: {cc.value}");
+        return cc;
+    }
+
+    private static void FixPresetChannels(List<CsoundChannelController> originalChannels, List<CsoundChannelController> channelsToFix)
+    {
+        if (originalChannels == null || originalChannels.Count == 0)
+        {
+            Debug.LogError("Couldn't fix preset channels, aborting");
+            return;
+        }
+
+        foreach (var chanToFix in channelsToFix)
+        {
+            foreach (var chan in originalChannels)
+            {
+                if (chan.channel == chanToFix.channel)
+                {
+                    // channel and value come from the Cabbage snap
+                    // but not all the other fields
+                    // set all the missing fields
+                    chanToFix.caption = chan.caption;
+                    chanToFix.increment = chan.increment;
+                    chanToFix.max = chan.max;
+                    chanToFix.min = chan.min;
+                    chanToFix.options = chan.options;
+                    chanToFix.skew = chan.skew;
+                    chanToFix.text = chan.text;
+                    chanToFix.type = chan.type;
+
+                    // also fix the combobox index?
+                    if (chanToFix.type.Equals("combobox"))
+                    {
+                        chanToFix.value -= 1;
+                    }
+                }
+            }
+        }
+    }
+
+    static IEnumerator LoadingData(string path, Action<string> onDataLoaded)
+    {
+        Debug.Log($"Loading JSON data from path: {path}");
+        using (var request = UnityWebRequest.Get(path))
+        {
+            request.downloadHandler = new DownloadHandlerBuffer();
+            yield return request.SendWebRequest();
+            if (request.isNetworkError || request.isHttpError)
+            {
+                Debug.Log($"Couldn't load data at path: {path}: {request.error}");
+                onDataLoaded?.Invoke(null);
+                yield break;
+            }
+            var data = request.downloadHandler.text;
+            onDataLoaded?.Invoke(data);
+        }
+    }
+
+    private static string CheckPathForExistence(string path, string presetName, bool overwriteIfExisting)
+    {
+        path = string.IsNullOrWhiteSpace(path) ?
+            Application.persistentDataPath
+            : path;
+        if (!char.IsSeparator(path[path.Length - 1]))
+        {
+            path = $"{path}/";
+        }
+
+        if (!Directory.Exists(path))
+        {
+            try
+            {
+                Directory.CreateDirectory(path);
+            }
+            catch (IOException ex)
+            {
+                Debug.LogError($"Couldn't create folder at: {path}, defaulting to {Application.persistentDataPath} {ex.Message}");
+                path = Application.persistentDataPath;
+            }
+        }
+
+        var fullPath = Path.Combine(path, presetName + ".json");
+
+        var count = 0;
+        while (File.Exists(fullPath) && !overwriteIfExisting)
+        {
+            fullPath = Path.Combine(path, $"{presetName}_{count++}.json");
+        }
+        return fullPath;
+    }
+
+    #endregion PRESETS
 
     #endregion UTILITIES
 
@@ -1470,9 +2459,9 @@ public class CsoundUnity : MonoBehaviour
 
     /// <summary>
     /// Where the samples to load come from:
-    /// the Resources folder
-    /// the StreamingAssets folder
-    /// An absolute path, can be external of the Unity Project
+    /// <para>the Resources folder</para>
+    /// <para>the StreamingAssets folder</para>
+    /// <para>An absolute path, can be external of the Unity Project</para>
     /// </summary>
     public enum SamplesOrigin { Resources, StreamingAssets, Absolute } // TODO Add PersistentDataPath and URL
 

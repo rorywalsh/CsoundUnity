@@ -1,3 +1,17 @@
+## [3.4.0] - 2022-10-30
+
+- added CsoundUnityPresets!
+- added Plugin EnvironmentSetting to be able to LoadPlugins on Android
+- added LoadPlugins method
+- added the possibility to edit multiple CsoundUnity components at once
+- added skew and increment to ChannelControllers for future implementation on Editor sliders
+- added lots of utilities methods
+- updated Csound libraries to Csound 6.18
+- updated GetSamples method to not require the origin
+- updated Samples
+- fix for CsoundUnityWatcher enabling CsoundUnity instance when it's disabled
+- fix for comboboxes and controller text not being set
+
 ## [3.3.1] - 2022-04-11
 
 - fix for LinkButton not available in Unity versions < 2021.1

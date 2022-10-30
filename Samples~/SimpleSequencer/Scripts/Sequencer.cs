@@ -45,7 +45,7 @@ public class Sequencer : MonoBehaviour
             var name = "Samples/" + clip.name;
 
             Debug.Log("loading clip " + name);
-            var samples = CsoundUnity.GetSamples(name, CsoundUnity.SamplesOrigin.Resources);
+            var samples = CsoundUnity.GetSamples(name);
             Debug.Log("samples read: " + samples.Length);
             if (samples.Length > 0)
             {

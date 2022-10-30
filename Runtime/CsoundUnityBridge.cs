@@ -43,13 +43,16 @@ public class CsoundUnityBridge
 {
     public IntPtr csound;
     bool compiledOk = false;
+    Action onCsoundCreated;
 
     private void SetEnvironmentSettings(List<EnvironmentSettings> environmentSettings)
     {
         if (environmentSettings == null || environmentSettings.Count == 0) return;
         foreach (var env in environmentSettings)
         {
-            if (env == null || string.IsNullOrWhiteSpace(env.GetPath())) continue;
+            if (env == null) continue;
+            var path = env.GetPath();
+            if (string.IsNullOrWhiteSpace(path)) continue;
 
             switch (Application.platform)
             {
@@ -57,30 +60,43 @@ public class CsoundUnityBridge
                 case RuntimePlatform.OSXPlayer:
                     if (env.platform.Equals(SupportedPlatform.MacOS))
                     {
-                        Debug.Log($"Setting {env.GetTypeString()} for MacOS to: {env.GetPath()}");
-                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), env.GetPath());
+                        Debug.Log($"Setting {env.GetTypeString()} for MacOS to: {path}");
+                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
                     }
                     break;
                 case RuntimePlatform.WindowsPlayer:
                 case RuntimePlatform.WindowsEditor:
                     if (env.platform.Equals(SupportedPlatform.Windows))
                     {
-                        Debug.Log($"Setting {env.GetTypeString()} for Windows to: {env.GetPath()}");
-                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), env.GetPath());
+                        Debug.Log($"Setting {env.GetTypeString()} for Windows to: {path}");
+                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
                     }
                     break;
                 case RuntimePlatform.Android:
                     if (env.platform.Equals(SupportedPlatform.Android))
                     {
-                        Debug.Log($"Setting {env.GetTypeString()} for Android to: {env.GetPath()}");
-                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), env.GetPath());
+                        Debug.Log($"Setting {env.GetTypeString()} for Android to: {path}");
+                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
+                        //Debug.Log($"baseFolder: {env.baseFolder}");
+                        if (env.baseFolder.Equals(EnvironmentPathOrigin.Plugins))
+                        {
+                            if (onCsoundCreated == null || onCsoundCreated.GetInvocationList().Length == 0)
+                            {
+                                onCsoundCreated += () =>
+                                {
+                                    Debug.Log("Csound Force Loading Plugins!");
+                                    var loaded = Csound6.NativeMethods.csoundLoadPlugins(csound, path);
+                                    Debug.Log($"PLUGINS LOADED? {loaded}");
+                                };
+                            }
+                        }
                     }
                     break;
                 case RuntimePlatform.IPhonePlayer:
                     if (env.platform.Equals(SupportedPlatform.iOS))
                     {
-                        Debug.Log($"Setting {env.GetTypeString()} for iOS to: {env.GetPath()}");
-                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), env.GetPath());
+                        Debug.Log($"Setting {env.GetTypeString()} for iOS to: {path}");
+                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
                     }
                     break;
                 default:
@@ -98,7 +114,7 @@ public class CsoundUnityBridge
     /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
     public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
     {
-         SetEnvironmentSettings(environmentSettings);
+        SetEnvironmentSettings(environmentSettings);
 
         // KEEP THIS FOR REFERENCE ;)
         //#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
@@ -118,7 +134,7 @@ public class CsoundUnityBridge
             Debug.LogError("Couldn't create Csound!");
             return;
         }
-        
+
         Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
         Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
 
@@ -130,6 +146,9 @@ public class CsoundUnityBridge
         parms.sample_rate_override = AudioSettings.outputSampleRate;
         SetParams(parms);
 
+        onCsoundCreated?.Invoke();
+        onCsoundCreated = null;
+
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
         Csound6.NativeMethods.csoundStart(csound);
         //var res = PerformKsmps();
@@ -139,6 +158,11 @@ public class CsoundUnityBridge
     }
 
     #region Instantiation
+    
+    public int LoadPlugins(string dir)
+    {
+        return Csound6.NativeMethods.csoundLoadPlugins(csound, dir);
+    }
 
     #endregion
     public int GetVersion()
@@ -209,7 +233,8 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundRewindScore(csound);
     }
 
-    public void CsoundSetScoreOffsetSeconds(MYFLT value) {
+    public void CsoundSetScoreOffsetSeconds(MYFLT value)
+    {
         Csound6.NativeMethods.csoundSetScoreOffsetSeconds(csound, value);
     }
 
@@ -443,7 +468,8 @@ public class CsoundUnityBridge
         return Csound6.NativeMethods.csoundGetSpoutSample(csound, frame, channel);
     }
 
-    public void AddSpinSample(int frame, int channel, MYFLT sample) {
+    public void AddSpinSample(int frame, int channel, MYFLT sample)
+    {
         Csound6.NativeMethods.csoundAddSpinSample(csound, frame, channel, sample);
     }
 
@@ -583,7 +609,7 @@ public class CsoundUnityBridge
     public IDictionary<string, ChannelInfo> GetChannelList()
     {
         IDictionary<string, ChannelInfo> channels = new SortedDictionary<string, ChannelInfo>();
-        
+
         IntPtr ppChannels = IntPtr.Zero;
         int size = Csound6.NativeMethods.csoundListChannels(csound, out ppChannels);
         if ((size > 0) && (ppChannels != IntPtr.Zero))

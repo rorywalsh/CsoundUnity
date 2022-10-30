@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf04a3a84c1917a49969d76afce933fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioClip: {fileID: 8300000, guid: e42adb7abd5ecd84bb8dcd15f9936207, type: 3}
+  audioClip: {fileID: 8300000, guid: 151e5d7e59ec9f64a9ba58184c97e89e, type: 3}
 --- !u!65 &122050310
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -436,7 +436,10 @@ MonoBehaviour:
   logCsoundOutput: 1
   mute: 0
   processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
   csoundScore: 
+  environmentSettings: []
   _csoundFileGUID: fd584176b66790649998e36801d2c6ba
   _csoundString: "<Cabbage>\r\nform caption(\"Untitled\") size(400, 300), colour(58,
     110, 182), pluginid(\"def1\")\r\nkeyboard bounds(8, 158, 381, 95)\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
@@ -460,10 +463,10 @@ MonoBehaviour:
     behaviour of\r\n CsoundUnity.CreateTable(), i.e, it will only write a single
     channel to \r\n a function table. This is because Csound doesn't handle stereo
     function\r\n tables, without the use of a custom UDO as shown above */\r\ninstr
-    2\r\n    iTableNumber = 9001\r\n    print ftlen(iTableNumber)\r\n    iLen = ftlen(iTableNumber)\r\n   
-    aPhs phasor (sr/iLen)\r\n    aFile table aPhs, iTableNumber, 1\r\n    outs aFile,
-    aFile\r\nendin\r\n\r\ninstr 3\r\n    prints \"Reading file directly\"\r\n   
-    a1, a2 diskin2 \"C:\\\\Users\\\\rory\\\\sourcecode\\\\CsoundUnityPackage\\\\Assets\\\\Scenes\\\\UnityTableRead\\\\Resources\\\\Samples\\\\232009__danmitch3ll__xylophone-sweep.wav\",
+    2\r\n    iTableNumber = 9001\r\n    prints \"Printing table size\"\r\n    print
+    ftlen(iTableNumber)\r\n    iLen = ftlen(iTableNumber)\r\n    aPhs phasor (sr/iLen)\r\n   
+    aFile table aPhs, iTableNumber, 1\r\n    outs aFile, aFile\r\nendin\r\n\r\ninstr
+    3\r\n    prints \"Reading file directly\"\r\n    a1, a2 diskin2 \"C:\\\\Users\\\\rory\\\\sourcecode\\\\CsoundUnityPackage\\\\Assets\\\\Scenes\\\\UnityTableRead\\\\Resources\\\\Samples\\\\232009__danmitch3ll__xylophone-sweep.wav\",
     1, 0, 1\r\n    outs a1, a2\r\nendin\r\n</CsInstruments>\r\n<CsScore>\r\nf0 z\r\ni1
     1 2\r\ni2 3 4\r\ni3 7 10\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: AudioClipRead.csd
@@ -478,12 +481,21 @@ MonoBehaviour:
     value: 0
     skew: 0
     increment: 0
+    options: []
   _availableAudioChannels: []
   _drawCsoundString: 1
   _drawTestScore: 0
   _drawSettings: 1
   _drawChannels: 0
   _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
 --- !u!82 &1498695640
 AudioSource:
   m_ObjectHideFlags: 0
