@@ -7,7 +7,7 @@ This interface would not have been possible without Richard Henninger's .NET int
 
 Contributors:
 
-Bernt Isak Wærstad
+Bernt Isak WÃ¦rstad
 Charles Berman
 Giovanni Bedetti
 Hector Centeno
@@ -114,6 +114,11 @@ public class CsoundUnityBridge
     /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
     public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
     {
+	//if working on Windows, disable searching of plugins unless explicitly set it using
+	//the env settings in the editor
+	if (Application.platform == RuntimePlatform.WindowsPlayer)
+            Csound6.NativeMethods.csoundSetOpcodedir(".");
+	    
         SetEnvironmentSettings(environmentSettings);
 
         // KEEP THIS FOR REFERENCE ;)
