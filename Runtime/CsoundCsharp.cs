@@ -11,7 +11,7 @@ This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 
 Contributors:
 
-Bernt Isak Wærstad
+Bernt Isak WÃ¦rstad
 Charles Berman
 Giovanni Bedetti
 Hector Centeno
@@ -561,6 +561,8 @@ namespace csoundcsharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
             internal static extern void csoundDisposeOpcodeList([In] IntPtr csound, [In] IntPtr ppOpcodeList);
 
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundSetOpcodedir([In] String opcodeDir);
             // PUBLIC int csoundAppendOpcode (CSOUND *, const char *opname, int dsblksiz, int flags, int thread, const char *outypes, const char *intypes, int(*iopadr)(CSOUND *, void *), int(*kopadr)(CSOUND *, void *), int(*aopadr)(CSOUND *, void *))
 
             #endregion Opcodes
