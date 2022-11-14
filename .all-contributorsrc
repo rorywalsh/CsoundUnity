@@ -59,6 +59,15 @@
         "doc",
         "bug"
       ]
+    },
+    {
+      "login": "nathanjams",
+      "name": "nathanjams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/52339466?v=4",
+      "profile": "https://github.com/nathanjams",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
