@@ -12,7 +12,10 @@
       "profile": "http://www.giovannibedetti.com",
       "contributions": [
         "code",
-        "bug"
+        "bug",
+        "maintenance",
+        "platform",
+        "doc"
       ]
     },
     {
