@@ -19,16 +19,19 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-    <td align="center"><a href="http://www.giovannibedetti.com"><img src="https://avatars1.githubusercontent.com/u/1912983?v=4" width="100px;" alt=""/><br /><sub><b>Giovanni Bedetti</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=giovannibedetti" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/berntisak"><img src="https://avatars0.githubusercontent.com/u/9213871?v=4" width="100px;" alt=""/><br /><sub><b>Bernt Isak Wærstad</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=berntisak" title="Code">💻</a></td>
-    <td align="center"><a href="http://bermondo.com"><img src="https://avatars1.githubusercontent.com/u/33271566?v=4" width="100px;" alt=""/><br /><sub><b>Charles Berman</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=ceberman" title="Code">💻</a></td>
-    <td align="center"><a href="http://www.hcenteno.net"><img src="https://avatars3.githubusercontent.com/u/4064498?v=4" width="100px;" alt=""/><br /><sub><b>Hector Centeno</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=hectorC" title="Code">💻</a></td>
-  </tr>
+  <tbody>
+    <tr>
+      <td align="center"><a href="http://www.giovannibedetti.com"><img src="https://avatars1.githubusercontent.com/u/1912983?v=4?s=100" width="100px;" alt="Giovanni Bedetti"/><br /><sub><b>Giovanni Bedetti</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=giovannibedetti" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/berntisak"><img src="https://avatars0.githubusercontent.com/u/9213871?v=4?s=100" width="100px;" alt="Bernt Isak Wærstad"/><br /><sub><b>Bernt Isak Wærstad</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=berntisak" title="Code">💻</a></td>
+      <td align="center"><a href="http://bermondo.com"><img src="https://avatars1.githubusercontent.com/u/33271566?v=4?s=100" width="100px;" alt="Charles Berman"/><br /><sub><b>Charles Berman</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=ceberman" title="Code">💻</a></td>
+      <td align="center"><a href="http://www.hcenteno.net"><img src="https://avatars3.githubusercontent.com/u/4064498?v=4?s=100" width="100px;" alt="Hector Centeno"/><br /><sub><b>Hector Centeno</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=hectorC" title="Code">💻</a> <a href="#platform-hectorC" title="Packaging/porting to new platform">📦</a></td>
+    </tr>
+  </tbody>
 </table>
 
-<!-- markdownlint-enable -->
+<!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
