@@ -3,7 +3,7 @@
 # CsoundUnity #
 #### Csound wrapper for the Unity game engine.
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Please visit [homepage](http://rorywalsh.github.io/CsoundUnity/)
@@ -53,6 +53,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://github.com/Despair-Bear"><img src="https://avatars.githubusercontent.com/u/25762834?v=4?s=100" width="100px;" alt="Despair-Bear"/><br /><sub><b>Despair-Bear</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=Despair-Bear" title="Code">💻</a> <a href="https://github.com/rorywalsh/CsoundUnity/issues?q=author%3ADespair-Bear" title="Bug reports">🐛</a></td>
       <td align="center"><a href="https://github.com/runette"><img src="https://avatars.githubusercontent.com/u/2239795?v=4?s=100" width="100px;" alt="Paul"/><br /><sub><b>Paul</b></sub></a><br /><a href="#tool-runette" title="Tools">🔧</a></td>
       <td align="center"><a href="http://reptile-sounddesign.com"><img src="https://avatars.githubusercontent.com/u/60217027?v=4?s=100" width="100px;" alt="Patrick J. Boettcher"/><br /><sub><b>Patrick J. Boettcher</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/issues?q=author%3Apatrickjboettcher" title="Bug reports">🐛</a></td>
+      <td align="center"><a href="https://github.com/simogreg"><img src="https://avatars.githubusercontent.com/u/57944333?v=4?s=100" width="100px;" alt="simogreg"/><br /><sub><b>simogreg</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/issues?q=author%3Asimogreg" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
