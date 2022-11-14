@@ -92,6 +92,15 @@
       "contributions": [
         "tool"
       ]
+    },
+    {
+      "login": "patrickjboettcher",
+      "name": "Patrick J. Boettcher",
+      "avatar_url": "https://avatars.githubusercontent.com/u/60217027?v=4",
+      "profile": "http://reptile-sounddesign.com",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
