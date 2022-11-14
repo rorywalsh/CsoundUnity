@@ -11,7 +11,11 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/1912983?v=4",
       "profile": "http://www.giovannibedetti.com",
       "contributions": [
-        "code"
+        "code",
+        "bug",
+        "maintenance",
+        "platform",
+        "doc"
       ]
     },
     {
@@ -40,6 +44,53 @@
       "contributions": [
         "code",
         "platform"
+      ]
+    },
+    {
+      "login": "NPatch",
+      "name": "NPatch",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6648226?v=4",
+      "profile": "http://npatsiouras.wordpress.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "composingcap",
+      "name": "Chris Poovey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20663797?v=4",
+      "profile": "http://christopherpoovey.com",
+      "contributions": [
+        "doc",
+        "bug"
+      ]
+    },
+    {
+      "login": "nathanjams",
+      "name": "nathanjams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/52339466?v=4",
+      "profile": "https://github.com/nathanjams",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "Despair-Bear",
+      "name": "Despair-Bear",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25762834?v=4",
+      "profile": "https://github.com/Despair-Bear",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "runette",
+      "name": "Paul",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2239795?v=4",
+      "profile": "https://github.com/runette",
+      "contributions": [
+        "tool"
       ]
     }
   ],
