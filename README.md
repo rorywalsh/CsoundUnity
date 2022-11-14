@@ -3,7 +3,7 @@
 # CsoundUnity #
 #### Csound wrapper for the Unity game engine.
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Please visit [homepage](http://rorywalsh.github.io/CsoundUnity/)
@@ -48,6 +48,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="http://npatsiouras.wordpress.com/"><img src="https://avatars.githubusercontent.com/u/6648226?v=4?s=100" width="100px;" alt="NPatch"/><br /><sub><b>NPatch</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=NPatch" title="Code">💻</a></td>
       <td align="center"><a href="http://christopherpoovey.com"><img src="https://avatars.githubusercontent.com/u/20663797?v=4?s=100" width="100px;" alt="Chris Poovey"/><br /><sub><b>Chris Poovey</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=composingcap" title="Documentation">📖</a> <a href="https://github.com/rorywalsh/CsoundUnity/issues?q=author%3Acomposingcap" title="Bug reports">🐛</a></td>
       <td align="center"><a href="https://github.com/nathanjams"><img src="https://avatars.githubusercontent.com/u/52339466?v=4?s=100" width="100px;" alt="nathanjams"/><br /><sub><b>nathanjams</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/issues?q=author%3Anathanjams" title="Bug reports">🐛</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://github.com/Despair-Bear"><img src="https://avatars.githubusercontent.com/u/25762834?v=4?s=100" width="100px;" alt="Despair-Bear"/><br /><sub><b>Despair-Bear</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=Despair-Bear" title="Code">💻</a> <a href="https://github.com/rorywalsh/CsoundUnity/issues?q=author%3ADespair-Bear" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
