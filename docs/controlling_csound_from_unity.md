@@ -77,7 +77,7 @@ void Update()
 <a name="csound-s-channel-system"></a>
 ### Csound's channel system ###
  
- Csound allows data to be sent and received over its channel system. To access data in Csound, one should use the **chnget** opcode. In the following code example, we access data being sent from Unity to Csoud on a channel named *speed*. The variable kSpeed will constantly update according to the value stored on the channel named *speed*. 
+ Csound allows data to be sent and received over its channel system. To access data in Csound, one should use the **chnget** opcode. In the following code example, we access data being sent from Unity to Csound on a channel named *speed*. The variable kSpeed will constantly update according to the value stored on the channel named *speed*. 
 <!--
 <img src="http://rorywalsh.github.io/CsoundUnity/images/chnget.png" alt="chnget"/>
 -->
@@ -89,7 +89,6 @@ instr PLAYER_MOVE
 	aNoise buzz 0.4, 100, 3, -1
 	outs aNoise*kSpeed, aNoise*kSpeed 
 endin
-
 
 ```
 In order to send data from Unity to Csound we must use the [**CsoundUnity.SetChannel(string channel, MYFLT value)**](https://github.com/rorywalsh/CsoundUnity/blob/7f45fd3bfffa9f3d4760b0437d38de44b04a96e9/Runtime/CsoundUnity.cs#L812) method. 
@@ -162,7 +161,7 @@ You can also stop a running instrument, but only if it has been started with ind
 csoundUnity.SendScoreEvent("i1 0 -1");
 ```
 
-To stop an instrument, put a "-" in front of the number to make it negitive:
+To stop an instrument, put a "-" in front of the number to make it negative:
 
 ```cs
 // C# code
