@@ -84,9 +84,11 @@ public class CsoundUnityBridge
                             {
                                 onCsoundCreated += () =>
                                 {
+#if !UNITY_IOS // this is needed to avoid references to this method on iOS, where it's not supported
                                     Debug.Log("Csound Force Loading Plugins!");
                                     var loaded = Csound6.NativeMethods.csoundLoadPlugins(csound, path);
                                     Debug.Log($"PLUGINS LOADED? {loaded}");
+#endif
                                 };
                             }
                         }
@@ -163,13 +165,15 @@ public class CsoundUnityBridge
     }
 
     #region Instantiation
-    
+
+#if !UNITY_IOS
     public int LoadPlugins(string dir)
     {
         return Csound6.NativeMethods.csoundLoadPlugins(csound, dir);
     }
+#endif
 
-    #endregion
+#endregion
     public int GetVersion()
     {
         return Csound6.NativeMethods.csoundGetVersion();

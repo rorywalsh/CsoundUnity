@@ -74,7 +74,7 @@ namespace csoundcsharp
         //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         //internal delegate int YieldCallback(IntPtr csound);
 
-        // Csound API 6.17
+        // Csound API 6.18
         public class NativeMethods
         {
             #region Instantiation
@@ -84,10 +84,10 @@ namespace csoundcsharp
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern IntPtr csoundCreate(IntPtr hostdata);
-
+#if !UNITY_IOS
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern Int32 csoundLoadPlugins([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String dir);
-
+#endif
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern void csoundDestroy([In] IntPtr csound);
 
