@@ -561,6 +561,7 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetAPIVersion();
     }
 
+#if !UNITY_IOS
     /// <summary>
     /// Loads all plugins from a given directory
     /// </summary>
@@ -570,6 +571,7 @@ public class CsoundUnity : MonoBehaviour
     {
         return csound.LoadPlugins(dir);
     }
+#endif
 
     /// <summary>
     /// Returns true if the csd file was compiled without errors.
