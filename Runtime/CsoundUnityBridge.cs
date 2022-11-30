@@ -30,9 +30,9 @@ using System;
 using System.Runtime.InteropServices;
 using csoundcsharp;
 using System.Collections.Generic;
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID
 using MYFLT = System.Single;
 #endif
 
