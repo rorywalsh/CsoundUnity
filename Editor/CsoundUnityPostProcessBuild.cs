@@ -15,7 +15,7 @@ public class CsoundUnityPostProcessBuild
             var project = new PBXProject();
             project.ReadFromString(File.ReadAllText(projectPath));
             var targetGUID = project.GetUnityFrameworkTargetGuid();
-            project.AddFrameworkToProject(targetGUID, "Accelerate.framework", false);
+            //project.AddFrameworkToProject(targetGUID, "Accelerate.framework", false);
             project.AddBuildProperty(targetGUID, "OTHER_CODE_SIGN_FLAGS", "--generate-entitlement-der");
             File.WriteAllText(projectPath, project.WriteToString());
         }
