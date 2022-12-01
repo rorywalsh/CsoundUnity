@@ -219,6 +219,7 @@ public class CsoundUnityBridge
 
     public int PerformKsmps()
     {
+        if (csound == IntPtr.Zero) return -1;
         return Csound6.NativeMethods.csoundPerformKsmps(csound);
     }
 
