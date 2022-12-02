@@ -2545,6 +2545,7 @@ public class CsoundUnity : MonoBehaviour
                         namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
                     }
             }
+            Debug.Log($"Sample 0: {samples[0]}");
         }
     }
 
