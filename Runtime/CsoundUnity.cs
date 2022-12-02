@@ -2508,6 +2508,7 @@ public class CsoundUnity : MonoBehaviour
                         if ((ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
                         {
                             var res = PerformKsmps();
+                            Debug.Log($"PerformKsmps = {res}");
                             performanceFinished = res == 1;
                             ksmpsIndex = 0;
 
