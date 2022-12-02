@@ -158,6 +158,13 @@ public class CsoundUnityBridge
 
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
         Csound6.NativeMethods.csoundStart(csound);
+
+        Debug.Log($"Csound created and started.\n" +
+            $"AudioSettings.outputSampleRate: {AudioSettings.outputSampleRate}\n" +
+            $"GetSr: {GetSr()}\n" +
+            $"GetKr: {GetKr()}\n" +
+            $"Get0dbfs: {Get0dbfs()}\n" +
+            $"GetKsmps: {GetKsmps()}");
         //var res = PerformKsmps();
         //Debug.Log($"PerformKsmps: {res}");
         compiledOk = ret == 0 ? true : false;

@@ -470,6 +470,9 @@ public class CsoundUnity : MonoBehaviour
 
         AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
 
+        Debug.Log($"CsoundUnity Awake\n" +
+            $"AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
+
         audioSource = GetComponent<AudioSource>();
         audioSource.spatializePostEffects = true;
 
