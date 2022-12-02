@@ -32,6 +32,7 @@ using System.Collections;
 using System;
 using System.Globalization;
 using UnityEngine.Networking;
+using System.Diagnostics;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -2492,6 +2493,7 @@ public class CsoundUnity : MonoBehaviour
     {
         if (compiledOk && initialized && !_quitting)
         {
+            Debug.Log($"Sample 0 PRE: {samples[0]}");
             for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)
             {
                 for (uint channel = 0; channel < numChannels; channel++)
@@ -2545,7 +2547,7 @@ public class CsoundUnity : MonoBehaviour
                         namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
                     }
             }
-            Debug.Log($"Sample 0: {samples[0]}");
+            Debug.Log($"Sample 0 POST: {samples[0]}");
         }
     }
 
