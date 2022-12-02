@@ -148,10 +148,12 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundSetOption(csound, "-n");
         Csound6.NativeMethods.csoundSetOption(csound, "-d");
 
+#if !UNITY_IOS
         var parms = GetParams();
         parms.control_rate_override = AudioSettings.outputSampleRate;
         parms.sample_rate_override = AudioSettings.outputSampleRate;
         SetParams(parms);
+#endif
 
         onCsoundCreated?.Invoke();
         onCsoundCreated = null;
