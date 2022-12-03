@@ -2492,8 +2492,6 @@ public class CsoundUnity : MonoBehaviour
     {
         if (compiledOk && initialized && !_quitting)
         {
-            //Debug.Log($"Sample 0 PRE: {samples[0]}");
-            var count = 0;
             for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)
             {
                 for (uint channel = 0; channel < numChannels; channel++)
@@ -2506,11 +2504,9 @@ public class CsoundUnity : MonoBehaviour
                         samples[i + channel] = 0.0f;
                     else
                     {
-
                         if ((ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
                         {
                             var res = PerformKsmps();
-                            //Debug.Log($"PerformKsmps#{count++} = {res}");
                             performanceFinished = res == 1;
                             ksmpsIndex = 0;
 
@@ -2528,8 +2524,7 @@ public class CsoundUnity : MonoBehaviour
 
                         //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
                         var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
-                        var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel);// / (float)csound.Get0dbfs();
-                        //Debug.Log($"Csound output: {output}, 0dbfs: {(float)csound.Get0dbfs()}");
+                        var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / (float)csound.Get0dbfs();
                         // multiply Csound output by the sample value to maintain spatialization set by Unity. 
                         // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
                         samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
@@ -2550,7 +2545,6 @@ public class CsoundUnity : MonoBehaviour
                         namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
                     }
             }
-            //Debug.Log($"Sample 0 POST: {samples[0]}");
         }
     }
 
