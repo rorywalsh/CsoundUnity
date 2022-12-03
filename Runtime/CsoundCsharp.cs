@@ -31,9 +31,9 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Runtime.InteropServices;
-#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS
+#if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID || UNITY_IOS
 using MYFLT = System.Single;
 #endif
 
