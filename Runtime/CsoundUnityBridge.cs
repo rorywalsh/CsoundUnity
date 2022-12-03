@@ -148,12 +148,15 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundSetOption(csound, "-n");
         Csound6.NativeMethods.csoundSetOption(csound, "-d");
 
-#if !UNITY_IOS
         var parms = GetParams();
+#if !UNITY_IOS
         parms.control_rate_override = AudioSettings.outputSampleRate;
         parms.sample_rate_override = AudioSettings.outputSampleRate;
-        SetParams(parms);
+#else
+        parms.control_rate_override = 24000f;
+        parms.sample_rate_override = 24000f;
 #endif
+        SetParams(parms);
 
         onCsoundCreated?.Invoke();
         onCsoundCreated = null;
@@ -173,7 +176,7 @@ public class CsoundUnityBridge
         //Debug.Log($"CsoundCompile: {compiledOk}");
     }
 
-    #region Instantiation
+#region Instantiation
 
 #if !UNITY_IOS
     public int LoadPlugins(string dir)
@@ -864,11 +867,11 @@ public class CsoundUnityBridge
                                           multicore, 0 or 1  */
         public int realtime_mode;       /* use realtime priority mode, 0 or 1 */
         public int sample_accurate;     /* use sample-level score event accuracy */
-        public double sample_rate_override; /* overriding sample rate */
-        public double control_rate_override; /* overriding control rate */
+        public MYFLT sample_rate_override; /* overriding sample rate */
+        public MYFLT control_rate_override; /* overriding control rate */
         public int nchnls_override;     /* overriding number of out channels */
         public int nchnls_i_override;   /* overriding number of in channels */
-        public double e0dbfs_override;  /* overriding 0dbfs */
+        public MYFLT e0dbfs_override;  /* overriding 0dbfs */
         public int daemon;              /* daemon mode*/
         public int ksmps_override;      /* ksmps override */
         public int FFT_library;         /* fft_lib */
