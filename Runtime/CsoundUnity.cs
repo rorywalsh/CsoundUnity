@@ -2529,7 +2529,7 @@ public class CsoundUnity : MonoBehaviour
                         //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
                         var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
                         var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel);// / (float)csound.Get0dbfs();
-                        Debug.Log($"Csound output: {output}, 0dbfs: {(float)csound.Get0dbfs()}");
+                        //Debug.Log($"Csound output: {output}, 0dbfs: {(float)csound.Get0dbfs()}");
                         // multiply Csound output by the sample value to maintain spatialization set by Unity. 
                         // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
                         samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
