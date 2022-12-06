@@ -118,7 +118,7 @@ public class CsoundUnityBridge
     {
 	//if working on Windows, disable searching of plugins unless explicitly set it using
 	//the env settings in the editor
-	if (Application.platform == RuntimePlatform.WindowsPlayer)
+	    if (Application.platform == RuntimePlatform.WindowsPlayer)
             Csound6.NativeMethods.csoundSetOpcodedir(".");
 	    
         SetEnvironmentSettings(environmentSettings);
@@ -149,13 +149,14 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundSetOption(csound, "-d");
 
         var parms = GetParams();
-#if !UNITY_IOS
+
+#if UNITY_IOS
+        //
+        Debug.Log("Initialising sample rate with Unity value " + AudioSettings.outputSampleRate  + "Hz, some values maybe incompatible with older hardware.");
+#endif  
+
         parms.control_rate_override = AudioSettings.outputSampleRate;
         parms.sample_rate_override = AudioSettings.outputSampleRate;
-#else
-        parms.control_rate_override = 24000f;
-        parms.sample_rate_override = 24000f;
-#endif
         SetParams(parms);
 
         onCsoundCreated?.Invoke();

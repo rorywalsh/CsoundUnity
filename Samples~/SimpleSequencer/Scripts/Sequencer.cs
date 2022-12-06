@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System;
+#if UNITY_EDITOR || UNITY_STANDALONE
+using MYFLT = System.Double;
+#elif UNITY_ANDROID || UNITY_IOS
+using MYFLT = System.Single;
+#endif
 
 
 public class Sequencer : MonoBehaviour
@@ -12,6 +17,9 @@ public class Sequencer : MonoBehaviour
     public int numberOfBeats = 16;
     private GameObject[] pads;
     public AudioClip[] clips;
+    public GameObject padPrefab;
+    public Material padEnabledMaterial;
+    public Material padDisabledMaterial;
     private CsoundUnity csoundUnity;
     private int beatNumber = -1;
     public bool showSequencerGUI = true;
@@ -67,11 +75,13 @@ public class Sequencer : MonoBehaviour
             {
                 for (int beat = 0; beat < numberOfBeats; beat++)
                 {
-                    GameObject gObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    //GameObject gObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    GameObject gObj = Instantiate(padPrefab);
                     gObj.transform.position = new Vector3(beat - numberOfBeats + 8f, numberOfVoices - voice - 4f, 0);
                     gObj.transform.localScale = new Vector3(0.5f, 0.5f, 0.1f);
-                    double enabled = csoundUnity.GetTableSample(voice + 1, beat);
-                    gObj.GetComponent<Renderer>().material.color = (enabled == 1 ? new Color(1, 0, 0) : new Color(.5f, .5f, .5f));
+                    MYFLT enabled = csoundUnity.GetTableSample(voice + 1, beat);
+                    //gObj.GetComponent<Renderer>().material.color = (enabled == 1 ? new Color(1, 0, 0) : new Color(.5f, .5f, .5f));
+                    gObj.GetComponent<Renderer>().material = enabled == 1 ? padEnabledMaterial : padDisabledMaterial;
                     gObj.AddComponent<PadController>();
                     gObj.name = padIndex++.ToString();
                     pads[beat + (voice * numberOfBeats)] = gObj;
@@ -91,14 +101,12 @@ public class Sequencer : MonoBehaviour
 
         if (Input.GetKeyDown("1"))
         {
-            csoundUnity.SendScoreEvent("i\"ClearSequencer\" 0 0 ");
-            Invoke("updateSequencerGUI", .1f);
+            ClearSequencer();
         }
 
         if (Input.GetKeyDown("2"))
         {
-            csoundUnity.SendScoreEvent("i\"RandomSequencer\" 0 0 ");
-            Invoke("updateSequencerGUI", .1f);
+            RandomSequencer();
         }
 
 
@@ -131,16 +139,29 @@ public class Sequencer : MonoBehaviour
         }
     }
 
-    void UpdateSequencerGUI()
+    public void ClearSequencer()
+    {
+        csoundUnity.SendScoreEvent("i\"ClearSequencer\" 0 0 ");
+        Invoke("UpdateSequencerGUI", .1f);
+    }
+
+    public void RandomSequencer()
+    {
+        csoundUnity.SendScoreEvent("i\"RandomSequencer\" 0 0 ");
+        Invoke("UpdateSequencerGUI", .1f);
+    }
+
+    public void UpdateSequencerGUI()
     {
         //now update the GUI
         for (int voice = 0; voice < numberOfVoices; voice++)
         {
             for (int beat = 0; beat < numberOfBeats; beat++)
             {
-                double enabled = csoundUnity.GetTableSample(voice + 1, beat);
+                MYFLT enabled = csoundUnity.GetTableSample(voice + 1, beat);
                 GameObject pad = pads[beat + (voice * numberOfBeats)];
-                pad.GetComponent<Renderer>().material.color = (enabled == 1 ? new Color(1, 0, 0) : new Color(.5f, .5f, .5f));
+                //pad.GetComponent<Renderer>().material.color = (enabled == 1 ? new Color(1, 0, 0) : new Color(.5f, .5f, .5f));
+                pad.GetComponent<Renderer>().material = enabled == 1 ? padEnabledMaterial : padDisabledMaterial;
             }
         }
     }
