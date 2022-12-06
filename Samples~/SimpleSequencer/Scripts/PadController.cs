@@ -14,12 +14,6 @@ public class PadController : MonoBehaviour
             Debug.LogError("Can't find Sequencer script?");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnMouseDown()
     {
         sequencer.UpdateSequencerPad(Int32.Parse(gameObject.name));
