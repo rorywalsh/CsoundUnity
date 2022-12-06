@@ -119,6 +119,17 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "makeplayhappy",
+      "name": "Makeplayhappy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46995545?v=4",
+      "profile": "https://makeplayhappy.com/",
+      "contributions": [
+        "code",
+        "platform",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,

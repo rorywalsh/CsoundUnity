@@ -3,7 +3,7 @@
 # CsoundUnity #
 #### Csound wrapper for the Unity game engine.
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-13-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Please visit [homepage](http://rorywalsh.github.io/CsoundUnity/)
@@ -55,6 +55,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="http://reptile-sounddesign.com"><img src="https://avatars.githubusercontent.com/u/60217027?v=4?s=100" width="100px;" alt="Patrick J. Boettcher"/><br /><sub><b>Patrick J. Boettcher</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/issues?q=author%3Apatrickjboettcher" title="Bug reports">🐛</a></td>
       <td align="center"><a href="https://github.com/simogreg"><img src="https://avatars.githubusercontent.com/u/57944333?v=4?s=100" width="100px;" alt="simogreg"/><br /><sub><b>simogreg</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/issues?q=author%3Asimogreg" title="Bug reports">🐛</a></td>
       <td align="center"><a href="http://eris.codes"><img src="https://avatars.githubusercontent.com/u/3947103?v=4?s=100" width="100px;" alt="Eris Koleszar"/><br /><sub><b>Eris Koleszar</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/issues?q=author%3Abellicapax" title="Bug reports">🐛</a></td>
+      <td align="center"><a href="https://makeplayhappy.com/"><img src="https://avatars.githubusercontent.com/u/46995545?v=4?s=100" width="100px;" alt="Makeplayhappy"/><br /><sub><b>Makeplayhappy</b></sub></a><br /><a href="https://github.com/rorywalsh/CsoundUnity/commits?author=makeplayhappy" title="Code">💻</a> <a href="#platform-makeplayhappy" title="Packaging/porting to new platform">📦</a> <a href="https://github.com/rorywalsh/CsoundUnity/issues?q=author%3Amakeplayhappy" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
