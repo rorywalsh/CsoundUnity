@@ -151,8 +151,7 @@ public class CsoundUnityBridge
         var parms = GetParams();
 
 #if UNITY_IOS
-        //
-        Debug.Log("Initialising sample rate with Unity value " + AudioSettings.outputSampleRate  + "Hz, some values maybe incompatible with older hardware.");
+        Debug.Log($"Initialising sample rate and control rate using Audio Project Settings value: {AudioSettings.outputSampleRate}Hz, some values maybe incompatible with older hardware.");
 #endif  
 
         parms.control_rate_override = AudioSettings.outputSampleRate;
