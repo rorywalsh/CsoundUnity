@@ -1,3 +1,4 @@
+#if UNITY_IPHONE
 using System.IO;
 using UnityEngine;
 using UnityEditor;
@@ -21,3 +22,4 @@ public class CsoundUnityPostProcessBuild
         }
     }
 }
+#endif
