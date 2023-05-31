@@ -29,13 +29,16 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class CsoundUnityPreset : ScriptableObject
+namespace Csound.Unity
 {
-    public string presetName;
-    public string csoundFileName;
-    public List<CsoundChannelController> channels;
+    [Serializable]
+    public class CsoundUnityPreset : ScriptableObject
+    {
+        public string presetName;
+        public string csoundFileName;
+        public List<CsoundChannelController> channels;
 #pragma warning disable 414
-    [SerializeField] private bool _drawChannels = false;
+        [SerializeField] private bool _drawChannels = false;
 #pragma warning restore 414
+    }
 }

@@ -1,24 +1,53 @@
+/*
+Copyright (C) 2015 Rory Walsh. 
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+This interface would not have been possible without Richard Henninger's .NET interface to the Csound API.
+
+Contributors:
+
+Bernt Isak Wærstad
+Charles Berman
+Giovanni Bedetti
+Hector Centeno
+NPatch
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 #if UNITY_IPHONE
 using System.IO;
-using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
 
-public class CsoundUnityPostProcessBuild
+namespace Csound.Unity
 {
-    [PostProcessBuildAttribute(1)]
-    public static void OnPostProcessBuild(BuildTarget target, string path)
+    public class CsoundUnityPostProcessBuild
     {
-        if (target == BuildTarget.iOS)
+        [PostProcessBuildAttribute(1)]
+        public static void OnPostProcessBuild(BuildTarget target, string path)
         {
-            var projectPath = PBXProject.GetPBXProjectPath(path);
-            var project = new PBXProject();
-            project.ReadFromString(File.ReadAllText(projectPath));
-            var targetGUID = project.GetUnityFrameworkTargetGuid();
-            //project.AddFrameworkToProject(targetGUID, "Accelerate.framework", false);
-            project.AddBuildProperty(targetGUID, "OTHER_CODE_SIGN_FLAGS", "--generate-entitlement-der");
-            File.WriteAllText(projectPath, project.WriteToString());
+            if (target == BuildTarget.iOS)
+            {
+                var projectPath = PBXProject.GetPBXProjectPath(path);
+                var project = new PBXProject();
+                project.ReadFromString(File.ReadAllText(projectPath));
+                var targetGUID = project.GetUnityFrameworkTargetGuid();
+                //project.AddFrameworkToProject(targetGUID, "Accelerate.framework", false);
+                project.AddBuildProperty(targetGUID, "OTHER_CODE_SIGN_FLAGS", "--generate-entitlement-der");
+                File.WriteAllText(projectPath, project.WriteToString());
+            }
         }
     }
 }
