@@ -77,7 +77,7 @@ namespace Csound.Unity
         private string[] _csoundUnityPresetAssetsGUIDs;
         private string[] _jsonPresetsPaths;
         private List<CsoundUnityPreset> _assignablePresets;
-        private int _assignablePresetsSpace = 5;
+        private int _assignablePresetsSpace = 10;
         private string _currentPresetImportFolder;
         private string _currentPresetImportFolderSave;
 
