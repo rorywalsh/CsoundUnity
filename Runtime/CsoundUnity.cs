@@ -25,12 +25,12 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections;
 using System;
 using System.Globalization;
+using UnityEngine;
 using UnityEngine.Networking;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -40,6 +40,7 @@ using MYFLT = System.Double;
 #elif UNITY_ANDROID || UNITY_IOS
 using MYFLT = System.Single;
 #endif
+using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
 
 namespace Csound.Unity
 {
@@ -1033,7 +1034,6 @@ namespace Csound.Unity
             for (var i = 0; i < channelControllers.Count; i++)
             {
                 if (excludeButtons && channelControllers[i].type.Contains("button")) continue;
-
                 SetChannel(channelControllers[i]);
             }
         }
@@ -1109,7 +1109,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public int CreateFloatTable(int tableNumber, float[] samples)
         {
-            var myFlts = ConvertToMYFLT(samples);
+            var myFlts = ASU.ConvertToMYFLT(samples);
             return CreateTable(tableNumber, myFlts);
         }
 
@@ -1233,7 +1233,7 @@ namespace Csound.Unity
         /// <param name="source"></param>
         public void CopyFloatTableIn(int table, float[] source)
         {
-            var myFlts = ConvertToMYFLT(source);
+            var myFlts = ASU.ConvertToMYFLT(source);
             CopyTableIn(table, myFlts);
         }
 
@@ -1399,375 +1399,6 @@ namespace Csound.Unity
             return csound.GetCurrentTimeSamples();
         }
 
-        [Serializable]
-        public enum SkewMode { Cabbage, Normalized };
-
-        /// <summary>
-        /// Remaps a float value from one range to another with optional clamping and skewing. 
-        /// There are two possible modes for skewing: Cabbage and Normalized.
-        /// <para>
-        /// In Cabbage mode, the skew factor has no upper limit and the mapping behaves as follows:
-        /// - Exponential mapping for values above 0 to 1
-        /// - Linear mapping at 1
-        /// - Logarithmic mapping for values above 1
-        /// </para>
-        /// <para>
-        /// In Normalized mode, the skew factor is bound between 0 and 1, and the mapping behaves as follows:
-        /// - Exponential mapping from values above 0 to 0.5
-        /// - Linear mapping at 0.5
-        /// - Logarithmic mapping for values above 0.5 to 1
-        /// </para>
-        /// <para>
-        /// Both modes return the lower target bound (from2) when the skew is 0 or below.
-        /// The Normalized mode returns the upper target bound (to2) when the skew is 1 or above.
-        /// </para>
-        /// </summary>
-        /// <param name="value">The input value to be remapped.</param>
-        /// <param name="from1">The lower bound of the source range.</param>
-        /// <param name="to1">The upper bound of the source range.</param>
-        /// <param name="from2">The lower bound of the target range.</param>
-        /// <param name="to2">The upper bound of the target range.</param>
-        /// <param name="clamp">Determines whether the mapped value should be clamped within the target range. Default is false.</param>
-        /// <param name="skew">A skew factor that controls the mapping behavior. Default is 1</param>
-        /// <param name="mode">The mode for skewing the mapping behavior. Default is Cabbage</param>
-        /// <returns>The remapped value within the target range.</returns>
-        public static float Remap(float value, float from1, float to1, float from2, float to2, bool clamp = false, float skew = 1f, SkewMode mode = SkewMode.Cabbage)
-        {
-            if (skew <= 0f) return from2;
-
-            if (mode == SkewMode.Normalized)
-            {
-                if (skew >= 1f) return to2;
-            }
-
-            var normalizedValue = (value - from1) / (to1 - from1);
-            var exponent = mode == SkewMode.Cabbage ? 1f / skew : Mathf.Log(skew) / Mathf.Log(0.5f);
-            var factor = Mathf.Pow(normalizedValue, exponent);
-            var retValue = Mathf.Lerp(from2, to2, factor);
-
-            if (float.IsNaN(retValue)) return from2;
-            if (float.IsPositiveInfinity(retValue)) return to2;
-            if (float.IsNegativeInfinity(retValue)) return from2;
-
-            return clamp ? Mathf.Clamp(retValue, from2, to2) : retValue;
-        }
-
-        /// <summary>
-        /// Remap a value to a normalized (0-1) value specifying its expected "from" and "to" values, 
-        /// and the skew of the exponential curve of the remapping. 
-        /// If skew is 1 the remapping is linear, if 0.5 it's exponential.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <param name="skew"></param>
-        /// <returns></returns>
-        public static float RemapTo0to1(float value, float from, float to, float skew = 1f)
-        {
-            if ((to - from) == 0) return 0;
-
-            var proportion = Mathf.Clamp01((value - from) / (to - from));
-
-            if (skew == 1)
-                return proportion;
-
-            return Mathf.Pow(proportion, skew);
-        }
-
-
-        /// <summary>
-        /// Remap a normalized (0-1) value to a value in another range, specifying its "from" and "to" values, 
-        /// and the skew of the exponential curve of the remapping. 
-        /// If skew is 1 the remapping is linear, if 0.5 it's exponential.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <param name="skew"></param>
-        /// <returns></returns>
-        public static float RemapFrom0to1(float value, float from, float to, float skew = 1f)
-        {
-            if (skew == 0) return to;
-
-            var proportion = Mathf.Clamp01(value);
-
-            if (skew != 1 && proportion > 0)
-                proportion = Mathf.Exp(Mathf.Log(proportion) / skew);
-
-            return from + (to - from) * proportion;
-        }
-
-        /// <summary>
-        /// Utility method to create an array of MYFLTs from an array of floats
-        /// </summary>
-        /// <param name="samples"></param>
-        /// <returns></returns>
-        public static MYFLT[] ConvertToMYFLT(float[] samples)
-        {
-            if (samples == null || samples.Length == 0) return new MYFLT[0];
-            var myFLT = new MYFLT[samples.Length];
-            for (var i = 0; i < myFLT.Length; i++)
-            {
-                myFLT[i] = (MYFLT)samples[i];
-            }
-            return myFLT;
-        }
-
-        /// <summary>
-        /// Utility method to create an array of floats from an array of MYFLTs
-        /// </summary>
-        /// <param name="samples"></param>
-        /// <returns></returns>
-        public static float[] ConvertToFloat(MYFLT[] samples)
-        {
-            if (samples == null || samples.Length == 0) return new float[0];
-            var flt = new float[samples.Length];
-            for (var i = 0; i < flt.Length; i++)
-            {
-                flt[i] = (float)samples[i];
-            }
-            return flt;
-        }
-
-        /// <summary>
-        /// Get an array of MYFLTs in from the AudioClip source from the Resources folder.
-        /// The first index in the returned array will have its value set as 2 like the number of channels.
-        /// See <see cref="GetSamples">GetSamples</see>
-        /// </summary>
-        /// <param name="source">The name of the source to retrieve</param>
-        /// <returns></returns>
-        public static MYFLT[] GetStereoSamples(string source)
-        {
-            return GetSamples(source, 0, true);
-        }
-
-        /// <summary>
-        /// Get an array of floats from the AudioClip source from the Resources folder.
-        /// The first index in the returned array will have its value set as 2 like the number of channels.
-        /// See <see cref="GetSamples">GetSamples</see>
-        /// </summary>
-        /// <param name="source">The name of the source to retrieve</param>
-        /// <returns></returns>
-        public static float[] GetStereoFloatSamples(string source)
-        {
-            return ConvertToFloat(GetSamples(source, 0, true));
-        }
-
-        /// <summary>
-        /// Get an array of MYFLTs from the AudioClip source from the Resources folder. 
-        /// No information about the channels will be added in the first element of the returned array.
-        /// See <see cref="GetSamples">GetSamples</see>
-        /// </summary>
-        /// <param name="source">The name of the source to retrieve</param>
-        /// <returns></returns>
-        public static MYFLT[] GetMonoSamples(string source, int channelNumber)
-        {
-            return GetSamples(source, channelNumber, false);
-        }
-
-        /// <summary>
-        /// Get an array of floats from the AudioClip source from the Resources folder. 
-        /// No information about the channels will be added in the first element of the returned array.
-        /// See <see cref="GetSamples">GetSamples</see>
-        /// </summary>
-        /// <param name="source">The name of the source to retrieve</param>
-        /// <returns></returns>
-        public static float[] GetMonoFloatSamples(string source, int channelNumber)
-        {
-            return ConvertToFloat(GetSamples(source, channelNumber, false));
-        }
-
-        /// <summary>
-        /// Get Samples from a "Resources" path.
-        /// This will return an interleaved array of samples, with the first index used to specify the number of channels. 
-        /// This array can be passed to the CsoundUnity.CreateTable() method for processing by Csound. 
-        /// Use async version to load very large files, or load from external paths
-        /// Note: You need to be careful that your AudioClips match the SR of the 
-        /// project. If not, you will hear some re-pitching issues with your audio when
-        /// you play it back with a table reader opcode. 
-        /// </summary>
-        /// <param name="source">The path of the audio source relative to a "Resources" folder</param>
-        /// <param name="channelNumber">The channel to read from the source</param>
-        /// <param name="writeChannelData"></param>
-        /// <returns></returns>
-        public static MYFLT[] GetSamples(string source, int channelNumber = 1, bool writeChannelData = false)
-        {
-            MYFLT[] res = new MYFLT[0];
-
-            var src = Resources.Load<AudioClip>(source);
-            if (src == null)
-            {
-                Debug.LogError($"Couldn't load samples from AudioClip {source}");
-                return res;
-            }
-
-            var data = new float[src.samples * src.channels];
-            src.GetData(data, 0);
-
-            if (writeChannelData)
-            {
-                res = new MYFLT[src.samples * src.channels + 1];
-                res[0] = src.channels;
-                var s = 1;
-                for (var i = 0; i < data.Length; i++)
-                {
-                    res[s] = data[i];
-                    s++;
-                }
-            }
-            else
-            {
-                var s = 0;
-                res = new MYFLT[src.samples];
-
-                for (var i = 0; i < data.Length; i += src.channels, s++)
-                {
-                    res[s] = data[i + (channelNumber - 1)];
-                }
-            }
-
-            return res;
-        }
-
-        /// <summary>
-        /// Same as <see cref="GetSamples">GetSamples</see> but it will return a float array.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="channelNumber"></param>
-        /// <param name="writeChannelData"></param>
-        /// <returns></returns>
-        public static float[] GetFloatSamples(string source, int channelNumber = 1, bool writeChannelData = false)
-        {
-            return ConvertToFloat(GetSamples(source, channelNumber, writeChannelData));
-        }
-
-        /// <summary>
-        /// Async version of <see cref="GetSamples">GetSamples</see>
-        /// <para>
-        /// Example of usage:
-        /// <code>
-        /// yield return CsoundUnity.GetSamples(source.name, CsoundUnity.SamplesOrigin.Resources, (samples) =>
-        /// {
-        ///     Debug.Log("samples loaded: "+samples.Length+", creating table");
-        ///     csound.CreateTable(100, samples);
-        /// });
-        /// </code>
-        /// </para>
-        /// </summary>
-        /// <param name="source">the name of the AudioClip to load</param>
-        /// <param name="origin">the origin of the path</param>
-        /// <param name="onSamplesLoaded">the callback when samples are loaded</param>
-        /// <returns></returns>
-        public static IEnumerator GetSamples(string source, SamplesOrigin origin, Action<MYFLT[]> onSamplesLoaded)
-        {
-            switch (origin)
-            {
-                case SamplesOrigin.Resources:
-                    var req = Resources.LoadAsync<AudioClip>(source);
-
-                    while (!req.isDone)
-                    {
-                        yield return null;
-                    }
-                    var samples = ((AudioClip)req.asset).samples;
-                    if (samples == 0)
-                    {
-                        onSamplesLoaded?.Invoke(null);
-                        yield break;
-                    }
-                    onSamplesLoaded?.Invoke(GetSamples((AudioClip)req.asset));
-                    break;
-                case SamplesOrigin.StreamingAssets:
-                    var path = Path.Combine(Application.streamingAssetsPath, source);
-                    yield return LoadingClip(path, (clip) =>
-                    {
-                        onSamplesLoaded?.Invoke(GetSamples(clip));
-                    });
-                    break;
-                case SamplesOrigin.Absolute:
-                    yield return LoadingClip(source, (clip) =>
-                    {
-                        onSamplesLoaded?.Invoke(GetSamples(clip));
-                    });
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Get samples from an AudioClip as a MYFLT array.
-        /// </summary>
-        /// <param name="audioClip"></param>
-        /// <returns></returns>
-        public static MYFLT[] GetSamples(AudioClip audioClip)
-        {
-            var data = new float[audioClip.samples * audioClip.channels];
-            audioClip.GetData(data, 0);
-            MYFLT[] res = new MYFLT[data.Length];
-            var s = 0;
-            foreach (var d in data)
-            {
-                res[s] = (MYFLT)d;
-                s++;
-            }
-            return res;
-        }
-
-        static IEnumerator LoadingClip(string path, Action<AudioClip> onEnd)
-        {
-            var ext = Path.GetExtension(path);
-            AudioType type;
-
-            switch (ext)
-            {
-                case "mp3":
-                case "MP3": type = AudioType.MPEG; break;
-                case "ogg":
-                case "OGG": type = AudioType.OGGVORBIS; break;
-                case "wav":
-                case "WAV":
-                default: type = AudioType.WAV; break;
-            }
-
-#if UNITY_ANDROID
-            path = "file://" + path;
-#elif UNITY_IPHONE
-            path = "file:///" + path;
-#endif
-
-            using (var req = UnityWebRequestMultimedia.GetAudioClip(path, type))
-            {
-                yield return req.SendWebRequest();
-
-#if UNITY_2020_1_OR_NEWER
-            if (req.result == UnityWebRequest.Result.ConnectionError ||
-                req.result == UnityWebRequest.Result.DataProcessingError ||
-                req.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.LogError($"Couldn't load file at path: {path} \n{req.error}");
-                onEnd?.Invoke(null);
-                yield break;
-            }
-#else
-                if (req.isHttpError || req.isNetworkError)
-                {
-                    Debug.LogError($"Couldn't load file at path: {path} \n{req.error}");
-                    onEnd?.Invoke(null);
-                    yield break;
-                }
-#endif
-                var clip = DownloadHandlerAudioClip.GetContent(req);
-
-                if (clip == null)
-                {
-                    Debug.LogError("The loaded clip is null!");
-                    yield break;
-                }
-
-                clip.name = Path.GetFileName(path);
-                onEnd?.Invoke(clip);
-            }
-        }
-
         /// <summary>
         /// Resets all internal memory and state in preparation for a new performance. 
         /// Enables external software to run successive Csound performances without reloading Csound. 
@@ -1786,6 +1417,7 @@ namespace Csound.Unity
         {
             csound.Cleanup();
         }
+
 
         #region PRESETS
 
@@ -2390,7 +2022,6 @@ namespace Csound.Unity
 
         #endregion PUBLIC_METHODS
 
-
         #region ENUMS
 
         /// <summary>
@@ -2492,14 +2123,6 @@ namespace Csound.Unity
             /// </summary>
             CS_OMIT_LIBS
         }
-
-        /// <summary>
-        /// Where the samples to load come from:
-        /// <para>the Resources folder</para>
-        /// <para>the StreamingAssets folder</para>
-        /// <para>An absolute path, can be external of the Unity Project</para>
-        /// </summary>
-        public enum SamplesOrigin { Resources, StreamingAssets, Absolute } // TODO Add PersistentDataPath and URL
 
         #endregion ENUMS
 
