@@ -60,6 +60,8 @@ namespace Csound.Unity.CsoundCSharp
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void MessageCallbackProxy(IntPtr csound, Int32 attr, string format, IntPtr valist);
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate void MessageStrCallbackProxy(IntPtr csound, Int32 attr, string message);
         // Callbacks will be probably removed in Csound 7
 
         //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -397,7 +399,8 @@ namespace Csound.Unity.CsoundCSharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
             internal static extern void csoundSetMessageCallback([In] IntPtr csound, MessageCallbackProxy processMessage);
 
-            // PUBLIC void csoundSetMessageStringCallback (CSOUND *csound, void(*csoundMessageStrCallback)(CSOUND *csound, int attr, const char *str))
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal static extern void csoundSetMessageStringCallback([In] IntPtr csound, MessageStrCallbackProxy processMessage);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern Int32 csoundGetMessageLevel([In] IntPtr csound);
