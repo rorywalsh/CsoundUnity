@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Csound.Unity.Utilities.LoadFiles
+namespace Csound.Unity.Utilities.MonoBehaviours
 {
     /// <summary>
     /// Read samples from an AudioClip, draw its waveform in a RawImage, and use an Image as a progress bar.

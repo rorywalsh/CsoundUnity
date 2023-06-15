@@ -3,8 +3,9 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using WAFU = Csound.Unity.Utilities.WriteAudioFileUtils;
 
-namespace Csound.Unity.Utilities.LoadFiles
+namespace Csound.Unity.Utilities.MonoBehaviours
 {
     /// <summary>
     /// Utility class that copies different kind of files into the Persistent Data Path so that they can be found by Csound using Environment Variables.
@@ -15,6 +16,8 @@ namespace Csound.Unity.Utilities.LoadFiles
     /// </summary>
     public class CopyFilesToPersistentDataPath : MonoBehaviour
     {
+        [Tooltip("Those audio files will be searched into the Resources folder, and copied into the Persistent Data path")]
+        [SerializeField] private AudioFileInfo[] _audioFiles;
         [Tooltip("The names of the plugins to copy from Resources to the Persistent Data Path folder. " +
             "Don't specify the extension. The extension will be added to the copied files depending on the platform. ")]
         [SerializeField] private string[] _pluginsNames;
@@ -22,7 +25,6 @@ namespace Csound.Unity.Utilities.LoadFiles
         [SerializeField] private string[] _streamingAssetsFiles;
         [Tooltip("Those files will be read from Resources folders")]
         [SerializeField] private AdditionalFileInfo[] _additionalFiles;
-
         [Tooltip("Ensure these CsoundUnity GameObjects are inactive when hitting play, " +
             "otherwise their initialization will run. " +
             "Setting the Environment Variables on a running Csound instance can have unintended effects.")]
@@ -34,17 +36,19 @@ namespace Csound.Unity.Utilities.LoadFiles
         void Awake()
         {
 #if UNITY_ANDROID || UNITY_IOS
-            _filesToCopy = _streamingAssetsFiles.Length + _additionalFiles.Length;
+            _filesToCopy = _audioFiles.Length + _streamingAssetsFiles.Length + _additionalFiles.Length;
 #else
-            _filesToCopy = _pluginsNames.Length + _streamingAssetsFiles.Length + _additionalFiles.Length;
+            _filesToCopy = _audioFiles.Length + _pluginsNames.Length + _streamingAssetsFiles.Length + _additionalFiles.Length;
 #endif
 
-            Debug.Log($"Csound.Unity.LoadFiles: Copying {_filesToCopy} files to Persistent Data Path");
+            Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Copying / Checking {_filesToCopy} files to Persistent Data Path");
+
+            StartCoroutine(CopyAudioFiles());
 
 #if !UNITY_ANDROID && !UNITY_IOS
             foreach (var pluginName in _pluginsNames)
             {
-                Debug.Log($"Csound.Unity.LoadFiles: Copying plugin: {pluginName}");
+                Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Copying plugin: {pluginName}");
                 var dir = Application.persistentDataPath;
                 var pluginPath = string.Empty;
                 var destinationPath = string.Empty;
@@ -55,13 +59,13 @@ namespace Csound.Unity.Utilities.LoadFiles
                 destinationPath = Path.Combine(dir, "lib" + pluginName + ".dylib");
                 pluginPath = Path.Combine("MacOS", "lib" + pluginName);
 #endif
-                Debug.Log($"Csound.Unity.LoadFiles: File Exists? {File.Exists(destinationPath)}");
+                Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: File Exists? {File.Exists(destinationPath)}");
                 if (!File.Exists(destinationPath))
                 {
-                    Debug.Log($"Csound.Unity.LoadFiles: Loading plugin at path: {pluginPath}");
+                    Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Loading plugin at path: {pluginPath}");
                     var plugin = Resources.Load<TextAsset>(pluginPath);
-                    Debug.Log($"Csound.Unity.LoadFiles: Loaded plugin bytes: {plugin.bytes.Length}");
-                    Debug.Log($"Csound.Unity.LoadFiles: Writing plugin file at path: {destinationPath}");
+                    Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Loaded plugin bytes: {plugin.bytes.Length}");
+                    Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Writing plugin file at path: {destinationPath}");
                     WriteFile(plugin.bytes, destinationPath);
                 }
                 _copiedFiles++;
@@ -84,7 +88,7 @@ namespace Csound.Unity.Utilities.LoadFiles
                 var filePath = Path.Combine(additionalFile.Directory, additionalFile.FileName + "." + additionalFile.Extension);
                 var destinationPath = Path.Combine(dir, additionalFile.FileName + "." + additionalFile.Extension);
 
-                Debug.Log($"Csound.Unity.LoadFiles: Copying additional File from Resources: {additionalFile.FileName}, destinationPath: {destinationPath}, file Exists? {File.Exists(destinationPath)}");
+                Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Copying additional File from Resources: {additionalFile.FileName}, destinationPath: {destinationPath}, file Exists? {File.Exists(destinationPath)}");
                 if (!File.Exists(destinationPath))
                 {
                     CopyGenericFileFromResources(filePath, destinationPath);
@@ -94,6 +98,32 @@ namespace Csound.Unity.Utilities.LoadFiles
 
             // start waiting for all the files to be copied, at the end enable all the CsoundUnity instances
             StartCoroutine(WaitForCopy());
+        }
+
+        IEnumerator CopyAudioFiles()
+        {
+            foreach (var audioFile in _audioFiles)
+            {
+                var dir = string.IsNullOrWhiteSpace(audioFile.Directory) ?
+                    Application.persistentDataPath :
+                    Application.persistentDataPath + "/" + audioFile.Directory;
+
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                var filePath = audioFile.Directory + "/" + audioFile.FileName;
+                var destinationPath = dir + "/" + audioFile.FileName;
+
+                if (!File.Exists(destinationPath))
+                {
+                    Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Copying audio file from Resources: {audioFile.FileName}, dir {audioFile.Directory}, destinationPath: {destinationPath}, file Exists? {File.Exists(destinationPath)}");
+                    CopyAudioFileFromResources(filePath, destinationPath);
+                    // wait one frame between each copy to avoid locking too much the main thread
+                    yield return null;
+                }
+
+                _copiedFiles++;
+            }
         }
 
         IEnumerator WaitForCopy()
@@ -158,13 +188,29 @@ namespace Csound.Unity.Utilities.LoadFiles
 #else
                 if (req.isHttpError || req.isNetworkError)
                 {
-                    Debug.LogError($"Csound.Unity.LoadFiles Error: {req.error}");
+                    Debug.LogError($"Csound.Unity.CopyFilesToPersistentDataPath Error: {req.error}");
                     yield break;
                 }
-                Debug.Log($"Csound.Unity.LoadFiles: {req.downloadHandler.data.Length} bytes read");
+                Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: {req.downloadHandler.data.Length} bytes read");
                 onBytesLoaded?.Invoke(req.downloadHandler.data);
 #endif
             }
+        }
+
+        private void CopyAudioFileFromResources(string origin, string destination)
+        {
+            var pathWithoutExtension = Path.ChangeExtension(origin, null);
+            var audioClip = Resources.Load<AudioClip>(pathWithoutExtension);
+            if (audioClip == null)
+            {
+                Debug.LogError($"Csound.Unity.CopyFilesToPersistentDataPath Error: AudioClip at {origin} couldn't be loaded.");
+                return;
+            }
+
+            var data = new float[audioClip.samples * audioClip.channels];
+            audioClip.GetData(data, 0);
+
+            WAFU.WriteAudioFile(audioClip, destination, 16);
         }
 
         private static void CopyGenericFileFromResources(string origin, string destination)
@@ -176,7 +222,7 @@ namespace Csound.Unity.Utilities.LoadFiles
 
         private static void WriteFile(byte[] bytes, string destination)
         {
-            Debug.Log($"Csound.Unity.LoadFiles: Writing file ({bytes.Length} bytes) at path: {destination}");
+            Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Writing file ({bytes.Length} bytes) at path: {destination}");
             Stream s = new MemoryStream(bytes);
             BinaryReader br = new BinaryReader(s);
             var dir = Path.GetDirectoryName(destination);
@@ -193,9 +239,21 @@ namespace Csound.Unity.Utilities.LoadFiles
         [Serializable]
         public class AdditionalFileInfo
         {
-            public string Directory;
+            [Tooltip("The file name without extension")]
             public string FileName;
+            [Tooltip("The extension of the file, without the dot")]
             public string Extension;
+            [Tooltip("The directory where the file is contained / will be placed after copy")]
+            public string Directory;
+        }
+
+        [Serializable]
+        public class AudioFileInfo
+        {
+            [Tooltip("The file name with extension")]
+            public string FileName;
+            [Tooltip("The directory where the file is contained / will be placed after copy")]
+            public string Directory;
         }
     }
 }

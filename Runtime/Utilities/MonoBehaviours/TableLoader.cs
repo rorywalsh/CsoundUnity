@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
+using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
 
-namespace Csound.Unity.Utilities.LoadFiles
+namespace Csound.Unity.Utilities.MonoBehaviours
 {
     /// <summary>
     /// Loads audio samples from an AudioClip into a Csound table
@@ -33,7 +34,7 @@ namespace Csound.Unity.Utilities.LoadFiles
                 yield return null; //waiting for initialization
             }
 
-            var samples = CsoundUnity.GetSamples(_source);
+            var samples = ASU.GetMonoSamples(_source);
             Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {samples.Length}, creating table #{_tableNumber}");
             var res = _csound.CreateTable(_tableNumber, samples);
             if (res == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber}!");
