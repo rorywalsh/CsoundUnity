@@ -1,0 +1,238 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc83b726b41f0c4ba68dac38255a4dd, type: 3}
+  m_Name: Duck
+  m_EditorClassIdentifier: 
+  presetName: Duck_1
+  csoundFileName: VoiceChanger.csd
+  channels:
+  - type: form
+    channel: 
+    text: 
+    caption: Voice Changer
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: gain
+    text: Gain
+    caption: 
+    min: 0
+    max: 10
+    value: 0.79
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: cutoff
+    text: Cutoff
+    caption: 
+    min: 0
+    max: 4000
+    value: 4000
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: dry
+    text: Dry
+    caption: 
+    min: 0
+    max: 2
+    value: 0
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: dryReverbSend
+    text: Dry Reverb Send
+    caption: 
+    min: 0
+    max: 2
+    value: 0
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: dryDelaySend
+    text: Dry Delay Send
+    caption: 
+    min: 0
+    max: 2
+    value: 0
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: reverb
+    text: Reverb
+    caption: 
+    min: 0
+    max: 5
+    value: 0.43
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: reverbTime
+    text: Reverb Time
+    caption: 
+    min: 0
+    max: 0.95
+    value: 0.843
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: delay
+    text: Delay
+    caption: 
+    min: 0
+    max: 5
+    value: 0.61
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: delayMix
+    text: Delay Mix
+    caption: 
+    min: 0
+    max: 0.996
+    value: 0.064
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: delayTimeL
+    text: Delay Time Left
+    caption: 
+    min: 0
+    max: 0.95
+    value: 0.787
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: delayTimeR
+    text: Delay Time Right
+    caption: 
+    min: 0
+    max: 0.95
+    value: 0.826
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: delayFeedback
+    text: Delay Feedback
+    caption: 
+    min: 0
+    max: 0.995
+    value: 0.1
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: delayCutoff
+    text: Delay Cutoff
+    caption: 
+    min: 0
+    max: 0.995
+    value: 0.6
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: pitcherLev
+    text: Pitcher Level
+    caption: 
+    min: 0
+    max: 5
+    value: 1.98
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: pitcherScale
+    text: Pitcher Scale
+    caption: 
+    min: 0
+    max: 4
+    value: 3.6
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: pitcherRevSend
+    text: Pitcher Reverb Send
+    caption: 
+    min: 0
+    max: 2
+    value: 0.36
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: pitcherDelaySend
+    text: Pitcher Delay Send
+    caption: 
+    min: 0
+    max: 2
+    value: 0.99
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: reverseLev
+    text: Reverse Level
+    caption: 
+    min: 0
+    max: 5
+    value: 0
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: reverseTime
+    text: Reverse Time
+    caption: 
+    min: 0.3
+    max: 2
+    value: 0.52
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: reverseRevSend
+    text: Reverse Reverb Send
+    caption: 
+    min: 0
+    max: 2
+    value: 0
+    skew: 1
+    increment: 1
+    options: []
+  - type: rslider
+    channel: reverseDelaySend
+    text: Reverse Delay Send
+    caption: 
+    min: 0
+    max: 2
+    value: 0
+    skew: 1
+    increment: 1
+    options: []
+  _drawChannels: 0

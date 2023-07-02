@@ -1,0 +1,188 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3655006456468214349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3655006456468214344}
+  - component: {fileID: 3655006456468214347}
+  - component: {fileID: 82146628349730517}
+  m_Layer: 0
+  m_Name: Csound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3655006456468214344
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3655006456468214349}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &3655006456468214347
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3655006456468214349}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &82146628349730517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3655006456468214349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logCsoundOutput: 1
+  mute: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  csoundScore: 
+  environmentSettings:
+  - platform: 0
+    type: 0
+    baseFolder: 0
+    suffix: CsoundFiles
+  - platform: 1
+    type: 0
+    baseFolder: 0
+    suffix: CsoundFiles
+  - platform: 2
+    type: 0
+    baseFolder: 0
+    suffix: CsoundFiles
+  _csoundFileGUID: 5a709faad364585448f780bdb9069960
+  _csoundString: "<CsoundSynthesizer>\r\n<CsOptions>\r\n-n -d \r\n</CsOptions>\r\n<CsInstruments>\r\n\r\n;
+    By  Menno Knevel - 2020\r\n\r\nsr = 48000\r\nksmps = 64\r\nnchnls = 2\r\n0dbfs 
+    = 1\r\n\r\n; load in two soundfonts\r\nisf\tsfload\t\"sf_GMbank.sf2\"\r\nir\tsfload\t\"07AcousticGuitar.sf2\"\r\n\tsfplist
+    isf\r\n\tsfplist ir\r\n; first sf_GMbank.sf2 is loaded and assigned to start
+    at 0 and counting up to 328\r\n; as there are 329 presets in sf_GMbank.sf2 (0-328).\r\n;
+    then 07AcousticGuitar.sf2 is loaded and assigned to replace the 10th preset of
+    already loaded sf_GMbank.sf2\r\n\tsfpassign\t0, isf\t\r\n\tsfpassign\t10, ir\r\n\r\ninstr
+    1 ; play French Horn, bank 0 program 60\r\n\r\ninum\t=\tp4\r\nivel\t=\tp5\r\nkamp\tlinsegr\t1,
+    1, 1, .1, 0\r\nkamp\t= kamp/500000\t\t\t\t\t\t;scale amplitude\r\nkfreq\t=\t1\t\t\t\t\t\t;do
+    not change freq from sf\r\na1,a2\tsfplay3\tivel, inum, kamp*ivel, kfreq, 60\t\t\t;preset
+    index = 60\r\n\touts\ta1, a2\t\r\nendin\r\n\t\r\ninstr 2\t; play Guitar replaces
+    sf_GMbank.sf2 at preset index 10\r\n\r\ninum\t=\tp4\r\nivel\t=\tp5\r\nkamp\tlinsegr\t1,
+    1, 1, .1, 0\r\nkamp\t= kamp/700000\t\t\t\t\t\t;scale amplitude\r\nkfreq\t=\t1\t\t\t\t\t\t;do
+    not change freq from sf\r\na1,a2\tsfplay3\tivel, inum, kamp*ivel, kfreq, 10\t\t\t;preset
+    index = 10\r\n\touts\ta1, a2\t\r\nendin\r\n\t\r\n</CsInstruments>\r\n<CsScore>\r\n\r\ni1
+    0 1 60 100\r\ni1 + 1 62 <\r\ni1 + 1 65 <\r\ni1 + 1 69 10\r\n\r\ni2 5 1 60 100\r\ni2
+    + 1 62 <\r\ni2 7 1 65 <\r\ni2 7 1 69 10\r\n\r\ne\r\n</CsScore>\r\n</CsoundSynthesizer>"
+  _csoundFileName: sfload.csd
+  _csoundAsset: {fileID: 102900000, guid: 5a709faad364585448f780bdb9069960, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 1
+  _drawChannels: 0
+  _drawAudioChannels: 0
