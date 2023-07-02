@@ -44,7 +44,12 @@
       "displayName": "Presets",
       "description": "Using Presets",
       "path": "Samples~/Presets"
-    }, 
+    },
+	{
+      "displayName": "Miscellaneous",
+      "description": "Several Csound treasures lie in this folder",
+      "path": "Samples~/Miscellaneous"
+    },
     {
       "displayName": "Collisions",
       "description": "Using collisions to trigger instruments",
