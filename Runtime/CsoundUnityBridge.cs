@@ -109,6 +109,11 @@ namespace Csound.Unity
             }
         }
 
+        public CsoundUnityBridge()
+        {
+            // empty constructor, will return an empty object and won't do any initialization
+        }
+
         /// <summary>
         /// The CsoundUnityBridge constructor sets up the Csound Global Environment Variables set by the user. 
         /// Then it creates an instance of Csound and compiles the full csdFile passed as a string.
@@ -118,6 +123,11 @@ namespace Csound.Unity
         /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
         public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
         {
+            if (string.IsNullOrWhiteSpace(csdFile))
+            {
+                Debug.Log("CsoundUnityBridge not created, passed csdFile is empty, returning");
+                return;
+            }
             //if working on Windows, disable searching of plugins unless explicitly set it using
             //the env settings in the editor
             if (Application.platform == RuntimePlatform.WindowsPlayer)
@@ -165,17 +175,16 @@ namespace Csound.Unity
 
             int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
             Csound6.NativeMethods.csoundStart(csound);
-
-            Debug.Log($"Csound created and started.\n" +
+            compiledOk = ret == 0 ? true : false;
+            Debug.Log($"Csound created and started. CsoundCompile: {compiledOk}\n" +
                 $"AudioSettings.outputSampleRate: {AudioSettings.outputSampleRate}\n" +
                 $"GetSr: {GetSr()}\n" +
                 $"GetKr: {GetKr()}\n" +
                 $"Get0dbfs: {Get0dbfs()}\n" +
                 $"GetKsmps: {GetKsmps()}");
+            
             //var res = PerformKsmps();
             //Debug.Log($"PerformKsmps: {res}");
-            compiledOk = ret == 0 ? true : false;
-            //Debug.Log($"CsoundCompile: {compiledOk}");
         }
 
         #region Instantiation
@@ -203,8 +212,9 @@ namespace Csound.Unity
             Csound6.NativeMethods.csoundStop(csound);
         }
 
-        public void OnApplicationQuit()
+        public virtual void OnApplicationQuit()
         {
+            //Debug.Log("Bridge OnApplicationQuit");
             StopCsound();
             //Csound6.NativeMethods.csoundCleanup(csound);
             Csound6.NativeMethods.csoundDestroyMessageBuffer(csound);
