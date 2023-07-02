@@ -351,7 +351,7 @@ namespace Csound.Unity
                             var max = cc.FindPropertyRelative("max").floatValue;
 
                             EditorGUI.BeginChangeCheck();
-                            chanValue.floatValue = EditorGUILayout.Slider(label, chanValue.floatValue, min, max);
+                            chanValue.floatValue = EditorGUILayout.Slider(new GUIContent(label, channel), chanValue.floatValue, min, max);
                             if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
                             {
                                 csoundUnity.SetChannel(channel, chanValue.floatValue);
@@ -382,7 +382,7 @@ namespace Csound.Unity
                         }
                         else if (type.Contains("button"))
                         {
-                            if (GUILayout.Button(label))
+                            if (GUILayout.Button(new GUIContent(label, channel)))
                             {
                                 if (Application.isPlaying && csoundUnity != null)
                                 {
@@ -398,11 +398,15 @@ namespace Csound.Unity
                         else if (type.Contains("checkbox"))
                         {
                             EditorGUI.BeginChangeCheck();
-                            chanValue.floatValue = EditorGUILayout.Toggle(label, chanValue.floatValue == 1 ? true : false) ? 1f : 0f;
+                            chanValue.floatValue = EditorGUILayout.Toggle(new GUIContent(label, channel), chanValue.floatValue == 1 ? true : false) ? 1f : 0f;
                             if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
                             {
                                 csoundUnity.SetChannel(channel, chanValue.floatValue);
                             }
+                        }
+                        else if (type.Contains("label"))
+                        {
+                            EditorGUILayout.LabelField(label);
                         }
                     }
             }

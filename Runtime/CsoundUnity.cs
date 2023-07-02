@@ -815,7 +815,7 @@ namespace Csound.Unity
                 }
                 var control = trimmd.Substring(0, trimmd.IndexOf(" ") > -1 ? trimmd.IndexOf(" ") : 0);
                 if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox")
-                    || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox"))
+                    || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox") || control.Contains("label"))
                 {
                     CsoundChannelController controller = new CsoundChannelController();
                     controller.type = control;
