@@ -2223,6 +2223,7 @@ namespace Csound.Unity
                             if (!namedAudioChannelDataDict.ContainsKey(chanName) || !namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
                             namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
                         }
+                    }
                 }
             }
         }
