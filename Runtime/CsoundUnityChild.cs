@@ -134,11 +134,12 @@ namespace Csound.Unity
             }
 
             if (namedAudioChannelData.Count == 0)
+            { 
                 for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
                 {
                     namedAudioChannelData.Add(new MYFLT[bufferSize]);
                 }
-
+            }
             if (selectedAudioChannelIndexByChannel == null) selectedAudioChannelIndexByChannel = new int[2];
             // TODO: force doppler level of the AudioSource to 0, to avoid audio artefacts ?
             // audioSource.dopplerLevel = 0;
