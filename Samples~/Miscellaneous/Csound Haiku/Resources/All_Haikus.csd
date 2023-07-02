@@ -44,10 +44,6 @@ gkVII            chnget  "VII"
 gkVIII           chnget  "VIII" 
 gkIX             chnget  "IX" 
 
-printk2 gkI
-printk2 gkII
-printk2 gkIII
-
 if trigger:k(gkOFF,0.5,0)==1 then
                  chnset 0, "I"
                  chnset 0, "II"
