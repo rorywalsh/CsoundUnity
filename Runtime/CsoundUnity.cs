@@ -52,10 +52,10 @@ namespace Csound.Unity
     /// </summary>
     public class CsoundChannelController
     {
-        [SerializeField] public string type = "";
-        [SerializeField] public string channel = "";
-        [SerializeField] public string text = "";
-        [SerializeField] public string caption = "";
+        [SerializeField] public string type;
+        [SerializeField] public string channel;
+        [SerializeField] public string text;
+        [SerializeField] public string caption;
         [SerializeField] public float min;
         [SerializeField] public float max;
         [SerializeField] public float value;
@@ -277,7 +277,7 @@ namespace Csound.Unity
         /// <summary>
         /// The version of this package
         /// </summary>
-        public const string packageVersion = "3.4.0";
+        public const string packageVersion = "3.5.0";
 
         /// <summary>
         /// the unique guid of the csd file
@@ -468,8 +468,7 @@ namespace Csound.Unity
 
             AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
 
-            Debug.Log($"CsoundUnity Awake\n" +
-                $"AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
+            Debug.Log($"CsoundUnity v{packageVersion} Awake, AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
 
             audioSource = GetComponent<AudioSource>();
             audioSource.spatializePostEffects = true;
@@ -499,12 +498,18 @@ namespace Csound.Unity
                     for (int i = 0; i < channels.Count; i++)
                     {
                         if (channels[i].type.Contains("combobox"))
+                        {
                             csound.SetChannel(channels[i].channel, channels[i].value + 1);
+                        }
                         else
+                        {
                             csound.SetChannel(channels[i].channel, channels[i].value);
+                        }
                         // update channels index dictionary
                         if (!_channelsIndexDict.ContainsKey(channels[i].channel))
+                        {
                             _channelsIndexDict.Add(channels[i].channel, i);
+                        }
                     }
 
                 foreach (var name in availableAudioChannels)
@@ -622,9 +627,20 @@ namespace Csound.Unity
             this._csoundString = File.ReadAllText(csoundFilePath);
             this._channels = ParseCsdFile(fileName);
             var count = 0;
-            foreach (var chan in this._channels)
-                if (!_channelsIndexDict.ContainsKey(chan.channel))
-                    _channelsIndexDict.Add(chan.channel, count++);
+            // updating the channelsIndexDict here is only needed if updating the Csd when app is playing
+            // not yet important since updating the Csd at runtime is not supported yet
+            // but it will be possible at some point in the future
+            if (_channelsIndexDict != null)
+            {
+                foreach (var chan in this._channels)
+                {
+                    if (string.IsNullOrWhiteSpace(chan.channel)) continue;
+                    if (!_channelsIndexDict.ContainsKey(chan.channel))
+                    {
+                        _channelsIndexDict.Add(chan.channel, count++);
+                    }
+                }
+            }
             this._availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
 
             foreach (var name in availableAudioChannels)
@@ -756,7 +772,13 @@ namespace Csound.Unity
                 if (!split[0].StartsWith("a") && !split[0].StartsWith("ga"))
                     continue; //discard non audio variables
                               // Debug.Log("found audio channel");
+                
+                // discard channels that are not plain strings, since they cannot be interpreted afterwards
+                // "validChan" vs SinvalidChan
+                if (!split[1].StartsWith("\"") || !split[1].EndsWith("\"")) continue;
+
                 var ach = split[1].Replace('\\', ' ').Replace('\"', ' ').Trim();
+                
                 if (!locaAudioChannels.Contains(ach))
                     locaAudioChannels.Add(ach);
             }
@@ -2155,7 +2177,9 @@ namespace Csound.Unity
                         if (_quitting) return;
 
                         if (mute == true)
+                        { 
                             samples[i + channel] = 0.0f;
+                        }
                         else
                         {
                             if ((ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
@@ -2193,6 +2217,7 @@ namespace Csound.Unity
 
                     // update the audioChannels just when this instance is not muted
                     if (!mute)
+                    { 
                         foreach (var chanName in availableAudioChannels)
                         {
                             if (!namedAudioChannelDataDict.ContainsKey(chanName) || !namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
