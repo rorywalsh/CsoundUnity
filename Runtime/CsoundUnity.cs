@@ -364,6 +364,9 @@ namespace Csound.Unity
         /// </summary>
         public event CsoundInitialized OnCsoundInitialized;
 
+        public delegate void CsoundPerformKsmps();
+        public event CsoundPerformKsmps OnCsoundPerformKsmps;
+
         public bool PerformanceFinished { get => performanceFinished; }
         /// <summary>
         /// the score to send via editor
@@ -2195,6 +2198,8 @@ namespace Csound.Unity
                                     if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
                                     namedAudioChannelTempBufferDict[chanName] = GetAudioChannel(chanName);
                                 }
+
+                                OnCsoundPerformKsmps?.Invoke();
                             }
 
                             if (processClipAudio)
