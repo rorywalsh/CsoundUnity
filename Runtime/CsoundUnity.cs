@@ -772,10 +772,12 @@ namespace Csound.Unity
                 if (!split[0].StartsWith("a") && !split[0].StartsWith("ga"))
                     continue; //discard non audio variables
                               // Debug.Log("found audio channel");
-                
+
                 // discard channels that are not plain strings, since they cannot be interpreted afterwards
                 // "validChan" vs SinvalidChan
-                if (!split[1].StartsWith("\"") || !split[1].EndsWith("\"")) continue;
+                if (!split[1].TrimStart().StartsWith("\"") || 
+                    !split[1].TrimEnd().EndsWith("\"")) 
+                    continue;
 
                 var ach = split[1].Replace('\\', ' ').Replace('\"', ' ').Trim();
                 
