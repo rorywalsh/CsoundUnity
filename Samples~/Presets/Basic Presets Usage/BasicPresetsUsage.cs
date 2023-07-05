@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Csound.BasicPresetUsage
+namespace Csound.Unity.Samples.BasicPresetUsage
 {
     /// <summary>
     /// This example saves presets in the Persistent Data Path, 

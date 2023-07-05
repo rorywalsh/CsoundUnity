@@ -727,15 +727,12 @@ MonoBehaviour:
     30, 0, 1, 0.001) text(\"LFO Freq\") \r\nrslider bounds(210, 270, 60, 60) channel(\"filtLFORandAmp\")
     range(0, 1, 0, 1, 0.001) text(\"LFO Rand Amp\")\r\nrslider bounds(210, 210, 60,
     60) channel(\"filtLFORandFreq\") range(0, 30, 0, 1, 0.001) text(\"LFO Rand Freq\")\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
-    -d\r\n</CsOptions>\r\n<CsInstruments>\r\n; Initialize the global variables. \r\nsr
-    = 48000\r\nksmps = 32\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\ngiSine    ftgen     1,
-    0, 2^10, 10, 1\r\ngiSaw     ftgen     2, 0, 2^10, 10, 1,-1/2,1/3,-1/4,1/5,-1/6,1/7,-1/8,1/9\r\ngiSquare 
+    -d --port=11000\r\n</CsOptions>\r\n<CsInstruments>\r\n; Initialize the global
+    variables. \r\nsr = 48000\r\nksmps = 32\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\ngiSine   
+    ftgen     1, 0, 2^10, 10, 1\r\ngiSaw     ftgen     2, 0, 2^10, 10, 1,-1/2,1/3,-1/4,1/5,-1/6,1/7,-1/8,1/9\r\ngiSquare 
     ftgen     3, 0, 2^10, 10, 1, 0, 1/3, 0, 1/5, 0, 1/7, 0, 1/9\r\ngiTri     ftgen    
     4, 0, 2^10, 10, 1, 0, -1/9, 0, 1/25, 0, -1/49, 0, 1/81\r\ngiImp     ftgen    
     5, 0, 2^10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1\r\ngiNoise   ftgen     6, 0, 2^10,
-    21, 1\r\n\r\n;giWave1 ftgen 1, 0, 4096, 10, 1\r\n;giWave2 ftgen 2, 0, 4096, 10,
-    1, .5, .25, .17\r\n;giWave3 ftgen 3, 0, 4096, 10, 1, 0, .333, 0, .2, 0, .143,
-    0, .111, 0, .0909, 0, .077, 0, .0666, 0, .0588\r\n;giNoise ftgen 4, 0, 4096,
     21, 1\r\n\r\ninstr 1\r\n\r\n    kEnv madsr 0.1, .5, .6, 1\r\n        \r\n   
     kFiltRandFreq = chnget:k(\"filtRandFreq\")\r\n    kFiltRandRes = chnget:k(\"filtRandRes\")\r\n   
     kLFORandAmp = chnget:k(\"filtLFORandAmp\")\r\n    kLFORandFreq = chnget:k(\"filtLFORandFreq\")\r\n   
@@ -779,7 +776,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 1
+    value: 0.4
     skew: 1
     increment: 0.01
     options: []
@@ -789,7 +786,7 @@ MonoBehaviour:
     caption: 
     min: 10
     max: 2200
-    value: 55
+    value: 440
     skew: 1
     increment: 0.001
     options: []
@@ -799,7 +796,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 200
-    value: 1.6
+    value: 10
     skew: 1
     increment: 1
     options: []
@@ -809,7 +806,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.525
+    value: 1
     skew: 1
     increment: 0.001
     options: []
@@ -819,7 +816,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.455
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -829,7 +826,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.387
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -839,7 +836,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.762
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -849,7 +846,7 @@ MonoBehaviour:
     caption: 
     min: 1
     max: 6
-    value: 2
+    value: 0
     skew: 1
     increment: 0.01
     options:
@@ -865,7 +862,7 @@ MonoBehaviour:
     caption: 
     min: 1
     max: 6
-    value: 5
+    value: 0
     skew: 1
     increment: 0.01
     options:
@@ -881,7 +878,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 15
-    value: 0.36
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -901,7 +898,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0
-    value: 1
+    value: 0
     skew: 0
     increment: 0
     options: []
@@ -911,7 +908,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 16000
-    value: 1256
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -931,7 +928,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 0.126
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -941,7 +938,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 1.659
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -951,7 +948,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0
-    value: 1
+    value: 0
     skew: 0
     increment: 0
     options: []
@@ -977,7 +974,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.99
-    value: 0.177
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -987,7 +984,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 3.18
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1007,7 +1004,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 0.1
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1022,9 +1019,9 @@ MonoBehaviour:
   _drawPresetsSave: 1
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 1
-  _currentPreset: Smoothie
+  _currentPreset: SlowUpAndDown
   _currentPresetSaveFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets
-  _currentPresetLoadFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets/Samples/CsoundUnity/3.4.0/Presets/BasicPresetsUsage/Presets
+  _currentPresetLoadFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets
 --- !u!82 &1923268640
 AudioSource:
   m_ObjectHideFlags: 0
