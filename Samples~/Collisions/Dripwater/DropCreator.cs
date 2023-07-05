@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Csound.Samples.Collisions.Dripwater
+namespace Csound.Unity.Samples.Collisions.Dripwater
 {
     public class DropCreator : MonoBehaviour
     {

@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RU = Csound.Unity.Utilities.RemapUtils;
 
-namespace Csound.Samples.Collisions.BasicCollision
+namespace Csound.Unity.Samples.Collisions.BasicCollision
 {
     public class CollisionDetection : MonoBehaviour
     {
@@ -27,6 +28,7 @@ namespace Csound.Samples.Collisions.BasicCollision
 
         private void OnCollisionEnter(Collision collision)
         {
+            if (!_csound || !_csound.IsInitialized) return;
             SetData(collision);
 
             Debug.Log("OnCollisionEnter");
@@ -36,6 +38,7 @@ namespace Csound.Samples.Collisions.BasicCollision
 
         private void OnCollisionExit(Collision collision)
         {
+            if (!_csound || !_csound.IsInitialized) return;
             Debug.Log("OnCollisionExit");
             var score = $"i -1 0 -1";
             _csound.SendScoreEvent(score);
@@ -43,6 +46,7 @@ namespace Csound.Samples.Collisions.BasicCollision
 
         private void OnCollisionStay(Collision collision)
         {
+            //Debug.Log("collision: "+collision.contacts[0].point);
             SetData(collision);
         }
 
@@ -50,8 +54,8 @@ namespace Csound.Samples.Collisions.BasicCollision
         {
             var contacts = new ContactPoint[collision.contactCount];
             collision.GetContacts(contacts);
-            _csound.SetChannel("modIndex", CsoundUnity.Remap(contacts[0].point.x, RangeX.x, RangeX.y, 2f, 0.1f));
-            _csound.SetChannel("modFreq", CsoundUnity.Remap(contacts[0].point.y, RangeY.x, RangeY.y, 0f, 110f));
+            _csound.SetChannel("modIndex", RU.Remap(contacts[0].point.x, RangeX.x, RangeX.y, 2f, 0.1f));
+            _csound.SetChannel("modFreq", RU.Remap(contacts[0].point.y, RangeY.x, RangeY.y, 0f, 110f));
         }
     }
 }
