@@ -1454,6 +1454,16 @@ namespace Csound.Unity
             csound.Cleanup();
         }
 
+#if UNITY_EDITOR
+        [MenuItem("GameObject/Audio/CsoundUnity", false)]
+        static public void CreateCsoundUnityObject(MenuCommand menuCommand)
+        {
+            var go = new GameObject();
+            go.AddComponent(typeof(CsoundUnity));
+            go.name = "Csound";
+            Selection.activeObject = go;
+        }
+#endif
 
         #region PRESETS
 

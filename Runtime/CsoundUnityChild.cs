@@ -26,6 +26,9 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -174,6 +177,17 @@ namespace Csound.Unity
             //Debug.Log($"CsoundUnityChild SetAudioChannel channel: {channel}, audioChannel: {audioChannel}");
             selectedAudioChannelIndexByChannel[channel] = audioChannel;
         }
+
+#if UNITY_EDITOR
+        [MenuItem("GameObject/Audio/CsoundUnityChild", false)]
+        static public void CreateCsoundUnityObject(MenuCommand menuCommand)
+        {
+            var go = new GameObject();
+            go.AddComponent(typeof(CsoundUnityChild));
+            go.name = "CsoundUnityChild";
+            Selection.activeObject = go;
+        }
+#endif
 
         void Start()
         {
