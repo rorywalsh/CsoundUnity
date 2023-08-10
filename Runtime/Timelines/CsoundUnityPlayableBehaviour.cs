@@ -38,11 +38,12 @@ namespace Csound.Unity.Timelines
     [Serializable]
     public class CsoundUnityPlayableBehaviour : PlayableBehaviour
     {
-        public string channel = "";
         public float value = 0f;
 
         // Keep this for reference, this is the basic behaviour
         // without the ability of mixing clips
+
+        // public string channel = "";
 
         //private CsoundUnity csound;
         //private bool firstFrameHappened;

@@ -39,10 +39,13 @@ namespace Csound.Unity.Timelines
     [TrackBindingType(typeof(CsoundUnity))]
     public class CsoundUnityTrack : TrackAsset
     {
+        public string channel;
+
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
             // Create a custom mixer playable for your track
             var mixerPlayable = ScriptPlayable<CsoundUnityMixerBehaviour>.Create(graph, inputCount);
+            mixerPlayable.GetBehaviour().channel = this.channel;
             return mixerPlayable;
         }
     }
