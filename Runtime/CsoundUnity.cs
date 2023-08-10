@@ -1359,6 +1359,15 @@ namespace Csound.Unity
         }
 
         /// <summary>
+        /// Return a 32-bit unsigned integer to be used as seed from current time.
+        /// </summary>
+        /// <returns></returns>
+        public uint GetRandomSeedFromTime()
+        {
+            return csound.GetRandomSeedFromTime();
+        }
+
+        /// <summary>
         /// Get Environment path.
         /// </summary>
         /// <param name="envType">the type of the environment to get</param>

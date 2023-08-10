@@ -889,6 +889,14 @@ namespace Csound.Unity
             public int FFT_library;         /* fft_lib */
         }
 
+        /// <summary>
+        /// Return a 32-bit unsigned integer to be used as seed from current time.
+        /// </summary>
+        /// <returns></returns>
+        public uint GetRandomSeedFromTime()
+        {
+            return Csound6.NativeMethods.csoundGetRandomSeedFromTime();
+        }
 
         /// <summary>
         /// Gets a string value from csound's environment values.
