@@ -412,6 +412,8 @@ namespace Csound.Unity
         /// </summary>
         private Dictionary<string, int> _channelsIndexDict = new Dictionary<string, int>();
         [HideInInspector] [SerializeField] private List<string> _availableAudioChannels = new List<string>();
+        [HideInInspector] [SerializeField] private List<string> _audioChannelsToAdd = new List<string>();
+        [HideInInspector] [SerializeField] private List<string> _audioChannelsToRemove = new List<string>();
         /// <summary>
         /// Inspector foldout settings
         /// </summary>
@@ -1121,6 +1123,92 @@ namespace Csound.Unity
         public MYFLT[] GetAudioChannel(string channel)
         {
             return csound.GetAudioChannel(channel);
+        }
+
+        /// <summary>
+        /// This method updates the available audio channels that will be used in ProcessBlock
+        /// It is called in <see cref="ProcessBlock(float[], int)"/> before further processing is executed
+        /// </summary>
+        private void UpdateAvailableAudioChannels()
+        {
+            // add any new channel that could have been added in the meantime
+            foreach (var newChan in _audioChannelsToAdd)
+            {
+                _availableAudioChannels.Add(newChan);
+                namedAudioChannelDataDict.Add(newChan, new MYFLT[bufferSize]);
+                namedAudioChannelTempBufferDict.Add(newChan, new MYFLT[ksmps]);
+            }
+            _audioChannelsToAdd.Clear();
+
+            // also remove channels that could have been removed after the last processed block
+            foreach (var oldChan in _audioChannelsToRemove)
+            {
+                _availableAudioChannels.Remove(oldChan);
+                namedAudioChannelDataDict.Remove(oldChan);
+                namedAudioChannelTempBufferDict.Remove(oldChan);
+            }
+            _audioChannelsToRemove.Clear();
+        }
+
+        /// <summary>
+        /// Add an audio channel to the list that can be used in CsoundUnityChild
+        /// </summary>
+        /// <param name="channel">The channel to be added</param>
+        public void AddAudioChannel(string channel)
+        {
+            if (namedAudioChannelDataDict.ContainsKey(channel) || 
+                _availableAudioChannels.Contains(channel) || 
+                _audioChannelsToAdd.Contains(channel))
+            {
+                Debug.LogWarning($"Cannot add available audio channel {channel}, it is already present");
+                return; 
+            }
+
+            _audioChannelsToAdd.Add(channel);
+        }
+
+
+        /// <summary>
+        /// Removes an audio channel from the list that can be used in CsoundUnityChild
+        /// </summary>
+        /// <param name="channel">The channel to be removed</param>
+        public void RemoveAudioChannel(string channel)
+        {
+            if (_availableAudioChannels.Contains(channel) && namedAudioChannelDataDict.ContainsKey(channel) && 
+                namedAudioChannelTempBufferDict.ContainsKey(channel)
+                && !_audioChannelsToRemove.Contains(channel))
+            {
+                // The removal will happen during the next OnAudioFilterRead call
+                // Check the ProcessBlock(float[], int) method
+                _audioChannelsToRemove.Add(channel);
+            }
+        }
+
+        /// <summary>
+        /// Returns a sample from a CsoundUnity audio channel
+        /// This is useful if you want to update an AudioSource using the OnAudioFilterRead callback
+        /// Internally it uses the <see cref="namedAudioChannelDataDict"/> buffer,
+        /// that is usually used to update CsoundUnityChild scripts
+        /// Using this together with <see cref="AddAudioChannel(string)"/> and <see cref="RemoveAudioChannel(string)"/>
+        /// allows you to create new audio channels at runtime.
+        /// See the "Trapped in Convert" sample under "Miscellaneous" for a demonstration on how to use this.
+        /// </summary>
+        /// <param name="channel">An existing audio channel buffer</param>
+        /// <param name="sample">The sample to retrieve from the buffer</param>
+        /// <returns></returns>
+        public double GetAudioChannelSample(string channel, int sample)
+        {
+            if (!namedAudioChannelDataDict.ContainsKey(channel))
+            {
+                return 0;
+            }
+            var len = namedAudioChannelDataDict[channel].Length;
+            if (sample < 0 || sample >= len)
+            {
+                Debug.LogWarning($"CsoundUnity.GetAudioChannelSample Out of range! channel: {channel}, sample: {sample}, buffer length: {len}");
+                return 0;
+            }
+            return namedAudioChannelDataDict[channel][sample];
         }
 
         #endregion AUDIO_CHANNELS
@@ -2192,6 +2280,8 @@ namespace Csound.Unity
         {
             if (compiledOk && initialized && !_quitting)
             {
+                UpdateAvailableAudioChannels();
+
                 for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)
                 {
                     for (uint channel = 0; channel < numChannels; channel++)
