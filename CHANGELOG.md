@@ -1,3 +1,13 @@
+## [3.4.1] - 2023-10-21
+
+This release is a collection of hot fixes made in the last year, some of those were already on the master branch for quite some time.
+
+- [Fix] Android crash in Unity versions above 2021.3.27  
+- [Fix] Unity Editor crashing on Windows if having a different version of Csound installed  
+- [Fix] Apps targeting Android ARM7 devices now build and run correctly  
+- [Fix] iOS builds correctly  
+- [Fix] Drag&Drop issue on Windows editor  
+
 ## [3.4.0] - 2022-10-30
 
 - added CsoundUnityPresets!
