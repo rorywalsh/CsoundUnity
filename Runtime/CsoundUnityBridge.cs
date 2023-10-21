@@ -150,16 +150,19 @@ public class CsoundUnityBridge
 
         Csound6.NativeMethods.csoundSetOption(csound, "-n");
         Csound6.NativeMethods.csoundSetOption(csound, "-d");
-
-        var parms = GetParams();
+        Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
+        Csound6.NativeMethods.csoundSetOption(csound, $"--control-rate={AudioSettings.outputSampleRate}");
+        Csound6.NativeMethods.csoundSetOption(csound, $"--ksmps=1");
 
 #if UNITY_IOS
         Debug.Log($"Initialising sample rate and control rate using Audio Project Settings value: {AudioSettings.outputSampleRate}Hz, some values maybe incompatible with older hardware.");
-#endif  
+#endif
 
-        parms.control_rate_override = AudioSettings.outputSampleRate;
-        parms.sample_rate_override = AudioSettings.outputSampleRate;
-        SetParams(parms);
+        // This causes a crash in Unity >= 2021.3.28
+        //var parms = GetParams();
+        //parms.control_rate_override = AudioSettings.outputSampleRate;
+        //parms.sample_rate_override = AudioSettings.outputSampleRate;
+        //SetParams(parms);
 
         onCsoundCreated?.Invoke();
         onCsoundCreated = null;
