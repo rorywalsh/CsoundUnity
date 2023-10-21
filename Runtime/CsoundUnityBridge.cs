@@ -116,11 +116,14 @@ public class CsoundUnityBridge
     /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
     public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
     {
-	//if working on Windows, disable searching of plugins unless explicitly set it using
-	//the env settings in the editor
-	    if (Application.platform == RuntimePlatform.WindowsPlayer)
+        // if working on Windows, disable searching of plugins unless explicitly set using
+        // the env settings in the editor
+        if (Application.platform == RuntimePlatform.WindowsEditor || 
+            Application.platform == RuntimePlatform.WindowsPlayer)
+        {
             Csound6.NativeMethods.csoundSetOpcodedir(".");
-	    
+        }
+
         SetEnvironmentSettings(environmentSettings);
 
         // KEEP THIS FOR REFERENCE ;)
