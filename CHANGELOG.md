@@ -1,3 +1,7 @@
+## [3.4.2] - 2024-01-20
+
+- [Update] Android libraries to Csound 6.19 beta, to fix sound font issues
+
 ## [3.4.1] - 2023-10-21
 
 This release is a collection of hot fixes made in the last year, some of those were already on the master branch for quite some time.
