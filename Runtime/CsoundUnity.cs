@@ -1890,8 +1890,8 @@ public class CsoundUnity : MonoBehaviour
             Debug.Log($"Creating new CsoundUnityPreset at {fullPath}");
             AssetDatabase.CreateAsset(preset, fullPath);
         }
+        AssetDatabase.ImportAsset(fullPath);
         AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
 #endif
     }
 
@@ -1931,7 +1931,7 @@ public class CsoundUnity : MonoBehaviour
             Debug.Log(ex.Message);
         }
 #if UNITY_EDITOR
-        AssetDatabase.Refresh();
+        AssetDatabase.ImportAsset(fullPath);
 #endif
     }
 
@@ -1979,10 +1979,10 @@ public class CsoundUnity : MonoBehaviour
     public void SaveGlobalPreset(string presetName, string path = null, bool overwriteIfExisting = false)
     {
         var presetData = JsonUtility.ToJson(this, true);
+        var name = $"{presetName} {GLOBAL_TAG}";
+        var fullPath = CheckPathForExistence(path, name, overwriteIfExisting);
         try
-        {
-            var name = $"{presetName} {GLOBAL_TAG}";
-            var fullPath = CheckPathForExistence(path, name, overwriteIfExisting);
+        {    
             Debug.Log($"Saving global preset at {fullPath}");
             File.WriteAllText(fullPath, presetData);
         }
@@ -1991,7 +1991,7 @@ public class CsoundUnity : MonoBehaviour
             Debug.Log(ex.Message);
         }
 #if UNITY_EDITOR
-        AssetDatabase.Refresh();
+        AssetDatabase.ImportAsset(fullPath);
 #endif
     }
 
@@ -2053,15 +2053,16 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="preset"></param>
     public void SetPreset(CsoundUnityPreset preset)
     {
+        if (preset == null)
+        {
+            Debug.LogError("Couldn't load a null CsoundUnityPreset!");
+            return;
+        }
         if (this.csoundFileName != preset.csoundFileName)
         {
             Debug.LogError($"Couldn't set preset {preset.presetName} to this CsoundUnity instance {this.name}, " +
                 $"this instance uses csd: {this.csoundFileName}, the preset was saved with csd: {preset.csoundFileName} instead");
             return;
-        }
-        if (preset == null)
-        {
-            Debug.LogError("Couldn't load a null CsoundUnityPreset!");
         }
 
         _currentPreset = preset.presetName;
