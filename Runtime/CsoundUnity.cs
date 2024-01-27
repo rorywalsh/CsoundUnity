@@ -1891,7 +1891,7 @@ public class CsoundUnity : MonoBehaviour
             AssetDatabase.CreateAsset(preset, fullPath);
         }
         AssetDatabase.ImportAsset(fullPath);
-        AssetDatabase.SaveAssets();
+        //AssetDatabase.SaveAssets();
 #endif
     }
 
