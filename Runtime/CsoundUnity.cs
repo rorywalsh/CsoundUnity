@@ -2152,7 +2152,7 @@ public class CsoundUnity : MonoBehaviour
     {
         var presetName = Path.GetFileName(path);
 
-#if UNITY_ANDROID || UNITY_IOS
+#if !UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS)
         StartCoroutine(LoadingData(path, (d) =>
         {
             SetGlobalPreset(presetName, d);
