@@ -782,9 +782,9 @@ public class CsoundUnityEditor : Editor
 
     private void RefreshPresets()
     {
-        AssetDatabase.Refresh();
-        EditorUtility.SetDirty(csoundUnity.gameObject);
-        Repaint();
+        //AssetDatabase.Refresh();
+        //EditorUtility.SetDirty(csoundUnity.gameObject);
+        //Repaint();
         EditorApplication.update += WaitOneFrameToUpdatePresets;
     }
 
