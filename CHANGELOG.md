@@ -1,3 +1,11 @@
+## [3.4.3] - 2024-04-26
+
+- [Fix] Unity crash on macOS
+- [Fix] Couldn't set a global preset in editor
+- [Remove] Commented section when searching for new presets. Apparently useless, saving resources
+- [Remove] Useless call to SaveAssets after creating a new preset
+- [Fix] Avoid calling AssetDatabase.Refresh() when presets are saved
+
 ## [3.4.2] - 2024-01-20
 
 - [Update] Android libraries to Csound 6.19 beta, to fix sound font issues
