@@ -1,0 +1,22 @@
+{
+    "name": "com.csound.unity.timelines",
+    "references": [
+        "GUID:0f8a96c3990a549aebde74c2a0c21938",
+        "GUID:f06555f75b070af458a003d92f9efb00"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.timeline",
+            "expression": "1.0.0",
+            "define": "USE_TIMELINES"
+        }
+    ],
+    "noEngineReferences": false
+}

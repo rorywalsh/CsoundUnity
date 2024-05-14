@@ -2,8 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RU = Csound.Unity.Utilities.RemapUtils;
 
-namespace Csound.Samples.Collisions.Dripwater
+namespace Csound.Unity.Samples.Collisions.Dripwater
 {
     [RequireComponent(typeof(Rigidbody))]
     public class Dripwater : MonoBehaviour
@@ -77,8 +78,8 @@ namespace Csound.Samples.Collisions.Dripwater
 
             if (!_csound || !_csound.IsInitialized) return;
 
-            var p4 = CsoundUnity.Remap(collision.GetContact(0).point.x, -3, 3, 330, 440);
-            var p5 = CsoundUnity.Remap(collision.GetContact(0).point.y, -3, 3, 880, 1200);
+            var p4 = RU.Remap(collision.GetContact(0).point.x, -3, 3, 330, 440);
+            var p5 = RU.Remap(collision.GetContact(0).point.y, -3, 3, 880, 1200);
             // get an intermediate frequency
             var p6 = (p4 + p5) / 2;
             var score = $"i 2 0 1 {p4} {p5} {p6}";

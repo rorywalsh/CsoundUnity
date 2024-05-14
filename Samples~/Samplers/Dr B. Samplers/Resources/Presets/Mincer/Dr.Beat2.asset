@@ -1,0 +1,187 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc83b726b41f0c4ba68dac38255a4dd, type: 3}
+  m_Name: Dr.Beat2
+  m_EditorClassIdentifier: 
+  presetName: Dr.Beat2
+  csoundFileName: CAB-RCB-mincer.csd
+  channels:
+  - type: 
+    channel: form
+    text: 
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: button
+    channel: trigger
+    text: Trigger
+    caption: 
+    min: 0
+    max: 0
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+  - type: 
+    channel: label44
+    text: 
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: combobox
+    channel: sound
+    text: Whisper, Dog, Traffic, Bird, QBfox, DrB-hello, Perotin, Sheila, Drum
+    caption: 
+    min: 1
+    max: 9
+    value: 5
+    skew: 1
+    increment: 0.01
+    options:
+    - Whisper
+    - Dog
+    - Traffic
+    - Bird
+    - QBfox
+    - DrB-hello
+    - Perotin
+    - Sheila
+    - Drum
+  - type: groupbox
+    channel: groupbox1
+    text: Time
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: time
+    text: Time
+    caption: 
+    min: 0
+    max: 10
+    value: 2.47
+    skew: 1
+    increment: 0.01
+    options: []
+  - type: groupbox
+    channel: groupbox2
+    text: Pitch
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: pitch
+    text: Pitch
+    caption: 
+    min: -2
+    max: 2
+    value: -0.16000009
+    skew: 1
+    increment: 0.01
+    options: []
+  - type: rslider
+    channel: verbLvl
+    text: Verb
+    caption: 
+    min: 0
+    max: 1
+    value: 0.75
+    skew: 1
+    increment: 0.01
+    options: []
+  - type: rslider
+    channel: masterLvl
+    text: Gain
+    caption: 
+    min: 0
+    max: 1
+    value: 0.818
+    skew: 1
+    increment: 0.01
+    options: []
+  - type: rslider
+    channel: mix
+    text: Mix
+    caption: 
+    min: 0
+    max: 1
+    value: 0.89
+    skew: 1
+    increment: 0.01
+    options: []
+  - type: rslider
+    channel: dur
+    text: Duration
+    caption: 
+    min: 0.2
+    max: 30
+    value: 28.8
+    skew: 1
+    increment: 0.01
+    options: []
+  - type: 
+    channel: label66
+    text: 
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: checkbox
+    channel: loop
+    text: 
+    caption: 
+    min: 0
+    max: 0
+    value: 1
+    skew: 0
+    increment: 0
+    options: []
+  - type: filebutton
+    channel: filebutton32
+    text: Save, Save
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: filebutton
+    channel: filebutton33
+    text: Remove, Remove
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  _drawChannels: 0

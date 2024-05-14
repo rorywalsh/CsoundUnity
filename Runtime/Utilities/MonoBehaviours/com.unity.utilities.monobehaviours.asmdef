@@ -1,0 +1,16 @@
+{
+    "name": "com.unity.utilities.monobehaviours",
+    "references": [
+        "GUID:0f8a96c3990a549aebde74c2a0c21938",
+        "GUID:a5751c921f1706842adafe69b078c09e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
