@@ -21,9 +21,11 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         [Tooltip("The names of the plugins to copy from Resources to the Persistent Data Path folder. " +
             "Don't specify the extension. The extension will be added to the copied files depending on the platform. ")]
         [SerializeField] private string[] _pluginsNames;
-        [Tooltip("Those files will be read from the StreamingAssets folder")]
+        [Tooltip("Those files will be read from the StreamingAssets folder. Please specify also the extension of the file.")]
         [SerializeField] private string[] _streamingAssetsFiles;
-        [Tooltip("Those files will be read from Resources folders")]
+        [Tooltip("Those files will be read from Resources folders. Only specify the file name, no need to specify the extension too." +
+            "Be sure though to rename these additional files extensions to .txt or .bytes. " +
+            "See https://docs.unity3d.com/Manual/class-TextAsset.html")]
         [SerializeField] private AdditionalFileInfo[] _additionalFiles;
         [Tooltip("Ensure these CsoundUnity GameObjects are inactive when hitting play, " +
             "otherwise their initialization will run. " +
@@ -81,9 +83,10 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             foreach (var additionalFile in _additionalFiles)
             {
                 var dir = Path.Combine(Application.persistentDataPath, additionalFile.Directory);
-
                 if (!Directory.Exists(dir))
+                { 
                     Directory.CreateDirectory(dir);
+                }
 
                 var filePath = Path.Combine(additionalFile.Directory, additionalFile.FileName + "." + additionalFile.Extension);
                 var destinationPath = Path.Combine(dir, additionalFile.FileName + "." + additionalFile.Extension);
@@ -241,7 +244,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         {
             [Tooltip("The file name without extension")]
             public string FileName;
-            [Tooltip("The extension of the file, without the dot")]
+            [Tooltip("The extension of the copied file, without the dot")]
             public string Extension;
             [Tooltip("The directory where the file is contained / will be placed after copy")]
             public string Directory;
