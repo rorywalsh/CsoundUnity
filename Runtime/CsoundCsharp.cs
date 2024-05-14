@@ -457,8 +457,8 @@ namespace Csound.Unity.CsoundCSharp
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern void csoundSetAudioChannel([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] string name, IntPtr samples);
 
-
-            // PUBLIC void csoundGetStringChannel (CSOUND *csound, const char *name, char *string)
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+            internal static extern void csoundGetStringChannel([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] string name, IntPtr str);
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern IntPtr csoundSetStringChannel([In] IntPtr csound, [In] String str, [In] String value);

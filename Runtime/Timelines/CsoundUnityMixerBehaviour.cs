@@ -53,7 +53,7 @@ namespace Csound.Unity.Timelines
             for (int i = 0; i < inputCount; i++)
             {
                 float inputWeight = playable.GetInputWeight(i);
-                var inputPlayable = (ScriptPlayable<CsoundUnityPlayableBehaviour>)playable.GetInput(i);
+                var inputPlayable = (ScriptPlayable<CsoundUnityChannelPlayableBehaviour>)playable.GetInput(i);
                 var input = inputPlayable.GetBehaviour();
 
                 finalValue += input.value * inputWeight;
