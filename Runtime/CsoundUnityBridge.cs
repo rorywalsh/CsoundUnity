@@ -28,95 +28,108 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
-using csoundcsharp;
+using Csound.Unity.CsoundCSharp;
 using System.Collections.Generic;
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || (UNITY_2022_1_OR_NEWER && UNITY_ANDROID)
 using MYFLT = System.Double;
 #elif UNITY_ANDROID || UNITY_IOS
 using MYFLT = System.Single;
 #endif
 
-/*
- * CsoundUnityBridge class
- */
-public class CsoundUnityBridge
+namespace Csound.Unity
 {
-    public IntPtr csound;
-    bool compiledOk = false;
-    Action onCsoundCreated;
-
-    private void SetEnvironmentSettings(List<EnvironmentSettings> environmentSettings)
+    /*
+     * CsoundUnityBridge class
+     */
+    public class CsoundUnityBridge
     {
-        if (environmentSettings == null || environmentSettings.Count == 0) return;
-        foreach (var env in environmentSettings)
-        {
-            if (env == null) continue;
-            var path = env.GetPath();
-            if (string.IsNullOrWhiteSpace(path)) continue;
+        public IntPtr csound;
+        bool compiledOk = false;
+        Action onCsoundCreated;
 
-            switch (Application.platform)
+        private void SetEnvironmentSettings(List<EnvironmentSettings> environmentSettings)
+        {
+            if (environmentSettings == null || environmentSettings.Count == 0) return;
+            foreach (var env in environmentSettings)
             {
-                case RuntimePlatform.OSXEditor:
-                case RuntimePlatform.OSXPlayer:
-                    if (env.platform.Equals(SupportedPlatform.MacOS))
-                    {
-                        Debug.Log($"Setting {env.GetTypeString()} for MacOS to: {path}");
-                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
-                    }
-                    break;
-                case RuntimePlatform.WindowsPlayer:
-                case RuntimePlatform.WindowsEditor:
-                    if (env.platform.Equals(SupportedPlatform.Windows))
-                    {
-                        Debug.Log($"Setting {env.GetTypeString()} for Windows to: {path}");
-                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
-                    }
-                    break;
-                case RuntimePlatform.Android:
-                    if (env.platform.Equals(SupportedPlatform.Android))
-                    {
-                        Debug.Log($"Setting {env.GetTypeString()} for Android to: {path}");
-                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
-                        //Debug.Log($"baseFolder: {env.baseFolder}");
-                        if (env.baseFolder.Equals(EnvironmentPathOrigin.Plugins))
+                if (env == null) continue;
+                var path = env.GetPath();
+                if (string.IsNullOrWhiteSpace(path)) continue;
+
+                switch (Application.platform)
+                {
+                    case RuntimePlatform.OSXEditor:
+                    case RuntimePlatform.OSXPlayer:
+                        if (env.platform.Equals(SupportedPlatform.MacOS))
                         {
-                            if (onCsoundCreated == null || onCsoundCreated.GetInvocationList().Length == 0)
+                            Debug.Log($"Setting {env.GetTypeString()} for MacOS to: {path}");
+                            Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
+                        }
+                        break;
+                    case RuntimePlatform.WindowsPlayer:
+                    case RuntimePlatform.WindowsEditor:
+                        if (env.platform.Equals(SupportedPlatform.Windows))
+                        {
+                            Debug.Log($"Setting {env.GetTypeString()} for Windows to: {path}");
+                            Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
+                        }
+                        break;
+                    case RuntimePlatform.Android:
+                        if (env.platform.Equals(SupportedPlatform.Android))
+                        {
+                            Debug.Log($"Setting {env.GetTypeString()} for Android to: {path}");
+                            Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
+                            //Debug.Log($"baseFolder: {env.baseFolder}");
+                            if (env.baseFolder.Equals(EnvironmentPathOrigin.Plugins))
                             {
-                                onCsoundCreated += () =>
+                                if (onCsoundCreated == null || onCsoundCreated.GetInvocationList().Length == 0)
                                 {
+                                    onCsoundCreated += () =>
+                                    {
 #if !UNITY_IOS // this is needed to avoid references to this method on iOS, where it's not supported
                                     Debug.Log("Csound Force Loading Plugins!");
                                     var loaded = Csound6.NativeMethods.csoundLoadPlugins(csound, path);
                                     Debug.Log($"PLUGINS LOADED? {loaded}");
 #endif
                                 };
+                                }
                             }
                         }
-                    }
-                    break;
-                case RuntimePlatform.IPhonePlayer:
-                    if (env.platform.Equals(SupportedPlatform.iOS))
-                    {
-                        Debug.Log($"Setting {env.GetTypeString()} for iOS to: {path}");
-                        Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    case RuntimePlatform.IPhonePlayer:
+                        if (env.platform.Equals(SupportedPlatform.iOS))
+                        {
+                            Debug.Log($"Setting {env.GetTypeString()} for iOS to: {path}");
+                            Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
 
-    /// <summary>
-    /// The CsoundUnityBridge constructor sets up the Csound Global Environment Variables set by the user. 
-    /// Then it creates an instance of Csound and compiles the full csdFile passed as a string.
-    /// Then it starts Csound.
-    /// </summary>
-    /// <param name="csdFile">The Csound (.csd) file content as a string</param>
-    /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
-    public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
-    {
-        // On editor and desktop platforms, disable searching of plugins unless explicitly set using
+        public CsoundUnityBridge()
+        {
+            // empty constructor, will return an empty object and won't do any initialization
+        }
+
+        /// <summary>
+        /// The CsoundUnityBridge constructor sets up the Csound Global Environment Variables set by the user. 
+        /// Then it creates an instance of Csound and compiles the full csdFile passed as a string.
+        /// Then it starts Csound.
+        /// </summary>
+        /// <param name="csdFile">The Csound (.csd) file content as a string</param>
+        /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
+        public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
+        {
+            if (string.IsNullOrWhiteSpace(csdFile))
+            {
+                Debug.Log("CsoundUnityBridge not created, passed csdFile is empty, returning");
+                return;
+            }
+            // On editor and desktop platforms, disable searching of plugins unless explicitly set using
         // the env settings in the editor
         if (Application.isEditor || !Application.isMobilePlatform)
         {
@@ -168,7 +181,7 @@ public class CsoundUnityBridge
 
         int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
         Csound6.NativeMethods.csoundStart(csound);
-
+	compiledOk = ret == 0 ? true : false;
         Debug.Log($"Csound created and started.\n" +
             $"AudioSettings.outputSampleRate: {AudioSettings.outputSampleRate}\n" +
             $"GetSr: {GetSr()}\n" +
@@ -177,8 +190,6 @@ public class CsoundUnityBridge
             $"GetKsmps: {GetKsmps()}");
         //var res = PerformKsmps();
         //Debug.Log($"PerformKsmps: {res}");
-        compiledOk = ret == 0 ? true : false;
-        //Debug.Log($"CsoundCompile: {compiledOk}");
     }
 
 #region Instantiation
@@ -303,13 +314,13 @@ public class CsoundUnityBridge
         return Csound6.NativeMethods.csoundTableLength(csound, table);
     }
 
-    /// <summary>
-    /// Returns the value of a slot in a function table. The table number and index are assumed to be valid.
-    /// </summary>
-	public MYFLT GetTable(int table, int index)
-    {
-        return Csound6.NativeMethods.csoundTableGet(csound, table, index);
-    }
+        /// <summary>
+        /// Returns the value of a slot in a function table. The table number and index are assumed to be valid.
+        /// </summary>
+        public MYFLT GetTable(int table, int index)
+        {
+            return Csound6.NativeMethods.csoundTableGet(csound, table, index);
+        }
 
     /// <summary>
     /// Sets the value of a slot in a function table. The table number and index are assumed to be valid.

@@ -1,4 +1,4 @@
-# Documentation v3.4.3 #
+# Documentation v3.5.0 #
 
   * [How to import CsoundUnity](importing.md)
   * [Getting Started](getting_started.md)
@@ -12,4 +12,5 @@
   * [Environment Variables](environment_variables.md)
   * [CsoundFileWatcher](csound_file_watcher.md)
   * [Supported Platforms](platforms.md)
+  * [How To Build](how_to_build.md)
   * [API Docs](http://rorywalsh.github.io/CsoundUnity/html/index.html)
