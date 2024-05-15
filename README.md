@@ -12,7 +12,7 @@ This simple wrapper is based on Richard Henninger's Csound6Net .NET wrapper.
 If you wish to use the Csound API in a model that is idiomatic to .net please use his wrapper instead. 
 http://csound6net.codeplex.com (unfortunately the site is not reachable at the moment)
   
-## Newest Version: 3.4.3 ##
+## Newest Version: 4.0.0 ##
 
 Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md) for more details.  
 
