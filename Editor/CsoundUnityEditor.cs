@@ -429,6 +429,7 @@ public class CsoundUnityEditor : Editor
         var envType = elem.FindPropertyRelative("type");
         var baseFolder = elem.FindPropertyRelative("baseFolder");
         var suffix = elem.FindPropertyRelative("suffix");
+
         var foldout = elem.FindPropertyRelative("foldout");
         DrawEnvironmentSettingContextMenu(rect, csoundUnity.environmentSettings[index], index);
 
@@ -445,9 +446,11 @@ public class CsoundUnityEditor : Editor
             {
                 EditorUtility.RevealInFinder(path);
             }
-            
+
             if (foldout.boolValue)
             {
+                EditorGUI.BeginChangeCheck();
+
                 EditorGUI.PropertyField(
                     new Rect(rect.x, rect.y + h + margin, rect.width, h),
                     platform
@@ -464,6 +467,32 @@ public class CsoundUnityEditor : Editor
                     new Rect(rect.x, rect.y + h * 4 + margin * 4, rect.width, h),
                     suffix
                     );
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    // for the WebGL platform we need to scan the folders for the files to be loaded
+                    // this because WebGL cannot read from a path at runtime
+                    // The suggested folder to use is the StreamingAssets folder, that keeps the files intacts.
+                    // We will make the files available to Csound on creation, copying them from the paths
+
+                    // we need to force one update of the serialized properties to get the updated value
+                    serializedObject.ApplyModifiedProperties();
+
+                    if (((SupportedPlatform)platform.intValue) == SupportedPlatform.WebGL)
+                    {
+                        if (((EnvironmentPathOrigin)baseFolder.intValue) == EnvironmentPathOrigin.StreamingAssets)
+                        {
+                            // update the list of the required assets for WebGL
+                            csoundUnity.webGLAssetsList = ScanWebGLAssets();
+                        }
+                        else
+                        {
+                            Debug.LogWarning("CsoundUnity can read files from the StreamingAssets folder only." +
+                                "When built, the files inside the StreamingAssets folder will remain the same and the folder will be copied as is in the build. " +
+                                "The other files will be compressed in the wasm archive, so not readable by Csound or javascript, but only via Unity WebRequests.");
+                        }
+                    }
+                }
             }
         }
         EditorGUI.indentLevel--;
@@ -903,7 +932,7 @@ public class CsoundUnityEditor : Editor
             {
                 _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset", new string[] { assetsFolderPath });
             }
-            
+
             _jsonPresetsPaths = Directory.GetFiles(m_currentPresetLoadFolder.stringValue, "*.json");
         }
 
@@ -930,4 +959,43 @@ public class CsoundUnityEditor : Editor
         relativeToAssetsPath = relativeToAssetsPath.Length >= "Assets".Length ? relativeToAssetsPath : path;
         return relativeToAssetsPath;
     }
+    /// <summary>
+    /// Scans the folder at path and returns a list of strings with the paths of the found files
+    /// </summary>
+    /// <param name="path">The path of the folder to scan</param>
+    /// <returns>A list of strings of the paths</returns>
+    private List<string> ScanWebGLAssets()
+    {
+        var webGLAssetsList = new List<string>();
+        var settings = csoundUnity.environmentSettings;
+        foreach (var setting in settings)
+        {
+            //Debug.Log($"ScanWebGLAssets {setting.GetPath()} {setting.GetPlatformString()} {setting.baseFolder} {setting.suffix}");
+            if (setting.baseFolder != EnvironmentPathOrigin.StreamingAssets ||
+                setting.platform != SupportedPlatform.WebGL) continue;
+            var path = Path.Combine(Application.streamingAssetsPath, setting.suffix);
+            //Debug.Log($"ScanWebGLAssets at path: {path}");
+            if (!Directory.Exists(path)) continue;
+            var files = Directory.GetFiles(path);
+            foreach (var file in files)
+            {
+                var prefix = $"./StreamingAssets/{setting.suffix}";
+                var fileName = Path.GetFileName(file);
+                var ext = Path.GetExtension(file);
+                if (ext == ".meta")
+                {
+                    // discard meta files
+                    continue;
+                }
+                //Debug.Log($"ScanWebGLAssets found file: {file}");
+                webGLAssetsList.Add($"{prefix}/{fileName}");
+            }
+        }
+        // foreach (var path in webGLAssetsList)
+        // {
+        //     Debug.Log($"webGLAssetsList: {path}");
+        // }
+        return webGLAssetsList;
+    }
+
 }

@@ -32,12 +32,13 @@ using System.Collections;
 using System;
 using System.Globalization;
 using UnityEngine.Networking;
+using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
 using MYFLT = System.Single;
 #endif
 
@@ -93,6 +94,8 @@ public class EnvironmentSettings
     [Tooltip("Utility bool to store if the drawn property is foldout or not")]
     [SerializeField] public bool foldout;
 
+    public List<string> AssetsToLoadList;
+
     /// <summary>
     /// Set the runtime bool true on Editor for debug purposes only, let Unity detect the correct path with Application.persistentDataPath
     /// </summary>
@@ -147,6 +150,9 @@ public class EnvironmentSettings
             case SupportedPlatform.iOS:
                 res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Documents" : Application.persistentDataPath;
                 break;
+            case SupportedPlatform.WebGL:
+                res = runtime ? $"/idbfs/<md5 hash of data path>" : Application.persistentDataPath;
+                break;
         }
         return res;
     }
@@ -170,6 +176,9 @@ public class EnvironmentSettings
                 break;
             case SupportedPlatform.iOS:
                 res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Raw/" : Application.streamingAssetsPath;
+                break;
+            case SupportedPlatform.WebGL:
+                res = runtime ? $"http://<your server>:<your port>/unity_webgl_build/StreamingAssets/" : Application.streamingAssetsPath;
                 break;
         }
         return res;
@@ -251,7 +260,7 @@ public class EnvironmentSettings
 }
 
 [Serializable]
-public enum SupportedPlatform { MacOS, Windows, Android, iOS }
+public enum SupportedPlatform { MacOS, Windows, Android, iOS, WebGL }
 
 /// <summary>
 /// The base folder where to set the Environment Variables
@@ -385,7 +394,7 @@ public class CsoundUnity : MonoBehaviour
     /// The current preset name. If empty, no preset has been set.
     /// </summary>
     public string CurrentPreset => _currentPreset;
-    
+
     #endregion PUBLIC_FIELDS
 
     #region PRIVATE_FIELDS
@@ -434,7 +443,7 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector] [SerializeField] private string _currentPresetSaveFolder;
     [HideInInspector] [SerializeField] private string _currentPresetLoadFolder;
 
-    
+
 
 #pragma warning restore 414
 
@@ -474,6 +483,20 @@ public class CsoundUnity : MonoBehaviour
             $"AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
 
         audioSource = GetComponent<AudioSource>();
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+        Init();
+#else
+        InitWebGL();
+#endif
+    }
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+    /// <summary>
+    /// A default init method for all platforms except WebGL
+    /// </summary>
+    private void Init()
+    {
         audioSource.spatializePostEffects = true;
 
         // FIX SPATIALIZATION ISSUES
@@ -538,13 +561,61 @@ public class CsoundUnity : MonoBehaviour
             Debug.Log("Error creating Csound object");
             compiledOk = false;
         }
-
         Debug.Log($"CsoundUnity done init, compiledOk? {compiledOk}");
     }
+#endif
+    
+#region WEBGL_INIT
+    
+#if UNITY_WEBGL && !UNITY_EDITOR
 
-    #region PUBLIC_METHODS
+    private int _instanceId;
+    
+    /// <summary>
+    /// Init method for WebGL platform only
+    /// </summary>
+    private void InitWebGL()
+    { 
+        CsoundUnityBridge.OnWebGLBridgeInitialized += OnWebGLBridgeInitialized;
+        csound = new CsoundUnityBridge(_csoundString, this.webGLAssetsList);
+        _instanceId = CsoundUnityBridge.LastInstanceId;
+        Debug.Log($"InitWebGL, CsoundUnityBridge.LastInstanceId: {CsoundUnityBridge.LastInstanceId}");
+        csound.assignedInstanceId = _instanceId;
+        
+    }
 
-    #region INSTANTIATION
+    private void OnWebGLBridgeInitialized(int instanceId)
+    {
+        Debug.Log($"Csound WebGL Bridge instance #{instanceId} initialized received by CsoundUnity instance {this._instanceId}");
+        if (instanceId != this._instanceId) return;
+        if (csound == null) return;
+        
+        // channels are created when a csd file is selected in the inspector
+        if (channels != null)
+        {
+            // initialise channels if found in xml descriptor..
+            for (var i = 0; i < channels.Count; i++)
+            {
+                if (channels[i].type.Contains("combobox"))
+                    csound.SetChannel(channels[i].channel, channels[i].value + 1);
+                else
+                    csound.SetChannel(channels[i].channel, channels[i].value);
+                // update channels index dictionary
+                if (!_channelsIndexDict.ContainsKey(channels[i].channel))
+                    _channelsIndexDict.Add(channels[i].channel, i);
+            }
+        }
+        initialized = true;
+        OnCsoundInitialized?.Invoke();
+    }
+
+#endif
+    
+#endregion WEBGL_INIT
+
+#region PUBLIC_METHODS
+
+#region INSTANTIATION
 
     /// <summary>
     /// Returns the Csound version number times 1000 (5.00.0 = 5000).
@@ -585,9 +656,9 @@ public class CsoundUnity : MonoBehaviour
         return compiledOk;
     }
 
-    #endregion INSTANTIATION
+#endregion INSTANTIATION
 
-    #region PERFORMANCE
+#region PERFORMANCE
 
     /// <summary>
     /// Sets the csd file 
@@ -729,9 +800,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetKsmps();
     }
 
-    #endregion PERFORMANCE
+#endregion PERFORMANCE
 
-    #region CSD_PARSE
+#region CSD_PARSE
 
     /// <summary>
     /// Parse the csd and returns available audio channels (set in csd via: <code>chnset avar, "audio channel name") </code>
@@ -919,9 +990,9 @@ public class CsoundUnity : MonoBehaviour
         return locaChannelControllers;
     }
 
-    #endregion CSD_PARSE
+#endregion CSD_PARSE
 
-    #region IO_BUFFERS
+#region IO_BUFFERS
 
     /// <summary>
     /// Set a sample in Csound's input buffer
@@ -989,9 +1060,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetSpout();
     }
 
-    #endregion IO_BUFFERS
+#endregion IO_BUFFERS
 
-    #region CONTROL_CHANNELS
+#region CONTROL_CHANNELS
     /// <summary>
     /// Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
     /// </summary>
@@ -1086,9 +1157,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetChannelList();
     }
 
-    #endregion CONTROL_CHANNELS
+#endregion CONTROL_CHANNELS
 
-    #region AUDIO_CHANNELS
+#region AUDIO_CHANNELS
 
     /// <summary>
     /// Gets a Csound Audio channel. Used in connection with a chnset opcode in your Csound instrument.
@@ -1100,9 +1171,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetAudioChannel(channel);
     }
 
-    #endregion AUDIO_CHANNELS
+#endregion AUDIO_CHANNELS
 
-    #region TABLES
+#region TABLES
 
     /// <summary>
     /// Creates a table with the supplied float samples.
@@ -1295,9 +1366,9 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetNamedGens();
     }
 
-    #endregion TABLES
+#endregion TABLES
 
-    #region UTILITIES
+#region UTILITIES
 
 #if UNITY_EDITOR
     /// <summary>
@@ -1756,7 +1827,7 @@ public class CsoundUnity : MonoBehaviour
         csound.Cleanup();
     }
 
-    #region PRESETS
+#region PRESETS
 
     /// <summary>
     /// Create a CsoundUnityPreset from a presetName, csoundFileName and a list of CsoundChannelControllers
@@ -1982,7 +2053,7 @@ public class CsoundUnity : MonoBehaviour
         var name = $"{presetName} {GLOBAL_TAG}";
         var fullPath = CheckPathForExistence(path, name, overwriteIfExisting);
         try
-        {    
+        {
             Debug.Log($"Saving global preset at {fullPath}");
             File.WriteAllText(fullPath, presetData);
         }
@@ -2354,14 +2425,14 @@ public class CsoundUnity : MonoBehaviour
         return fullPath;
     }
 
-    #endregion PRESETS
+#endregion PRESETS
 
-    #endregion UTILITIES
+#endregion UTILITIES
 
-    #endregion PUBLIC_METHODS
+#endregion PUBLIC_METHODS
 
 
-    #region ENUMS
+#region ENUMS
 
     /// <summary>
     /// The enum representing the Csound Environment Variables
@@ -2471,10 +2542,10 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     public enum SamplesOrigin { Resources, StreamingAssets, Absolute } // TODO Add PersistentDataPath and URL
 
-    #endregion ENUMS
+#endregion ENUMS
 
 
-    #region PRIVATE_METHODS
+#region PRIVATE_METHODS
 
     void OnAudioFilterRead(float[] data, int channels)
     {
@@ -2549,6 +2620,7 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
+#if !UNITY_WEBGL || UNITY_EDITOR
     /// <summary>
     /// Print the Csound output to the Unity message console.
     /// No need to call this manually, it is set up and controlled in the CsoundUnity Awake() function.
@@ -2584,7 +2656,7 @@ public class CsoundUnity : MonoBehaviour
             yield return null; //wait one frame
         }
     }
-
+#endif
 
     /// <summary>
     /// Reset the fields of this instance
@@ -2622,5 +2694,62 @@ public class CsoundUnity : MonoBehaviour
         }
     }
 
-    #endregion PRIVATE_METHODS
+#endregion PRIVATE_METHODS
+
+#region WEBGL
+
+    public List<string> webGLAssetsList;
+#if UNITY_WEBGL && !UNITY_EDITOR
+    private static AudioListener _activeAudioListener;
+    public static AudioListener activeAudioListener
+    {
+        get
+        {
+            if (!_activeAudioListener
+                || !_activeAudioListener.isActiveAndEnabled)
+            {
+                var audioListeners = FindObjectsOfType<AudioListener>(false);
+                _activeAudioListener = Array.Find(audioListeners, audioListener => audioListener.enabled); 
+            }
+    
+            return _activeAudioListener;
+        }
+    }
+    
+    private void Update()
+    {
+        Debug.Log("WebGL Update is initialized? " + IsInitialized);
+        if (!IsInitialized) return;
+        
+        Debug.Log("WebGL Update");
+        // Calculate distance between the AudioListener and the AudioSource
+        var distance = Vector3.Distance(activeAudioListener.transform.position, transform.position);
+
+        // Get the vector from the AudioListener to the AudioSource
+        var direction = transform.position - activeAudioListener.transform.position;
+
+        // Calculate the local direction vector relative to the AudioListener
+        var localDirection = activeAudioListener.transform.InverseTransformDirection(direction);
+
+        // Calculate the azimuth
+        var azimuth = Mathf.Atan2(localDirection.x, localDirection.z) * Mathf.Rad2Deg;
+        if (azimuth < 0) azimuth += 360; // Ensure azimuth is in the range [0, 360]
+
+        // Calculate the elevation
+        var elevation =
+            Mathf.Atan2(localDirection.y, new Vector2(localDirection.x, localDirection.z).magnitude) * Mathf.Rad2Deg;
+
+        //Debug.Log($"Distance: {distance}, Azimuth: {azimuth}, Elevation: {elevation}");
+        var rolloffCurve = audioSource.GetCustomCurve(AudioSourceCurveType.CustomRolloff);
+        var normalized = (distance / (audioSource.maxDistance - audioSource.minDistance));
+        normalized = Mathf.Clamp01(normalized);
+        var rolloff = rolloffCurve.Evaluate(normalized);
+        //Debug.Log($"distance: {distance}, normalized: {normalized} rolloff: {rolloff}");
+    
+        SetChannel("rolloff", rolloff);
+        SetChannel("azimuth", azimuth);
+        SetChannel("elevation", elevation);
+    }
+#endif
+    #endregion WEBGL
 }
