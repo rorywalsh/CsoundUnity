@@ -577,11 +577,9 @@ public class CsoundUnity : MonoBehaviour
     private void InitWebGL()
     { 
         CsoundUnityBridge.OnWebGLBridgeInitialized += OnWebGLBridgeInitialized;
+        // create CsoundUnityBridge and start initialization, we pass the csd and the list of the assets to be loaded, no environment settings as they won't work on Unity WebGL
         csound = new CsoundUnityBridge(_csoundString, this.webGLAssetsList);
-        _instanceId = CsoundUnityBridge.LastInstanceId;
         Debug.Log($"InitWebGL, CsoundUnityBridge.LastInstanceId: {CsoundUnityBridge.LastInstanceId}");
-        csound.assignedInstanceId = _instanceId;
-        
     }
 
     private void OnWebGLBridgeInitialized(int instanceId)
@@ -2701,35 +2699,31 @@ public class CsoundUnity : MonoBehaviour
     public List<string> webGLAssetsList;
 #if UNITY_WEBGL && !UNITY_EDITOR
     private static AudioListener _activeAudioListener;
-    public static AudioListener activeAudioListener
+    public static AudioListener ActiveAudioListener
     {
         get
         {
-            if (!_activeAudioListener
-                || !_activeAudioListener.isActiveAndEnabled)
-            {
-                var audioListeners = FindObjectsOfType<AudioListener>(false);
-                _activeAudioListener = Array.Find(audioListeners, audioListener => audioListener.enabled); 
-            }
-    
+            if (_activeAudioListener
+                && _activeAudioListener.isActiveAndEnabled) return _activeAudioListener;
+            var audioListeners = FindObjectsOfType<AudioListener>(false);
+            _activeAudioListener = Array.Find(audioListeners, audioListener => audioListener.enabled);
+
             return _activeAudioListener;
         }
     }
     
     private void Update()
     {
-        Debug.Log("WebGL Update is initialized? " + IsInitialized);
         if (!IsInitialized) return;
-        
-        Debug.Log("WebGL Update");
+  
         // Calculate distance between the AudioListener and the AudioSource
-        var distance = Vector3.Distance(activeAudioListener.transform.position, transform.position);
+        var distance = Vector3.Distance(ActiveAudioListener.transform.position, transform.position);
 
         // Get the vector from the AudioListener to the AudioSource
-        var direction = transform.position - activeAudioListener.transform.position;
+        var direction = transform.position - ActiveAudioListener.transform.position;
 
         // Calculate the local direction vector relative to the AudioListener
-        var localDirection = activeAudioListener.transform.InverseTransformDirection(direction);
+        var localDirection = ActiveAudioListener.transform.InverseTransformDirection(direction);
 
         // Calculate the azimuth
         var azimuth = Mathf.Atan2(localDirection.x, localDirection.z) * Mathf.Rad2Deg;

@@ -201,23 +201,38 @@ public class CsoundUnityBridge
     private static HashSet<int> _instances = new HashSet<int>();
     private static int _lastInstanceId = -1;
 
-    private int UniqueId => _lastInstanceId++;
+    private static int UniqueId => _lastInstanceId++;
 
     internal static int LastInstanceId => _lastInstanceId;
 
     // this will be set by CsoundUnity after the initialization
-    internal int assignedInstanceId;
+    private int _assignedInstanceId;
     
     internal static event Action<int> OnWebGLBridgeInitialized;
 
+    // WebGL approach
+    // TODO we may want to specify the csound variation to load for webgl
+    // The sad story: we cannot pass the csound webgl object to C#, we can only use basic types. 
+    // the situation: every time a new Csound object is created in javascript, it will be in memory but we don't know where
+    // furthermore, the creation is an async operation
+    // the goal: we need to store the created instance somehow in CsoundUnityBridge so that the current API doesn't break
+    // and we are able to use it on that instance
+    // the hurdle: the CsoundUnityBridge initialization callback OnCsoundInitialized(int instanceId) is static
+    // the simple solution: use an int that gets increased in C# as our id generator (see CsoundUnityBridge.UniqueId),
+    // pass it as a parameter to native webgl csoundInitialize method, see the CsoundUnityBridge(string csdFile, List<string> assetsToLoad) constructor
+    // the javascript side will take care of duplicated ids
+    // we receive a callback from javascript when a csound instance is created, with an optional int as the instance id 
+    // the callback is received by CsoundUnityBridge.OnCsoundInitialized that triggers the static Action<int> CsoundUnityBridge.OnWebGLBridgeInitialized
+    // in the same CsoundUnityBridge constructor we subscribe to this static action with a non-static method OnInitialized(int instanceId)
+    // when this is triggered we store the received id in _assignedInstanceId of this CsoundUnityBridge instance
     /// <summary>
     /// CsoundUnityBridge constructor for the WebGL platform
     /// </summary>
-    /// <param name="csdFile"></param>
-    /// <param name="assetsToLoad"></param>
-    // TODO we may want to specify the csound variation to load for webgl
+    /// <param name="csdFile">the string with the csd file content</param>
+    /// <param name="assetsToLoad">the lists of the paths of the assets to load on WebGL</param>
     public CsoundUnityBridge(string csdFile, List<string> assetsToLoad)
     {
+        CsoundUnityBridge.OnWebGLBridgeInitialized += OnInitialized;
         var assetsPaths = string.Join(":", assetsToLoad);
         CsoundWebGL.Csound6.NativeMethods.csoundInitialize(UniqueId, 3, csdFile, assetsPaths, 
             Marshal.GetFunctionPointerForDelegate((CsoundWebGL.Csound6.CsoundInitializeCallback)OnCsoundInitialized)
@@ -234,6 +249,11 @@ public class CsoundUnityBridge
         }
         OnWebGLBridgeInitialized?.Invoke(instanceId);
         Debug.Log("csoundInitialize result from C#: " + instanceId);
+    }
+
+    private void OnInitialized(int instanceId)
+    {
+        this._assignedInstanceId = instanceId;
     }
 
 #endif
@@ -310,8 +330,9 @@ public class CsoundUnityBridge
     {
 #if !UNITY_WEBGL || UNITY_EDITOR
         return Csound6.NativeMethods.csoundCompileOrc(csound, orchStr);
-#endif
+#else
         return 0;
+#endif
     }
 
     public int PerformKsmps()
@@ -368,8 +389,8 @@ public class CsoundUnityBridge
 #if !UNITY_WEBGL || UNITY_EDITOR
         Csound6.NativeMethods.csoundSetControlChannel(csound, channel, value);
 #else
-        Debug.Log($"Calling WebGL SetChannel for instance {assignedInstanceId}, channel: {channel}, value: {value}");
-        CsoundWebGL.Csound6.NativeMethods.csoundSetChannel(assignedInstanceId, channel, value);
+        Debug.Log($"Calling WebGL SetChannel for instance {_assignedInstanceId}, channel: {channel}, value: {value}");
+        CsoundWebGL.Csound6.NativeMethods.csoundSetChannel(_assignedInstanceId, channel, value);
 #endif
     }
 
@@ -411,8 +432,9 @@ public class CsoundUnityBridge
     {
 #if !UNITY_WEBGL || UNITY_EDITOR
         return Csound6.NativeMethods.csoundTableLength(csound, table);
-#endif
+#else
         return 0;
+#endif
     }
 
     /// <summary>
@@ -422,8 +444,9 @@ public class CsoundUnityBridge
     {
 #if !UNITY_WEBGL || UNITY_EDITOR
         return Csound6.NativeMethods.csoundTableGet(csound, table, index);
+#else
+        return 0;
 #endif
-return 0;
     }
 
     /// <summary>
@@ -536,9 +559,10 @@ return 0;
         GCHandle gc = GCHandle.FromIntPtr(tablePtr);
         gc.Free();
         return res;
-#endif
+#else
         tableValues = new MYFLT[0]; // TODO
         return 0;
+#endif
     }
 
     /// <summary>
@@ -557,9 +581,10 @@ return 0;
         else args = null;
         Marshal.FreeHGlobal(addr);
         return len;
-#endif
+#else
         args = new MYFLT[0]; // TODO
         return 0;
+#endif
     }
 
     /// <summary>
@@ -571,8 +596,9 @@ return 0;
 #if !UNITY_WEBGL || UNITY_EDITOR       
 
         return Csound6.NativeMethods.csoundIsNamedGEN(csound, num);
-#endif
+#else
         return 0;
+#endif
     }
 
     /// <summary>
@@ -583,8 +609,9 @@ return 0;
     {
 #if !UNITY_WEBGL || UNITY_EDITOR       
         Csound6.NativeMethods.csoundGetNamedGEN(csound, num, out name, len);
-#endif
+#else
         name = "";
+#endif
     }
 
     /// <summary>
@@ -626,24 +653,27 @@ return 0;
 #if !UNITY_WEBGL || UNITY_EDITOR       
 
         return Csound6.NativeMethods.csoundGetSr(csound);
-#endif
+#else
         return 0;
+#endif
     }
 
     public MYFLT GetKr()
     {
 #if !UNITY_WEBGL || UNITY_EDITOR
         return Csound6.NativeMethods.csoundGetKr(csound);
-#endif
+#else
         return 0;
+#endif
     }
 
     public uint GetKsmps()
     {
 #if !UNITY_WEBGL || UNITY_EDITOR
         return Csound6.NativeMethods.csoundGetKsmps(csound);
-#endif
+#else
         return 0;
+#endif
     }
 
     /// <summary>
@@ -653,8 +683,9 @@ return 0;
     {
 #if !UNITY_WEBGL || UNITY_EDITOR
         return Csound6.NativeMethods.csoundGetSpoutSample(csound, frame, channel);
-#endif
+#else
         return 0;
+#endif
     }
 
     public void AddSpinSample(int frame, int channel, MYFLT sample)
@@ -697,8 +728,9 @@ return 0;
         var addr = Csound6.NativeMethods.csoundGetSpin(csound);
         Marshal.Copy(addr, spin, 0, size);
         return spin;
-#endif
+#else
         return null;
+#endif
     }
 
     /// <summary>
@@ -714,8 +746,9 @@ return 0;
         var addr = Csound6.NativeMethods.csoundGetSpout(csound);
         Marshal.Copy(addr, spout, 0, size);
         return spout;
-#endif
+#else
         return null;
+#endif
     }
 
     /// <summary>
@@ -725,8 +758,9 @@ return 0;
     {
 #if !UNITY_WEBGL || UNITY_EDITOR
         return Csound6.NativeMethods.csoundGetControlChannel(csound, channel, IntPtr.Zero);
-#endif
+#else
         return 0;
+#endif
     }
 
     /// <summary>
@@ -865,8 +899,9 @@ return 0;
         CSOUND_PARAMS oparms = new CSOUND_PARAMS();
         Csound6.NativeMethods.csoundGetParams(csound, oparms);
         return oparms;
-#endif
+#else
         return null; // TODO WEBGL
+#endif
     }
 
     /// <summary>
