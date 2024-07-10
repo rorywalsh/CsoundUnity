@@ -472,7 +472,7 @@ public class CsoundUnityEditor : Editor
                 {
                     // for the WebGL platform we need to scan the folders for the files to be loaded
                     // this because WebGL cannot read from a path at runtime
-                    // The suggested folder to use is the StreamingAssets folder, that keeps the files intacts.
+                    // The suggested folder to use is the StreamingAssets folder, that keeps the files intact.
                     // We will make the files available to Csound on creation, copying them from the paths
 
                     // we need to force one update of the serialized properties to get the updated value
