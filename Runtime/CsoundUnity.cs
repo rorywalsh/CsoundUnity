@@ -569,22 +569,25 @@ public class CsoundUnity : MonoBehaviour
     
 #if UNITY_WEBGL && !UNITY_EDITOR
 
-    private int _instanceId;
+    private int _instanceId = -1;
     
     /// <summary>
     /// Init method for WebGL platform only
     /// </summary>
     private void InitWebGL()
     { 
-        CsoundUnityBridge.OnWebGLBridgeInitialized += OnWebGLBridgeInitialized;
+        CsoundUnityBridge.OnCsoundWebGLInitialized += OnWebGLBridgeInitialized;
         // create CsoundUnityBridge and start initialization, we pass the csd and the list of the assets to be loaded, no environment settings as they won't work on Unity WebGL
         csound = new CsoundUnityBridge(_csoundString, this.webGLAssetsList);
-        Debug.Log($"InitWebGL, CsoundUnityBridge.LastInstanceId: {CsoundUnityBridge.LastInstanceId}");
+        // save the instanceId
+        this._instanceId = CsoundUnityBridge.LastInstanceId;
+        Debug.Log($"[CsoundUnity] InitWebGL, CsoundUnityBridge.LastInstanceId: {CsoundUnityBridge.LastInstanceId}");
     }
 
     private void OnWebGLBridgeInitialized(int instanceId)
     {
-        Debug.Log($"Csound WebGL Bridge instance #{instanceId} initialized received by CsoundUnity instance {this._instanceId}");
+        CsoundUnityBridge.OnCsoundWebGLInitialized -= OnWebGLBridgeInitialized;
+        Debug.Log($"[CsoundUnity] OnWebGLBridgeInitialized for instance #{instanceId} received by CsoundUnity instance {this._instanceId}");
         if (instanceId != this._instanceId) return;
         if (csound == null) return;
         

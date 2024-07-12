@@ -201,14 +201,15 @@ public class CsoundUnityBridge
     private static HashSet<int> _instances = new HashSet<int>();
     private static int _lastInstanceId = -1;
 
-    private static int UniqueId => _lastInstanceId++;
+    private static int UniqueId => ++_lastInstanceId;
 
     internal static int LastInstanceId => _lastInstanceId;
 
     // this will be set by CsoundUnity after the initialization
     private int _assignedInstanceId;
     
-    internal static event Action<int> OnWebGLBridgeInitialized;
+    internal static event Action<int> OnCsoundWebGLInitialized; 
+    private static event Action<int> OnWebGLBridgeInitialized;
 
     // WebGL approach
     // TODO we may want to specify the csound variation to load for webgl
@@ -234,7 +235,8 @@ public class CsoundUnityBridge
     {
         CsoundUnityBridge.OnWebGLBridgeInitialized += OnInitialized;
         var assetsPaths = string.Join(":", assetsToLoad);
-        CsoundWebGL.Csound6.NativeMethods.csoundInitialize(UniqueId, 3, csdFile, assetsPaths, 
+        this._assignedInstanceId = UniqueId;
+        CsoundWebGL.Csound6.NativeMethods.csoundInitialize(this._assignedInstanceId, 3, csdFile, assetsPaths, 
             Marshal.GetFunctionPointerForDelegate((CsoundWebGL.Csound6.CsoundInitializeCallback)OnCsoundInitialized)
                 .ToInt32());
     }
@@ -248,12 +250,16 @@ public class CsoundUnityBridge
             return;
         }
         OnWebGLBridgeInitialized?.Invoke(instanceId);
-        Debug.Log("csoundInitialize result from C#: " + instanceId);
+        Debug.Log("CsoundUnityBridge.OnCsoundInitialized for instance: " + instanceId);
     }
 
     private void OnInitialized(int instanceId)
     {
-        this._assignedInstanceId = instanceId;
+        if (this._assignedInstanceId != instanceId) return;
+        Debug.Log($"CsoundUnityBridge.OnInitialized for instance: {instanceId}, ");
+        // stop listening to initialization callbacks
+        CsoundUnityBridge.OnWebGLBridgeInitialized -= OnInitialized;
+        OnCsoundWebGLInitialized?.Invoke(instanceId);
     }
 
 #endif
@@ -389,7 +395,7 @@ public class CsoundUnityBridge
 #if !UNITY_WEBGL || UNITY_EDITOR
         Csound6.NativeMethods.csoundSetControlChannel(csound, channel, value);
 #else
-        Debug.Log($"Calling WebGL SetChannel for instance {_assignedInstanceId}, channel: {channel}, value: {value}");
+        // Debug.Log($"[CsoundUnity] Calling WebGL SetChannel for instance {_assignedInstanceId}, channel: {channel}, value: {value}");
         CsoundWebGL.Csound6.NativeMethods.csoundSetChannel(_assignedInstanceId, channel, value);
 #endif
     }

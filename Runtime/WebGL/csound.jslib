@@ -72,16 +72,16 @@ var csoundModule = {
 
         // copy URL to local file
         async function copyUrlToLocal(csound, src, dest) {
-            console.log("fetching " + src)
+            console.log("[CsoundUnity] fetching " + src)
             // fetch the file
             let srcfile = await fetch(src, {cache: "no-store"}); //, mode: "no-cors", crossorigin: "anonymous"})
 
             // get the file data as an array
             let dat = await srcfile.arrayBuffer();
-            console.log("fetched src: " + src + " dat length: " + dat.byteLength)
+            console.log("[CsoundUnity] fetched src: " + src + " dat length: " + dat.byteLength)
             // write the data as a new file in the filesystem
             await csound.fs.writeFile(dest, new Uint8Array(dat));
-            console.log("finished writing file to " + dest);
+            console.log("[CsoundUnity] finished writing file to " + dest);
         };
 
         const csoundVariations = [
@@ -96,7 +96,7 @@ var csoundModule = {
         {
             // in case the id exists already, we could kill the existing instance and replace it with a new one
             // for now let's reject the operation
-            console.log("id already exists! aborting Csound creation with id " + id);
+            console.log("[CsoundUnity] id already exists! aborting Csound creation with id " + id);
             reject("existing id");
             return;
         }
@@ -107,7 +107,7 @@ var csoundModule = {
         //var filesToLoad = "./StreamingAssets/samples/hrtf-44100-left.dat:./StreamingAssets/samples/hrtf-44100-right.dat"
         var filesArray = filesToLoad.split(":");
 
-        console.log(`starting to await for Csound id ${id} with flag: ${flags}`);// + " options: " + options)
+        console.log(`[CsoundUnity] starting to await for Csound id ${id} with flag: ${flags}`);// + " options: " + options)
         const cs = await Csound(variation);
 
         for (const element of filesArray) {
@@ -115,14 +115,14 @@ var csoundModule = {
             await copyUrlToLocal(cs, element, "./" + name);
         }
 
-        console.log(`Csound version: ${cs.name}`);
+        console.log(`[CsoundUnity] Csound version: ${cs.name}`);
         const compileReturn = await cs.compileCsdText(csdText);
         const startReturn = await cs.start();
-        //console.log(startReturn);
+        
         CsoundRef.instances[CsoundRef.uniqueIdCounter] = cs;
         var uniqueId = CsoundRef.uniqueIdCounter;
         CsoundRef.uniqueIdCounter++;
-        console.log(`uniqueId: ${uniqueId}, CsoundRef.uniqueIdCounter: ${CsoundRef.uniqueIdCounter}`);
+        console.log(`[CsoundUnity] created Csound with uniqueId: ${uniqueId}, CsoundRef.instances : ${JSON.stringify(CsoundRef.instances)} CsoundRef.uniqueIdCounter: ${CsoundRef.uniqueIdCounter}`);
         Module['dynCall_vi'](callback, uniqueId);
         //cs.terminateInstance && (await cs.terminateInstance());
     },
