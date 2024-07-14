@@ -127,8 +127,19 @@ var csoundModule = {
         //cs.terminateInstance && (await cs.terminateInstance());
     },
     
-    csoundGetChannel: async function (uniqueId, channelPtr) {
-        return CsoundRef.instances[uniqueId].getControlChannel(UTF8ToString(channelPtr));
+    csoundGetChannel: async function (uniqueId, channelPtr, callback) {
+        var channel = UTF8ToString(channelPtr);
+        if (CsoundRef.instances[uniqueId] === undefined) return;
+        try {
+            var value = await CsoundRef.instances[uniqueId].getControlChannel(channel);
+            // console.log(`[CsoundUnity] [id: ${+uniqueId}] csoundGetChannel(${channel}) -> value: ${value}`);
+            var strBufferSize = lengthBytesUTF8(channel) + 1;
+            var strBuffer = _malloc(strBufferSize);
+            stringToUTF8(channel, strBuffer, strBufferSize);
+            Module['dynCall_viif'](callback, uniqueId, [strBuffer], value);
+        } catch (error) {
+            console.error(`[CsoundUnity] [id: ${+uniqueId}] Error retrieving\ channel ${channel}, error: ${error}`);
+        }
     },
 
     csoundSetChannel: async function (uniqueId, channelPtr, value) {

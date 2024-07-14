@@ -569,6 +569,7 @@ public class CsoundUnity : MonoBehaviour
     
 #if UNITY_WEBGL && !UNITY_EDITOR
 
+    public int InstanceId => _instanceId;
     private int _instanceId = -1;
     
     /// <summary>
@@ -576,21 +577,23 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     private void InitWebGL()
     { 
+        // listen for the OnCsoundWebGLInitialized event
         CsoundUnityBridge.OnCsoundWebGLInitialized += OnWebGLBridgeInitialized;
         // create CsoundUnityBridge and start initialization, we pass the csd and the list of the assets to be loaded, no environment settings as they won't work on Unity WebGL
+        // creating a new CsoundUnityBridge instance increases the internal instanceId counter
         csound = new CsoundUnityBridge(_csoundString, this.webGLAssetsList);
-        // save the instanceId
+        // save the instanceId grabbing the last generated instanceId
         this._instanceId = CsoundUnityBridge.LastInstanceId;
         Debug.Log($"[CsoundUnity] InitWebGL, CsoundUnityBridge.LastInstanceId: {CsoundUnityBridge.LastInstanceId}");
     }
 
     private void OnWebGLBridgeInitialized(int instanceId)
     {
-        CsoundUnityBridge.OnCsoundWebGLInitialized -= OnWebGLBridgeInitialized;
         Debug.Log($"[CsoundUnity] OnWebGLBridgeInitialized for instance #{instanceId} received by CsoundUnity instance {this._instanceId}");
         if (instanceId != this._instanceId) return;
         if (csound == null) return;
         
+        CsoundUnityBridge.OnCsoundWebGLInitialized -= OnWebGLBridgeInitialized;
         // channels are created when a csd file is selected in the inspector
         if (channels != null)
         {
@@ -602,8 +605,7 @@ public class CsoundUnity : MonoBehaviour
                 else
                     csound.SetChannel(channels[i].channel, channels[i].value);
                 // update channels index dictionary
-                if (!_channelsIndexDict.ContainsKey(channels[i].channel))
-                    _channelsIndexDict.Add(channels[i].channel, i);
+                _channelsIndexDict.TryAdd(channels[i].channel, i);
             }
         }
         initialized = true;
@@ -1133,6 +1135,13 @@ public class CsoundUnity : MonoBehaviour
     {
         return csound.GetChannel(channel);
     }
+    
+#if UNITY_WEBGL && !UNITY_EDITOR
+    public void GetChannel(string channel, Action<MYFLT> callback)
+    {
+        csound.GetChannel(channel, callback);
+    }
+#endif
 
     /// <summary>
     /// Get a serialized CsoundChannelController

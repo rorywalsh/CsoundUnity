@@ -765,10 +765,11 @@ public class CsoundUnityBridge
 #if !UNITY_WEBGL || UNITY_EDITOR
         return Csound6.NativeMethods.csoundGetControlChannel(csound, channel, IntPtr.Zero);
 #else
+        Debug.LogError("use GetChannel(channel, callback) on the WebGL platform");
         return 0;
 #endif
     }
-
+    
     /// <summary>
     /// Get number of input channels
     /// <summary>
@@ -1167,6 +1168,61 @@ public class CsoundUnityBridge
 
 #region WEBGL
 
-   
+#if UNITY_WEBGL && !UNITY_EDITOR
+
+    /// <summary>
+    /// A class to hold a string Channel and an int ID, to be used as key for GetChannel callbacks
+    /// </summary>
+    private sealed class CallbackId: Tuple<string, int>
+    {
+        public CallbackId(string channel, int id) : base(channel, id) { }
+        public string Channel => Item1;
+        public int Id => Item2;
+    }
+
+    // dictionary to store the user GetChannel callbacks by channel and instanceId
+    private Dictionary<CallbackId, Action<MYFLT>> _userCallbacksByChannel = new Dictionary<CallbackId, Action<MYFLT>>();
+   // dictionary to store the internal GetChannel callbacks by channel and instanceId
+    private static Dictionary<CallbackId, Action<int, string, MYFLT>> _getChannelCallbacks = new Dictionary<CallbackId, Action<int, string, MYFLT>>();
+    
+    internal void GetChannel(string channel, Action<MYFLT> callback)
+    {
+        // create the key to store the callback in a dictionary, to be recalled later filtering by channel and id
+        // the key is a tuple <channel, id>
+        var callbackId = new CallbackId(channel, this._assignedInstanceId);
+        _userCallbacksByChannel[callbackId] = callback;
+        // Debug.Log($"GetChannel for instance: {this._assignedInstanceId}, channel: {channel}");
+        _getChannelCallbacks[callbackId] = OnGetChannelCompleted;
+        CsoundWebGL.Csound6.NativeMethods.csoundGetChannel(this._assignedInstanceId, channel, Marshal
+            .GetFunctionPointerForDelegate((CsoundWebGL.Csound6.CsoundGetChannelCallback)OnCsoundGetChannel)
+            .ToInt32());
+    }
+
+    [AOT.MonoPInvokeCallback(typeof(CsoundWebGL.Csound6.CsoundGetChannelCallback))]
+    private static void OnCsoundGetChannel(int instanceId, string channel, MYFLT value)
+    {
+        // Debug.Log($"OnCsoundGetChannel for instance {instanceId}, channel: {channel}, value: {value}");
+        var callbackId = new CallbackId(channel, instanceId);
+        _getChannelCallbacks[callbackId]?.Invoke(instanceId, channel, value);
+    }
+    
+    private void OnGetChannelCompleted(int instanceId, string channel, MYFLT value)
+    {
+        // abort if the callback is not related with this instanceId
+        if (this._assignedInstanceId != instanceId) return;
+        // create the key to look in the dictionary of getChannel and user callbacks
+        // the key is a tuple <channel, id>
+        var callbackId = new CallbackId(channel, this._assignedInstanceId);
+        //Debug.Log($"OnGetChannelCompleted {instanceId}: channel: {channel}, value: {value}");
+        // remove the callback from the dictionary since we're now sure the received value is for this instanceId
+        _getChannelCallbacks[callbackId] = null;
+        _getChannelCallbacks.Remove(callbackId);
+        
+        // we select the user callback by callbackId and invoke it
+        _userCallbacksByChannel[callbackId]?.Invoke(value);
+    }
+
+#endif
+
 #endregion WEBGL
 }

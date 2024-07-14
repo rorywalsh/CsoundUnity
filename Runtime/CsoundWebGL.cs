@@ -38,6 +38,8 @@ namespace CsoundWebGL
         internal delegate void CsoundInitializeCallback(int instanceId);
         internal delegate void CsoundSetOptionCallback(int instanceId, int res);
         internal delegate void CsoundStopCallback(int instanceId);
+
+        internal delegate void CsoundGetChannelCallback(int instanceId, string channel, float value);
         // private delegate void CsoundGetTableCallback(int instanceId, int tableLength, IntPtr tableId);
 
         public class NativeMethods
@@ -50,14 +52,13 @@ namespace CsoundWebGL
             // internal static extern int csoundSetOption(int instanceId, string csOption, int callback);
             // [DllImport(DLLVersion)]
             // internal static extern void csoundStop(int instanceId, int callback);
-
-            
            
             #endregion Instantiation
 
-
             [DllImport(DLLVersion)]
             internal static extern void csoundSetChannel(int instanceId, string channel, float value);
+            [DllImport(DLLVersion)]
+            internal static extern void csoundGetChannel(int instanceId, string channel, int callback);
             // [DllImport(DLLVersion)]
             // private static extern void csoundGetTable(int instanceId, int tableId, IntPtr callback);
             [DllImport(DLLVersion)]
