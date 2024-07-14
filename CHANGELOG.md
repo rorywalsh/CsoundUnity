@@ -1,3 +1,7 @@
+## [3.5.0] - 2024-07-15
+
+- [Add] WebGL support (experimental)
+
 ## [3.4.3] - 2024-04-26
 
 - [Fix] Unity crash on macOS
