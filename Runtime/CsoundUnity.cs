@@ -120,7 +120,6 @@ public class EnvironmentSettings
             default:
                 break;
         }
-        path = Path.Combine(path, suffix);
         return path;
     }
 
@@ -131,27 +130,31 @@ public class EnvironmentSettings
     private string GetPersistentDataPath(SupportedPlatform supportedPlatform, bool runtime)
     {
         var res = Application.persistentDataPath;
+        var path = Path.Combine(Application.persistentDataPath, suffix);
         switch (supportedPlatform)
         {
             case SupportedPlatform.MacOS:
                 res = runtime ?
-                    $"~/Library/Application Support/{Application.companyName}/{Application.productName}" :
-                    Application.persistentDataPath;
+                    $"~/Library/Application Support/{Application.companyName}/{Application.productName}/{suffix}" :
+                    path;
                 break;
             case SupportedPlatform.Windows:
                 res = runtime ?
-                    $"%userprofile%\\AppData\\LocalLow\\{Application.companyName}\\{Application.productName}" :
-                    Application.persistentDataPath;
+                    $"%userprofile%\\AppData\\LocalLow\\{Application.companyName}\\{Application.productName}\\{suffix}" :
+                    path;
                 break;
             case SupportedPlatform.Android:
                 res = runtime ?
-                    $"/storage/emulated/0/Android/data/{Application.identifier}/files" : Application.persistentDataPath;
+                    $"/storage/emulated/0/Android/data/{Application.identifier}/files/{suffix}" : 
+                    path;
                 break;
             case SupportedPlatform.iOS:
-                res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Documents" : Application.persistentDataPath;
+                res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Documents/{suffix}" : 
+                    path;
                 break;
             case SupportedPlatform.WebGL:
-                res = runtime ? $"/idbfs/<md5 hash of data path>" : Application.persistentDataPath;
+                res = runtime ? $"/idbfs/<md5 hash of data path>/{suffix}" : 
+                    path;
                 break;
         }
         return res;
@@ -163,24 +166,27 @@ public class EnvironmentSettings
     private string GetStreamingAssetsPath(SupportedPlatform supportedPlatform, bool runtime)
     {
         var res = Application.streamingAssetsPath;
+        var path = Path.Combine(Application.streamingAssetsPath, suffix);
         switch (supportedPlatform)
         {
             case SupportedPlatform.MacOS:
-                res = runtime ? $"<path to player app bundle>/Contents/Resources/Data/StreamingAssets" : Application.streamingAssetsPath;
+                res = runtime ? $"<path to player app bundle>/Contents/Resources/Data/StreamingAssets/{suffix}" : 
+                    path;
                 break;
             case SupportedPlatform.Windows:
-                res = runtime ? $"<path to executablename_Data folder>" : Application.streamingAssetsPath;
+                res = runtime ? $"<path to executablename_Data folder>\\{suffix}" : path;
                 break;
             case SupportedPlatform.Android:
-                res = runtime ? $"jar:file://storage/emulated/0/Android/data/{Application.identifier}/!/assets" : Application.streamingAssetsPath;
+                res = runtime ? $"jar:file://storage/emulated/0/Android/data/{Application.identifier}/!/assets/{suffix}" : path;
                 break;
             case SupportedPlatform.iOS:
-                res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Raw/" : Application.streamingAssetsPath;
+                res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Raw/{suffix}" : path;
                 break;
             case SupportedPlatform.WebGL:
-                res = runtime ? $"http://<your server>:<your port>/unity_webgl_build/StreamingAssets/" : Application.streamingAssetsPath;
+                res = runtime ? $"https://<your website>/<unity webgl build path>/StreamingAssets/{suffix}" : path;
                 break;
         }
+        //Debug.Log("res: " + res);
         return res;
     }
 
