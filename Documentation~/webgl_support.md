@@ -7,7 +7,7 @@ There are some differences in the CsoundUnity API given the async context, and a
 ### Spatialization
 
 Unity doesn't support the OnAudioFilterRead callback on the WebGL platform, so instead of writing and reading samples in that callback, we are creating Csound instances and sending their output directly to the speakers. 
-To be able to spatialize the sources like regular AudioSources, we are sending info to Csound regarding the rotation and distance from the audio listener:
+To be able to spatialize the sources like regular AudioSources, we are sending info from Unity to Csound regarding the rotation and distance from the audio listener:
 
 - azimuth: the horizontal rotation relative to the listener
 - elevation: the vertical rotation relative to the listener
@@ -41,7 +41,7 @@ endin
 The rolloff value is evaluated using the 3D Sound Settings of the AudioSource, so you can tweak the curve there to achieve a different rolloff behaviour.
 
 The above code will always listen for "azimuth", "elevation" and "rolloff" channels, but they're only set on the WebGL platform when running on the browser. 
-So kAz, kElev and kRoll will be always 0 when running on the editor.
+So kAz, kElev and kRoll will be always 0 when running on the Unity editor.
 This means you won't hear anything as the final output will be zeroed.
 The CsoundUnity.Update method runs on WebGL only, and it is responsible for those channels being set.
 To be able to test your sounds on the editor, you could add a Cabbage checkbox widget in your csd to toggle between the editor and the WebGL build:
@@ -122,10 +122,7 @@ i 1 0 z ; instr 1 plays forever
 ; tweaked for CsoundUnity - WebGL by gb
 
 ```
-In the above example there's no binaural 3d processing when isWebGL is set to false in the CsoundUnity inspector, or its checkbox widget value should is set to 0.
-
-
-
+In the above example there's no binaural 3d processing when isWebGL is set to false in the CsoundUnity inspector, or its checkbox widget value  is set to 0.
 
 ### Supported API methods
 
@@ -173,14 +170,16 @@ Microphone input on the browser is supported out of the box if you use any of th
 ### Read files
 
 On WebGL, Csound can only read from the StreamingAssets folder.
-The PersistentDataPath cannot be used, because its content is compressed into the wasm binary, and we can only access it with WebRequests. The absolute path could work (so letting Csound load an asset from an absolute url) but it's not implemented at the moment.
+The PersistentDataPath cannot be used, because its content is compressed into the wasm binary, and we can only access it using Unity WebRequests. The absolute path could work (so letting Csound load an asset from an absolute url) but it's not implemented at the moment.
 
-The underlying Csound wasm has its own file system and can fetch for files to store them there.
+The underlying Csound wasm object has its own file system and can fetch for files and store them.
 We are using that capability when Csound is created, so CsoundUnity needs to know in advance the list of the files to be loaded from the StreamingAssets folder.
+
+#### How to create the list of files to be loaded in WebGL
 
 First of all, place the files you want to load in the StreamingAssets folder. If you don't have any in your project, create one.
 To specify the files you want to load for a specific Csound instance, go on the related CsoundUnity inspector, Settings, Csound Global Environment Folders and add a new setting pressing the + button in the bottom right corner.
 Select WebGL, StreamingAssets, and eventually type a suffix.
-If there are files in the chosen folder, you should see the WebGLFilesList on top of the CsoundUnity inspector to populate with the found files. You can remove the files you don't want Csound to load. 
+If there are files in the chosen folder, you should see the WebGLFilesList variable (found on top of the CsoundUnity inspector) populate with the found files. You can remove the files you don't want that Csound instance to load selecting it and pressing the '-' button. 
 
-Remember to add an environment setting for the platform you're developing with to point to the same folder you have selected above or it won't load the files on the editor.
+Remember to add an environment setting for the platform you're developing with to point to the same folder you have selected above or it won't load the files when running on the editor.
