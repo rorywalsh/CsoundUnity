@@ -3,9 +3,8 @@
 From version 3.5.0 experimental WebGL platform support was added.
 There are some differences in the CsoundUnity API given the async context, and also some limitations.
 
-### Differences from other platforms
 
-#### Spatialization
+### Spatialization
 
 Unity doesn't support the OnAudioFilterRead callback on the WebGL platform, so instead of writing and reading samples in that callback, we are creating Csound instances and sending their output directly to the speakers. 
 To be able to spatialize the sources like regular AudioSources, we are sending info to Csound regarding the rotation and distance from the audio listener:
@@ -126,6 +125,15 @@ i 1 0 z ; instr 1 plays forever
 In the above example there's no binaural 3d processing when isWebGL is set to false in the CsoundUnity inspector, or its checkbox widget value should is set to 0.
 
 
+
+
+### Supported API methods
+
+Other methods will come with later versions.
+
+- SetChannel(string channel)
+- GetChannel(string channel, Action<MYFLT> callback);
+
 #### GetChannel
 
 To retrieve a channel, on the WebGL platform you should use:
@@ -153,21 +161,16 @@ void Update()
   
 In this way the script supports every platform, since it only executes the async GetChannel method when running on the WebGL platform (ie on the browser, when running on the editor or other platforms it uses the default CsoundUnity implementation instead).
 
-#### Supported API methods
 
-- SetChannel(string channel)
-- GetChannel(string channel, Action<MYFLT> callback);
 
-Other methods will come with later versions.
-
-#### Audio input
+### Audio input
 
 Audio input from Unity is not supported yet (so you can't use CsoundUnity.ProcessClipAudio to gather data from an AudioClip and send it to Csound).
 
 Microphone input on the browser is supported out of the box if you use any of the opcodes that grab audio input, like [inch](https://csound.com/docs/manual/inch.html), there's no need to use Unity's Microphone API.
 
 <a name="read-files"></a>
-#### Read files
+### Read files
 
 On WebGL, Csound can only read from the StreamingAssets folder.
 The PersistentDataPath cannot be used, because its content is compressed into the wasm binary, and we can only access it with WebRequests. The absolute path could work (so letting Csound load an asset from an absolute url) but it's not implemented at the moment.
