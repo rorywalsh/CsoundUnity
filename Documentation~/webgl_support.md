@@ -152,7 +152,7 @@ void Update()
 #else
      _testChannel = (float)csound.GetChannel("test");
 #endif
-     Debug.Log($"test channel value: {_testChannel";
+     Debug.Log($"test channel value: {_testChannel}");
 }
 ```
   
