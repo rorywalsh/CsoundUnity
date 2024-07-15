@@ -490,6 +490,8 @@ public class CsoundUnityEditor : Editor
                             Debug.LogWarning("CsoundUnity can read files from the StreamingAssets folder only." +
                                 "When built, the files inside the StreamingAssets folder will remain the same and the folder will be copied as is in the build. " +
                                 "The other files will be compressed in the wasm archive, so not readable by Csound or javascript, but only via Unity WebRequests.");
+                            // clear the list when the baseFolder is not StreamingAssets
+                            csoundUnity.webGLAssetsList = new List<string>();
                         }
                     }
                 }
