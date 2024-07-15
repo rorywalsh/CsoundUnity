@@ -1143,6 +1143,12 @@ public class CsoundUnity : MonoBehaviour
     }
     
 #if UNITY_WEBGL && !UNITY_EDITOR
+    /// <summary>
+    /// Gets a Csound channel on the WebGL platform. Used in connection with a chnset opcode in your Csound instrument.
+    /// </summary>
+    /// <param name="channel">The channel to retrieve</param>
+    /// <param name="callback">The action that will be triggered with the returned MYFLT value</param>
+    /// <returns></returns>
     public void GetChannel(string channel, Action<MYFLT> callback)
     {
         csound.GetChannel(channel, callback);
