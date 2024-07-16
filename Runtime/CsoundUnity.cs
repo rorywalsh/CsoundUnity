@@ -353,6 +353,25 @@ public class CsoundUnity : MonoBehaviour
     [HideInInspector] public float loudWarningThreshold = 10f;
 
     /// <summary>
+    /// If true you can override the default Csound control rate with a custom value.
+    /// The default value is AudioSettings.outputSampleRate.
+    /// Ksmps will be calculated by Csound so there's no need to set it in your csd.
+    /// </summary>
+    [HideInInspector] public bool overrideSamplingRate = false;
+
+    [HideInInspector] public int audioRate = 44100;
+    [HideInInspector] public int controlRate = 44100;
+
+    public string samplingRateSettingsInfo
+    {
+        get
+        {
+            var k = audioRate == 0 ? 0 : controlRate == 0 ? 0 : audioRate /(float) controlRate;
+            return $"sr: {audioRate}, kr: {controlRate}, ksmps: {k:F00}";
+        }
+    } 
+    
+    /// <summary>
     /// list to hold channel data
     /// </summary>
     public List<CsoundChannelController> channels { get => _channels; }
@@ -488,6 +507,9 @@ public class CsoundUnity : MonoBehaviour
         Debug.Log($"CsoundUnity Awake\n" +
             $"AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
 
+        if (audioRate == 0) audioRate = AudioSettings.outputSampleRate;
+        if (controlRate == 0) controlRate = AudioSettings.outputSampleRate;
+        
         audioSource = GetComponent<AudioSource>();
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -517,11 +539,11 @@ public class CsoundUnity : MonoBehaviour
             audioSource.loop = true;
             audioSource.Play();
         }
-
+        
         /// the CsoundUnityBridge constructor the string with the csound code and a list of the Global Environment Variables Settings.
         /// It then calls createCsound() to create an instance of Csound and compile the csd string.
         /// After this we start the performance of Csound.
-        csound = new CsoundUnityBridge(_csoundString, environmentSettings);
+        csound = new CsoundUnityBridge(_csoundString, environmentSettings, audioRate, controlRate);
         if (csound != null)
         {
             /// channels are created when a csd file is selected in the inspector
@@ -2584,6 +2606,7 @@ public class CsoundUnity : MonoBehaviour
     /// <param name="numChannels"></param>
     private void ProcessBlock(float[] samples, int numChannels)
     {
+        // Debug.Log(samples.Length + " numChannels: " + numChannels);
         if (compiledOk && initialized && !_quitting)
         {
             for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)

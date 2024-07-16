@@ -126,7 +126,7 @@ public class CsoundUnityBridge
     /// </summary>
     /// <param name="csdFile">The Csound (.csd) file content as a string</param>
     /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
-    public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings)
+    public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings, float audioRate, float controlRate)
     {
 //#if !UNITY_WEBGL || UNITY_EDITOR
 
@@ -139,6 +139,7 @@ public class CsoundUnityBridge
 
         SetEnvironmentSettings(environmentSettings);
 
+        Debug.Log("audio Rate: "+ audioRate + " control Rate: " + controlRate);
         // KEEP THIS FOR REFERENCE ;)
         //#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
         //        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
@@ -163,19 +164,19 @@ public class CsoundUnityBridge
 
         Csound6.NativeMethods.csoundSetOption(csound, "-n");
         Csound6.NativeMethods.csoundSetOption(csound, "-d");
-        Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
-        Csound6.NativeMethods.csoundSetOption(csound, $"--control-rate={AudioSettings.outputSampleRate}");
-        Csound6.NativeMethods.csoundSetOption(csound, $"--ksmps=1");
+        Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={audioRate}");
+        Csound6.NativeMethods.csoundSetOption(csound, $"--control-rate={controlRate}");
+        //Csound6.NativeMethods.csoundSetOption(csound, $"--ksmps=1");
 
 #if UNITY_IOS
         Debug.Log($"Initialising sample rate and control rate using Audio Project Settings value: {AudioSettings.outputSampleRate}Hz, some values maybe incompatible with older hardware.");
 #endif
 
         // This causes a crash in Unity >= 2021.3.28
-        //var parms = GetParams();
-        //parms.control_rate_override = AudioSettings.outputSampleRate;
-        //parms.sample_rate_override = AudioSettings.outputSampleRate;
-        //SetParams(parms);
+        // var parms = GetParams();
+        // parms.control_rate_override = controlRate;
+        // parms.sample_rate_override = audioRate;
+        // SetParams(parms);
 
         onCsoundCreated?.Invoke();
         onCsoundCreated = null;

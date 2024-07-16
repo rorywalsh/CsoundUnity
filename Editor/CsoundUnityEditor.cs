@@ -50,6 +50,9 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_logCsoundOutput;
     SerializedProperty m_loudVolumeWarning;
     SerializedProperty m_loudWarningThreshold;
+    SerializedProperty m_overrideSamplingRate;
+    SerializedProperty m_audioRate;
+    SerializedProperty m_controlRate;
     SerializedProperty m_enviromentSettings;
     SerializedProperty m_channelControllers;
     SerializedProperty m_availableAudioChannels;
@@ -94,6 +97,9 @@ public class CsoundUnityEditor : Editor
         m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
         m_loudVolumeWarning = this.serializedObject.FindProperty("loudVolumeWarning");
         m_loudWarningThreshold = this.serializedObject.FindProperty("loudWarningThreshold");
+        m_overrideSamplingRate = this.serializedObject.FindProperty("overrideSamplingRate");
+        m_audioRate = this.serializedObject.FindProperty("audioRate");
+        m_controlRate = this.serializedObject.FindProperty("controlRate");
         m_enviromentSettings = this.serializedObject.FindProperty("environmentSettings");
         m_channelControllers = this.serializedObject.FindProperty("_channels");
         m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
@@ -159,6 +165,15 @@ public class CsoundUnityEditor : Editor
         m_drawSettings.boolValue = EditorGUILayout.Foldout(m_drawSettings.boolValue, "Settings", true);
         if (m_drawSettings.boolValue)
         {
+            EditorGUILayout.LabelField(csoundUnity.samplingRateSettingsInfo);
+            m_overrideSamplingRate.boolValue = EditorGUILayout.Toggle("Override sampling rate", m_overrideSamplingRate.boolValue);
+
+            if (m_overrideSamplingRate.boolValue)
+            {
+                m_audioRate.intValue = EditorGUILayout.IntField("Audio Rate", m_audioRate.intValue);
+                m_controlRate.intValue = EditorGUILayout.IntField("Control Rate", m_controlRate.intValue);
+            }
+
             EditorGUI.BeginChangeCheck();
             m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
             if (EditorGUI.EndChangeCheck())
