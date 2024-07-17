@@ -165,7 +165,9 @@ public class CsoundUnityBridge
         Csound6.NativeMethods.csoundSetOption(csound, "-n");
         Csound6.NativeMethods.csoundSetOption(csound, "-d");
         Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={audioRate}");
-        Csound6.NativeMethods.csoundSetOption(csound, $"--control-rate={controlRate}");
+        //Csound6.NativeMethods.csoundSetOption(csound, $"--control-rate={controlRate}");
+        var ksmps = Mathf.CeilToInt(audioRate / (float)controlRate);
+        Csound6.NativeMethods.csoundSetOption(csound, $"--ksmps={ksmps}");
         //Csound6.NativeMethods.csoundSetOption(csound, $"--ksmps=1");
 
 #if UNITY_IOS
