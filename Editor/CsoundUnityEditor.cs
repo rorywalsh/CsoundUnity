@@ -56,7 +56,7 @@ public class CsoundUnityEditor : Editor
     SerializedProperty m_enviromentSettings;
     SerializedProperty m_channelControllers;
     SerializedProperty m_availableAudioChannels;
-
+    SerializedProperty m_audioChannelsBufferSize;
     SerializedProperty m_drawTestScore;
     SerializedProperty m_drawSettings;
     SerializedProperty m_drawChannels;
@@ -103,7 +103,7 @@ public class CsoundUnityEditor : Editor
         m_enviromentSettings = this.serializedObject.FindProperty("environmentSettings");
         m_channelControllers = this.serializedObject.FindProperty("_channels");
         m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
-
+        m_audioChannelsBufferSize = this.serializedObject.FindProperty("_audioChannelsBufferSize");
         m_drawCsoundString = this.serializedObject.FindProperty("_drawCsoundString");
         m_drawTestScore = this.serializedObject.FindProperty("_drawTestScore");
         m_drawSettings = this.serializedObject.FindProperty("_drawSettings");
@@ -172,6 +172,16 @@ public class CsoundUnityEditor : Editor
             {
                 m_audioRate.intValue = EditorGUILayout.IntField("Audio Rate", m_audioRate.intValue);
                 m_controlRate.intValue = EditorGUILayout.IntField("Control Rate", m_controlRate.intValue);
+                // make sure the audio channels buffer size is always at least of size ksmps
+                if (m_audioChannelsBufferSize.intValue < csoundUnity.GetKsmps())
+                {
+                    m_audioChannelsBufferSize.intValue = (int)csoundUnity.GetKsmps();
+                }
+            }
+            else
+            {
+                m_audioRate.intValue = AudioSettings.outputSampleRate;
+                m_controlRate.intValue = AudioSettings.outputSampleRate;
             }
 
             EditorGUI.BeginChangeCheck();
@@ -279,6 +289,13 @@ public class CsoundUnityEditor : Editor
                     return;
                 }
 
+                EditorGUILayout.HelpBox("Warning: change the buffer size setting very carefully to avoid crashes", MessageType.None);
+                m_audioChannelsBufferSize.intValue =
+                    EditorGUILayout.IntField("Audio Channels Buffer Size", m_audioChannelsBufferSize.intValue);
+                if (m_audioChannelsBufferSize.intValue < csoundUnity.GetKsmps())
+                {
+                    m_audioChannelsBufferSize.intValue = (int)csoundUnity.GetKsmps();
+                }
                 EditorGUILayout.HelpBox("Available Audio Channels", MessageType.None);
                 for (int i = 0; i < m_availableAudioChannels.arraySize; i++)
                 {

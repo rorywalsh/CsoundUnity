@@ -445,6 +445,7 @@ public class CsoundUnity : MonoBehaviour
     /// </summary>
     private Dictionary<string, int> _channelsIndexDict = new Dictionary<string, int>();
     [HideInInspector] [SerializeField] private List<string> _availableAudioChannels = new List<string>();
+    [HideInInspector] [SerializeField] private uint _audioChannelsBufferSize = 32;
     /// <summary>
     /// Inspector foldout settings
     /// </summary>
@@ -473,7 +474,7 @@ public class CsoundUnity : MonoBehaviour
 #pragma warning restore 414
 
     private bool initialized = false;
-    private uint ksmps = 32;
+    private uint ksmps = 32; // this is unused
     private uint ksmpsIndex = 0;
     private float zerdbfs = 1;
     private bool compiledOk = false;
@@ -565,7 +566,7 @@ public class CsoundUnity : MonoBehaviour
                 if (!namedAudioChannelDataDict.ContainsKey(name))
                 {
                     namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
-                    namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
+                    namedAudioChannelTempBufferDict.Add(name, new MYFLT[_audioChannelsBufferSize]);
                 }
             }
 
@@ -738,7 +739,7 @@ public class CsoundUnity : MonoBehaviour
             if (!namedAudioChannelDataDict.ContainsKey(name))
             {
                 namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
-                namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
+                namedAudioChannelTempBufferDict.Add(name, new MYFLT[_audioChannelsBufferSize]);
             }
         }
 
@@ -828,6 +829,10 @@ public class CsoundUnity : MonoBehaviour
     /// <returns></returns>
     public uint GetKsmps()
     {
+        if (csound == null)
+        {
+            return (uint)Mathf.CeilToInt(audioRate / (float)controlRate);
+        }
         return csound.GetKsmps();
     }
 
