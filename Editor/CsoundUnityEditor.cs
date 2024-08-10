@@ -174,13 +174,16 @@ public class CsoundUnityEditor : Editor
         m_drawSettings.boolValue = EditorGUILayout.Foldout(m_drawSettings.boolValue, "Settings", true);
         if (m_drawSettings.boolValue)
         {
-            EditorGUILayout.LabelField(csoundUnity.samplingRateSettingsInfo);
+            EditorGUILayout.HelpBox(csoundUnity.samplingRateSettingsInfo, MessageType.None);
             m_overrideSamplingRate.boolValue = EditorGUILayout.Toggle("Override sampling rate", m_overrideSamplingRate.boolValue);
 
             if (m_overrideSamplingRate.boolValue)
             {
                 m_audioRate.intValue = EditorGUILayout.IntField("Audio Rate", m_audioRate.intValue);
                 m_controlRate.intValue = EditorGUILayout.IntField("Control Rate", m_controlRate.intValue);
+                // keep the audio rate and control rate values above 1
+                if (m_audioRate.intValue < 1) m_audioRate.intValue = 1;
+                if (m_controlRate.intValue < 1) m_controlRate.intValue = 1;
                 // make sure the audio channels buffer size is always at least of size ksmps
                 if (m_audioChannelsBufferSize.intValue < csoundUnity.GetKsmps())
                 {
