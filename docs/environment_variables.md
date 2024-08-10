@@ -45,5 +45,5 @@ Add the plugins for each CPU you want to support.
 Also be sure to set the *OPCODE6DIR64* to *Plugins*, so that CsoundUnity will try to load them.
 The Suffix folder will be ignored.
   
-You can still set the *SFDIR* in another location to load sound files or any additional files, like in the example below:  
+You can still set the *SFDIR* in another location to load sound files or any additional files, like in the example below:
 <img src="images/plugin_settings.jpg" alt="Android Plugin Settings"/>
