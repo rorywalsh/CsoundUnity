@@ -128,8 +128,6 @@ public class CsoundUnityBridge
     /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
     public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings, float audioRate, float controlRate)
     {
-//#if !UNITY_WEBGL || UNITY_EDITOR
-
         // On editor and desktop platforms, disable searching of plugins unless explicitly set using
         // the env settings in the editor
         if (Application.isEditor || !Application.isMobilePlatform)
@@ -196,6 +194,7 @@ public class CsoundUnityBridge
         compiledOk = ret == 0 ? true : false;
         //Debug.Log($"CsoundCompile: {compiledOk}");
     }
+
 #endif
 
 #if UNITY_WEBGL && !UNITY_EDITOR

@@ -549,6 +549,7 @@ public class CsoundUnity : MonoBehaviour
         {
             /// channels are created when a csd file is selected in the inspector
             if (channels != null)
+            {
                 // initialise channels if found in xml descriptor..
                 for (int i = 0; i < channels.Count; i++)
                 {
@@ -560,7 +561,7 @@ public class CsoundUnity : MonoBehaviour
                     if (!_channelsIndexDict.ContainsKey(channels[i].channel))
                         _channelsIndexDict.Add(channels[i].channel, i);
                 }
-
+            }
             foreach (var audioChannel in availableAudioChannels)
             {
                 if (namedAudioChannelDataDict.ContainsKey(audioChannel)) continue;
