@@ -1,6 +1,8 @@
-## [3.5.0] - 2024-07-15
+## [3.5.0] - 2024-08-10
 
 - [Add] WebGL support (experimental)
+- [Add] Ability to set sampling rate and control rate
+- [Fix] Got rid of null refs errors on editor when going into play mode
 
 ## [3.4.3] - 2024-04-26
 
