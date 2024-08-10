@@ -12,6 +12,6 @@ Have a look at the official [Csound website](https://csound.com/) and [Csound pa
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-## Newest Version: 3.5.0 ##
+## Newest Version: 3.4.2 ##
 
 Read the [CHANGELOG](https://github.com/rorywalsh/CsoundUnity/blob/master/CHANGELOG.md) for more details.  
