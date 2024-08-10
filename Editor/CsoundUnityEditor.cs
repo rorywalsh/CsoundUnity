@@ -25,6 +25,7 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -130,8 +131,16 @@ public class CsoundUnityEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        base.DrawDefaultInspector();
-
+        try
+        {
+            base.DrawDefaultInspector();
+        }
+        catch (NullReferenceException ex)
+        {
+            // this try catch section is needed to avoid (harmless) null references 
+            // in the inspector when going on play mode in the editor
+        }
+        
         this.serializedObject.Update();
 
         EditorGUILayout.Space();
