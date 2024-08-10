@@ -474,7 +474,7 @@ public class CsoundUnity : MonoBehaviour
 #pragma warning restore 414
 
     private bool initialized = false;
-    private uint ksmps = 32; // this is unused
+    // private uint ksmps = 32; // this is unused
     private uint ksmpsIndex = 0;
     private float zerdbfs = 1;
     private bool compiledOk = false;
@@ -561,16 +561,14 @@ public class CsoundUnity : MonoBehaviour
                         _channelsIndexDict.Add(channels[i].channel, i);
                 }
 
-            foreach (var name in availableAudioChannels)
+            foreach (var audioChannel in availableAudioChannels)
             {
-                if (!namedAudioChannelDataDict.ContainsKey(name))
-                {
-                    namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
-                    namedAudioChannelTempBufferDict.Add(name, new MYFLT[_audioChannelsBufferSize]);
-                }
+                if (namedAudioChannelDataDict.ContainsKey(audioChannel)) continue;
+                namedAudioChannelDataDict.Add(audioChannel, new MYFLT[bufferSize]);
+                namedAudioChannelTempBufferDict.Add(audioChannel, new MYFLT[_audioChannelsBufferSize]);
             }
 
-            /// This coroutine prints the Csound output to the Unity console
+            // This coroutine prints the Csound output to the Unity console
             LoggingCoroutine = StartCoroutine(Logging(.01f));
 
             compiledOk = csound.CompiledWithoutError();
