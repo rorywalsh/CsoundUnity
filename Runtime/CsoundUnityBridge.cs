@@ -432,6 +432,16 @@ public class CsoundUnityBridge
         return dest;
     }
 
+    public string GetStringChannel(string name)
+    {
+        var bufferSize = 32768; // we need a better way to retrieve the length of the string
+        IntPtr channelStr = Marshal.AllocHGlobal(bufferSize);
+        Csound6.NativeMethods.csoundGetStringChannel(csound, name, channelStr);
+        var stringChannel = GetMessageText(channelStr);
+        Marshal.FreeHGlobal(channelStr);
+        return stringChannel;
+    }
+
     /// <summary>
     /// Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
     /// </summary>

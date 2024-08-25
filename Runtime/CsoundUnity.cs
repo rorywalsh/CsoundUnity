@@ -1205,6 +1205,11 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetChannelList();
     }
 
+    public string GetStringChannel(string name)
+    {
+        return csound.GetStringChannel(name);
+    }
+
 #endregion CONTROL_CHANNELS
 
 #region AUDIO_CHANNELS
