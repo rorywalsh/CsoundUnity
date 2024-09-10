@@ -1,6 +1,6 @@
 ## Getting Started ##
 
-CsoundUnity is a component that can be added to any GameObject in a scene. To do so simple press the **AddComponent** button in Unity's inspector, then search for **CsoundUnity** and select the **CsoundUnity** component. This will add a **Csound Unity** and **Audio Source**  component (if it does not already exist) to the selected GameObject.
+CsoundUnity is a component that can be added to any GameObject in a scene. To do so simple press the **AddComponent** button in Unity's inspector, then search for **CsoundUnity** and select the **CsoundUnity** component. This will add a **Csound Unity** and **Audio Source**  components (if it does not already exist) to the selected GameObject.
 
 <img src="images/addCsoundUnityComponent_v3.gif" alt="Add CsoundUnity"/>
 

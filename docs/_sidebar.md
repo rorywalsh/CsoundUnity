@@ -20,6 +20,7 @@
   * [Environment Variables](environment_variables.md)
   * [CsoundFileWatcher](csound_file_watcher.md)
   *	[Supported Platforms](platforms.md)
+  + [WebGL](webgl_support.md)
 * [API Docs](http://rorywalsh.github.io/CsoundUnity/html/index.html)
 
 
