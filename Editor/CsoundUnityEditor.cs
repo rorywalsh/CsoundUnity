@@ -25,6 +25,7 @@ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -52,10 +53,13 @@ namespace Csound.Unity
         SerializedProperty m_logCsoundOutput;
         SerializedProperty m_loudVolumeWarning;
         SerializedProperty m_loudWarningThreshold;
+        SerializedProperty m_overrideSamplingRate;
+    	SerializedProperty m_audioRate;
+    	SerializedProperty m_controlRate;
         SerializedProperty m_enviromentSettings;
         SerializedProperty m_channelControllers;
         SerializedProperty m_availableAudioChannels;
-
+        SerializedProperty m_audioChannelsBufferSize;
         SerializedProperty m_drawTestScore;
         SerializedProperty m_drawSettings;
         SerializedProperty m_drawChannels;
@@ -96,10 +100,13 @@ namespace Csound.Unity
             m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
             m_loudVolumeWarning = this.serializedObject.FindProperty("loudVolumeWarning");
             m_loudWarningThreshold = this.serializedObject.FindProperty("loudWarningThreshold");
+            m_overrideSamplingRate = this.serializedObject.FindProperty("overrideSamplingRate");
+        	m_audioRate = this.serializedObject.FindProperty("audioRate");
+        	m_controlRate = this.serializedObject.FindProperty("controlRate");
             m_enviromentSettings = this.serializedObject.FindProperty("environmentSettings");
             m_channelControllers = this.serializedObject.FindProperty("_channels");
             m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
-
+            m_audioChannelsBufferSize = this.serializedObject.FindProperty("_audioChannelsBufferSize");
             m_drawCsoundString = this.serializedObject.FindProperty("_drawCsoundString");
             m_drawTestScore = this.serializedObject.FindProperty("_drawTestScore");
             m_drawSettings = this.serializedObject.FindProperty("_drawSettings");
@@ -126,9 +133,17 @@ namespace Csound.Unity
 
         public override void OnInspectorGUI()
         {
-            base.DrawDefaultInspector();
-
-            this.serializedObject.Update();
+            try
+        	{
+            	base.DrawDefaultInspector();
+        	}
+        	catch (NullReferenceException ex)
+        	{
+                // this try catch section is needed to avoid (harmless) null references 
+                // in the inspector when going on play mode in the editor
+                Debug.Log($"Default Inspector failed to draw, with error: {ex.Message}, {ex.StackTrace}");
+        	}
+        	this.serializedObject.Update();
 
             EditorGUILayout.Space();
             DrawCaption();
@@ -161,6 +176,27 @@ namespace Csound.Unity
             m_drawSettings.boolValue = EditorGUILayout.Foldout(m_drawSettings.boolValue, "Settings", true);
             if (m_drawSettings.boolValue)
             {
+            	EditorGUILayout.HelpBox(csoundUnity.samplingRateSettingsInfo, MessageType.None);
+            m_overrideSamplingRate.boolValue = EditorGUILayout.Toggle("Override sampling rate", m_overrideSamplingRate.boolValue);
+
+            if (m_overrideSamplingRate.boolValue)
+            {
+                m_audioRate.intValue = EditorGUILayout.IntField("Audio Rate", m_audioRate.intValue);
+                m_controlRate.intValue = EditorGUILayout.IntField("Control Rate", m_controlRate.intValue);
+                // keep the audio rate and control rate values above 1
+                if (m_audioRate.intValue < 1) m_audioRate.intValue = 1;
+                if (m_controlRate.intValue < 1) m_controlRate.intValue = 1;
+                // make sure the audio channels buffer size is always at least of size ksmps
+                if (m_audioChannelsBufferSize.intValue < csoundUnity.GetKsmps())
+                {
+                    m_audioChannelsBufferSize.intValue = (int)csoundUnity.GetKsmps();
+                }
+            }
+            else
+            {
+                m_audioRate.intValue = AudioSettings.outputSampleRate;
+                m_controlRate.intValue = AudioSettings.outputSampleRate;
+            }
                 EditorGUI.BeginChangeCheck();
                 m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
                 if (EditorGUI.EndChangeCheck())
@@ -266,6 +302,13 @@ namespace Csound.Unity
                         return;
                     }
 
+				EditorGUILayout.HelpBox("Warning: change the buffer size setting very carefully to avoid crashes", MessageType.None);
+                m_audioChannelsBufferSize.intValue =
+                    EditorGUILayout.IntField("Audio Channels Buffer Size", m_audioChannelsBufferSize.intValue);
+                if (m_audioChannelsBufferSize.intValue < csoundUnity.GetKsmps())
+                {
+                    m_audioChannelsBufferSize.intValue = (int)csoundUnity.GetKsmps();
+                }
                     EditorGUILayout.HelpBox("Available Audio Channels", MessageType.None);
                     for (int i = 0; i < m_availableAudioChannels.arraySize; i++)
                     {
@@ -454,6 +497,7 @@ namespace Csound.Unity
 
                 if (foldout.boolValue)
                 {
+                	EditorGUI.BeginChangeCheck();
                     EditorGUI.PropertyField(
                         new Rect(rect.x, rect.y + h + margin, rect.width, h),
                         platform
@@ -470,6 +514,34 @@ namespace Csound.Unity
                         new Rect(rect.x, rect.y + h * 4 + margin * 4, rect.width, h),
                         suffix
                         );
+                        
+                    if (EditorGUI.EndChangeCheck())
+	                {
+	                    // for the WebGL platform we need to scan the folders for the files to be loaded
+	                    // this because WebGL cannot read from a path at runtime
+	                    // The suggested folder to use is the StreamingAssets folder, that keeps the files intact.
+	                    // We will make the files available to Csound on creation, copying them from the paths
+	
+	                    // we need to force one update of the serialized properties to get the updated value
+	                    serializedObject.ApplyModifiedProperties();
+	
+	                    if (((SupportedPlatform)platform.intValue) == SupportedPlatform.WebGL)
+	                    {
+	                        if (((EnvironmentPathOrigin)baseFolder.intValue) == EnvironmentPathOrigin.StreamingAssets)
+	                        {
+	                            // update the list of the required assets for WebGL
+	                            csoundUnity.webGLAssetsList = ScanWebGLAssets();
+	                        }
+	                        else
+	                        {
+	                            Debug.LogWarning("CsoundUnity can read files from the StreamingAssets folder only." +
+	                                "When built, the files inside the StreamingAssets folder will remain the same and the folder will be copied as is in the build. " +
+	                                "The other files will be compressed in the wasm archive, so not readable by Csound or javascript, but only via Unity WebRequests.");
+	                            // clear the list when the baseFolder is not StreamingAssets
+	                            csoundUnity.webGLAssetsList = new List<string>();
+	                        }
+	                    }
+	                }
                 }
             }
             EditorGUI.indentLevel--;
@@ -938,5 +1010,43 @@ namespace Csound.Unity
             relativeToAssetsPath = relativeToAssetsPath.Length >= "Assets".Length ? relativeToAssetsPath : path;
             return relativeToAssetsPath;
         }
+	/// <summary>
+    /// Scans the folder at path and returns a list of strings with the paths of the found files
+    /// </summary>
+    /// <param name="path">The path of the folder to scan</param>
+    /// <returns>A list of strings of the paths</returns>
+    private List<string> ScanWebGLAssets()
+    {
+        var webGLAssetsList = new List<string>();
+        var settings = csoundUnity.environmentSettings;
+        foreach (var setting in settings)
+        {
+            //Debug.Log($"ScanWebGLAssets {setting.GetPath()} {setting.GetPlatformString()} {setting.baseFolder} {setting.suffix}");
+            if (setting.baseFolder != EnvironmentPathOrigin.StreamingAssets ||
+                setting.platform != SupportedPlatform.WebGL) continue;
+            var path = Path.Combine(Application.streamingAssetsPath, setting.suffix);
+            //Debug.Log($"ScanWebGLAssets at path: {path}");
+            if (!Directory.Exists(path)) continue;
+            var files = Directory.GetFiles(path);
+            foreach (var file in files)
+            {
+                var prefix = $"./StreamingAssets/{setting.suffix}";
+                var fileName = Path.GetFileName(file);
+                var ext = Path.GetExtension(file);
+                if (ext == ".meta")
+                {
+                    // discard meta files
+                    continue;
+                }
+                //Debug.Log($"ScanWebGLAssets found file: {file}");
+                webGLAssetsList.Add($"{prefix}/{fileName}");
+            }
+        }
+        // foreach (var path in webGLAssetsList)
+        // {
+        //     Debug.Log($"webGLAssetsList: {path}");
+        // }
+        return webGLAssetsList;
+    }
     }
 }

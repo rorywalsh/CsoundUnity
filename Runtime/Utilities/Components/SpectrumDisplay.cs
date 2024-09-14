@@ -66,7 +66,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     if (_source == null) return;
                     
                     _source.GetSpectrumData(_samples, 0, FFTWindow.BlackmanHarris);
-                    Debug.Log($"Getting spectrum {Time.time} {_samples[50]}");
+                    // Debug.Log($"Getting spectrum {Time.time} {_samples[50]}");
                     break;
             }
 

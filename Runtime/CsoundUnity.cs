@@ -32,12 +32,13 @@ using System;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
 using MYFLT = System.Single;
 #endif
 using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
@@ -91,6 +92,8 @@ namespace Csound.Unity
         [Tooltip("Utility bool to store if the drawn property is foldout or not")]
         [SerializeField] public bool foldout;
 
+        public List<string> AssetsToLoadList;
+
         /// <summary>
         /// Set the runtime bool true on Editor for debug purposes only, let Unity detect the correct path with Application.persistentDataPath
         /// </summary>
@@ -126,6 +129,7 @@ namespace Csound.Unity
         private string GetPersistentDataPath(SupportedPlatform supportedPlatform, bool runtime)
         {
             var res = Application.persistentDataPath;
+            var path = Path.Combine(Application.persistentDataPath, suffix);
             switch (supportedPlatform)
             {
                 case SupportedPlatform.MacOS:
@@ -145,6 +149,10 @@ namespace Csound.Unity
                 case SupportedPlatform.iOS:
                     res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Documents" : Application.persistentDataPath;
                     break;
+                case SupportedPlatform.WebGL:
+                    res = runtime ? $"/idbfs/<md5 hash of data path>/{suffix}" :
+                        path;
+                    break;
             }
             return res;
         }
@@ -155,6 +163,7 @@ namespace Csound.Unity
         private string GetStreamingAssetsPath(SupportedPlatform supportedPlatform, bool runtime)
         {
             var res = Application.streamingAssetsPath;
+            var path = Path.Combine(Application.streamingAssetsPath, suffix);
             switch (supportedPlatform)
             {
                 case SupportedPlatform.MacOS:
@@ -168,6 +177,9 @@ namespace Csound.Unity
                     break;
                 case SupportedPlatform.iOS:
                     res = runtime ? $"/var/mobile/Containers/Data/Application/{Application.identifier}/Raw/" : Application.streamingAssetsPath;
+                    break;
+                case SupportedPlatform.WebGL:
+                    res = runtime ? $"https://<your website>/<unity webgl build path>/StreamingAssets/{suffix}" : path;
                     break;
             }
             return res;
@@ -249,7 +261,7 @@ namespace Csound.Unity
     }
 
     [Serializable]
-    public enum SupportedPlatform { MacOS, Windows, Android, iOS }
+    public enum SupportedPlatform { MacOS, Windows, Android, iOS, WebGL }
 
     /// <summary>
     /// The base folder where to set the Environment Variables
@@ -337,6 +349,24 @@ namespace Csound.Unity
         [HideInInspector] public float loudWarningThreshold = 10f;
 
         /// <summary>
+        /// If true you can override the default Csound control rate with a custom value.
+        /// The default value is AudioSettings.outputSampleRate.
+        /// Ksmps will be calculated by Csound so there's no need to set it in your csd.
+        /// </summary>
+        [HideInInspector] public bool overrideSamplingRate = false;
+
+        [HideInInspector] public int audioRate = 44100;
+        [HideInInspector] public int controlRate = 44100;
+
+        public string samplingRateSettingsInfo
+        {
+            get
+            {
+                var k = audioRate == 0 ? 0 : controlRate == 0 ? 0 : audioRate / (float)controlRate;
+                return $"sr: {audioRate}, kr: {controlRate}, ksmps: {k:F00}";
+            }
+        }
+        /// <summary>
         /// list to hold channel data
         /// </summary>
         public List<CsoundChannelController> channels { get => _channels; }
@@ -401,42 +431,43 @@ namespace Csound.Unity
         /// fuctions, then methods should be added to the CsoundUnity.cs file and CsoundUnityBridge class.
         /// </summary>
         private CsoundUnityBridge csound;
-        [HideInInspector] [SerializeField] private string _csoundFileGUID;
-        [HideInInspector] [SerializeField] private string _csoundString;
-        [HideInInspector] [SerializeField] private string _csoundFileName;
+        [HideInInspector][SerializeField] private string _csoundFileGUID;
+        [HideInInspector][SerializeField] private string _csoundString;
+        [HideInInspector][SerializeField] private string _csoundFileName;
 #if UNITY_EDITOR
-        [HideInInspector] [SerializeField] private DefaultAsset _csoundAsset;
+        [HideInInspector][SerializeField] private DefaultAsset _csoundAsset;
 #endif
-        [HideInInspector] [SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
+        [HideInInspector][SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
         /// <summary>
         /// An utility dictionary to store the index of every channel in the _channels list
         /// </summary>
         private Dictionary<string, int> _channelsIndexDict = new Dictionary<string, int>();
-        [HideInInspector] [SerializeField] private List<string> _availableAudioChannels = new List<string>();
-        [HideInInspector] [SerializeField] private List<string> _audioChannelsToAdd = new List<string>();
-        [HideInInspector] [SerializeField] private List<string> _audioChannelsToRemove = new List<string>();
+        [HideInInspector][SerializeField] private List<string> _availableAudioChannels = new List<string>();
+        [HideInInspector][SerializeField] private List<string> _audioChannelsToAdd = new List<string>();
+        [HideInInspector][SerializeField] private List<string> _audioChannelsToRemove = new List<string>();
+        [HideInInspector][SerializeField] private uint _audioChannelsBufferSize = 32;
         /// <summary>
         /// Inspector foldout settings
         /// </summary>
 #pragma warning disable 414
-        [HideInInspector] [SerializeField] private bool _drawCsoundString = false;
-        [HideInInspector] [SerializeField] private bool _drawTestScore = false;
-        [HideInInspector] [SerializeField] private bool _drawSettings = false;
-        [HideInInspector] [SerializeField] private bool _drawChannels = false;
-        [HideInInspector] [SerializeField] private bool _drawAudioChannels = false;
-        [HideInInspector] [SerializeField] private bool _drawPresets = false;
-        [HideInInspector] [SerializeField] private bool _drawPresetsLoad = false;
-        [HideInInspector] [SerializeField] private bool _drawPresetsSave = false;
-        [HideInInspector] [SerializeField] private bool _drawPresetsImport = false;
+        [HideInInspector][SerializeField] private bool _drawCsoundString = false;
+        [HideInInspector][SerializeField] private bool _drawTestScore = false;
+        [HideInInspector][SerializeField] private bool _drawSettings = false;
+        [HideInInspector][SerializeField] private bool _drawChannels = false;
+        [HideInInspector][SerializeField] private bool _drawAudioChannels = false;
+        [HideInInspector][SerializeField] private bool _drawPresets = false;
+        [HideInInspector][SerializeField] private bool _drawPresetsLoad = false;
+        [HideInInspector][SerializeField] private bool _drawPresetsSave = false;
+        [HideInInspector][SerializeField] private bool _drawPresetsImport = false;
         /// <summary>
         /// If true, the path shown in the Csound Global Environments Folders inspector will be
         /// the one expected at runtime, otherwise it will show the Editor path (for desktop platform). 
         /// For mobile platforms the path will always be the same.
         /// </summary>
-        [HideInInspector] [SerializeField] private bool _showRuntimeEnvironmentPath = false;
-        [HideInInspector] [SerializeField] private string _currentPreset;
-        [HideInInspector] [SerializeField] private string _currentPresetSaveFolder;
-        [HideInInspector] [SerializeField] private string _currentPresetLoadFolder;
+        [HideInInspector][SerializeField] private bool _showRuntimeEnvironmentPath = false;
+        [HideInInspector][SerializeField] private string _currentPreset;
+        [HideInInspector][SerializeField] private string _currentPresetSaveFolder;
+        [HideInInspector][SerializeField] private string _currentPresetLoadFolder;
 
 
 
@@ -476,7 +507,25 @@ namespace Csound.Unity
 
             Debug.Log($"CsoundUnity v{packageVersion} Awake, AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
 
+
+            if (audioRate == 0) audioRate = AudioSettings.outputSampleRate;
+            if (controlRate == 0) controlRate = AudioSettings.outputSampleRate;
+
             audioSource = GetComponent<AudioSource>();
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+            Init();
+#else
+        InitWebGL();
+#endif
+        }
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+        /// <summary>
+        /// A default init method for all platforms except WebGL
+        /// </summary>
+        private void Init()
+        {
             audioSource.spatializePostEffects = true;
 
             // FIX SPATIALIZATION ISSUES
@@ -495,39 +544,32 @@ namespace Csound.Unity
             /// the CsoundUnityBridge constructor the string with the csound code and a list of the Global Environment Variables Settings.
             /// It then calls createCsound() to create an instance of Csound and compile the csd string.
             /// After this we start the performance of Csound.
-            csound = new CsoundUnityBridge(_csoundString, environmentSettings);
+            csound = new CsoundUnityBridge(_csoundString, environmentSettings, audioRate, controlRate);
             if (csound != null)
             {
                 /// channels are created when a csd file is selected in the inspector
                 if (channels != null)
+                {
                     // initialise channels if found in xml descriptor..
                     for (int i = 0; i < channels.Count; i++)
                     {
                         if (channels[i].type.Contains("combobox"))
-                        {
-                            csound.SetChannel(channels[i].channel, channels[i].value + 1);
-                        }
+                        {    csound.SetChannel(channels[i].channel, channels[i].value + 1);}
                         else
-                        {
-                            csound.SetChannel(channels[i].channel, channels[i].value);
-                        }
+                        {    csound.SetChannel(channels[i].channel, channels[i].value);}
                         // update channels index dictionary
                         if (!_channelsIndexDict.ContainsKey(channels[i].channel))
-                        {
-                            _channelsIndexDict.Add(channels[i].channel, i);
-                        }
-                    }
-
-                foreach (var name in availableAudioChannels)
-                {
-                    if (!namedAudioChannelDataDict.ContainsKey(name))
-                    {
-                        namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
-                        namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
+                        {    _channelsIndexDict.Add(channels[i].channel, i);}
                     }
                 }
+                foreach (var audioChannel in availableAudioChannels)
+                {
+                    if (namedAudioChannelDataDict.ContainsKey(audioChannel)) continue;
+                    namedAudioChannelDataDict.Add(audioChannel, new MYFLT[bufferSize]);
+                    namedAudioChannelTempBufferDict.Add(audioChannel, new MYFLT[_audioChannelsBufferSize]);
+                }
 
-                /// This coroutine prints the Csound output to the Unity console
+                // This coroutine prints the Csound output to the Unity console
                 LoggingCoroutine = StartCoroutine(Logging(.01f));
 
                 compiledOk = csound.CompiledWithoutError();
@@ -547,9 +589,60 @@ namespace Csound.Unity
                 Debug.Log("Error creating Csound object");
                 compiledOk = false;
             }
-
             Debug.Log($"CsoundUnity done init, compiledOk? {compiledOk}");
         }
+#endif
+
+        #region WEBGL_INIT
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+
+    public int InstanceId => _instanceId;
+    private int _instanceId = -1;
+    
+    /// <summary>
+    /// Init method for WebGL platform only
+    /// </summary>
+    private void InitWebGL()
+    { 
+        // listen for the OnCsoundWebGLInitialized event
+        CsoundUnityBridge.OnCsoundWebGLInitialized += OnWebGLBridgeInitialized;
+        // create CsoundUnityBridge and start initialization, we pass the csd and the list of the assets to be loaded, no environment settings as they won't work on Unity WebGL
+        // creating a new CsoundUnityBridge instance increases the internal instanceId counter
+        csound = new CsoundUnityBridge(_csoundString, this.webGLAssetsList);
+        // save the instanceId grabbing the last generated instanceId
+        this._instanceId = CsoundUnityBridge.LastInstanceId;
+        Debug.Log($"[CsoundUnity] InitWebGL, CsoundUnityBridge.LastInstanceId: {CsoundUnityBridge.LastInstanceId}");
+    }
+
+    private void OnWebGLBridgeInitialized(int instanceId)
+    {
+        Debug.Log($"[CsoundUnity] OnWebGLBridgeInitialized for instance #{instanceId} received by CsoundUnity instance {this._instanceId}");
+        if (instanceId != this._instanceId) return;
+        if (csound == null) return;
+        
+        CsoundUnityBridge.OnCsoundWebGLInitialized -= OnWebGLBridgeInitialized;
+        // channels are created when a csd file is selected in the inspector
+        if (channels != null)
+        {
+            // initialise channels if found in xml descriptor..
+            for (var i = 0; i < channels.Count; i++)
+            {
+                if (channels[i].type.Contains("combobox"))
+                    csound.SetChannel(channels[i].channel, channels[i].value + 1);
+                else
+                    csound.SetChannel(channels[i].channel, channels[i].value);
+                // update channels index dictionary
+                _channelsIndexDict.TryAdd(channels[i].channel, i);
+            }
+        }
+        initialized = true;
+        OnCsoundInitialized?.Invoke();
+    }
+
+#endif
+
+        #endregion WEBGL_INIT
 
         #region PUBLIC_METHODS
 
@@ -745,6 +838,10 @@ namespace Csound.Unity
         /// <returns></returns>
         public uint GetKsmps()
         {
+            if (csound == null)
+            {
+                return (uint)Mathf.CeilToInt(audioRate / (float)controlRate);
+            }
             return csound.GetKsmps();
         }
 
@@ -781,12 +878,12 @@ namespace Csound.Unity
 
                 // discard channels that are not plain strings, since they cannot be interpreted afterwards
                 // "validChan" vs SinvalidChan
-                if (!split[1].TrimStart().StartsWith("\"") || 
-                    !split[1].TrimEnd().EndsWith("\"")) 
+                if (!split[1].TrimStart().StartsWith("\"") ||
+                    !split[1].TrimEnd().EndsWith("\""))
                     continue;
 
                 var ach = split[1].Replace('\\', ' ').Replace('\"', ' ').Trim();
-                
+
                 if (!locaAudioChannels.Contains(ach))
                     locaAudioChannels.Add(ach);
             }
@@ -1079,7 +1176,7 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Gets a Csound channel. Used in connection with a chnset opcode in your Csound instrument.
+        /// Gets a Csound channel. Used in connection with a chnset opcode in your Csound instrument, or set with SetChannel
         /// </summary>
         /// <param name="channel"></param>
         /// <returns></returns>
@@ -1099,6 +1196,17 @@ namespace Csound.Unity
             var indx = _channelsIndexDict[channel];
             return this._channels[indx];
         }
+
+        /// <summary>
+        /// Get a Csound string channel. Used in connection with a chnset opcode in your Csound instrument, or set with SetStringChannel
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public string GetStringChannel(string name)
+        {
+            return csound.GetStringChannel(name);
+        }
+
         /// <summary>
         /// Blocking method to get a list of the channels from Csound, not from the serialized list of this instance.
         /// Provides a dictionary of all currently defined channels resulting from compilation of an orchestra
@@ -1157,12 +1265,12 @@ namespace Csound.Unity
         /// <param name="channel">The channel to be added</param>
         public void AddAudioChannel(string channel)
         {
-            if (namedAudioChannelDataDict.ContainsKey(channel) || 
-                _availableAudioChannels.Contains(channel) || 
+            if (namedAudioChannelDataDict.ContainsKey(channel) ||
+                _availableAudioChannels.Contains(channel) ||
                 _audioChannelsToAdd.Contains(channel))
             {
                 Debug.LogWarning($"Cannot add available audio channel {channel}, it is already present");
-                return; 
+                return;
             }
 
             _audioChannelsToAdd.Add(channel);
@@ -1175,7 +1283,7 @@ namespace Csound.Unity
         /// <param name="channel">The channel to be removed</param>
         public void RemoveAudioChannel(string channel)
         {
-            if (_availableAudioChannels.Contains(channel) && namedAudioChannelDataDict.ContainsKey(channel) && 
+            if (_availableAudioChannels.Contains(channel) && namedAudioChannelDataDict.ContainsKey(channel) &&
                 namedAudioChannelTempBufferDict.ContainsKey(channel)
                 && !_audioChannelsToRemove.Contains(channel))
             {
@@ -1683,13 +1791,13 @@ namespace Csound.Unity
                         break;
                 }
             }
-        else
-        {
-            Debug.Log($"Creating new CsoundUnityPreset at {fullPath}");
-            AssetDatabase.CreateAsset(preset, fullPath);
-        }
-        AssetDatabase.ImportAsset(fullPath);
-        //AssetDatabase.SaveAssets();
+            else
+            {
+                Debug.Log($"Creating new CsoundUnityPreset at {fullPath}");
+                AssetDatabase.CreateAsset(preset, fullPath);
+            }
+            AssetDatabase.ImportAsset(fullPath);
+            //AssetDatabase.SaveAssets();
 
 #endif
         }
@@ -1730,60 +1838,60 @@ namespace Csound.Unity
                 Debug.Log(ex.Message);
             }
 #if UNITY_EDITOR
-        AssetDatabase.ImportAsset(fullPath);
+            AssetDatabase.ImportAsset(fullPath);
 #endif
-    }
+        }
 
-    /// <summary>
-    /// Save a preset as JSON from a list of CsoundChannelController, specifying the related CsoundFileName and the presetName.
-    /// See <see cref="SavePresetAsJSON(CsoundUnityPreset, string, bool)">SavePresetAsJSON(CsoundUnityPreset, string, bool)</see>
-    /// </summary>
-    /// <param name="channels"></param>
-    /// <param name="csoundFileName"></param>
-    /// <param name="presetName"></param>
-    /// <param name="path"></param>
-    /// <param name="overwriteIfExisting"></param>
-    public static void SavePresetAsJSON(List<CsoundChannelController> channels, string csoundFileName, string presetName, string path = null, bool overwriteIfExisting = false)
-    {
-        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-        preset.channels = channels;
-        presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
-        preset.presetName = presetName;
-        preset.csoundFileName = csoundFileName;
-        SavePresetAsJSON(preset, path, overwriteIfExisting);
-    }
+        /// <summary>
+        /// Save a preset as JSON from a list of CsoundChannelController, specifying the related CsoundFileName and the presetName.
+        /// See <see cref="SavePresetAsJSON(CsoundUnityPreset, string, bool)">SavePresetAsJSON(CsoundUnityPreset, string, bool)</see>
+        /// </summary>
+        /// <param name="channels"></param>
+        /// <param name="csoundFileName"></param>
+        /// <param name="presetName"></param>
+        /// <param name="path"></param>
+        /// <param name="overwriteIfExisting"></param>
+        public static void SavePresetAsJSON(List<CsoundChannelController> channels, string csoundFileName, string presetName, string path = null, bool overwriteIfExisting = false)
+        {
+            var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+            preset.channels = channels;
+            presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+            preset.presetName = presetName;
+            preset.csoundFileName = csoundFileName;
+            SavePresetAsJSON(preset, path, overwriteIfExisting);
+        }
 
-    /// <summary>
-    /// Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this CsoundUnity instance.
-    /// See <see cref="SavePresetAsJSON(CsoundUnityPreset, string, bool)">SavePresetAsJSON(CsoundUnityPreset, string, bool)</see>
-    /// </summary>
-    /// <param name="presetName"></param>
-    /// <param name="path"></param>
-    /// <param name="overwriteIfExisting"></param>
-    public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
-    {
-        var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-        preset.channels = this.channels;
-        presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
-        preset.presetName = presetName;
-        preset.csoundFileName = this.csoundFileName;
-        SavePresetAsJSON(preset, path, overwriteIfExisting);
-    }
+        /// <summary>
+        /// Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this CsoundUnity instance.
+        /// See <see cref="SavePresetAsJSON(CsoundUnityPreset, string, bool)">SavePresetAsJSON(CsoundUnityPreset, string, bool)</see>
+        /// </summary>
+        /// <param name="presetName"></param>
+        /// <param name="path"></param>
+        /// <param name="overwriteIfExisting"></param>
+        public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
+        {
+            var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
+            preset.channels = this.channels;
+            presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
+            preset.presetName = presetName;
+            preset.csoundFileName = this.csoundFileName;
+            SavePresetAsJSON(preset, path, overwriteIfExisting);
+        }
 
-    /// <summary>
-    /// Save a serialized copy of this CsoundUnity instance.
-    /// Similar behaviour as saving a Unity Preset from the inspector of the CsoundUnity component, but this can be used at runtime.
-    /// </summary>
-    /// <param name="presetName"></param>
-    public void SaveGlobalPreset(string presetName, string path = null, bool overwriteIfExisting = false)
-    {
-        var presetData = JsonUtility.ToJson(this, true);
-        var name = $"{presetName} {GLOBAL_TAG}";
-        var fullPath = CheckPathForExistence(path, name, overwriteIfExisting);
-        try
-        {    
-            Debug.Log($"Saving global preset at {fullPath}");
-            File.WriteAllText(fullPath, presetData);
+        /// <summary>
+        /// Save a serialized copy of this CsoundUnity instance.
+        /// Similar behaviour as saving a Unity Preset from the inspector of the CsoundUnity component, but this can be used at runtime.
+        /// </summary>
+        /// <param name="presetName"></param>
+        public void SaveGlobalPreset(string presetName, string path = null, bool overwriteIfExisting = false)
+        {
+            var presetData = JsonUtility.ToJson(this, true);
+            var name = $"{presetName} {GLOBAL_TAG}";
+            var fullPath = CheckPathForExistence(path, name, overwriteIfExisting);
+            try
+            {
+                Debug.Log($"Saving global preset at {fullPath}");
+                File.WriteAllText(fullPath, presetData);
 
             }
             catch (IOException ex)
@@ -1791,7 +1899,7 @@ namespace Csound.Unity
                 Debug.Log(ex.Message);
             }
 #if UNITY_EDITOR
-        AssetDatabase.ImportAsset(fullPath);
+            AssetDatabase.ImportAsset(fullPath);
 #endif
         }
 
@@ -1959,13 +2067,13 @@ namespace Csound.Unity
         }));
 
 #else
-        if (!File.Exists(path))
-        {
-            Debug.LogError($"Global Preset JSON not found at path {path}");
-            return;
-        }
-        var data = File.ReadAllText(path);
-        SetGlobalPreset(presetName, data);
+            if (!File.Exists(path))
+            {
+                Debug.LogError($"Global Preset JSON not found at path {path}");
+                return;
+            }
+            var data = File.ReadAllText(path);
+            SetGlobalPreset(presetName, data);
 #endif
         }
 
@@ -2295,7 +2403,7 @@ namespace Csound.Unity
                         if (_quitting) return;
 
                         if (mute == true)
-                        { 
+                        {
                             samples[i + channel] = 0.0f;
                         }
                         else
@@ -2337,7 +2445,7 @@ namespace Csound.Unity
 
                     // update the audioChannels just when this instance is not muted
                     if (!mute)
-                    { 
+                    {
                         foreach (var chanName in availableAudioChannels)
                         {
                             if (!namedAudioChannelDataDict.ContainsKey(chanName) || !namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
@@ -2422,5 +2530,58 @@ namespace Csound.Unity
         }
 
         #endregion PRIVATE_METHODS
+
+        #region WEBGL
+
+        public List<string> webGLAssetsList;
+#if UNITY_WEBGL && !UNITY_EDITOR
+    private static AudioListener _activeAudioListener;
+    public static AudioListener ActiveAudioListener
+    {
+        get
+        {
+            if (_activeAudioListener
+                && _activeAudioListener.isActiveAndEnabled) return _activeAudioListener;
+            var audioListeners = FindObjectsOfType<AudioListener>(false);
+            _activeAudioListener = Array.Find(audioListeners, audioListener => audioListener.enabled);
+
+            return _activeAudioListener;
+        }
+    }
+    
+    private void Update()
+    {
+        if (!IsInitialized) return;
+  
+        // Calculate distance between the AudioListener and the AudioSource
+        var distance = Vector3.Distance(ActiveAudioListener.transform.position, transform.position);
+
+        // Get the vector from the AudioListener to the AudioSource
+        var direction = transform.position - ActiveAudioListener.transform.position;
+
+        // Calculate the local direction vector relative to the AudioListener
+        var localDirection = ActiveAudioListener.transform.InverseTransformDirection(direction);
+
+        // Calculate the azimuth
+        var azimuth = Mathf.Atan2(localDirection.x, localDirection.z) * Mathf.Rad2Deg;
+        if (azimuth < 0) azimuth += 360; // Ensure azimuth is in the range [0, 360]
+
+        // Calculate the elevation
+        var elevation =
+            Mathf.Atan2(localDirection.y, new Vector2(localDirection.x, localDirection.z).magnitude) * Mathf.Rad2Deg;
+
+        //Debug.Log($"Distance: {distance}, Azimuth: {azimuth}, Elevation: {elevation}");
+        var rolloffCurve = audioSource.GetCustomCurve(AudioSourceCurveType.CustomRolloff);
+        var normalized = (distance / (audioSource.maxDistance - audioSource.minDistance));
+        normalized = Mathf.Clamp01(normalized);
+        var rolloff = rolloffCurve.Evaluate(normalized);
+        //Debug.Log($"distance: {distance}, normalized: {normalized} rolloff: {rolloff}");
+    
+        SetChannel("rolloff", rolloff);
+        SetChannel("azimuth", azimuth);
+        SetChannel("elevation", elevation);
+    }
+#endif
+        #endregion WEBGL
     }
 }

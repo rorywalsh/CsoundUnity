@@ -54,6 +54,11 @@
       "displayName": "Collisions",
       "description": "Using collisions to trigger instruments",
       "path": "Samples~/Collisions"
+    },
+    {
+      "displayName": "WebGL",
+      "description": "Examples showcasing the WebGL platform support",
+      "path": "Samples~/WebGL"
     }
   ],
   "type": "tool"

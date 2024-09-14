@@ -1,12 +1,12 @@
 ## Controlling Csound from the Unity Editor
 
-You can control **Csound** channels using the Unity Editor while you are developing your game's sounds.  
-To do so, you must provide a short <Cabbage></Cabbage> descriptor at the top of your **Csound** files (.csd) describing the channels that are needed.  
-This simple descriptor section uses a single line of code to describe each channel.  
-Each line starts with the given channel's controller type and is then followed by combination of other identifiers such as *channel()*, *text()*, and *range()*.  
-The following descriptor sets up 3 channel controllers. A slider, a button and a checkbox(toggle).
+Once you have loaded a csound file into your CsoundUnity component, you are able to control parameters of your Csound code using GUI widgets generated in the inspector. 
+
+Each of these graphical components corrisponds with a Csound channel that can be used in the csound orchestra section to control various parameters of your sound. To reveal a channel in the editor, you must write [**Cabbage widget**](https://cabbageaudio.com/docs/cabbage_syntax/) code between ```<Cabbage> </Cabbage>``` xml tags at the top of your **Csound** files (.csd).
+
+<img src="images/controlChannels.png" alt="Add CsoundUnity"/>
+
 ```csound
-;csd file
 <Cabbage>
 form caption("SimpleFreq")
 hslider channel("freq1"), text("Frequency Slider"), range(0, 10000, 0)
@@ -15,18 +15,26 @@ checkbox channel("mute")
 </Cabbage>
 ```
 
-Each control MUST specify a channel.  
-The **range()** identifier must be used if the controller type is a slider.  
-The **text()** identifier can be used to display unique text beside a control but it is not required. If it is left out, the channel() name will be used as the control's label. The caption() identifier, used with form, is used to display some simple help text to the user.
+
+
+The block above is an example of a Cabbage GUI section that will create graphical elements for 3 channels: a slider, a button and a checkbox(toggle). Notice that each graphical element should be on its own line and that starts with the controller type followed by  other identifiers which describe attributes of the graphical element such as *channel()*, *text()*, and *range()*.  
+
+* Each control MUST specify a channel using the **channel()** identifier.  
+* The **range()** identifier must be used if the controller type is a slider.  
+* The **text()** identifier displays a label beside a control and can be useful to give a control context to a user. If no **text()** is provided, the **channel()** name will be used as the control's label. 
+* The **caption()** identifier can be used in with the *form* element and is used to display some simple help text to the user.
+
+
+**CsoundUnity** supports these widgets from **Cabbage**:
+
+* rslider|hslider|vslider: horizontal sliders
+* button: button with text
+* checkbox: toggle box
+* combobox: dropdown menu 
 
 See [**Cabbage Widgets**](https://cabbageaudio.com/docs/cabbage_syntax/) for more information about the syntax to use.
-**CsoundUnity** aims to support most of the (relevant) Widgets available in Cabbage.  
-[**Cabbage**](https://cabbageaudio.com/) is a framework for audio software development, with it you can create wonderful VST/AU plugins based on **Csound**.  
-And of course it is a great **Csound** IDE!  
-You will find a lot of examples inside it: be aware that most of them are not supported at the moment in **CsoundUnity**, since the  Widgets support is still limited. But they're worth a try!   
-Feel free to ask on the [**Cabbage Forum**](https://forum.cabbageaudio.com/) for any Cabbage example that you would like to be added to **CsoundUnity** as a sample.
 
-When a **Csound** file which contains a valid ***< Cabbage >*** section is dragged to a **CsoundUnity** component, Unity will generate controls for each channel.  
-These controls can be tweaked when your game is running. Each time a control is modified, its value is sent to **Csound** from Unity on the associated channel. In this way it works the same as the method above, only we don't have to code anything in order to test our sound.  
-If you change a channel value via C# code, you will see its value updated in the editor.  
-For now, **CsoundUnity** supports only four types of controller: *slider*, *checkbox(toggle)*, *button* and *comboboxes*.
+___
+
+Csound Unity is based off of the [**Cabbage**](https://cabbageaudio.com/) framework which allows for the creation of VST/AU plugins based on **Csound**. In addition to creating plugins, **Cabbage** is also a wonderful development environment for generating csound files to be used in **CsoundUnity**.  
+**Cabbage** also contains many excellent examples, be aware that most are not currently supported in **CsoundUnity**, due to limited widget support. It may be possible to adapt many of the examples to work with **CsoundUnity** so please ask the [**Cabbage Forum**](https://forum.cabbageaudio.com/) for any Cabbage example that you would like to be added to the **CsoundUnity** code library.
