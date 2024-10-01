@@ -16,7 +16,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
     /// </summary>
     public class CopyFilesToPersistentDataPath : MonoBehaviour
     {
-        [Tooltip("Those audio files will be searched into the Resources folder, and copied into the Persistent Data path")]
+        [Tooltip("Those audio files will be searched into the Resources folder, and copied into the Persistent Data path. " +
+            "Please specify the destination extension, only wav or aif are supported")]
         [SerializeField] private AudioFileInfo[] _audioFiles;
         [Tooltip("The names of the plugins to copy from Resources to the Persistent Data Path folder. " +
             "Don't specify the extension. The extension will be added to the copied files depending on the platform. ")]
@@ -52,12 +53,12 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// </summary>
         /// <param name="audioClips"></param>
         /// <param name="directory"></param>
-        public void SetAudioFiles(AudioClip[] audioClips, string directory = "")
+        public void SetAudioFiles(AudioClip[] audioClips, string directory = "", string extension = "wav")
         {
             var audioFiles = new AudioFileInfo[audioClips.Length];
             for (var i = 0; i < audioFiles.Length; i++)
             {
-                audioFiles[i] = new AudioFileInfo() { Directory = directory, FileName = audioClips[i].name };
+                audioFiles[i] = new AudioFileInfo() { Directory = directory, FileName = audioClips[i].name + "." + extension };
             }
             _audioFiles = audioFiles;
         }
@@ -143,27 +144,13 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     Application.persistentDataPath + "/" + audioFile.Directory;
 
                 if (!Directory.Exists(dir))
+                {
                     Directory.CreateDirectory(dir);
+                }
 
                 var filePath = string.IsNullOrWhiteSpace(audioFile.Directory) ? audioFile.FileName : audioFile.Directory + "/" + audioFile.FileName;
                 var destinationPath = dir + "/" + audioFile.FileName;
 
-                switch (Path.GetExtension(destinationPath))
-                {
-                    case "aif":
-                    case "AIF":
-                    case "AIFF":
-                    case "wav":
-                    case "WAV": break;
-                    // for non supported file formats, add the wav extension suffix
-                    default:
-                    if (_fallbackToWav)
-                    {
-                        destinationPath += "wav";
-                    }
-                    break;
-                }
-                
                 if (!File.Exists(destinationPath))
                 {
                     Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Copying audio file from Resources: {audioFile.FileName}, dir {audioFile.Directory}, destinationPath: {destinationPath}, file Exists? {File.Exists(destinationPath)}");
