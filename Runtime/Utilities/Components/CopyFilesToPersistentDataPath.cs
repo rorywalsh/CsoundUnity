@@ -32,6 +32,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             "Setting the Environment Variables on a running Csound instance can have unintended effects.")]
         [SerializeField] private CsoundUnity[] _csoundUnitys;
         [SerializeField] private bool _autoStart = true;
+        [SerializeField] private bool _fallbackToWav = true;
 
         public bool copyCompleted = false;
 
@@ -248,7 +249,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             var data = new float[audioClip.samples * audioClip.channels];
             audioClip.GetData(data, 0);
 
-            WAFU.WriteAudioFile(audioClip, destination, 16);
+            WAFU.WriteAudioFile(audioClip, destination, 16, _fallbackToWav);
         }
 
         private static void CopyGenericFileFromResources(string origin, string destination)
