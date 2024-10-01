@@ -31,12 +31,41 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             "otherwise their initialization will run. " +
             "Setting the Environment Variables on a running Csound instance can have unintended effects.")]
         [SerializeField] private CsoundUnity[] _csoundUnitys;
+        [SerializeField] private bool _autoStart = true;
+
+        public bool copyCompleted = false;
 
         private int _filesToCopy;
         private int _copiedFiles;
 
         void Awake()
         {
+            if (_autoStart)
+            {
+                Copy();
+            }
+        }
+
+        /// <summary>
+        /// Set the AudioFiles to load before calling Copy. Intended usage of this function is when autoStart is false
+        /// </summary>
+        /// <param name="audioClips"></param>
+        /// <param name="directory"></param>
+        public void SetAudioFiles(AudioClip[] audioClips, string directory = "")
+        {
+            var audioFiles = new AudioFileInfo[audioClips.Length];
+            for (var i = 0; i < audioFiles.Length; i++)
+            {
+                audioFiles[i] = new AudioFileInfo() { Directory = directory, FileName = audioClips[i].name };
+            }
+        }
+
+        /// <summary>
+        /// Start the copy process 
+        /// </summary>
+        public void Copy()
+        {
+            copyCompleted = false;
 #if UNITY_ANDROID || UNITY_IOS
             _filesToCopy = _audioFiles.Length + _streamingAssetsFiles.Length + _additionalFiles.Length;
 #else
@@ -84,7 +113,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             {
                 var dir = Path.Combine(Application.persistentDataPath, additionalFile.Directory);
                 if (!Directory.Exists(dir))
-                { 
+                {
                     Directory.CreateDirectory(dir);
                 }
 
@@ -135,6 +164,9 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             {
                 yield return null;
             }
+
+            copyCompleted = true;
+            
             // finally enable all the Csound instances
             foreach (var csound in _csoundUnitys)
             {
@@ -189,7 +221,9 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                         break;
                 }
 #else
-                if (req.isHttpError || req.isNetworkError)
+                if (req.result == UnityWebRequest.Result.ConnectionError ||
+                    req.result == UnityWebRequest.Result.ProtocolError ||
+                    req.result == UnityWebRequest.Result.DataProcessingError)
                 {
                     Debug.LogError($"Csound.Unity.CopyFilesToPersistentDataPath Error: {req.error}");
                     yield break;
