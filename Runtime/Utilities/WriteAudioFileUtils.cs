@@ -14,7 +14,7 @@ namespace Csound.Unity.Utilities
         /// Writes an audio file from the provided AudioClip to the specified destination.
         /// </summary>
         /// <param name="clip">The AudioClip containing the audio data.</param>
-        /// <param name="destination">The destination path for the output audio file.</param>
+        /// <param name="destination">The destination path for the output audio file. </param>
         /// <param name="bitsPerSample">The desired bits per sample of the output audio file (default: 16).</param>
         /// <returns>True if the writing succeeds; false otherwise.</returns>
         public static bool WriteAudioFile(AudioClip clip, string destination, int bitsPerSample = 16, bool fallbackToWav = false)
@@ -23,7 +23,11 @@ namespace Csound.Unity.Utilities
             clip.GetData(data, 0);
 
             var extension = Path.GetExtension(destination);
-
+            if (string.IsNullOrWhiteSpace(extension) && fallbackToWav)
+            {
+                destination += "wav";
+            }
+            
             switch (extension.ToLower())
             {
                 case ".aif":
@@ -35,7 +39,7 @@ namespace Csound.Unity.Utilities
                 default:
                     if (fallbackToWav)
                     {
-                        return WriteWav(data, destination + ".wav", clip.channels, clip.frequency, bitsPerSample);
+                        return WriteWav(data, destination, clip.channels, clip.frequency, bitsPerSample);
                     }
                     Debug.LogError($"Csound.Unity.Utilities.WriteAudioFileUtils: FORMAT NOT SUPPORTED! Cannot Write Audio File {clip} to {destination}, extension: {extension}");
                     break;
