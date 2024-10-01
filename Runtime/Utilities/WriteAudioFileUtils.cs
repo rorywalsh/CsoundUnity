@@ -35,7 +35,7 @@ namespace Csound.Unity.Utilities
                 default:
                     if (fallbackToWav)
                     {
-                        return WriteWav(data, destination, clip.channels, clip.frequency, bitsPerSample);
+                        return WriteWav(data, destination + ".wav", clip.channels, clip.frequency, bitsPerSample);
                     }
                     Debug.LogError($"Csound.Unity.Utilities.WriteAudioFileUtils: FORMAT NOT SUPPORTED! Cannot Write Audio File {clip} to {destination}, extension: {extension}");
                     break;
