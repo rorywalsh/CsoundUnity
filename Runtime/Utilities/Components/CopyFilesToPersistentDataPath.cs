@@ -58,6 +58,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             {
                 audioFiles[i] = new AudioFileInfo() { Directory = directory, FileName = audioClips[i].name };
             }
+            _audioFiles = audioFiles;
         }
 
         /// <summary>
@@ -166,7 +167,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             }
 
             copyCompleted = true;
-            
+
             // finally enable all the Csound instances
             foreach (var csound in _csoundUnitys)
             {
