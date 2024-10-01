@@ -144,7 +144,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
 
-                var filePath = audioFile.Directory + "/" + audioFile.FileName;
+                var filePath = string.IsNullOrWhiteSpace(audioFile.Directory) ? audioFile.FileName : audioFile.Directory + "/" + audioFile.FileName;
                 var destinationPath = dir + "/" + audioFile.FileName;
 
                 if (!File.Exists(destinationPath))
