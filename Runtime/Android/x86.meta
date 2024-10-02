@@ -1,12 +1,7 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Runtime/Android/x86.meta
 guid: a2ee1018c0a553d4aaebb8111cd452e4
 folderAsset: yes
 DefaultImporter:
-========
-guid: 1d0e94be34e15ef4ab4745ccc023247b
-PrefabImporter:
->>>>>>>> release_3_5_0:Samples~/Environment/SFDIR/Csound.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 
