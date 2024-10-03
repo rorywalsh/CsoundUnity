@@ -47,8 +47,11 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             }
         }
 
-        public void Load(AudioClip audioClip)
+        public void Load(AudioClip audioClip, float startPoint = 0, float endPoint = 0)
         {
+            _source = audioClip;
+            _startPoint = startPoint;
+            _endPoint = endPoint;
             StartCoroutine(Loading(audioClip));
         }
 
