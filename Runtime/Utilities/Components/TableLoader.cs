@@ -153,12 +153,15 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     Debug.LogWarning($"Csound.Unity.Utilities.LoadFiles.TableLoader: start point is higher than end point, it will be set to the beginning of the file");
                     start = 0;
                 }
-                selectedSamples = new double[end - start];
-                for (int i = 0, j = 0; i < (end - start); i++, j += audioClip.channels)
+                // keep in mind the first sample is the number of channels
+                selectedSamples = new double[end - start + 1];
+                for (int i = 1, j = 1; i < (end - start + 1); i++, j += audioClip.channels)
                 {
                     //Debug.Log($"i: {i}, j: {j}, channels: {audioClip.channels}, start: {start}, end: {end}, start + j: {start + j}, length: {end - start}, selectedSamples.length: {selectedSamples.Length}, interleavedSamples.Length: {interleavedSamples.Length}");
                     selectedSamples[i] = interleavedSamples[start + j];
                 }
+                // copy the number of channels in the first sample
+                selectedSamples[0] = interleavedSamples[0];
             }
             if (selectedSamples.Length == 0)
             {
