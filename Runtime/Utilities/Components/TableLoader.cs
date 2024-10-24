@@ -21,9 +21,10 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         [Tooltip("The channel that will be read when forceToMono is true")]
         [SerializeField] int _channel = 0;
 
-        [Tooltip("If true, when more than one channel is present in the source AudioClip, it will create a table for each channel, " +
+        [Tooltip("If true, it will create a table for each channel, " +
             "starting from tableNumber and increasing by one for each channel.\n" +
-            "If false it will create an interleaved table with all the channels together. The number of channels will be written in the first index of the table")]
+            "If false it will create an interleaved table with all the channels together. The number of channels will be written in the first index of the table. " +
+            "This is applied to mono audio files too, if forceToMono is true.")]
         [SerializeField] bool _splitChannels = false;
 
         [Tooltip("The starting point in seconds where to start to read for samples")]
@@ -134,7 +135,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         private double[] GetSamples(bool isMono, AudioClip audioClip, int channel, float startPoint, float endPoint)
         {
-            double[] selectedSamples = new double[]{};
+            double[] selectedSamples = new double[] { };
             int start;
             int end;
 
@@ -152,6 +153,14 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 var channelSamples = ASU.GetMonoSamples(audioClip, channel);
                 if (_splitChannels)
                 {
+                    selectedSamples = new double[channelSamples.Length];
+                    for (var i = 0; i < (end - start); i++)
+                    {
+                        selectedSamples[i] = channelSamples[i + start];
+                    }
+                }
+                else // if not splitting channels fill the array with selected sample data only
+                {
                     selectedSamples = new double[channelSamples.Length + 1];
                     for (var i = 1; i < (end - start + 1); i++)
                     {
@@ -159,14 +168,6 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     }
                     // copy the number of channels in the first element of the array
                     selectedSamples[0] = 1;
-                }
-                else // if not splitting channels fill the array with selected sample data only
-                {
-                    selectedSamples = new double[channelSamples.Length];
-                    for (var i = 0; i < (end - start); i++)
-                    {
-                        selectedSamples[i] = channelSamples[i + start];
-                    }
                 }
             }
             else
