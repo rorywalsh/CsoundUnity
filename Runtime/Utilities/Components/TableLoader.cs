@@ -74,16 +74,33 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
             if (_forceToMono) // only reading one channel from the source AudioClip
             {
-                var selectedSamples = GetSamples(true, audioClip, _channel, _startPoint, _endPoint);
-                if (selectedSamples.Length == 0)
+                if (_splitChannels)
                 {
-                    Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table{_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
-                    yield break;
+                    var selectedSamples = GetSamples(true, audioClip, _channel, _startPoint, _endPoint);
+                    if (selectedSamples.Length == 0)
+                    {
+                        Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table{_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
+                        yield break;
+                    }
+                    Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
+                    var resMono = _csound.CreateTable(_tableNumber, selectedSamples);
+                    if (resMono == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
+                    else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
                 }
-                Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
-                var resMono = _csound.CreateTable(_tableNumber, selectedSamples);
-                if (resMono == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
-                else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
+                else // if splitChannels is false, create a table where the first element is the number of channels, 1
+                {
+                    var selectedSamples = GetSamples(true, audioClip, _channel, _startPoint, _endPoint);
+                    if (selectedSamples.Length == 0)
+                    {
+                        Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table{_tableNumber} from audioClip {audioClip.name}, selection range is 0 samples!");
+                        yield break;
+                    }
+                    Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
+                    var resMono = _csound.CreateTable(_tableNumber, selectedSamples);
+                    if (resMono == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
+                    else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
+                }
+
             }
             else
             {
@@ -117,7 +134,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
         private double[] GetSamples(bool isMono, AudioClip audioClip, int channel, float startPoint, float endPoint)
         {
-            double[] selectedSamples;
+            double[] selectedSamples = new double[]{};
             int start;
             int end;
 
@@ -133,10 +150,23 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     start = 0;
                 }
                 var channelSamples = ASU.GetMonoSamples(audioClip, channel);
-                selectedSamples = new double[channelSamples.Length];
-                for (var i = 0; i < (end - start); i++)
+                if (_splitChannels)
                 {
-                    selectedSamples[i] = channelSamples[i + start];
+                    selectedSamples = new double[channelSamples.Length + 1];
+                    for (var i = 1; i < (end - start + 1); i++)
+                    {
+                        selectedSamples[i] = channelSamples[i + start];
+                    }
+                    // copy the number of channels in the first element of the array
+                    selectedSamples[0] = 1;
+                }
+                else // if not splitting channels fill the array with selected sample data only
+                {
+                    selectedSamples = new double[channelSamples.Length];
+                    for (var i = 0; i < (end - start); i++)
+                    {
+                        selectedSamples[i] = channelSamples[i + start];
+                    }
                 }
             }
             else
@@ -144,8 +174,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 var interleavedSamples = ASU.GetSamples(audioClip);
                 // AudioSampleUtils.GetSamples returns an interleaved table where the first index is the number of channels
                 // that's why we have to add 1 here
-                start = Mathf.CeilToInt(_startPoint * audioClip.frequency * audioClip.channels + 1);
-                end = Mathf.CeilToInt(_endPoint * audioClip.frequency * audioClip.channels + 1);
+                start = Mathf.CeilToInt(startPoint * audioClip.frequency * audioClip.channels + 1);
+                end = Mathf.CeilToInt(endPoint * audioClip.frequency * audioClip.channels + 1);
                 if (start < 0) start = 1;
                 if (end <= 1 || end >= audioClip.samples) end = audioClip.samples + 1;
                 if (start > end || start >= audioClip.samples)
@@ -160,7 +190,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     //Debug.Log($"i: {i}, j: {j}, channels: {audioClip.channels}, start: {start}, end: {end}, start + j: {start + j}, length: {end - start}, selectedSamples.length: {selectedSamples.Length}, interleavedSamples.Length: {interleavedSamples.Length}");
                     selectedSamples[i] = interleavedSamples[start + j];
                 }
-                // copy the number of channels in the first sample
+                // copy the number of channels in the first element of the array
                 selectedSamples[0] = interleavedSamples[0];
             }
             if (selectedSamples.Length == 0)
