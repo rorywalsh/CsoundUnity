@@ -175,6 +175,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             else
             {
                 var interleavedSamples = ASU.GetSamples(audioClip);
+                WAU.WriteWav(ASU.ConvertToFloat(interleavedSamples), Application.persistentDataPath + "/interleaved.wav", audioClip.channels, audioClip.frequency, 16);
+
                 // AudioSampleUtils.GetSamples returns an interleaved table where the first index is the number of channels
                 // that's why we have to add 1 here
                 start = Mathf.CeilToInt(startPoint * audioClip.frequency * audioClip.channels + 1);
@@ -188,10 +190,10 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 }
                 // keep in mind the first sample is the number of channels
                 selectedSamples = new double[end - start + 1];
-                for (int i = 1, j = 1; i < (end - start + 1); i++, j += audioClip.channels)
+                for (int i = 1; i < (end - start + 1); i++)
                 {
                     //Debug.Log($"i: {i}, j: {j}, channels: {audioClip.channels}, start: {start}, end: {end}, start + j: {start + j}, length: {end - start}, selectedSamples.length: {selectedSamples.Length}, interleavedSamples.Length: {interleavedSamples.Length}");
-                    selectedSamples[i] = interleavedSamples[start + j];
+                    selectedSamples[i] = interleavedSamples[start + i];
                 }
                 // copy the number of channels in the first element of the array
                 selectedSamples[0] = interleavedSamples[0];
