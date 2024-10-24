@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
 using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
-using WAU = Csound.Unity.Utilities.WriteAudioFileUtils;
 
 namespace Csound.Unity.Utilities.MonoBehaviours
 {
@@ -126,7 +125,6 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 else // creating interleaved table
                 {
                     var selectedSamples = GetSamples(false, audioClip, 0, _startPoint, _endPoint);
-                    WAU.WriteWav(ASU.ConvertToFloat(selectedSamples), Application.persistentDataPath + "/test.wav", audioClip.channels, audioClip.frequency, 16);
                     Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
                     var resInterleaved = _csound.CreateTable(_tableNumber, selectedSamples);
                     if (resInterleaved == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
@@ -175,8 +173,6 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             else
             {
                 var interleavedSamples = ASU.GetSamples(audioClip);
-                WAU.WriteWav(ASU.ConvertToFloat(interleavedSamples), Application.persistentDataPath + "/interleaved.wav", audioClip.channels, audioClip.frequency, 16);
-
                 // AudioSampleUtils.GetSamples returns an interleaved table where the first index is the number of channels
                 // that's why we have to add 1 here
                 start = Mathf.CeilToInt(startPoint * audioClip.frequency * audioClip.channels + 1);
