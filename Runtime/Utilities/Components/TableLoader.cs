@@ -1,6 +1,11 @@
 ﻿using System.Collections;
 using UnityEngine;
 using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
+#if UNITY_EDITOR || UNITY_STANDALONE
+using MYFLT = System.Double;
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+using MYFLT = System.Single;
+#endif
 
 namespace Csound.Unity.Utilities.MonoBehaviours
 {
@@ -101,7 +106,6 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     if (resMono == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
                     else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
                 }
-
             }
             else
             {
@@ -133,9 +137,9 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             }
         }
 
-        private double[] GetSamples(bool isMono, AudioClip audioClip, int channel, float startPoint, float endPoint)
+        private MYFLT[] GetSamples(bool isMono, AudioClip audioClip, int channel, float startPoint, float endPoint)
         {
-            double[] selectedSamples = new double[] { };
+            MYFLT[] selectedSamples;
             int start;
             int end;
 
