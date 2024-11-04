@@ -508,8 +508,8 @@ namespace Csound.Unity
             Debug.Log($"CsoundUnity v{packageVersion} Awake, AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
 
 
-            if (audioRate == 0) audioRate = AudioSettings.outputSampleRate;
-            if (controlRate == 0) controlRate = AudioSettings.outputSampleRate;
+            if (audioRate == 0 || !overrideSamplingRate) audioRate = AudioSettings.outputSampleRate;
+            if (controlRate == 0 || !overrideSamplingRate) controlRate = AudioSettings.outputSampleRate;
 
             audioSource = GetComponent<AudioSource>();
 
