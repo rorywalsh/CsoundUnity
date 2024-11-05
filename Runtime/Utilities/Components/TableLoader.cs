@@ -157,7 +157,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 var channelSamples = ASU.GetMonoSamples(audioClip, channel);
                 if (_splitChannels)
                 {
-                    selectedSamples = new MYFLT[channelSamples.Length];
+                    selectedSamples = new MYFLT[end - start];
                     for (var i = 0; i < (end - start); i++)
                     {
                         selectedSamples[i] = channelSamples[i + start];
@@ -165,7 +165,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 }
                 else // if not splitting channels fill the array with selected sample data only
                 {
-                    selectedSamples = new MYFLT[channelSamples.Length + 1];
+                    selectedSamples = new MYFLT[end - start + 1];
                     for (var i = 1; i < (end - start + 1); i++)
                     {
                         selectedSamples[i] = channelSamples[i + start];
