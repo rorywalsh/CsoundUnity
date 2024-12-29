@@ -357,6 +357,7 @@ namespace Csound.Unity
 
         [HideInInspector] public int audioRate = 44100;
         [HideInInspector] public int controlRate = 44100;
+        [HideInInspector] public bool updateOutputBuffer = false;
 
         public string samplingRateSettingsInfo
         {
@@ -417,6 +418,15 @@ namespace Csound.Unity
         /// The current preset name. If empty, no preset has been set.
         /// </summary>
         public string CurrentPreset => _currentPreset;
+
+        public float[] OutputBuffer
+        {
+            get
+            {
+                // Return the current output buffer
+                return outputBuffer;
+            }
+        }
 
         #endregion PUBLIC_FIELDS
 
@@ -482,6 +492,10 @@ namespace Csound.Unity
         private AudioSource audioSource;
         private Coroutine LoggingCoroutine;
         int bufferSize, numBuffers;
+        private float[] bufferA;
+        private float[] bufferB;
+        private int activeBufferIndex = 0; // 0 for bufferA, 1 for bufferB
+        private float[] outputBuffer = null;
 
         private const string GLOBAL_TAG = "(GLOBAL)";
 
@@ -504,7 +518,8 @@ namespace Csound.Unity
             initialized = false;
 
             AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
-
+            outputBuffer = new float[bufferSize];
+            
             Debug.Log($"CsoundUnity v{packageVersion} Awake, AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
 
 
@@ -545,7 +560,7 @@ namespace Csound.Unity
             /// It then calls createCsound() to create an instance of Csound and compile the csd string.
             /// After this we start the performance of Csound.
             csound = new CsoundUnityBridge(_csoundString, environmentSettings, audioRate, controlRate);
-            if (csound != null)
+            if (csound != null && csound.CompiledOk)
             {
                 /// channels are created when a csd file is selected in the inspector
                 if (channels != null)
@@ -2453,6 +2468,11 @@ namespace Csound.Unity
                         }
                     }
                 }
+                if (!updateOutputBuffer) return;
+                // copy the samples in outputBuffer using a double buffer approach
+                Array.Copy(samples, activeBufferIndex == 0 ? bufferA : bufferB, samples.Length);
+                outputBuffer = (activeBufferIndex == 0) ? bufferA : bufferB;
+                activeBufferIndex = (activeBufferIndex == 0) ? 1 : 0;
             }
         }
 

@@ -53,6 +53,7 @@ namespace Csound.Unity
         SerializedProperty m_logCsoundOutput;
         SerializedProperty m_loudVolumeWarning;
         SerializedProperty m_loudWarningThreshold;
+        SerializedProperty m_updateOutputBuffer;
         SerializedProperty m_overrideSamplingRate;
     	SerializedProperty m_audioRate;
     	SerializedProperty m_controlRate;
@@ -100,6 +101,7 @@ namespace Csound.Unity
             m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
             m_loudVolumeWarning = this.serializedObject.FindProperty("loudVolumeWarning");
             m_loudWarningThreshold = this.serializedObject.FindProperty("loudWarningThreshold");
+            m_updateOutputBuffer = this.serializedObject.FindProperty("updateOutputBuffer");
             m_overrideSamplingRate = this.serializedObject.FindProperty("overrideSamplingRate");
         	m_audioRate = this.serializedObject.FindProperty("audioRate");
         	m_controlRate = this.serializedObject.FindProperty("controlRate");
@@ -208,6 +210,8 @@ namespace Csound.Unity
                 m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle("Loud Volume Warning", m_loudVolumeWarning.boolValue);
                 if (m_loudVolumeWarning.boolValue)
                     m_loudWarningThreshold.floatValue = EditorGUILayout.FloatField("Warning Threshold", m_loudWarningThreshold.floatValue, GUILayout.MaxWidth(Screen.width / 2 + 20));
+
+                m_updateOutputBuffer.boolValue = EditorGUILayout.Toggle("Update Output Buffer", m_updateOutputBuffer.boolValue);
 
                 EditorGUILayout.Space();
                 EditorGUI.indentLevel++;
