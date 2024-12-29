@@ -48,6 +48,7 @@ namespace Csound.Unity
      */
     public class CsoundUnityBridge
     {
+        public bool CompiledOk => compiledOk;
         public IntPtr csound;
         bool compiledOk = false;
         Action onCsoundCreated;
