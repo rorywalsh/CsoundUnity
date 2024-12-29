@@ -18,7 +18,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// </summary>
         AudioSource,
         /// <summary>
-        /// Reads the spectrum data from the CsoundUnity OutputBuffer property
+        /// Reads the sample data from the CsoundUnity OutputBuffer property
         /// </summary>
         CsoundUnity,
         /// <summary>
