@@ -531,7 +531,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             Init();
 #else
-        InitWebGL();
+            InitWebGL();
 #endif
         }
 
@@ -569,12 +569,12 @@ namespace Csound.Unity
                     for (int i = 0; i < channels.Count; i++)
                     {
                         if (channels[i].type.Contains("combobox"))
-                        {    csound.SetChannel(channels[i].channel, channels[i].value + 1);}
+                        { csound.SetChannel(channels[i].channel, channels[i].value + 1); }
                         else
-                        {    csound.SetChannel(channels[i].channel, channels[i].value);}
+                        { csound.SetChannel(channels[i].channel, channels[i].value); }
                         // update channels index dictionary
                         if (!_channelsIndexDict.ContainsKey(channels[i].channel))
-                        {    _channelsIndexDict.Add(channels[i].channel, i);}
+                        { _channelsIndexDict.Add(channels[i].channel, i); }
                     }
                 }
                 foreach (var audioChannel in availableAudioChannels)
