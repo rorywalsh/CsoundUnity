@@ -1,0 +1,609 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: TrappedInConvert
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: d31e8e13d086c9243920c7ca0f7e577c,
+      type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.size
+    value: 15
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].name
+    value: IVORY
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].number
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].color.r
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].color.g
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].color.b
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.size
+    value: 7
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[0].name
+    value: duration p3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[0].min
+    value: 5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[0].max
+    value: 5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[1].name
+    value: empty p4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[1].min
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[1].max
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[2].name
+    value: freq p5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[2].min
+    value: 10.024
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[2].max
+    value: 12.031
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[3].name
+    value: amp p6
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[3].min
+    value: 200
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[3].max
+    value: 600
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[4].name
+    value: vibrat p7
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[4].min
+    value: 0.001
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[4].max
+    value: 6
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[5].name
+    value: glisdeltime p8
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[5].min
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[5].max
+    value: 17
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[6].name
+    value: frqdrp p9
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[6].min
+    value: 0.001
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[0].parameters.Array.data[6].max
+    value: 0.99
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[1].name
+    value: BLUE
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[1].number
+    value: 2
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[1].color.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[1].color.g
+    value: 0.09776497
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[1].color.b
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[1].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[1].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[1].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[2].name
+    value: VIOLET
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[2].number
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[2].color.r
+    value: 0.5149193
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[2].color.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[2].color.b
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[2].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[2].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[2].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[3].name
+    value: BLACK
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[3].number
+    value: 4
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[3].color.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[3].color.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[3].color.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[3].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[3].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[3].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[4].name
+    value: GREEN
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[4].number
+    value: 5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[4].color.r
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[4].color.g
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[4].color.b
+    value: 0.36588264
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[4].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[4].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[4].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[5].name
+    value: COPPER
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[5].number
+    value: 6
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[5].color.r
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[5].color.g
+    value: 0.60640585
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[5].color.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[5].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[5].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[5].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[6].name
+    value: PEWTER
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[6].number
+    value: 7
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[6].color.r
+    value: 0.6226415
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[6].color.g
+    value: 0.6141761
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[6].color.b
+    value: 0.56096476
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[6].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[6].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[6].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[7].name
+    value: RED
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[7].number
+    value: 8
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[7].color.r
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[7].color.g
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[7].color.b
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[7].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[7].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[7].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[8].name
+    value: SAND
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[8].number
+    value: 9
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[8].color.r
+    value: 0.6415094
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[8].color.g
+    value: 0.46842292
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[8].color.b
+    value: 0.20879316
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[8].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[8].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[8].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[9].name
+    value: TAUPE
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[9].number
+    value: 10
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[9].color.r
+    value: 0.8962264
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[9].color.g
+    value: 0.7550387
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[9].color.b
+    value: 0.629895
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[9].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[9].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[9].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[10].name
+    value: RUST
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[10].number
+    value: 11
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[10].color.r
+    value: 0.5377358
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[10].color.g
+    value: 0.12101355
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[10].color.b
+    value: 0.09385012
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[10].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[10].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[10].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[11].name
+    value: TEAL
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[11].number
+    value: 12
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[11].color.r
+    value: 0.059407253
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[11].color.g
+    value: 0.8396226
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[11].color.b
+    value: 0.67590255
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[11].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[11].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[11].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[12].name
+    value: FOAM
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[12].number
+    value: 13
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[12].color.r
+    value: 0.71
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[12].color.g
+    value: 0.986
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[12].color.b
+    value: 0.95630896
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[12].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[12].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[12].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[13].name
+    value: SMEAR
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[13].number
+    value: 98
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[13].color.r
+    value: 0.4528302
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[13].color.g
+    value: 0.33962265
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[13].color.b
+    value: 0.33962265
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[13].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[13].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[13].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[14].name
+    value: SWIRL
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[14].number
+    value: 99
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[14].color.r
+    value: 0.3773585
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[14].color.g
+    value: 0.3773585
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[14].color.b
+    value: 0.3773585
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[14].color.a
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[14].material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: instruments.Array.data[14].parameters.Array.size
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: _instrumentPrefab
+    value: 
+    objectReference: {fileID: 6368502929175539482, guid: 2a8e49abf8a4cd14ab5334b091b0f114,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: _draggablePrefab
+    value: 
+    objectReference: {fileID: 4631366053081590052, guid: aa4373d6ee2586a4195e75d39079ee2c,
+      type: 3}
+  - target: {fileID: 0}
+    propertyPath: _draggableContainer
+    value: 
+    objectReference: {fileID: 0}

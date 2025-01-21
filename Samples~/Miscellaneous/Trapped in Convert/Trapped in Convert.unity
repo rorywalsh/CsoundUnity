@@ -1,0 +1,2161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 9
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 12
+  m_GIWorkflowMode: 1
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_FinalGather: 0
+    m_FinalGatherFiltering: 1
+    m_FinalGatherRayCount: 256
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 1
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 5
+    m_PVRFilteringGaussRadiusAO: 2
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 0}
+  m_LightingSettings: {fileID: 0}
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 3
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &172016358
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 172016361}
+  - component: {fileID: 172016360}
+  - component: {fileID: 172016359}
+  m_Layer: 0
+  m_Name: Main Camera
+  m_TagString: MainCamera
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &172016359
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172016358}
+  m_Enabled: 1
+--- !u!20 &172016360
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172016358}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.2, g: 0.2, b: 0.2, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: -1
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &172016361
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172016358}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &296777601
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 296777602}
+  - component: {fileID: 296777604}
+  - component: {fileID: 296777603}
+  m_Layer: 5
+  m_Name: InfoText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &296777602
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296777601}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 763212867}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &296777603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296777601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.43137255}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 50
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 54
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Drag&Drop the colors here to play the corresponding instrument
+--- !u!222 &296777604
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296777601}
+  m_CullTransparentMesh: 0
+--- !u!1 &399710634
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 399710638}
+  - component: {fileID: 399710637}
+  - component: {fileID: 399710636}
+  - component: {fileID: 399710635}
+  m_Layer: 5
+  m_Name: Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &399710635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399710634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &399710636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399710634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 1
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 1920, y: 1080}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!223 &399710637
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399710634}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &399710638
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399710634}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 997771125}
+  - {fileID: 763212867}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
+--- !u!1 &411201503
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 411201505}
+  - component: {fileID: 411201504}
+  m_Layer: 0
+  m_Name: Directional Light
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!108 &411201504
+Light:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411201503}
+  m_Enabled: 1
+  serializedVersion: 10
+  m_Type: 1
+  m_Shape: 0
+  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Intensity: 1
+  m_Range: 10
+  m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
+  m_CookieSize: 10
+  m_Shadows:
+    m_Type: 2
+    m_Resolution: -1
+    m_CustomResolution: -1
+    m_Strength: 1
+    m_Bias: 0.05
+    m_NormalBias: 0.4
+    m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
+  m_Cookie: {fileID: 0}
+  m_DrawHalo: 0
+  m_Flare: {fileID: 0}
+  m_RenderMode: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingLayerMask: 1
+  m_Lightmapping: 4
+  m_LightShadowCasterMode: 0
+  m_AreaSize: {x: 1, y: 1}
+  m_BounceIntensity: 1
+  m_ColorTemperature: 6570
+  m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ShadowRadius: 0
+  m_ShadowAngle: 0
+--- !u!4 &411201505
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411201503}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &749705609
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 749705612}
+  - component: {fileID: 749705611}
+  - component: {fileID: 749705610}
+  m_Layer: 0
+  m_Name: SpectrumDisplay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &749705610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749705609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb451614cd7063f4b9657c94fe4d5a97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _listenerSettings: 0
+  _source: {fileID: 0}
+  _csoundUnity: {fileID: 0}
+  _csoundAudioChannel: 
+  _sizeMult: {x: 0.08, y: 0.4}
+  _offset: {x: 0, y: 0, z: 0}
+  _maxHeight: 80
+--- !u!120 &749705611
+LineRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749705609}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 0.1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: -1
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 0
+    textureMode: 0
+    textureScale: {x: 1, y: 1}
+    shadowBias: 0.5
+    generateLightingData: 0
+  m_MaskInteraction: 0
+  m_UseWorldSpace: 0
+  m_Loop: 0
+  m_ApplyActiveColorSpace: 0
+--- !u!4 &749705612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749705609}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -41, y: -21.6, z: 40}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &763212866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 763212867}
+  - component: {fileID: 763212869}
+  - component: {fileID: 763212868}
+  - component: {fileID: 763212870}
+  m_Layer: 5
+  m_Name: DropSpace
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &763212867
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763212866}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 296777602}
+  m_Father: {fileID: 399710638}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.15, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &763212868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763212866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &763212869
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763212866}
+  m_CullTransparentMesh: 0
+--- !u!114 &763212870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763212866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 087d52c411f1c254385463112eac69e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _trappedManager: {fileID: 1213912739}
+--- !u!1 &898357953
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 898357956}
+  - component: {fileID: 898357955}
+  - component: {fileID: 898357954}
+  m_Layer: 0
+  m_Name: EventSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &898357954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898357953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
+  m_HorizontalAxis: Horizontal
+  m_VerticalAxis: Vertical
+  m_SubmitButton: Submit
+  m_CancelButton: Cancel
+  m_InputActionsPerSecond: 10
+  m_RepeatDelay: 0.5
+  m_ForceModuleActive: 0
+--- !u!114 &898357955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898357953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
+--- !u!4 &898357956
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898357953}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &997771124
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 997771125}
+  - component: {fileID: 997771128}
+  - component: {fileID: 997771127}
+  - component: {fileID: 997771126}
+  - component: {fileID: 997771129}
+  m_Layer: 5
+  m_Name: UIContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &997771125
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 997771124}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1689230081}
+  m_Father: {fileID: 399710638}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.15, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &997771126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 997771124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 25
+    m_Right: 25
+    m_Top: 50
+    m_Bottom: 50
+  m_ChildAlignment: 1
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 25, y: 25}
+  m_Constraint: 0
+  m_ConstraintCount: 2
+--- !u!114 &997771127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 997771124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.78260994, g: 0.22761661, b: 0.8773585, a: 0.21176471}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &997771128
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 997771124}
+  m_CullTransparentMesh: 0
+--- !u!114 &997771129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 997771124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a53847135813ff41bcf26d5c1ec5029, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1213912735
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1213912738}
+  - component: {fileID: 1213912737}
+  - component: {fileID: 1213912736}
+  - component: {fileID: 1213912739}
+  m_Layer: 0
+  m_Name: Csound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1213912736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213912735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logCsoundOutput: 1
+  mute: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  updateOutputBuffer: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 85a00ad24bee5bd419bef7afd9a27f81
+  _csoundString: "<CsoundSynthesizer>\r\n<CsOptions>\r\n-odac -dm0 -+rtmidi=null
+    -+msg_color=0 --sample-accurate\r\n</CsOptions>\r\n<CsInstruments>\r\n;============================================================================;\r\n;============================================================================;\r\n;============================================================================;\r\n;                           
+    == TRAPPED IN CONVERT ==                        ;\r\n;                               
+    Richard Boulanger                           ;\r\n;============================================================================;\r\n;============================================================================;\r\n;                                  
+    ORCHESTRA                                ;\r\n;============================================================================;\r\n;============================================================================;\r\n;============================================================================;\r\n;                           
+    written July 1979 in music11                    ;\r\n;                         
+    M.I.T. Experimental Music Studio                  ;\r\n;                           
+    revised June 1986 in Csound                     ;\r\n;                               
+    M.I.T. Media Lab                            ;\r\n;                          revised
+    July 1996 in SHARCsound                   ;\r\n;                               
+    Analog Devices Inc.                         ;\r\n;============================================================================;\r\n;============================================================================;\r\n;===================================
+    HEADER =================================;\r\n;============================================================================;\r\nsr    
+    =        44100\r\n;kr     =        4410\r\nksmps  =        32 \r\nnchnls =       
+    2\r\n;============================================================================;\r\n;===============================
+    INITIALIZATION =============================;\r\n;============================================================================;\r\ngarvb 
+    init     0\r\ngadel  init     0\r\n;============================================================================;\r\n;==================================
+    INSTRUMENTS =============================;\r\n;============================================================================;\r\n;====================================
+    IVORY =================================;\r\n;============================================================================;\r\n      
+    instr    1                            ; p6 = amp\r\nifreq  =        cpspch(p5)                  
+    ; p7 = vib rate\r\n                                             ; p8 = glis.
+    del time (default < 1)\r\naglis  expseg   1, p8, 1, p3 - p8, p9        ; p9 =
+    freq drop factor\r\n\r\nk1     line     0, p3, 5\r\nk2     oscil    k1, p7, 1\r\nk3    
+    linseg   0, p3 * .7, p6, p3 * .3, 0\r\na1     oscil    k3, (ifreq + k2) * aglis,
+    1\r\n\r\nk4     linseg   0, p3 * .6, 6, p3 * .4, 0\r\nk5     oscil    k4, p7
+    * .9, 1, 1.4\r\nk6     linseg   0, p3 * .9, p6, p3 * .1, 0\r\na3     oscil   
+    k6, ((ifreq + .009) + k5) * aglis, 9, .2\r\n\r\nk7     linseg   9, p3 * .7, 1,
+    p3 * .3, 1\r\nk8     oscil    k7, p7 * 1.2, 1, .7\r\nk9     linen    p6, p3 *
+    .5, p3, p3 * .333\r\na5     oscil    k9, ((ifreq + .007) + k8) * aglis, 10, .3\r\n\r\nk10   
+    expseg   1, p3 * .99, 3.1, p3 * .01, 3.1\r\nk11    oscil    k10, p7 * .97, 1,
+    .6\r\nk12    expseg   .001, p3 * .8, p6, p3 * .2, .001\r\na7     oscil    k12,((ifreq
+    + .005) + k11) * aglis, 11, .5\r\n\r\nk13    expseg   1, p3 * .4, 3, p3 * .6,
+    .02\r\nk14    oscil    k13, p7 * .99, 1, .4\r\nk15    expseg   .001, p3 *.5,
+    p6, p3 *.1, p6 *.6, p3 *.2, p6 *.97, p3 *.2, .001\r\na9     oscil    k15, ((ifreq
+    + .003) + k14) * aglis, 12, .8\r\n\r\nk16    expseg   4, p3 * .91, 1, p3 * .09,
+    1\r\nk17    oscil    k16, p7 * 1.4, 1, .2\r\nk18    expseg   .001, p3 *.6, p6,
+    p3 *.2, p6 *.8, p3 *.1, p6 *.98, p3 *.1, .001\r\na11    oscil    k18, ((ifreq
+    + .001) + k17) * aglis, 13, 1.3\r\n\r\n;a0      oscil 5000, 440, 1\r\n      
+    ;outs     a1 + a3 + a5, a7 + a9 + a11\r\n       SchanL = p10\r\n       SchanR
+    = p11\r\n       \r\n       ;outs a0, a0\r\n       \r\n       chnset a1 + a3 +
+    a5, SchanL\r\n       chnset a7 + a9 + a11, SchanR\r\n\r\n       endin\r\n;============================================================================;\r\n;====================================
+    BLUE ==================================;\r\n;============================================================================;\r\n      
+    instr 2                               ; p6 = amp\r\nifreq  =        cpspch(p5)                  
+    ; p7 = reverb send factor\r\n                                             ; p8
+    = lfo freq\r\nk1     randi    1, 30                        ; p9 = number of harmonic\r\nk2    
+    linseg   0, p3 * .5, 1, p3 * .5, 0    ; p10 = sweep rate\r\nk3     linseg   .005,
+    p3 * .71, .015, p3 * .29, .01\r\nk4     oscil    k2, p8, 1,.2\r\nk5     =       
+    k4 + 2\r\n\r\nksweep linseg   p9, p3 * p10, 1, p3 * (p3 - (p3 * p10)), 1\r\n\r\nkenv  
+    expseg   .001, p3 * .01, p6, p3 * .99, .001\r\nasig   gbuzz    kenv, ifreq +
+    k3, k5, ksweep, k1, 15\r\n\r\nSchanL = p11\r\nSchanR = p12\r\n       \r\n      
+    chnset asig, SchanL\r\n       chnset asig, SchanR\r\n       ;outs     asig, asig\r\n       
+    \r\ngarvb  =        garvb + (asig * p7)\r\n       endin\r\n;============================================================================;\r\n;==================================
+    VIOLET ==================================;\r\n;============================================================================;\r\n      
+    instr   3                             ; p6 = amp\r\nifreq  =       cpspch(p5)                   
+    ; p7 = reverb send factor\r\n                                             ; p8
+    = rand freq\r\nk3     expseg  1, p3 * .5, 30 ,p3 * .5, 2\r\nk4     expseg  10,
+    p3 *.7, p8, p3 *.3, 6\r\nk8     linen   p6, p3 * .333, p3, p3 * .333\r\nk13   
+    line    0, p3, -1\r\n\r\nk14    randh   k3, k4, .5\r\na1     oscil   k8, ifreq
+    + (p5 * .05) + k14 + k13, 1, .1\r\n\r\nk1     expseg  1, p3 * .8, 6, p3 *.2,
+    1\r\nk6     linseg  .4, p3 * .9, p8 * .96, p3 * .1, 0\r\nk7     linseg  8, p3
+    * .2, 10, p3 * .76, 2\r\n\r\nkenv2  expseg  .001, p3 * .4, p6 * .99, p3 * .6,
+    .0001\r\nk15    randh   k6, k7\r\na2     buzz    kenv2, ifreq + (p5 * .009) +
+    k15 + k13, k1, 1, .2\r\n\r\nkenv1  linen   p6, p3 * .25, p3, p3 * .4\r\nk16   
+    randh   k4 * 1.4, k7 * 2.1, .2\r\na3     oscil   kenv1, ifreq + (p5 * .1) + k16
+    + k13, 16, .3\r\n\r\namix   =       a1 + a2 + a3\r\n        \r\nSchanL = p9\r\nSchanR
+    = p10\r\n\r\n;       outs    a1 + a3, a2 + a3\r\n        chnset a1 + a3, SchanL\r\n       
+    chnset a2 + a3, SchanR\r\ngarvb  =       garvb + (amix * p7)\r\n       endin\r\n;============================================================================;\r\n;====================================
+    BLACK =================================;\r\n;============================================================================;\r\n      
+    instr   4                             ; p6 = amp\r\nifreq  =       cpspch(p5)                   
+    ; p7 = filtersweep strtfreq\r\n                                             ;
+    p8 = filtersweep endfreq\r\nk1     expon   p7, p3, p8                    ; p9
+    = bandwidth\r\nanoise rand    8000                          ; p10 = reverb send
+    factor\r\na1     reson   anoise, k1, k1 / p9, 1\r\nk2     oscil   .6, 11.3, 1,
+    .1\r\nk3     expseg  .001,p3 * .001, p6, p3 * .999, .001\r\na2     oscil   k3,
+    ifreq + k2, 15\r\n\r\nSchanL = p11\r\nSchanR = p12\r\n       ;outs   (a1 * .8)
+    + a2, (a1 * .6) + (a2 * .7)\r\n       chnset (a1 * .8) + a2, SchanL\r\n      
+    chnset (a1 * .6) + (a2 * .7), SchanR\r\ngarvb  =      garvb + (a2 * p10)\r\n      
+    endin\r\n;============================================================================;\r\n;====================================
+    GREEN =================================;\r\n;============================================================================;\r\n       
+    instr  5                             ; p6 = amp\r\nifreq   =      cpspch(p5)                   
+    ; p7 = reverb send factor\r\n                                             ; p8
+    = pan direction\r\nk1     line    p9, p3, 1                     ; ... (1.0 =
+    L -> R, 0.1 = R -> L)\r\nk2     line    1, p3, p10                    ; p9 =
+    carrier freq\r\nk4     expon   2, p3, p12                    ; p10 = modulator
+    freq\r\nk5     linseg  0, p3 * .8, 8, p3 * .2, 8     ; p11 = modulation index\r\nk7    
+    randh   p11, k4                       ; p12 = rand freq\r\nk6     oscil   k4,
+    k5, 1, .3\r\n\r\nkenv1  linen   p6, .03, p3, .2\r\na1     foscil  kenv1, ifreq
+    + k6, k1, k2, k7, 1\r\n\r\nkenv2  linen   p6, .1, p3, .1\r\na2     oscil   kenv2,
+    ifreq * 1.001, 1\r\n\r\namix   =       a1 + a2\r\nkpan   linseg  int(p8), p3
+    * .7, frac(p8), p3 * .3, int(p8)\r\n\r\nSchanL = p13\r\nSchanR = p14\r\n      
+    chnset amix * kpan, SchanL\r\n       chnset amix * (1 - kpan), SchanR\r\n      
+    ;outs    amix * kpan, amix * (1 - kpan)\r\ngarvb  =       garvb + (amix * p7)\r\n      
+    endin\r\n;============================================================================;\r\n;==================================
+    COPPER ==================================;\r\n;============================================================================;\r\n       
+    instr  6                             ; p5 = FilterSweep StartFreq\r\nifuncl 
+    =      8                             ; p6 = FilterSweep EndFreq\r\n                                            
+    ; p7 = bandwidth\r\nk1      phasor p4                            ; p8 = reverb
+    send factor\r\nk2      table  k1 * ifuncl, 19               ; p9 = amp\r\nanoise 
+    rand   8000\r\nk3      expon  p5, p3, p6\r\na1      reson  anoise, k3 * k2, k3
+    / p7, 1\r\n\r\nkenv    linen  p9, .01, p3, .05\r\nasig    =      a1 * kenv\r\n\r\nSchanL
+    = p10\r\nSchanR = p11\r\n\r\n        chnset asig, SchanL\r\n        chnset asig,
+    SchanR\r\n        ;outs   asig, asig\r\ngarvb   =      garvb + (asig * p8)\r\n       
+    endin\r\n;============================================================================;\r\n;====================================
+    PEWTER ================================;\r\n;============================================================================;\r\n      
+    instr   7                             ; p4 = amp\r\nifuncl =       512                          
+    ; p5 = freq\r\nifreq  =       cpspch(p5)                    ; p6 = begin phase
+    point\r\n                                             ; p7 = end phase point\r\na1    
+    oscil   1, ifreq, p10                 ; p8 = ctrl osc amp (.1 -> 1)\r\nk1    
+    linseg  p6, p3 * .5, p7, p3 * .5, p6  ; p9 = ctrl osc func\r\na3     oscili 
+    p8, ifreq + k1, p9            ; p10 = main osc func (f2 or f3)\r\na4     phasor 
+    ifreq                         ; ...(function length must be 512!)\r\na5     table  
+    (a4 + a3) * ifuncl, p10       ; p11 = reverb send factor\r\n\r\nkenv   linen  
+    p4, p3 * .4, p3, p3 * .5\r\nasig   =       kenv * ((a1 + a5) * .2)\r\n\r\nSchanL
+    = p12\r\nSchanR = p13\r\n\r\n       chnset asig, SchanL\r\n       chnset asig,
+    SchanR\r\n       ;outs   asig, asig\r\ngarvb  =       garvb + (asig * p11)\r\n      
+    endin\r\n;============================================================================;\r\n;====================================
+    RED ===================================;\r\n;============================================================================;\r\n      
+    instr   8                             ; p4 = amp\r\nifuncl =       16                           
+    ; p5 = FilterSweep StartFreq\r\n                                            
+    ; p6 = FilterSweep EndFreq\r\nk1     expon   p5, p3, p6                    ;
+    p7 = bandwidth\r\nk2     line    p8, p3, p8 * .93              ; p8 = cps of
+    rand1\r\nk3     phasor  k2                            ; p9 = cps of rand2\r\nk4    
+    table   k3 * ifuncl, 20               ; p10 = reverb send factor\r\nanoise rand   
+    8000\r\naflt1  reson   anoise, k1, 20 + (k4 * k1 / p7), 1\r\n\r\nk5     linseg 
+    p6 * .9, p3 * .8, p5 * 1.4, p3 * .2, p5 * 1.4\r\nk6     expon   p9 * .97, p3,
+    p9\r\nk7     phasor  k6\r\nk8     tablei  k7 * ifuncl, 21\r\naflt2  reson   anoise,
+    k5, 30 + (k8 * k5 / p7 * .9), 1\r\n\r\nabal   oscil   1000, 1000, 1\r\na3    
+    balance aflt1, abal\r\na5     balance aflt2, abal\r\n\r\nk11    linen   p4, .15,
+    p3, .5\r\na3     =       a3 * k11\r\na5     =       a5 * k11\r\n\r\nk9     randh  
+    1, k2\r\naleft  =       ((a3 * k9) * .7) + ((a5 * k9) * .3)\r\nk10    randh  
+    1, k6\r\naright =       ((a3 * k10) * .3)+((a5 * k10) * .7)\r\n\r\nSchanL = p11\r\nSchanR
+    = p12\r\n\r\n       chnset aleft, SchanL\r\n       chnset aright, SchanR\r\n      
+    ;outs    aleft, aright\r\ngarvb  =       garvb + (a3 * p10)\r\nendin\r\n;============================================================================;\r\n;====================================
+    SAND ==================================;\r\n;============================================================================;\r\n       
+    instr  9                             ; p4 = delay send factor\r\nifreq   =     
+    cpspch(p5)                    ; p5 = freq\r\n                                            
+    ; p6 = amp\r\nk2      randh  p8, p9, .1                    ; p7 = reverb send
+    factor\r\nk3      randh  p8 * .98, p9 * .91, .2        ; p8 = rand amp\r\nk4     
+    randh  p8 * 1.2, p9 * .96, .3        ; p9 = rand freq\r\nk5      randh  p8 *
+    .9, p9 * 1.3\r\n\r\nkenv    linen  p6, p3 *.1, p3, p3 * .8\r\n\r\na1      oscil 
+    kenv, ifreq + k2, 1, .2\r\na2      oscil  kenv * .91, (ifreq + .004) + k3, 2,
+    .3\r\na3      oscil  kenv * .85, (ifreq + .006) + k4, 3, .5\r\na4      oscil 
+    kenv * .95, (ifreq + .009) + k5, 4, .8\r\n\r\namix    =      a1 + a2 + a3 + a4\r\n\r\nSchanL
+    = p10\r\nSchanR = p11\r\n\r\n        chnset a1 + a3, SchanL\r\n        chnset
+    a2 + a4, SchanR\r\n        ;outs   a1 + a3, a2 + a4\r\ngarvb   =      garvb +
+    (amix * p7)\r\ngadel   =      gadel + (amix * p4)\r\n        endin\r\n;============================================================================;\r\n;====================================
+    TAUPE =================================;\r\n;============================================================================;\r\n       
+    instr  10\r\nifreq   =      cpspch(p5)                    ; p5 = freq\r\n                                            
+    ; p6 = amp\r\nk2      randh  p8, p9, .1                    ; p7 = reverb send
+    factor\r\nk3      randh  p8 * .98, p9 * .91, .2        ; p8 = rand amp\r\nk4     
+    randh  p8 * 1.2, p9 * .96, .3        ; p9 = rand freq\r\nk5      randh  p8 *
+    .9, p9 * 1.3\r\n\r\nkenv    linen  p6, p3 *.1, p3, p3 * .8\r\n\r\na1      oscil 
+    kenv, ifreq + k2, 1, .2\r\na2      oscil  kenv * .91, (ifreq + .004) + k3, 2,
+    .3\r\na3      oscil  kenv * .85, (ifreq + .006) + k4, 3, .5\r\na4      oscil 
+    kenv * .95, (ifreq + .009) + k5, 4, .8\r\n\r\namix    =      a1 + a2 + a3 + a4\r\n\r\nSchanL
+    = p10\r\nSchanR = p11\r\n\r\n        chnset a1 + a3, SchanL\r\n        chnset
+    a2 + a4, SchanR\r\n        ;outs   a1 + a3, a2 + a4\r\ngarvb   =      garvb +
+    (amix * p7)\r\n        endin\r\n;============================================================================;\r\n;====================================
+    RUST ==================================;\r\n;============================================================================;\r\n      
+    instr   11                            ; p4 = delay send factor\r\nifreq  =      
+    cpspch(p5)                    ; p5 = freq\r\n                                            
+    ; p6 = amp\r\nk1     expseg  1, p3 * .5, 40, p3 * .5, 2    ; p7 = reverb send
+    factor\r\nk2     expseg  10, p3 * .72, 35, p3 * .28, 6\r\nk3     linen   p6,
+    p3* .333, p3, p3 * .333\r\nk4     randh   k1, k2, .5\r\na4     oscil   k3, ifreq
+    + (p5 * .05) + k4, 1, .1\r\n\r\nk5     linseg  .4, p3 * .9, 26, p3 * .1, 0\r\nk6    
+    linseg  8, p3 * .24, 20, p3 * .76, 2\r\nk7     linen   p6, p3 * .5, p3, p3 *
+    .46\r\nk8     randh   k5, k6, .4\r\na3     oscil   k7, ifreq + (p5 * .03) + k8,
+    14, .3\r\n\r\nk9     expseg  1, p3 * .7, 50, p3 * .3, 2\r\nk10    expseg  10,
+    p3 * .3, 45, p3 * .7, 6\r\nk11    linen   p6, p3 * .25, p3, p3 * .25\r\nk12   
+    randh   k9, k10, .5\r\na2     oscil   k11, ifreq + (p5 * .02) + k12, 1, .1\r\n\r\nk13   
+    linseg  .4, p3 * .6, 46, p3 * .4, 0\r\nk14    linseg  18, p3 * .1, 50, p3 * .9,
+    2\r\nk15    linen   p6, p3 * .2, p3, p3 * .3\r\nk16    randh   k13, k14, .8\r\na1    
+    oscil   k15, ifreq + (p5 * .01) + k16, 14, .3\r\n\r\namix   =       a1 + a2 +
+    a3 + a4\r\n\r\nSchanL = p8\r\nSchanR = p9\r\n\r\n       chnset a1 + a3, SchanL\r\n      
+    chnset a2 + a4, SchanR\r\n       ;outs    a1 + a3, a2 + a4\r\ngarvb  =      
+    garvb + (amix * p7)\r\ngadel  =       gadel + (amix * p4)\r\n       endin\r\n;============================================================================;\r\n;====================================
+    TEAL ==================================;\r\n;============================================================================;\r\n      
+    instr   12                            ; p6 = amp\r\nifreq  =       octpch(p5)                   
+    ; p7 = FilterSweep StartFreq\r\nifuncl =       8                            
+    ; p8 = FilterSweep PeakFreq\r\n                                             ;
+    p9 = bandwdth\r\nk1     linseg  0, p3 * .8, 9, p3 * .2, 1     ; p10 = reverb
+    send factor\r\nk2     phasor  k1\r\nk3     table   k2 * ifuncl, 22\r\nk4    
+    expseg  p7, p3 * .7, p8, p3 * .3, p7 * .9\r\n\r\nanoise rand    8000\r\n\r\naflt  
+    reson   anoise, k4, k4 / p9, 1\r\nkenv1  expseg  .001, p3 *.1, p6, p3 *.1, p6
+    *.5, p3 *.3, p6 *.8, p3 *.5,.001\r\na3     oscil   kenv1, cpsoct(ifreq + k3)
+    + aflt * .8, 1\r\n\r\nSchanL = p11\r\nSchanR = p12\r\n\r\n       chnset a3, SchanL\r\n      
+    chnset (a3 * .98) + (aflt * .3), SchanR\r\n       ;outs    a3,(a3 * .98) + (aflt
+    * .3)\r\ngarvb  =       garvb + (anoise * p10)\r\n       endin\r\n;============================================================================;\r\n;====================================
+    FOAM ==================================;\r\n;============================================================================;\r\n      
+    instr   13                            ; p6 = amp\r\nifreq  =       octpch(p5)                   
+    ; p7 = vibrato rate\r\n                                             ; p8 = glis.
+    factor\r\nk1     line    0, p3, p8\r\nk2     oscil   k1, p7, 1\r\nk3     linseg 
+    0, p3 * .7, p6, p3 * .3, 1\r\na1     oscil   k3, cpsoct(ifreq + k2), 1\r\n\r\nk4    
+    linseg  0, p3 * .6, p8 * .995, p3 * .4, 0\r\nk5     oscil   k4, p7 * .9, 1, .1\r\nk6    
+    linseg  0, p3 * .9, p6, p3 * .1, 3\r\na2     oscil   k6, cpsoct((ifreq + .009)
+    + k5), 4, .2\r\n\r\nk7     linseg  p8 * .985, p3 * .7, 0, p3 * .3, 0\r\nk8    
+    oscil   k7, p7 * 1.2, 1, .7\r\nk9     linen   p6, p3 * .5, p3, p3 * .333\r\na3    
+    oscil   k6, cpsoct((ifreq + .007) + k8), 5, .5\r\n\r\nk10    expseg  1, p3 *
+    .8, p8, p3 * .2, 4\r\nk11    oscil   k10, p7 * .97, 1, .6\r\nk12    expseg  .001,
+    p3 * .99, p6 * .97, p3 * .01, p6 * .97\r\na4     oscil   k12, cpsoct((ifreq +
+    .005) + k11), 6, .8\r\n\r\nk13    expseg  .002, p3 * .91, p8 * .99, p3 * .09,
+    p8 * .99\r\nk14    oscil   k13, p7 * .99, 1, .4\r\nk15    expseg  .001, p3 *.5,
+    p6, p3 *.1, p6 *.6, p3 *.2, p6 *.97, p3 *.2, .001\r\na5     oscil   k15, cpsoct((ifreq
+    + .003) + k14), 7, .9\r\n\r\nk16    expseg  p8 * .98, p3 * .81, .003, p3 * .19,
+    .003\r\nk17    oscil   k16, p7 * 1.4, 1, .2\r\nk18    expseg  .001, p3 *.6, p6,
+    p3 *.2, p6 *.8, p3 *.1, p6 *.98, p3 *.1, .001\r\na6     oscil   k18, cpsoct((ifreq
+    + .001) + k17), 8, .1\r\n\r\nSchanL = p9\r\nSchanR = p10\r\n\r\n       chnset
+    a1 + a3 + a5, SchanL\r\n       chnset a2 + a4 + a6, SchanR\r\n       outs   
+    a1 + a3 + a5, a2 + a4 + a6\r\n       endin\r\n;============================================================================;\r\n;====================================
+    SMEAR =================================;\r\n;============================================================================;\r\n       
+    instr  98\r\nasig    delay  gadel, .08\r\n        outs   asig, asig\r\ngadel  
+    =      0\r\n        endin\r\n;============================================================================;\r\n;====================================
+    SWIRL =================================;\r\n;============================================================================;\r\n      
+    instr   99                            ; p4 = panrate\r\nk1     oscil   .5, p4,
+    1\r\nk2     =       .5 + k1\r\nk3     =       1 - k2\r\nasig   reverb  garvb,
+    2.1\r\n       outs    asig * k2, (asig * k3) * (-1)\r\ngarvb  =       0\r\n      
+    endin\r\n;============================================================================;\r\n;============================================================================;\r\n;============================================================================;\r\n;============================================================================;\r\ninstr
+    100\r\n  ;k0,1,k2 cpumeter 0.3\r\n  ;   printk2 k0\r\n  ;   printk2 k1, 10\r\n 
+    ;   printk2 k2, 20\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;============================================================================;\r\n;============================================================================;\r\n;                           
+    == TRAPPED IN CONVERT ==                        ;\r\n;                               
+    Richard Boulanger                           ;\r\n;============================================================================;\r\n;============================================================================;\r\n;                                    
+    SCORE                                  ;\r\n;============================================================================;\r\n;=================================
+    PARAMETERS ===============================;\r\n;============================================================================;\r\n;
+    i1:  p6=amp,p7=vibrat,p8=glisdeltime (default < 1),p9=frqdrop              ;\r\n;
+    i2:  p6=amp,p7=rvbsnd,p8=lfofrq,p9=num of harmonics,p10=sweeprate          ;\r\n;
+    i3:  p6=amp,p7=rvbsnd,p8=rndfrq                                            ;\r\n;
+    i4:  p6=amp,p7=fltrswp:strtval,p8=fltrswp:endval,p9=bdwth,p10=rvbsnd       ;\r\n;
+    i5:  p6=amp,p7=rvbatn,p8=pan:1.0,p9=carfrq,p10=modfrq,p11=modndx,p12=rndfrq;\r\n;
+    i6:  p5=swpfrq:strt,p6=swpfrq:end,p7=bndwth,p8=rvbsnd,p9=amp               ;\r\n;
+    i7:  p4=amp,p5=frq,p6=strtphse,p7=endphse,p8=ctrlamp(.1-1),p9=ctrlfnc      ;\r\n;            
+    p10=audfnc(f2,f3,f14,p11=rvbsnd                                ;\r\n; i8:  p4=amp,p5=swpstrt,p6=swpend,p7=bndwt,p8=rnd1:cps,p9=rnd2:cps,p10=rvbsnd;\r\n;
+    i9:  p4=delsnd,p5=frq,p6=amp,p7=rvbsnd,p8=rndamp,p9=rndfrq                 ;\r\n;
+    i10: p4=0,p5=frq,p6=amp,p7=rvbsnd,p8=rndamp,p9=rndfrq                      ;\r\n;
+    i11: p4=delsnd,p5=frq,p6=amp,p7=rvbsnd                                     ;\r\n;
+    i12: p6=amp,p7=swpstrt,p8=swppeak,p9=bndwth,p10=rvbsnd                     ;\r\n;
+    i13: p6=amp,p7=vibrat,p8=dropfrq                                           ;\r\n;
+    i98: p2=strt,p3=dur                                                        ;\r\n;
+    i99: p4=pancps                                                             ;\r\n;============================================================================;\r\n;=========================
+    FUNCTIONS ========================================;\r\n;============================================================================;\r\nf1  
+    0  8192  10   1\r\nf2   0  512   10   10  8   0   6   0   4   0   1\r\nf3   0 
+    512   10   10  0   5   5   0   4   3   0   1\r\nf4   0  2048  10   10  0   9  
+    0   0   8   0   7   0  4  0  2  0  1\r\nf5   0  2048  10   5   3   2   1   0\r\nf6  
+    0  2048  10   8   10  7   4   3   1\r\nf7   0  2048  10   7   9   11  4   2  
+    0   1   1\r\nf8   0  2048  10   0   0   0   0   7   0   0   0   0  2  0  0  0 
+    1  1\r\nf9   0  2048  10   10  9   8   7   6   5   4   3   2  1\r\nf10  0  2048 
+    10   10  0   9   0   8   0   7   0   6  0  5\r\nf11  0  2048  10   10  10  9  
+    0   0   0   3   2   0  0  1\r\nf12  0  2048  10   10  0   0   0   5   0   0  
+    0   0  0  3\r\nf13  0  2048  10   10  0   0   0   0   3   1\r\nf14  0  512  
+    9    1   3   0   3   1   0   9  .333   180\r\nf15  0  8192  9    1   1   90\r\nf16 
+    0  2048  9    1   3   0   3   1   0   6   1   0\r\nf17  0  9     5   .1   8  
+    1\r\nf18  0  17    5   .1   10  1   6  .4\r\nf19  0  16    2    1   7   10  7  
+    6   5   4   2   1   1  1  1  1  1  1  1\r\nf20  0  16   -2    0   30  40  45 
+    50  40  30  20  10  5  4  3  2  1  0  0  0\r\nf21  0  16   -2    0   20  15 
+    10  9   8   7   6   5   4  3  2  1  0  0\r\nf22  0  9    -2   .001 .004 .007
+    .003 .002 .005 .009 .006\r\n;============================================================================;\r\n;=========================
+    SECTION I: 78 SECONDS  ===========================;\r\n;============================================================================;\r\n/*\r\ni1  
+    0.0    24.12   0      11.057   200    0.001  17.8   0.99\r\ni1   1.0    21.76  
+    0      11.049   240    0.001  10.2   0.99\r\ni1   3.6    17.13   0      11.082  
+    390    0.001  11.3   0.99\r\ni1   6.2    15.02   0      11.075   460    0.001 
+    10.5   0.99\r\ni1   8.4    13.85   0      11.069   680    0.001  13.8   0.99\r\ni99 
+    22.0   7.5     5\r\ni2   22.0   4       0      9.029    600    0.6    23    
+    10     0.52\r\ni2   22.13  4       0      9.01     600    0.5    20     6     
+    0.66\r\ni1   26.5   5.6     0      12.019   500    4.0    5.8    0.98\r\ni1  
+    26.51  6.1     0      12.004   550    5.0    5.5    0.98\r\ni1   26.52  5.4    
+    0      12.026   600    5.2    5.6    0.98\r\ni1   26.55  5       0      12.031  
+    660    4.5    5.7    0.98\r\ni99  31.3   0.7     22\r\ni4   31.3   1       0     
+    13.045   2200   6000   7000   30     0.5\r\ni99  32.0   4       11\r\ni2   32.0  
+    4       0      14.107   900    0.4    19     13     0.21\r\ni2   32.14  4      
+    0      11.023   750    0.7    21     9      0.19\r\ni2   32.19  4       0     
+    11.029   589    0.97   20     10     0.22\r\ni4   35.0   1       0      12.029  
+    1000   4600   6500   33     0.6\r\ni99  36.0   10      7\r\ni3   36.0   7.6    
+    0      13.087   800    0.8    57\r\ni1   39.31  8.1     0      10.024   519   
+    3.0    3.1    0.002\r\ni1   39.32  8       0      10.031   520    5.1    3.7   
+    0.001\r\ni1   39.35  7.9     0      10.042   557    3.4    3.5    0.003\r\ni1  
+    39.37  7.86    0      10.050   547    4.2    3.3    0.004\r\ni99  46.0   7.3    
+    2\r\ni5   46.0   0.9     0      4.09     3500   0.2    0.1    3      10   12 
+    27\r\ni5   49.2   1.1     0      3.07     4500   0.1    1.0    5      3    16 
+    30\r\ni99  53.3   9.6     5\r\ni6   53.3   8.5     0.81   3000     17     10    
+    0.6    1.6\r\ni98  62.9   15.1\r\ni99  62.9   15.1    3\r\ni9   62.9   2.9    
+    0.4    4.113    600    0.2    6.2    320\r\ni9   62.93  2.85    0.43   4.115   
+    640    0.23   6.1    300\r\ni9   67.1   7.9     0.2    5.004    700    0.4   
+    4.5    289\r\ni9   67.14  7.78    0.17   5.007    700    0.43   4.4    280\r\n;s  
+    80\r\ni100 0 78\r\ns\r\n;============================================================================;\r\n;=========================
+    SECTION II: 49 SECONDS ===========================;\r\n;============================================================================;\r\ni98 
+    0      48.5\r\ni99  0      4.5     1\r\ni9   0      5       0.4    10.01    1200  
+    0.2    28     39\r\ni9   0      5       0.3    9.119    1200   0.4    29    
+    37\r\ni3   0.5    6.5     0      12.067   600    0.6    47\r\ni99  4.5    2      
+    7\r\ni6   4.5    4.3     17     6000     9000   100    0.4    0.9\r\ni99  6.5   
+    9.9     0.7\r\ni7   6.5    3.2     9999   5.023    0.2    0.7    0.6    2     
+    3    0.12\r\ni7   8      1.9     9800   5.039    0.01   0.9    1      3     
+    2    0.23\r\ni7   9      3.8     9900   10.001   0.99   0.1    0.3    3     
+    2    0.12\r\ni3   9.1    5.5     0      10.017   900    0.5    67\r\ni7   9.2   
+    2.5     9890   5.052    0.1    1.0    0.7    2      3    0.23\r\ni8   11    
+    4.6     4      20       8000   590    2      9.9    0.6\r\ni8   15.5   3.1    
+    3      50       4000   129    8      2.6    0.3\r\ni8   16.2   4.3     2     
+    10000    9000   200    12     17.9   1\r\ni99  16.4   10.3    0.3\r\ni7   16.4  
+    3.5     8000   5.019    0.2    0.7    0.5    2      3    0.1\r\ni7   19.3   6.4    
+    8000   5.041    0.01   0.9    1      3      2    0.1\r\ni9   20.2   4       0.4   
+    9.021    1000   0.2    4      100\r\ni9   21     4.2     0.4    9.099    1100  
+    0.4    4      167\r\ni9   21.1   8       0.4    9.043    1000   0.6    4     
+    210\r\ni9   21.25  5       0.4    9.062    1200   0.9    5      200\r\ni99  26.7  
+    5.3     11\r\ni9   26.7   1.9     0.5    4.114    3100   0.1    5.9    300\r\ni9  
+    29.1   2.1     0.1    5.013    2900   0.2    4.2    390\r\ni99  32     6.2    
+    0.28\r\ni9   32     9.1     0.34   5.051    2300   0.5    3.8    420\r\ni9  
+    32.1   9.0     0.4    5.0517   2500   0.4    4      430\r\ni2   34.2   5      
+    0      9.029    1900   0.3    23     10     0.42\r\ni2   34.23  5       0     
+    9.01     2100   0.2    20     6      0.29\r\ni2   36     5       0      13.027  
+    3500   0.5    27     9      0.38\r\ni2   36.05  5       0      12.119   3399  
+    0.1    21     3      0.30\r\ni2   36.12  5       0      13.018   3709   0.4   
+    17     12     0.33\r\ni99  38.2   10.8    2\r\ni2   38.2   7.3     0      8.062   
+    5900   0.4    19     13     0.26\r\ni2   38.4   7       0      7.077    4730  
+    0.6    26     21     0.23\r\ni4   38.9   3.1     0      10.001   2600   2000  
+    3000   46     0.3\r\ni4   39.7   2.3     0      9.0119   1200   1000   2000  
+    50     0.2\r\ni100 0 49\r\ns\r\n;============================================================================;\r\n;=========================
+    SECTION III: 56 SECONDS ==========================;\r\n;============================================================================;\r\ni98 
+    0      42\r\ni99  0      42      0.0618\r\ni9   0      7       0.6    11.031  
+    1100   0.2    30     40\r\ni9   0.1    7       0.2    11.042   1100   0.9   
+    26     37\r\ni9   0.3    6.2     0.9    11.049   1105   0.1    32     29\r\ni9  
+    0.6    5.8     0.4    11.021   1110   0.6    41     34\r\ni11  3.7    8      
+    0.2    5.02     2200   0.2\r\ni13  7.0    4.5     0.4    11.064   1500   40.0  
+    7\r\ni9   9.3    9       0.8    7.098    1300   0.3    33     27\r\ni9   9.8   
+    7       0.2    7.087    1400   0.7    39     31\r\ni2   10.9   4       0.2   
+    8.113    5000   0.9    45     20     1\r\ni11  12     5       0.2    4.101   
+    3300   0.3\r\ni2   12.9   5       0.2    9.108    5900   0.4    59     14    
+    0.6\r\ni8   15     4.7     2.5    8600     8900   900    13     11.1   0.7\r\ni11 
+    17.9   7       0.4    4.091    3000   0.1\r\ni9   22     7       0.6    10.031  
+    1000   0.2    30     40\r\ni9   22.1   7       0.2    10.042   1000   0.9   
+    26     37\r\ni9   22.3   6.2     0.9    10.049   1005   0.1    32     29\r\ni9  
+    22.6   5.8     0.4    10.021   1010   0.6    41     34\r\ni11  25.2   5.3    
+    0.3    5.111    2500   0.2\r\ni11  26.9   5.1     0.2    4.093    2330   0.1\r\ni13 
+    27.1   4       0.4    12.064   2000   40     7\r\ni13  28.9   4       0.4   
+    11.117   2000   30.0   5\r\ni9   29.3   9       0.8    8.098    1000   0.3   
+    33     27\r\ni9   30.8   7       0.2    8.087    1200   0.7    39     31\r\ni9  
+    31.2   7.2     0.9    8.071    1400   0.9    29     40\r\ni2   32.9   5      
+    0.9    8.113    5000   0.8    45     20     1\r\ni8   33.1   7       2      5000    
+    6000   1000   17     15     0.3\r\ni2   33.3   6       0.9    7.097    5100  
+    0.5    51     18     0.3\r\ni11  34     5       0.3    4.111    2000   0.5\r\ni8  
+    34.5   6       2      3000     100    500    8.3    9.8    0.1\r\ni2   34.9  
+    6       0.9    9.108    2900   0.4    59     14     0.4\r\ni2   35     5      
+    0.9    8.042    2800   0.6    39     20     0.3\r\ni11  36.1   5       0.5   
+    3.119    1200   0.4\r\ni11  36.8   7       0.2    5.118    1800   0.4\r\ni11 
+    38     6       0.2    4.031    2000   0.2\r\ni11  39     4       0.3    6.003   
+    1300   0.1\r\ni99  42     3.6     8.3\r\ni4   42     1       9.6    13.061  
+    3000   8000   20     10     0.9\r\ni4   42     0.99    9.6    13.013   3110  
+    6000   30     6      0.3\r\ni4   42     1.01    9.6    12.119   2999   10000 
+    25     15     0.7\r\ni5   43     1.1     9.6    3.106    2500   0.4    1.0   
+    8      3    17  34\r\ni5   43.1   1       9.6    4.034    2500   0.2    0.1   
+    2      7    19  29\r\ni99  45.6   4.9     3.2\r\ni5   45.6   3       3.2    4.022   
+    2300   0.3    1.0    11     4    20  37\r\ni5   46.1   2.4     3.2    3.049   
+    2400   0.2    0.1    5      8    19  27\r\ni99  50.5   5.5     8.3\r\ni4   50.5  
+    0.7     11     11.059   3000   7000   40     9      0.9\r\ni4   50.5   0.7    
+    11     10.038   3000   10000  20     20     0.7\r\ni4   50.5   0.71    11    
+    13.077   3000   9500   25     5      0.8\r\ni4   50.52  0.64    11     12.016  
+    3000   8500   18     14     0.5\r\ni5   51     1.5     11     4.011    2000  
+    0.1    1.0    3      11   13  28\r\ni5   51     1.5     11     3.106    2000  
+    0.4    0.1    7      5    15  34\r\ni100 0 56\r\ns\r\n;============================================================================;\r\n;=========================
+    SECTION IV: 100 SECONDS  =========================;\r\n;============================================================================;\r\n;=========================
+    VARIABLE TEMPO ===================================;\r\nt 0 60 40 60 45 30 49
+    40 52 90 55 100 58 160 59 200 61 230 65 270 78 40\r\n;============================================================================;\r\ni99 
+    0      1       2.8\r\ni4   0      1       6.8    12.013   3700   9000   40    
+    17     0.5\r\ni4   0.01   1       6.8    12.061   3501   8500   30     20    
+    0.3\r\ni4   0.02   1       6.8    11.119   3399   7780   32     22     0.8\r\ni4  
+    0.03   1       6.8    12.042   3010   8600   41     27     0.45\r\ni99  1     
+    3.4     9.8\r\ni12  1      3       6.8    5.06     1000   100    7000   16    
+    0.2\r\ni12  1.03   2.9     6.8    5.02     1000   60     6000   30     0.2\r\ni99 
+    4.4    3.6     4.8\r\ni12  4.4    2.6     6.8    11.09    2000   1000   200   
+    5      0.1\r\ni99  8      2.1     7\r\ni4   8      0.9     11     10.013   3000  
+    9000   40     17     0.9\r\ni4   8.1    0.9     11     10.061   3001   8500  
+    30     20     0.8\r\ni4   8.2    0.9     11     10.119   2999   7780   32    
+    22     0.7\r\ni99  10.1   1.1     21\r\ni12  10.1   0.6     11     11.02    1000  
+    1500   300    4      0.2\r\ni99  11.2   6.8     2\r\ni10  11.2   6       0     
+    4.092    3000   0.3    6.9    200\r\ni10  11.2   10      0      4.113    3000  
+    0.1    7.2    278\r\ni12  13     1.6     0.3    10.01    3000   2000   500   
+    5.2    0.2\r\ni10  13     1.6     0.4    9.012    3000   0.3    21     31\r\ni4  
+    15     0.7     0.4    13.023   5000   9000   40     17     0.9\r\ni4   15    
+    0.7     0.4    13.081   5001   8500   30     20     0.3\r\ni4   15     0.7    
+    0.4    13.019   4999   7780   32     22     0.7\r\ni4   15     0.7     0.4   
+    13.079   4550   9699   50     30     0.5\r\ni4   15.7   1       0.4    9.013   
+    1101   9000   40     17     0.9\r\ni4   15.7   1       0.4    10.051   1051  
+    8500   30     20     0.6\r\ni4   15.7   1       0.4    7.119    1111   7780  
+    32     22     0.2\r\ni4   15.7   1       0.4    8.099    1100   10000  100   
+    27     0.8\r\ni12  17     2       0.4    9.02     3000   3000   1000   4     
+    0.3\r\ni99  18     3       9.3\r\ni10  18     5       0      11.09    900   
+    0.4    23     33\r\ni10  18.1   5       0      11.08    900    0.4    20    
+    40\r\ni10  18.3   5       0      11.073   900    0.4    30     27\r\ni10  18.6  
+    5       0      11.068   900    0.4    33     33\r\ni10  19     10      0     
+    11.001   500    0.8    8      200\r\ni10  20     9       0      11.022   500   
+    0.8    9      300\r\ni10  20.4   8.6     0      11.091   500    0.8    5     
+    223\r\ni99  21     56      0.15\r\ni10  21     18      0      11.115   500   
+    0.8    6.4    311\r\ni10  21.6   17.4    0      12.041   500    0.8    7     
+    276\r\ni10  21.9   2.9     0      5.002    2000   0.3    4.1    200\r\ni10  25.3  
+    3.5     0      5.031    2300   0.5    3.6    160\r\ni10  30.9   3.9     0     
+    5.017    2500   0.7    3      100\r\ni10  36.3   6.1     0      4.097    1770  
+    0.8    4      200\r\ni10  42     34.09   0      4.0017   6000   0.19   4.1   
+    310\r\ni8   45     26.9    0.79   190      500    11     1.9    2.7    0.1\r\ni8  
+    49     22.9    0.80   10000    8000   300    11     12.6   0.2\r\ni8   52    
+    19.1    0.85   7000     10000  16     4.1    4.8    0.3\r\ni8   55     16.9   
+    0.91   500      190    10     2.9    1.3    0.2\r\ni8   58     13.9    0.98  
+    40       9000   379    33     19     0.1\r\ni8   60     12.9    0.99   3600    
+    11000  19     17     22     0.3\r\ni8   61     11.9    1.01   2000     3000  
+    30     4      18.8   0.2\r\ni99  77     23      0.09\r\ni4   77     1.7     0.3   
+    13.079   850    9699   50     30     0.8\r\ni10  77.1   2.14    0      13.03   
+    600    0.5    60     26\r\ni10  77.6   2.3     0      13.02    800    0.6   
+    62     24\r\ni10  78.3   9.9     0      5.004    900    0.2    4.1    160\r\ni10 
+    78.7   9.8     0      5.001    800    0.3    1.4    220\r\ni2   80.4   9      
+    0      7.077    930    0.8    26     21     0.23\r\ni2   80.7   8       0     
+    8.077    830    0.7    24     19     0.13\r\ni4   81.9   1.9     0.7    11.079  
+    950    7699   40     20     0.7\r\ni4   82     2.8     0.5    10.079   850   
+    5699   60     40     0.5\r\ni10  82.11  5.3     0      3.053    1800   0.1   
+    4.0    210\r\ni10  82.14  3.8     0      4.048    1100   0.2    71     33\r\ni10 
+    82.32  3.1     0      5.049    1000   0.2    68     27\r\ni10  82.06  2.9    
+    0      5.051    900    0.2    72     31\r\ni10  84.04  9.9     0      4.003   
+    1800   0.1    4.1    160\r\ni10  84.06  9.8     0      4.002    1900   0.3   
+    1.4    220\r\ni10  84.618 9.8     0      5.005    900    0.4    4.1    180\r\ni100
+    0 100\r\ne\r\n;============================================================================;\r\n;=======================
+    TOTAL TIME: 283 SECONDS ============================;\r\n;============================================================================;\r\n\r\n\r\n*/\r\nf0
+    z\r\n\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n<bsbPanel>\r\n <label>Widgets</label>\r\n
+    <objectName/>\r\n <x>966</x>\r\n <y>366</y>\r\n <width>400</width>\r\n <height>201</height>\r\n
+    <visible>true</visible>\r\n <uuid/>\r\n <bgcolor mode=\"nobackground\">\r\n 
+    <r>231</r>\r\n  <g>46</g>\r\n  <b>255</b>\r\n </bgcolor>\r\n <bsbObject version=\"2\"
+    type=\"BSBVSlider\">\r\n  <objectName>slider1</objectName>\r\n  <x>5</x>\r\n 
+    <y>5</y>\r\n  <width>20</width>\r\n  <height>100</height>\r\n  <uuid>{86b9ad70-540b-4d5b-b0b9-07fa3da7466b}</uuid>\r\n 
+    <visible>true</visible>\r\n  <midichan>0</midichan>\r\n  <midicc>-3</midicc>\r\n 
+    <minimum>0.00000000</minimum>\r\n  <maximum>1.00000000</maximum>\r\n  <value>0.00000000</value>\r\n 
+    <mode>lin</mode>\r\n  <mouseControl act=\"jump\">continuous</mouseControl>\r\n 
+    <resolution>-1.00000000</resolution>\r\n  <randomizable group=\"0\">false</randomizable>\r\n
+    </bsbObject>\r\n</bsbPanel>\r\n<bsbPresets>\r\n</bsbPresets>\r\n<MacOptions>\r\nVersion:
+    3\r\nRender: Real\r\nAsk: Yes\r\nFunctions: ioObject\r\nListing: Window\r\nWindowBounds:
+    966 366 400 201\r\nCurrentView: io\r\nIOViewEdit: On\r\nOptions:\r\n</MacOptions>\r\n\r\n<MacGUI>\r\nioView
+    nobackground {59367, 11822, 65535}\r\nioSlider {5, 5} {20, 100} 0.000000 1.000000
+    0.000000 slider1\r\n</MacGUI>\r\n"
+  _csoundFileName: trapped.csd
+  _csoundAsset: {fileID: 102900000, guid: 85a00ad24bee5bd419bef7afd9a27f81, type: 3}
+  _channels: []
+  _availableAudioChannels: []
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _audioChannelsBufferSize: 32
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 1
+  _drawChannels: 1
+  _drawAudioChannels: 1
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  webGLAssetsList: []
+--- !u!82 &1213912737
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213912735}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1213912738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213912735}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1213912739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1213912735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d31e8e13d086c9243920c7ca0f7e577c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  instruments:
+  - name: IVORY
+    number: 1
+    color: {r: 1, g: 1, b: 1, a: 1}
+    material: {fileID: 2100000, guid: a0c1100e36cb3bf47a1f14013cb87078, type: 2}
+    parameters:
+    - name: p3 duration
+      min: 5
+      max: 10
+    - name: p4 empty
+      min: 0
+      max: 0
+    - name: 'p5 freq '
+      min: 10.024
+      max: 12.031
+    - name: p6 amp
+      min: 200
+      max: 600
+    - name: p7 vibrat
+      min: 0.001
+      max: 6
+    - name: p8 glisdeltime
+      min: 3
+      max: 17
+    - name: p9 frqdrp
+      min: 0.001
+      max: 0.99
+  - name: BLUE
+    number: 2
+    color: {r: 0, g: 0.09776497, b: 1, a: 1}
+    material: {fileID: 2100000, guid: 3d0c140895a2eb349be8567aab61705d, type: 2}
+    parameters:
+    - name: p3 duration
+      min: 5
+      max: 10
+    - name: p4 empty
+      min: 0
+      max: 0
+    - name: p5 freq
+      min: 7.077
+      max: 14.1
+    - name: p6 amp
+      min: 200
+      max: 600
+    - name: p7 reverb send
+      min: 0.1
+      max: 0.9
+    - name: p8 lfo freq
+      min: 13
+      max: 59
+    - name: p9 num of harmonic
+      min: 3
+      max: 20
+    - name: p10 sweep rate
+      min: 0.13
+      max: 0.66
+  - name: VIOLET
+    number: 3
+    color: {r: 0.5149193, g: 0, b: 1, a: 1}
+    material: {fileID: 2100000, guid: 65746293bb506e54aaa30c35fa4caf7d, type: 2}
+    parameters:
+    - name: p3 duration
+      min: 5
+      max: 10
+    - name: p4 empty
+      min: 0
+      max: 0
+    - name: p5 freq
+      min: 10
+      max: 12
+    - name: p6 amp
+      min: 600
+      max: 900
+    - name: p7 reverb send
+      min: 0.6
+      max: 0.8
+    - name: p8 rand freq
+      min: 45
+      max: 70
+  - name: BLACK
+    number: 4
+    color: {r: 0, g: 0, b: 0, a: 1}
+    material: {fileID: 2100000, guid: bdb80748255a12e408b18c7ca0653ad4, type: 2}
+    parameters:
+    - name: p3 duration
+      min: 5
+      max: 10
+    - name: p4 empty
+      min: 0
+      max: 0
+    - name: p5 freq
+      min: 9
+      max: 13
+    - name: p6 amp
+      min: 850
+      max: 5001
+    - name: p7 fltrswp:strtval
+      min: 3000
+      max: 10000
+    - name: p8 fltrswp:endval
+      min: 20
+      max: 100
+    - name: p9 bdwth
+      min: 15
+      max: 30
+    - name: p10 rvbsnd
+      min: 0.1
+      max: 0.8
+  - name: GREEN
+    number: 5
+    color: {r: 0, g: 1, b: 0.36588264, a: 1}
+    material: {fileID: 2100000, guid: b72bb02b8b70fd34db5d01117d2d5f3c, type: 2}
+    parameters:
+    - name: p3 duration
+      min: 5
+      max: 10
+    - name: p4 empty
+      min: 0
+      max: 0
+    - name: p5 freq
+      min: 3
+      max: 11
+    - name: p6 amp
+      min: 2300
+      max: 3500
+    - name: p7 reverb send
+      min: 0.1
+      max: 0.4
+    - name: p8 pan direction
+      min: 0
+      max: 1
+    - name: p9 carrier freq
+      min: 2
+      max: 11
+    - name: p10 modulator freq
+      min: 3
+      max: 10
+    - name: p11 modulation index
+      min: 12
+      max: 20
+    - name: p12 rand freq
+      min: 27
+      max: 37
+  - name: COPPER
+    number: 6
+    color: {r: 1, g: 0.60640585, b: 0, a: 1}
+    material: {fileID: 2100000, guid: 7d06a3e405d58d44e919be9f06d78cd5, type: 2}
+    parameters:
+    - name: p3 duration
+      min: 5
+      max: 10
+    - name: p4 empty
+      min: 0
+      max: 0
+    - name: p5 FilterSweep StartFreq
+      min: 0
+      max: 0
+    - name: p6 FilterSweep EndFreq
+      min: 0
+      max: 0
+    - name: p7 bandwidth
+      min: 0
+      max: 0
+    - name: p8 reverb send factor
+      min: 0
+      max: 0
+    - name: p9 amp
+      min: 0
+      max: 0
+  - name: PEWTER
+    number: 7
+    color: {r: 0.6226415, g: 0.6141761, b: 0.56096476, a: 1}
+    material: {fileID: 2100000, guid: 0e79aef43ffb0f0488c964e6f600a689, type: 2}
+    parameters:
+    - name: p3 duration
+      min: 0
+      max: 0
+    - name: p4 amp
+      min: 0
+      max: 0
+    - name: p5 freq
+      min: 0
+      max: 0
+    - name: p6 begin phase point
+      min: 0
+      max: 0
+    - name: p7 end phase point
+      min: 0
+      max: 0
+    - name: p8 ctrl osc amp (.1 -> 1)
+      min: 0
+      max: 0
+    - name: p9 ctrl osc func
+      min: 0
+      max: 0
+    - name: p10 main osc func (f2 or f3)
+      min: 0
+      max: 0
+    - name: 
+      min: 0
+      max: 0
+  - name: RED
+    number: 8
+    color: {r: 1, g: 0, b: 0, a: 1}
+    material: {fileID: 2100000, guid: a2c03f75202ccc64b8658a7b4992af63, type: 2}
+    parameters: []
+  - name: SAND
+    number: 9
+    color: {r: 0.6415094, g: 0.46842292, b: 0.20879316, a: 1}
+    material: {fileID: 2100000, guid: 3ddded75ae74f3d41a2dd758385d6817, type: 2}
+    parameters: []
+  - name: TAUPE
+    number: 10
+    color: {r: 0.8962264, g: 0.7550387, b: 0.629895, a: 1}
+    material: {fileID: 2100000, guid: 3a4cc98efda95f742b6551a696956feb, type: 2}
+    parameters: []
+  - name: RUST
+    number: 11
+    color: {r: 0.5377358, g: 0.12101355, b: 0.09385012, a: 1}
+    material: {fileID: 2100000, guid: 230726c6e44993f478229cc4a4465d84, type: 2}
+    parameters: []
+  - name: TEAL
+    number: 12
+    color: {r: 0.059407253, g: 0.8396226, b: 0.67590255, a: 1}
+    material: {fileID: 2100000, guid: 394211b5893300948959f44f6acc33e6, type: 2}
+    parameters: []
+  - name: FOAM
+    number: 13
+    color: {r: 0.71, g: 0.986, b: 0.95630896, a: 1}
+    material: {fileID: 2100000, guid: 1360a239d117d664792a497225b0616a, type: 2}
+    parameters: []
+  - name: SMEAR
+    number: 98
+    color: {r: 0.4528302, g: 0.33962265, b: 0.33962265, a: 1}
+    material: {fileID: 2100000, guid: 714c1588551b1f0498363e0c7c9dc435, type: 2}
+    parameters: []
+  - name: SWIRL
+    number: 99
+    color: {r: 0.3773585, g: 0.3773585, b: 0.3773585, a: 1}
+    material: {fileID: 2100000, guid: 0292da8a8b7b3b94a933e88c083534f3, type: 2}
+    parameters: []
+  _instrumentPrefab: {fileID: 6368502929175539482, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+  _draggablePrefab: {fileID: 4631366053081590052, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+  _draggableContainer: {fileID: 997771125}
+  _activeInstrumentsContainer: {fileID: 1337918229}
+--- !u!1 &1337918228
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1337918229}
+  m_Layer: 0
+  m_Name: ActiveInstruments
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1337918229
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1337918228}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &1689230081 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+  m_PrefabInstance: {fileID: 4631366053674660391}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1857974582
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1857974584}
+  - component: {fileID: 1857974583}
+  - component: {fileID: 1857974585}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1857974583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857974582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb451614cd7063f4b9657c94fe4d5a97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _listenerSettings: 0
+  _source: {fileID: 0}
+  _csoundUnity: {fileID: 0}
+  _csoundAudioChannel: 
+  _sizeMult: {x: 0.04, y: 0.1}
+  _offset: {x: -0.74, y: -0.31, z: 0}
+  _maxHeight: 50
+--- !u!4 &1857974584
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857974582}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!120 &1857974585
+LineRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857974582}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 0
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 1}
+  m_Parameters:
+    serializedVersion: 3
+    widthMultiplier: 0.01
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: -1
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 0
+    textureMode: 0
+    textureScale: {x: 1, y: 1}
+    shadowBias: 0.5
+    generateLightingData: 0
+  m_MaskInteraction: 0
+  m_UseWorldSpace: 1
+  m_Loop: 0
+  m_ApplyActiveColorSpace: 0
+--- !u!1001 &4631366053674660391
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 997771125}
+    m_Modifications:
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590054, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590055, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_Name
+      value: DraggableIcon
+      objectReference: {fileID: 0}
+    - target: {fileID: 4631366053081590055, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
+--- !u!1001 &6368502929801351134
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5543235363464356422, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: _listenerSettings
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539478, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539484, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_Name
+      value: TrappedInstrument
+      objectReference: {fileID: 0}
+    - target: {fileID: 6368502929175539484, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 172016361}
+  - {fileID: 411201505}
+  - {fileID: 1213912738}
+  - {fileID: 6368502929801351134}
+  - {fileID: 749705612}
+  - {fileID: 399710638}
+  - {fileID: 898357956}
+  - {fileID: 1337918229}
+  - {fileID: 1857974584}
