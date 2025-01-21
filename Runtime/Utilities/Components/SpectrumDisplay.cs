@@ -28,7 +28,11 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         /// <summary>
         /// Set the samples from any source. You will need to call SetSamples
         /// </summary>
-        RawSamples
+        RawSamples,
+        /// <summary>
+        /// Same as RawSamples, but computes the Frequency Spectrum using FFT
+        /// </summary>
+        RawSamplesSpectrum,
     }
 
     [RequireComponent(typeof(LineRenderer))]
@@ -60,7 +64,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         }
 
         public void SetSamples(float[] samples)
-        {   
+        {
             _samples = samples;
         }
 
@@ -105,12 +109,16 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     if (_csoundUnity == null || string.IsNullOrEmpty(_csoundAudioChannel)) return;
                     _samples = Utilities.AudioSamplesUtils.ConvertToFloat(_csoundUnity.GetAudioChannel(_csoundAudioChannel));
                     break;
+                case ListenerSettings.RawSamplesSpectrum:
+                    _samples = Utilities.FFTUtils.CalculateSpectrum(_samples);
+                    break;
             }
 
             //Debug.Log($"_samples[0]: {_samples[0]}");
             if (_samples == null || _samples.Length == 0) return;
-            
-            for (int i = 0; i < _samples.Length; i++)
+
+            var samplesLength = _listenerSettings == ListenerSettings.RawSamplesSpectrum ? _samples.Length / 2 : _samples.Length;
+            for (int i = 0; i < samplesLength; i++)
             {
                 var pos = new Vector3(i * _sizeMult.x, Mathf.Clamp(_samples[i] * (_maxHeight + i * i), 0, _maxHeight) * _sizeMult.y, 0);
                 _lr.SetPosition(i, pos + _offset);
