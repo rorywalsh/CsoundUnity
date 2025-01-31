@@ -64,7 +64,7 @@ namespace Csound.Unity.Timelines
             m_duration = m_scoreInfo.FindPropertyRelative("duration");
             m_swarmDuration = m_scoreInfo.FindPropertyRelative("swarmDuration");
             m_swarmDelay = m_scoreInfo.FindPropertyRelative("swarmDelay");
-            
+
 
             //switch (m_mode.intValue)
             //{
@@ -108,6 +108,8 @@ namespace Csound.Unity.Timelines
 
             m_mode.intValue = (int)(CsoundUnityScorePlayableBehaviour.ScoreMode)EditorGUILayout.Popup((int)m_mode.intValue, options);
 
+#if UNITY_2022_1_OR_NEWER
+
             switch ((CsoundUnityScorePlayableBehaviour.ScoreMode)m_mode.boxedValue)
             {
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Single:
@@ -126,7 +128,7 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.BeginVertical();
                     EditorGUILayout.LabelField("Instr #");
-                    m_instrN.stringValue = EditorGUILayout.TextField(m_instrN.stringValue);                    EditorGUILayout.EndVertical();
+                    m_instrN.stringValue = EditorGUILayout.TextField(m_instrN.stringValue); EditorGUILayout.EndVertical();
 
                     EditorGUILayout.BeginVertical();
                     EditorGUILayout.LabelField("Time");
@@ -155,6 +157,11 @@ namespace Csound.Unity.Timelines
 
                     break;
             }
+
+#else
+            EditorGUILayout.HelpBox("Score syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...", MessageType.None);
+            m_score.stringValue = EditorGUILayout.TextField(m_score.stringValue);
+#endif
         }
     }
 }
