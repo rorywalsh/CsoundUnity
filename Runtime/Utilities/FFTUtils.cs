@@ -12,12 +12,18 @@ namespace Csound.Unity.Utilities
         public static float[] CalculateSpectrum(float[] input)
         {
             if (input == null || input.Length == 0)
-                throw new ArgumentException("Input data cannot be null or empty.");
+            {
+                return new float[0];
+                //    throw new ArgumentException("Input data cannot be null or empty.");
+            }
 
             int n = input.Length;
 
             if ((n & (n - 1)) != 0) // Check if length is a power of 2
-                throw new ArgumentException("Input length must be a power of 2.");
+            {
+                return new float[0];
+                //throw new ArgumentException("Input length must be a power of 2.");
+            }
 
             // Convert the real input to complex
             var complexInput = new Complex[n];

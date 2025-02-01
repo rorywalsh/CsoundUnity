@@ -1690,92 +1690,205 @@ MonoBehaviour:
       min: 0
       max: 0
     - name: p5 FilterSweep StartFreq
-      min: 0
-      max: 0
+      min: 3000
+      max: 6000
     - name: p6 FilterSweep EndFreq
-      min: 0
-      max: 0
+      min: 17
+      max: 9000
     - name: p7 bandwidth
-      min: 0
-      max: 0
+      min: 10
+      max: 100
     - name: p8 reverb send factor
-      min: 0
-      max: 0
+      min: 0.4
+      max: 0.6
     - name: p9 amp
-      min: 0
-      max: 0
+      min: 0.9
+      max: 1.6
   - name: PEWTER
     number: 7
     color: {r: 0.6226415, g: 0.6141761, b: 0.56096476, a: 1}
     material: {fileID: 2100000, guid: 0e79aef43ffb0f0488c964e6f600a689, type: 2}
     parameters:
     - name: p3 duration
-      min: 0
-      max: 0
+      min: 5
+      max: 10
     - name: p4 amp
-      min: 0
-      max: 0
+      min: 8000
+      max: 9999
     - name: p5 freq
-      min: 0
-      max: 0
+      min: 5.019
+      max: 10.001
     - name: p6 begin phase point
-      min: 0
-      max: 0
+      min: 0.01
+      max: 0.99
     - name: p7 end phase point
-      min: 0
-      max: 0
+      min: 0.1
+      max: 1
     - name: p8 ctrl osc amp (.1 -> 1)
-      min: 0
-      max: 0
+      min: 0.3
+      max: 1
     - name: p9 ctrl osc func
-      min: 0
-      max: 0
+      min: 2
+      max: 3
     - name: p10 main osc func (f2 or f3)
-      min: 0
-      max: 0
-    - name: 
-      min: 0
-      max: 0
+      min: 2
+      max: 3
+    - name: p11 Reverb send factor
+      min: 0.1
+      max: 0.23
   - name: RED
     number: 8
     color: {r: 1, g: 0, b: 0, a: 1}
     material: {fileID: 2100000, guid: a2c03f75202ccc64b8658a7b4992af63, type: 2}
-    parameters: []
+    parameters:
+    - name: p3 duration
+      min: 5
+      max: 10
+    - name: p4 Amp
+      min: 2
+      max: 4
+    - name: 'p5: FilterSweep StartFreq'
+      min: 20
+      max: 10000
+    - name: 'p6: FilterSweep EndFreq'
+      min: 4000
+      max: 9000
+    - name: 'p7: Bandwidth'
+      min: 129
+      max: 590
+    - name: 'p8: cps of rand1'
+      min: 2
+      max: 12
+    - name: 'p9: cps of rand2'
+      min: 2.6
+      max: 17.9
+    - name: 'p10: Reverb send factor'
+      min: 0.3
+      max: 1
   - name: SAND
     number: 9
     color: {r: 0.6415094, g: 0.46842292, b: 0.20879316, a: 1}
     material: {fileID: 2100000, guid: 3ddded75ae74f3d41a2dd758385d6817, type: 2}
-    parameters: []
+    parameters:
+    - name: 'p3: duration'
+      min: 5
+      max: 10
+    - name: 'p4: Delay send factor'
+      min: 0.1
+      max: 0.5
+    - name: 'p5: Freq (unused)'
+      min: 4.114
+      max: 10.01
+    - name: 'p6: Amp'
+      min: 1000
+      max: 3100
+    - name: 'p7: Reverb send factor'
+      min: 0.1
+      max: 0.9
+    - name: 'p8: rand amp'
+      min: 3.8
+      max: 29
+    - name: 'p9: rand freq'
+      min: 37
+      max: 430
   - name: TAUPE
     number: 10
     color: {r: 0.8962264, g: 0.7550387, b: 0.629895, a: 1}
     material: {fileID: 2100000, guid: 3a4cc98efda95f742b6551a696956feb, type: 2}
-    parameters: []
+    parameters:
+    - name: 'p3: duration'
+      min: 5
+      max: 10
+    - name: 'p4: unused'
+      min: 0
+      max: 0
+    - name: 'p5: Freq'
+      min: 3.053
+      max: 13.03
+    - name: 'p6: Amp'
+      min: 500
+      max: 6000
+    - name: 'p7: Reverb send factor'
+      min: 0.1
+      max: 0.8
+    - name: 'p8: rand amp'
+      min: 1.4
+      max: 72
+    - name: 'p9: rand freq'
+      min: 24
+      max: 311
   - name: RUST
     number: 11
     color: {r: 0.5377358, g: 0.12101355, b: 0.09385012, a: 1}
     material: {fileID: 2100000, guid: 230726c6e44993f478229cc4a4465d84, type: 2}
-    parameters: []
+    parameters:
+    - name: 'p3: duration'
+      min: 5
+      max: 10
+    - name: 'p4: Delay send factor'
+      min: 0.2
+      max: 0.3
+    - name: 'p5: Freq'
+      min: 4.093
+      max: 5.111
+    - name: 'p6: Amp'
+      min: 2200
+      max: 3300
+    - name: 'p7: Reverb send factor'
+      min: 0.1
+      max: 0.3
   - name: TEAL
     number: 12
     color: {r: 0.059407253, g: 0.8396226, b: 0.67590255, a: 1}
     material: {fileID: 2100000, guid: 394211b5893300948959f44f6acc33e6, type: 2}
-    parameters: []
+    parameters:
+    - name: 'p3: duration'
+      min: 5
+      max: 10
+    - name: 'p4: unused'
+      min: 0
+      max: 0
+    - name: 'p5: Freq'
+      min: 0
+      max: 0
+    - name: 'p6: Amp'
+      min: 3000
+      max: 5900
+    - name: 'p7: FilterSweep StartFreq '
+      min: 0.4
+      max: 3000
+    - name: 'p8: FilterSweep PeakFreq '
+      min: 45
+      max: 1000
+    - name: 'p9: Bandwidth '
+      min: 4
+      max: 20
+    - name: 'p10: Reverb send factor '
+      min: 0.2
+      max: 1
   - name: FOAM
     number: 13
     color: {r: 0.71, g: 0.986, b: 0.95630896, a: 1}
     material: {fileID: 2100000, guid: 1360a239d117d664792a497225b0616a, type: 2}
-    parameters: []
-  - name: SMEAR
-    number: 98
-    color: {r: 0.4528302, g: 0.33962265, b: 0.33962265, a: 1}
-    material: {fileID: 2100000, guid: 714c1588551b1f0498363e0c7c9dc435, type: 2}
-    parameters: []
-  - name: SWIRL
-    number: 99
-    color: {r: 0.3773585, g: 0.3773585, b: 0.3773585, a: 1}
-    material: {fileID: 2100000, guid: 0292da8a8b7b3b94a933e88c083534f3, type: 2}
-    parameters: []
+    parameters:
+    - name: 'p3: duration'
+      min: 5
+      max: 10
+    - name: 'p4: unused'
+      min: 0
+      max: 0
+    - name: 'p5: Freq'
+      min: 11.064
+      max: 11.117
+    - name: 'p6: Amp'
+      min: 1500
+      max: 2000
+    - name: 'p7: Vibrato rate'
+      min: 30
+      max: 40
+    - name: 'p8: Gliss. factor'
+      min: 5
+      max: 7
   _instrumentPrefab: {fileID: 6368502929175539482, guid: 2a8e49abf8a4cd14ab5334b091b0f114, type: 3}
   _draggablePrefab: {fileID: 4631366053081590052, guid: aa4373d6ee2586a4195e75d39079ee2c, type: 3}
   _draggableContainer: {fileID: 997771125}
