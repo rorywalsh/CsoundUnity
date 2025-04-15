@@ -37,7 +37,7 @@ using csoundcsharp;
 #endif
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL || UNITY_VISIONOS
 using MYFLT = System.Single;
 #endif
 
@@ -90,7 +90,7 @@ public class CsoundUnityBridge
                             {
                                 onCsoundCreated += () =>
                                 {
-#if !UNITY_IOS // this is needed to avoid references to this method on iOS, where it's not supported
+#if !UNITY_IOS || UNITY_VISIONOS // this is needed to avoid references to this method on iOS, where it's not supported
                                     Debug.Log("Csound Force Loading Plugins!");
                                     var loaded = Csound6.NativeMethods.csoundLoadPlugins(csound, path);
                                     Debug.Log($"PLUGINS LOADED? {loaded}");
@@ -167,7 +167,7 @@ public class CsoundUnityBridge
         var ksmps = Mathf.CeilToInt(audioRate / (float)controlRate);
         Csound6.NativeMethods.csoundSetOption(csound, $"--ksmps={ksmps}");
 
-#if UNITY_IOS
+#if UNITY_IOS || UNITY_VISIONOS
         Debug.Log($"Initialising sample rate and control rate using Audio Project Settings value: {AudioSettings.outputSampleRate}Hz, some values maybe incompatible with older hardware.");
 #endif
 
@@ -267,7 +267,7 @@ public class CsoundUnityBridge
     
 #region Instantiation
 
-#if !UNITY_IOS
+#if !UNITY_IOS || UNITY_VISIONOS
     public int LoadPlugins(string dir)
     {
 #if !UNITY_WEBGL || UNITY_EDITOR

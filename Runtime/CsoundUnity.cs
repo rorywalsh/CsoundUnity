@@ -38,7 +38,7 @@ using UnityEditor;
 #endif
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL || UNITY_VISIONOS
 using MYFLT = System.Single;
 #endif
 
@@ -666,7 +666,7 @@ public class CsoundUnity : MonoBehaviour
         return csound.GetAPIVersion();
     }
 
-#if !UNITY_IOS
+#if !UNITY_IOS || UNITY_VISIONOS
     /// <summary>
     /// Loads all plugins from a given directory
     /// </summary>
@@ -2236,7 +2236,7 @@ public class CsoundUnity : MonoBehaviour
     {
         var presetName = Path.ChangeExtension(Path.GetFileName(path), null);
 
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS || UNITY_VISIONOS) && !UNITY_EDITOR
         StartCoroutine(LoadingData(path, (d) =>
         {
             if (d == null)
@@ -2276,7 +2276,7 @@ public class CsoundUnity : MonoBehaviour
     {
         var presetName = Path.GetFileName(path);
 
-#if !UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS)
+#if !UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS || UNITY_VISIONOS)
         StartCoroutine(LoadingData(path, (d) =>
         {
             SetGlobalPreset(presetName, d);

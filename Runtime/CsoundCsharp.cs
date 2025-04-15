@@ -34,7 +34,7 @@ using System;
 using System.Runtime.InteropServices;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_VISIONOS
 using MYFLT = System.Single;
 #endif
 
@@ -54,7 +54,7 @@ namespace csoundcsharp
         internal const string _dllVersion = "CsoundLib64.bundle";
 #elif UNITY_ANDROID
         internal const string _dllVersion = "csoundandroid";
-#elif UNITY_IOS
+#elif UNITY_IOS || UNITY_VISIONOS
         internal const string _dllVersion = "__Internal";
 #endif
 
@@ -85,7 +85,7 @@ namespace csoundcsharp
 
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
             internal static extern IntPtr csoundCreate(IntPtr hostdata);
-#if !UNITY_IOS
+#if !UNITY_IOS || UNITY_VISIONOS
             [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
             internal static extern Int32 csoundLoadPlugins([In] IntPtr csound, [In, MarshalAs(UnmanagedType.LPStr)] String dir);
 #endif
