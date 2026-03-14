@@ -1,5 +1,5 @@
-﻿/*
-Copyright (C) 2015 Rory Walsh. 
+/*
+Copyright (C) 2015 Rory Walsh.
 
 This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 
@@ -13,23 +13,29 @@ Giovanni Bedetti
 Hector Centeno
 NPatch
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #if USE_TIMELINES
+
 using UnityEngine.Timeline;
 
 namespace Csound.Unity.Timelines
 {
+    /// <summary>
+    /// A Unity Timeline track that sends Csound score events.
+    /// Clips placed on this track will trigger score events on the bound <see cref="CsoundUnity"/> component.
+    /// Bind a <see cref="CsoundUnity"/> component to this track in the Timeline window.
+    /// </summary>
     [TrackColor(0.1f, .3f, 0.9f)]
     [TrackClipType(typeof(CsoundUnityScorePlayableClip))]
     [TrackBindingType(typeof(CsoundUnity))]
