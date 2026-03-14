@@ -1,5 +1,5 @@
-﻿/*
-Copyright (C) 2015 Rory Walsh. 
+/*
+Copyright (C) 2015 Rory Walsh.
 
 This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 
@@ -13,21 +13,20 @@ Giovanni Bedetti
 Hector Centeno
 NPatch
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #if USE_TIMELINES
 
-using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -39,7 +38,6 @@ namespace Csound.Unity.Timelines
     {
         CsoundUnityScorePlayableClip _clip;
         CsoundUnityScorePlayableBehaviour _behaviour;
-        CsoundUnityScorePlayableBehaviour.ScoreInfo _scoreInfo;
 
         SerializedProperty m_score;
         SerializedProperty m_scoreInfo;
@@ -50,12 +48,15 @@ namespace Csound.Unity.Timelines
         SerializedProperty m_duration;
         SerializedProperty m_swarmDuration;
         SerializedProperty m_swarmDelay;
+        SerializedProperty m_pitchBase;
+        SerializedProperty m_pitchSpread;
+        SerializedProperty m_delayVariation;
 
         private void OnEnable()
         {
             _clip = target as CsoundUnityScorePlayableClip;
             _behaviour = _clip.scoreBehaviour;
-            m_behaviour = this.serializedObject.FindProperty("scoreBehaviour");
+            m_behaviour = serializedObject.FindProperty("scoreBehaviour");
             m_score = m_behaviour.FindPropertyRelative("score");
             m_scoreInfo = m_behaviour.FindPropertyRelative("scoreInfo");
             m_mode = m_scoreInfo.FindPropertyRelative("mode");
@@ -64,24 +65,15 @@ namespace Csound.Unity.Timelines
             m_duration = m_scoreInfo.FindPropertyRelative("duration");
             m_swarmDuration = m_scoreInfo.FindPropertyRelative("swarmDuration");
             m_swarmDelay = m_scoreInfo.FindPropertyRelative("swarmDelay");
-
-
-            //switch (m_mode.intValue)
-            //{
-            //    case 0:
-            //        m_duration.floatValue = (float)_clip.duration;
-            //        break;
-            //    case 1:
-            //        m_swarmDuration.floatValue = (float)_clip.duration;
-            //        break;
-            //}
-            //_scoreInfo = m_scoreInfo.boxedValue as System.Object as CsoundUnityScorePlayableBehaviour.ScoreInfo;
+            m_pitchBase = m_scoreInfo.FindPropertyRelative("pitchBase");
+            m_pitchSpread = m_scoreInfo.FindPropertyRelative("pitchSpread");
+            m_delayVariation = m_scoreInfo.FindPropertyRelative("delayVariation");
         }
 
         public override void OnInspectorGUI()
         {
             base.DrawDefaultInspector();
-            this.serializedObject.Update();
+            serializedObject.Update();
 
             DrawScoreComposer();
 
@@ -114,9 +106,7 @@ namespace Csound.Unity.Timelines
             {
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Single:
                     EditorGUILayout.HelpBox("Score syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...", MessageType.None);
-                    //m_duration.floatValue = (float)_clip.duration;
                     m_score.stringValue = EditorGUILayout.TextField(m_score.stringValue);
-
                     break;
 
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Swarm:
@@ -124,11 +114,13 @@ namespace Csound.Unity.Timelines
                     var orig = EditorGUIUtility.labelWidth;
                     EditorGUIUtility.labelWidth = orig / 8;
 
+                    // Row 1: timing / scheduling parameters
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
                     EditorGUILayout.LabelField("Instr #");
-                    m_instrN.stringValue = EditorGUILayout.TextField(m_instrN.stringValue); EditorGUILayout.EndVertical();
+                    m_instrN.stringValue = EditorGUILayout.TextField(m_instrN.stringValue);
+                    EditorGUILayout.EndVertical();
 
                     EditorGUILayout.BeginVertical();
                     EditorGUILayout.LabelField("Time");
@@ -136,19 +128,41 @@ namespace Csound.Unity.Timelines
                     EditorGUILayout.EndVertical();
 
                     EditorGUILayout.BeginVertical();
-                    EditorGUILayout.LabelField("Swarm Duration");
+                    EditorGUILayout.LabelField("Swarm Dur");
                     m_swarmDuration.floatValue = EditorGUILayout.FloatField(m_swarmDuration.floatValue);
-                    //m_swarmDuration.floatValue = (float)_clip.duration;
                     EditorGUILayout.EndVertical();
 
                     EditorGUILayout.BeginVertical();
-                    EditorGUILayout.LabelField("Note Duration");
+                    EditorGUILayout.LabelField("Note Dur");
                     m_duration.floatValue = EditorGUILayout.FloatField(m_duration.floatValue);
                     EditorGUILayout.EndVertical();
 
                     EditorGUILayout.BeginVertical();
                     EditorGUILayout.LabelField("Delay");
                     m_swarmDelay.floatValue = EditorGUILayout.FloatField(m_swarmDelay.floatValue);
+                    EditorGUILayout.EndVertical();
+
+                    EditorGUILayout.BeginVertical();
+                    EditorGUILayout.LabelField("Delay Var");
+                    m_delayVariation.floatValue = EditorGUILayout.Slider(m_delayVariation.floatValue, 0f, 1f);
+                    EditorGUILayout.EndVertical();
+
+                    EditorGUILayout.EndHorizontal();
+
+                    EditorGUILayout.Space();
+
+                    // Row 2: pitch parameters (sent as p4)
+                    EditorGUILayout.LabelField("Pitch (p4)", EditorStyles.boldLabel);
+                    EditorGUILayout.BeginHorizontal();
+
+                    EditorGUILayout.BeginVertical();
+                    EditorGUILayout.LabelField("Base (Hz)");
+                    m_pitchBase.floatValue = EditorGUILayout.FloatField(m_pitchBase.floatValue);
+                    EditorGUILayout.EndVertical();
+
+                    EditorGUILayout.BeginVertical();
+                    EditorGUILayout.LabelField("Spread (Hz)");
+                    m_pitchSpread.floatValue = EditorGUILayout.FloatField(m_pitchSpread.floatValue);
                     EditorGUILayout.EndVertical();
 
                     EditorGUILayout.EndHorizontal();
