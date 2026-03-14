@@ -59,6 +59,11 @@
       "displayName": "WebGL",
       "description": "Examples showcasing the WebGL platform support",
       "path": "Samples~/WebGL"
+    },
+    {
+      "displayName": "UI",
+      "description": "Using CsoundUnity UI components to control Csound parameters",
+      "path": "Samples~/UI"
     }
   ],
   "type": "tool"
