@@ -11,6 +11,7 @@
   * [CsoundUnityChild](csoundunity_child.md)
   * [Environment Variables](environment_variables.md)
   * [CsoundFileWatcher](csound_file_watcher.md)
+  * [Timelines](timelines.md)
   * [Supported Platforms](platforms.md)
   	+ [WebGL](webgl_support.md)
   * [API Docs](http://rorywalsh.github.io/CsoundUnity/html/index.html)
