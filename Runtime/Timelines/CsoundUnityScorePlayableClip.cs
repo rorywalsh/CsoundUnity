@@ -42,12 +42,17 @@ namespace Csound.Unity.Timelines
     [Serializable]
     public class CsoundUnityScorePlayableClip : PlayableAsset, ITimelineClipAsset
     {
-        [HideInInspector] public CsoundUnityScorePlayableBehaviour scoreBehaviour = new CsoundUnityScorePlayableBehaviour();
-        public ClipCaps clipCaps => ClipCaps.None;
+        public CsoundUnityScorePlayableBehaviour template = new CsoundUnityScorePlayableBehaviour();
+
+        /// <summary>
+        /// ClipCaps.Blending is required for the Clip Properties curve editor to appear in the
+        /// Timeline window, allowing numeric parameters to be keyframed and animated over time.
+        /// </summary>
+        public ClipCaps clipCaps => ClipCaps.Blending;
 
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
-            return ScriptPlayable<CsoundUnityScorePlayableBehaviour>.Create(graph, scoreBehaviour);
+            return ScriptPlayable<CsoundUnityScorePlayableBehaviour>.Create(graph, template);
         }
     }
 }
