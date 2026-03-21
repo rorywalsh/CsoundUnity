@@ -27,6 +27,8 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #if USE_TIMELINES
 
+using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
 namespace Csound.Unity.Timelines
@@ -39,7 +41,13 @@ namespace Csound.Unity.Timelines
     [TrackColor(0.1f, .3f, 0.9f)]
     [TrackClipType(typeof(CsoundUnityScorePlayableClip))]
     [TrackBindingType(typeof(CsoundUnity))]
-    public class CsoundUnityScoreTrack : TrackAsset { }
+    public class CsoundUnityScoreTrack : TrackAsset
+    {
+        public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
+        {
+            return ScriptPlayable<CsoundUnityScoreMixerBehaviour>.Create(graph, inputCount);
+        }
+    }
 }
 
 #endif
