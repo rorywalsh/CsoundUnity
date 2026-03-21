@@ -40,32 +40,54 @@ namespace Csound.Unity.Timelines
     public class CsoundUnityMixerBehaviour : PlayableBehaviour
     {
         public string channel;
+        /// <summary>Enable diagnostic logging for this channel track (logs when value changes by > 0.001).</summary>
+        public bool verboseLog = false;
 
-        private bool _isFirstFrame = true;
+        private bool  _isFirstFrame  = true;
         private CsoundUnity _csound;
+        private float _lastLoggedValue = float.MinValue;
 
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
-            var finalValue = 0f;
-
             if (_isFirstFrame)
             {
                 _isFirstFrame = false;
                 _csound = playerData as CsoundUnity;
             }
 
+            // Accumulate the weighted sum across all active clip inputs.
+            // Only write to the Csound channel when at least one clip is active (weight > 0).
+            // If no clip covers the current time, the Csound channel keeps its last value
+            // (either the CSD/Cabbage default or the last frame written by an active clip).
+            // Writing 0 when inactive would silence parameters like cutoff, gain, etc.
+            float finalValue    = 0f;
+            bool  hasActiveClip = false;
+
             int inputCount = playable.GetInputCount();
             for (int i = 0; i < inputCount; i++)
             {
                 float inputWeight = playable.GetInputWeight(i);
+                if (inputWeight <= 0f) continue;
+                hasActiveClip = true;
                 var inputPlayable = (ScriptPlayable<CsoundUnityChannelPlayableBehaviour>)playable.GetInput(i);
                 var input = inputPlayable.GetBehaviour();
                 finalValue += input.value * inputWeight;
             }
 
-            if (Application.isPlaying && _csound != null && _csound.IsInitialized)
+            if (hasActiveClip && Application.isPlaying && _csound != null && _csound.IsInitialized)
             {
                 _csound.SetChannel(channel, finalValue);
+                if (verboseLog && Mathf.Abs(finalValue - _lastLoggedValue) > 0.001f)
+                {
+                    Debug.Log($"[CsoundChannel] SET '{channel}' = {finalValue:F4}  (inputs active: {inputCount})");
+                    _lastLoggedValue = finalValue;
+                }
+            }
+            else if (verboseLog && !hasActiveClip && _lastLoggedValue != float.MinValue)
+            {
+                // Log once when the last clip ends (no more active clips)
+                Debug.Log($"[CsoundChannel] NO ACTIVE CLIP for '{channel}' — value held at {_lastLoggedValue:F4}");
+                _lastLoggedValue = float.MinValue;
             }
         }
     }
