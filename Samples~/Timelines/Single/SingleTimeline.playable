@@ -1,0 +1,537 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfda56da833e2384a9677cd3c976a436, type: 3}
+  m_Name: SingleTimeline
+  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.TimelineAsset
+  m_Version: 0
+  m_Tracks:
+  - {fileID: 1377783121661871149}
+  m_FixedDuration: 0
+  m_EditorSettings:
+    m_Framerate: 60
+    m_ScenePreview: 1
+  m_DurationMode: 0
+  m_MarkerTrack: {fileID: 0}
+--- !u!114 &590168843860293184
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3bb726fa0abcfe47b454740fce8b051, type: 3}
+  m_Name: CsoundUnityScorePlayableClip
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundUnityScorePlayableClip
+  template:
+    scoreInfo:
+      mode: 0
+      instrN: 1
+      time: 0
+      parameters: []
+      swarmLookahead: 0.1
+      arpLookahead: 0.1
+      arpDivision: 3
+      arpNoteSource: 0
+      arpCustomIntervals: 000000000400000007000000
+      arpPerNoteBpm: 0
+      euclideanPerNoteBpm: 0
+      euclideanSteps: 8
+      euclideanDivision: 4
+      stochasticDivision: 3
+      stochasticNoteSource: 0
+      chordRepeat: 0
+      chordDivision: 0
+      chordNoteSource: 1
+      chordCustomIntervals: 000000000400000007000000
+    score: i1 0.000 3.500 220.0000
+    bpm: 120
+    pitchBase: 261.63
+    noteDuration: 0.25
+    octaves: 1
+    scaleIndex: 0
+    chordTypeIndex: 2
+    swarmPitchSpread: 0
+    swarmDelay: 0.05
+    swarmDelayVariation: 0
+    swarmNoteDurationVariation: 0
+    arpDirectionIndex: 0
+    euclideanHits: 3
+    euclideanRotation: 0
+    stochasticHitProbability: 0.7
+    stochasticPitchWeight: 0
+    chordStrumSpread: 0
+    verboseLog: 0
+--- !u!114 &1377783121661871149
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bafc9977c5043d478d10d49299afe0f, type: 3}
+  m_Name: Score
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundUnityScoreTrack
+  m_Version: 3
+  m_AnimClip: {fileID: 0}
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_Curves: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips:
+  - m_Version: 1
+    m_Start: 0
+    m_ClipIn: 0
+    m_Asset: {fileID: 590168843860293184}
+    m_Duration: 4
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 1377783121661871149}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: "Single \u2014 A3 220 Hz"
+  - m_Version: 1
+    m_Start: 4
+    m_ClipIn: 0
+    m_Asset: {fileID: 8053348450470673971}
+    m_Duration: 4
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 1377783121661871149}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: "Single \u2014 C4 261.63 Hz"
+  - m_Version: 1
+    m_Start: 8
+    m_ClipIn: 0
+    m_Asset: {fileID: 2802758055007880205}
+    m_Duration: 4
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 1377783121661871149}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: "Single \u2014 Major chord A4+C#5+E5"
+  - m_Version: 1
+    m_Start: 12
+    m_ClipIn: 0
+    m_Asset: {fileID: 2756827371476537412}
+    m_Duration: 4
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 1377783121661871149}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: "Single \u2014 Descending phrase"
+  m_Markers:
+    m_Objects: []
+--- !u!114 &2756827371476537412
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3bb726fa0abcfe47b454740fce8b051, type: 3}
+  m_Name: CsoundUnityScorePlayableClip
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundUnityScorePlayableClip
+  template:
+    scoreInfo:
+      mode: 0
+      instrN: 1
+      time: 0
+      parameters: []
+      swarmLookahead: 0.1
+      arpLookahead: 0.1
+      arpDivision: 3
+      arpNoteSource: 0
+      arpCustomIntervals: 000000000400000007000000
+      arpPerNoteBpm: 0
+      euclideanPerNoteBpm: 0
+      euclideanSteps: 8
+      euclideanDivision: 4
+      stochasticDivision: 3
+      stochasticNoteSource: 0
+      chordRepeat: 0
+      chordDivision: 0
+      chordNoteSource: 1
+      chordCustomIntervals: 000000000400000007000000
+    score: 'i1 0 0.5 880
+
+      i1 0.6 0.5 660
+
+      i1 1.2 0.5 550
+
+      i1 1.8
+      0.5 440'
+    bpm: 120
+    pitchBase: 261.63
+    noteDuration: 0.25
+    octaves: 1
+    scaleIndex: 0
+    chordTypeIndex: 2
+    swarmPitchSpread: 0
+    swarmDelay: 0.05
+    swarmDelayVariation: 0
+    swarmNoteDurationVariation: 0
+    arpDirectionIndex: 0
+    euclideanHits: 3
+    euclideanRotation: 0
+    stochasticHitProbability: 0.7
+    stochasticPitchWeight: 0
+    chordStrumSpread: 0
+    verboseLog: 0
+--- !u!114 &2802758055007880205
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3bb726fa0abcfe47b454740fce8b051, type: 3}
+  m_Name: CsoundUnityScorePlayableClip
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundUnityScorePlayableClip
+  template:
+    scoreInfo:
+      mode: 0
+      instrN: 1
+      time: 0
+      parameters: []
+      swarmLookahead: 0.1
+      arpLookahead: 0.1
+      arpDivision: 3
+      arpNoteSource: 0
+      arpCustomIntervals: 000000000400000007000000
+      arpPerNoteBpm: 0
+      euclideanPerNoteBpm: 0
+      euclideanSteps: 8
+      euclideanDivision: 4
+      stochasticDivision: 3
+      stochasticNoteSource: 0
+      chordRepeat: 0
+      chordDivision: 0
+      chordNoteSource: 1
+      chordCustomIntervals: 000000000400000007000000
+    score: 'i1 0 3.5 440
+
+      i1 0.05 3.5 554
+
+      i1 0.10 3.5 659'
+    bpm: 120
+    pitchBase: 261.63
+    noteDuration: 0.25
+    octaves: 1
+    scaleIndex: 0
+    chordTypeIndex: 2
+    swarmPitchSpread: 0
+    swarmDelay: 0.05
+    swarmDelayVariation: 0
+    swarmNoteDurationVariation: 0
+    arpDirectionIndex: 0
+    euclideanHits: 3
+    euclideanRotation: 0
+    stochasticHitProbability: 0.7
+    stochasticPitchWeight: 0
+    chordStrumSpread: 0
+    verboseLog: 0
+--- !u!114 &8053348450470673971
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3bb726fa0abcfe47b454740fce8b051, type: 3}
+  m_Name: CsoundUnityScorePlayableClip
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundUnityScorePlayableClip
+  template:
+    scoreInfo:
+      mode: 0
+      instrN: 1
+      time: 0
+      parameters: []
+      swarmLookahead: 0.1
+      arpLookahead: 0.1
+      arpDivision: 3
+      arpNoteSource: 0
+      arpCustomIntervals: 000000000400000007000000
+      arpPerNoteBpm: 0
+      euclideanPerNoteBpm: 0
+      euclideanSteps: 8
+      euclideanDivision: 4
+      stochasticDivision: 3
+      stochasticNoteSource: 0
+      chordRepeat: 0
+      chordDivision: 0
+      chordNoteSource: 1
+      chordCustomIntervals: 000000000400000007000000
+    score: i1 0.000 3.500 261.6300
+    bpm: 120
+    pitchBase: 261.63
+    noteDuration: 0.25
+    octaves: 1
+    scaleIndex: 0
+    chordTypeIndex: 2
+    swarmPitchSpread: 0
+    swarmDelay: 0.05
+    swarmDelayVariation: 0
+    swarmNoteDurationVariation: 0
+    arpDirectionIndex: 0
+    euclideanHits: 3
+    euclideanRotation: 0
+    stochasticHitProbability: 0.7
+    stochasticPitchWeight: 0
+    chordStrumSpread: 0
+    verboseLog: 0

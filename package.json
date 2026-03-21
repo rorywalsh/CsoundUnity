@@ -64,6 +64,11 @@
       "displayName": "UI",
       "description": "Using CsoundUnity UI components to control Csound parameters",
       "path": "Samples~/UI"
+    },
+    {
+      "displayName": "Timelines",
+      "description": "Using Unity Timelines to schedule and trigger Csound score events",
+      "path": "Samples~/Timelines"
     }
   ],
   "type": "tool"
