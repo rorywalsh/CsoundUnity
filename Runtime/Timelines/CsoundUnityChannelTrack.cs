@@ -44,11 +44,15 @@ namespace Csound.Unity.Timelines
     public class CsoundUnityChannelTrack : TrackAsset
     {
         public string channel;
+        /// <summary>Enable diagnostic logging for this channel track. Logs channel value changes at runtime.</summary>
+        public bool verboseLog = false;
 
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
             var mixerPlayable = ScriptPlayable<CsoundUnityMixerBehaviour>.Create(graph, inputCount);
-            mixerPlayable.GetBehaviour().channel = channel;
+            var b = mixerPlayable.GetBehaviour();
+            b.channel    = channel;
+            b.verboseLog = verboseLog;
             return mixerPlayable;
         }
     }
