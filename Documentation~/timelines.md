@@ -182,6 +182,55 @@ Distributes a number of hits as evenly as possible across a fixed number of step
 
 ---
 
+#### Pattern
+
+A step sequencer with multiple independent lanes (instruments), each with its own toggle grid. Every lane fires its Csound instrument on each active step. Typical use: drum machines, rhythmic sound design.
+
+**Timing**
+
+| Field | Description |
+|---|---|
+| BPM | Tempo of the pattern |
+| Division | Step grid: Whole, Half, Quarter, Eighth, Sixteenth, Thirty-second |
+| Steps | Total number of steps per cycle (1–32) |
+| Lookahead | How far ahead (in seconds) the cycle is pre-scheduled into Csound. Increase if you hear occasional late starts (see note below) |
+| Scheduling | **Precise**: the entire cycle is sent to Csound at once — sample-accurate, immune to frame jitter. **BPM-step**: one step at a time, allows live BPM changes within a cycle, timing ±1 frame |
+
+**Lanes**
+
+Each lane represents one instrument and has:
+
+| Field | Description |
+|---|---|
+| Label | Display name (for the Inspector grid) |
+| Instr N | Csound instrument number to trigger on active steps |
+| Enabled | Mutes the entire lane without removing it |
+| Velocity Mode | **Fixed**: all steps use the same velocity. **Offbeat**: alternate steps use a lower velocity for a natural groove feel |
+| Velocity | Base velocity (0–1), sent as `p4` |
+| Accent Velocity | Velocity for downbeat / accented steps |
+| Pan | Stereo position (−1 left, 0 centre, +1 right), sent as `p5` |
+| Pattern | The toggle grid: one button per step, click to activate or deactivate |
+
+**Snap to bars / Snap to pattern** buttons in the Inspector set the clip duration to musically aligned values.
+
+**CSD requirements:** `i{N} {onset} {duration} {velocity} {pan}`
+
+**Lookahead guidance (Precise mode)**
+
+In Precise mode, the entire cycle is pre-scheduled `patternLookahead` seconds before it starts. If a Unity frame takes longer than the lookahead window, the cycle fires late:
+
+- Default lookahead: `0.1 s` (100 ms) — robust for most hardware
+- Increase to `0.2 s` or more if you hear occasional missed beats on slower machines
+- Very high values (> cycle duration) are safe but unnecessary
+
+> **Performance note:** Audio timing in Unity is tightly coupled to CPU performance. Always test builds with the power adapter connected. Without it, CPU throttling can introduce timing irregularities that make even correct code sound out of time.
+
+**Changing the pattern from code**
+
+Use the Pattern runtime API (see [Runtime API](#runtime-api) below) to toggle steps, mute lanes, and change tempo while the Timeline is playing.
+
+---
+
 #### Stochastic
 
 Fires notes at a regular rhythmic grid, with each step having a probability of triggering. Pitch is chosen randomly from a scale or chord, optionally weighted toward the center.
@@ -293,3 +342,148 @@ The channel is updated every Unity frame, so resolution is limited to the frame 
 
 **No channels appear in the Channel Track dropdown**
 → Make sure the CsoundUnity component has a CSD file assigned. The channel list is read from the CSD at import time.
+
+**Pattern (or other modes) sounds irregular / out of time in a build**
+→ If on a laptop, always test with the **power adapter connected**. Without it, macOS and Windows reduce CPU clock speed (throttling), introducing frame timing jitter that can make the patterns sound out of time. This applies especially to audio-intensive builds. If irregularities persist with the adapter connected, try increasing the `Lookahead` value on the clip (e.g. from `0.1` to `0.2` s).
+
+---
+
+## Runtime API
+
+You can read and write parameters on a Score clip while the Timeline is playing. Each clip exposes a set of typed setters on `CsoundUnityScorePlayableBehaviour`.
+
+### Accessing the behaviour at runtime
+
+Iterate the playable graph to reach the behaviour for a specific clip:
+
+```csharp
+using Csound.Unity.Timelines;
+using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
+
+public class ScoreController : MonoBehaviour
+{
+    public PlayableDirector director;
+
+    CsoundUnityScorePlayableBehaviour _patternBehaviour;
+
+    void Start()
+    {
+        _patternBehaviour = GetFirstPatternBehaviour();
+    }
+
+    CsoundUnityScorePlayableBehaviour GetFirstPatternBehaviour()
+    {
+        var timeline = director.playableAsset as TimelineAsset;
+        var graph    = director.playableGraph;
+        int outIdx   = 0;
+
+        foreach (var track in timeline.GetOutputTracks())
+        {
+            if (track is CsoundUnityScoreTrack)
+            {
+                var output = graph.GetOutput(outIdx);
+                var mixer  = (ScriptPlayable<CsoundUnityScoreMixerBehaviour>)output.GetSourcePlayable();
+
+                for (int i = 0; i < mixer.GetInputCount(); i++)
+                {
+                    var clipPlayable = (ScriptPlayable<CsoundUnityScorePlayableBehaviour>)mixer.GetInput(i);
+                    var behaviour    = clipPlayable.GetBehaviour();
+                    if (behaviour.scoreInfo.mode == ScoreMode.Pattern)
+                        return behaviour;
+                }
+            }
+            outIdx++;
+        }
+        return null;
+    }
+
+    void Update()
+    {
+        if (_patternBehaviour == null) return;
+
+        // Change tempo live
+        _patternBehaviour.SetPatternBpm(140f);
+
+        // Toggle step 4 on lane 0 (kick drum)
+        _patternBehaviour.SetPatternStep(0, 4, true);
+
+        // Mute lane 2 (hi-hat)
+        _patternBehaviour.SetPatternLaneEnabled(2, false);
+    }
+}
+```
+
+> Changes take effect on the **next cycle** — the current cycle's notes have already been sent to Csound.
+
+---
+
+### Arpeggio setters
+
+| Method | Description |
+|---|---|
+| `SetArpBpm(float bpm)` | Change tempo |
+| `SetArpDivision(RhythmicDivision d)` | Change note grid (e.g. `Eighth`, `Sixteenth`) |
+| `SetArpPitchBase(float hz)` | Change root pitch |
+| `SetArpNoteDuration(float s)` | Change note duration |
+| `SetArpOctaves(int o)` | Change number of octaves (1–4) |
+| `SetArpScale(Scale scale)` | Change scale (e.g. `Scale.Minor`) |
+| `SetArpChord(Chord chord)` | Change chord voicing |
+| `SetArpDirection(ArpDirection d)` | Change direction (`Up`, `Down`, `UpDown`, `Random`) |
+| `SetArpNoteSource(ArpNoteSource s)` | Switch between `Scale` and `Chord` |
+| `SetArpCustomIntervals(int[] i)` | Set custom semitone intervals for the Custom chord |
+
+---
+
+### Swarm setters
+
+| Method | Description |
+|---|---|
+| `SetSwarmPitchBase(float hz)` | Change center frequency |
+| `SetSwarmPitchSpread(float hz)` | Change random pitch spread |
+| `SetSwarmDelay(float s)` | Change inter-grain delay |
+| `SetSwarmDelayVariation(float v)` | Change delay randomness (0–1) |
+| `SetSwarmGrainDuration(float s)` | Change grain duration |
+| `SetSwarmNoteDurationVariation(float v)` | Change duration randomness (0–1) |
+
+---
+
+### Euclidean setters
+
+| Method | Description |
+|---|---|
+| `SetEuclideanBpm(float bpm)` | Change tempo |
+| `SetEuclideanDivision(RhythmicDivision d)` | Change step grid |
+| `SetEuclideanHits(int hits)` | Change number of active hits |
+| `SetEuclideanSteps(int steps)` | Change total step count (1–32) |
+| `SetEuclideanRotation(int r)` | Rotate the pattern by N steps |
+| `SetEuclideanPitch(float hz)` | Change pitch |
+| `SetEuclideanNoteDuration(float s)` | Change note duration |
+
+---
+
+### Pattern setters
+
+| Method | Description |
+|---|---|
+| `SetPatternBpm(float bpm)` | Change tempo |
+| `SetPatternDivision(RhythmicDivision d)` | Change step grid |
+| `SetPatternStep(int lane, int step, bool active)` | Toggle a single step on or off |
+| `SetPatternLanePattern(int lane, bool[] pattern)` | Replace the entire step grid for a lane |
+| `SetPatternLaneEnabled(int lane, bool enabled)` | Mute or unmute a lane |
+| `SetPatternLaneVelocity(int lane, float v)` | Set base velocity (0–1) |
+| `SetPatternLaneAccentVelocity(int lane, float v)` | Set accent velocity (0–1) |
+| `SetPatternLanePan(int lane, float pan)` | Set pan (−1 left, 0 centre, +1 right) |
+
+---
+
+### Common setters
+
+| Method | Description |
+|---|---|
+| `SetBpm(float bpm)` | Change tempo (works for any mode that uses BPM) |
+| `SetPitchBase(float hz)` | Change root pitch |
+| `SetNoteDuration(float s)` | Change note duration |
+| `SetInstrN(string n)` | Change the Csound instrument number |
+| `SetMode(ScoreMode m)` | Switch clip mode at runtime |

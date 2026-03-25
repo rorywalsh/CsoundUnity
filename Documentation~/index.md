@@ -7,6 +7,7 @@
     + [Starting / Stopping Instruments](controlling_csound_from_unity.md#starting-stopping-instruments)
     + [Keeping Csound performance running](controlling_csound_from_unity.md#keeping-csound-performance-running)
   * [Controlling Csound from the Unity Editor](controlling_csound_from_the_unity_editor.md)
+    + [Audio Rates: sr, kr, and ksmps](controlling_csound_from_the_unity_editor.md#audio-rates-sr-kr-and-ksmps)
   * [Presets](presets.md)
   * [CsoundUnityChild](csoundunity_child.md)
   * [Environment Variables](environment_variables.md)
