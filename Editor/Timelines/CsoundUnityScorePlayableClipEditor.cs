@@ -53,6 +53,8 @@ namespace Csound.Unity.Timelines
         // the header labels at the exact x-position of each toggle column.
         private Rect[] _cachedStepRects;
 
+        #region Serialized properties
+
         // Root template property
         SerializedProperty m_template;
 
@@ -124,6 +126,13 @@ namespace Csound.Unity.Timelines
         SerializedProperty m_stepPerStepBpm;
         SerializedProperty m_stepLanes;
 
+        // Diagnostics (all modes)
+        SerializedProperty m_verboseLog;
+
+        #endregion Serialized properties
+
+        #region Instance state
+
         // Step editor state: (laneIndex, stepIndex) of the currently selected step for editing
         private int _stepSelLane = -1;
         private int _stepSelStep = -1;
@@ -138,8 +147,9 @@ namespace Csound.Unity.Timelines
         private float _stepRndVelMax     = 1.0f;
         private bool  _stepRndPitchOnly  = false;
 
-        // Diagnostics (all modes)
-        SerializedProperty m_verboseLog;
+        #endregion Instance state
+
+        #region OnEnable
 
         private void OnEnable()
         {
@@ -218,6 +228,8 @@ namespace Csound.Unity.Timelines
             m_verboseLog     = m_template.FindPropertyRelative("verboseLog");
         }
 
+        #endregion OnEnable
+
         #region Animated-property helpers
 
         // Per-property colours.
@@ -290,7 +302,7 @@ namespace Csound.Unity.Timelines
 
         #endregion Animated-property helpers
 
-        #region Step Randomize scale data
+        #region Step mode data
 
         static readonly string[] s_scaleNames = { "Major", "Minor", "Penta Maj", "Penta Min", "Dorian", "Mixolydian", "Chromatic" };
         static readonly int[][]  s_scales =
@@ -367,7 +379,9 @@ namespace Csound.Unity.Timelines
             EditorGUILayout.EndHorizontal();
         }
 
-        #endregion Step Randomize scale data
+        #endregion Step mode data
+
+        #region OnInspectorGUI
 
         public override void OnInspectorGUI()
         {
@@ -386,6 +400,8 @@ namespace Csound.Unity.Timelines
                 serializedObject.ApplyModifiedProperties();
         }
 
+        #endregion OnInspectorGUI
+
         private void DrawScoreComposer()
         {
             if (_behaviour == null)
@@ -402,7 +418,8 @@ namespace Csound.Unity.Timelines
 
             switch ((CsoundUnityScorePlayableBehaviour.ScoreMode)m_mode.boxedValue)
             {
-                // ------------------------------------------------------------------ Single
+                #region Single
+
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Single:
                     EditorGUILayout.HelpBox("Score syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...\n\nMultiple 'i' lines = polyphonic / melodic phrase.", MessageType.None);
                     EditorGUILayout.LabelField("Score:", EditorStyles.boldLabel);
@@ -414,7 +431,10 @@ namespace Csound.Unity.Timelines
                         _behaviour.SendScore();
                     break;
 
-                // ------------------------------------------------------------------ Swarm
+                #endregion Single
+
+                #region Swarm
+
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Swarm:
                 {
                     var orig = EditorGUIUtility.labelWidth;
@@ -484,7 +504,10 @@ namespace Csound.Unity.Timelines
                     break;
                 }
 
-                // ------------------------------------------------------------------ Arpeggio
+                #endregion Swarm
+
+                #region Arpeggio
+
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Arpeggio:
                 {
                     var orig = EditorGUIUtility.labelWidth;
@@ -628,7 +651,8 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.Space();
 
-                    // --- Timing info ---
+                    #region Timing info
+
                     float arpBpmVal  = m_bpm.floatValue;
                     float interval   = MusicUtils.DivisionToSeconds(arpBpmVal, (RhythmicDivision)m_arpDivision.intValue);
                     float bar        = interval * 4f; // assumes 4/4
@@ -684,7 +708,10 @@ namespace Csound.Unity.Timelines
                     else
                         EditorGUILayout.LabelField("Pattern cycle: — (Random direction has no fixed cycle)", EditorStyles.miniLabel);
 
-                    // --- Snap to bars ---
+                    #endregion Timing info
+
+                    #region Snap to bars
+
                     EditorGUILayout.Space(4);
                     EditorGUILayout.LabelField("Snap to bars:", EditorStyles.boldLabel);
                     EditorGUILayout.BeginHorizontal();
@@ -696,7 +723,10 @@ namespace Csound.Unity.Timelines
                     }
                     EditorGUILayout.EndHorizontal();
 
-                    // --- Snap to pattern ---
+                    #endregion Snap to bars
+
+                    #region Snap to pattern
+
                     EditorGUILayout.Space(4);
                     EditorGUILayout.LabelField("Snap to pattern:", EditorStyles.boldLabel);
                     if (hasPattern && patternDuration > 0f)
@@ -715,11 +745,16 @@ namespace Csound.Unity.Timelines
                         EditorGUILayout.HelpBox("No fixed pattern cycle for Random direction.", MessageType.None);
                     }
 
+                    #endregion Snap to pattern
+
                     EditorGUIUtility.labelWidth = orig;
                     break;
                 }
 
-                // ------------------------------------------------------------------ Euclidean
+                #endregion Arpeggio
+
+                #region Euclidean
+
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Euclidean:
                 {
                     var orig = EditorGUIUtility.labelWidth;
@@ -830,7 +865,10 @@ namespace Csound.Unity.Timelines
                     break;
                 }
 
-                // ------------------------------------------------------------------ Stochastic
+                #endregion Euclidean
+
+                #region Stochastic
+
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Stochastic:
                 {
                     var orig = EditorGUIUtility.labelWidth;
@@ -947,7 +985,10 @@ namespace Csound.Unity.Timelines
                     break;
                 }
 
-                // ------------------------------------------------------------------ Chord
+                #endregion Stochastic
+
+                #region Chord
+
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Chord:
                 {
                     var orig = EditorGUIUtility.labelWidth;
@@ -1119,7 +1160,10 @@ namespace Csound.Unity.Timelines
                     break;
                 }
 
-                // ------------------------------------------------------------------ Pattern
+                #endregion Chord
+
+                #region Pattern
+
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Pattern:
                 {
                     var orig = EditorGUIUtility.labelWidth;
@@ -1550,7 +1594,10 @@ namespace Csound.Unity.Timelines
                     break;
                 }
 
-                // Step
+                #endregion Pattern
+
+                #region Step
+
                 case CsoundUnityScorePlayableBehaviour.ScoreMode.Step:
                 {
                     var orig = EditorGUIUtility.labelWidth;
@@ -1893,6 +1940,8 @@ namespace Csound.Unity.Timelines
                     EditorGUIUtility.labelWidth = orig;
                     break;
                 }
+
+                #endregion Step
             }
 
 #else
