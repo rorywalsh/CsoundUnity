@@ -1,5 +1,5 @@
 <Cabbage>
-form caption("Single Sample Timeline") size(570, 220), guiMode("queue"), pluginId("sttl")
+form caption("Score Sample Timeline") size(570, 220), guiMode("queue"), pluginId("sttl")
 rslider bounds(10,  10, 80, 80) channel("gain")      range(0, 1, 0.7, 1, 0.001)         text("Gain")
 rslider bounds(100, 10, 80, 80) channel("amp")       range(0, 1, 0.5, 1, 0.001)         text("Amp")
 rslider bounds(190, 10, 80, 80) channel("attack")    range(0.001, 0.5, 0.008, 1, 0.001) text("Attack")
@@ -17,7 +17,7 @@ rslider bounds(370,110, 80, 80) channel("detune")    range(0, 10, 0, 1, 0.01)   
 -n -d
 </CsOptions>
 <CsInstruments>
-; Single Sample Timeline — versatile instrument for all Score modes
+; Score Sample Timeline — versatile instrument for all Score modes
 ; p4 = frequency in Hz
 
 sr     = 48000
