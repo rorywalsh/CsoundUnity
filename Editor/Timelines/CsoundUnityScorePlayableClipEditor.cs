@@ -409,7 +409,7 @@ namespace Csound.Unity.Timelines
 
             EditorGUILayout.Space();
 
-            var options = new string[] { "Single", "Swarm", "Arpeggio", "Euclidean", "Stochastic", "Chord", "Pattern", "Step" };
+            var options = new string[] { "Score", "Swarm", "Arpeggio", "Euclidean", "Stochastic", "Chord", "Pattern", "Step" };
             EditorGUILayout.LabelField("Mode: ");
             m_mode.intValue = EditorGUILayout.Popup(m_mode.intValue, options);
             DrawAnimatedSummary();
@@ -418,9 +418,9 @@ namespace Csound.Unity.Timelines
 
             switch ((CsoundUnityScorePlayableBehaviour.ScoreMode)m_mode.boxedValue)
             {
-                #region Single
+                #region Score
 
-                case CsoundUnityScorePlayableBehaviour.ScoreMode.Single:
+                case CsoundUnityScorePlayableBehaviour.ScoreMode.Score:
                     EditorGUILayout.HelpBox("Score syntax: \n\n\tp1\tp2\tp3\tp4\t...\tpN\ni\tinum\tstart\tdur\t...\t...\t...\n\nMultiple 'i' lines = polyphonic / melodic phrase.", MessageType.None);
                     EditorGUILayout.LabelField("Score:", EditorStyles.boldLabel);
                     m_score.stringValue = EditorGUILayout.TextArea(m_score.stringValue,
@@ -431,7 +431,7 @@ namespace Csound.Unity.Timelines
                         _behaviour.SendScore();
                     break;
 
-                #endregion Single
+                #endregion Score
 
                 #region Swarm
 

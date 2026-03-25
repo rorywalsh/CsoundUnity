@@ -76,7 +76,7 @@ Any numeric parameter on a Score clip can be animated over time using Unity's Cl
 
 ### Clip Modes
 
-#### Single
+#### Score
 
 Sends one Csound score line when the clip starts. The clip duration is automatically used as `p3`.
 

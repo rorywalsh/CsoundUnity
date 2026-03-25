@@ -49,7 +49,7 @@ namespace Csound.Unity.Timelines
     /// <summary>
     /// PlayableBehaviour for a clip on a <see cref="CsoundUnityScoreTrack"/>.
     /// Sends Csound score events when the clip plays.
-    /// Supports four modes: Single, Swarm, Arpeggio, Euclidean.
+    /// Supports four modes: Score, Swarm, Arpeggio, Euclidean.
     ///
     /// Discrete (snapshot-locked) — read ONCE at each cycle boundary and held
     /// for the full cycle, so changes take effect at the NEXT cycle start.
@@ -72,7 +72,7 @@ namespace Csound.Unity.Timelines
         [Serializable]
         public enum ScoreMode
         {
-            Single,
+            Score,
             Swarm,
             Arpeggio,
             Euclidean,
@@ -227,7 +227,7 @@ namespace Csound.Unity.Timelines
         [SerializeField]
         public ScoreInfo scoreInfo = new()
         {
-            mode               = ScoreMode.Single,
+            mode               = ScoreMode.Score,
             instrN             = "1",
             time               = 0,
             parameters         = new List<string>(),
@@ -268,12 +268,12 @@ namespace Csound.Unity.Timelines
 
         #endregion Non-animatable config
 
-        #region Animatable parameters — Single
+        #region Animatable parameters — Score
 
-        // Single
+        // Score
         public string score = "i1 0 1";
 
-        #endregion Animatable parameters — Single
+        #endregion Animatable parameters — Score
 
         #region Unified fields (shared across all modes that use them)
 
@@ -1456,8 +1456,8 @@ namespace Csound.Unity.Timelines
 
         private void Send()
         {
-            if (scoreInfo.mode != ScoreMode.Single) return;
-            if (verboseLog) Debug.Log($"[CsoundScore] SINGLE  {score}");
+            if (scoreInfo.mode != ScoreMode.Score) return;
+            if (verboseLog) Debug.Log($"[CsoundScore] SCORE  {score}");
             _csound.SendScoreEvent(score);
         }
 
