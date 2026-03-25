@@ -42,11 +42,16 @@ namespace Csound.Unity
     {
         static CsoundUnity[] csoundInstances;
         static List<FileSystemWatcher> fswInstances = new List<FileSystemWatcher>();
+        // Keys are normalised to forward-slash paths on all platforms so that
+        // the background-thread FileSystemWatcher events (which may use backslashes on
+        // Windows) always match the keys written by FindInstancesAndStartWatching.
         static Dictionary<string, List<CsoundUnity>> _pathsCsdListDict = new Dictionary<string, List<CsoundUnity>>();
         static Dictionary<string, DateTime> _lastFileChangeDict = new Dictionary<string, DateTime>();
         static Queue<Action> _actionsQueue = new Queue<Action>();
-        static float _lastUpdate;
-        static float _timeBetweenUpdates = .2f;
+        // Use EditorApplication.timeSinceStartup (double, editor-stable) instead
+        // of Time.realtimeSinceStartup which resets to 0 on every domain reload.
+        static double _lastUpdate;
+        static double _timeBetweenUpdates = .2;
         static bool _executeActions = true;
         static bool _quitting = false;
 
@@ -86,6 +91,14 @@ namespace Csound.Unity
                 _actionsQueue.Clear();
             }
 
+            // Properly dispose FileSystemWatcher instances before clearing the list
+            // to release OS file-notification handles.
+            foreach (var fsw in fswInstances)
+            {
+                fsw.EnableRaisingEvents = false;
+                fsw.Changed -= Watcher_Changed;
+                fsw.Dispose();
+            }
             fswInstances.Clear();
             EditorApplication.hierarchyChanged -= OnHierarchyChanged;
             EditorApplication.update -= EditorUpdate;
@@ -123,8 +136,10 @@ namespace Csound.Unity
 
         private static void EditorUpdate()
         {
-            var startTime = Time.realtimeSinceStartup;
-            if (startTime > _lastUpdate + _timeBetweenUpdates)
+            // EditorApplication.timeSinceStartup is a stable double
+            // that continues across domain reloads, unlike Time.realtimeSinceStartup.
+            var now = EditorApplication.timeSinceStartup;
+            if (now > _lastUpdate + _timeBetweenUpdates)
                 lock (_actionsQueue)
                 {
                     if (_quitting)
@@ -136,11 +151,18 @@ namespace Csound.Unity
                             var action = _actionsQueue.Dequeue();
                             if (action == null)
                                 continue;
-                            //Debug.Log($"{startTime} fileWatcher: action!");
+                            //Debug.Log($"{now} fileWatcher: action!");
                             action();
                         }
-                    _lastUpdate = Time.realtimeSinceStartup;
+                    _lastUpdate = EditorApplication.timeSinceStartup;
                 }
+        }
+
+        // Normalise a file path to forward-slash so dictionary keys are
+        // consistent regardless of whether Path.Combine or FileSystemWatcher produced them.
+        private static string NormalisePath(string path)
+        {
+            return path.Replace('\\', '/');
         }
 
         private static void StartWatching(string filePath)
@@ -150,25 +172,29 @@ namespace Csound.Unity
             FileSystemWatcher watcher = new FileSystemWatcher();
             watcher.Path = Path.GetDirectoryName(filePath);
             watcher.Filter = Path.GetFileName(filePath);
-            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
             watcher.Changed += Watcher_Changed;
+            watcher.Created += Watcher_Changed; // atomic-save editors write a temp file then rename it
             watcher.EnableRaisingEvents = true;
             fswInstances.Add(watcher);
         }
 
         private static void Watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
-            if (e.ChangeType == WatcherChangeTypes.Changed)
+            if (e.ChangeType == WatcherChangeTypes.Changed || e.ChangeType == WatcherChangeTypes.Created)
             {
-                var fileChanged = e.FullPath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                // Normalise the incoming path the same way keys are stored.
+                var fileChanged = NormalisePath(e.FullPath);
                 //Debug.Log("fileWatcher: fileChanged! " + fileChanged);
 
                 if (!_lastFileChangeDict.ContainsKey(fileChanged)) return;
 
                 var lastChange = _lastFileChangeDict[fileChanged];
                 //Debug.Log($"fileWatcher: {fileChanged} last change was at {lastChange}");
-                //ignore duplicate calls detected by FileSystemWatcher on file save
-                if (DateTime.Now.Subtract(lastChange).TotalMilliseconds < 1000)
+                // Debounce: 300 ms is enough to swallow the duplicate event that most
+                // OS/editor combos fire for a single save, without suppressing legitimate
+                // rapid saves (edit → save → edit → save within a second).
+                if (DateTime.Now.Subtract(lastChange).TotalMilliseconds < 300)
                 {
                     //Debug.Log($"fileWatcher: IGNORING CHANGE AT {DateTime.Now}");
                     return;
@@ -191,16 +217,25 @@ namespace Csound.Unity
                     lock (_actionsQueue)
                         _actionsQueue.Enqueue(() =>
                         {
+                            // Guard against destroyed objects captured by the lambda:
+                            // a CsoundUnity component can be removed from the scene between
+                            // the FileSystemWatcher event and the EditorUpdate queue drain.
+                            if (csound == null) return;
+
                             if (result != 0)
                             {
                                 csound.enabled = false;
+                                EditorUtility.SetDirty(csound);
                             }
                             else
                             {
                                 Debug.Log($"<color=green>[CsoundFileWatcher] Updating csd: {csound.csoundFileName} in GameObject: {csound.gameObject.name}</color>");
-                            // csound.enabled = true;
-                            //file changed but guid stays the same
-                            csound.SetCsd(csound.csoundFileGUID);
+                                // csound.enabled = true;
+                                // file changed but guid stays the same
+                                csound.SetCsd(csound.csoundFileGUID);
+                                // Mark the object and scene dirty so Unity knows the
+                                // serialized data changed and will save it with the scene.
+                                EditorUtility.SetDirty(csound);
                             }
                         });
                 }
@@ -243,9 +278,12 @@ namespace Csound.Unity
             if (Application.isPlaying) return;
 
             // Debug.Log("fileWatcher: OnHierarchyChanged");
+            // Dispose watchers properly before restarting.
             foreach (var fsw in fswInstances)
             {
+                fsw.EnableRaisingEvents = false;
                 fsw.Changed -= Watcher_Changed;
+                fsw.Dispose();
             }
             fswInstances.Clear();
             FindInstancesAndStartWatching();
@@ -253,15 +291,28 @@ namespace Csound.Unity
 
         private static void FindInstancesAndStartWatching()
         {
-            csoundInstances = (CsoundUnity[])Resources.FindObjectsOfTypeAll(typeof(CsoundUnity));//as CsoundUnity[];
+            // Use Object.FindObjectsByType (Unity 2022+ API) to find only live scene instances,
+            // falling back to FindObjectsOfType for older Unity versions.
+            // Resources.FindObjectsOfTypeAll also returns prefab assets, which must be avoided.
+#if UNITY_2022_2_OR_NEWER
+            csoundInstances = UnityEngine.Object.FindObjectsByType<CsoundUnity>(FindObjectsSortMode.None);
+#else
+            csoundInstances = UnityEngine.Object.FindObjectsOfType<CsoundUnity>();
+#endif
             _pathsCsdListDict.Clear();
             _lastFileChangeDict.Clear();
 
             // Debug.Log($"fileWatcher: found {csoundInstances.Length} instance(s) of csound");
             foreach (var csd in csoundInstances)
             {
+                // Skip null/destroyed entries that may linger.
+                if (csd == null) continue;
+
                 // get csd file path from the CsoundUnity instance and check if it exists
-                var filePath = csd.GetFilePath();
+                var rawFilePath = csd.GetFilePath();
+                // Normalise so that dictionary keys always use forward slashes
+                // and match the normalised path coming from Watcher_Changed.
+                var filePath = NormalisePath(rawFilePath);
                 // Debug.Log("fileWatcher: FILEPATH " + filePath);
                 if (!File.Exists(filePath)) continue;
 
@@ -269,17 +320,20 @@ namespace Csound.Unity
                 {
                     Debug.LogError($"fileWatcher: Heuston we have a problem... CsoundUnity disabled for file: {filePath}");
                     csd.enabled = false;
+                    EditorUtility.SetDirty(csd);
                 }
                 else
                 {
                     //Debug.Log("<color=green>fileWatcher: Csound file has no errors!</color>");
                     var csdString = File.ReadAllText(filePath);
                     // check if the csdString in the asset file is different from the one we have serialised in CsoundUnity
-                    if (!csd.csoundString.Equals(csdString))
+                    if (csd.csoundString == null || !csd.csoundString.Equals(csdString))
                     {
                         Debug.Log($"<color=green>[CsoundFileWatcher] Updating csd: {csd.csoundFileName} in GameObject: {csd.gameObject.name}</color>");
                         // content changed but guid stays the same
                         csd.SetCsd(csd.csoundFileGUID);
+                        // Mark dirty after the on-startup catch-up sync too.
+                        EditorUtility.SetDirty(csd);
                     }
                     // csd.enabled = true;
                 }
