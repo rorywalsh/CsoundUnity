@@ -1,0 +1,752 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!29 &1
+OcclusionCullingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_OcclusionBakeSettings:
+    smallestOccluder: 5
+    smallestHole: 0.25
+    backfaceThreshold: 100
+  m_SceneGUID: 00000000000000000000000000000000
+  m_OcclusionCullingData: {fileID: 0}
+--- !u!104 &2
+RenderSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 10
+  m_Fog: 0
+  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  m_FogMode: 3
+  m_FogDensity: 0.01
+  m_LinearFogStart: 0
+  m_LinearFogEnd: 300
+  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
+  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
+  m_AmbientIntensity: 1
+  m_AmbientMode: 0
+  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_HaloStrength: 0.5
+  m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
+  m_HaloTexture: {fileID: 0}
+  m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
+  m_DefaultReflectionMode: 0
+  m_DefaultReflectionResolution: 128
+  m_ReflectionBounces: 1
+  m_ReflectionIntensity: 1
+  m_CustomReflection: {fileID: 0}
+  m_Sun: {fileID: 0}
+  m_UseRadianceAmbientProbe: 0
+--- !u!157 &3
+LightmapSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
+  m_GISettings:
+    serializedVersion: 2
+    m_BounceScale: 1
+    m_IndirectOutputScale: 1
+    m_AlbedoBoost: 1
+    m_EnvironmentLightingMode: 0
+    m_EnableBakedLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
+  m_LightmapEditorSettings:
+    serializedVersion: 12
+    m_Resolution: 2
+    m_BakeResolution: 40
+    m_AtlasSize: 1024
+    m_AO: 0
+    m_AOMaxDistance: 1
+    m_CompAOExponent: 1
+    m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
+    m_Padding: 2
+    m_LightmapParameters: {fileID: 0}
+    m_LightmapsBakeMode: 1
+    m_TextureCompression: 1
+    m_ReflectionCompression: 2
+    m_MixedBakeMode: 2
+    m_BakeBackend: 2
+    m_PVRSampling: 1
+    m_PVRDirectSampleCount: 32
+    m_PVRSampleCount: 512
+    m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 1
+    m_PVRDenoiserTypeDirect: 1
+    m_PVRDenoiserTypeIndirect: 1
+    m_PVRDenoiserTypeAO: 1
+    m_PVRFilterTypeDirect: 0
+    m_PVRFilterTypeIndirect: 0
+    m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 1
+    m_PVRCulling: 1
+    m_PVRFilteringGaussRadiusDirect: 1
+    m_PVRFilteringGaussRadiusIndirect: 1
+    m_PVRFilteringGaussRadiusAO: 1
+    m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+    m_PVRFilteringAtrousPositionSigmaIndirect: 2
+    m_PVRFilteringAtrousPositionSigmaAO: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
+  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingSettings: {fileID: 0}
+--- !u!196 &4
+NavMeshSettings:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_BuildSettings:
+    serializedVersion: 3
+    agentTypeID: 0
+    agentRadius: 0.5
+    agentHeight: 2
+    agentSlope: 45
+    agentClimb: 0.4
+    ledgeDropHeight: 0
+    maxJumpAcrossDistance: 0
+    minRegionArea: 2
+    manualCellSize: 0
+    cellSize: 0.16666667
+    manualTileSize: 0
+    tileSize: 256
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
+    debug:
+      m_Flags: 0
+  m_NavMeshData: {fileID: 0}
+--- !u!1 &83651809
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 83651811}
+  - component: {fileID: 83651810}
+  m_Layer: 0
+  m_Name: CsoundTimelineStarter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &83651810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83651809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9004c5881b1524903b5550fb6a39dd7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity.timelines::Csound.Unity.Timelines.CsoundTimelineStarter
+  director: {fileID: 1275899114}
+  csound: {fileID: 582020846}
+  extraDelay: 0.1
+--- !u!4 &83651811
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83651809}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &582020845
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 582020848}
+  - component: {fileID: 582020847}
+  - component: {fileID: 582020846}
+  m_Layer: 0
+  m_Name: CsoundUnity
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &582020846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582020845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
+  logCsoundOutput: 0
+  mute: 0
+  processClipAudio: 0
+  loudVolumeWarning: 1
+  loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 48000
+  controlRate: 4800
+  updateOutputBuffer: 0
+  csoundScore: 
+  environmentSettings: []
+  _csoundFileGUID: 49dee544fe93a4f76ba1fb351b4daab7
+  _csoundString: "\r\n<Cabbage>\r\nform caption(\"TR-808 Pattern Timeline\") size(300,
+    90), guiMode(\"queue\"), pluginId(\"drml\")\r\nrslider bounds(10, 10, 80, 80)
+    channel(\"masterLevel\") range(0, 1, 1, 1, 0.001) text(\"Master\")\r\nrslider
+    bounds(100, 10, 80, 80) channel(\"reverbMix\") range(0, 1, 0.1, 1, 0.001) text(\"Reverb\")\r\n</Cabbage>\r\n\r\n;
+    PatternTimeline.csd\r\n; Based on TR-808.csd by Iain McCurdy (2012)\r\n; https://iainmccurdy.org\r\n;
+    License: CC BY-NC-SA 4.0  https://creativecommons.org/licenses/by-nc-sa/4.0/\r\n;\r\n;
+    Adapted for CsoundUnity Timelines by gb (2026).\r\n; The internal step sequencer
+    (instrs 1-4) has been replaced by Unity Timeline\r\n; Drum clips, which trigger
+    individual drum instruments directly via score events:\r\n;\r\n;   i <instrN>
+    <onset> 0.001 <velocity>\r\n;\r\n;   instrN   : 101=BD  102=SN  103=OHH  104=CHH 
+    105=HTom  106=MTom  107=LTom\r\n;              108=Cym  109=Rim  110=Clv  111=CB  
+    112=Clap  113=Mar\r\n;              114=HConga  115=MConga  116=LConga\r\n;  
+    velocity : 0.0\u20131.0  (p4)\r\n;\r\n; Per-instrument timbre can be tweaked
+    at runtime via CsoundUnity channels:\r\n;   level1..16   \u2013 amplitude multiplier 
+    (default 1)\r\n;   tune1..16    \u2013 pitch offset in octaves (default 0)\r\n;  
+    dur1..16     \u2013 decay time multiplier  (default 1)\r\n;   pan1..16     \u2013
+    stereo pan 0\u20131        (default 0.5)\r\n;   masterLevel  \u2013 global output
+    level    (default 1)\r\n\r\n<CsoundSynthesizer>\r\n\r\n<CsOptions>\r\n-n -d\r\n</CsOptions>\r\n\r\n<CsInstruments>\r\n\r\nsr     
+    =   48000\r\nksmps   =   32\r\nnchnls  =   2\r\n0dbfs   =   1\r\n\r\ngisine       
+    ftgen 0, 0, 1024,  10, 1\r\ngicos         ftgen 0, 0, 65536,  9, 1, 1, 90\r\ngiTR808RimShot
+    ftgen 0, 0, 1024,  10, 0.971,0.269,0.041,0.054,0.011,0.013,0.08,0.0065,0.005,0.004,0.003,0.003,0.002,0.002,0.002,0.002,0.002,0.001,0.001,0.001,0.001,0.001,0.002,0.001,0.001\r\n\r\n;
+    \u2500\u2500 Global defaults for per-instrument gk vars \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n;
+    These ensure drum instruments get sensible values even before instr 1's\r\n;
+    first k-pass (gklevel=0 would make all hits silent).\r\ngklevel1  init 1   ; 
+    BD  level\r\ngklevel2  init 1   ;  SN  level\r\ngklevel3  init 1   ;  OHH level\r\ngklevel4 
+    init 1   ;  CHH level\r\ngklevel5  init 1   ;  HTom level\r\ngklevel6  init 1  
+    ;  MTom level\r\ngklevel7  init 1   ;  LTom level\r\ngklevel8  init 1   ;  Cym 
+    level\r\ngklevel9  init 1   ;  Rim  level\r\ngklevel10 init 1   ;  Clv  level\r\ngklevel11
+    init 1   ;  CB   level\r\ngklevel12 init 1   ;  Clap level\r\ngklevel13 init
+    1   ;  Mar  level\r\ngklevel14 init 1   ;  HCo  level\r\ngklevel15 init 1   ; 
+    MCo  level\r\ngklevel16 init 1   ;  LCo  level\r\ngktune1   init 0\r\ngktune2  
+    init 0\r\ngktune3   init 0\r\ngktune4   init 0\r\ngktune5   init 0\r\ngktune6  
+    init 0\r\ngktune7   init 0\r\ngktune8   init 0\r\ngktune9   init 0\r\ngktune10 
+    init 0\r\ngktune11  init 0\r\ngktune12  init 0\r\ngktune13  init 0\r\ngktune14 
+    init 0\r\ngktune15  init 0\r\ngktune16  init 0\r\ngkdur1    init 1\r\ngkdur2   
+    init 1\r\ngkdur3    init 1\r\ngkdur4    init 1\r\ngkdur5    init 1\r\ngkdur6   
+    init 1\r\ngkdur7    init 1\r\ngkdur8    init 1\r\ngkdur9    init 1\r\ngkdur10  
+    init 1\r\ngkdur11   init 1\r\ngkdur12   init 1\r\ngkdur13   init 1\r\ngkdur14  
+    init 1\r\ngkdur15   init 1\r\ngkdur16   init 1\r\ngkpan1    init 0.5\r\ngkpan2   
+    init 0.5\r\ngkpan3    init 0.5\r\ngkpan4    init 0.5\r\ngkpan5    init 0.5\r\ngkpan6   
+    init 0.5\r\ngkpan7    init 0.5\r\ngkpan8    init 0.5\r\ngkpan9    init 0.5\r\ngkpan10  
+    init 0.5\r\ngkpan11   init 0.5\r\ngkpan12   init 0.5\r\ngkpan13   init 0.5\r\ngkpan14  
+    init 0.5\r\ngkpan15   init 0.5\r\ngkpan16   init 0.5\r\ngklevel   init 1   ; 
+    masterLevel\r\nga1       init 0   ;  reverb send bus (mono)\r\n\r\n; \u2500\u2500
+    Global channel reader \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n;
+    Reads per-instrument and master-level channels with sensible defaults.\r\n; All
+    drum instruments reference these gk vars at i-time and k-rate.\r\ninstr 1\r\n   
+    gklevel1    chnget  \"level1\"\r\n    gklevel2    chnget  \"level2\"\r\n    gklevel3   
+    chnget  \"level3\"\r\n    gklevel4    chnget  \"level4\"\r\n    gklevel5    chnget 
+    \"level5\"\r\n    gklevel6    chnget  \"level6\"\r\n    gklevel7    chnget  \"level7\"\r\n   
+    gklevel8    chnget  \"level8\"\r\n    gklevel9    chnget  \"level9\"\r\n    gklevel10  
+    chnget  \"level10\"\r\n    gklevel11   chnget  \"level11\"\r\n    gklevel12  
+    chnget  \"level12\"\r\n    gklevel13   chnget  \"level13\"\r\n    gklevel14  
+    chnget  \"level14\"\r\n    gklevel15   chnget  \"level15\"\r\n    gklevel16  
+    chnget  \"level16\"\r\n    gktune1     chnget  \"tune1\"\r\n    gktune2     chnget 
+    \"tune2\"\r\n    gktune3     chnget  \"tune3\"\r\n    gktune4     chnget  \"tune4\"\r\n   
+    gktune5     chnget  \"tune5\"\r\n    gktune6     chnget  \"tune6\"\r\n    gktune7    
+    chnget  \"tune7\"\r\n    gktune8     chnget  \"tune8\"\r\n    gktune9     chnget 
+    \"tune9\"\r\n    gktune10    chnget  \"tune10\"\r\n    gktune11    chnget  \"tune11\"\r\n   
+    gktune12    chnget  \"tune12\"\r\n    gktune13    chnget  \"tune13\"\r\n    gktune14   
+    chnget  \"tune14\"\r\n    gktune15    chnget  \"tune15\"\r\n    gktune16    chnget 
+    \"tune16\"\r\n    gkdur1      chnget  \"dur1\"\r\n    gkdur2      chnget  \"dur2\"\r\n   
+    gkdur3      chnget  \"dur3\"\r\n    gkdur4      chnget  \"dur4\"\r\n    gkdur5     
+    chnget  \"dur5\"\r\n    gkdur6      chnget  \"dur6\"\r\n    gkdur7      chnget 
+    \"dur7\"\r\n    gkdur8      chnget  \"dur8\"\r\n    gkdur9      chnget  \"dur9\"\r\n   
+    gkdur10     chnget  \"dur10\"\r\n    gkdur11     chnget  \"dur11\"\r\n    gkdur12    
+    chnget  \"dur12\"\r\n    gkdur13     chnget  \"dur13\"\r\n    gkdur14     chnget 
+    \"dur14\"\r\n    gkdur15     chnget  \"dur15\"\r\n    gkdur16     chnget  \"dur16\"\r\n   
+    gkpan1      chnget  \"pan1\"\r\n    gkpan2      chnget  \"pan2\"\r\n    gkpan3     
+    chnget  \"pan3\"\r\n    gkpan4      chnget  \"pan4\"\r\n    gkpan5      chnget 
+    \"pan5\"\r\n    gkpan6      chnget  \"pan6\"\r\n    gkpan7      chnget  \"pan7\"\r\n   
+    gkpan8      chnget  \"pan8\"\r\n    gkpan9      chnget  \"pan9\"\r\n    gkpan10    
+    chnget  \"pan10\"\r\n    gkpan11     chnget  \"pan11\"\r\n    gkpan12     chnget 
+    \"pan12\"\r\n    gkpan13     chnget  \"pan13\"\r\n    gkpan14     chnget  \"pan14\"\r\n   
+    gkpan15     chnget  \"pan15\"\r\n    gkpan16     chnget  \"pan16\"\r\n    gklevel    
+    chnget  \"masterLevel\"\r\nendin\r\n\r\n; \u2500\u2500 Default channel values
+    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n;
+    Written once at score start so chnget returns sensible values immediately.\r\ninstr
+    2\r\n    chnset  1.0, \"level1\"\r\n    chnset  1.0, \"level2\"\r\n    chnset 
+    1.0, \"level3\"\r\n    chnset  1.0, \"level4\"\r\n    chnset  1.0, \"level5\"\r\n   
+    chnset  1.0, \"level6\"\r\n    chnset  1.0, \"level7\"\r\n    chnset  1.0, \"level8\"\r\n   
+    chnset  1.0, \"level9\"\r\n    chnset  1.0, \"level10\"\r\n    chnset  1.0, \"level11\"\r\n   
+    chnset  1.0, \"level12\"\r\n    chnset  1.0, \"level13\"\r\n    chnset  1.0,
+    \"level14\"\r\n    chnset  1.0, \"level15\"\r\n    chnset  1.0, \"level16\"\r\n   
+    chnset  0.0, \"tune1\"\r\n    chnset  0.0, \"tune2\"\r\n    chnset  0.0, \"tune3\"\r\n   
+    chnset  0.0, \"tune4\"\r\n    chnset  0.0, \"tune5\"\r\n    chnset  0.0, \"tune6\"\r\n   
+    chnset  0.0, \"tune7\"\r\n    chnset  0.0, \"tune8\"\r\n    chnset  0.0, \"tune9\"\r\n   
+    chnset  0.0, \"tune10\"\r\n    chnset  0.0, \"tune11\"\r\n    chnset  0.0, \"tune12\"\r\n   
+    chnset  0.0, \"tune13\"\r\n    chnset  0.0, \"tune14\"\r\n    chnset  0.0, \"tune15\"\r\n   
+    chnset  0.0, \"tune16\"\r\n    chnset  1.0, \"dur1\"\r\n    chnset  1.0, \"dur2\"\r\n   
+    chnset  1.0, \"dur3\"\r\n    chnset  1.0, \"dur4\"\r\n    chnset  1.0, \"dur5\"\r\n   
+    chnset  1.0, \"dur6\"\r\n    chnset  1.0, \"dur7\"\r\n    chnset  1.0, \"dur8\"\r\n   
+    chnset  1.0, \"dur9\"\r\n    chnset  1.0, \"dur10\"\r\n    chnset  1.0, \"dur11\"\r\n   
+    chnset  1.0, \"dur12\"\r\n    chnset  1.0, \"dur13\"\r\n    chnset  1.0, \"dur14\"\r\n   
+    chnset  1.0, \"dur15\"\r\n    chnset  1.0, \"dur16\"\r\n    chnset  0.5, \"pan1\"\r\n   
+    chnset  0.5, \"pan2\"\r\n    chnset  0.5, \"pan3\"\r\n    chnset  0.5, \"pan4\"\r\n   
+    chnset  0.5, \"pan5\"\r\n    chnset  0.5, \"pan6\"\r\n    chnset  0.5, \"pan7\"\r\n   
+    chnset  0.5, \"pan8\"\r\n    chnset  0.5, \"pan9\"\r\n    chnset  0.5, \"pan10\"\r\n   
+    chnset  0.5, \"pan11\"\r\n    chnset  0.5, \"pan12\"\r\n    chnset  0.5, \"pan13\"\r\n   
+    chnset  0.5, \"pan14\"\r\n    chnset  0.5, \"pan15\"\r\n    chnset  0.5, \"pan16\"\r\n   
+    chnset  1.0, \"masterLevel\"\r\n    turnoff\r\nendin\r\n\r\n; \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\r\n;
+    DRUM VOICES  (101\u2013116)\r\n; Triggered by Unity Timeline Drum clips: i <N>
+    <onset> 0.001 <velocity>\r\n; p4 = velocity (0\u20131)\r\n; \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\r\n\r\ninstr  
+    101     ;BASS DRUM\r\n    xtratim 0.1\r\n    p3      =       2*i(gkdur1)\r\n   
+    kmul    transeg 0.2,p3*0.5,-15,0.01, p3*0.5,0,0\r\n    kbend   transeg 0.5,1.2,-4,
+    0,1,0,0\r\n    asig    gbuzz   0.5,50*octave(gktune1)*semitone(kbend),20,1,kmul,gicos\r\n   
+    aenv    transeg 1,p3-0.004,-6,0\r\n    aatt    linseg  0,0.004,1\r\n    asig   
+    =       asig*aenv*aatt\r\n    aenv    linseg  1,0.07,0\r\n    acps    expsega
+    400,0.07,0.001,1,0.001\r\n    aimp    oscili  aenv,acps*octave(gktune1*0.25),gisine\r\n   
+    amix    =       ((asig*0.5)+(aimp*0.35))*gklevel1*p4*gklevel\r\n    aL,aR   pan2   
+    amix,(p5+1)*0.5\r\n            outs    aL,aR\r\n    ga1 += (aL + aR) * 0.5\r\nendin\r\n\r\ninstr  
+    102     ;SNARE DRUM\r\n    xtratim 0.1\r\n    ifrq    =       342\r\n    iNseDur
+    =       0.3*i(gkdur2)\r\n    iPchDur =       0.1*i(gkdur2)\r\n    p3      =      
+    iNseDur\r\n    aenv1   expseg  1,iPchDur,0.0001,p3-iPchDur,0.0001\r\n    apitch1
+    oscili  1,ifrq*octave(gktune2),gisine\r\n    apitch2 oscili  0.25,ifrq*0.5*octave(gktune2),gisine\r\n   
+    apitch  =       (apitch1+apitch2)*0.75\r\n    aenv2   expon   1,p3,0.0005\r\n   
+    anoise  noise   0.75,0\r\n    anoise  butbp   anoise,10000*octave(gktune2),10000\r\n   
+    anoise  buthp   anoise,1000\r\n    kcf     expseg  5000,0.1,3000,p3-0.2,3000\r\n   
+    anoise  butlp   anoise,kcf\r\n    amix    =       ((apitch*aenv1)+(anoise*aenv2))*gklevel2*p4*gklevel\r\n   
+    aL,aR   pan2    amix,(p5+1)*0.5\r\n            outs    aL,aR\r\n    ga1 += (aL
+    + aR) * 0.5\r\nendin\r\n\r\ninstr   103     ;OPEN HIGH HAT\r\n    xtratim 0.1\r\n   
+    kFrq1   =       296*octave(gktune3)\r\n    kFrq2   =       285*octave(gktune3)\r\n   
+    kFrq3   =       365*octave(gktune3)\r\n    kFrq4   =       348*octave(gktune3)\r\n   
+    kFrq5   =       420*octave(gktune3)\r\n    kFrq6   =       835*octave(gktune3)\r\n   
+    p3      =       0.5*i(gkdur3)\r\n    aenv    linseg  1,p3-0.05,0.1,0.05,0\r\n   
+    ipw     =       0.25\r\n    a1      vco2    0.5,kFrq1,2,ipw\r\n    a2      vco2   
+    0.5,kFrq2,2,ipw\r\n    a3      vco2    0.5,kFrq3,2,ipw\r\n    a4      vco2   
+    0.5,kFrq4,2,ipw\r\n    a5      vco2    0.5,kFrq5,2,ipw\r\n    a6      vco2   
+    0.5,kFrq6,2,ipw\r\n    amix    sum     a1,a2,a3,a4,a5,a6\r\n    amix    reson  
+    amix,5000*octave(gktune3),5000,1\r\n    amix    buthp   amix,5000\r\n    amix   
+    buthp   amix,5000\r\n    amix    =       amix*aenv\r\n    kcf     expseg  20000,0.7,9000,p3-0.1,9000\r\n   
+    anoise  noise   0.8,0\r\n    aenv    linseg  1,p3-0.05,0.1,0.05,0\r\n    anoise 
+    butlp   anoise,kcf\r\n    anoise  buthp   anoise,8000\r\n    anoise  =      
+    anoise*aenv\r\n    amix    =       (amix+anoise)*gklevel3*p4*0.55*gklevel\r\n   
+    aL,aR   pan2    amix,(p5+1)*0.5\r\n            outs    aL,aR\r\n    ga1 += (aL
+    + aR) * 0.5\r\nendin\r\n\r\ninstr   104     ;CLOSED HIGH HAT  (mutes Open HH
+    when active)\r\n    xtratim 0.1\r\n    kFrq1   =       296*octave(gktune4)\r\n   
+    kFrq2   =       285*octave(gktune4)\r\n    kFrq3   =       365*octave(gktune4)\r\n   
+    kFrq4   =       348*octave(gktune4)\r\n    kFrq5   =       420*octave(gktune4)\r\n   
+    kFrq6   =       835*octave(gktune4)\r\n    idur    =       0.088*i(gkdur4)\r\n   
+    p3      limit   idur,0.1,10\r\n    iactive active  p1-1\r\n    if iactive>0 then\r\n    
+    turnoff2 p1-1,0,0\r\n    endif\r\n    aenv    expsega 1,idur,0.001,1,0.001\r\n   
+    ipw     =       0.25\r\n    a1      vco2    0.5,kFrq1,2,ipw\r\n    a2      vco2   
+    0.5,kFrq2,2,ipw\r\n    a3      vco2    0.5,kFrq3,2,ipw\r\n    a4      vco2   
+    0.5,kFrq4,2,ipw\r\n    a5      vco2    0.5,kFrq5,2,ipw\r\n    a6      vco2   
+    0.5,kFrq6,2,ipw\r\n    amix    sum     a1,a2,a3,a4,a5,a6\r\n    amix    reson  
+    amix,5000*octave(gktune4),5000,1\r\n    amix    buthp   amix,5000\r\n    amix   
+    buthp   amix,5000\r\n    amix    =       amix*aenv\r\n    anoise  noise   0.8,0\r\n   
+    aenv    expsega 1,idur,0.001,1,0.001\r\n    kcf     expseg  20000,0.7,9000,idur-0.1,9000\r\n   
+    anoise  butlp   anoise,kcf\r\n    anoise  buthp   anoise,8000\r\n    anoise 
+    =       anoise*aenv\r\n    amix    =       (amix+anoise)*gklevel4*p4*0.55*gklevel\r\n   
+    aL,aR   pan2    amix,(p5+1)*0.5\r\n            outs    aL,aR\r\n    ga1 += (aL
+    + aR) * 0.5\r\nendin\r\n\r\ninstr   105     ;HIGH TOM\r\n    xtratim 0.1\r\n   
+    ifrq    =       200*octave(i(gktune5))\r\n    p3      =       0.5*i(gkdur5)\r\n   
+    aAmpEnv transeg 1,p3,-10,0.001\r\n    afmod   expsega 5,0.125/ifrq,1,1,1\r\n   
+    asig    oscili  -aAmpEnv*0.6,ifrq*afmod,gisine\r\n    aEnvNse transeg 1,p3,-6,0.001\r\n   
+    anoise  dust2   0.4,8000\r\n    anoise  reson   anoise,400*octave(i(gktune5)),800,1\r\n   
+    anoise  buthp   anoise,100*octave(i(gktune5))\r\n    anoise  butlp   anoise,1000*octave(i(gktune5))\r\n   
+    anoise  =       anoise*aEnvNse\r\n    amix    =       (asig+anoise)*gklevel5*p4*gklevel\r\n   
+    aL,aR   pan2    amix,(p5+1)*0.5\r\n            outs    aL,aR\r\n    ga1 += (aL
+    + aR) * 0.5\r\nendin\r\n\r\ninstr   106     ;MID TOM\r\n    xtratim 0.1\r\n   
+    ifrq    =       133*octave(i(gktune6))\r\n    p3      =       0.6*i(gkdur6)\r\n   
+    aAmpEnv transeg 1,p3,-10,0.001\r\n    afmod   expsega 5,0.125/ifrq,1,1,1\r\n   
+    asig    oscili  -aAmpEnv*0.6,ifrq*afmod,gisine\r\n    aEnvNse transeg 1,p3,-6,0.001\r\n   
+    anoise  dust2   0.4,8000\r\n    anoise  reson   anoise,400*octave(i(gktune6)),800,1\r\n   
+    anoise  buthp   anoise,100*octave(i(gktune6))\r\n    anoise  butlp   anoise,600*octave(i(gktune6))\r\n   
+    anoise  =       anoise*aEnvNse\r\n    amix    =       (asig+anoise)*gklevel6*p4*gklevel\r\n   
+    aL,aR   pan2    amix,(p5+1)*0.5\r\n            outs    aL,aR\r\n    ga1 += (aL
+    + aR) * 0.5\r\nendin\r\n\r\ninstr   107     ;LOW TOM\r\n    xtratim 0.1\r\n   
+    ifrq    =       90*octave(i(gktune7))\r\n    p3      =       0.7*i(gkdur7)\r\n   
+    aAmpEnv transeg 1,p3,-10,0.001\r\n    afmod   expsega 5,0.125/ifrq,1,1,1\r\n   
+    asig    oscili  -aAmpEnv*0.6,ifrq*afmod,gisine\r\n    aEnvNse transeg 1,p3,-6,0.001\r\n   
+    anoise  dust2   0.4,8000\r\n    anoise  reson   anoise,40*octave(gktune7),800,1\r\n   
+    anoise  buthp   anoise,100*octave(i(gktune7))\r\n    anoise  butlp   anoise,600*octave(i(gktune7))\r\n   
+    anoise  =       anoise*aEnvNse\r\n    amix    =       (asig+anoise)*gklevel7*p4*gklevel\r\n   
+    aL,aR   pan2    amix,(p5+1)*0.5\r\n            outs    aL,aR\r\n    ga1 += (aL
+    + aR) * 0.5\r\nendin\r\n\r\ninstr   108     ;CYMBAL\r\n    xtratim 0.1\r\n   
+    kFrq1   =       296*octave(gktune8)\r\n    kFrq2   =       285*octave(gktune8)\r\n   
+    kFrq3   =       365*octave(gktune8)\r\n    kFrq4   =       348*octave(gktune8)\r\n   
+    kFrq5   =       420*octave(gktune8)\r\n    kFrq6   =       835*octave(gktune8)\r\n   
+    p3      =       2*i(gkdur8)\r\n    aenv    expon   1,p3,0.0001\r\n    ipw    
+    =       0.25\r\n    a1      vco2    0.5,kFrq1,2,ipw\r\n    a2      vco2    0.5,kFrq2,2,ipw\r\n   
+    a3      vco2    0.5,kFrq3,2,ipw\r\n    a4      vco2    0.5,kFrq4,2,ipw\r\n   
+    a5      vco2    0.5,kFrq5,2,ipw\r\n    a6      vco2    0.5,kFrq6,2,ipw\r\n   
+    amix    sum     a1,a2,a3,a4,a5,a6\r\n    amix    reson   amix,5000*octave(gktune8),5000,1\r\n   
+    amix    buthp   amix,10000\r\n    amix    butlp   amix,12000\r\n    amix    butlp  
+    amix,12000\r\n    amix    =       amix*aenv\r\n    anoise  noise   0.8,0\r\n   
+    aenv    expsega 1,0.3,0.07,p3-0.1,0.00001\r\n    kcf     expseg  14000,0.7,7000,p3-0.1,5000\r\n   
+    anoise  butlp   anoise,kcf\r\n    anoise  buthp   anoise,8000\r\n    anoise 
+    =       anoise*aenv\r\n    amix    =       (amix+anoise)*gklevel8*p4*0.85*gklevel\r\n   
+    aL,aR   pan2    amix,(p5+1)*0.5\r\n            outs    aL,aR\r\n    ga1 += (aL
+    + aR) * 0.5\r\nendin\r\n\r\ninstr   109     ;RIM SHOT\r\n    xtratim 0.1\r\n   
+    ; table created at global scope (giTR808RimShot) \u2014 ftgenonce not available
+    in CsoundUnity\r\n    idur    =       0.027*i(gkdur9)\r\n    p3      limit  
+    idur,0.1,10\r\n    aenv1   expsega 1,idur,0.001,1,0.001\r\n    ifrq1   =      
+    1700*octave(i(gktune9))\r\n    aring   oscili  1,ifrq1,giTR808RimShot,0\r\n   
+    aring   butbp   aring,ifrq1,ifrq1*8\r\n    aring   =       aring*(aenv1-0.001)*0.5\r\n   
+    anoise  noise   1,0\r\n    aenv2   expsega 1,0.002,0.8,0.005,0.5,idur-0.002-0.005,0.0001,1,0.0001\r\n   
+    anoise  buthp   anoise,800\r\n    kcf     expseg  4000,p3,20\r\n    anoise  butlp  
+    anoise,kcf\r\n    anoise  =       anoise*(aenv2-0.001)\r\n    amix    =      
+    (aring+anoise)*gklevel9*p4*0.8*gklevel\r\n    aL,aR   pan2    amix,(p5+1)*0.5\r\n           
+    outs    aL,aR\r\n    ga1 += (aL + aR) * 0.5\r\nendin\r\n\r\ninstr   110     ;CLAVES\r\n   
+    xtratim 0.1\r\n    ifrq    =       2500*octave(i(gktune10))\r\n    idur    =      
+    0.045*i(gkdur10)\r\n    p3      limit   idur,0.1,10\r\n    aenv    expsega 1,idur,0.001,1,0.001\r\n   
+    afmod   expsega 3,0.00005,1,1,1\r\n    asig    oscili  -(aenv-0.001),ifrq*afmod,gisine,0\r\n   
+    asig    =       asig*0.4*gklevel10*p4*gklevel\r\n    aL,aR   pan2    asig,(p5+1)*0.5\r\n           
+    outs    aL,aR\r\n    ga1 += (aL + aR) * 0.5\r\nendin\r\n\r\ninstr   111     ;COWBELL\r\n   
+    xtratim 0.1\r\n    ifrq1   =       562*octave(i(gktune11))\r\n    ifrq2   =      
+    845*octave(i(gktune11))\r\n    ipw     =       0.5\r\n    idur    =       0.7\r\n   
+    p3      =       idur*i(gkdur11)\r\n    ishape  =       -30\r\n    kenv1   transeg
+    1,p3*0.3,ishape,0.2, p3*0.7,ishape,0.2\r\n    kenv2   expon   1,p3,0.0005\r\n   
+    kenv    =       kenv1*kenv2\r\n    itype   =       2\r\n    a1      vco2    0.65,ifrq1,itype,ipw\r\n   
+    a2      vco2    0.65,ifrq2,itype,ipw\r\n    amix    =       a1+a2\r\n    iLPF2  
+    =       10000\r\n    kcf     expseg  12000,0.07,iLPF2,1,iLPF2\r\n    alpf   
+    butlp   amix,kcf\r\n    abpf    reson   amix,ifrq2,25\r\n    amix    dcblock2
+    (abpf*0.06*kenv1)+(alpf*0.5)+(amix*0.9)\r\n    amix    buthp   amix,700\r\n   
+    amix    =       amix*0.07*kenv*p4*gklevel11*gklevel\r\n    aL,aR   pan2    amix,(p5+1)*0.5\r\n           
+    outs    aL,aR\r\n    ga1 += (aL + aR) * 0.5\r\nendin\r\n\r\ninstr   112     ;CLAP\r\n   
+    iTimGap =       0.01\r\n    idur1   =       0.02\r\n    idur2   =       2*i(gkdur12)\r\n   
+    idens   =       8000\r\n    iamp1   =       0.5\r\n    iamp2   =       1\r\n   
+    if frac(p1)==0 then\r\n     event_i \"i\", p1+0.1, 0,         idur1, p4\r\n    
+    event_i \"i\", p1+0.1, iTimGap,   idur1, p4\r\n     event_i \"i\", p1+0.1, iTimGap*2,
+    idur1, p4\r\n     event_i \"i\", p1+0.1, iTimGap*3, idur2, p4\r\n    else\r\n    
+    kenv    transeg 1,p3,-25,0\r\n     iamp    random  0.7,1\r\n     anoise  dust2  
+    kenv*iamp,idens\r\n     iBPF    =       1100*octave(i(gktune12))\r\n     ibw    
+    =       2000*octave(i(gktune12))\r\n     iHPF    =       1000\r\n     iLPF   
+    =       1\r\n     kcf     expseg  8000,0.07,1700,1,800,2,500,1,500\r\n     asig   
+    butlp   anoise,kcf*iLPF\r\n     asig    buthp   asig,iHPF\r\n     ares    reson  
+    asig,iBPF,ibw,1\r\n     asig    dcblock2 (asig*iamp1)+(ares*iamp2)\r\n     asig   
+    =       asig*p4*i(gklevel12)*1.75*gklevel\r\n     aL,aR   pan2    asig,(p5+1)*0.5\r\n            
+    outs    aL,aR\r\n    ga1 += (aL + aR) * 0.5\r\n    endif\r\nendin\r\n\r\ninstr  
+    113     ;MARACA\r\n    xtratim 0.1\r\n    idur    =       0.07*i(gkdur13)\r\n   
+    p3      limit   idur,0.1,10\r\n    iHPF    limit   6000*octave(i(gktune13)),20,sr/2\r\n   
+    iLPF    limit   12000*octave(i(gktune13)),20,sr/3\r\n    iBP1    =       0.4\r\n   
+    iDur1   =       0.014*i(gkdur13)\r\n    iBP2    =       1\r\n    iDur2   =      
+    0.01*i(gkdur13)\r\n    iBP3    =       0.05\r\n    p3      limit   idur,0.1,10\r\n   
+    aenv    expsega iBP1,iDur1,iBP2,iDur2,iBP3\r\n    anoise  noise   0.75,0\r\n   
+    anoise  buthp   anoise,iHPF\r\n    anoise  butlp   anoise,iLPF\r\n    anoise 
+    =       anoise*aenv*p4*gklevel13*gklevel\r\n    aL,aR   pan2    anoise,(p5+1)*0.5\r\n           
+    outs    aL,aR\r\n    ga1 += (aL + aR) * 0.5\r\nendin\r\n\r\ninstr   114     ;HIGH
+    CONGA\r\n    xtratim 0.1\r\n    ifrq    =       420*octave(i(gktune14))\r\n   
+    p3      =       0.22*i(gkdur14)\r\n    aenv    transeg 0.7,1/ifrq,1,1,p3,-6,0.001\r\n   
+    afrq    expsega ifrq*3,0.25/ifrq,ifrq,1,ifrq\r\n    asig    oscili  -aenv*0.25,afrq,gisine\r\n   
+    asig    =       asig*p4*gklevel14*gklevel\r\n    aL,aR   pan2    asig,(p5+1)*0.5\r\n           
+    outs    aL,aR\r\n    ga1 += (aL + aR) * 0.5\r\nendin\r\n\r\ninstr   115     ;MID
+    CONGA\r\n    xtratim 0.1\r\n    ifrq    =       310*octave(i(gktune15))\r\n   
+    p3      =       0.33*i(gkdur15)\r\n    aenv    transeg 0.7,1/ifrq,1,1,p3,-6,0.001\r\n   
+    afrq    expsega ifrq*3,0.25/ifrq,ifrq,1,ifrq\r\n    asig    oscili  -aenv*0.25,afrq,gisine\r\n   
+    asig    =       asig*p4*gklevel15*gklevel\r\n    aL,aR   pan2    asig,(p5+1)*0.5\r\n           
+    outs    aL,aR\r\n    ga1 += (aL + aR) * 0.5\r\nendin\r\n\r\ninstr   116     ;LOW
+    CONGA\r\n    xtratim 0.1\r\n    ifrq    =       227*octave(i(gktune16))\r\n   
+    p3      =       0.41*i(gkdur16)\r\n    aenv    transeg 0.7,1/ifrq,1,1,p3,-6,0.001\r\n   
+    afrq    expsega ifrq*3,0.25/ifrq,ifrq,1,ifrq\r\n    asig    oscili  -aenv*0.25,afrq,gisine\r\n   
+    asig    =       asig*p4*gklevel16*gklevel\r\n    aL,aR   pan2    asig,(p5+1)*0.5\r\n           
+    outs    aL,aR\r\n    ga1 += (aL + aR) * 0.5\r\nendin\r\n\r\n; \u2500\u2500 Melodic
+    synth (Step Sequencer) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n;
+    Triggered by a Step-mode Timeline clip.\r\n; p4 = velocity 0\u20131   p5 = pan
+    -1..1   p6 = pitch Hz\r\ninstr 10\r\n    ivel    =       p4\r\n    ifreq   =      
+    p6\r\n    iatt    =       0.005\r\n    idec    =       0.08\r\n    isus    =      
+    0.5\r\n    irel    =       p3 * 0.3\r\n\r\n    ; Slightly detuned oscillators
+    for width\r\n    asig1   poscil  1, ifreq\r\n    asig2   poscil  1, ifreq * 1.003\r\n   
+    asig    =       (asig1 + asig2) * 0.5\r\n\r\n    ; Low-pass filter with slight
+    resonance\r\n    kcut    expseg  ifreq * 6, iatt, ifreq * 2, p3, ifreq * 1.2\r\n   
+    asig    moogladder asig, kcut, 0.3\r\n\r\n    aenv    adsr    iatt, idec, isus,
+    irel\r\n    asig    =       asig * aenv * ivel\r\n\r\n    kmaster chnget  \"masterLevel\"\r\n   
+    asig    =       asig * kmaster\r\n\r\n    aL, aR  pan2    asig, (p5 + 1) * 0.5\r\n           
+    outs    aL, aR\r\n    ga1     +=      (aL + aR) * 0.5\r\nendin\r\n\r\n; \u2500\u2500
+    Reverb bus \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n;
+    Reads the mono ga1 bus, applies reverbsc, outputs wet signal, clears bus.\r\ninstr
+    99\r\n    kMix    chnget  \"reverbMix\"\r\n    aWetL, aWetR reverbsc ga1, ga1,
+    0.82, 8000\r\n    outs    aWetL * kMix, aWetR * kMix\r\n    ga1     =   0\r\nendin\r\n\r\n</CsInstruments>\r\n\r\n<CsScore>\r\nf
+    0 [3600*24*7]\r\n; Instr 2 writes channel defaults once at t=0\r\ni 2 0 0.001\r\n;
+    Instr 1 runs for the whole session, keeping global vars updated\r\ni 1 0 [3600*24*7]\r\n;
+    Reverb bus processor\r\ni 99 0 [3600*24*7]\r\n</CsScore>\r\n\r\n</CsoundSynthesizer>\r\n"
+  _csoundFileName: PatternTimeline.csd
+  _csoundAsset: {fileID: 102900000, guid: 49dee544fe93a4f76ba1fb351b4daab7, type: 3}
+  _channels:
+  - type: form
+    channel: 
+    text: 
+    caption: TR-808 Pattern Timeline
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+  - type: rslider
+    channel: masterLevel
+    text: Master
+    caption: 
+    min: 0
+    max: 1
+    value: 1
+    skew: 1
+    increment: 0.001
+    options: []
+  - type: rslider
+    channel: reverbMix
+    text: Reverb
+    caption: 
+    min: 0
+    max: 1
+    value: 0.1
+    skew: 1
+    increment: 0.001
+    options: []
+  _availableAudioChannels: []
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _audioChannelsBufferSize: 12000
+  _drawCsoundString: 0
+  _drawTestScore: 0
+  _drawSettings: 1
+  _drawChannels: 1
+  _drawAudioChannels: 1
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  webGLAssetsList: []
+--- !u!82 &582020847
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582020845}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &582020848
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 582020845}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &991626769
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 991626771}
+  - component: {fileID: 991626770}
+  m_Layer: 0
+  m_Name: Audio Listener
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &991626770
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991626769}
+  m_Enabled: 1
+--- !u!4 &991626771
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991626769}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1275899113
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1275899115}
+  - component: {fileID: 1275899114}
+  m_Layer: 0
+  m_Name: Timeline Director
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!320 &1275899114
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275899113}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 11400000, guid: 99129e3bfbf554cb382fd1ec08919b28, type: 2}
+  m_InitialState: 0
+  m_WrapMode: 1
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings:
+  - key: {fileID: 1377783121661871149, guid: 078a589936c74482eb6a6c67c14b530f, type: 2}
+    value: {fileID: 582020846}
+  - key: {fileID: 4026173608545075627, guid: 078a589936c74482eb6a6c67c14b530f, type: 2}
+    value: {fileID: 582020846}
+  - key: {fileID: 1377783121661871149, guid: 99129e3bfbf554cb382fd1ec08919b28, type: 2}
+    value: {fileID: 582020846}
+  - key: {fileID: -7806803104548144418, guid: 99129e3bfbf554cb382fd1ec08919b28, type: 2}
+    value: {fileID: 582020846}
+  m_ExposedReferences:
+    m_References: []
+--- !u!4 &1275899115
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275899113}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 582020848}
+  - {fileID: 1275899115}
+  - {fileID: 83651811}
+  - {fileID: 991626771}
