@@ -178,26 +178,73 @@ namespace Csound.Unity
             m_drawSettings.boolValue = EditorGUILayout.Foldout(m_drawSettings.boolValue, "Settings", true);
             if (m_drawSettings.boolValue)
             {
-            	EditorGUILayout.HelpBox(csoundUnity.samplingRateSettingsInfo, MessageType.None);
-            m_overrideSamplingRate.boolValue = EditorGUILayout.Toggle("Override sampling rate", m_overrideSamplingRate.boolValue);
+            m_overrideSamplingRate.boolValue = EditorGUILayout.Toggle("Override sample rate (sr)", m_overrideSamplingRate.boolValue);
 
             if (m_overrideSamplingRate.boolValue)
             {
-                m_audioRate.intValue = EditorGUILayout.IntField("Audio Rate", m_audioRate.intValue);
-                m_controlRate.intValue = EditorGUILayout.IntField("Control Rate", m_controlRate.intValue);
-                // keep the audio rate and control rate values above 1
-                if (m_audioRate.intValue < 1) m_audioRate.intValue = 1;
-                if (m_controlRate.intValue < 1) m_controlRate.intValue = 1;
-                // make sure the audio channels buffer size is always at least of size ksmps
-                if (m_audioChannelsBufferSize.intValue < csoundUnity.GetKsmps())
+                // sr — editable; clamp kr whenever sr shrinks below it
+                EditorGUI.BeginChangeCheck();
+                int newSr = EditorGUILayout.IntField("Sample Rate (sr)", m_audioRate.intValue);
+                if (EditorGUI.EndChangeCheck())
                 {
-                    m_audioChannelsBufferSize.intValue = (int)csoundUnity.GetKsmps();
+                    m_audioRate.intValue = Mathf.Max(1, newSr);
+                    m_controlRate.intValue = Mathf.Min(m_controlRate.intValue, m_audioRate.intValue);
                 }
             }
             else
             {
+                // sr — locked to device rate; clamp kr in case it was set above device sr
                 m_audioRate.intValue = AudioSettings.outputSampleRate;
-                m_controlRate.intValue = AudioSettings.outputSampleRate;
+                m_controlRate.intValue = Mathf.Min(m_controlRate.intValue, m_audioRate.intValue);
+                EditorGUILayout.LabelField("Sample Rate (sr)", $"{AudioSettings.outputSampleRate} Hz  (AudioSettings.outputSampleRate)");
+            }
+
+            // kr — always editable (independent of the sr toggle)
+            {
+                EditorGUI.BeginChangeCheck();
+                int newKr = EditorGUILayout.IntField("Control Rate (kr)", m_controlRate.intValue);
+                if (EditorGUI.EndChangeCheck())
+                    m_controlRate.intValue = Mathf.Clamp(newKr, 1, m_audioRate.intValue);
+            }
+
+            // ksmps — editable shortcut: editing it updates kr = sr / ksmps
+            {
+                int sr    = m_audioRate.intValue;
+                int kr    = Mathf.Max(1, m_controlRate.intValue);
+                int ksmps = Mathf.Max(1, Mathf.RoundToInt(sr / (float)kr));
+
+                EditorGUI.BeginChangeCheck();
+                int newKsmps = EditorGUILayout.IntField("ksmps  (= sr / kr)", ksmps);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    newKsmps = Mathf.Max(1, newKsmps);
+                    m_controlRate.intValue = Mathf.Max(1, sr / newKsmps);
+                }
+
+                // keep the audio channels buffer size always at least ksmps
+                if (m_audioChannelsBufferSize.intValue < ksmps)
+                    m_audioChannelsBufferSize.intValue = ksmps;
+            }
+
+            // Explanatory note (always visible)
+            EditorGUILayout.HelpBox(
+                "ksmps = sr / kr.  Higher ksmps → lower CPU usage, lower control-rate precision.\n" +
+                "Typical values: 10–64.  ksmps = 1 is accurate but CPU-intensive.",
+                MessageType.None);
+
+            // Warning when ksmps == 1
+            {
+                int sr    = m_audioRate.intValue;
+                int kr    = Mathf.Max(1, m_controlRate.intValue);
+                int ksmps = Mathf.Max(1, Mathf.RoundToInt(sr / (float)kr));
+                if (ksmps <= 1)
+                {
+                    int suggestedKr = Mathf.Max(1, sr / 20);
+                    EditorGUILayout.HelpBox(
+                        $"ksmps = 1: Csound updates every sample — very high CPU usage.\n" +
+                        $"To reduce load, increase ksmps (e.g. set kr = {suggestedKr} for ksmps ≈ 20).",
+                        MessageType.Warning);
+                }
             }
                 EditorGUI.BeginChangeCheck();
                 m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);

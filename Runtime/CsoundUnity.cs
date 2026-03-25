@@ -524,7 +524,8 @@ namespace Csound.Unity
 
 
             if (audioRate == 0 || !overrideSamplingRate) audioRate = AudioSettings.outputSampleRate;
-            if (controlRate == 0 || !overrideSamplingRate) controlRate = AudioSettings.outputSampleRate;
+            // kr is independent of the sr toggle; clamp to sr so ksmps >= 1 always holds
+            if (controlRate == 0 || controlRate > audioRate) controlRate = audioRate;
 
             audioSource = GetComponent<AudioSource>();
 
@@ -601,8 +602,21 @@ namespace Csound.Unity
             }
             else
             {
-                Debug.Log("Error creating Csound object");
                 compiledOk = false;
+                if (csound != null)
+                {
+                    // Dump the Csound message queue so the error is visible in the Unity console
+                    var sb = new System.Text.StringBuilder();
+                    sb.AppendLine("CsoundUnity: compilation failed. Csound messages:");
+                    int msgCount = csound.GetCsoundMessageCount();
+                    for (int i = 0; i < msgCount; i++)
+                        sb.AppendLine(csound.GetCsoundMessage());
+                    Debug.LogError(sb.ToString());
+                }
+                else
+                {
+                    Debug.LogError("CsoundUnity: failed to create Csound object.");
+                }
             }
             Debug.Log($"CsoundUnity done init, compiledOk? {compiledOk}");
         }
