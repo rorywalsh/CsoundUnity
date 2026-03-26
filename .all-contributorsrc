@@ -130,6 +130,15 @@
         "platform",
         "bug"
       ]
+    },
+    {
+      "login": "horseisfish",
+      "name": "horseisfish",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26128953?v=4",
+      "profile": "https://github.com/horseisfish",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -138,5 +147,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,
-  "commitConvention": "angular"
+  "commitConvention": "angular",
+  "commitType": "docs"
 }

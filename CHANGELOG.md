@@ -1,3 +1,11 @@
+## [3.5.2] - 2025-04-28
+
+- [Fix] Version bump
+
+## [3.5.1] - 2025-04-15
+
+- [Add] Support for visionOS
+
 ## [3.5.0] - 2024-08-10
 
 - [Add] WebGL support (experimental)
