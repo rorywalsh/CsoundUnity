@@ -7,13 +7,41 @@ using UnityEngine;
 namespace Csound.Unity.Samples.Miscellaneous.Trapped
 {
     /// <summary>
-    /// A "Trapped in Convert" instrument, that has been dropped in the 3D space
+    /// Represents a single synthesiser instrument in the "Trapped in Convert" interactive piece.
+    /// Each instance is a self-contained 3D sound object: it spawns a Csound score event,
+    /// routes Csound audio back through Unity's spatial audio pipeline, and optionally displays
+    /// its own real-time spectrum via <see cref="AudioDisplay"/>.
+    ///
+    /// <para><b>How per-instrument audio routing works:</b><br/>
+    /// Rather than reading from CsoundUnity's main mixed output, each instrument writes its audio
+    /// into a pair of <em>named audio channels</em> (<c>chnseta</c> in Csound). Channel names are
+    /// unique per instance (e.g. <c>"chan2.1L"</c>, <c>"chan2.1R"</c>) and registered at runtime
+    /// via <see cref="CsoundUnity.AddAudioChannel"/>. This lets Unity read back only this
+    /// instrument's audio, independent of all others running simultaneously.
+    /// </para>
+    ///
+    /// <para><b>Spatialization pipeline:</b><br/>
+    /// The instrument uses a dedicated <see cref="AudioSource"/> positioned in 3D space. Because
+    /// Unity's spatialization is lost when using <c>OnAudioFilterRead</c> without an active clip
+    /// (a known Unity limitation), a dummy looping clip of all 1.0f samples is assigned — see
+    /// <c>InitAudioSource</c>. In <c>OnAudioFilterRead</c>, the dummy clip's samples (all 1.0f)
+    /// are multiplied by the Csound channel output, effectively injecting Csound audio while
+    /// preserving Unity's 3D audio processing (distance attenuation, panning, reverb zones, etc.).
+    /// </para>
+    ///
+    /// <para><b>Lifecycle:</b><br/>
+    /// The instrument is fire-and-forget: <see cref="Init"/> sends the score event and the
+    /// instrument plays for its randomised duration. When the DSP clock indicates the note is
+    /// nearly finished, <c>OnAudioFilterRead</c> fades the output to silence and sets
+    /// <c>_canBeDestroyed</c>. The next <c>Update</c> then cleans up the audio channels and
+    /// destroys the GameObject.
+    /// </para>
     /// </summary>
     public class TrappedInstrument : MonoBehaviour
     {
         [SerializeField] float _safeInterruptionTime = 0.1f;
-        [SerializeField] SpectrumDisplay _spectrumDisplayL;
-        [SerializeField] SpectrumDisplay _spectrumDisplayR;
+        [SerializeField] AudioDisplay _spectrumDisplayL;
+        [SerializeField] AudioDisplay _spectrumDisplayR;
 
 
         private CsoundUnity _csound;
@@ -32,6 +60,15 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
         private float[] _rightSamples;
 
 
+        /// <summary>
+        /// Initialises the instrument: sets up the AudioSource, registers the Csound audio channels,
+        /// randomises all p-field parameters within the ranges defined by <paramref name="data"/>,
+        /// and fires the Csound score event that starts the note.
+        /// </summary>
+        /// <param name="csound">The shared CsoundUnity instance running the piece.</param>
+        /// <param name="chanLeft">Unique name for this instrument's left audio channel (e.g. "chan2.1L").</param>
+        /// <param name="chanRight">Unique name for this instrument's right audio channel (e.g. "chan2.1R").</param>
+        /// <param name="data">Instrument definition: Csound instrument number, parameter ranges, material, colour.</param>
         public void Init(CsoundUnity csound, string chanLeft, string chanRight, InstrumentData data)
         {
             this.name = $"[{data.Index}] {data.name} Instrument #{data.number} [{chanLeft}:{chanRight}]";
@@ -43,13 +80,24 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
             _csound = csound;
             _ksmps = _csound.GetKsmps();
 
-            _spectrumDisplayL.SetCsound(csound);
-            _spectrumDisplayL.SetChannel(chanLeft);
+            // Pre-allocate sample buffers so SetSamples is never called with null
+            // on the first Update() before OnAudioFilterRead has had a chance to run.
+            // OnAudioFilterRead will resize them if needed.
+            AudioSettings.GetDSPBufferSize(out var dspBufferSize, out _);
+            _leftSamples = new float[dspBufferSize];
+            _rightSamples = new float[dspBufferSize];
 
-            _spectrumDisplayR.SetCsound(csound);
-            _spectrumDisplayR.SetChannel(chanRight);
 
-            Debug.Log($"_ksmps: {_ksmps}");
+            if (_spectrumDisplayL != null)
+            {
+                _spectrumDisplayL.SetCsound(csound);
+                _spectrumDisplayL.SetChannel(chanLeft);
+            }
+            if (_spectrumDisplayR != null)
+            {
+                _spectrumDisplayR.SetCsound(csound);
+                _spectrumDisplayR.SetChannel(chanRight);
+            }
 
             var parameters = new List<string>();
             var count = 0;
@@ -62,7 +110,6 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
                 // the first parameter is the duration
                 if (count == 1)
                 {
-                    Debug.Log($"{p.name}: {value}");
                     _totalDuration = value;
                 }
             }
@@ -70,7 +117,6 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
             data.material.color = data.color;
             GetComponent<MeshRenderer>().material = data.material;
 
-            //Debug.Break();
             _csound.AddAudioChannel(_chanL);
             _csound.AddAudioChannel(_chanR);
 
@@ -85,7 +131,6 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
 
         private void InitAudioSource()
         {
-            //Debug.Log($"Unity Buffer size: {_UnityBufferSize}");
             _audioSource = GetComponent<AudioSource>();
             if (!_audioSource)
                 Debug.LogError("AudioSource was not found?");
@@ -94,8 +139,12 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
             _audioSource.spatialBlend = 1.0f;
             _audioSource.spatializePostEffects = true;
 
-            /* FIX SPATIALIZATION ISSUES
-            */
+            // Unity bug workaround: AudioSources using OnAudioFilterRead without a playing clip
+            // lose all 3D spatialization (spatial blend, distance attenuation, panning).
+            // Assigning a looping dummy clip of all 1.0f samples forces Unity to treat this
+            // AudioSource as "active" so spatialization is applied correctly.
+            // The dummy values (1.0f) act as a pass-through multiplier in OnAudioFilterRead,
+            // where each sample is multiplied by the Csound channel output.
             if (_audioSource.clip == null)
             {
                 var ac = AudioClip.Create("DummyClip", 32, 1, AudioSettings.outputSampleRate, false);
@@ -112,6 +161,23 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
             }
         }
 
+        /// <summary>
+        /// Audio thread callback. Reads this instrument's audio from the Csound named channels
+        /// and writes it into Unity's audio buffer, enabling 3D spatialization.
+        /// <para>
+        /// For each interleaved sample frame, <see cref="CsoundUnity.GetAudioChannelSample"/> fetches
+        /// the corresponding Csound output for the L and R channels, normalises by 0dBFS, and
+        /// multiplies the dummy clip's 1.0f value — effectively replacing the clip with live
+        /// Csound audio while keeping the AudioSource active for Unity's spatial processing.
+        /// </para>
+        /// <para>
+        /// When the note's duration is reached (checked via <c>AudioSettings.dspTime</c>), the
+        /// buffer is zeroed for a clean tail and <c>_canBeDestroyed</c> is set so the main thread
+        /// can safely tear down the instrument on the next frame.
+        /// </para>
+        /// <para><b>Note:</b> this callback runs on the audio thread — avoid allocations and
+        /// Unity API calls other than those explicitly marked thread-safe.</para>
+        /// </summary>
         private void OnAudioFilterRead(float[] samples, int numChannels)
         {
             if (!_initialized || _canBeDestroyed) return;
@@ -148,10 +214,14 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
             SplitStereoSamples(samples, numChannels, _leftSamples, _rightSamples);
         }
 
+        /// <summary>
+        /// Splits an interleaved stereo buffer into separate L and R arrays.
+        /// Called at the end of <see cref="OnAudioFilterRead"/> so that the processed audio
+        /// is available to <see cref="AudioDisplay"/> on the main thread via
+        /// <see cref="AudioDisplay.SetSamples"/>.
+        /// </summary>
         void SplitStereoSamples(float[] samples, int numChannels, float[] leftSamples, float[] rightSamples)
         {
-            int numSamples = samples.Length / numChannels;
-
             for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
             {
                 leftSamples[sampleIndex] = samples[i]; // Left channel
@@ -178,9 +248,5 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
             }
         }
 
-        //private void OnDestroy()
-        //{
-        //    _csound.OnCsoundPerformKsmps -= OnCsoundPerformKsmps;
-        //}
     }
 }

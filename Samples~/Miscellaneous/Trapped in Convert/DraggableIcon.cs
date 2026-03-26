@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 namespace Csound.Unity.Samples.Miscellaneous.Trapped
 {
+    /// <summary>
+    /// A UI icon representing one instrument type. Follows the mouse while dragging;
+    /// snaps back to its original grid position if dropped outside a valid <see cref="DropSpace"/>.
+    /// </summary>
     public class DraggableIcon : MonoBehaviour, IDragHandler
     {
         [SerializeField] Image _image;
