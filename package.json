@@ -67,8 +67,13 @@
     },
     {
       "displayName": "Timelines",
-      "description": "Using Unity Timelines to schedule and trigger Csound score events",
+      "description": "Using Unity Timelines to control Csound: schedule score events, explore different score clip modes, and drive channels",
       "path": "Samples~/Timelines"
+    },
+    {
+      "displayName": "Engines",
+      "description": "Simulating various vehicle engines",
+      "path": "Samples~/Engines"
     }
   ],
   "type": "tool"
