@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -42,8 +42,8 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -66,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -566,6 +563,7 @@ MonoBehaviour:
   overrideSamplingRate: 0
   audioRate: 44100
   controlRate: 44100
+  updateOutputBuffer: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 77526f3b3efee489586db0d2e8dab853
@@ -583,7 +581,7 @@ MonoBehaviour:
     %f - %f - %f\\n\", 0.1, kAmount, chnget:k(\"FillAmount\"), chnget:k(\"MaxFrequency\")\r\naEnv
     madsr 0.2, 0.1, 0.5, 0.1\r\naOut oscili aEnv, kFreq, 1\r\nouts aOut, aOut\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
     Csound to run for about 7000 years...\r\nf0 z\r\n;i1 0 3600\r\nf1 0 4096 10 1\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
-  _csoundFileName: TestFillingBar.csd
+  _csoundFileName: FillingBar.csd
   _csoundAsset: {fileID: 102900000, guid: 77526f3b3efee489586db0d2e8dab853, type: 3}
   _channels:
   - type: form
@@ -596,6 +594,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: FillAmount
     text: 
@@ -606,6 +608,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: MinFrequency
     text: 
@@ -616,6 +622,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: MaxFrequency
     text: 
@@ -626,6 +636,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -655,6 +669,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

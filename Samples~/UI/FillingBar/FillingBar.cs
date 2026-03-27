@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Csound.Unity.Samples.UI
 {
-    public class TestFillingBar : MonoBehaviour
+    public class FillingBar : MonoBehaviour
     {
         [SerializeField] float _fillingDuration = 5f;
         [SerializeField] CsoundUnitySlider _csoundUnitySlider;

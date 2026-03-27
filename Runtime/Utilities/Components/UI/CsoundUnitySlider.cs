@@ -19,6 +19,7 @@ namespace Csound.Unity.Utilities.Components.UI
         [SerializeField] string _channel;
         [SerializeField] Text _labelText;
         [SerializeField] Text _valueText;
+        [SerializeField, Range(0, 1)] float _smoothingTime = 0f;
 
         public float Value
         {
@@ -68,6 +69,9 @@ namespace Csound.Unity.Utilities.Components.UI
         private CsoundChannelController _channelController;
         private bool _active = false;
         private bool _isInitialized = false;
+        private float _targetValue;
+        private float _currentValue;
+        private float _velocity;
 
         IEnumerator Start()
         {
@@ -103,8 +107,17 @@ namespace Csound.Unity.Utilities.Components.UI
             _valueText.text = $"{_channelController.value}";
             _slider.value = RU.Remap(_channelController.value, _channelController.min, _channelController.max, 0, 1, true);
 
+            _targetValue = _channelController.value;
+            _currentValue = _channelController.value;
             _slider.onValueChanged.AddListener((value) => UpdateSlider(value));
             _isInitialized = true;
+        }
+
+        private void Update()
+        {
+            if (!_isInitialized || _smoothingTime <= 0) return;
+            _currentValue = Mathf.SmoothDamp(_currentValue, _targetValue, ref _velocity, _smoothingTime);
+            _csound.SetChannel(_channel, _currentValue);
         }
 
         private void UpdateSlider(float value)
@@ -112,7 +125,9 @@ namespace Csound.Unity.Utilities.Components.UI
             if (!_isInitialized) return;
             var remapped = RU.Remap(value, 0, 1, _channelController.min, _channelController.max, true, _channelController.skew);
             _valueText.text = $"{remapped:F2}";
-            _csound.SetChannel(_channel, remapped);
+            _targetValue = remapped;
+            if (_smoothingTime <= 0)
+                _csound.SetChannel(_channel, remapped);
         }
     }
 }
