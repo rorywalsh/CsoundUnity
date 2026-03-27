@@ -1,8 +1,10 @@
 {
     "name": "com.csound.unity.editor",
+    "rootNamespace": "",
     "references": [
         "GUID:0f8a96c3990a549aebde74c2a0c21938",
-        "GUID:a5751c921f1706842adafe69b078c09e"
+        "GUID:a5751c921f1706842adafe69b078c09e",
+        "GUID:c73e74e67074f17428041047c312af6f"
     ],
     "includePlatforms": [
         "Editor"

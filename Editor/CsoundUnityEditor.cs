@@ -85,6 +85,19 @@ namespace Csound.Unity
         private int _assignablePresetsSpace = 10;
         private string _currentPresetImportFolder;
         private string _currentPresetImportFolderSave;
+        // Transient Y-axis state for xypad widgets (not serialized, lives only in this editor session)
+        private readonly Dictionary<string, float> _xypadYValues = new Dictionary<string, float>();
+        private readonly HashSet<string> _xypadDragging = new HashSet<string>();
+
+        private const string CsdTemplatePath = "Packages/com.csound.csoundunity/Editor/Templates/CsoundTemplate.csd";
+
+        private static string LoadCsdTemplate()
+        {
+            if (File.Exists(CsdTemplatePath))
+                return File.ReadAllText(CsdTemplatePath);
+            Debug.LogWarning($"[CsoundUnity] CSD template not found at {CsdTemplatePath}. Using built-in fallback.");
+            return "<CsoundSynthesizer>\n<CsOptions>\n-n -d\n</CsOptions>\n<CsInstruments>\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ninstr 1\nendin\n</CsInstruments>\n<CsScore>\nf0 z\n</CsScore>\n</CsoundSynthesizer>";
+        }
 
         void OnEnable()
         {
@@ -375,6 +388,38 @@ namespace Csound.Unity
             }
         }
 
+        /// Returns the folder currently shown/active in the Project window.
+        /// Uses ProjectWindowUtil.GetActiveFolderPath (internal Unity API via reflection).
+        /// Falls back to the selected asset's folder, then to "Assets".
+        private static string GetActiveFolderPath()
+        {
+            try
+            {
+                var method = typeof(ProjectWindowUtil).GetMethod(
+                    "GetActiveFolderPath",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+                if (method != null)
+                {
+                    var result = method.Invoke(null, null) as string;
+                    if (!string.IsNullOrEmpty(result)) return result;
+                }
+            }
+            catch { }
+
+            // Fallback: use selected object's folder
+            var selected = Selection.activeObject;
+            if (selected != null)
+            {
+                var path = AssetDatabase.GetAssetPath(selected);
+                if (!string.IsNullOrEmpty(path))
+                    return System.IO.Directory.Exists(path)
+                        ? path
+                        : System.IO.Path.GetDirectoryName(path);
+            }
+
+            return "Assets";
+        }
+
         public void DropAreaGUI()
         {
             if (m_csoundAsset.objectReferenceValue as DefaultAsset == null)
@@ -386,7 +431,19 @@ namespace Csound.Unity
             DefaultAsset obj = (DefaultAsset)m_csoundAsset.objectReferenceValue;
             //
             EditorGUI.BeginChangeCheck();
+            EditorGUILayout.BeginHorizontal();
             obj = (DefaultAsset)EditorGUILayout.ObjectField("Csd Asset", obj, typeof(DefaultAsset), false);
+            EditorGUI.BeginDisabledGroup(obj == null);
+            if (GUILayout.Button("↺", GUILayout.Width(24)) && obj != null)
+            {
+                if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out string refreshGuid, out long _))
+                {
+                    Undo.RecordObject(target, "Refresh Csd");
+                    SetCsd(refreshGuid);
+                }
+            }
+            EditorGUI.EndDisabledGroup();
+            EditorGUILayout.EndHorizontal();
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -413,6 +470,36 @@ namespace Csound.Unity
                     }
                 }
                 EditorUtility.SetDirty(csoundUnity.gameObject);
+            }
+
+            // CREATE button — shown only when no CSD is assigned
+            if (m_csoundAsset.objectReferenceValue == null)
+            {
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button("CREATE", GUILayout.Width(80)))
+                {
+                    // Use the folder currently active in the Project window, fallback to Assets/
+                    string folder = GetActiveFolderPath();
+
+                    string baseName = "CsoundTemplate";
+                    string filePath = $"{folder}/{baseName}.csd";
+                    int suffix = 1;
+                    while (System.IO.File.Exists(filePath))
+                        filePath = $"{folder}/{baseName}_{suffix++}.csd";
+
+                    System.IO.File.WriteAllText(filePath, LoadCsdTemplate());
+                    AssetDatabase.Refresh();
+
+                    var newAsset = AssetDatabase.LoadAssetAtPath<DefaultAsset>(filePath);
+                    if (newAsset != null &&
+                        AssetDatabase.TryGetGUIDAndLocalFileIdentifier(newAsset, out string newGuid, out long _))
+                    {
+                        Undo.RecordObject(target, "Create Csd");
+                        SetCsd(newGuid);
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
             }
         }
 
@@ -497,6 +584,89 @@ namespace Csound.Unity
                             {
                                 csoundUnity.SetChannel(channel, chanValue.floatValue);
                             }
+                        }
+                        else if (type == "xypad")
+                        {
+                            var xchan    = channel;
+                            var ychan    = cc.FindPropertyRelative("channelY").stringValue;
+                            var xMin     = cc.FindPropertyRelative("min").floatValue;
+                            var xMax     = cc.FindPropertyRelative("max").floatValue;
+                            var yMin     = cc.FindPropertyRelative("minY").floatValue;
+                            var yMax     = cc.FindPropertyRelative("maxY").floatValue;
+                            var yInitial = cc.FindPropertyRelative("value2").floatValue;
+
+                            if (!_xypadYValues.ContainsKey(ychan))
+                            {
+                                _xypadYValues[ychan] = yInitial;
+                                // push initial values to Csound as soon as the pad is first drawn in play mode
+                                if (Application.isPlaying && csoundUnity != null)
+                                {
+                                    csoundUnity.SetChannel(xchan, chanValue.floatValue);
+                                    csoundUnity.SetChannel(ychan, yInitial);
+                                }
+                            }
+
+                            EditorGUILayout.LabelField(label.Length > 0 ? label : xchan, EditorStyles.boldLabel);
+
+                            // Reserve square
+                            const float padSize = 120f;
+                            var rect = GUILayoutUtility.GetRect(padSize, padSize);
+                            rect.x    += (EditorGUIUtility.currentViewWidth - padSize) * 0.5f - 14f;
+                            rect.width = padSize;
+
+                            // Handle drag
+                            var e = Event.current;
+                            if (e.type == EventType.MouseDown && rect.Contains(e.mousePosition))
+                            {
+                                _xypadDragging.Add(ychan);
+                            }
+                            if (e.type == EventType.MouseUp)
+                            {
+                                _xypadDragging.Remove(ychan);
+                            }
+                            if ((e.type == EventType.MouseDown || e.type == EventType.MouseDrag) &&
+                                (rect.Contains(e.mousePosition) || _xypadDragging.Contains(ychan)))
+                            {
+                                float nx = Mathf.Clamp01((e.mousePosition.x - rect.x) / rect.width);
+                                float ny = Mathf.Clamp01(1f - (e.mousePosition.y - rect.y) / rect.height);
+                                chanValue.floatValue = Mathf.Lerp(xMin, xMax, nx);
+                                _xypadYValues[ychan] = Mathf.Lerp(yMin, yMax, ny);
+                                e.Use();
+                                if (Application.isPlaying && csoundUnity != null)
+                                {
+                                    csoundUnity.SetChannel(xchan, chanValue.floatValue);
+                                    csoundUnity.SetChannel(ychan, _xypadYValues[ychan]);
+                                }
+                            }
+                            EditorGUIUtility.AddCursorRect(rect, MouseCursor.MoveArrow);
+
+                            EditorGUI.DrawRect(rect, new Color(0.13f, 0.13f, 0.13f));
+                            EditorGUI.DrawRect(new Rect(rect.x,        rect.y,        rect.width, 1),         new Color(0.4f, 0.4f, 0.4f));
+                            EditorGUI.DrawRect(new Rect(rect.x,        rect.yMax - 1, rect.width, 1),         new Color(0.4f, 0.4f, 0.4f));
+                            EditorGUI.DrawRect(new Rect(rect.x,        rect.y,        1, rect.height),        new Color(0.4f, 0.4f, 0.4f));
+                            EditorGUI.DrawRect(new Rect(rect.xMax - 1, rect.y,        1, rect.height),        new Color(0.4f, 0.4f, 0.4f));
+                            EditorGUI.DrawRect(new Rect(rect.x, rect.y + rect.height * 0.5f, rect.width, 1),  new Color(0.28f, 0.28f, 0.28f));
+                            EditorGUI.DrawRect(new Rect(rect.x + rect.width * 0.5f, rect.y, 1, rect.height),  new Color(0.28f, 0.28f, 0.28f));
+
+                            var axisStyle = new GUIStyle(EditorStyles.miniLabel) { normal = { textColor = new Color(0.5f, 0.5f, 0.5f) } };
+                            GUI.Label(new Rect(rect.xMax - 30, rect.yMax - 14, 30, 14), xchan, axisStyle);
+                            GUI.Label(new Rect(rect.x + 2, rect.y + 2, 30, 14), ychan, axisStyle);
+
+                            float nx2 = xMax > xMin ? (chanValue.floatValue - xMin) / (xMax - xMin) : 0;
+                            float ny2 = yMax > yMin ? (_xypadYValues[ychan] - yMin) / (yMax - yMin) : 0;
+                            float dx  = rect.x + Mathf.Clamp01(nx2) * rect.width;
+                            float dy  = rect.y + (1f - Mathf.Clamp01(ny2)) * rect.height;
+
+                            EditorGUI.DrawRect(new Rect(rect.x, dy - 0.5f, rect.width, 1), new Color(0.2f, 0.8f, 1f, 0.25f));
+                            EditorGUI.DrawRect(new Rect(dx - 0.5f, rect.y, 1, rect.height), new Color(0.2f, 0.8f, 1f, 0.25f));
+                            EditorGUI.DrawRect(new Rect(dx - 5, dy - 5, 10, 10), new Color(0.2f, 0.8f, 1f));
+
+                            EditorGUILayout.BeginHorizontal();
+                            EditorGUI.BeginDisabledGroup(true);
+                            EditorGUILayout.FloatField(xchan, chanValue.floatValue);
+                            EditorGUILayout.FloatField(ychan, _xypadYValues.ContainsKey(ychan) ? _xypadYValues[ychan] : yMin);
+                            EditorGUI.EndDisabledGroup();
+                            EditorGUILayout.EndHorizontal();
                         }
                         else if (type.Contains("label"))
                         {

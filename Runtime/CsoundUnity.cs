@@ -63,6 +63,14 @@ namespace Csound.Unity
         [SerializeField] public float skew;
         [SerializeField] public float increment;
         [SerializeField] public string[] options;
+        /// <summary>Second channel name. Used by xypad for the Y axis channel.</summary>
+        [SerializeField] public string channelY;
+        /// <summary>Y axis minimum value. Used by xypad.</summary>
+        [SerializeField] public float minY;
+        /// <summary>Y axis maximum value. Used by xypad.</summary>
+        [SerializeField] public float maxY;
+        /// <summary>Initial Y value. Used by xypad (rangeY third token).</summary>
+        [SerializeField] public float value2;
 
         public void SetRange(float uMin, float uMax, float uValue = 0f, float uSkew = 1f, float uIncrement = 0.01f)
         {
@@ -478,6 +486,7 @@ namespace Csound.Unity
         [HideInInspector][SerializeField] private string _currentPreset;
         [HideInInspector][SerializeField] private string _currentPresetSaveFolder;
         [HideInInspector][SerializeField] private string _currentPresetLoadFolder;
+        private Coroutine _morphCoroutine;
 
 
 
@@ -573,6 +582,9 @@ namespace Csound.Unity
                         { csound.SetChannel(channels[i].channel, channels[i].value + 1); }
                         else
                         { csound.SetChannel(channels[i].channel, channels[i].value); }
+                        // xypad has a second channel (Y)
+                        if (channels[i].type == "xypad" && !string.IsNullOrEmpty(channels[i].channelY))
+                        { csound.SetChannel(channels[i].channelY, channels[i].value2); }
                         // update channels index dictionary
                         if (!_channelsIndexDict.ContainsKey(channels[i].channel))
                         { _channelsIndexDict.Add(channels[i].channel, i); }
@@ -661,6 +673,9 @@ namespace Csound.Unity
                     csound.SetChannel(channels[i].channel, channels[i].value + 1);
                 else
                     csound.SetChannel(channels[i].channel, channels[i].value);
+                // xypad has a second channel (Y)
+                if (channels[i].type == "xypad" && !string.IsNullOrEmpty(channels[i].channelY))
+                    csound.SetChannel(channels[i].channelY, channels[i].value2);
                 // update channels index dictionary
                 _channelsIndexDict.TryAdd(channels[i].channel, i);
             }
@@ -948,7 +963,64 @@ namespace Csound.Unity
                     continue;
                 }
                 var control = trimmd.Substring(0, trimmd.IndexOf(" ") > -1 ? trimmd.IndexOf(" ") : 0);
-                if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox")
+                if (control == "xypad")
+                {
+                    CsoundChannelController controller = new CsoundChannelController();
+                    controller.type = control;
+
+                    if (trimmd.IndexOf("text(") > -1)
+                    {
+                        string text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
+                        text = text.Substring(0, text.IndexOf(")") - 1);
+                        controller.text = text.Replace("\"", "").Trim();
+                    }
+
+                    // channel("xchan", "ychan")
+                    if (trimmd.IndexOf("channel(") > -1)
+                    {
+                        string chanStr = trimmd.Substring(trimmd.IndexOf("channel(") + 8);
+                        chanStr = chanStr.Substring(0, chanStr.IndexOf(")")).Replace("\"", "");
+                        var parts = chanStr.Split(',');
+                        controller.channel = parts[0].Trim();
+                        if (parts.Length > 1)
+                            controller.channelY = parts[1].Trim();
+                    }
+
+                    // rangeX(min, max, value) — case-insensitive
+                    controller.SetRange(0, 1, 0);
+                    int rxIdx = trimmd.IndexOf("rangex(", StringComparison.OrdinalIgnoreCase);
+                    if (rxIdx > -1)
+                    {
+                        string range = trimmd.Substring(rxIdx + 7);
+                        range = range.Substring(0, range.IndexOf(")"));
+                        var tokens = range.Split(',');
+                        float xMin = tokens.Length > 0 ? float.Parse(tokens[0].Trim(), CultureInfo.InvariantCulture) : 0;
+                        float xMax = tokens.Length > 1 ? float.Parse(tokens[1].Trim(), CultureInfo.InvariantCulture) : 1;
+                        float xVal = tokens.Length > 2 ? float.Parse(tokens[2].Trim(), CultureInfo.InvariantCulture) : xMin;
+                        controller.SetRange(xMin, xMax, xVal);
+                    }
+
+                    // rangeY(min, max, value) — case-insensitive
+                    controller.minY   = 0f;
+                    controller.maxY   = 1f;
+                    controller.value2 = 0f;
+                    int ryIdx = trimmd.IndexOf("rangey(", StringComparison.OrdinalIgnoreCase);
+                    if (ryIdx > -1)
+                    {
+                        string range = trimmd.Substring(ryIdx + 7);
+                        range = range.Substring(0, range.IndexOf(")"));
+                        var tokens = range.Split(',');
+                        float yMin = tokens.Length > 0 ? float.Parse(tokens[0].Trim(), CultureInfo.InvariantCulture) : 0;
+                        float yMax = tokens.Length > 1 ? float.Parse(tokens[1].Trim(), CultureInfo.InvariantCulture) : 1;
+                        float yVal = tokens.Length > 2 ? float.Parse(tokens[2].Trim(), CultureInfo.InvariantCulture) : yMin;
+                        controller.minY   = yMin;
+                        controller.maxY   = yMax;
+                        controller.value2 = yVal;
+                    }
+
+                    locaChannelControllers.Add(controller);
+                }
+                else if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox")
                     || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox") || control.Contains("label"))
                 {
                     CsoundChannelController controller = new CsoundChannelController();
@@ -966,8 +1038,7 @@ namespace Csound.Unity
                         text = text.Substring(0, text.IndexOf(")") - 1);
                         text = text.Replace("\"", "");
                         text = text.Replace('"', new char());
-                        controller.text = text;
-                        if (controller.type == "combobox") //if combobox, create a range
+                        if (controller.type == "combobox") //if combobox, text() contains options not a label
                         {
                             char[] delimiterChars = { ',' };
                             string[] tokens = text.Split(delimiterChars);
@@ -978,6 +1049,10 @@ namespace Csound.Unity
                                 tokens[o] = string.Join("", tokens[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
                             }
                             controller.options = tokens;
+                        }
+                        else
+                        {
+                            controller.text = text;
                         }
                     }
 
@@ -2222,14 +2297,17 @@ namespace Csound.Unity
                         // channel and value come from the Cabbage snap
                         // but not all the other fields
                         // set all the missing fields
-                        chanToFix.caption = chan.caption;
+                        chanToFix.caption   = chan.caption;
+                        chanToFix.channelY  = chan.channelY;
                         chanToFix.increment = chan.increment;
-                        chanToFix.max = chan.max;
-                        chanToFix.min = chan.min;
-                        chanToFix.options = chan.options;
-                        chanToFix.skew = chan.skew;
-                        chanToFix.text = chan.text;
-                        chanToFix.type = chan.type;
+                        chanToFix.max       = chan.max;
+                        chanToFix.min       = chan.min;
+                        chanToFix.minY      = chan.minY;
+                        chanToFix.maxY      = chan.maxY;
+                        chanToFix.options   = chan.options;
+                        chanToFix.skew      = chan.skew;
+                        chanToFix.text      = chan.text;
+                        chanToFix.type      = chan.type;
 
                         // also fix the combobox index?
                         if (chanToFix.type.Equals("combobox"))
@@ -2290,6 +2368,162 @@ namespace Csound.Unity
                 fullPath = Path.Combine(path, $"{presetName}_{count++}.json");
             }
             return fullPath;
+        }
+
+        /// <summary>
+        /// Controls how discrete channels (button, checkbox, combobox) are handled during <see cref="MorphToPreset"/>.
+        /// </summary>
+        public enum DiscreteChannelMode
+        {
+            /// <summary>Discrete channels are applied only at the very end, together with <see cref="SetPreset"/>. Default.</summary>
+            SnapAtEnd,
+            /// <summary>Discrete channels snap to the target value when the interpolation parameter crosses 0.5.</summary>
+            SnapAtMidpoint,
+            /// <summary>Discrete channels are set to the target value immediately when the morph begins.</summary>
+            SnapAtStart,
+        }
+
+        /// <summary>
+        /// Controls how discrete channels (button, checkbox, combobox) are handled during <see cref="BlendPresets"/>.
+        /// </summary>
+        public enum DiscreteBlendMode
+        {
+            /// <summary>Discrete channels are not modified during the blend. Default.</summary>
+            Ignore,
+            /// <summary>Discrete channels take the value from whichever corner currently has the highest weight.</summary>
+            NearestCorner,
+        }
+
+        /// <summary>
+        /// Smoothly interpolates all slider channels from their current values to the target preset's values over the given duration.
+        /// An optional <see cref="AnimationCurve"/> controls easing; pass null for linear interpolation.
+        /// The returned <see cref="Coroutine"/> can be passed to <see cref="StopMorph"/> to cancel mid-way.
+        /// If duration is zero or negative, the preset is applied immediately.
+        /// </summary>
+        public Coroutine MorphToPreset(CsoundUnityPreset preset, float duration,
+            AnimationCurve curve = null, Action onComplete = null,
+            DiscreteChannelMode discreteMode = DiscreteChannelMode.SnapAtEnd)
+        {
+            if (duration <= 0f)
+            {
+                SetPreset(preset);
+                onComplete?.Invoke();
+                return null;
+            }
+            StopMorph();
+            _morphCoroutine = StartCoroutine(MorphCoroutine(preset, duration, curve, onComplete, discreteMode));
+            return _morphCoroutine;
+        }
+
+        /// <summary>
+        /// Stops an in-progress morph started by <see cref="MorphToPreset"/>.
+        /// Channel values remain at whatever point the morph reached when stopped.
+        /// </summary>
+        public void StopMorph()
+        {
+            if (_morphCoroutine == null) return;
+            StopCoroutine(_morphCoroutine);
+            _morphCoroutine = null;
+        }
+
+        private IEnumerator MorphCoroutine(CsoundUnityPreset preset, float duration,
+            AnimationCurve curve, System.Action onComplete, DiscreteChannelMode discreteMode)
+        {
+            var startValues = new Dictionary<string, float>();
+            foreach (var ch in channels)
+                if (ch.type.Contains("slider") || ch.type == "nslider") startValues[ch.channel] = ch.value;
+
+            if (discreteMode == DiscreteChannelMode.SnapAtStart)
+                ApplyDiscreteChannels(preset);
+
+            var midpointSnapped = false;
+            var elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += UnityEngine.Time.deltaTime;
+                var rawT = Mathf.Clamp01(elapsed / duration);
+                var t = curve?.Evaluate(rawT) ?? rawT;
+
+                foreach (var target in preset.channels)
+                {
+                    if (!target.type.Contains("slider") && target.type != "nslider") continue;
+                    var start = startValues.TryGetValue(target.channel, out float s) ? s : target.value;
+                    SetChannel(target.channel, Mathf.Lerp(start, target.value, t));
+                }
+
+                if (discreteMode == DiscreteChannelMode.SnapAtMidpoint && !midpointSnapped && rawT >= 0.5f)
+                {
+                    ApplyDiscreteChannels(preset);
+                    midpointSnapped = true;
+                }
+
+                yield return null;
+            }
+            SetPreset(preset);
+            _morphCoroutine = null;
+            onComplete?.Invoke();
+        }
+
+        private void ApplyDiscreteChannels(CsoundUnityPreset preset)
+        {
+            foreach (var ch in preset.channels)
+            {
+                if (ch.type != "button" && ch.type != "checkbox" && !ch.type.Contains("combobox")) continue;
+                SetChannel(ch.channel, ch.type.Contains("combobox") ? ch.value + 1 : ch.value);
+            }
+        }
+
+        /// <summary>
+        /// Bilinear blend of four presets placed at the corners of a unit square.
+        /// <para>Corner mapping: <paramref name="a"/> = (0,0), <paramref name="b"/> = (1,0),
+        /// <paramref name="c"/> = (0,1), <paramref name="d"/> = (1,1).</para>
+        /// <para>Slider channels are interpolated bilinearly. Discrete channels (button, checkbox, combobox)
+        /// follow <paramref name="discreteMode"/>.</para>
+        /// Call this every frame (e.g. from <see cref="CsoundUnityVectorMorph"/>) to drive real-time vector synthesis.
+        /// </summary>
+        public void BlendPresets(CsoundUnityPreset a, CsoundUnityPreset b,
+            CsoundUnityPreset c, CsoundUnityPreset d, Vector2 position,
+            DiscreteBlendMode discreteMode = DiscreteBlendMode.Ignore)
+        {
+            var x = Mathf.Clamp01(position.x);
+            var y = Mathf.Clamp01(position.y);
+            var wA = (1 - x) * (1 - y);
+            var wB = x       * (1 - y);
+            var wC = (1 - x) * y;
+            var wD = x       * y;
+
+            foreach (var chA in a.channels)
+            {
+                var channelName     = chA.channel;
+                var isSlider   = chA.type.Contains("slider") || chA.type == "nslider";
+                var isDiscrete = chA.type == "button" || chA.type == "checkbox" || chA.type.Contains("combobox");
+
+                if (isDiscrete && discreteMode == DiscreteBlendMode.NearestCorner)
+                {
+                    float[] weights   = { wA, wB, wC, wD };
+                    CsoundUnityPreset[] presets = { a, b, c, d };
+                    var maxIdx = 0;
+                    for (var i = 1; i < 4; i++)
+                        if (weights[i] > weights[maxIdx]) maxIdx = i;
+                    var val = GetPresetChannelValue(presets[maxIdx], channelName, chA.value);
+                    SetChannel(channelName, chA.type.Contains("combobox") ? val + 1 : val);
+                }
+                else if (isSlider)
+                {
+                    var vA = chA.value;
+                    var vB = GetPresetChannelValue(b, channelName, vA);
+                    var vC = GetPresetChannelValue(c, channelName, vA);
+                    var vD = GetPresetChannelValue(d, channelName, vA);
+                    SetChannel(channelName, vA * wA + vB * wB + vC * wC + vD * wD);
+                }
+            }
+        }
+
+        private static float GetPresetChannelValue(CsoundUnityPreset preset, string channel, float fallback)
+        {
+            foreach (var ch in preset.channels)
+                if (ch.channel == channel) return ch.value;
+            return fallback;
         }
 
         #endregion PRESETS
