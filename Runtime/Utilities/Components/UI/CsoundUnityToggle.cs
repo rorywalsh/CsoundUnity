@@ -1,0 +1,74 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Csound.Unity.Utilities.Components.UI
+{
+    /// <summary>
+    /// A Unity UI Toggle component that integrates with CsoundUnity.
+    /// Maps a Cabbage checkbox widget to a Unity Toggle, sending 0 or 1 to the named Csound channel.
+    /// </summary>
+    [RequireComponent(typeof(Toggle))]
+    public class CsoundUnityToggle : MonoBehaviour
+    {
+        [SerializeField] CsoundUnity _csound;
+        [SerializeField] string _channel;
+        [SerializeField] Text _labelText;
+
+        public bool IsOn
+        {
+            get => _toggle != null && _toggle.isOn;
+            set { if (_toggle != null) _toggle.isOn = value; }
+        }
+
+        public bool IsInitialized => _csound != null && _csound.IsInitialized && _isInitialized;
+
+        private Toggle _toggle;
+        private CsoundChannelController _channelController;
+        private bool _isInitialized = false;
+
+        IEnumerator Start()
+        {
+            _toggle = GetComponent<Toggle>();
+            if (_toggle == null)
+            {
+                Debug.LogError($"CsoundUnityToggle {name} cannot work without a Toggle component");
+                yield break;
+            }
+            if (_csound == null)
+            {
+                _csound = GetComponent<CsoundUnity>();
+                if (_csound == null)
+                {
+                    Debug.LogError($"CsoundUnityToggle {name} cannot work without CsoundUnity! Please assign it in the inspector");
+                    yield break;
+                }
+            }
+
+            while (!_csound.IsInitialized)
+                yield return null;
+
+            _channelController = _csound.GetChannelController(_channel);
+            if (_channelController == null)
+            {
+                Debug.LogError($"CsoundUnityToggle {name} couldn't find channel '{_channel}'");
+                yield break;
+            }
+
+            if (_labelText != null)
+                _labelText.text = string.IsNullOrWhiteSpace(_channelController.text)
+                    ? _channel
+                    : $"{_channelController.text}\n({_channel})";
+
+            _toggle.isOn = _channelController.value >= 1f;
+            _toggle.onValueChanged.AddListener(OnToggleChanged);
+            _isInitialized = true;
+        }
+
+        private void OnToggleChanged(bool value)
+        {
+            if (!_isInitialized) return;
+            _csound.SetChannel(_channel, value ? 1f : 0f);
+        }
+    }
+}
