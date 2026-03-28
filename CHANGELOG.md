@@ -1,3 +1,19 @@
+## [4.0.0]
+
+- [Add] Unity Timelines integration: Channel and Score clips, Step Sequencer mode, pattern mode, CsoundTimelineStarter
+- [Add] MusicUtils: music theory utilities (scales, chords, arpeggios, Euclidean rhythms)
+- [Add] CsoundUnityVectorMorph: bilinear blending between four CsoundUnityPresets with interactive editor
+- [Add] UI components: CsoundUnitySlider, CsoundUnityButton, CsoundUnityToggle, CsoundUnityDropdown, CsoundUnityXYPad with prefabs
+- [Add] xypad Cabbage widget support in parser and inspector
+- [Add] CSD refresh button and CREATE from template button in inspector
+- [Add] Many new samples across new and existing categories: Timelines, UI, Samplers, Collisions, Miscellaneous, Presets, Engines
+- [Add] Utility scripts: AudioDisplay, FFTUtils, TableLoader, WriteAudioFileUtils, CopyFilesToPersistentDataPath, RemapUtils
+- [Add] Waveform and spectrum audio monitor in inspector (play mode, with zoom sliders)
+- [Add] OutputBuffer and OnCsoundPerformKsmps callback
+- [Add] Context menu shortcuts to quickly create CsoundUnity GameObjects
+- [Update] Inspector: sr/kr/ksmps redesign with single override toggle
+- [Fix] CsoundFileWatcher: handle atomic saves from modern editors
+
 ## [3.5.2] - 2025-04-28
 
 - [Fix] Version bump

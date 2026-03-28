@@ -528,6 +528,8 @@ namespace Csound.Unity
 
             AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
             outputBuffer = new float[bufferSize];
+            bufferA = new float[bufferSize];
+            bufferB = new float[bufferSize];
             
             Debug.Log($"CsoundUnity v{packageVersion} Awake, AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
 
@@ -2718,6 +2720,11 @@ namespace Csound.Unity
                 }
                 if (!updateOutputBuffer) return;
                 // copy the samples in outputBuffer using a double buffer approach
+                if (bufferA.Length != samples.Length)
+                {
+                    bufferA = new float[samples.Length];
+                    bufferB = new float[samples.Length];
+                }
                 Array.Copy(samples, activeBufferIndex == 0 ? bufferA : bufferB, samples.Length);
                 outputBuffer = (activeBufferIndex == 0) ? bufferA : bufferB;
                 activeBufferIndex = (activeBufferIndex == 0) ? 1 : 0;

@@ -28,6 +28,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Csound.Unity.Utilities;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -88,6 +89,10 @@ namespace Csound.Unity
         // Transient Y-axis state for xypad widgets (not serialized, lives only in this editor session)
         private readonly Dictionary<string, float> _xypadYValues = new Dictionary<string, float>();
         private readonly HashSet<string> _xypadDragging = new HashSet<string>();
+        private bool _showWaveform;
+        private bool _showSpectrum;
+        private float _waveformZoom = 1f;
+        private float _spectrumZoom = 1f;
 
         private const string CsdTemplatePath = "Packages/com.csound.csoundunity/Editor/Templates/CsoundTemplate.csd";
 
@@ -182,6 +187,9 @@ namespace Csound.Unity
 
             EditorGUILayout.Space();
             DrawPresets();
+
+            EditorGUILayout.Space();
+            DrawAudioMonitor();
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -1269,5 +1277,71 @@ namespace Csound.Unity
         // }
         return webGLAssetsList;
     }
+
+        private void DrawAudioMonitor()
+        {
+            if (!Application.isPlaying) return;
+
+            EditorGUILayout.LabelField("Audio Monitor", EditorStyles.boldLabel);
+            _showWaveform = EditorGUILayout.Toggle("Waveform", _showWaveform);
+            _showSpectrum = EditorGUILayout.Toggle("Spectrum", _showSpectrum);
+
+            if (!_showWaveform && !_showSpectrum) return;
+
+            if (!csoundUnity.updateOutputBuffer)
+            {
+                EditorGUILayout.HelpBox("Enable 'Update Output Buffer' in Settings to use the audio monitor.", MessageType.Warning);
+                return;
+            }
+
+            var buffer = csoundUnity.OutputBuffer;
+            if (buffer == null || buffer.Length == 0) return;
+
+            const float height = 80f;
+            var bg = new Color(0.1f, 0.1f, 0.1f);
+
+            if (_showWaveform)
+            {
+                EditorGUILayout.BeginHorizontal();
+                var rect = GUILayoutUtility.GetRect(0, height, GUILayout.ExpandWidth(true));
+                _waveformZoom = GUILayout.VerticalSlider(_waveformZoom, 20f, 1f, GUILayout.Width(16f), GUILayout.Height(height));
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUI.DrawRect(rect, bg);
+                float midY = rect.y + rect.height * 0.5f;
+                EditorGUI.DrawRect(new Rect(rect.x, midY, rect.width, 1), new Color(0.3f, 0.3f, 0.3f));
+                float segW = rect.width / buffer.Length;
+                float halfH = rect.height * 0.5f;
+                var col = new Color(0.2f, 0.85f, 0.2f);
+                for (int i = 0; i < buffer.Length; i++)
+                {
+                    float sample = Mathf.Clamp(buffer[i] * _waveformZoom, -1f, 1f);
+                    float barH = Mathf.Max(1f, Mathf.Abs(sample) * halfH);
+                    float barY = sample >= 0f ? midY - barH : midY;
+                    EditorGUI.DrawRect(new Rect(rect.x + i * segW, barY, Mathf.Max(1f, segW), barH), col);
+                }
+            }
+
+            if (_showSpectrum)
+            {
+                EditorGUILayout.BeginHorizontal();
+                var rect = GUILayoutUtility.GetRect(0, height, GUILayout.ExpandWidth(true));
+                _spectrumZoom = GUILayout.VerticalSlider(_spectrumZoom, 100f, 1f, GUILayout.Width(16f), GUILayout.Height(height));
+                EditorGUILayout.EndHorizontal();
+
+                EditorGUI.DrawRect(rect, bg);
+                var spectrum = FFTUtils.CalculateSpectrum(buffer);
+                float barW = rect.width / spectrum.Length;
+                var col = new Color(0.2f, 0.6f, 1f);
+                for (int i = 0; i < spectrum.Length; i++)
+                {
+                    float barH = Mathf.Clamp01(spectrum[i] * _spectrumZoom) * rect.height;
+                    EditorGUI.DrawRect(new Rect(rect.x + i * barW, rect.yMax - barH, Mathf.Max(1f, barW), barH), col);
+                }
+            }
+        }
+
+        public override bool RequiresConstantRepaint() =>
+            Application.isPlaying && (_showWaveform || _showSpectrum);
     }
 }

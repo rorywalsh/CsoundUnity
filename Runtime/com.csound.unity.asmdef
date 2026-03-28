@@ -1,5 +1,6 @@
 {
     "name": "com.csound.unity",
+    "rootNamespace": "",
     "references": [
         "GUID:a5751c921f1706842adafe69b078c09e"
     ],
