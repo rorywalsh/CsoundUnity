@@ -8,7 +8,7 @@
 - [Add] CSD refresh button and CREATE from template button in inspector
 - [Add] Many new samples across new and existing categories: Timelines, UI, Samplers, Collisions, Miscellaneous, Presets, Engines
 - [Add] Utility scripts: AudioDisplay, FFTUtils, TableLoader, WriteAudioFileUtils, CopyFilesToPersistentDataPath, RemapUtils
-- [Add] Waveform and spectrum audio monitor in inspector (play mode, with zoom sliders)
+- [Add] Waveform, spectrum and Lissajous audio monitor in inspector (play mode, with zoom sliders)
 - [Add] OutputBuffer and OnCsoundPerformKsmps callback
 - [Add] Context menu shortcuts to quickly create CsoundUnity GameObjects
 - [Update] Inspector: sr/kr/ksmps redesign with single override toggle

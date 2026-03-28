@@ -427,14 +427,9 @@ namespace Csound.Unity
         /// </summary>
         public string CurrentPreset => _currentPreset;
 
-        public float[] OutputBuffer
-        {
-            get
-            {
-                // Return the current output buffer
-                return outputBuffer;
-            }
-        }
+        public float[] OutputBuffer => outputBuffer;
+
+        public int OutputChannels { get; private set; }
 
         #endregion PUBLIC_FIELDS
 
@@ -503,8 +498,8 @@ namespace Csound.Unity
         int bufferSize, numBuffers;
         private float[] bufferA;
         private float[] bufferB;
-        private int activeBufferIndex = 0; // 0 for bufferA, 1 for bufferB
-        private float[] outputBuffer = null;
+        private int activeBufferIndex;
+        private float[] outputBuffer;
 
         private const string GLOBAL_TAG = "(GLOBAL)";
 
@@ -2718,16 +2713,18 @@ namespace Csound.Unity
                         }
                     }
                 }
-                if (!updateOutputBuffer) return;
-                // copy the samples in outputBuffer using a double buffer approach
-                if (bufferA.Length != samples.Length)
+                if (updateOutputBuffer)
                 {
-                    bufferA = new float[samples.Length];
-                    bufferB = new float[samples.Length];
+                    if (bufferA.Length != samples.Length)
+                    {
+                        bufferA = new float[samples.Length];
+                        bufferB = new float[samples.Length];
+                    }
+                    Array.Copy(samples, activeBufferIndex == 0 ? bufferA : bufferB, samples.Length);
+                    outputBuffer = activeBufferIndex == 0 ? bufferA : bufferB;
+                    activeBufferIndex = activeBufferIndex == 0 ? 1 : 0;
+                    OutputChannels = numChannels;
                 }
-                Array.Copy(samples, activeBufferIndex == 0 ? bufferA : bufferB, samples.Length);
-                outputBuffer = (activeBufferIndex == 0) ? bufferA : bufferB;
-                activeBufferIndex = (activeBufferIndex == 0) ? 1 : 0;
             }
         }
 
