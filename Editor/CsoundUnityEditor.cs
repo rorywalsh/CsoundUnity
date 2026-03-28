@@ -28,6 +28,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Csound.Unity.Utilities;
 using UnityEditor;
 using UnityEditorInternal;
@@ -92,6 +93,7 @@ namespace Csound.Unity
         private bool _showWaveform;
         private bool _showSpectrum;
         private bool _showLissajous;
+        private static MethodInfo _powerSliderMethod;
         private float _waveformZoom = 1f;
         private float _spectrumZoom = 1f;
         private float _lissajousZoom = 1f;
@@ -540,9 +542,27 @@ namespace Csound.Unity
                         {
                             var min = cc.FindPropertyRelative("min").floatValue;
                             var max = cc.FindPropertyRelative("max").floatValue;
+                            var skew = cc.FindPropertyRelative("skew").floatValue;
+                            var increment = cc.FindPropertyRelative("increment").floatValue;
+                            var labelContent = new GUIContent(label, channel);
 
                             EditorGUI.BeginChangeCheck();
-                            chanValue.floatValue = EditorGUILayout.Slider(new GUIContent(label, channel), chanValue.floatValue, min, max);
+                            float newValue;
+                            if (skew > 0f && skew != 1f && GetPowerSliderMethod() != null)
+                            {
+                                var rect = EditorGUILayout.GetControlRect();
+                                newValue = (float)_powerSliderMethod.Invoke(null, new object[] { rect, labelContent, chanValue.floatValue, min, max, 1f / skew });
+                            }
+                            else
+                            {
+                                newValue = EditorGUILayout.Slider(labelContent, chanValue.floatValue, min, max);
+                            }
+                            if (increment > 1e-5f)
+                            {
+                                newValue = min + Mathf.Round((newValue - min) / increment) * increment;
+                                newValue = Mathf.Clamp(newValue, min, max);
+                            }
+                            chanValue.floatValue = newValue;
                             if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
                             {
                                 csoundUnity.SetChannel(channel, chanValue.floatValue);
@@ -1279,6 +1299,19 @@ namespace Csound.Unity
         // }
         return webGLAssetsList;
     }
+
+        private static MethodInfo GetPowerSliderMethod()
+        {
+            if (_powerSliderMethod == null)
+                _powerSliderMethod = typeof(EditorGUI).GetMethod(
+                    "PowerSlider",
+                    BindingFlags.NonPublic | BindingFlags.Static,
+                    null,
+                    new[] { typeof(Rect), typeof(GUIContent), typeof(float), typeof(float), typeof(float), typeof(float) },
+                    null
+                );
+            return _powerSliderMethod;
+        }
 
         private void DrawAudioMonitor()
         {

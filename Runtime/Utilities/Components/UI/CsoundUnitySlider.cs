@@ -41,8 +41,7 @@ namespace Csound.Unity.Utilities.Components.UI
             set
             {
                 _channelController.value = value;
-                var remapped = RU.Remap(value, _channelController.min, _channelController.max, 0, 1, true, _channelController.skew);
-                UpdateSlider(remapped);
+                UpdateSlider(RU.RemapTo0to1(value, _channelController.min, _channelController.max, _channelController.skew));
             }
         }
 
@@ -105,7 +104,7 @@ namespace Csound.Unity.Utilities.Components.UI
 
             _labelText.text = string.IsNullOrWhiteSpace(_channelController.text) ? $"{_channel}" : $"{_channelController.text}\n({_channel})";
             _valueText.text = $"{_channelController.value}";
-            _slider.value = RU.Remap(_channelController.value, _channelController.min, _channelController.max, 0, 1, true);
+            _slider.value = RU.RemapTo0to1(_channelController.value, _channelController.min, _channelController.max, _channelController.skew);
 
             _targetValue = _channelController.value;
             _currentValue = _channelController.value;
@@ -123,7 +122,13 @@ namespace Csound.Unity.Utilities.Components.UI
         private void UpdateSlider(float value)
         {
             if (!_isInitialized) return;
-            var remapped = RU.Remap(value, 0, 1, _channelController.min, _channelController.max, true, _channelController.skew);
+            var remapped = RU.RemapFrom0to1(value, _channelController.min, _channelController.max, _channelController.skew);
+            if (_channelController.increment > 1e-5f)
+            {
+                remapped = _channelController.min + Mathf.Round((remapped - _channelController.min) / _channelController.increment) * _channelController.increment;
+                remapped = Mathf.Clamp(remapped, _channelController.min, _channelController.max);
+                _slider.SetValueWithoutNotify(RU.RemapTo0to1(remapped, _channelController.min, _channelController.max, _channelController.skew));
+            }
             _valueText.text = $"{remapped:F2}";
             _targetValue = remapped;
             if (_smoothingTime <= 0)
