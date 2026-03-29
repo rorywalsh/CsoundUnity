@@ -11,6 +11,8 @@
 - [Add] Waveform, spectrum and Lissajous audio monitor in inspector (play mode, with zoom sliders)
 - [Add] OutputBuffer and OnCsoundPerformKsmps callback
 - [Add] Context menu shortcuts to quickly create CsoundUnity GameObjects
+- [Add] Lifecycle API: initializeOnAwake toggle, Initialize(), Stop(), Restart()
+- [Add] OnCsoundStopped and OnCsoundPerformanceFinished events
 - [Update] Inspector: sr/kr/ksmps redesign with single override toggle
 - [Fix] CsoundFileWatcher: handle atomic saves from modern editors
 
