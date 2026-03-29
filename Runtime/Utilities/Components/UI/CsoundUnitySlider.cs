@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using RU = Csound.Unity.Utilities.RemapUtils;
@@ -52,13 +52,9 @@ namespace Csound.Unity.Utilities.Components.UI
             {
                 _active = value;
                 if (_active)
-                {
                     _csound.SendScoreEvent("i1 0 -1");
-                }
                 else
-                {
                     _csound.SendScoreEvent("i-1 0 -1");
-                }
             }
         }
 
@@ -90,16 +86,45 @@ namespace Csound.Unity.Utilities.Components.UI
                 }
             }
 
-            while (!_csound.IsInitialized)
-            {
-                yield return null;
-            }
+            _csound.OnCsoundInitialized += OnCsoundInitialized;
+            _csound.OnCsoundStopped += OnCsoundStopped;
 
+            yield return new WaitUntil(() => _csound.IsInitialized);
+
+            InitSlider();
+        }
+
+        private void OnDestroy()
+        {
+            if (_csound == null) return;
+            _csound.OnCsoundInitialized -= OnCsoundInitialized;
+            _csound.OnCsoundStopped -= OnCsoundStopped;
+        }
+
+        private void OnCsoundInitialized()
+        {
+            StartCoroutine(ReinitSlider());
+        }
+
+        private IEnumerator ReinitSlider()
+        {
+            yield return new WaitUntil(() => _csound.IsInitialized);
+            InitSlider();
+        }
+
+        private void OnCsoundStopped()
+        {
+            _slider.onValueChanged.RemoveListener(UpdateSlider);
+            _isInitialized = false;
+        }
+
+        private void InitSlider()
+        {
             _channelController = _csound.GetChannelController(_channel);
             if (_channelController == null)
             {
                 Debug.LogError($"CsoundUnitySlider {name} couldn't find channel '{_channel}'");
-                yield break;
+                return;
             }
 
             _labelText.text = string.IsNullOrWhiteSpace(_channelController.text) ? $"{_channel}" : $"{_channelController.text}\n({_channel})";
@@ -108,7 +133,10 @@ namespace Csound.Unity.Utilities.Components.UI
 
             _targetValue = _channelController.value;
             _currentValue = _channelController.value;
-            _slider.onValueChanged.AddListener((value) => UpdateSlider(value));
+            _velocity = 0f;
+
+            _slider.onValueChanged.RemoveListener(UpdateSlider);
+            _slider.onValueChanged.AddListener(UpdateSlider);
             _isInitialized = true;
         }
 

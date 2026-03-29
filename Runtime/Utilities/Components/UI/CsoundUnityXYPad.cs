@@ -90,16 +90,46 @@ namespace Csound.Unity.Utilities.Components.UI
                 }
             }
 
-            while (!_csound.IsInitialized)
-                yield return null;
+            _csound.OnCsoundInitialized += OnCsoundInitialized;
+            _csound.OnCsoundStopped += OnCsoundStopped;
 
+            yield return new WaitUntil(() => _csound.IsInitialized);
+
+            InitXYPad();
+        }
+
+        private void OnDestroy()
+        {
+            if (_csound == null) return;
+            _csound.OnCsoundInitialized -= OnCsoundInitialized;
+            _csound.OnCsoundStopped -= OnCsoundStopped;
+        }
+
+        private void OnCsoundInitialized()
+        {
+            StartCoroutine(ReinitXYPad());
+        }
+
+        private IEnumerator ReinitXYPad()
+        {
+            yield return new WaitUntil(() => _csound.IsInitialized);
+            InitXYPad();
+        }
+
+        private void OnCsoundStopped()
+        {
+            _isInitialized = false;
+        }
+
+        private void InitXYPad()
+        {
             if (_mode == XYPadMode.Widget)
             {
                 _controller = _csound.GetChannelController(_channel);
                 if (_controller == null)
                 {
                     Debug.LogError($"CsoundUnityXYPad {name} couldn't find channel '{_channel}'. Make sure the CSD has an xypad widget with that channel name.");
-                    yield break;
+                    return;
                 }
 
                 if (_controller.type != "xypad")
@@ -119,7 +149,7 @@ namespace Csound.Unity.Utilities.Components.UI
                 if (string.IsNullOrEmpty(_channel) || string.IsNullOrEmpty(_channelYManual))
                 {
                     Debug.LogError($"CsoundUnityXYPad {name} is in Manual mode but channel names are not set.");
-                    yield break;
+                    return;
                 }
 
                 _channelX = _channel;
@@ -143,6 +173,7 @@ namespace Csound.Unity.Utilities.Components.UI
                 Mathf.InverseLerp(_yMin, _yMax, _channelValue.y));
 
             _targetValue = _channelValue;
+            _velocity = Vector2.zero;
             MoveDot(_normalizedPos);
             SendChannels();
             UpdateLabels();

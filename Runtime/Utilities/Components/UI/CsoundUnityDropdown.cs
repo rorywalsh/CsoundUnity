@@ -51,14 +51,45 @@ namespace Csound.Unity.Utilities.Components.UI
                 }
             }
 
-            while (!_csound.IsInitialized)
-                yield return null;
+            _csound.OnCsoundInitialized += OnCsoundInitialized;
+            _csound.OnCsoundStopped += OnCsoundStopped;
 
+            yield return new WaitUntil(() => _csound.IsInitialized);
+
+            InitDropdown();
+        }
+
+        private void OnDestroy()
+        {
+            if (_csound == null) return;
+            _csound.OnCsoundInitialized -= OnCsoundInitialized;
+            _csound.OnCsoundStopped -= OnCsoundStopped;
+        }
+
+        private void OnCsoundInitialized()
+        {
+            StartCoroutine(ReinitDropdown());
+        }
+
+        private IEnumerator ReinitDropdown()
+        {
+            yield return new WaitUntil(() => _csound.IsInitialized);
+            InitDropdown();
+        }
+
+        private void OnCsoundStopped()
+        {
+            _dropdown.onValueChanged.RemoveListener(OnDropdownChanged);
+            _isInitialized = false;
+        }
+
+        private void InitDropdown()
+        {
             _channelController = _csound.GetChannelController(_channel);
             if (_channelController == null)
             {
                 Debug.LogError($"CsoundUnityDropdown {name} couldn't find channel '{_channel}'");
-                yield break;
+                return;
             }
 
             if (_channelLabelText != null)
@@ -78,6 +109,7 @@ namespace Csound.Unity.Utilities.Components.UI
             // Set initial value: Cabbage combobox is 1-based, dropdown is 0-based
             _dropdown.value = Mathf.Clamp(Mathf.RoundToInt(_channelController.value) - 1, 0, options.Count - 1);
 
+            _dropdown.onValueChanged.RemoveListener(OnDropdownChanged);
             _dropdown.onValueChanged.AddListener(OnDropdownChanged);
             _isInitialized = true;
         }

@@ -560,15 +560,16 @@ namespace Csound.Unity
                             {
                                 newValue = EditorGUILayout.Slider(labelContent, chanValue.floatValue, min, max);
                             }
-                            if (increment > 1e-5f)
+                            if (EditorGUI.EndChangeCheck())
                             {
-                                newValue = min + Mathf.Round((newValue - min) / increment) * increment;
-                                newValue = Mathf.Clamp(newValue, min, max);
-                            }
-                            chanValue.floatValue = newValue;
-                            if (EditorGUI.EndChangeCheck() && Application.isPlaying && csoundUnity != null)
-                            {
-                                csoundUnity.SetChannel(channel, chanValue.floatValue);
+                                if (increment > 1e-5f)
+                                {
+                                    newValue = min + Mathf.Round((newValue - min) / increment) * increment;
+                                    newValue = Mathf.Clamp(newValue, min, max);
+                                }
+                                chanValue.floatValue = newValue;
+                                if (Application.isPlaying && csoundUnity != null)
+                                    csoundUnity.SetChannel(channel, chanValue.floatValue);
                             }
                         }
                         else if (type.Contains("combobox"))

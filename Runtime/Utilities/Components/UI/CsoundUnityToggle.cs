@@ -45,14 +45,45 @@ namespace Csound.Unity.Utilities.Components.UI
                 }
             }
 
-            while (!_csound.IsInitialized)
-                yield return null;
+            _csound.OnCsoundInitialized += OnCsoundInitialized;
+            _csound.OnCsoundStopped += OnCsoundStopped;
 
+            yield return new WaitUntil(() => _csound.IsInitialized);
+
+            InitToggle();
+        }
+
+        private void OnDestroy()
+        {
+            if (_csound == null) return;
+            _csound.OnCsoundInitialized -= OnCsoundInitialized;
+            _csound.OnCsoundStopped -= OnCsoundStopped;
+        }
+
+        private void OnCsoundInitialized()
+        {
+            StartCoroutine(ReinitToggle());
+        }
+
+        private IEnumerator ReinitToggle()
+        {
+            yield return new WaitUntil(() => _csound.IsInitialized);
+            InitToggle();
+        }
+
+        private void OnCsoundStopped()
+        {
+            _toggle.onValueChanged.RemoveListener(OnToggleChanged);
+            _isInitialized = false;
+        }
+
+        private void InitToggle()
+        {
             _channelController = _csound.GetChannelController(_channel);
             if (_channelController == null)
             {
                 Debug.LogError($"CsoundUnityToggle {name} couldn't find channel '{_channel}'");
-                yield break;
+                return;
             }
 
             if (_labelText != null)
@@ -61,6 +92,7 @@ namespace Csound.Unity.Utilities.Components.UI
                     : $"{_channelController.text}\n({_channel})";
 
             _toggle.isOn = _channelController.value >= 1f;
+            _toggle.onValueChanged.RemoveListener(OnToggleChanged);
             _toggle.onValueChanged.AddListener(OnToggleChanged);
             _isInitialized = true;
         }
