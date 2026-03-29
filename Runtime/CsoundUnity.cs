@@ -334,6 +334,12 @@ namespace Csound.Unity
         [HideInInspector] public bool logCsoundOutput = false;
 
         /// <summary>
+        /// If true CsoundUnity will initialize automatically in Awake.
+        /// Set to false to initialize manually by calling <see cref="Initialize"/>.
+        /// </summary>
+        [HideInInspector] public bool initializeOnAwake = true;
+
+        /// <summary>
         /// If true no audio is sent to output
         /// </summary>
         [HideInInspector] public bool mute = false;
@@ -404,8 +410,27 @@ namespace Csound.Unity
         /// </summary>
         public event CsoundInitialized OnCsoundInitialized;
 
+        /// <summary>
+        /// The delegate of the event OnCsoundStopped
+        /// </summary>
+        public delegate void CsoundStopped();
+        /// <summary>
+        /// An event that will be executed when Csound is stopped via <see cref="Stop"/>
+        /// </summary>
+        public event CsoundStopped OnCsoundStopped;
+
         public delegate void CsoundPerformKsmps();
         public event CsoundPerformKsmps OnCsoundPerformKsmps;
+
+        /// <summary>
+        /// The delegate of the event OnCsoundPerformanceFinished
+        /// </summary>
+        public delegate void CsoundPerformanceFinishedDelegate();
+        /// <summary>
+        /// An event fired on the main thread when Csound performance ends naturally (score complete).
+        /// CsoundUnity will call <see cref="Stop"/> immediately after firing this event.
+        /// </summary>
+        public event CsoundPerformanceFinishedDelegate OnCsoundPerformanceFinished;
 
         public bool PerformanceFinished { get => performanceFinished; }
         /// <summary>
@@ -488,13 +513,15 @@ namespace Csound.Unity
 #pragma warning restore 414
 
         private bool initialized = false;
+        private bool _initializing = false;
         private uint ksmps = 32;
         private uint ksmpsIndex = 0;
         private float zerdbfs = 1;
         private bool compiledOk = false;
-        private bool performanceFinished;
+        private volatile bool performanceFinished;
         private AudioSource audioSource;
         private Coroutine LoggingCoroutine;
+        private Coroutine _monitorPerformanceCoroutine;
         int bufferSize, numBuffers;
         private float[] bufferA;
         private float[] bufferB;
@@ -536,9 +563,9 @@ namespace Csound.Unity
             audioSource = GetComponent<AudioSource>();
 
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Init();
+            if (initializeOnAwake) { _initializing = true; Init(); }
 #else
-            InitWebGL();
+            if (initializeOnAwake) { _initializing = true; InitWebGL(); }
 #endif
         }
 
@@ -596,6 +623,9 @@ namespace Csound.Unity
 
                 // This coroutine prints the Csound output to the Unity console
                 LoggingCoroutine = StartCoroutine(Logging(.01f));
+                // This coroutine detects natural performance end on the main thread,
+                // avoiding memory-visibility issues with polling a volatile field in Update()
+                _monitorPerformanceCoroutine = StartCoroutine(MonitorPerformanceEnd());
 
                 compiledOk = csound.CompiledWithoutError();
 
@@ -606,6 +636,7 @@ namespace Csound.Unity
                     Debug.Log($"Csound zerdbfs: {zerdbfs}");
 
                     initialized = true;
+                    _initializing = false;
                     OnCsoundInitialized?.Invoke();
                 }
             }
@@ -657,7 +688,7 @@ namespace Csound.Unity
     {
         Debug.Log($"[CsoundUnity] OnWebGLBridgeInitialized for instance #{instanceId} received by CsoundUnity instance {this._instanceId}");
         if (instanceId != this._instanceId) return;
-        if (csound == null) return;
+        if (!IsInitialized || csound == null) return;
         
         CsoundUnityBridge.OnCsoundWebGLInitialized -= OnWebGLBridgeInitialized;
         // channels are created when a csd file is selected in the inspector
@@ -678,6 +709,7 @@ namespace Csound.Unity
             }
         }
         initialized = true;
+        _initializing = false;
         OnCsoundInitialized?.Invoke();
     }
 
@@ -687,6 +719,93 @@ namespace Csound.Unity
 
         #region PUBLIC_METHODS
 
+        #region LIFECYCLE
+
+        /// <summary>
+        /// Initializes CsoundUnity manually. Only works if <see cref="initializeOnAwake"/> is false,
+        /// or after a <see cref="Stop"/>. Silently returns if already initialized or initializing.
+        /// </summary>
+        public void Initialize()
+        {
+            if (initialized || _initializing)
+            {
+                Debug.LogWarning("[CsoundUnity] Initialize() called but already initialized or initializing.");
+                return;
+            }
+            _initializing = true;
+#if !UNITY_WEBGL || UNITY_EDITOR
+            Init();
+#else
+            InitWebGL();
+#endif
+        }
+
+        /// <summary>
+        /// Stops and disposes the current Csound instance.
+        /// After this, <see cref="Initialize"/> or <see cref="Restart"/> can be called to start again.
+        /// </summary>
+        public void Stop()
+        {
+            if (!initialized && !_initializing) return;
+            if (LoggingCoroutine != null)
+            {
+                StopCoroutine(LoggingCoroutine);
+                LoggingCoroutine = null;
+            }
+            if (_monitorPerformanceCoroutine != null)
+            {
+                StopCoroutine(_monitorPerformanceCoroutine);
+                _monitorPerformanceCoroutine = null;
+            }
+            // Set initialized = false FIRST. The audio thread checks this in both the outer
+            // ProcessBlock guard and the inner per-sample guard, so it will exit before
+            // reaching any direct csound.* native calls.
+            // Then defer csoundDestroy to a coroutine (one frame later) to guarantee the
+            // audio thread has fully exited any in-progress ProcessBlock before we free
+            // the native Csound object, avoiding a SIGSEGV use-after-free.
+            initialized = false;
+            _initializing = false;
+            performanceFinished = false;
+            ksmpsIndex = 0;
+            _channelsIndexDict.Clear();
+            namedAudioChannelDataDict.Clear();
+            namedAudioChannelTempBufferDict.Clear();
+            if (csound != null)
+            {
+                StartCoroutine(DeferredCsoundDestroy(csound));
+                csound = null;
+            }
+            OnCsoundStopped?.Invoke();
+        }
+
+        private IEnumerator MonitorPerformanceEnd()
+        {
+            yield return new WaitUntil(() => performanceFinished);
+            if (!IsInitialized) yield break;
+            OnCsoundPerformanceFinished?.Invoke();
+            Stop();
+        }
+
+        private IEnumerator DeferredCsoundDestroy(CsoundUnityBridge bridge)
+        {
+            // Wait one frame: initialized=false causes the audio thread to exit ProcessBlock
+            // at the inner guard before any native call, so after one frame it is safe to
+            // call csoundDestroy without a SIGSEGV race condition.
+            yield return null;
+            bridge.OnApplicationQuit();
+        }
+
+        /// <summary>
+        /// Stops the current Csound instance and reinitializes it from scratch.
+        /// </summary>
+        public void Restart()
+        {
+            Stop();
+            Initialize();
+        }
+
+        #endregion LIFECYCLE
+
         #region INSTANTIATION
 
         /// <summary>
@@ -695,6 +814,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public int GetVersion()
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetVersion();
         }
 
@@ -704,6 +824,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public int GetAPIVersion()
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetAPIVersion();
         }
 
@@ -715,6 +836,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public int LoadPlugins(string dir)
         {
+            if (!IsInitialized || csound == null) return -1;
             return csound.LoadPlugins(dir);
         }
 #endif
@@ -812,6 +934,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public int CompileOrc(string orcStr)
         {
+            if (!IsInitialized || csound == null) return -1;
             return csound.CompileOrc(orcStr);
         }
 
@@ -821,7 +944,7 @@ namespace Csound.Unity
         /// <param name="scoreEvent">the score string to send</param>
         public void SendScoreEvent(string scoreEvent)
         {
-            //print(scoreEvent);
+            if (!IsInitialized || csound == null) return;
             csound.SendScoreEvent(scoreEvent);
         }
 
@@ -830,6 +953,7 @@ namespace Csound.Unity
         /// </summary>
         public void RewindScore()
         {
+            if (!IsInitialized || csound == null) return;
             csound.RewindScore();
         }
 
@@ -843,6 +967,7 @@ namespace Csound.Unity
         /// <param name="value"></param>
         public void SetScoreOffsetSeconds(MYFLT value)
         {
+            if (!IsInitialized || csound == null) return;
             csound.CsoundSetScoreOffsetSeconds(value);
         }
 
@@ -852,6 +977,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public MYFLT GetSr()
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetSr();
         }
 
@@ -861,6 +987,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public MYFLT GetKr()
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetKr();
         }
 
@@ -870,6 +997,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public int PerformKsmps()
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.PerformKsmps();
         }
 
@@ -1156,6 +1284,7 @@ namespace Csound.Unity
         /// <param name="sample"></param>
         public void SetInputSample(int frame, int channel, MYFLT sample)
         {
+            if (!IsInitialized || csound == null) return;
             csound.SetSpinSample(frame, channel, sample);
         }
 
@@ -1170,6 +1299,7 @@ namespace Csound.Unity
         /// <param name="sample"></param>
         public void AddInputSample(int frame, int channel, MYFLT sample)
         {
+            if (!IsInitialized || csound == null) return;
             csound.AddSpinSample(frame, channel, sample);
         }
 
@@ -1193,6 +1323,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public MYFLT GetOutputSample(int frame, int channel)
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetSpoutSample(frame, channel);
         }
 
@@ -1202,6 +1333,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public MYFLT[] GetSpin()
         {
+            if (!IsInitialized || csound == null) return null;
             return csound.GetSpin();
         }
 
@@ -1211,6 +1343,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public MYFLT[] GetSpout()
         {
+            if (!IsInitialized || csound == null) return null;
             return csound.GetSpout();
         }
 
@@ -1224,6 +1357,7 @@ namespace Csound.Unity
         /// <param name="val"></param>
         public void SetChannel(string channel, MYFLT val)
         {
+            if (!IsInitialized || csound == null) return;
             csound.SetChannel(channel, val);
 
             // The dictionary below is used to update the serialized channels on the editor
@@ -1248,7 +1382,7 @@ namespace Csound.Unity
         {
             if (_channelsIndexDict.ContainsKey(channelController.channel))
                 channels[_channelsIndexDict[channelController.channel]] = channelController;
-            if (csound == null) return;
+            if (!IsInitialized || csound == null) return;
             csound.SetChannel(channelController.channel, channelController.value);
         }
 
@@ -1273,6 +1407,7 @@ namespace Csound.Unity
         /// <param name="val"></param>
         public void SetStringChannel(string channel, string val)
         {
+            if (!IsInitialized || csound == null) return;
             csound.SetStringChannel(channel, val);
         }
 
@@ -1283,6 +1418,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public MYFLT GetChannel(string channel)
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetChannel(channel);
         }
 
@@ -1305,6 +1441,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public string GetStringChannel(string name)
         {
+            if (!IsInitialized || csound == null) return null;
             return csound.GetStringChannel(name);
         }
 
@@ -1318,6 +1455,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public IDictionary<string, CsoundUnityBridge.ChannelInfo> GetChannelList()
         {
+            if (!IsInitialized || csound == null) return null;
             return csound.GetChannelList();
         }
 
@@ -1332,6 +1470,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public MYFLT[] GetAudioChannel(string channel)
         {
+            if (!IsInitialized || csound == null) return null;
             return csound.GetAudioChannel(channel);
         }
 
@@ -1479,6 +1618,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public int GetTableLength(int table)
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.TableLength(table);
         }
 
@@ -1490,6 +1630,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public MYFLT GetTableSample(int tableNumber, int index)
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetTable(tableNumber, index);
         }
 
@@ -1502,6 +1643,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public int GetTable(out MYFLT[] tableValues, int numTable)
         {
+            if (!IsInitialized || csound == null) { tableValues = null; return -1; }
             return csound.GetTable(out tableValues, numTable);
         }
 
@@ -1516,6 +1658,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public int GetTableArgs(out MYFLT[] args, int index)
         {
+            if (!IsInitialized || csound == null) { args = null; return -1; }
             return csound.GetTableArgs(out args, index);
         }
 
@@ -1527,6 +1670,7 @@ namespace Csound.Unity
         /// <param name="value"></param>
         public void SetTable(int table, int index, MYFLT value)
         {
+            if (!IsInitialized || csound == null) return;
             csound.SetTable(table, index, value);
         }
 
@@ -1538,6 +1682,7 @@ namespace Csound.Unity
         /// <param name="dest"></param>
         public void CopyTableOut(int table, out MYFLT[] dest)
         {
+            if (!IsInitialized || csound == null) { dest = null; return; }
             csound.TableCopyOut(table, out dest);
         }
 
@@ -1548,6 +1693,7 @@ namespace Csound.Unity
         /// <param name="dest"></param>
         public void CopyTableOutAsync(int table, out MYFLT[] dest)
         {
+            if (!IsInitialized || csound == null) { dest = null; return; }
             csound.TableCopyOutAsync(table, out dest);
         }
 
@@ -1570,6 +1716,7 @@ namespace Csound.Unity
         /// <param name="source">the supplied array</param>
         public void CopyTableIn(int table, MYFLT[] source)
         {
+            if (!IsInitialized || csound == null) return;
             csound.TableCopyIn(table, source);
         }
 
@@ -1580,6 +1727,7 @@ namespace Csound.Unity
         /// <param name="source"></param>
         public void CopyTableInAsync(int table, MYFLT[] source)
         {
+            if (!IsInitialized || csound == null) return;
             csound.TableCopyInAsync(table, source);
         }
 
@@ -1591,6 +1739,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public int IsNamedGEN(int num)
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.IsNamedGEN(num);
         }
 
@@ -1603,6 +1752,7 @@ namespace Csound.Unity
         /// <param name="len"></param>
         public void GetNamedGEN(int num, out string name, int len)
         {
+            if (!IsInitialized || csound == null) { name = null; return; }
             csound.GetNamedGEN(num, out name, len);
         }
 
@@ -1613,6 +1763,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public IDictionary<string, int> GetNamedGens()
         {
+            if (!IsInitialized || csound == null) return null;
             return csound.GetNamedGens();
         }
 
@@ -1639,6 +1790,7 @@ namespace Csound.Unity
         /// <returns>The same parameter structure that was provided but filled in with csounds current internal contents</returns>
         public CsoundUnityBridge.CSOUND_PARAMS GetParams()
         {
+            if (!IsInitialized || csound == null) return default;
             return csound.GetParams();
         }
 
@@ -1653,6 +1805,7 @@ namespace Csound.Unity
         /// <param name="parms">a </param>
         public void SetParams(CsoundUnityBridge.CSOUND_PARAMS parms)
         {
+            if (!IsInitialized || csound == null) return;
             csound.SetParams(parms);
         }
 
@@ -1662,6 +1815,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public uint GetRandomSeedFromTime()
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetRandomSeedFromTime();
         }
 
@@ -1672,6 +1826,7 @@ namespace Csound.Unity
         /// <returns>the corresponding value or an empty string if no such key exists</returns>
         public string GetEnv(EnvType envType)
         {
+            if (!IsInitialized || csound == null) return null;
             return csound.GetEnv(envType.ToString());
         }
 
@@ -1685,6 +1840,7 @@ namespace Csound.Unity
         /// <returns>Returns zero on success.</returns>
         public int SetGlobalEnv(string name, string value)
         {
+            if (!IsInitialized || csound == null) return -1;
             return csound.SetGlobalEnv(name, value);
         }
 
@@ -1694,6 +1850,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>> GetOpcodeList()
         {
+            if (!IsInitialized || csound == null) return null;
             return csound.GetOpcodeList();
         }
 
@@ -1703,6 +1860,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public uint GetNchnlsInputs()
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetNchnlsInput();
         }
 
@@ -1712,6 +1870,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public uint GetNchnls()
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetNchnls();
         }
 
@@ -1721,6 +1880,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public MYFLT Get0dbfs()
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.Get0dbfs();
         }
 
@@ -1730,6 +1890,7 @@ namespace Csound.Unity
         /// <returns></returns>
         public long GetCurrentTimeSamples()
         {
+            if (!IsInitialized || csound == null) return 0;
             return csound.GetCurrentTimeSamples();
         }
 
@@ -1740,6 +1901,7 @@ namespace Csound.Unity
         /// </summary>
         public void CsoundReset()
         {
+            if (!IsInitialized || csound == null) return;
             csound.Reset();
         }
 
@@ -1749,6 +1911,7 @@ namespace Csound.Unity
         /// </summary>
         public void Cleanup()
         {
+            if (!IsInitialized || csound == null) return;
             csound.Cleanup();
         }
 
@@ -2637,7 +2800,7 @@ namespace Csound.Unity
 
         void OnAudioFilterRead(float[] data, int channels)
         {
-            if (csound != null)
+            if (csound != null && initialized)
             {
                 ProcessBlock(data, channels);
             }
@@ -2658,20 +2821,20 @@ namespace Csound.Unity
                 {
                     for (uint channel = 0; channel < numChannels; channel++)
                     {
-                        // necessary to avoid calling csound functions when quitting while reading this block of samples
+                        // necessary to avoid calling csound functions when quitting or stopping while reading this block of samples
                         // always remember OnAudioFilterRead runs on a different thread
-                        if (_quitting) return;
+                        if (_quitting || !initialized || csound == null) return;
 
-                        if (mute == true)
+                        if (mute)
                         {
                             samples[i + channel] = 0.0f;
                         }
                         else
                         {
-                            if ((ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
+                            if (!performanceFinished && (ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
                             {
                                 var res = PerformKsmps();
-                                performanceFinished = res == 1;
+                                performanceFinished = res != 0;
                                 ksmpsIndex = 0;
 
                                 foreach (var chanName in availableAudioChannels)
@@ -2683,22 +2846,31 @@ namespace Csound.Unity
                                 OnCsoundPerformKsmps?.Invoke();
                             }
 
-                            if (processClipAudio)
+                            if (performanceFinished)
                             {
-                                SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel] * (float)csound.Get0dbfs());
-                            }
-
-                            //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
-                            var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
-                            var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / (float)csound.Get0dbfs();
-                            // multiply Csound output by the sample value to maintain spatialization set by Unity. 
-                            // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
-                            samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
-
-                            if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
-                            {
+                                // Score ended naturally: output silence and let MonitorPerformanceEnd
+                                // fire OnCsoundPerformanceFinished and call Stop() on the main thread.
                                 samples[i + channel] = 0.0f;
-                                Debug.LogWarning("Volume is too high! Clearing output");
+                            }
+                            else
+                            {
+                                if (processClipAudio)
+                                {
+                                    SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel] * (float)csound.Get0dbfs());
+                                }
+
+                                //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
+                                var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
+                                var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / (float)csound.Get0dbfs();
+                                // multiply Csound output by the sample value to maintain spatialization set by Unity.
+                                // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
+                                samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
+
+                                if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
+                                {
+                                    samples[i + channel] = 0.0f;
+                                    Debug.LogWarning("Volume is too high! Clearing output");
+                                }
                             }
                         }
                     }
@@ -2824,7 +2996,8 @@ namespace Csound.Unity
     private void Update()
     {
         if (!IsInitialized) return;
-  
+
+
         // Calculate distance between the AudioListener and the AudioSource
         var distance = Vector3.Distance(ActiveAudioListener.transform.position, transform.position);
 

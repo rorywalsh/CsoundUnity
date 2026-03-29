@@ -52,6 +52,7 @@ namespace Csound.Unity
         SerializedProperty m_csoundScore;
         SerializedProperty m_processAudio;
         SerializedProperty m_mute;
+        SerializedProperty m_initializeOnAwake;
         SerializedProperty m_logCsoundOutput;
         SerializedProperty m_loudVolumeWarning;
         SerializedProperty m_loudWarningThreshold;
@@ -120,6 +121,7 @@ namespace Csound.Unity
             m_csoundScore = this.serializedObject.FindProperty("csoundScore");
             m_processAudio = this.serializedObject.FindProperty("processClipAudio");
             m_mute = this.serializedObject.FindProperty("mute");
+            m_initializeOnAwake = this.serializedObject.FindProperty("initializeOnAwake");
             m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
             m_loudVolumeWarning = this.serializedObject.FindProperty("loudVolumeWarning");
             m_loudWarningThreshold = this.serializedObject.FindProperty("loudWarningThreshold");
@@ -277,6 +279,7 @@ namespace Csound.Unity
                 {
                     csoundUnity.ClearSpin();
                 }
+                m_initializeOnAwake.boolValue = EditorGUILayout.Toggle(new GUIContent("Initialize On Awake", "If disabled, call Initialize() manually from an external script."), m_initializeOnAwake.boolValue);
                 m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", m_mute.boolValue);
                 m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
                 m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle("Loud Volume Warning", m_loudVolumeWarning.boolValue);
