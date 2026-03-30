@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -98,13 +94,13 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 598a9c325fe1f45eebcf358742a033bf, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +113,9 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -149,9 +147,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 626668946}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -173,6 +171,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -238,11 +237,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  logCsoundOutput: 0
+  logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 48000
+  controlRate: 1500
+  updateOutputBuffer: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: bcb7aeda3b47b864198e0573ab325ff4
@@ -269,19 +273,19 @@ MonoBehaviour:
     AMPLITUDE METERS)\r\nkmetera1\tdownsamp\tametera1\t\t;CONVERT AMPLITUDE FOLLOWING
     SIGNAL TO K-RATE\r\nkmetera1\tportk\t\tkmetera1, .1\t;SMOOTH THE MOVEMENT OF
     THE AMPLITUDE FOLLOWING SIGNAL - THIS WILL MAKE THE METERS EASIER TO VIEW\r\nxout
-    kmetera1\r\nendop\r\n\r\nsr = 48000    ; setting the sampling rate is superfluous
+    kmetera1\r\nendop\r\n\r\n;sr = 48000    ; setting the sampling rate is superfluous
     since Unity uses the AudioSettings.SampleRate\r\nksmps = 32\r\nnchnls = 8\r\n\r\n;
     Example by Joachim Heintz and Oeyvind Brandtsegg 2008\r\n; ported to CsoundUnity
     (and slightly mixed with partikkel-panlaws.csd) by gb 2021\r\n\r\ngiCosine\t\t\tftgen\t0,
     0, 8193, 9, 1, 1, 90\t\t\t\t\t\t\t\t\t; cosine\r\ngiDisttab\t\t\tftgen\t0, 0,
     32768, 7, 0, 32768, 1\t\t\t\t\t\t\t\t; for kdistribution\r\n;giFile\t\t\t\tftgen\t0,
     0, 0, 1, \"fox.wav\", 0, 0, 0\t\t\t\t\t\t\t; original soundfile reading for source
-    waveform\r\ngiFile\t\t\t\tinit    100   \t\t\t\t\t\t\t\t\t\t\t\t\t; table set
-    by Unity     \r\ngiWin\t\t\t\tftgen\t0, 0, 4096, 20, 9, 1\t\t\t\t\t\t\t\t\t;
-    grain envelope\r\n;giPan\t\t\t\tftgen\t0, 0, 32768, -21, 1\t\t    \t\t\t\t\t\t\t;
-    for panning (random values between 0 and 1)\r\n\r\n\r\n; *************************************************\r\n;
+    waveform\r\ngiWin\t\t\t\tftgen\t0, 0, 4096, 20, 9, 1\t\t\t\t\t\t\t\t\t; grain
+    envelope\r\n;giPan\t\t\t\tftgen\t0, 0, 32768, -21, 1\t\t    \t\t\t\t\t\t\t; for
+    panning (random values between 0 and 1)\r\n\r\ngiFile\t\t\t\tinit    200   \t\t\t\t\t\t\t\t\t\t\t\t\t;
+    table set by Unity   \r\n; *************************************************\r\n;
     partikkel example, processing of soundfile\r\n; uses the file set by Unity in
-    table 100 \t\t\t\t\t\t\t\t\t\t\t; the original example is using \"fox.wav\" \r\n;
+    table 200 \t\t\t\t\t\t\t\t\t\t\t; the original example is using \"fox.wav\" \r\n;
     *************************************************\r\n\r\ninstr 1\r\n\r\n/*score
     parameters*/\r\nkgain           chnget \"gain\"                                                  
     ; the gain of a grain\r\nkspeed\t        chnget \"speed\"          \t\t\t;= p4\t\t\t\t\t\t;
@@ -342,12 +346,13 @@ MonoBehaviour:
     icosine, kTrainCps, knumpartials, \\\r\n\t\tkchroma, ichannelmasks, krandommask,
     kwaveform1, kwaveform2, kwaveform3, kwaveform4, \\\r\n\t\tiwaveamptab, asamplepos1,
     asamplepos2, asamplepos3, asamplepos4, \\\r\n\t\tkwavekey1, kwavekey2, kwavekey3,
-    kwavekey4, imax_grains, iopcode_id\r\n\r\nchnset a1, \"a1\"\r\nchnset a2, \"a2\"\r\nchnset
-    a3, \"a3\"\r\nchnset a4, \"a4\"\r\nchnset a5, \"a5\"\r\nchnset a6, \"a6\"\r\nchnset
-    a7, \"a7\"\r\nchnset a8, \"a8\"\r\n\r\nchnset vuMeter(a1), \"a1Vol\"\r\nchnset
-    vuMeter(a2), \"a2Vol\"\r\nchnset vuMeter(a3), \"a3Vol\"\r\nchnset vuMeter(a4),
-    \"a4Vol\"\r\nchnset vuMeter(a5), \"a5Vol\"\r\nchnset vuMeter(a6), \"a6Vol\"\r\nchnset
-    vuMeter(a7), \"a7Vol\"\r\nchnset vuMeter(a8), \"a8Vol\"\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;i1\t\tst\tdur\t\tspeed\tgrate\tgsize\tcent\tposrnd\tcntrnd\tpan\t\tdist\r\n;
+    kwavekey4, imax_grains, iopcode_id\r\n\r\n; output to 8 different audio channels,
+    that will be read by Unity using CsoundUnityChild \r\nchnset a1, \"a1\"\r\nchnset
+    a2, \"a2\"\r\nchnset a3, \"a3\"\r\nchnset a4, \"a4\"\r\nchnset a5, \"a5\"\r\nchnset
+    a6, \"a6\"\r\nchnset a7, \"a7\"\r\nchnset a8, \"a8\"\r\n\r\nchnset vuMeter(a1),
+    \"a1Vol\"\r\nchnset vuMeter(a2), \"a2Vol\"\r\nchnset vuMeter(a3), \"a3Vol\"\r\nchnset
+    vuMeter(a4), \"a4Vol\"\r\nchnset vuMeter(a5), \"a5Vol\"\r\nchnset vuMeter(a6),
+    \"a6Vol\"\r\nchnset vuMeter(a7), \"a7Vol\"\r\nchnset vuMeter(a8), \"a8Vol\"\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;i1\t\tst\tdur\t\tspeed\tgrate\tgsize\tcent\tposrnd\tcntrnd\tpan\t\tdist\r\n;
     wait a little before starting, to let Unity load the samples and fill the table
     #100\r\ni1\t\t.5\tz\t\r\n;i1 \t0\t2.757\t1\t\t200\t\t15\t\t0\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t200\t\t15\t\t400\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t15\t\t450\t\t400\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t15\t\t450\t\t400\t\t0\t\t0\t\t0\t\t0.4\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t200\t\t15\t\t0\t\t400\t\t0\t\t0\t\t1\r\n;s\r\n;i1\t\t0\t5.514\t.5\t\t200\t\t20\t\t0\t\t0\t\t600\t\t.5\t\t1\r\n;s\r\n;i1\t\t0\t11.028\t.25\t\t200\t\t15\t\t0\t\t1000\t400\t\t1\t\t1\r\n\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: partikkel-2.csd
@@ -363,6 +368,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: rslider
     channel: gain
     text: Gain
@@ -373,6 +382,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: rslider
     channel: speed
     text: Speed
@@ -383,6 +396,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: rslider
     channel: density
     text: Density
@@ -393,6 +410,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: rslider
     channel: grainSize
     text: GrainSize ms
@@ -403,6 +424,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: rslider
     channel: grainPitch
     text: Grain Pitch
@@ -413,6 +438,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: rslider
     channel: randPitch
     text: Random Pitch
@@ -423,6 +452,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: rslider
     channel: jitter
     text: Jitter
@@ -433,6 +466,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: rslider
     channel: distribution
     text: Distribution
@@ -443,6 +480,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: rslider
     channel: spread
     text: Spread
@@ -453,6 +494,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: rslider
     channel: panDur
     text: Panning Duration
@@ -463,6 +508,10 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels:
   - a1
   - a2
@@ -472,6 +521,9 @@ MonoBehaviour:
   - a6
   - a7
   - a8
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _audioChannelsBufferSize: 8192
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
@@ -485,6 +537,7 @@ MonoBehaviour:
   _currentPreset: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  webGLAssetsList: []
 --- !u!82 &247984522
 AudioSource:
   m_ObjectHideFlags: 0
@@ -496,6 +549,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -588,12 +642,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 247984520}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &247984524
 MonoBehaviour:
@@ -608,7 +663,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _source: {fileID: 8300000, guid: d498122b0fbc11449a28a477d04a2a28, type: 3}
-  _tableNumber: 100
+  _tableNumber: 200
+  _forceToMono: 0
+  _channel: 0
+  _splitChannels: 1
+  _startPoint: 0
+  _endPoint: 0
+  _autoLoad: 1
   _csound: {fileID: 247984521}
 --- !u!114 &247984525
 MonoBehaviour:
@@ -623,13 +684,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetImage: {fileID: 964008223}
-  _clip: {fileID: 8300000, guid: d498122b0fbc11449a28a477d04a2a28, type: 3}
+  _clip: {fileID: 8300000, guid: 8ed24adf68e064d20a4b6f4d7bbd6aea, type: 3}
   _progressBar: {fileID: 1285017714}
   _waveformWidth: 512
   _waveformHeight: 128
   _waveformColor: {r: 1, g: 1, b: 1, a: 1}
   _progressBarChannel: samplepos
-  _csound: {fileID: 0}
+  _csound: {fileID: 247984521}
 --- !u!114 &247984526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -644,8 +705,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _radius: 200
   _rollofTolerance: 100
-  _childMeterPrefab: {fileID: 6825065067897352831, guid: fbf2aa1c9c2567d42824a3524e571e70,
-    type: 3}
+  _childMeterPrefab: {fileID: 6825065067897352831, guid: fbf2aa1c9c2567d42824a3524e571e70, type: 3}
 --- !u!114 &247984527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -658,8 +718,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a13a41dc341d7464e8ba22d6ff1bb620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _VUMeterUIPrefab: {fileID: 5544309492770846865, guid: 446ec315b912e704b9878bedf30b19ab,
-    type: 3}
+  _VUMeterUIPrefab: {fileID: 5544309492770846865, guid: 446ec315b912e704b9878bedf30b19ab, type: 3}
   _VUMetersContainer: {fileID: 1965946644}
 --- !u!114 &247984528
 MonoBehaviour:
@@ -673,8 +732,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 841f0a1b12daf8c47a386c6a920ac1e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _parameterCubePrefab: {fileID: 4371178850701135038, guid: 442f25e7e177d62428b4d1b1e4a04a86,
-    type: 3}
+  _parameterCubePrefab: {fileID: 4371178850701135038, guid: 442f25e7e177d62428b4d1b1e4a04a86, type: 3}
   _parametersAreaSizes: {x: 100, y: 100}
   _player: {fileID: 725293438}
 --- !u!1 &416652494
@@ -702,12 +760,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 416652494}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1.5, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 725293441}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &416652497
 MeshRenderer:
@@ -720,10 +779,17 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -745,9 +811,12 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &416652498
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -814,6 +883,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &626668945
 Canvas:
   m_ObjectHideFlags: 0
@@ -831,7 +901,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -845,12 +917,12 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 964008222}
   - {fileID: 1965946644}
   - {fileID: 44941940}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -899,9 +971,17 @@ Camera:
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -935,13 +1015,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 725293438}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 416652495}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &725293442
 CharacterController:
@@ -951,9 +1032,16 @@ CharacterController:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 725293438}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Height: 2
   m_Radius: 1
   m_SlopeLimit: 0
@@ -1004,10 +1092,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1285017713}
   m_Father: {fileID: 626668946}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.5, y: 0.2}
@@ -1029,6 +1117,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.5019608}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1076,9 +1165,9 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 964008222}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
@@ -1100,6 +1189,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.9263749, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1149,9 +1239,17 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1675483797}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
@@ -1166,10 +1264,17 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1191,9 +1296,12 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1675483800
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1209,12 +1317,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1675483797}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1738180933
 GameObject:
@@ -1241,15 +1350,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1738180933}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 1
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -1292,8 +1400,13 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!4 &1738180935
 Transform:
   m_ObjectHideFlags: 0
@@ -1301,12 +1414,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1738180933}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.51653326, y: 0, z: 0, w: 0.8562671}
   m_LocalPosition: {x: 1026.4238, y: 322.43454, z: -19.199924}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 62.2, y: 0, z: 0}
 --- !u!1 &1965946643
 GameObject:
@@ -1337,9 +1451,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 626668946}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 1, y: 0.2}
@@ -1371,6 +1485,7 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!114 &1965946646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1386,6 +1501,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.5188679, g: 0.5188679, b: 0.5188679, a: 0.5019608}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1408,3 +1524,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1965946643}
   m_CullTransparentMesh: 0
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 725293441}
+  - {fileID: 1738180935}
+  - {fileID: 247984523}
+  - {fileID: 1675483801}
+  - {fileID: 626668946}

@@ -30,7 +30,7 @@ kmetera1	portk		kmetera1, .1	;SMOOTH THE MOVEMENT OF THE AMPLITUDE FOLLOWING SIG
 xout kmetera1
 endop
 
-sr = 48000    ; setting the sampling rate is superfluous since Unity uses the AudioSettings.SampleRate
+;sr = 48000    ; setting the sampling rate is superfluous since Unity uses the AudioSettings.SampleRate
 ksmps = 32
 nchnls = 8
 
@@ -40,14 +40,13 @@ nchnls = 8
 giCosine			ftgen	0, 0, 8193, 9, 1, 1, 90									; cosine
 giDisttab			ftgen	0, 0, 32768, 7, 0, 32768, 1								; for kdistribution
 ;giFile				ftgen	0, 0, 0, 1, "fox.wav", 0, 0, 0							; original soundfile reading for source waveform
-giFile				init    100   													; table set by Unity     
 giWin				ftgen	0, 0, 4096, 20, 9, 1									; grain envelope
 ;giPan				ftgen	0, 0, 32768, -21, 1		    							; for panning (random values between 0 and 1)
 
-
+giFile				init    200   													; table set by Unity   
 ; *************************************************
 ; partikkel example, processing of soundfile
-; uses the file set by Unity in table 100 											; the original example is using "fox.wav" 
+; uses the file set by Unity in table 200 											; the original example is using "fox.wav" 
 ; *************************************************
 
 instr 1

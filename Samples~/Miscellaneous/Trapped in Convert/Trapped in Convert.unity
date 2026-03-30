@@ -604,9 +604,9 @@ MonoBehaviour:
   _source: {fileID: 0}
   _csoundUnity: {fileID: 0}
   _csoundAudioChannel: 
-  _sizeMult: {x: 0.08, y: 0.4}
+  _sizeMult: {x: 0.08, y: 0.2}
   _offset: {x: 0, y: 0, z: 0}
-  _maxHeight: 150
+  _maxHeight: 300
   _fftUpdateRate: 4
 --- !u!120 &749705611
 LineRenderer:
@@ -1035,13 +1035,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 0
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
-  controlRate: 4800
+  controlRate: 1500
   updateOutputBuffer: 0
   csoundScore: 
   environmentSettings: []

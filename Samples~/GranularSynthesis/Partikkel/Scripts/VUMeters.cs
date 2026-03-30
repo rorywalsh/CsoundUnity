@@ -19,6 +19,8 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
         IEnumerator Start()
         {
             _csound = this.GetComponent<CsoundUnity>();
+            if (!_csound) yield break;
+            
             while (!_csound.IsInitialized)
             {
                 yield return null;

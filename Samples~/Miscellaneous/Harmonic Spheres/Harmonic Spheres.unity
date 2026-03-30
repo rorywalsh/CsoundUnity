@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -42,8 +42,8 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 0
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -66,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 1024
     m_ReflectionCompression: 2
     m_MixedBakeMode: 1
     m_BakeBackend: 0
@@ -186,14 +183,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -220,6 +218,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -230,6 +232,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -240,6 +246,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -269,6 +279,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -371,6 +382,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -392,9 +408,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &58794953
 BoxCollider:
@@ -465,15 +483,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 117767468}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -517,8 +534,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &118964786
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,6 +632,10 @@ PrefabInstance:
       value: SpectrumDisplay (8)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 1490034420}
@@ -622,6 +647,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 1490034419}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -693,6 +722,10 @@ PrefabInstance:
       value: SpectrumDisplay (2)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 58794951}
@@ -704,6 +737,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 58794950}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -817,6 +854,10 @@ PrefabInstance:
       value: SpectrumDisplay (6)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 1124557567}
@@ -828,6 +869,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 1124557566}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -906,14 +951,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -940,6 +986,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -950,6 +1000,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -960,6 +1014,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -989,6 +1047,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -1091,6 +1150,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1112,9 +1176,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &542906750
 BoxCollider:
@@ -1202,6 +1268,10 @@ PrefabInstance:
       value: SpectrumDisplay (7)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 1751999622}
@@ -1213,6 +1283,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 1751999621}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -1263,6 +1337,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1284,9 +1363,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &570822222
 MeshCollider:
@@ -1397,14 +1478,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -1431,6 +1513,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -1441,6 +1527,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -1451,6 +1541,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -1480,6 +1574,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -1582,6 +1677,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1603,9 +1703,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &781236804
 BoxCollider:
@@ -1676,15 +1778,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 786736893}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -1728,8 +1829,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &882130407
 GameObject:
   m_ObjectHideFlags: 0
@@ -1766,6 +1871,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1787,9 +1897,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &882130409
 BoxCollider:
@@ -1871,6 +1983,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1892,9 +2009,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &937977429
 BoxCollider:
@@ -1997,6 +2116,10 @@ PrefabInstance:
       value: SpectrumDisplay (9)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 1877052204}
@@ -2008,6 +2131,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 1877052203}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -2062,15 +2189,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1048790128}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -2114,8 +2240,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &1055718186
 GameObject:
   m_ObjectHideFlags: 0
@@ -2152,6 +2282,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2173,9 +2308,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &1055718188
 BoxCollider:
@@ -2285,14 +2422,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -2319,6 +2457,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -2329,6 +2471,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -2339,6 +2485,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -2368,6 +2518,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -2470,6 +2621,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2491,9 +2647,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &1124557569
 BoxCollider:
@@ -2564,15 +2722,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1133142435}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -2616,8 +2773,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1001 &1162068514
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2675,6 +2836,10 @@ PrefabInstance:
       value: SpectrumDisplay (3)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 2078902019}
@@ -2686,6 +2851,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 2078902018}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -2740,15 +2909,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1164975286}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -2792,8 +2960,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!4 &1188505740 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3432462027350631695, guid: ac1a0fd8943b4764ba5758906573c19b, type: 3}
@@ -2975,6 +3147,10 @@ PrefabInstance:
       value: SpectrumDisplay (10)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 781236802}
@@ -2986,6 +3162,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 781236801}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -3057,6 +3237,10 @@ PrefabInstance:
       value: SpectrumDisplay (1)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 1862566113}
@@ -3068,6 +3252,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 1862566114}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -3133,15 +3321,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1442087861}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -3185,8 +3372,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1001 &1456666608
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3244,6 +3435,10 @@ PrefabInstance:
       value: SpectrumDisplay (5)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 542906748}
@@ -3255,6 +3450,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 542906747}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -3333,14 +3532,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -3367,6 +3567,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -3377,6 +3581,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -3387,6 +3595,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -3416,6 +3628,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -3518,6 +3731,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3539,9 +3757,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &1490034422
 BoxCollider:
@@ -3629,6 +3849,10 @@ PrefabInstance:
       value: SpectrumDisplay (4)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 2023994401}
@@ -3640,6 +3864,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 2023994400}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -3694,15 +3922,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1495494304}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -3746,8 +3973,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &1517644838
 GameObject:
   m_ObjectHideFlags: 0
@@ -3856,15 +4087,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1601990540}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -3908,8 +4138,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &1698522281
 GameObject:
   m_ObjectHideFlags: 0
@@ -3950,15 +4184,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1698522281}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -4002,8 +4235,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &1751999618
 GameObject:
   m_ObjectHideFlags: 0
@@ -4068,14 +4305,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -4102,6 +4340,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -4112,6 +4354,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -4122,6 +4368,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -4151,6 +4401,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -4253,6 +4504,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -4274,9 +4530,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &1751999624
 BoxCollider:
@@ -4347,15 +4605,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1806998075}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -4399,8 +4656,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1 &1862566112
 GameObject:
   m_ObjectHideFlags: 0
@@ -4434,6 +4695,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -4532,14 +4794,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -4566,6 +4829,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -4576,6 +4843,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -4586,6 +4857,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -4621,6 +4896,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -4642,9 +4922,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &1862566116
 BoxCollider:
@@ -4768,14 +5050,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -4802,6 +5085,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -4812,6 +5099,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -4822,6 +5113,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -4851,6 +5146,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -4953,6 +5249,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -4974,9 +5275,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &1877052206
 BoxCollider:
@@ -5064,6 +5367,10 @@ PrefabInstance:
       value: SpectrumDisplay (11)
       objectReference: {fileID: 0}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _source
       value: 
       objectReference: {fileID: 2053725336}
@@ -5075,6 +5382,10 @@ PrefabInstance:
       propertyPath: _sizeMult.y
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
+      propertyPath: _csoundUnity
+      value: 
+      objectReference: {fileID: 2053725335}
     - target: {fileID: 2494911346481121691, guid: 2aaf855e5a123ec46afc63a11db7d9ff, type: 3}
       propertyPath: _listenerSettings
       value: 1
@@ -5153,14 +5464,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -5187,6 +5499,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -5197,6 +5513,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -5207,6 +5527,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -5236,6 +5560,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -5338,6 +5663,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5359,9 +5689,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &2023994403
 BoxCollider:
@@ -5456,14 +5788,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -5490,6 +5823,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -5500,6 +5837,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -5510,6 +5851,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -5539,6 +5884,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -5641,6 +5987,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5662,9 +6013,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &2053725338
 BoxCollider:
@@ -5759,14 +6112,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
+  audioRate: 48000
   controlRate: 44100
-  updateOutputBuffer: 0
+  updateOutputBuffer: 1
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: c777caebdc987134c9950d9823f950d6
@@ -5793,6 +6147,10 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: freq
     text: Sphere Freq
@@ -5803,6 +6161,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   - type: hslider
     channel: amp
     text: Sphere Amp
@@ -5813,6 +6175,10 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
   _availableAudioChannels: []
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -5842,6 +6208,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -5944,6 +6311,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5965,9 +6337,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &2078902021
 BoxCollider:
@@ -6034,6 +6408,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -6055,9 +6434,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &2112866853
 BoxCollider:
@@ -6143,15 +6524,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2115542126}
   m_Enabled: 1
-  serializedVersion: 10
+  serializedVersion: 12
   m_Type: 2
-  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 6.75
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 0
     m_Resolution: -1
@@ -6195,8 +6575,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!1001 &1549225476912830202
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6205,6 +6589,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1089098056960233821, guid: ac1a0fd8943b4764ba5758906573c19b, type: 3}
+      propertyPath: audioRate
+      value: 48000
+      objectReference: {fileID: 0}
+    - target: {fileID: 1089098056960233821, guid: ac1a0fd8943b4764ba5758906573c19b, type: 3}
+      propertyPath: controlRate
+      value: 1500
+      objectReference: {fileID: 0}
+    - target: {fileID: 1089098056960233821, guid: ac1a0fd8943b4764ba5758906573c19b, type: 3}
+      propertyPath: logCsoundOutput
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2334120411834268143, guid: ac1a0fd8943b4764ba5758906573c19b, type: 3}
       propertyPath: mobileButton
       value: 
