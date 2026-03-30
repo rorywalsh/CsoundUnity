@@ -818,16 +818,6 @@ namespace Csound.Unity
             return csound.GetVersion();
         }
 
-        /// <summary>
-        /// Returns the Csound API version number times 100 (1.00 = 100).
-        /// </summary>
-        /// <returns></returns>
-        public int GetAPIVersion()
-        {
-            if (!IsInitialized || csound == null) return 0;
-            return csound.GetAPIVersion();
-        }
-
 #if !UNITY_IOS || UNITY_VISIONOS
         /// <summary>
         /// Loads all plugins from a given directory
@@ -1687,17 +1677,6 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Asynchronous version of <see cref="CopyTableOut(int, out MYFLT[])">CopyTableOut</see>.
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="dest"></param>
-        public void CopyTableOutAsync(int table, out MYFLT[] dest)
-        {
-            if (!IsInitialized || csound == null) { dest = null; return; }
-            csound.TableCopyOutAsync(table, out dest);
-        }
-
-        /// <summary>
         /// Same as <see cref="CopyTableIn(int, MYFLT[])">CopyTableIn</see> but passing a float array.
         /// </summary>
         /// <param name="table"></param>
@@ -1720,53 +1699,6 @@ namespace Csound.Unity
             csound.TableCopyIn(table, source);
         }
 
-        /// <summary>
-        /// Asynchronous version of <see cref="CopyTableIn(int, MYFLT[])">CopyTableIn</see>
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="source"></param>
-        public void CopyTableInAsync(int table, MYFLT[] source)
-        {
-            if (!IsInitialized || csound == null) return;
-            csound.TableCopyInAsync(table, source);
-        }
-
-        /// <summary>
-        /// Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char)
-        /// Otherwise it returns 0.
-        /// </summary>
-        /// <param name="num"></param>
-        /// <returns></returns>
-        public int IsNamedGEN(int num)
-        {
-            if (!IsInitialized || csound == null) return 0;
-            return csound.IsNamedGEN(num);
-        }
-
-        /// <summary>
-        /// Gets the GEN name from a number num, if this is a named GEN
-        /// The final parameter is the max len of the string (excluding termination)
-        /// </summary>
-        /// <param name="num"></param>
-        /// <param name="name"></param>
-        /// <param name="len"></param>
-        public void GetNamedGEN(int num, out string name, int len)
-        {
-            if (!IsInitialized || csound == null) { name = null; return; }
-            csound.GetNamedGEN(num, out name, len);
-        }
-
-        /// <summary>
-        /// Returns a Dictionary keyed by the names of all named table generators.
-        /// Each name is paired with its internal function number.
-        /// </summary>
-        /// <returns></returns>
-        public IDictionary<string, int> GetNamedGens()
-        {
-            if (!IsInitialized || csound == null) return null;
-            return csound.GetNamedGens();
-        }
-
         #endregion TABLES
 
         #region UTILITIES
@@ -1781,43 +1713,6 @@ namespace Csound.Unity
             return Path.Combine(Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length), AssetDatabase.GUIDToAssetPath(csoundFileGUID));
         }
 #endif
-
-        /// <summary>
-        /// Fills in a provided raw CSOUND_PARAMS object with csounds current parameter settings.
-        /// This method is used internally to manage this class and is not expected to be used directly by a host program.
-        /// </summary>
-        /// <param name="oparms">a CSOUND_PARAMS structure to be filled in by csound</param>
-        /// <returns>The same parameter structure that was provided but filled in with csounds current internal contents</returns>
-        public CsoundUnityBridge.CSOUND_PARAMS GetParams()
-        {
-            if (!IsInitialized || csound == null) return default;
-            return csound.GetParams();
-        }
-
-        /// <summary>
-        /// Transfers the contents of the provided raw CSOUND_PARAMS object into csound's 
-        /// internal data structues (chiefly its OPARMS structure).
-        /// This method is used internally to manage this class and is not expected to be used directly by a host program.
-        /// Most values are used and reflected in CSOUND_PARAMS.
-        /// Internally to csound, as of release 6.0.0, Heartbeat and IsComputingOpcodeWeights are ignored
-        /// and IsUsingCsdLineCounts can only be set and never reset once set.
-        /// </summary>
-        /// <param name="parms">a </param>
-        public void SetParams(CsoundUnityBridge.CSOUND_PARAMS parms)
-        {
-            if (!IsInitialized || csound == null) return;
-            csound.SetParams(parms);
-        }
-
-        /// <summary>
-        /// Return a 32-bit unsigned integer to be used as seed from current time.
-        /// </summary>
-        /// <returns></returns>
-        public uint GetRandomSeedFromTime()
-        {
-            if (!IsInitialized || csound == null) return 0;
-            return csound.GetRandomSeedFromTime();
-        }
 
         /// <summary>
         /// Get Environment path.
@@ -1842,16 +1737,6 @@ namespace Csound.Unity
         {
             if (!IsInitialized || csound == null) return -1;
             return csound.SetGlobalEnv(name, value);
-        }
-
-        /// <summary>
-        /// Get the Opcode List, blocking
-        /// </summary>
-        /// <returns></returns>
-        public IDictionary<string, IList<CsoundUnityBridge.OpcodeArgumentTypes>> GetOpcodeList()
-        {
-            if (!IsInitialized || csound == null) return null;
-            return csound.GetOpcodeList();
         }
 
         /// <summary>
@@ -1905,15 +1790,6 @@ namespace Csound.Unity
             csound.Reset();
         }
 
-        /// <summary>
-        /// Prints information about the end of a performance, and closes audio and MIDI devices. 
-        /// Note: after calling csoundCleanup(), the operation of the perform functions is undefined.
-        /// </summary>
-        public void Cleanup()
-        {
-            if (!IsInitialized || csound == null) return;
-            csound.Cleanup();
-        }
 
 #if UNITY_EDITOR
         [MenuItem("GameObject/Audio/CsoundUnity", false)]
@@ -2875,13 +2751,19 @@ namespace Csound.Unity
                         }
                     }
 
-                    // update the audioChannels just when this instance is not muted
-                    if (!mute)
+                    // update the audioChannels just when this instance is not muted and performance is still running
+                    // Note: when performanceFinished is true, ksmpsIndex is never reset (the PerformKsmps guard
+                    // includes !performanceFinished), so it would grow past the temp buffer bounds — skip here.
+                    // Also guard ksmpsIndex against the temp buffer length in case GetKsmps() is not yet
+                    // available or the buffer hasn't been refreshed yet after PerformKsmps.
+                    if (!mute && !performanceFinished)
                     {
                         foreach (var chanName in availableAudioChannels)
                         {
                             if (!namedAudioChannelDataDict.ContainsKey(chanName) || !namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
-                            namedAudioChannelDataDict[chanName][i / numChannels] = namedAudioChannelTempBufferDict[chanName][ksmpsIndex];
+                            var tempBuf = namedAudioChannelTempBufferDict[chanName];
+                            if (ksmpsIndex < (uint)tempBuf.Length)
+                                namedAudioChannelDataDict[chanName][i / numChannels] = tempBuf[ksmpsIndex];
                         }
                     }
                 }
