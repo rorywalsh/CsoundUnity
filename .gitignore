@@ -67,3 +67,7 @@ crashlytics-build.properties
 ehthumbs.db
 Thumbs.db
 *.backup
+
+# Internal maintenance scripts — not part of the public package
+scripts/
+scripts.meta

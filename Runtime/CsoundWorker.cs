@@ -56,29 +56,21 @@ namespace Csound.Unity
             Debug.Log("CsoundWorker construction");
             IsInitialized = false;
 
-            if (Application.platform == RuntimePlatform.WindowsPlayer)
-                NativeMethods.csoundSetOpcodedir(".");
-
             NativeMethods.csoundInitialize(0);
-            csound = NativeMethods.csoundCreate(System.IntPtr.Zero);
+            csound = NativeMethods.csoundCreate(System.IntPtr.Zero, null);
             if (csound == null)
             {
                 Debug.LogError("Couldn't create Csound!");
                 return;
             }
 
-            NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
             NativeMethods.csoundCreateMessageBuffer(csound, 0);
             SetMessageCallback(RawMessageCallback);
             NativeMethods.csoundSetOption(csound, "-n");
             NativeMethods.csoundSetOption(csound, "-d");
+            NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
 
-            var parms = GetParams();
-            parms.control_rate_override = AudioSettings.outputSampleRate;
-            parms.sample_rate_override = AudioSettings.outputSampleRate;
-            SetParams(parms);
-
-            int ret = NativeMethods.csoundCompileCsdText(csound, _csdEmptyTemplate);
+            int ret = NativeMethods.csoundCompileCSD(csound, _csdEmptyTemplate, 1, 0, null);
             NativeMethods.csoundStart(csound);
             var compiledOk = ret == 0;
             Debug.Log($"CsoundWorker created and started. CsoundCompile: {compiledOk}\n" +
@@ -145,11 +137,13 @@ namespace Csound.Unity
             {
                 try
                 {
-                    NativeMethods.csoundPerform(csound);
+                    int result = NativeMethods.csoundPerformKsmps(csound);
+                    if (result != 0) break; // non-zero means end of score or error
                 }
                 catch (ThreadAbortException)
                 {
                     Debug.Log("Thread aborted");
+                    break;
                 }
             }
             // Delay the thread for a certain amount of time

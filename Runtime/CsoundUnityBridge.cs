@@ -54,6 +54,20 @@ namespace Csound.Unity
         Action onCsoundCreated;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
+        // Cached values set after csoundStart — valid for the lifetime of the Csound session.
+        // Avoids repeated P/Invoke calls in the per-sample hot path (ProcessBlock).
+        private IntPtr _spoutPtr = IntPtr.Zero;
+        private IntPtr _spinPtr = IntPtr.Zero;
+        private uint _nchnlsCached = 0;
+        private uint _nchnlsInputCached = 0;
+        private uint _ksmpsCache = 0;
+        private int _myfltSize = 0;
+        // Reusable single-element buffer — avoids new MYFLT[1] allocation on every sample read/write.
+        // Only ever accessed from the audio thread (ProcessBlock via GetSpoutSample/SetSpinSample/AddSpinSample).
+        private readonly MYFLT[] _oneValueBuffer = new MYFLT[1];
+#endif
+
+#if !UNITY_WEBGL || UNITY_EDITOR
         private void SetEnvironmentSettings(List<EnvironmentSettings> environmentSettings)
         {
             if (environmentSettings == null || environmentSettings.Count == 0) return;
@@ -136,13 +150,6 @@ namespace Csound.Unity
                 return;
             }
 
-            // On editor and desktop platforms, disable searching of plugins unless explicitly set using
-            // the env settings in the editor
-            if (Application.isEditor || !Application.isMobilePlatform)
-            {
-                Csound6.NativeMethods.csoundSetOpcodedir(".");
-            }
-
             SetEnvironmentSettings(environmentSettings);
 
             // Debug.Log("audio Rate: " + audioRate + " control Rate: " + controlRate);
@@ -159,14 +166,13 @@ namespace Csound.Unity
             //#endif
 
             Csound6.NativeMethods.csoundInitialize(1);
-            csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero);
+            csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero, null);
             if (csound == null)
             {
                 Debug.LogError("Couldn't create Csound!");
                 return;
             }
 
-            Csound6.NativeMethods.csoundSetHostImplementedAudioIO(csound, 1, 0);
             Csound6.NativeMethods.csoundCreateMessageBuffer(csound, 0);
 
             Csound6.NativeMethods.csoundSetOption(csound, "-n");
@@ -189,9 +195,20 @@ namespace Csound.Unity
             onCsoundCreated?.Invoke();
             onCsoundCreated = null;
 
-            int ret = Csound6.NativeMethods.csoundCompileCsdText(csound, csdFile);
+            int ret = Csound6.NativeMethods.csoundCompileCSD(csound, csdFile, 1, 0, null);
             Csound6.NativeMethods.csoundStart(csound);
             compiledOk = ret == 0 ? true : false;
+
+            // Cache values that are constant for this Csound session.
+            // nchnls/ksmps/myfltSize are valid right after csoundStart (derived from the compiled CSD).
+            // _spoutPtr / _spinPtr are fetched lazily in the hot path because
+            // csoundGetSpout/csoundGetSpin may return NULL before the first csoundPerformKsmps.
+            _myfltSize = Marshal.SizeOf(typeof(MYFLT));
+            _nchnlsCached = Csound6.NativeMethods.csoundGetChannels(csound, 0);
+            _nchnlsInputCached = Csound6.NativeMethods.csoundGetChannels(csound, 1);
+            _ksmpsCache = Csound6.NativeMethods.csoundGetKsmps(csound);
+            // _spoutPtr and _spinPtr are populated lazily on the first non-null return (see GetSpoutSample/SetSpinSample).
+
             Debug.Log($"Csound created and started.\n" +
                 $"AudioSettings.outputSampleRate: {AudioSettings.outputSampleRate}\n" +
                 $"GetSr: {GetSr()}\n" +
@@ -296,36 +313,11 @@ namespace Csound.Unity
 #endif
         }
 
-        public int GetAPIVersion()
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetAPIVersion();
-#else
-        return 0;
-#endif
-        }
-
-        public void StopCsound()
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundStop(csound);
-#endif
-        }
-
         public virtual void OnApplicationQuit()
         {
-            StopCsound();
 #if !UNITY_WEBGL || UNITY_EDITOR
-            //Csound6.NativeMethods.csoundCleanup(csound);
             Csound6.NativeMethods.csoundDestroyMessageBuffer(csound);
             Csound6.NativeMethods.csoundDestroy(csound);
-#endif
-        }
-
-        public void Cleanup()
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundCleanup(csound);
 #endif
         }
 
@@ -344,7 +336,7 @@ namespace Csound.Unity
         public int CompileOrc(string orchStr)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundCompileOrc(csound, orchStr);
+            return Csound6.NativeMethods.csoundCompileOrc(csound, orchStr, 0);
 #else
         return 0;
 #endif
@@ -354,7 +346,15 @@ namespace Csound.Unity
         {
             if (csound == IntPtr.Zero) return -1;
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundPerformKsmps(csound);
+            int result = Csound6.NativeMethods.csoundPerformKsmps(csound);
+            // csoundGetSpout/csoundGetSpin return NULL before the first PerformKsmps.
+            // Cache the pointers here (once, on the first call) so GetSpoutSample/SetSpinSample
+            // never need to call P/Invoke in the per-sample hot path.
+            if (_spoutPtr == IntPtr.Zero)
+                _spoutPtr = Csound6.NativeMethods.csoundGetSpout(csound);
+            if (_spinPtr == IntPtr.Zero)
+                _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
+            return result;
 #else
         return 0;
 #endif
@@ -381,7 +381,7 @@ namespace Csound.Unity
         public void SendScoreEvent(string scoreEvent)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundInputMessage(csound, scoreEvent);
+            Csound6.NativeMethods.csoundEventString(csound, scoreEvent, 0);
 #endif
         }
 
@@ -467,7 +467,13 @@ namespace Csound.Unity
         public MYFLT GetTable(int table, int index)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundTableGet(csound, table, index);
+            IntPtr tablePtr;
+            int len = Csound6.NativeMethods.csoundGetTable(csound, out tablePtr, table);
+            if (len < 0 || index >= len || tablePtr == IntPtr.Zero) return 0;
+            int elemSize = Marshal.SizeOf(typeof(MYFLT));
+            var arr = new MYFLT[1];
+            Marshal.Copy(tablePtr + index * elemSize, arr, 0, 1);
+            return arr[0];
 #else
         return 0;
 #endif
@@ -479,7 +485,12 @@ namespace Csound.Unity
         public void SetTable(int table, int index, MYFLT value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundTableSet(csound, table, index, value);
+            IntPtr tablePtr;
+            int len = Csound6.NativeMethods.csoundGetTable(csound, out tablePtr, table);
+            if (len < 0 || index >= len || tablePtr == IntPtr.Zero) return;
+            int elemSize = Marshal.SizeOf(typeof(MYFLT));
+            var arr = new MYFLT[] { value };
+            Marshal.Copy(arr, 0, tablePtr + index * elemSize, 1);
 #endif
         }
 
@@ -498,7 +509,7 @@ namespace Csound.Unity
 
             dest = new MYFLT[len];
             IntPtr des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
-            Csound6.NativeMethods.csoundTableCopyOut(csound, table, des);
+            Csound6.NativeMethods.csoundTableCopyOut(csound, table, des, 0);
             Marshal.Copy(des, dest, 0, len);
             Marshal.FreeHGlobal(des);
 #else
@@ -507,30 +518,7 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Asynchronous version of tableCopyOut()
-        /// </summary>
-        public void TableCopyOutAsync(int table, out MYFLT[] dest)
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR
-            int len = Csound6.NativeMethods.csoundTableLength(csound, table);
-            if (len < 1)
-            {
-                dest = null;
-                return;
-            }
-
-            dest = new MYFLT[len];
-            IntPtr des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
-            Csound6.NativeMethods.csoundTableCopyOutAsync(csound, table, des);
-            Marshal.Copy(des, dest, 0, len);
-            Marshal.FreeHGlobal(des);
-#else
-        dest = new MYFLT[0]; // TODO
-#endif
-        }
-
-        /// <summary>
-        /// Copy the contents of an array source into a given function table 
+        /// Copy the contents of an array source into a given function table
         /// The table number is assumed to be valid, and the table needs to have sufficient space to receive all the array contents.
         /// </summary>
         public void TableCopyIn(int table, MYFLT[] source)
@@ -540,24 +528,9 @@ namespace Csound.Unity
             if (len < 1 || len < source.Length) return;
             IntPtr src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
             Marshal.Copy(source, 0, src, source.Length);
-            Csound6.NativeMethods.csoundTableCopyIn(csound, table, src);
+            Csound6.NativeMethods.csoundTableCopyIn(csound, table, src, 0);
             Marshal.FreeHGlobal(src);
 #endif            
-        }
-
-        /// <summary>
-        /// Asynchronous version of csoundTableCopyIn()
-        /// </summary>
-        public void TableCopyInAsync(int table, MYFLT[] source)
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR        	
-            var len = Csound6.NativeMethods.csoundTableLength(csound, table);
-            if (len < 1 || len < source.Length) return;
-            IntPtr src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
-            Marshal.Copy(source, 0, src, source.Length);
-            Csound6.NativeMethods.csoundTableCopyInAsync(csound, table, src);
-            Marshal.FreeHGlobal(src);
-#endif
         }
 
         /// <summary>
@@ -580,8 +553,6 @@ namespace Csound.Unity
             if (res != -1)
                 Marshal.Copy(tablePtr, tableValues, 0, len);
             else tableValues = null;
-            GCHandle gc = GCHandle.FromIntPtr(tablePtr);
-            gc.Free();
             return res;
 #else
         tableValues = new MYFLT[0]; // TODO
@@ -611,63 +582,6 @@ namespace Csound.Unity
 #endif
         }
 
-        /// <summary>
-        /// Checks if a given GEN number num is a named GEN if so, it returns the string length (excluding terminating NULL char) 
-        /// Otherwise it returns 0.
-        /// </summary>
-        public int IsNamedGEN(int num)
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR        	
-            return Csound6.NativeMethods.csoundIsNamedGEN(csound, num);
-#else
-        return 0;
-#endif
-        }
-
-        /// <summary>
-        /// Gets the GEN name from a number num, if this is a named GEN 
-        /// The final parameter is the max len of the string (excluding termination)
-        /// </summary>
-        public void GetNamedGEN(int num, out string name, int len)
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundGetNamedGEN(csound, num, out name, len);
-#else
-        name = "";
-#endif
-        }
-
-        /// <summary>
-        /// Named Gen Proxy 
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        private class NamedGenProxy
-        {
-            public IntPtr name;
-            public int genum;
-            public IntPtr next; //NAMEDGEN pointer used by csound as linked list, but not sure if we care
-        }
-
-        /// <summary>
-        /// Returns a Dictionary keyed by the names of all named table generators.
-        /// Each name is paired with its internal function number.
-        /// </summary>
-        /// <returns></returns>
-        public IDictionary<string, int> GetNamedGens()
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR
-            IDictionary<string, int> gens = new Dictionary<string, int>();
-            IntPtr pNAMEDGEN = Csound6.NativeMethods.csoundGetNamedGens(csound);
-            while (pNAMEDGEN != IntPtr.Zero)
-            {
-                NamedGenProxy namedGen = (NamedGenProxy)Marshal.PtrToStructure(pNAMEDGEN, typeof(NamedGenProxy));
-                gens.Add(Marshal.PtrToStringAnsi(namedGen.name), namedGen.genum);
-                pNAMEDGEN = namedGen.next;
-            }
-#endif
-            return gens;
-        }
-
         public MYFLT GetSr()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -689,38 +603,69 @@ namespace Csound.Unity
         public uint GetKsmps()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetKsmps(csound);
+            // Return cached value when available (set after csoundStart)
+            return _ksmpsCache != 0 ? _ksmpsCache : Csound6.NativeMethods.csoundGetKsmps(csound);
 #else
         return 0;
 #endif
         }
 
         /// <summary>
-        /// Get a sample from Csound's audio output buffer
-        /// <summary>
+        /// Get a sample from Csound's audio output buffer.
+        /// Hot path — uses cached spout pointer and channel count; zero allocation.
+        /// The pointer is fetched lazily because csoundGetSpout may return NULL before
+        /// the first csoundPerformKsmps.
+        /// </summary>
         public MYFLT GetSpoutSample(int frame, int channel)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetSpoutSample(csound, frame, channel);
+            if (_spoutPtr == IntPtr.Zero)
+            {
+                _spoutPtr = Csound6.NativeMethods.csoundGetSpout(csound);
+                if (_spoutPtr == IntPtr.Zero) return 0;
+            }
+            int index = frame * (int)_nchnlsCached + channel;
+            Marshal.Copy(_spoutPtr + index * _myfltSize, _oneValueBuffer, 0, 1);
+            return _oneValueBuffer[0];
 #else
         return 0;
 #endif
         }
 
+        /// <summary>
+        /// Add a value to a sample in Csound's audio input buffer.
+        /// Hot path — uses cached spin pointer and channel count; zero allocation.
+        /// </summary>
         public void AddSpinSample(int frame, int channel, MYFLT sample)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundAddSpinSample(csound, frame, channel, sample);
+            if (_spinPtr == IntPtr.Zero)
+            {
+                _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
+                if (_spinPtr == IntPtr.Zero) return;
+            }
+            int index = frame * (int)_nchnlsInputCached + channel;
+            Marshal.Copy(_spinPtr + index * _myfltSize, _oneValueBuffer, 0, 1);
+            _oneValueBuffer[0] += sample;
+            Marshal.Copy(_oneValueBuffer, 0, _spinPtr + index * _myfltSize, 1);
 #endif
         }
 
         /// <summary>
-        /// Set a sample from Csound's audio output buffer
-        /// <summary>
+        /// Set a sample in Csound's audio input buffer.
+        /// Hot path — uses cached spin pointer and channel count; zero allocation.
+        /// </summary>
         public void SetSpinSample(int frame, int channel, MYFLT sample)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundSetSpinSample(csound, frame, channel, sample);
+            if (_spinPtr == IntPtr.Zero)
+            {
+                _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
+                if (_spinPtr == IntPtr.Zero) return;
+            }
+            int index = frame * (int)_nchnlsInputCached + channel;
+            _oneValueBuffer[0] = sample;
+            Marshal.Copy(_oneValueBuffer, 0, _spinPtr + index * _myfltSize, 1);
 #endif
         }
 
@@ -730,7 +675,14 @@ namespace Csound.Unity
         public void ClearSpin()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundClearSpin(csound);
+            if (_spinPtr == IntPtr.Zero)
+            {
+                _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
+                if (_spinPtr == IntPtr.Zero) return;
+            }
+            int size = (int)_ksmpsCache * (int)_nchnlsInputCached;
+            var zeroes = new MYFLT[size];
+            Marshal.Copy(zeroes, 0, _spinPtr, size);
 #endif
         }
 
@@ -742,10 +694,14 @@ namespace Csound.Unity
         public MYFLT[] GetSpin()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            var size = (Int32)Csound6.NativeMethods.csoundGetKsmps(csound) * (int)GetNchnlsInput();
+            if (_spinPtr == IntPtr.Zero)
+            {
+                _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
+                if (_spinPtr == IntPtr.Zero) return null;
+            }
+            var size = (int)_ksmpsCache * (int)_nchnlsInputCached;
             var spin = new MYFLT[size];
-            var addr = Csound6.NativeMethods.csoundGetSpin(csound);
-            Marshal.Copy(addr, spin, 0, size);
+            Marshal.Copy(_spinPtr, spin, 0, size);
             return spin;
 #else
         return null;
@@ -760,10 +716,14 @@ namespace Csound.Unity
         public MYFLT[] GetSpout()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            var size = (Int32)Csound6.NativeMethods.csoundGetKsmps(csound) * (int)GetNchnls();
+            if (_spoutPtr == IntPtr.Zero)
+            {
+                _spoutPtr = Csound6.NativeMethods.csoundGetSpout(csound);
+                if (_spoutPtr == IntPtr.Zero) return null;
+            }
+            var size = (int)_ksmpsCache * (int)_nchnlsCached;
             var spout = new MYFLT[size];
-            var addr = Csound6.NativeMethods.csoundGetSpout(csound);
-            Marshal.Copy(addr, spout, 0, size);
+            Marshal.Copy(_spoutPtr, spout, 0, size);
             return spout;
 #else
         return null;
@@ -776,7 +736,8 @@ namespace Csound.Unity
         public MYFLT GetChannel(string channel)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetControlChannel(csound, channel, IntPtr.Zero);
+            Int32 err;
+            return Csound6.NativeMethods.csoundGetControlChannel(csound, channel, out err);
 #else
         Debug.LogError("use GetChannel(channel, callback) on the WebGL platform");
         return 0;
@@ -785,23 +746,25 @@ namespace Csound.Unity
 
         /// <summary>
         /// Get number of input channels
-        /// <summary>
+        /// </summary>
         public uint GetNchnlsInput()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetNchnlsInput(csound);
+            // Return cached value when available (set after csoundStart)
+            return _nchnlsInputCached != 0 ? _nchnlsInputCached : Csound6.NativeMethods.csoundGetChannels(csound, 1);
 #else
         return 0;
 #endif
         }
 
         /// <summary>
-        /// Get number of input channels
-        /// <summary>
+        /// Get number of output channels
+        /// </summary>
         public uint GetNchnls()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            return Csound6.NativeMethods.csoundGetNchnlsInput(csound);
+            // Return cached value when available (set after csoundStart)
+            return _nchnlsCached != 0 ? _nchnlsCached : Csound6.NativeMethods.csoundGetChannels(csound, 0);
 #else
         return 0;
 #endif
@@ -825,49 +788,6 @@ namespace Csound.Unity
             return CharPtr2String(message);
         }
 #endif
-        /// <summary>
-        /// Returns a sorted Dictionary keyed by all opcodes which are active in the current instance of csound.
-        /// The values contain argument strings representing signatures for an opcode's
-        /// output and input parameters.
-        /// The argument strings pairs are stored in a list to accomodate opcodes with multiple signatures.
-        /// </summary>
-        /// <returns>A sorted Dictionary keyed by all opcodes which are active in the current instance of csound.</returns>
-        public IDictionary<string, IList<OpcodeArgumentTypes>> GetOpcodeList()
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR
-            var opcodes = new SortedDictionary<string, IList<OpcodeArgumentTypes>>();
-            IntPtr ppOpcodeList = IntPtr.Zero;
-            int size = Csound6.NativeMethods.csoundNewOpcodeList(csound, out ppOpcodeList);
-            if ((ppOpcodeList != IntPtr.Zero) && (size >= 0))
-            {
-                int proxySize = Marshal.SizeOf(typeof(OpcodeListProxy));
-                for (int i = 0; i < size; i++)
-                {
-                    OpcodeListProxy proxy = Marshal.PtrToStructure(ppOpcodeList + (i * proxySize), typeof(OpcodeListProxy)) as OpcodeListProxy;
-                    string opname = Marshal.PtrToStringAnsi(proxy.opname);
-                    OpcodeArgumentTypes opcode = new OpcodeArgumentTypes
-                    {
-                        outypes = Marshal.PtrToStringAnsi(proxy.outtypes),
-                        intypes = Marshal.PtrToStringAnsi(proxy.intypes),
-                        flags = proxy.flags
-                    };
-                    if (!opcodes.ContainsKey(opname))
-                    {
-                        IList<OpcodeArgumentTypes> types = new List<OpcodeArgumentTypes>();
-                        types.Add(opcode);
-                        opcodes.Add(opname, types);
-                    }
-                    else
-                    {
-                        opcodes[opname].Add(opcode);
-                    }
-                }
-                Csound6.NativeMethods.csoundDisposeOpcodeList(csound, ppOpcodeList);
-            }
-#endif
-            return opcodes;
-        }
-
         /// <summary>
         /// Provides a dictionary of all currently defined channels resulting from compilation of an orchestra
         /// containing channel definitions.
@@ -909,39 +829,6 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Fills in a provided raw CSOUND_PARAMS object with csounds current parameter settings.
-        /// This method is used internally to manage this class and is not expected to be used directly by a host program.
-        /// </summary>
-        /// <param name="oparms">a CSOUND_PARAMS structure to be filled in by csound</param>
-        /// <returns>The same parameter structure that was provided but filled in with csounds current internal contents</returns>
-        public CSOUND_PARAMS GetParams()
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR
-            CSOUND_PARAMS oparms = new CSOUND_PARAMS();
-            Csound6.NativeMethods.csoundGetParams(csound, oparms);
-            return oparms;
-#else
-        return null; // TODO WEBGL
-#endif
-        }
-
-        /// <summary>
-        /// Transfers the contents of the provided raw CSOUND_PARAMS object into csound's 
-        /// internal data structues (chiefly its OPARMS structure).
-        /// This method is used internally to manage this class and is not expected to be used directly by a host program.
-        /// Most values are used and reflected in CSOUND_PARAMS.
-        /// Internally to csound, as of release 6.0.0, Heartbeat and IsComputingOpcodeWeights are ignored
-        /// and IsUsingCsdLineCounts can only be set and never reset once set.
-        /// </summary>
-        /// <param name="parms">a </param>
-        public void SetParams(CSOUND_PARAMS parms)
-        {
-#if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundSetParams(csound, parms);
-#endif
-        }
-
-        /// <summary>
         /// Defines a class to hold out and in types, and flags
         /// </summary>
         public class OpcodeArgumentTypes
@@ -952,19 +839,7 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Defines an OpcodeList to be Marshaled
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        private class OpcodeListProxy
-        {
-            public IntPtr opname;
-            public IntPtr outtypes;
-            public IntPtr intypes;
-            public int flags;
-        }
-
-        /// <summary>
-        /// Private proxy class used during marshalling of actual ChannelInfo 
+        /// Private proxy class used during marshalling of actual ChannelInfo
         /// </summary>
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
         private class ChannelInfoProxy
@@ -1088,56 +963,6 @@ namespace Csound.Unity
         {
             Input = 1,
             Output = 2
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public class CSOUND_PARAMS
-        {
-            public int debug_mode;     /* debug mode, 0 or 1 */
-            public int buffer_frames;  /* number of frames in in/out buffers */
-            public int hardware_buffer_frames; /* ibid. hardware */
-            public int displays;       /* graph displays, 0 or 1 */
-            public int ascii_graphs;   /* use ASCII graphs, 0 or 1 */
-            public int postscript_graphs; /* use postscript graphs, 0 or 1 */
-            public int message_level;     /* message printout control */
-            public int tempo;             /* tempo (sets Beatmode)  */
-            public int ring_bell;         /* bell, 0 or 1 */
-            public int use_cscore;        /* use cscore for processing */
-            public int terminate_on_midi; /* terminate performance at the end
-                                        of midifile, 0 or 1 */
-            public int heartbeat;         /* print heart beat, 0 or 1 */
-            public int defer_gen01_load;  /* defer GEN01 load, 0 or 1 */
-            public int midi_key;           /* pfield to map midi key no */
-            public int midi_key_cps;       /* pfield to map midi key no as cps */
-            public int midi_key_oct;       /* pfield to map midi key no as oct */
-            public int midi_key_pch;       /* pfield to map midi key no as pch */
-            public int midi_velocity;      /* pfield to map midi velocity */
-            public int midi_velocity_amp;   /* pfield to map midi velocity as amplitude */
-            public int no_default_paths;     /* disable relative paths from files, 0 or 1 */
-            public int number_of_threads;   /* number of threads for multicore performance */
-            public int syntax_check_only;   /* do not compile, only check syntax */
-            public int csd_line_counts;     /* csd line error reporting */
-            public int compute_weights;     /* use calculated opcode weights for
-                                          multicore, 0 or 1  */
-            public int realtime_mode;       /* use realtime priority mode, 0 or 1 */
-            public int sample_accurate;     /* use sample-level score event accuracy */
-            public MYFLT sample_rate_override; /* overriding sample rate */
-            public MYFLT control_rate_override; /* overriding control rate */
-            public int nchnls_override;     /* overriding number of out channels */
-            public int nchnls_i_override;   /* overriding number of in channels */
-            public MYFLT e0dbfs_override;  /* overriding 0dbfs */
-            public int daemon;              /* daemon mode*/
-            public int ksmps_override;      /* ksmps override */
-            public int FFT_library;         /* fft_lib */
-        }
-
-        /// <summary>
-        /// Return a 32-bit unsigned integer to be used as seed from current time.
-        /// </summary>
-        /// <returns></returns>
-        public uint GetRandomSeedFromTime()
-        {
-            return Csound6.NativeMethods.csoundGetRandomSeedFromTime();
         }
 
         /// <summary>
