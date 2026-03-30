@@ -205,6 +205,8 @@ namespace Csound.Unity
             m_drawSettings.boolValue = EditorGUILayout.Foldout(m_drawSettings.boolValue, "Settings", true);
             if (m_drawSettings.boolValue)
             {
+            EditorGUI.BeginDisabledGroup(Application.isPlaying);
+
             m_overrideSamplingRate.boolValue = EditorGUILayout.Toggle("Override sample rate (sr)", m_overrideSamplingRate.boolValue);
 
             if (m_overrideSamplingRate.boolValue)
@@ -252,6 +254,8 @@ namespace Csound.Unity
                 if (m_audioChannelsBufferSize.intValue < ksmps)
                     m_audioChannelsBufferSize.intValue = ksmps;
             }
+
+            EditorGUI.EndDisabledGroup();
 
             // Explanatory note (always visible)
             EditorGUILayout.HelpBox(
