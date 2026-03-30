@@ -41,6 +41,10 @@ namespace Csound.Unity
         SerializedProperty m_availableAudioChannels;
         SerializedProperty m_bufferSize;
 
+        private readonly AudioMonitorGUI _audioMonitor = new AudioMonitorGUI();
+        // Interleaved float[] built every frame from the Child's per-channel MYFLT[] data.
+        private float[] _monitorBuffer;
+
         private void OnEnable()
         {
             m_selectedAudioChannelIndexByChan = serializedObject.FindProperty("selectedAudioChannelIndexByChannel");
@@ -48,6 +52,11 @@ namespace Csound.Unity
             m_channels = serializedObject.FindProperty("AudioChannelsSetting");
             m_availableAudioChannels = serializedObject.FindProperty("availableAudioChannels");
             m_bufferSize = serializedObject.FindProperty("bufferSize");
+        }
+
+        private void OnDisable()
+        {
+            _audioMonitor.Dispose();
         }
 
         public override void OnInspectorGUI()
@@ -120,7 +129,37 @@ namespace Csound.Unity
                 }
             }
             serializedObject.ApplyModifiedProperties();
+
+            if (Application.isPlaying)
+                DrawAudioMonitor();
         }
+
+        private void DrawAudioMonitor()
+        {
+            var child = (CsoundUnityChild)target;
+            var srcData = child.namedAudioChannelData;
+            if (srcData == null || srcData.Count == 0 || srcData[0] == null || srcData[0].Length == 0)
+                return;
+
+            // Build an interleaved float[] from the per-channel MYFLT[] buffers.
+            // CsoundUnityChild is always MONO (1 ch) or STEREO (2 ch).
+            int nCh    = (int)child.AudioChannelsSetting;
+            int frames = srcData[0].Length;
+            int needed = frames * nCh;
+
+            if (_monitorBuffer == null || _monitorBuffer.Length != needed)
+                _monitorBuffer = new float[needed];
+
+            for (int f = 0; f < frames; f++)
+                for (int c = 0; c < nCh; c++)
+                    _monitorBuffer[f * nCh + c] = c < srcData.Count ? (float)srcData[c][f] : 0f;
+
+            EditorGUILayout.Space();
+            _audioMonitor.Draw(_monitorBuffer, nCh);
+        }
+
+        public override bool RequiresConstantRepaint() =>
+            Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
 
         //assumes list are ordered
         private bool CheckListEquality(SerializedProperty first, List<string> second)

@@ -91,13 +91,8 @@ namespace Csound.Unity
         // Transient Y-axis state for xypad widgets (not serialized, lives only in this editor session)
         private readonly Dictionary<string, float> _xypadYValues = new Dictionary<string, float>();
         private readonly HashSet<string> _xypadDragging = new HashSet<string>();
-        private bool _showWaveform;
-        private bool _showSpectrum;
-        private bool _showLissajous;
         private static MethodInfo _powerSliderMethod;
-        private float _waveformZoom = 1f;
-        private float _spectrumZoom = 1f;
-        private float _lissajousZoom = 1f;
+        private readonly AudioMonitorGUI _audioMonitor = new AudioMonitorGUI();
 
         private const string CsdTemplatePath = "Packages/com.csound.csoundunity/Editor/Templates/CsoundTemplate.csd";
 
@@ -155,6 +150,11 @@ namespace Csound.Unity
             };
 
             UpdateAssignablePresets();
+        }
+
+        void OnDisable()
+        {
+            _audioMonitor.Dispose();
         }
 
         public override void OnInspectorGUI()
@@ -1321,107 +1321,29 @@ namespace Csound.Unity
         {
             if (!Application.isPlaying) return;
 
-            EditorGUILayout.LabelField("Audio Monitor", EditorStyles.boldLabel);
-            _showWaveform = EditorGUILayout.Toggle("Waveform", _showWaveform);
-            _showSpectrum = EditorGUILayout.Toggle("Spectrum", _showSpectrum);
-            _showLissajous = EditorGUILayout.Toggle("Lissajous", _showLissajous);
-
-            if (!_showWaveform && !_showSpectrum && !_showLissajous) return;
-
-            if (!csoundUnity.updateOutputBuffer)
+            if (_audioMonitor.ShowWaveform || _audioMonitor.ShowSpectrum ||
+                _audioMonitor.ShowLissajous || _audioMonitor.ShowSpectrogram)
             {
-                EditorGUILayout.HelpBox("Enable 'Update Output Buffer' in Settings to use the audio monitor.", MessageType.Warning);
-                return;
+                if (!csoundUnity.updateOutputBuffer)
+                {
+                    // Draw the toggles so the user can see/change them, then show the warning.
+                    EditorGUILayout.LabelField("Audio Monitor", EditorStyles.boldLabel);
+                    _audioMonitor.ShowWaveform    = EditorGUILayout.Toggle("Waveform",    _audioMonitor.ShowWaveform);
+                    _audioMonitor.ShowSpectrum    = EditorGUILayout.Toggle("Spectrum",    _audioMonitor.ShowSpectrum);
+                    _audioMonitor.ShowLissajous   = EditorGUILayout.Toggle("Lissajous",   _audioMonitor.ShowLissajous);
+                    _audioMonitor.ShowSpectrogram = EditorGUILayout.Toggle("Spectrogram", _audioMonitor.ShowSpectrogram);
+                    EditorGUILayout.HelpBox(
+                        "Enable 'Update Output Buffer' in Settings to use the audio monitor.",
+                        MessageType.Warning);
+                    return;
+                }
             }
 
             var buffer = csoundUnity.OutputBuffer;
-            if (buffer == null || buffer.Length == 0) return;
-
-            const float height = 80f;
-            var bg = new Color(0.1f, 0.1f, 0.1f);
-
-            if (_showWaveform)
-            {
-                EditorGUILayout.BeginHorizontal();
-                var rect = GUILayoutUtility.GetRect(0, height, GUILayout.ExpandWidth(true));
-                _waveformZoom = GUILayout.VerticalSlider(_waveformZoom, 20f, 1f, GUILayout.Width(16f), GUILayout.Height(height));
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUI.DrawRect(rect, bg);
-                float midY = rect.y + rect.height * 0.5f;
-                EditorGUI.DrawRect(new Rect(rect.x, midY, rect.width, 1), new Color(0.3f, 0.3f, 0.3f));
-                float segW = rect.width / buffer.Length;
-                float halfH = rect.height * 0.5f;
-                var col = new Color(0.2f, 0.85f, 0.2f);
-                for (int i = 0; i < buffer.Length; i++)
-                {
-                    float sample = Mathf.Clamp(buffer[i] * _waveformZoom, -1f, 1f);
-                    float barH = Mathf.Max(1f, Mathf.Abs(sample) * halfH);
-                    float barY = sample >= 0f ? midY - barH : midY;
-                    EditorGUI.DrawRect(new Rect(rect.x + i * segW, barY, Mathf.Max(1f, segW), barH), col);
-                }
-            }
-
-            if (_showSpectrum)
-            {
-                EditorGUILayout.BeginHorizontal();
-                var rect = GUILayoutUtility.GetRect(0, height, GUILayout.ExpandWidth(true));
-                _spectrumZoom = GUILayout.VerticalSlider(_spectrumZoom, 100f, 1f, GUILayout.Width(16f), GUILayout.Height(height));
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUI.DrawRect(rect, bg);
-                var spectrum = FFTUtils.CalculateSpectrum(buffer);
-                float barW = rect.width / spectrum.Length;
-                var col = new Color(0.2f, 0.6f, 1f);
-                for (int i = 0; i < spectrum.Length; i++)
-                {
-                    float barH = Mathf.Clamp01(spectrum[i] * _spectrumZoom) * rect.height;
-                    EditorGUI.DrawRect(new Rect(rect.x + i * barW, rect.yMax - barH, Mathf.Max(1f, barW), barH), col);
-                }
-            }
-
-            if (_showLissajous)
-            {
-                const float size = 120f;
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.FlexibleSpace();
-                var rect = GUILayoutUtility.GetRect(size, size, GUILayout.Width(size), GUILayout.Height(size));
-                _lissajousZoom = GUILayout.VerticalSlider(_lissajousZoom, 20f, 1f, GUILayout.Width(16f), GUILayout.Height(size));
-                GUILayout.FlexibleSpace();
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUI.DrawRect(rect, bg);
-                // center crosshairs
-                float cx = rect.x + rect.width * 0.5f;
-                float cy = rect.y + rect.height * 0.5f;
-                EditorGUI.DrawRect(new Rect(rect.x, cy, rect.width, 1), new Color(0.25f, 0.25f, 0.25f));
-                EditorGUI.DrawRect(new Rect(cx, rect.y, 1, rect.height), new Color(0.25f, 0.25f, 0.25f));
-
-                int ch = Mathf.Max(1, csoundUnity.OutputChannels);
-                float halfW = rect.width * 0.5f;
-                float halfH = rect.height * 0.5f;
-                var lissCol = new Color(1f, 0.75f, 0.1f);
-                Handles.BeginGUI();
-                Handles.color = lissCol;
-                for (int i = ch; i < buffer.Length; i += ch)
-                {
-                    float l0 = buffer[i - ch];
-                    float r0 = ch > 1 ? buffer[i - ch + 1] : l0;
-                    float l1 = buffer[i];
-                    float r1 = ch > 1 ? buffer[i + 1] : l1;
-                    var p0 = new Vector3(
-                        Mathf.Clamp(cx + l0 * halfW * _lissajousZoom, rect.xMin, rect.xMax),
-                        Mathf.Clamp(cy - r0 * halfH * _lissajousZoom, rect.yMin, rect.yMax));
-                    var p1 = new Vector3(
-                        Mathf.Clamp(cx + l1 * halfW * _lissajousZoom, rect.xMin, rect.xMax),
-                        Mathf.Clamp(cy - r1 * halfH * _lissajousZoom, rect.yMin, rect.yMax));
-                    Handles.DrawLine(p0, p1);
-                }
-                Handles.EndGUI();
-            }
+            _audioMonitor.Draw(buffer, Mathf.Max(1, csoundUnity.OutputChannels));
         }
 
         public override bool RequiresConstantRepaint() =>
-            Application.isPlaying && (_showWaveform || _showSpectrum || _showLissajous);
+            Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
     }
 }
