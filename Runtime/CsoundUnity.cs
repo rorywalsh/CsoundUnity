@@ -285,7 +285,7 @@ namespace Csound.Unity
     [AddComponentMenu("Audio/CsoundUnity")]
     [Serializable]
     [RequireComponent(typeof(AudioSource))]
-    public class CsoundUnity : MonoBehaviour
+    public partial class CsoundUnity : MonoBehaviour
     {
         #region PUBLIC_FIELDS
 
@@ -557,8 +557,19 @@ namespace Csound.Unity
 
 
             if (audioRate == 0 || !overrideSamplingRate) audioRate = AudioSettings.outputSampleRate;
-            // kr is independent of the sr toggle; clamp to sr so ksmps >= 1 always holds
-            if (controlRate == 0 || controlRate > audioRate) controlRate = audioRate;
+            // Snap kr so that ksmps = sr/kr is always a positive integer.
+            // Without this, a serialized kr from a previous session at a different
+            // sample rate (e.g. kr=44100 with sr=48000) produces a fractional ksmps
+            // and causes Csound to misreport its control rate at startup.
+            if (controlRate <= 0 || controlRate > audioRate)
+            {
+                controlRate = audioRate; // ksmps = 1
+            }
+            else
+            {
+                int ksmps = Mathf.Max(1, Mathf.RoundToInt(audioRate / (float)controlRate));
+                controlRate = Mathf.Max(1, audioRate / ksmps);
+            }
 
             audioSource = GetComponent<AudioSource>();
 
@@ -637,6 +648,9 @@ namespace Csound.Unity
 
                     initialized = true;
                     _initializing = false;
+#if UNITY_6000_0_OR_NEWER
+                    OnInitializedGenerator();
+#endif
                     OnCsoundInitialized?.Invoke();
                 }
             }
@@ -765,6 +779,9 @@ namespace Csound.Unity
             // the native Csound object, avoiding a SIGSEGV use-after-free.
             initialized = false;
             _initializing = false;
+#if UNITY_6000_0_OR_NEWER
+            OnStoppedGenerator();
+#endif
             performanceFinished = false;
             ksmpsIndex = 0;
             _channelsIndexDict.Clear();
@@ -1005,6 +1022,95 @@ namespace Csound.Unity
         }
 
         #endregion PERFORMANCE
+
+#if !UNITY_WEBGL || UNITY_EDITOR
+        #region MIDI
+
+        /// <summary>
+        /// Sends a MIDI Note On message to Csound.
+        /// The CSD must have a MIDI device option (e.g. <c>&lt;CsOptions&gt; -M0 &lt;/CsOptions&gt;)
+        /// for Csound to process MIDI events.
+        /// </summary>
+        /// <param name="channel">MIDI channel, 1–16</param>
+        /// <param name="note">Note number, 0–127</param>
+        /// <param name="velocity">Velocity, 0–127. Velocity 0 is treated as Note Off by convention.</param>
+        public void SendMidiNoteOn(int channel, int note, int velocity)
+        {
+            if (!IsInitialized || csound == null) return;
+            byte status = (byte)(0x90 | Mathf.Clamp(channel - 1, 0, 15));
+            csound.EnqueueMidiMessage(new byte[]
+            {
+                status,
+                (byte)Mathf.Clamp(note,     0, 127),
+                (byte)Mathf.Clamp(velocity, 0, 127)
+            });
+        }
+
+        /// <summary>
+        /// Sends a MIDI Note Off message to Csound.
+        /// </summary>
+        /// <param name="channel">MIDI channel, 1–16</param>
+        /// <param name="note">Note number, 0–127</param>
+        /// <param name="velocity">Release velocity, 0–127 (usually 0)</param>
+        public void SendMidiNoteOff(int channel, int note, int velocity = 0)
+        {
+            if (!IsInitialized || csound == null) return;
+            byte status = (byte)(0x80 | Mathf.Clamp(channel - 1, 0, 15));
+            csound.EnqueueMidiMessage(new byte[]
+            {
+                status,
+                (byte)Mathf.Clamp(note,     0, 127),
+                (byte)Mathf.Clamp(velocity, 0, 127)
+            });
+        }
+
+        /// <summary>
+        /// Sends a MIDI Control Change message to Csound.
+        /// </summary>
+        /// <param name="channel">MIDI channel, 1–16</param>
+        /// <param name="controller">Controller number, 0–127</param>
+        /// <param name="value">Controller value, 0–127</param>
+        public void SendMidiControlChange(int channel, int controller, int value)
+        {
+            if (!IsInitialized || csound == null) return;
+            byte status = (byte)(0xB0 | Mathf.Clamp(channel - 1, 0, 15));
+            csound.EnqueueMidiMessage(new byte[]
+            {
+                status,
+                (byte)Mathf.Clamp(controller, 0, 127),
+                (byte)Mathf.Clamp(value,       0, 127)
+            });
+        }
+
+        /// <summary>
+        /// Sends a MIDI Program Change message to Csound.
+        /// </summary>
+        /// <param name="channel">MIDI channel, 1–16</param>
+        /// <param name="program">Program number, 0–127</param>
+        public void SendMidiProgramChange(int channel, int program)
+        {
+            if (!IsInitialized || csound == null) return;
+            byte status = (byte)(0xC0 | Mathf.Clamp(channel - 1, 0, 15));
+            csound.EnqueueMidiMessage(new byte[]
+            {
+                status,
+                (byte)Mathf.Clamp(program, 0, 127)
+            });
+        }
+
+        /// <summary>
+        /// Sends a raw MIDI message (1–3 bytes) directly to Csound.
+        /// Use this for any MIDI message type not covered by the helper methods above.
+        /// </summary>
+        /// <param name="data">Raw MIDI bytes</param>
+        public void SendMidiMessage(byte[] data)
+        {
+            if (!IsInitialized || csound == null) return;
+            csound.EnqueueMidiMessage(data);
+        }
+
+        #endregion MIDI
+#endif
 
         #region CSD_PARSE
 
@@ -2362,7 +2468,11 @@ namespace Csound.Unity
             {
                 request.downloadHandler = new DownloadHandlerBuffer();
                 yield return request.SendWebRequest();
+#if UNITY_2020_2_OR_NEWER
+                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+#else
                 if (request.isNetworkError || request.isHttpError)
+#endif
                 {
                     Debug.Log($"Couldn't load data at path: {path}: {request.error}");
                     onDataLoaded?.Invoke(null);
@@ -2676,6 +2786,18 @@ namespace Csound.Unity
 
         void OnAudioFilterRead(float[] data, int channels)
         {
+#if UNITY_6000_0_OR_NEWER
+            // When IAudioGenerator path is active, CsoundRealtime.Process() already produced the
+            // audio — do NOT run ProcessBlock (that would call PerformKsmps a second time on the
+            // same bridge). However, Unity still calls OnAudioFilterRead with the generator output
+            // in 'data', so we use this opportunity to fill outputBuffer (waveform analysers) and
+            // namedAudioChannelDataDict is already filled by the ksmps callbacks in the registry.
+            if (_audioPath == AudioPath.IAudioGenerator)
+            {
+                UpdateOutputBuffer(data, channels);
+                return;
+            }
+#endif
             if (csound != null && initialized)
             {
                 ProcessBlock(data, channels);
@@ -2767,18 +2889,7 @@ namespace Csound.Unity
                         }
                     }
                 }
-                if (updateOutputBuffer)
-                {
-                    if (bufferA.Length != samples.Length)
-                    {
-                        bufferA = new float[samples.Length];
-                        bufferB = new float[samples.Length];
-                    }
-                    Array.Copy(samples, activeBufferIndex == 0 ? bufferA : bufferB, samples.Length);
-                    outputBuffer = activeBufferIndex == 0 ? bufferA : bufferB;
-                    activeBufferIndex = activeBufferIndex == 0 ? 1 : 0;
-                    OutputChannels = numChannels;
-                }
+                UpdateOutputBuffer(samples, numChannels);
             }
         }
 
@@ -2791,6 +2902,24 @@ namespace Csound.Unity
             //print Csound message to Unity console....
             for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
                 print(csound.GetCsoundMessage());
+        }
+
+        /// <summary>
+        /// Copies <paramref name="samples"/> into the double-buffer used by waveform analysers.
+        /// No-op when <see cref="updateOutputBuffer"/> is false.
+        /// </summary>
+        private void UpdateOutputBuffer(float[] samples, int numChannels)
+        {
+            if (!updateOutputBuffer) return;
+            if (bufferA.Length != samples.Length)
+            {
+                bufferA = new float[samples.Length];
+                bufferB = new float[samples.Length];
+            }
+            Array.Copy(samples, activeBufferIndex == 0 ? bufferA : bufferB, samples.Length);
+            outputBuffer = activeBufferIndex == 0 ? bufferA : bufferB;
+            activeBufferIndex = activeBufferIndex == 0 ? 1 : 0;
+            OutputChannels = numChannels;
         }
 
         /// <summary>
@@ -2840,11 +2969,28 @@ namespace Csound.Unity
         }
 
         private bool _quitting = false;
+
+#if UNITY_6000_0_OR_NEWER
+        /// <summary>
+        /// Implemented in <c>CsoundUnity.Generator.cs</c>.
+        /// Called from <see cref="OnApplicationQuit"/> to eagerly clear the
+        /// IAudioGenerator DSP connection before FMOD tears down.
+        /// </summary>
+        partial void OnApplicationQuitGenerator();
+#endif
+
         /// <summary>
         /// Called automatically when the game stops. Needed so that Csound stops when your game does
         /// </summary>
         void OnApplicationQuit()
         {
+#if UNITY_6000_0_OR_NEWER
+            // Clear the IAudioGenerator connection BEFORE FMOD starts tearing down
+            // its DSP graph.  OnDisable/OnDestroy fire too late (scene restore happens
+            // after FMOD system objects are freed), causing a null-pointer crash inside
+            // flushDSPConnectionRequests.
+            OnApplicationQuitGenerator();
+#endif
             _quitting = true;
             if (LoggingCoroutine != null)
                 StopCoroutine(LoggingCoroutine);

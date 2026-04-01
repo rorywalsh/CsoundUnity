@@ -217,14 +217,14 @@ namespace Csound.Unity
                 if (EditorGUI.EndChangeCheck())
                 {
                     m_audioRate.intValue = Mathf.Max(1, newSr);
-                    m_controlRate.intValue = Mathf.Min(m_controlRate.intValue, m_audioRate.intValue);
+                    SnapKrToSr(m_audioRate.intValue, m_controlRate);
                 }
             }
             else
             {
-                // sr — locked to device rate; clamp kr in case it was set above device sr
+                // sr — locked to device rate; snap kr whenever device sr differs from serialized value
                 m_audioRate.intValue = AudioSettings.outputSampleRate;
-                m_controlRate.intValue = Mathf.Min(m_controlRate.intValue, m_audioRate.intValue);
+                SnapKrToSr(m_audioRate.intValue, m_controlRate);
                 EditorGUILayout.LabelField("Sample Rate (sr)", $"{AudioSettings.outputSampleRate} Hz  (AudioSettings.outputSampleRate)");
             }
 
@@ -1349,5 +1349,25 @@ namespace Csound.Unity
 
         public override bool RequiresConstantRepaint() =>
             Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
+
+        /// <summary>
+        /// Snaps kr so that ksmps = sr/kr is always a positive integer.
+        /// Rounds the current ksmps to the nearest integer, then recomputes kr = sr/ksmps.
+        /// Only writes the property when the value actually changes to avoid spurious scene dirtying.
+        /// </summary>
+        private static void SnapKrToSr(int sr, SerializedProperty krProp)
+        {
+            if (sr <= 0) return;
+            int kr = krProp.intValue;
+            if (kr <= 0 || kr > sr)
+            {
+                krProp.intValue = sr;
+                return;
+            }
+            int ksmps   = Mathf.Max(1, Mathf.RoundToInt(sr / (float)kr));
+            int snapped = Mathf.Max(1, sr / ksmps);
+            if (krProp.intValue != snapped)
+                krProp.intValue = snapped;
+        }
     }
 }

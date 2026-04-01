@@ -930,10 +930,8 @@ namespace Csound.Unity
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
         private class ChannelInfoProxy
         {
-            [MarshalAs(UnmanagedType.AnsiBStr)]
             public IntPtr name;
             public int type;
-            [MarshalAs(UnmanagedType.Struct)]
             public ChannelHintsProxy hints;
         }
 
@@ -959,7 +957,6 @@ namespace Csound.Unity
             public int y;
             public int width;
             public int height;
-            [MarshalAs(UnmanagedType.AnsiBStr)]
             public IntPtr attributes;
         }
 
