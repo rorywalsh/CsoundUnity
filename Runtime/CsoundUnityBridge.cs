@@ -28,6 +28,7 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine.Events;
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -65,6 +66,23 @@ namespace Csound.Unity
         // Reusable single-element buffer — avoids new MYFLT[1] allocation on every sample read/write.
         // Only ever accessed from the audio thread (ProcessBlock via GetSpoutSample/SetSpinSample/AddSpinSample).
         private readonly MYFLT[] _oneValueBuffer = new MYFLT[1];
+
+        /// <summary>
+        /// MIDI: thread-safe queue of raw MIDI messages enqueued from any thread,
+        /// drained on the audio thread by the MidiReadCallback every ksmps.
+        /// </summary>
+        private readonly ConcurrentQueue<byte[]> _midiQueue = new ConcurrentQueue<byte[]>();
+
+        /// <summary>
+        /// Static reference used by the IL2CPP-compatible static callbacks below.
+        /// Only one CsoundUnityBridge instance can receive MIDI at a time (sufficient for all current use cases).
+        /// </summary>
+        private static ConcurrentQueue<byte[]> _staticMidiQueue;
+
+        /// <summary>Kept alive as fields to prevent GC collection of the unmanaged callback delegates.</summary>
+        private Csound6.NativeMethods.MidiInOpenCallbackProxy  _midiInOpenCallback;
+        private Csound6.NativeMethods.MidiReadCallbackProxy    _midiReadCallback;
+        private Csound6.NativeMethods.MidiInCloseCallbackProxy _midiInCloseCallback;
 #endif
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -195,6 +213,8 @@ namespace Csound.Unity
             onCsoundCreated?.Invoke();
             onCsoundCreated = null;
 
+            SetupMidiCallbacks();
+
             int ret = Csound6.NativeMethods.csoundCompileCSD(csound, csdFile, 1, 0, null);
             Csound6.NativeMethods.csoundStart(csound);
             compiledOk = ret == 0 ? true : false;
@@ -217,6 +237,72 @@ namespace Csound.Unity
                 $"GetKsmps: {GetKsmps()}");
             //var res = PerformKsmps();
             //Debug.Log($"PerformKsmps: {res}");
+        }
+
+        /// <summary>
+        /// Registers the host MIDI I/O callbacks with Csound.
+        /// Must be called after csoundCreate and before csoundCompileCSD.
+        /// This prevents Csound from loading an rtmidi module (which is not included
+        /// in the CsoundUnity build) and routes all MIDI through the _midiQueue instead.
+        /// The CSD still needs a MIDI device option (e.g. &lt;CsOptions&gt; -M0 &lt;/CsOptions&gt;)
+        /// to activate Csound's MIDI subsystem.
+        /// </summary>
+        private void SetupMidiCallbacks()
+        {
+            Csound6.NativeMethods.csoundSetHostMIDIIO(csound);
+
+            // Point the static reference to this instance's queue so the
+            // IL2CPP-compatible static callbacks below can drain it.
+            _staticMidiQueue = _midiQueue;
+
+            _midiInOpenCallback  = MidiInOpenCallback;
+            _midiReadCallback    = MidiReadCallback;
+            _midiInCloseCallback = MidiInCloseCallback;
+
+            Csound6.NativeMethods.csoundSetExternalMidiInOpenCallback(csound,  _midiInOpenCallback);
+            Csound6.NativeMethods.csoundSetExternalMidiReadCallback(csound,    _midiReadCallback);
+            Csound6.NativeMethods.csoundSetExternalMidiInCloseCallback(csound, _midiInCloseCallback);
+        }
+
+        /// <summary>
+        /// Static callbacks required by IL2CPP: instance methods and lambdas that
+        /// capture instance state cannot be marshalled to native code under IL2CPP.
+        /// The [MonoPInvokeCallback] attribute makes these safe for AOT compilation.
+        /// </summary>
+        [AOT.MonoPInvokeCallback(typeof(Csound6.NativeMethods.MidiInOpenCallbackProxy))]
+        private static int MidiInOpenCallback(IntPtr cs, ref IntPtr userData, string devName)
+        {
+            Debug.Log($"[CsoundUnity] MIDI in open: {devName}");
+            return 0;
+        }
+
+        [AOT.MonoPInvokeCallback(typeof(Csound6.NativeMethods.MidiReadCallbackProxy))]
+        private static int MidiReadCallback(IntPtr csound, IntPtr userData, IntPtr buf, int nBytes)
+        {
+            int written = 0;
+            var queue = _staticMidiQueue;
+            while (written + 3 <= nBytes && queue != null && queue.TryDequeue(out byte[] msg))
+            {
+                for (int i = 0; i < msg.Length && written < nBytes; i++, written++)
+                    Marshal.WriteByte(buf, written, msg[i]);
+            }
+            return written;
+        }
+
+        [AOT.MonoPInvokeCallback(typeof(Csound6.NativeMethods.MidiInCloseCallbackProxy))]
+        private static int MidiInCloseCallback(IntPtr csound, IntPtr userData)
+        {
+            return 0;
+        }
+
+        /// <summary>
+        /// Enqueues a raw MIDI message to be delivered to Csound on the next ksmps cycle.
+        /// Can be called from any thread.
+        /// </summary>
+        /// <param name="data">1–3 MIDI bytes (status [, data1 [, data2]])</param>
+        public void EnqueueMidiMessage(byte[] data)
+        {
+            _midiQueue.Enqueue(data);
         }
 
 #endif

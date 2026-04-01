@@ -213,6 +213,49 @@ namespace Csound.Unity.CsoundCSharp
             #endregion Audio I/O
 
 
+            #region MIDI
+
+            /// <summary>
+            /// Called by Csound to open MIDI input. Return 0 on success.
+            /// int (*MidiInOpenCallback)(CSOUND *, void **userData, const char *devName)
+            /// </summary>
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+            internal delegate int MidiInOpenCallbackProxy(IntPtr csound, ref IntPtr userData, string devName);
+
+            /// <summary>
+            /// Called every ksmps by Csound to read MIDI bytes from the host.
+            /// Write up to nBytes bytes into buf and return the number of bytes written.
+            /// int (*MidiReadCallback)(CSOUND *, void *userData, unsigned char *buf, int nBytes)
+            /// </summary>
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            internal delegate int MidiReadCallbackProxy(IntPtr csound, IntPtr userData, IntPtr buf, int nBytes);
+
+            /// <summary>
+            /// Called by Csound when MIDI input is closed. Return 0 on success.
+            /// int (*MidiInCloseCallback)(CSOUND *, void *userData)
+            /// </summary>
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            internal delegate int MidiInCloseCallbackProxy(IntPtr csound, IntPtr userData);
+
+            /// <summary>
+            /// Tells Csound that the host will provide MIDI I/O via the external callbacks below.
+            /// Must be called before csoundCompileCSD.
+            /// </summary>
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern void csoundSetHostMIDIIO([In] IntPtr csound);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern void csoundSetExternalMidiInOpenCallback([In] IntPtr csound, MidiInOpenCallbackProxy callback);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern void csoundSetExternalMidiReadCallback([In] IntPtr csound, MidiReadCallbackProxy callback);
+
+            [DllImport(_dllVersion, CallingConvention = CallingConvention.Cdecl)]
+            internal static extern void csoundSetExternalMidiInCloseCallback([In] IntPtr csound, MidiInCloseCallbackProxy callback);
+
+            #endregion MIDI
+
+
             #region Opcodes
 
 #if !UNITY_IOS || UNITY_VISIONOS
