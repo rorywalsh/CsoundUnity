@@ -17,7 +17,6 @@ namespace Csound.Unity
 {
     public class CsoundWorker : CsoundUnityBridge
     {
-        bool compiledOk = false;
         Thread performance;
 
         private static string _csdEmptyTemplate =

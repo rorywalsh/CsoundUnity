@@ -56,21 +56,18 @@ namespace Csound.Unity
 
         #region FFT caches
 
-        private float[] _fftCacheL;
-        private float[] _fftCacheR;
+        private float[][] _fftCaches;
 
         #endregion
 
         #region Spectrogram state
 
-        private Texture2D _spectrogramTexL;
-        private Texture2D _spectrogramTexR;
-        private Color32[] _spectrogramPixL;
-        private Color32[] _spectrogramPixR;
-        private int       _spectrogramBinCount;  // triggers texture rebuild
-        private int       _cachedMaxBin;          // triggers bin-map rebuild
-        private int[]     _sgBinForRow;           // row → FFT bin (log-spaced)
-        private int       _spectrogramFrameCounter;
+        private Texture2D[] _spectrogramTextures;
+        private Color32[][] _spectrogramPix;
+        private int         _spectrogramBinCount;  // triggers texture rebuild
+        private int         _cachedMaxBin;          // triggers bin-map rebuild
+        private int[]       _sgBinForRow;           // row → FFT bin (log-spaced)
+        private int         _spectrogramFrameCounter;
 
         private const int SpectrogramWidth      = 256;
         private const int SpectrogramTexHeight  = 64;   // fixed; looks smoother than numBins rows
@@ -82,8 +79,37 @@ namespace Csound.Unity
 
         static readonly Color BgCol      = new Color(0.10f, 0.10f, 0.10f);
         static readonly Color DividerCol = new Color(0.30f, 0.30f, 0.30f);
-        static readonly Color ColL       = new Color(0.20f, 0.85f, 0.20f);
-        static readonly Color ColR       = new Color(0.10f, 0.60f, 1.00f);
+        static readonly Color ColL = new Color(0.20f, 0.85f, 0.20f);
+        static readonly Color ColR = new Color(0.10f, 0.60f, 1.00f);
+
+        /// <summary>
+        /// Returns a distinct color for channel <paramref name="ch"/> out of <paramref name="nCh"/> total.
+        /// Stereo (nCh &lt;= 2) uses the classic green/blue pair (ColL / ColR).
+        /// For nCh &gt; 2 (up to 6) a fixed palette is used; beyond 6 channels hues are evenly spaced via HSV.
+        /// </summary>
+        private static Color ChannelColor(int ch, int nCh)
+        {
+            if (nCh <= 2)
+                return ch == 0 ? ColL : ColR;
+
+            if (nCh <= 6)
+            {
+                // Fixed palette: green, blue, red, orange, purple, cyan
+                float[] fixedHues = { 120f, 210f, 0f, 45f, 270f, 180f };
+                float hue = fixedHues[ch % fixedHues.Length] / 360f;
+                return Color.HSVToRGB(hue, 0.80f, 0.90f);
+            }
+
+            // Generic: evenly spaced hues
+            return Color.HSVToRGB((ch * (360f / nCh)) / 360f, 0.80f, 0.90f);
+        }
+
+        #endregion
+
+        #region Lissajous channel selection
+
+        private int _lissXCh = 0;
+        private int _lissYCh = 1;
 
         #endregion
 
@@ -94,7 +120,7 @@ namespace Csound.Unity
 
         /// <summary>
         /// Draw the full audio-monitor UI. Call from OnInspectorGUI while Application.isPlaying.
-        /// <paramref name="buffer"/> must be an interleaved float[] (L0 R0 L1 R1 …).
+        /// <paramref name="buffer"/> must be an interleaved float[] (ch0[0] ch1[0] … chN[0] ch0[1] …).
         /// </summary>
         public void Draw(float[] buffer, int numChannels)
         {
@@ -145,14 +171,17 @@ namespace Csound.Unity
                 EditorGUILayout.EndHorizontal();
             }
 
-            const float rowH    = 80f;
-            const float twoRowH = rowH * 2f;
+            const float rowH = 80f;
 
-            // Lissajous — compact square with its own
-            // horizontal zoom slider, so it stays out of the way of the full-width displays.
+            // Lissajous — compact square with its own horizontal zoom slider,
+            // plus channel-selection sliders when nCh > 2.
             if (ShowLissajous)
             {
                 const float size = 120f;
+
+                // Clamp channel indices to valid range whenever nCh changes
+                _lissXCh = Mathf.Clamp(_lissXCh, 0, nCh - 1);
+                _lissYCh = Mathf.Clamp(_lissYCh, 0, nCh - 1);
 
                 // Centre the square horizontally
                 EditorGUILayout.BeginHorizontal();
@@ -174,16 +203,16 @@ namespace Csound.Unity
                 Handles.color = new Color(1f, 0.75f, 0.1f);
                 for (int i = nCh; i < buffer.Length; i += nCh)
                 {
-                    float l0 = buffer[i - nCh];
-                    float r0 = nCh > 1 ? buffer[i - nCh + 1] : l0;
-                    float l1 = buffer[i];
-                    float r1 = nCh > 1 ? buffer[i + 1]       : l1;
+                    float x0 = buffer[i - nCh + _lissXCh];
+                    float y0 = buffer[i - nCh + _lissYCh];
+                    float x1 = buffer[i + _lissXCh];
+                    float y1 = buffer[i + _lissYCh];
                     var p0 = new Vector3(
-                        Mathf.Clamp(cx + l0 * halfW * _lissajousZoom, lissRect.xMin, lissRect.xMax),
-                        Mathf.Clamp(cy - r0 * halfH * _lissajousZoom, lissRect.yMin, lissRect.yMax));
+                        Mathf.Clamp(cx + x0 * halfW * _lissajousZoom, lissRect.xMin, lissRect.xMax),
+                        Mathf.Clamp(cy - y0 * halfH * _lissajousZoom, lissRect.yMin, lissRect.yMax));
                     var p1 = new Vector3(
-                        Mathf.Clamp(cx + l1 * halfW * _lissajousZoom, lissRect.xMin, lissRect.xMax),
-                        Mathf.Clamp(cy - r1 * halfH * _lissajousZoom, lissRect.yMin, lissRect.yMax));
+                        Mathf.Clamp(cx + x1 * halfW * _lissajousZoom, lissRect.xMin, lissRect.xMax),
+                        Mathf.Clamp(cy - y1 * halfH * _lissajousZoom, lissRect.yMin, lissRect.yMax));
                     Handles.DrawLine(p0, p1);
                 }
                 Handles.EndGUI();
@@ -195,24 +224,39 @@ namespace Csound.Unity
                     _lissajousZoom, 1f, 20f, GUILayout.Width(size));
                 GUILayout.FlexibleSpace();
                 EditorGUILayout.EndHorizontal();
+
+                // Channel selection — only shown when more than 2 channels are present
+                if (nCh > 2)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    GUILayout.FlexibleSpace();
+                    EditorGUILayout.BeginVertical(GUILayout.Width(size));
+                    _lissXCh = EditorGUILayout.IntSlider("X Ch", _lissXCh, 0, nCh - 1);
+                    _lissYCh = EditorGUILayout.IntSlider("Y Ch", _lissYCh, 0, nCh - 1);
+                    EditorGUILayout.EndVertical();
+                    GUILayout.FlexibleSpace();
+                    EditorGUILayout.EndHorizontal();
+                }
             }
 
             // Waveform
             if (ShowWaveform)
             {
+                float totalWaveH = rowH * nCh;
+
                 EditorGUILayout.BeginHorizontal();
-                var rect = GUILayoutUtility.GetRect(0, twoRowH, GUILayout.ExpandWidth(true));
+                var rect = GUILayoutUtility.GetRect(0, totalWaveH, GUILayout.ExpandWidth(true));
                 _waveformZoom = GUILayout.VerticalSlider(
                     _waveformZoom, 20f, 1f,
-                    GUILayout.Width(16f), GUILayout.Height(twoRowH));
+                    GUILayout.Width(16f), GUILayout.Height(totalWaveH));
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUI.DrawRect(rect, BgCol);
                 float segW = rect.width / framesInBuf;
 
-                for (int c = 0; c < Mathf.Min(nCh, 2); c++)
+                for (int c = 0; c < nCh; c++)
                 {
-                    var   chCol  = c == 0 ? ColL : ColR;
+                    var   chCol  = ChannelColor(c, nCh);
                     float rowTop = rect.y + c * rowH;
                     float midY   = rowTop + rowH * 0.5f;
 
@@ -226,84 +270,92 @@ namespace Csound.Unity
                         EditorGUI.DrawRect(new Rect(rect.x + f * segW, barY, Mathf.Max(1f, segW), barH), chCol);
                     }
 
+                    string chLabel = nCh <= 2 ? (c == 0 ? "L" : "R") : $"Ch {c + 1}";
                     var lStyle = new GUIStyle(EditorStyles.boldLabel)
                         { normal = { textColor = chCol }, fontSize = 11 };
-                    GUI.Label(new Rect(rect.x + 4, rowTop + 2, 20, 16), c == 0 ? "L" : "R", lStyle);
+                    GUI.Label(new Rect(rect.x + 4, rowTop + 2, 32, 16), chLabel, lStyle);
                 }
-                EditorGUI.DrawRect(new Rect(rect.x, rect.y + rowH, rect.width, 1), DividerCol);
+
+                // Bottom divider after last channel
+                EditorGUI.DrawRect(new Rect(rect.x, rect.y + totalWaveH, rect.width, 1), DividerCol);
             }
 
             // Spectrum
             if (ShowSpectrum)
             {
                 const float labelH = 18f;
+                float totalSpecH   = rowH * nCh;
 
                 EditorGUILayout.BeginHorizontal();
-                // Extra height for the freq-label row at the bottom
-                var rect = GUILayoutUtility.GetRect(0, twoRowH + labelH, GUILayout.ExpandWidth(true));
+                var rect = GUILayoutUtility.GetRect(0, totalSpecH + labelH, GUILayout.ExpandWidth(true));
                 _spectrumDbRange = GUILayout.VerticalSlider(
                     _spectrumDbRange, 140f, 20f,
-                    GUILayout.Width(16f), GUILayout.Height(twoRowH + labelH));
+                    GUILayout.Width(16f), GUILayout.Height(totalSpecH + labelH));
                 EditorGUILayout.EndHorizontal();
 
-                var displayRect = new Rect(rect.x, rect.y, rect.width, twoRowH);
-                var labelRow    = new Rect(rect.x, rect.y + twoRowH, rect.width, labelH);
+                var displayRect = new Rect(rect.x, rect.y, rect.width, totalSpecH);
+                var labelRow    = new Rect(rect.x, rect.y + totalSpecH, rect.width, labelH);
 
-                EnsureFftCaches(fftSize);
+                EnsureFftCaches(fftSize, nCh);
                 FillFftCaches(buffer, nCh, fftSize);
 
-                var rawL = FFTUtils.CalculateSpectrum(_fftCacheL);
-                if (rawL != null && rawL.Length > 0)
+                // Compute spectrum for ch 0 first to check validity
+                var raw0 = FFTUtils.CalculateSpectrum(_fftCaches[0]);
+                if (raw0 != null && raw0.Length > 0)
                 {
-                    int bins = Mathf.Min(displayBins, rawL.Length);
+                    int bins = Mathf.Min(displayBins, raw0.Length);
                     EditorGUI.DrawRect(displayRect, BgCol);
 
-                    // dB grid lines for each channel row
-                    DrawDbGrid(displayRect, 0f,   rowH, _spectrumDbRange);
-                    DrawDbGrid(displayRect, rowH, rowH, _spectrumDbRange);
+                    float barW = displayRect.width / bins;
 
-                    float barW   = displayRect.width / bins;
-                    float lBotY  = displayRect.y + rowH;
-
-                    // L bars (top row, grow upward from row bottom)
-                    for (int i = 0; i < bins; i++)
+                    // dB grid lines and bars for each channel
+                    for (int c = 0; c < nCh; c++)
                     {
-                        float bh = DbToHeight(rawL[i], _spectrumDbRange, rowH);
-                        EditorGUI.DrawRect(
-                            new Rect(displayRect.x + i * barW, lBotY - bh, Mathf.Max(1f, barW), bh), ColL);
+                        DrawDbGrid(displayRect, c * rowH, rowH, _spectrumDbRange);
                     }
 
-                    EditorGUI.DrawRect(
-                        new Rect(displayRect.x, displayRect.y + rowH, displayRect.width, 1), DividerCol);
+                    // Draw bars — reuse the already-computed raw0 for ch 0, compute rest
+                    float[][] rawSpectra = new float[nCh][];
+                    rawSpectra[0] = raw0;
+                    for (int c = 1; c < nCh; c++)
+                        rawSpectra[c] = FFTUtils.CalculateSpectrum(_fftCaches[c]);
 
-                    // R bars — rawL drawing fully done, static buffer safe to reuse
-                    var rawR   = FFTUtils.CalculateSpectrum(_fftCacheR);
-                    float rBotY = displayRect.y + twoRowH;
-                    for (int i = 0; i < bins && i < rawR.Length; i++)
+                    for (int c = 0; c < nCh; c++)
                     {
-                        float bh = DbToHeight(rawR[i], _spectrumDbRange, rowH);
+                        var   chCol = ChannelColor(c, nCh);
+                        float botY  = displayRect.y + (c + 1) * rowH;
+                        var   raw   = rawSpectra[c];
+                        if (raw == null) continue;
+
+                        for (int i = 0; i < bins && i < raw.Length; i++)
+                        {
+                            float bh = DbToHeight(raw[i], _spectrumDbRange, rowH);
+                            EditorGUI.DrawRect(
+                                new Rect(displayRect.x + i * barW, botY - bh, Mathf.Max(1f, barW), bh), chCol);
+                        }
+
+                        // Divider below this row
                         EditorGUI.DrawRect(
-                            new Rect(displayRect.x + i * barW, rBotY - bh, Mathf.Max(1f, barW), bh), ColR);
+                            new Rect(displayRect.x, displayRect.y + (c + 1) * rowH, displayRect.width, 1), DividerCol);
+
+                        // Channel label (top-left of each row)
+                        string chLabel = nCh <= 2 ? (c == 0 ? "L" : "R") : $"Ch {c + 1}";
+                        var chStyle = new GUIStyle(EditorStyles.boldLabel)
+                            { normal = { textColor = chCol }, fontSize = 11 };
+                        GUI.Label(new Rect(displayRect.x + 4, displayRect.y + c * rowH + 2, 32, 16), chLabel, chStyle);
+
+                        // dB range labels (top-right and floor-right of each row)
+                        var dbStyle = new GUIStyle(EditorStyles.miniLabel)
+                        {
+                            normal    = { textColor = new Color(0.55f, 0.55f, 0.55f) },
+                            alignment = TextAnchor.UpperRight,
+                            fontSize  = 9,
+                        };
+                        float dbW    = displayRect.width - 2f;
+                        float rowTop = displayRect.y + c * rowH;
+                        GUI.Label(new Rect(displayRect.x, rowTop + 1,          dbW, 11), "0 dB",                              dbStyle);
+                        GUI.Label(new Rect(displayRect.x, rowTop + rowH - 11,  dbW, 11), $"\u2212{(int)_spectrumDbRange} dB", dbStyle);
                     }
-
-                    // Channel labels
-                    var chStyle = new GUIStyle(EditorStyles.boldLabel) { normal = { textColor = ColL }, fontSize = 11 };
-                    GUI.Label(new Rect(displayRect.x + 4, displayRect.y + 2, 16, 16), "L", chStyle);
-                    chStyle.normal.textColor = ColR;
-                    GUI.Label(new Rect(displayRect.x + 4, displayRect.y + rowH + 2, 16, 16), "R", chStyle);
-
-                    // dB range labels (top-right and floor-right of each channel row)
-                    var dbStyle = new GUIStyle(EditorStyles.miniLabel)
-                    {
-                        normal    = { textColor = new Color(0.55f, 0.55f, 0.55f) },
-                        alignment = TextAnchor.UpperRight,
-                        fontSize  = 9,
-                    };
-                    float dbW = displayRect.width - 2f;
-                    GUI.Label(new Rect(displayRect.x, displayRect.y + 1,             dbW, 11), "0 dB",                    dbStyle);
-                    GUI.Label(new Rect(displayRect.x, displayRect.y + rowH - 11,     dbW, 11), $"\u2212{(int)_spectrumDbRange} dB", dbStyle);
-                    GUI.Label(new Rect(displayRect.x, displayRect.y + rowH + 1,      dbW, 11), "0 dB",                    dbStyle);
-                    GUI.Label(new Rect(displayRect.x, displayRect.y + twoRowH - 11,  dbW, 11), $"\u2212{(int)_spectrumDbRange} dB", dbStyle);
 
                     // Frequency labels below the display
                     DrawSpectrumFreqLabels(labelRow, bins, binHz);
@@ -314,52 +366,52 @@ namespace Csound.Unity
             if (ShowSpectrogram)
             {
                 const float sgH    = 80f;
-                const float sgTwoH = sgH * 2f;
                 const float labelH = 18f;
+                float totalSgH     = sgH * nCh;
 
                 EditorGUILayout.BeginHorizontal();
-                var sgRect = GUILayoutUtility.GetRect(0, sgTwoH + labelH, GUILayout.ExpandWidth(true));
+                var sgRect = GUILayoutUtility.GetRect(0, totalSgH + labelH, GUILayout.ExpandWidth(true));
                 _spectrogramDbRange = GUILayout.VerticalSlider(
                     _spectrogramDbRange, 140f, 20f,
-                    GUILayout.Width(16f), GUILayout.Height(sgTwoH + labelH));
+                    GUILayout.Width(16f), GUILayout.Height(totalSgH + labelH));
                 EditorGUILayout.EndHorizontal();
 
-                var displayRect = new Rect(sgRect.x, sgRect.y, sgRect.width, sgTwoH);
-                var labelRow    = new Rect(sgRect.x, sgRect.y + sgTwoH, sgRect.width, labelH);
+                var displayRect = new Rect(sgRect.x, sgRect.y, sgRect.width, totalSgH);
+                var labelRow    = new Rect(sgRect.x, sgRect.y + totalSgH, sgRect.width, labelH);
 
-                EnsureFftCaches(fftSize);
+                EnsureFftCaches(fftSize, nCh);
                 FillFftCaches(buffer, nCh, fftSize);
 
-                var rawL = FFTUtils.CalculateSpectrum(_fftCacheL);
-                if (rawL != null && rawL.Length > 0)
+                // Compute all spectra to check validity
+                float[][] rawSpectra = new float[nCh][];
+                for (int c = 0; c < nCh; c++)
+                    rawSpectra[c] = FFTUtils.CalculateSpectrum(_fftCaches[c]);
+
+                var raw0 = rawSpectra[0];
+                if (raw0 != null && raw0.Length > 0)
                 {
-                    int actualBins = rawL.Length;
+                    int actualBins = raw0.Length;
                     int maxBin     = Mathf.Clamp(displayBins, 1, actualBins);
 
-                    // Copy L before second FFT call overwrites the static buffer
-                    var colDataL = new float[actualBins];
-                    Array.Copy(rawL, colDataL, actualBins);
-                    var colDataR = FFTUtils.CalculateSpectrum(_fftCacheR);
-
-                    // Rebuild textures when bin count changes
-                    if (_spectrogramTexL == null || _spectrogramBinCount != actualBins)
+                    // Rebuild textures when bin count or channel count changes
+                    if (_spectrogramTextures == null || _spectrogramTextures.Length != nCh || _spectrogramBinCount != actualBins)
                     {
                         _spectrogramBinCount = actualBins;
-                        if (_spectrogramTexL != null)
+                        if (_spectrogramTextures != null)
                         {
-                            UnityEngine.Object.DestroyImmediate(_spectrogramTexL);
-                            UnityEngine.Object.DestroyImmediate(_spectrogramTexR);
+                            foreach (var tex in _spectrogramTextures)
+                                if (tex != null) UnityEngine.Object.DestroyImmediate(tex);
                         }
-                        _spectrogramTexL = new Texture2D(SpectrogramWidth, SpectrogramTexHeight, TextureFormat.RGB24, false)
-                            { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
-                        _spectrogramTexR = new Texture2D(SpectrogramWidth, SpectrogramTexHeight, TextureFormat.RGB24, false)
-                            { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
-                        _spectrogramPixL = new Color32[SpectrogramWidth * SpectrogramTexHeight];
-                        _spectrogramPixR = new Color32[SpectrogramWidth * SpectrogramTexHeight];
-                        _spectrogramTexL.SetPixels32(_spectrogramPixL);
-                        _spectrogramTexR.SetPixels32(_spectrogramPixR);
-                        _spectrogramTexL.Apply();
-                        _spectrogramTexR.Apply();
+                        _spectrogramTextures = new Texture2D[nCh];
+                        _spectrogramPix      = new Color32[nCh][];
+                        for (int c = 0; c < nCh; c++)
+                        {
+                            _spectrogramTextures[c] = new Texture2D(SpectrogramWidth, SpectrogramTexHeight, TextureFormat.RGB24, false)
+                                { filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+                            _spectrogramPix[c] = new Color32[SpectrogramWidth * SpectrogramTexHeight];
+                            _spectrogramTextures[c].SetPixels32(_spectrogramPix[c]);
+                            _spectrogramTextures[c].Apply();
+                        }
                         _sgBinForRow = null; // force bin-map rebuild
                     }
 
@@ -368,37 +420,47 @@ namespace Csound.Unity
                     {
                         _cachedMaxBin = maxBin;
                         _sgBinForRow  = BuildLogBinMap(actualBins, maxBin, SpectrogramTexHeight);
-                        // Clear texture so old data (different scale) is not shown
-                        Array.Clear(_spectrogramPixL, 0, _spectrogramPixL.Length);
-                        Array.Clear(_spectrogramPixR, 0, _spectrogramPixR.Length);
-                        _spectrogramTexL.SetPixels32(_spectrogramPixL);
-                        _spectrogramTexR.SetPixels32(_spectrogramPixR);
-                        _spectrogramTexL.Apply();
-                        _spectrogramTexR.Apply();
+                        // Clear all textures so old data (different scale) is not shown
+                        for (int c = 0; c < nCh; c++)
+                        {
+                            Array.Clear(_spectrogramPix[c], 0, _spectrogramPix[c].Length);
+                            _spectrogramTextures[c].SetPixels32(_spectrogramPix[c]);
+                            _spectrogramTextures[c].Apply();
+                        }
                     }
 
                     _spectrogramFrameCounter++;
                     if (_spectrogramFrameCounter >= SpectrogramUpdateRate)
                     {
                         _spectrogramFrameCounter = 0;
-                        ScrollAndWriteSpectrogram(colDataL, colDataR, actualBins);
+                        // Build colData array: one float[] per channel
+                        var colData = new float[nCh][];
+                        colData[0]  = rawSpectra[0];   // already computed
+                        for (int c = 1; c < nCh; c++)
+                            colData[c] = rawSpectra[c];
+                        ScrollAndWriteSpectrogram(colData, actualBins);
                     }
 
                     EditorGUI.DrawRect(displayRect, BgCol);
-                    GUI.DrawTexture(new Rect(displayRect.x, displayRect.y,       displayRect.width, sgH),
-                        _spectrogramTexL, ScaleMode.StretchToFill, false);
-                    EditorGUI.DrawRect(new Rect(displayRect.x, displayRect.y + sgH, displayRect.width, 1), DividerCol);
-                    GUI.DrawTexture(new Rect(displayRect.x, displayRect.y + sgH, displayRect.width, sgH),
-                        _spectrogramTexR, ScaleMode.StretchToFill, false);
 
-                    // Channel labels (top-left of each row)
-                    var chStyle = new GUIStyle(EditorStyles.boldLabel) { normal = { textColor = ColL }, fontSize = 11 };
-                    GUI.Label(new Rect(displayRect.x + 4, displayRect.y + 2,       20, 16), "L", chStyle);
-                    chStyle.normal.textColor = ColR;
-                    GUI.Label(new Rect(displayRect.x + 4, displayRect.y + sgH + 2, 20, 16), "R", chStyle);
+                    for (int c = 0; c < nCh; c++)
+                    {
+                        float rowTop = displayRect.y + c * sgH;
+                        GUI.DrawTexture(new Rect(displayRect.x, rowTop, displayRect.width, sgH),
+                            _spectrogramTextures[c], ScaleMode.StretchToFill, false);
+
+                        if (c < nCh - 1)
+                            EditorGUI.DrawRect(new Rect(displayRect.x, rowTop + sgH, displayRect.width, 1), DividerCol);
+
+                        // Channel label (top-left of each row)
+                        string chLabel = nCh <= 2 ? (c == 0 ? "L" : "R") : $"Ch {c + 1}";
+                        var chCol   = ChannelColor(c, nCh);
+                        var chStyle = new GUIStyle(EditorStyles.boldLabel) { normal = { textColor = chCol }, fontSize = 11 };
+                        GUI.Label(new Rect(displayRect.x + 4, rowTop + 2, 32, 16), chLabel, chStyle);
+                    }
 
                     // Frequency labels on right side of each channel row
-                    DrawSpectrogramFreqLabels(displayRect, sgH, maxBin, binHz);
+                    DrawSpectrogramFreqLabels(displayRect, sgH, maxBin, binHz, nCh);
 
                     // Bottom label: time direction
                     var timeStyle = new GUIStyle(EditorStyles.miniLabel)
@@ -416,57 +478,73 @@ namespace Csound.Unity
         /// <summary>Release spectrogram textures. Call from the editor's OnDisable.</summary>
         public void Dispose()
         {
-            if (_spectrogramTexL != null) { UnityEngine.Object.DestroyImmediate(_spectrogramTexL); _spectrogramTexL = null; }
-            if (_spectrogramTexR != null) { UnityEngine.Object.DestroyImmediate(_spectrogramTexR); _spectrogramTexR = null; }
+            if (_spectrogramTextures != null)
+            {
+                foreach (var tex in _spectrogramTextures)
+                    if (tex != null) UnityEngine.Object.DestroyImmediate(tex);
+                _spectrogramTextures = null;
+            }
+            _spectrogramPix = null;
         }
 
         #endregion
 
         #region Internal helpers
 
-        private void EnsureFftCaches(int size)
+        private void EnsureFftCaches(int size, int nCh)
         {
-            if (_fftCacheL == null || _fftCacheL.Length != size)
+            if (_fftCaches == null || _fftCaches.Length != nCh || _fftCaches[0] == null || _fftCaches[0].Length != size)
             {
-                _fftCacheL = new float[size];
-                _fftCacheR = new float[size];
+                _fftCaches = new float[nCh][];
+                for (int c = 0; c < nCh; c++)
+                    _fftCaches[c] = new float[size];
             }
         }
 
         private void FillFftCaches(float[] buffer, int nCh, int frames)
         {
-            int rCh = nCh > 1 ? 1 : 0;
-            for (int i = 0; i < frames; i++)
+            for (int c = 0; c < nCh; c++)
             {
-                _fftCacheL[i] = buffer[i * nCh];
-                _fftCacheR[i] = buffer[i * nCh + rCh];
+                for (int i = 0; i < frames; i++)
+                    _fftCaches[c][i] = buffer[i * nCh + c];
             }
         }
 
-        private void ScrollAndWriteSpectrogram(float[] colDataL, float[] colDataR, int numBins)
+        /// <summary>
+        /// Scrolls all spectrogram textures one pixel to the left and writes the new rightmost column
+        /// from <paramref name="colData"/> (one float[] per channel, indexed by FFT bin).
+        /// </summary>
+        private void ScrollAndWriteSpectrogram(float[][] colData, int numBins)
         {
-            // Shift all rows left by one pixel
-            for (int row = 0; row < SpectrogramTexHeight; row++)
+            int nCh = colData.Length;
+
+            // Shift all rows left by one pixel for every channel
+            for (int c = 0; c < nCh; c++)
             {
-                int rowBase = row * SpectrogramWidth;
-                Array.Copy(_spectrogramPixL, rowBase + 1, _spectrogramPixL, rowBase, SpectrogramWidth - 1);
-                Array.Copy(_spectrogramPixR, rowBase + 1, _spectrogramPixR, rowBase, SpectrogramWidth - 1);
+                var pix = _spectrogramPix[c];
+                for (int row = 0; row < SpectrogramTexHeight; row++)
+                {
+                    int rowBase = row * SpectrogramWidth;
+                    Array.Copy(pix, rowBase + 1, pix, rowBase, SpectrogramWidth - 1);
+                }
             }
 
             int newCol = SpectrogramWidth - 1;
             for (int row = 0; row < SpectrogramTexHeight; row++)
             {
-                int bin  = _sgBinForRow[row];
-                float mL = bin < colDataL.Length  ? colDataL[bin] : 0f;
-                float mR = colDataR != null && bin < colDataR.Length ? colDataR[bin] : 0f;
-                _spectrogramPixL[row * SpectrogramWidth + newCol] = HeatColor(DbToNorm(mL, _spectrogramDbRange));
-                _spectrogramPixR[row * SpectrogramWidth + newCol] = HeatColor(DbToNorm(mR, _spectrogramDbRange));
+                int bin = _sgBinForRow[row];
+                for (int c = 0; c < nCh; c++)
+                {
+                    float m = (colData[c] != null && bin < colData[c].Length) ? colData[c][bin] : 0f;
+                    _spectrogramPix[c][row * SpectrogramWidth + newCol] = HeatColor(DbToNorm(m, _spectrogramDbRange));
+                }
             }
 
-            _spectrogramTexL.SetPixels32(_spectrogramPixL);
-            _spectrogramTexR.SetPixels32(_spectrogramPixR);
-            _spectrogramTexL.Apply();
-            _spectrogramTexR.Apply();
+            for (int c = 0; c < nCh; c++)
+            {
+                _spectrogramTextures[c].SetPixels32(_spectrogramPix[c]);
+                _spectrogramTextures[c].Apply();
+            }
         }
 
         /// <summary>
@@ -537,7 +615,7 @@ namespace Csound.Unity
         /// Draws Hz labels on the right edge of each spectrogram channel row,
         /// positioned according to the same log-frequency mapping used by the texture.
         /// </summary>
-        private static void DrawSpectrogramFreqLabels(Rect displayRect, float chRowH, int maxBin, float binHz)
+        private static void DrawSpectrogramFreqLabels(Rect displayRect, float chRowH, int maxBin, float binHz, int nCh)
         {
             if (maxBin <= 0 || binHz <= 0f) return;
 
@@ -556,7 +634,7 @@ namespace Csound.Unity
 
             float[] niceHz = { 100f, 200f, 500f, 1000f, 2000f, 5000f, 10000f, 20000f };
 
-            for (int ch = 0; ch < 2; ch++)
+            for (int ch = 0; ch < nCh; ch++)
             {
                 float rowTop = displayRect.y + ch * chRowH;
 

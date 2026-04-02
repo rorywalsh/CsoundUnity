@@ -411,5 +411,61 @@ namespace Csound.Unity.Utilities
                 onEnd?.Invoke(clip);
             }
         }
+
+        /// <summary>
+        /// Computes the Root Mean Square (RMS) amplitude of a float sample buffer.
+        /// Returns 0 if the buffer is null or empty.
+        /// </summary>
+        public static float Rms(float[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0) return 0f;
+            float sum = 0f;
+            foreach (var s in buffer) sum += s * s;
+            return (float)Math.Sqrt(sum / buffer.Length);
+        }
+
+        /// <summary>
+        /// Computes the Root Mean Square (RMS) amplitude of a MYFLT sample buffer.
+        /// Returns 0 if the buffer is null or empty.
+        /// </summary>
+        public static float Rms(MYFLT[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0) return 0f;
+            double sum = 0;
+            foreach (var s in buffer) sum += s * s;
+            return (float)Math.Sqrt(sum / buffer.Length);
+        }
+
+        /// <summary>
+        /// Returns the peak (maximum absolute value) of a float sample buffer.
+        /// Returns 0 if the buffer is null or empty.
+        /// </summary>
+        public static float Peak(float[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0) return 0f;
+            float peak = 0f;
+            foreach (var s in buffer)
+            {
+                float abs = Math.Abs(s);
+                if (abs > peak) peak = abs;
+            }
+            return peak;
+        }
+
+        /// <summary>
+        /// Returns the peak (maximum absolute value) of a MYFLT sample buffer.
+        /// Returns 0 if the buffer is null or empty.
+        /// </summary>
+        public static float Peak(MYFLT[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0) return 0f;
+            float peak = 0f;
+            foreach (var s in buffer)
+            {
+                float abs = (float)Math.Abs(s);
+                if (abs > peak) peak = abs;
+            }
+            return peak;
+        }
     }
 }

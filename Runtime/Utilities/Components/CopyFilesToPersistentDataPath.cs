@@ -210,7 +210,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             using (var req = UnityWebRequest.Get(uri))
             {
                 yield return req.SendWebRequest();
-#if UNITY_2020_0_OR_NEWER
+#if UNITY_2020_2_OR_NEWER
                 switch (req.result)
                 {
                     case UnityWebRequest.Result.ConnectionError:
