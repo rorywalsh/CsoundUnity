@@ -283,6 +283,7 @@ namespace Csound.Unity
             DrawAudioMonitor();
 
             EditorGUILayout.Space();
+            EditorGUILayout.Space();
             DrawWebGLAssets();
 
             serializedObject.ApplyModifiedProperties();
@@ -1552,7 +1553,7 @@ namespace Csound.Unity
         }
 
         public override bool RequiresConstantRepaint() =>
-            Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
+            target != null && Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
 
         /// <summary>
         /// Recomputes kr = sr / ksmps and writes it back to <paramref name="krProp"/>.

@@ -28,7 +28,7 @@ namespace Csound.Unity
 {
     /// <summary>
     /// Reusable IMGUI audio monitor drawn inside a Unity custom editor.
-    /// Supports waveform, frequency spectrum (dB scale), Lissajous, and spectrogram.
+    /// Supports waveform, frequency spectrum (dB scale), Lissajous, spectrogram, and oscilloscope.
     /// </summary>
     internal class AudioMonitorGUI
     {
@@ -38,6 +38,7 @@ namespace Csound.Unity
         public bool ShowSpectrum;
         public bool ShowLissajous;
         public bool ShowSpectrogram;
+        public bool ShowOscilloscope;
 
         #endregion
 
@@ -47,6 +48,8 @@ namespace Csound.Unity
         // Spectrum: vertical slider controls dB floor (positive value: 80 → shows −80 dB to 0 dB)
         private float _spectrumDbRange    = 80f;
         private float _lissajousZoom      = 1f;
+        private float _oscZoom            = 1f;
+        private int   _oscChannel         = 0;
         // Spectrogram: same semantics as _spectrumDbRange; higher = more sensitive (shows quieter sounds)
         private float _spectrogramDbRange = 120f;
         // Shared max-Hz display limit (0 = auto/Nyquist); affects spectrum X and spectrogram Y
@@ -113,10 +116,19 @@ namespace Csound.Unity
 
         #endregion
 
+        #region Oscilloscope state
+
+        private float[][] _oscBuffer;
+        private int       _oscWritePos;
+        private const int OscBufSize     = 4096;
+        private const int OscDisplaySize = 512;
+
+        #endregion
+
         #region Public API
 
         public bool RequiresConstantRepaint =>
-            ShowWaveform || ShowSpectrum || ShowLissajous || ShowSpectrogram;
+            ShowWaveform || ShowSpectrum || ShowLissajous || ShowSpectrogram || ShowOscilloscope;
 
         /// <summary>
         /// Draw the full audio-monitor UI. Call from OnInspectorGUI while Application.isPlaying.
@@ -128,12 +140,13 @@ namespace Csound.Unity
 
             // Toggles
             EditorGUILayout.LabelField("Audio Monitor", EditorStyles.boldLabel);
-            ShowWaveform    = EditorGUILayout.Toggle("Waveform",    ShowWaveform);
-            ShowSpectrum    = EditorGUILayout.Toggle("Spectrum",    ShowSpectrum);
-            ShowSpectrogram = EditorGUILayout.Toggle("Spectrogram", ShowSpectrogram);
-            ShowLissajous   = EditorGUILayout.Toggle("Lissajous",   ShowLissajous);
+            ShowWaveform     = EditorGUILayout.Toggle("Waveform",     ShowWaveform);
+            ShowSpectrum     = EditorGUILayout.Toggle("Spectrum",     ShowSpectrum);
+            ShowSpectrogram  = EditorGUILayout.Toggle("Spectrogram",  ShowSpectrogram);
+            ShowLissajous    = EditorGUILayout.Toggle("Lissajous",    ShowLissajous);
+            ShowOscilloscope = EditorGUILayout.Toggle("Oscilloscope", ShowOscilloscope);
 
-            if (!ShowWaveform && !ShowSpectrum && !ShowLissajous && !ShowSpectrogram) return;
+            if (!ShowWaveform && !ShowSpectrum && !ShowLissajous && !ShowSpectrogram && !ShowOscilloscope) return;
 
             // Shared frequency context
             int   nCh         = Mathf.Max(1, numChannels);
@@ -173,69 +186,150 @@ namespace Csound.Unity
 
             const float rowH = 80f;
 
-            // Lissajous — compact square with its own horizontal zoom slider,
-            // plus channel-selection sliders when nCh > 2.
-            if (ShowLissajous)
+            // Fill oscilloscope circular buffer every frame so it's ready when toggled on
+            EnsureOscBuffer(nCh);
+            for (int f = 0; f < framesInBuf; f++)
             {
-                const float size = 120f;
+                for (int c = 0; c < nCh; c++)
+                    _oscBuffer[c][_oscWritePos] = buffer[f * nCh + c];
+                _oscWritePos = (_oscWritePos + 1) % OscBufSize;
+            }
 
-                // Clamp channel indices to valid range whenever nCh changes
-                _lissXCh = Mathf.Clamp(_lissXCh, 0, nCh - 1);
-                _lissYCh = Mathf.Clamp(_lissYCh, 0, nCh - 1);
+            // Lissajous and Oscilloscope — each in its own column (square → zoom slider → selectors).
+            // The oscilloscope column also shows a Trig Ch popup to the right of the square.
+            if (ShowLissajous || ShowOscilloscope)
+            {
+                const float size    = 120f;
+                const float trigW   = 80f;
+                var         crossCol = new Color(0.25f, 0.25f, 0.25f);
 
-                // Centre the square horizontally
+                _lissXCh    = Mathf.Clamp(_lissXCh,    0, nCh - 1);
+                _lissYCh    = Mathf.Clamp(_lissYCh,    0, nCh - 1);
+                _oscChannel = Mathf.Clamp(_oscChannel,  0, nCh - 1);
+
+                var chNames = (ShowOscilloscope && nCh > 1) ? BuildChannelNames(nCh) : null;
+
+                Rect lissRect = default, oscRect = default, trigArea = default;
+
+                // ── Layout ───────────────────────────────────────────────────
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();
-                var lissRect = GUILayoutUtility.GetRect(size, size, GUILayout.Width(size), GUILayout.Height(size));
-                GUILayout.FlexibleSpace();
-                EditorGUILayout.EndHorizontal();
 
-                EditorGUI.DrawRect(lissRect, BgCol);
-                float cx = lissRect.x + lissRect.width  * 0.5f;
-                float cy = lissRect.y + lissRect.height * 0.5f;
-                var crossCol = new Color(0.25f, 0.25f, 0.25f);
-                EditorGUI.DrawRect(new Rect(lissRect.x, cy,   lissRect.width,  1), crossCol);
-                EditorGUI.DrawRect(new Rect(cx, lissRect.y,   1, lissRect.height), crossCol);
-
-                float halfW = lissRect.width  * 0.5f;
-                float halfH = lissRect.height * 0.5f;
-                Handles.BeginGUI();
-                Handles.color = new Color(1f, 0.75f, 0.1f);
-                for (int i = nCh; i < buffer.Length; i += nCh)
+                // Lissajous column
+                if (ShowLissajous)
                 {
-                    float x0 = buffer[i - nCh + _lissXCh];
-                    float y0 = buffer[i - nCh + _lissYCh];
-                    float x1 = buffer[i + _lissXCh];
-                    float y1 = buffer[i + _lissYCh];
-                    var p0 = new Vector3(
-                        Mathf.Clamp(cx + x0 * halfW * _lissajousZoom, lissRect.xMin, lissRect.xMax),
-                        Mathf.Clamp(cy - y0 * halfH * _lissajousZoom, lissRect.yMin, lissRect.yMax));
-                    var p1 = new Vector3(
-                        Mathf.Clamp(cx + x1 * halfW * _lissajousZoom, lissRect.xMin, lissRect.xMax),
-                        Mathf.Clamp(cy - y1 * halfH * _lissajousZoom, lissRect.yMin, lissRect.yMax));
-                    Handles.DrawLine(p0, p1);
+                    EditorGUILayout.BeginVertical(GUILayout.Width(size));
+                    lissRect       = GUILayoutUtility.GetRect(size, size, GUILayout.Width(size), GUILayout.Height(size));
+                    _lissajousZoom = GUILayout.HorizontalSlider(_lissajousZoom, 1f, 20f);
+                    if (nCh > 2)
+                    {
+                        _lissXCh = EditorGUILayout.IntSlider("X Ch", _lissXCh, 0, nCh - 1);
+                        _lissYCh = EditorGUILayout.IntSlider("Y Ch", _lissYCh, 0, nCh - 1);
+                    }
+                    EditorGUILayout.EndVertical();
                 }
-                Handles.EndGUI();
 
-                // Horizontal zoom slider centred below the square
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.FlexibleSpace();
-                _lissajousZoom = GUILayout.HorizontalSlider(
-                    _lissajousZoom, 1f, 20f, GUILayout.Width(size));
-                GUILayout.FlexibleSpace();
-                EditorGUILayout.EndHorizontal();
+                if (ShowLissajous && ShowOscilloscope) GUILayout.Space(10f);
 
-                // Channel selection — only shown when more than 2 channels are present
-                if (nCh > 2)
+                // Oscilloscope column: [square + zoom] | [trig ch to the right]
+                if (ShowOscilloscope)
                 {
                     EditorGUILayout.BeginHorizontal();
-                    GUILayout.FlexibleSpace();
+
                     EditorGUILayout.BeginVertical(GUILayout.Width(size));
-                    _lissXCh = EditorGUILayout.IntSlider("X Ch", _lissXCh, 0, nCh - 1);
-                    _lissYCh = EditorGUILayout.IntSlider("Y Ch", _lissYCh, 0, nCh - 1);
+                    oscRect  = GUILayoutUtility.GetRect(size, size, GUILayout.Width(size), GUILayout.Height(size));
+                    _oscZoom = GUILayout.HorizontalSlider(_oscZoom, 1f, 20f);
                     EditorGUILayout.EndVertical();
-                    GUILayout.FlexibleSpace();
+
+                    // Trig Ch — reserve full square height, draw popup centred via explicit rect
+                    if (chNames != null)
+                    {
+                        GUILayout.Space(6f);
+                        trigArea = GUILayoutUtility.GetRect(trigW, size, GUILayout.Width(trigW), GUILayout.Height(size));
+                        if (Event.current.type != EventType.Layout)
+                        {
+                            var lh   = EditorGUIUtility.singleLineHeight;
+                            var midY = trigArea.y + (trigArea.height - lh * 2f + 2f) * 0.5f;
+                            EditorGUI.LabelField(new Rect(trigArea.x, midY,      trigArea.width, lh), "Trig Ch", EditorStyles.miniLabel);
+                            _oscChannel = EditorGUI.Popup(new Rect(trigArea.x,   midY + lh,     trigArea.width, lh), _oscChannel, chNames);
+                        }
+                    }
+
                     EditorGUILayout.EndHorizontal();
+                }
+
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.EndHorizontal();
+
+                // ── Draw Lissajous ───────────────────────────────────────────
+                if (ShowLissajous)
+                {
+                    EditorGUI.DrawRect(lissRect, BgCol);
+                    var cx    = lissRect.x + lissRect.width  * 0.5f;
+                    var cy    = lissRect.y + lissRect.height * 0.5f;
+                    EditorGUI.DrawRect(new Rect(lissRect.x, cy, lissRect.width, 1), crossCol);
+                    EditorGUI.DrawRect(new Rect(cx, lissRect.y, 1, lissRect.height), crossCol);
+                    var halfW = lissRect.width  * 0.5f;
+                    var halfH = lissRect.height * 0.5f;
+                    Handles.BeginGUI();
+                    Handles.color = new Color(1f, 0.75f, 0.1f);
+                    for (int i = nCh; i < buffer.Length; i += nCh)
+                    {
+                        float x0 = buffer[i - nCh + _lissXCh];
+                        float y0 = buffer[i - nCh + _lissYCh];
+                        float x1 = buffer[i       + _lissXCh];
+                        float y1 = buffer[i       + _lissYCh];
+                        var p0 = new Vector3(
+                            Mathf.Clamp(cx + x0 * halfW * _lissajousZoom, lissRect.xMin, lissRect.xMax),
+                            Mathf.Clamp(cy - y0 * halfH * _lissajousZoom, lissRect.yMin, lissRect.yMax));
+                        var p1 = new Vector3(
+                            Mathf.Clamp(cx + x1 * halfW * _lissajousZoom, lissRect.xMin, lissRect.xMax),
+                            Mathf.Clamp(cy - y1 * halfH * _lissajousZoom, lissRect.yMin, lissRect.yMax));
+                        Handles.DrawLine(p0, p1);
+                    }
+                    Handles.EndGUI();
+                }
+
+                // ── Draw Oscilloscope ────────────────────────────────────────
+                if (ShowOscilloscope)
+                {
+                    EditorGUI.DrawRect(oscRect, BgCol);
+                    var cx = oscRect.x + oscRect.width  * 0.5f;
+                    var cy = oscRect.y + oscRect.height * 0.5f;
+                    EditorGUI.DrawRect(new Rect(oscRect.x, cy, oscRect.width, 1), crossCol);
+                    EditorGUI.DrawRect(new Rect(cx, oscRect.y, 1, oscRect.height), crossCol);
+
+                    // Find trigger: most recent rising zero-crossing in the search window
+                    var triggerPos = (_oscWritePos - OscDisplaySize + OscBufSize) % OscBufSize;
+                    var maxSearch  = OscBufSize - OscDisplaySize;
+                    for (int k = 1; k < maxSearch; k++)
+                    {
+                        var i0 = (_oscWritePos - OscDisplaySize - k - 1 + 2 * OscBufSize) % OscBufSize;
+                        var i1 = (_oscWritePos - OscDisplaySize - k     + 2 * OscBufSize) % OscBufSize;
+                        if (_oscBuffer[_oscChannel][i0] < 0f && _oscBuffer[_oscChannel][i1] >= 0f)
+                        {
+                            triggerPos = i1;
+                            break;
+                        }
+                    }
+
+                    var segW = oscRect.width / OscDisplaySize;
+                    Handles.BeginGUI();
+                    for (int c = 0; c < nCh; c++)
+                    {
+                        Handles.color = ChannelColor(c, nCh);
+                        for (int i = 1; i < OscDisplaySize; i++)
+                        {
+                            var   idx0 = (triggerPos + i - 1) % OscBufSize;
+                            var   idx1 = (triggerPos + i    ) % OscBufSize;
+                            float s0   = Mathf.Clamp(_oscBuffer[c][idx0] * _oscZoom, -1f, 1f);
+                            float s1   = Mathf.Clamp(_oscBuffer[c][idx1] * _oscZoom, -1f, 1f);
+                            var   p0   = new Vector3(oscRect.x + (i - 1) * segW, cy - s0 * oscRect.height * 0.5f);
+                            var   p1   = new Vector3(oscRect.x +  i      * segW, cy - s1 * oscRect.height * 0.5f);
+                            Handles.DrawLine(p0, p1);
+                        }
+                    }
+                    Handles.EndGUI();
                 }
             }
 
@@ -490,6 +584,22 @@ namespace Csound.Unity
         #endregion
 
         #region Internal helpers
+
+        private static string[] BuildChannelNames(int nCh)
+        {
+            var names = new string[nCh];
+            for (var i = 0; i < nCh; i++)
+                names[i] = nCh == 2 ? (i == 0 ? "0 — L" : "1 — R") : $"Ch {i}";
+            return names;
+        }
+
+        private void EnsureOscBuffer(int nCh)
+        {
+            if (_oscBuffer != null && _oscBuffer.Length == nCh && _oscBuffer[0].Length == OscBufSize) return;
+            _oscBuffer = new float[nCh][];
+            for (var c = 0; c < nCh; c++) _oscBuffer[c] = new float[OscBufSize];
+            _oscWritePos = 0;
+        }
 
         private void EnsureFftCaches(int size, int nCh)
         {
