@@ -211,7 +211,6 @@ namespace Csound.Unity
 
                 Rect lissRect = default, oscRect = default, trigArea = default;
 
-                // ── Layout ───────────────────────────────────────────────────
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();
 
@@ -261,7 +260,6 @@ namespace Csound.Unity
                 GUILayout.FlexibleSpace();
                 EditorGUILayout.EndHorizontal();
 
-                // ── Draw Lissajous ───────────────────────────────────────────
                 if (ShowLissajous)
                 {
                     EditorGUI.DrawRect(lissRect, BgCol);
@@ -290,7 +288,6 @@ namespace Csound.Unity
                     Handles.EndGUI();
                 }
 
-                // ── Draw Oscilloscope ────────────────────────────────────────
                 if (ShowOscilloscope)
                 {
                     EditorGUI.DrawRect(oscRect, BgCol);
