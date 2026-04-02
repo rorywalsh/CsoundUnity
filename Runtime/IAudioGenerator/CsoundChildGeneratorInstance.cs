@@ -42,10 +42,19 @@ namespace Csound.Unity
         GeneratorInstance.IRealtime,
         GeneratorInstance.ICapabilities
     {
-        #region Unmanaged field
+        #region Unmanaged fields
 
         /// <summary>Index into <see cref="CsoundChildRegistry"/>.</summary>
         internal int InstanceId;
+
+        /// <summary>
+        /// Counts output frames since startup. Used for the linear fade-in that
+        /// masks transients while the parent is still filling its channel buffers.
+        /// </summary>
+        private int _startupFadeIndex;
+
+        /// <summary>Number of frames over which the startup fade ramps 0→1 (~43 ms at 48 kHz).</summary>
+        private const int StartupFadeSamples = 2048;
 
         #endregion
         #region GeneratorInstance.ICapabilities
@@ -79,27 +88,32 @@ namespace Csound.Unity
             ChannelBuffer              buffer,
             GeneratorInstance.Arguments args)
         {
-            int totalFrames = buffer.frameCount;
+            var totalFrames = buffer.frameCount;
 
             var entry = CsoundChildRegistry.GetEntry(InstanceId);
             if (entry == null || !entry.IsReady)
             {
-                for (int f = 0; f < totalFrames; f++)
-                    for (int ch = 0; ch < buffer.channelCount; ch++)
+                for (var f = 0; f < totalFrames; f++)
+                    for (var ch = 0; ch < buffer.channelCount; ch++)
                         buffer[ch, f] = 0f;
                 return totalFrames;
             }
 
             var channelNames = entry.ChannelNames;
             var dataDict     = entry.ChannelDataDict;
-            float inv0dbfs   = entry.Zerodbfs > 0.0 ? (float)(1.0 / entry.Zerodbfs) : 1f;
+            var inv0dbfs = entry.Zerodbfs > 0.0 ? (float)(1.0 / entry.Zerodbfs) : 1f;
 
-            for (int f = 0; f < totalFrames; f++)
+            for (var f = 0; f < totalFrames; f++)
             {
-                for (int ch = 0; ch < buffer.channelCount; ch++)
+                // Startup fade-in: ramps 0→1 over StartupFadeSamples frames.
+                var fade = _startupFadeIndex < StartupFadeSamples
+                    ? _startupFadeIndex++ / (float)StartupFadeSamples
+                    : 1f;
+
+                for (var ch = 0; ch < buffer.channelCount; ch++)
                 {
                     // Map Unity output channel → selected Csound audio channel name.
-                    int entryCh  = ch < channelNames.Length ? ch : channelNames.Length - 1;
+                    var entryCh  = ch < channelNames.Length ? ch : channelNames.Length - 1;
                     var chanName = channelNames[entryCh];
 
                     if (chanName == null || !dataDict.TryGetValue(chanName, out var dataArr)
@@ -109,7 +123,7 @@ namespace Csound.Unity
                         continue;
                     }
 
-                    buffer[ch, f] = (float)dataArr[f] * inv0dbfs;
+                    buffer[ch, f] = (float)dataArr[f] * inv0dbfs * fade;
                 }
             }
 

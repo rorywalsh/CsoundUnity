@@ -54,7 +54,7 @@ namespace Csound.Unity
 
         [Tooltip("Choose between the classic OnAudioFilterRead path and the Unity 6+ IAudioGenerator path.\n" +
                  "IAudioGenerator drives the AudioSource directly without a dummy clip.")]
-        [SerializeField] private AudioPath _audioPath = AudioPath.OnAudioFilterRead;
+        [SerializeField] private AudioPath _audioPath = AudioPath.IAudioGenerator;
 
         #endregion
         #region Runtime state (IAudioGenerator)
@@ -130,11 +130,11 @@ namespace Csound.Unity
             if (csoundUnity == null || !csoundUnity.IsInitialized) return;
 
             // Build the channel name array: one entry per AudioChannelsSetting slot.
-            int numSlots   = (int)AudioChannelsSetting;
-            var chanNames  = new string[numSlots];
+            var numSlots  = (int)AudioChannelsSetting;
+            var chanNames = new string[numSlots];
             for (int ch = 0; ch < numSlots; ch++)
             {
-                int  idx  = (selectedAudioChannelIndexByChannel != null && selectedAudioChannelIndexByChannel.Length > ch)
+                var idx = (selectedAudioChannelIndexByChannel != null && selectedAudioChannelIndexByChannel.Length > ch)
                     ? selectedAudioChannelIndexByChannel[ch]
                     : 0;
                 var  list = csoundUnity.availableAudioChannels;
@@ -182,8 +182,8 @@ namespace Csound.Unity
 
         partial void OnDisableGenerator()
         {
-            if (_audioPath == AudioPath.IAudioGenerator)
-                TeardownChildGenerator();
+            if (_audioPath != AudioPath.IAudioGenerator) return;
+            TeardownChildGenerator();
         }
 
         partial void OnDestroyGenerator()

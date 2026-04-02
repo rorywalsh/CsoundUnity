@@ -264,9 +264,9 @@ namespace Csound.Unity
 
             // Same pattern as CsoundUnity: take system output rate unless overridden,
             // then derive kr = sr / ksmps so the bridge writes the exact --ksmps we want.
-            int ksmps = Mathf.Max(1, _ksmps);
-            float sr  = _overrideSamplingRate ? (float)_audioRate : AudioSettings.outputSampleRate;
-            float kr  = sr / ksmps;
+            var ksmps = Mathf.Max(1, _ksmps);
+            var sr    = _overrideSamplingRate ? (float)_audioRate : AudioSettings.outputSampleRate;
+            var kr    = sr / ksmps;
 
             _bridge = new CsoundUnityBridge(_csoundString, _environmentSettings, sr, kr);
 

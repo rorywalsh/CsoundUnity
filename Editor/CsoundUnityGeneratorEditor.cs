@@ -60,7 +60,7 @@ namespace Csound.Unity
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
 
-            DefaultAsset picked = (DefaultAsset)EditorGUILayout.ObjectField(
+            var picked = (DefaultAsset)EditorGUILayout.ObjectField(
                 "Csd Asset", current, typeof(DefaultAsset), false);
 
             // Refresh button: re-read file content from disk

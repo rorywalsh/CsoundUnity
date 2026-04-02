@@ -74,12 +74,48 @@ namespace Csound.Unity
                 _bridges[id] = null;
                 _queues[id]  = null;
             }
+            if (id >= 0 && id < _spinFillCallbacks.Count)
+                _spinFillCallbacks[id] = null;
             if (id >= 0 && id < _ksmpsCallbacks.Count)
                 _ksmpsCallbacks[id] = null;
         }
 
         #endregion
-        #region Per-ksmps callbacks (called on the audio thread)
+        #region Pre-ksmps spin-fill callbacks (called on the audio thread)
+
+        /// <summary>
+        /// One entry per registered bridge. Invoked on the audio thread immediately
+        /// <b>before</b> each <c>PerformKsmps</c> call, so that audio input routes
+        /// can inject samples into Csound's spin buffer before processing begins.
+        /// Used by <see cref="CsoundUnity"/> in IAudioGenerator mode to support
+        /// <c>audioInputRoutes</c> (the same feature that <c>ApplyAudioInputRoutes</c>
+        /// provides on the <c>OnAudioFilterRead</c> path).
+        /// </summary>
+        private static readonly List<System.Action<int>> _spinFillCallbacks = new List<System.Action<int>>();
+
+        /// <summary>
+        /// Registers an action to be called <b>before</b> each <c>PerformKsmps</c>
+        /// for instance <paramref name="id"/>.  The int argument is the buffer-frame
+        /// offset at which the new ksmps block begins.
+        /// </summary>
+        internal static void RegisterSpinFillCallback(int id, System.Action<int> callback)
+        {
+            while (_spinFillCallbacks.Count <= id) _spinFillCallbacks.Add(null);
+            _spinFillCallbacks[id] = callback;
+        }
+
+        /// <summary>
+        /// Invoked by <see cref="CsoundRealtime"/> on the audio thread immediately
+        /// before each <c>PerformKsmps</c>.
+        /// </summary>
+        internal static void InvokeSpinFillCallback(int id, int bufferFrameOffset)
+        {
+            if (id >= 0 && id < _spinFillCallbacks.Count)
+                _spinFillCallbacks[id]?.Invoke(bufferFrameOffset);
+        }
+
+        #endregion
+        #region Post-ksmps callbacks (called on the audio thread)
 
         /// <summary>
         /// One entry per registered bridge. Invoked on the audio thread immediately

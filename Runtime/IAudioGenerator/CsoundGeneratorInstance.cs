@@ -59,6 +59,22 @@ namespace Csound.Unity
         /// </summary>
         private int _ksmpsIndex;
 
+        /// <summary>
+        /// Counts output frames produced since the generator started.
+        /// Used to apply a short linear fade-in on startup that masks transients
+        /// caused by audio-route sources not yet having filled their buffers.
+        /// Once <see cref="StartupFadeSamples"/> is reached it stays there
+        /// (output multiplier becomes 1 permanently).
+        /// </summary>
+        private int _startupFadeIndex;
+
+        /// <summary>
+        /// Number of frames over which the startup fade ramps from 0 to 1.
+        /// 2048 frames ≈ 43 ms at 48 kHz — imperceptible as a fade-in but long
+        /// enough to cover any initialization latency between chained instances.
+        /// </summary>
+        private const int StartupFadeSamples = 2048;
+
         #endregion
         #region GeneratorInstance.ICapabilities
 
@@ -85,7 +101,7 @@ namespace Csound.Unity
             ChannelBuffer              buffer,
             GeneratorInstance.Arguments args)
         {
-            int totalFrames = buffer.frameCount;
+            var totalFrames = buffer.frameCount;
 
             var bridge = CsoundBridgeRegistry.GetBridge(InstanceId);
             if (bridge == null)
@@ -97,29 +113,27 @@ namespace Csound.Unity
                 return totalFrames;
             }
 
-            int   nchnls   = (int)bridge.GetNchnls();
-            int   ksmps    = (int)bridge.GetKsmps();
-            float inv0dbfs = ksmps > 0 ? 1f / (float)bridge.Get0dbfs() : 1f;
+            var nchnls   = (int)bridge.GetNchnls();
+            var ksmps    = (int)bridge.GetKsmps();
+            var inv0dbfs = ksmps > 0 ? 1f / (float)bridge.Get0dbfs() : 1f;
 
             if (ksmps <= 0)
             {
                 // Csound not yet fully started — silence.
-                for (int f = 0; f < totalFrames; f++)
-                    for (int ch = 0; ch < buffer.channelCount; ch++)
+                for (var f = 0; f < totalFrames; f++)
+                    for (var ch = 0; ch < buffer.channelCount; ch++)
                         buffer[ch, f] = 0f;
                 return totalFrames;
             }
 
-            // ── Sample-by-sample loop, mirroring CsoundUnity.ProcessBlock ────
             // _ksmpsIndex tracks position within the current ksmps block and
             // persists between Process() calls (stored in unmanaged memory).
-
             for (int f = 0; f < totalFrames; f++, _ksmpsIndex++)
             {
-                // When we've consumed all samples of the current ksmps block,
-                // ask Csound to process the next one.
                 if (_ksmpsIndex >= ksmps)
                 {
+                    CsoundBridgeRegistry.InvokeSpinFillCallback(InstanceId, f);
+
                     int result = bridge.PerformKsmps();
                     _ksmpsIndex = 0;
 
@@ -130,18 +144,23 @@ namespace Csound.Unity
                     if (result != 0)
                     {
                         // Score ended — silence the rest of the buffer.
-                        for (int ff = f; ff < totalFrames; ff++)
-                            for (int ch = 0; ch < buffer.channelCount; ch++)
+                        for (var ff = f; ff < totalFrames; ff++)
+                            for (var ch = 0; ch < buffer.channelCount; ch++)
                                 buffer[ch, ff] = 0f;
                         return totalFrames;
                     }
                 }
 
-                // Copy one frame from Csound's spout → Unity buffer.
-                for (int ch = 0; ch < buffer.channelCount; ch++)
+                // Startup fade-in: ramps 0→1 over StartupFadeSamples frames to mask
+                // transients that occur when chained sources are not yet initialised.
+                var fade = _startupFadeIndex < StartupFadeSamples
+                    ? _startupFadeIndex++ / (float)StartupFadeSamples
+                    : 1f;
+
+                for (var ch = 0; ch < buffer.channelCount; ch++)
                 {
-                    int csoundCh = ch < nchnls ? ch : nchnls - 1;
-                    buffer[ch, f] = (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs;
+                    var csoundCh = ch < nchnls ? ch : nchnls - 1;
+                    buffer[ch, f] = (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade;
                 }
             }
 
