@@ -66,6 +66,8 @@ namespace Csound.Unity
         // Reusable single-element buffer — avoids new MYFLT[1] allocation on every sample read/write.
         // Only ever accessed from the audio thread (ProcessBlock via GetSpoutSample/SetSpinSample/AddSpinSample).
         private readonly MYFLT[] _oneValueBuffer = new MYFLT[1];
+        // Pre-allocated zeroed buffer for ClearSpin — avoids new MYFLT[size] allocation every ksmps.
+        // Resized only when ksmps*nchnlsInput changes (essentially never at runtime).
 
         /// <summary>
         /// MIDI: thread-safe queue of raw MIDI messages enqueued from any thread,
@@ -148,10 +150,7 @@ namespace Csound.Unity
             }
         }
 
-        public CsoundUnityBridge()
-        {
-            // empty constructor, will return an empty object and won't do any initialization
-        }
+        public CsoundUnityBridge() { }
 
         /// <summary>
         /// The CsoundUnityBridge constructor sets up the Csound Global Environment Variables set by the user. 
@@ -160,7 +159,7 @@ namespace Csound.Unity
         /// </summary>
         /// <param name="csdFile">The Csound (.csd) file content as a string</param>
         /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
-        public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings, float audioRate, float controlRate)
+        public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings, float audioRate, float controlRate, int ksmps = 0)
         {
             if (string.IsNullOrWhiteSpace(csdFile))
             {
@@ -169,19 +168,6 @@ namespace Csound.Unity
             }
 
             SetEnvironmentSettings(environmentSettings);
-
-            // Debug.Log("audio Rate: " + audioRate + " control Rate: " + controlRate);
-
-            // KEEP THIS FOR REFERENCE ;)
-            //#if (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
-            //        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-            //#elif UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-            //        var opcodePath = Path.GetFullPath(Path.Combine(csoundDir, "CsoundLib64.bundle/Contents/MacOS"));
-            //        //Debug.Log($"opcodePath {opcodePath} exists? " + Directory.Exists(opcodePath));
-            //        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", opcodePath);
-            //#elif UNITY_ANDROID
-            //        Csound6.NativeMethods.csoundSetGlobalEnv("OPCODE6DIR64", csoundDir);
-            //#endif
 
             Csound6.NativeMethods.csoundInitialize(1);
             csound = Csound6.NativeMethods.csoundCreate(System.IntPtr.Zero, null);
@@ -196,19 +182,17 @@ namespace Csound.Unity
             Csound6.NativeMethods.csoundSetOption(csound, "-n");
             Csound6.NativeMethods.csoundSetOption(csound, "-d");
             Csound6.NativeMethods.csoundSetOption(csound, $"--sample-rate={audioRate}");
-            //Csound6.NativeMethods.csoundSetOption(csound, $"--control-rate={controlRate}");
-            var ksmps = Mathf.CeilToInt(audioRate / (float)controlRate);
+            // Use the ksmps parsed directly from the CSD when available; fall back to
+            // deriving it from controlRate only if ksmps was not supplied (legacy path).
+            if (ksmps <= 0)
+                ksmps = Mathf.RoundToInt(audioRate / (float)controlRate);
             Csound6.NativeMethods.csoundSetOption(csound, $"--ksmps={ksmps}");
 
 #if UNITY_IOS || UNITY_VISIONOS
             Debug.Log($"Initialising sample rate and control rate using Audio Project Settings value: {AudioSettings.outputSampleRate}Hz, some values maybe incompatible with older hardware.");
 #endif
 
-            // This causes a crash in Unity >= 2021.3.28
-            //var parms = GetParams();
-            //parms.control_rate_override = AudioSettings.outputSampleRate;
-            //parms.sample_rate_override = AudioSettings.outputSampleRate;
-            //SetParams(parms);
+            // Crash in Unity >= 2021.3.28: do not call SetParams here.
 
             onCsoundCreated?.Invoke();
             onCsoundCreated = null;
@@ -217,7 +201,7 @@ namespace Csound.Unity
 
             int ret = Csound6.NativeMethods.csoundCompileCSD(csound, csdFile, 1, 0, null);
             Csound6.NativeMethods.csoundStart(csound);
-            compiledOk = ret == 0 ? true : false;
+            compiledOk = ret == 0;
 
             // Cache values that are constant for this Csound session.
             // nchnls/ksmps/myfltSize are valid right after csoundStart (derived from the compiled CSD).
@@ -235,8 +219,6 @@ namespace Csound.Unity
                 $"GetKr: {GetKr()}\n" +
                 $"Get0dbfs: {Get0dbfs()}\n" +
                 $"GetKsmps: {GetKsmps()}");
-            //var res = PerformKsmps();
-            //Debug.Log($"PerformKsmps: {res}");
         }
 
         /// <summary>
@@ -244,7 +226,7 @@ namespace Csound.Unity
         /// Must be called after csoundCreate and before csoundCompileCSD.
         /// This prevents Csound from loading an rtmidi module (which is not included
         /// in the CsoundUnity build) and routes all MIDI through the _midiQueue instead.
-        /// The CSD still needs a MIDI device option (e.g. &lt;CsOptions&gt; -M0 &lt;/CsOptions&gt;)
+        /// The CSD still needs a MIDI device option (e.g. <c><CsOptions> -M0 </CsOptions></c>)
         /// to activate Csound's MIDI subsystem.
         /// </summary>
         private void SetupMidiCallbacks()
@@ -516,14 +498,30 @@ namespace Csound.Unity
         public MYFLT[] GetAudioChannel(string name)
         {
             var bufsiz = GetKsmps();
-            var buffer = Marshal.AllocHGlobal(sizeof(MYFLT) * (int)bufsiz);
-            MYFLT[] dest = new MYFLT[bufsiz];//include nchnls/nchnlss_i? no, not an output channel: just a single ksmps-sized buffer
-#if !UNITY_WEBGL || UNITY_EDITOR
-            Csound6.NativeMethods.csoundGetAudioChannel(csound, name, buffer);
-#endif
-            Marshal.Copy(buffer, dest, 0, dest.Length);
-            Marshal.FreeHGlobal(buffer);
+            MYFLT[] dest = new MYFLT[(int)bufsiz];
+            GetAudioChannel(name, dest);
             return dest;
+        }
+
+        /// <summary>
+        /// Zero-allocation overload: reads the named audio channel directly into
+        /// <paramref name="dest"/> without any managed or native heap allocation.
+        /// Use this on hot audio-thread paths to avoid GC pressure.
+        /// </summary>
+        public void GetAudioChannel(string name, MYFLT[] dest)
+        {
+            if (dest == null || dest.Length == 0) return;
+#if !UNITY_WEBGL || UNITY_EDITOR
+            var handle = GCHandle.Alloc(dest, GCHandleType.Pinned);
+            try
+            {
+                Csound6.NativeMethods.csoundGetAudioChannel(csound, name, handle.AddrOfPinnedObject());
+            }
+            finally
+            {
+                handle.Free();
+            }
+#endif
         }
 
         public string GetStringChannel(string name)
@@ -710,11 +708,9 @@ namespace Csound.Unity
                 _spoutPtr = Csound6.NativeMethods.csoundGetSpout(csound);
                 if (_spoutPtr == IntPtr.Zero) return 0;
             }
-            int index = frame * (int)_nchnlsCached + channel;
-            Marshal.Copy(_spoutPtr + index * _myfltSize, _oneValueBuffer, 0, 1);
-            return _oneValueBuffer[0];
+            unsafe { return ((MYFLT*)_spoutPtr)[frame * (int)_nchnlsCached + channel]; }
 #else
-        return 0;
+            return 0;
 #endif
         }
 
@@ -730,10 +726,7 @@ namespace Csound.Unity
                 _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
                 if (_spinPtr == IntPtr.Zero) return;
             }
-            int index = frame * (int)_nchnlsInputCached + channel;
-            Marshal.Copy(_spinPtr + index * _myfltSize, _oneValueBuffer, 0, 1);
-            _oneValueBuffer[0] += sample;
-            Marshal.Copy(_oneValueBuffer, 0, _spinPtr + index * _myfltSize, 1);
+            unsafe { ((MYFLT*)_spinPtr)[frame * (int)_nchnlsInputCached + channel] += sample; }
 #endif
         }
 
@@ -749,9 +742,7 @@ namespace Csound.Unity
                 _spinPtr = Csound6.NativeMethods.csoundGetSpin(csound);
                 if (_spinPtr == IntPtr.Zero) return;
             }
-            int index = frame * (int)_nchnlsInputCached + channel;
-            _oneValueBuffer[0] = sample;
-            Marshal.Copy(_oneValueBuffer, 0, _spinPtr + index * _myfltSize, 1);
+            unsafe { ((MYFLT*)_spinPtr)[frame * (int)_nchnlsInputCached + channel] = sample; }
 #endif
         }
 
@@ -767,8 +758,8 @@ namespace Csound.Unity
                 if (_spinPtr == IntPtr.Zero) return;
             }
             int size = (int)_ksmpsCache * (int)_nchnlsInputCached;
-            var zeroes = new MYFLT[size];
-            Marshal.Copy(zeroes, 0, _spinPtr, size);
+            if (size <= 0) return;
+            unsafe { new System.Span<MYFLT>((MYFLT*)_spinPtr, size).Clear(); }
 #endif
         }
 
@@ -930,10 +921,8 @@ namespace Csound.Unity
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
         private class ChannelInfoProxy
         {
-            [MarshalAs(UnmanagedType.AnsiBStr)]
             public IntPtr name;
             public int type;
-            [MarshalAs(UnmanagedType.Struct)]
             public ChannelHintsProxy hints;
         }
 
@@ -959,7 +948,6 @@ namespace Csound.Unity
             public int y;
             public int width;
             public int height;
-            [MarshalAs(UnmanagedType.AnsiBStr)]
             public IntPtr attributes;
         }
 

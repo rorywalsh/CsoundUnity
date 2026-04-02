@@ -72,7 +72,7 @@ namespace Csound.Unity
         /// <summary>Initial Y value. Used by xypad (rangeY third token).</summary>
         [SerializeField] public float value2;
 
-        public void SetRange(float uMin, float uMax, float uValue = 0f, float uSkew = 1f, float uIncrement = 0.01f)
+        public void SetRange(float uMin, float uMax, float uValue = 0f, float uSkew = 1f, float uIncrement = 0.001f)
         {
             min = uMin;
             max = uMax;
@@ -85,6 +85,60 @@ namespace Csound.Unity
         {
             return this.MemberwiseClone() as CsoundChannelController;
         }
+    }
+
+    /// <summary>
+    /// Result of an <see cref="CsoundUnity.AddAudioInputRoute"/> call.
+    /// </summary>
+    public enum AudioRouteResult
+    {
+        /// <summary>Route added successfully; no cycle in the audio graph.</summary>
+        Added,
+        /// <summary>Route added despite a circular dependency (<c>forceConnection</c> was <c>true</c>).</summary>
+        AddedWithCycle,
+        /// <summary>Route rejected because it would create a circular dependency.</summary>
+        RejectedCycle,
+        /// <summary>Route rejected because <c>source</c> was <c>null</c>.</summary>
+        InvalidSource,
+        /// <summary>Route not added because an identical one (same source, channel, and spin channel) already exists.</summary>
+        AlreadyExists,
+    }
+
+    /// <summary>
+    /// Defines a single audio-rate connection from a source <see cref="CsoundUnity"/> instance
+    /// into this instance's Csound spin (input) buffer.
+    /// <para>
+    /// Add one or more routes to <see cref="CsoundUnity.audioInputRoutes"/> to chain Csound
+    /// instances together: the source's named audio channel data is injected into the destination's
+    /// spin channel before each <c>PerformKsmps</c> call, with at most one DSP-buffer of latency.
+    /// </para>
+    /// </summary>
+    [Serializable]
+    public class AudioInputRoute
+    {
+        /// <summary>The CsoundUnity instance to read audio from.</summary>
+        public CsoundUnity source;
+
+        /// <summary>
+        /// Name of the audio channel on <see cref="source"/> to read from
+        /// (must be listed in source's Named Audio Channels).
+        /// </summary>
+        public string sourceChannelName = "";
+
+        /// <summary>
+        /// Csound spin channel index on this instance to write into (0-based).
+        /// Must be less than <c>nchnls_i</c> declared in this CSD.
+        /// </summary>
+        public int destSpinChannel = 0;
+
+        /// <summary>
+        /// Send level applied to the source signal before it is written into the
+        /// spin buffer.  1 = unity gain.  Multiple routes targeting the same spin
+        /// channel are <b>summed</b>, so this acts as a per-send fader — useful for
+        /// mixing several generators into a single effect/reverb instance.
+        /// </summary>
+        [UnityEngine.Range(0f, 2f)]
+        public float level = 1f;
     }
 
     /// <summary>
@@ -285,7 +339,7 @@ namespace Csound.Unity
     [AddComponentMenu("Audio/CsoundUnity")]
     [Serializable]
     [RequireComponent(typeof(AudioSource))]
-    public class CsoundUnity : MonoBehaviour
+    public partial class CsoundUnity : MonoBehaviour
     {
         #region PUBLIC_FIELDS
 
@@ -371,7 +425,22 @@ namespace Csound.Unity
 
         [HideInInspector] public int audioRate = 44100;
         [HideInInspector] public int controlRate = 44100;
+        /// <summary>
+        /// Intended ksmps value. Stored so that when the audio device changes
+        /// (sr changes) the control rate is recomputed as kr = sr / ksmps
+        /// rather than being rounded from the old kr, which would yield a different ksmps.
+        /// </summary>
+        [HideInInspector] public int ksmps = 32;
         [HideInInspector] public bool updateOutputBuffer = false;
+
+        /// <summary>
+        /// Audio-rate input routes: each entry reads a named audio channel from another
+        /// <see cref="CsoundUnity"/> instance and injects it into this instance's spin buffer
+        /// before every <c>PerformKsmps</c> call.
+        /// </summary>
+        [HideInInspector] public List<AudioInputRoute> audioInputRoutes = new List<AudioInputRoute>();
+        /// <summary>When true, all Audio Input Routes are silenced without removing them.</summary>
+        [HideInInspector] public bool muteAudioInputRoutes = false;
 
         public string samplingRateSettingsInfo
         {
@@ -400,6 +469,46 @@ namespace Csound.Unity
         /// Is Csound initialized?
         /// </summary>
         public bool IsInitialized { get => initialized; }
+
+        #region DSP load measurement
+
+        /// <summary>
+        /// Enable to measure how much of the DSP time budget this instance consumes.
+        /// Off by default — zero overhead when disabled.
+        /// <para>
+        /// On the <b>OnAudioFilterRead</b> path the entire <c>ProcessBlock</c> call is timed
+        /// (includes spin/spout management, channel copying and all <c>PerformKsmps</c> calls).
+        /// On the <b>IAudioGenerator</b> path the equivalent per-buffer Csound work is timed.
+        /// Budget for both = DSP buffer size / output sample rate.
+        /// </para>
+        /// </summary>
+        [HideInInspector][SerializeField] private bool _measureDspLoad = false;
+
+        public bool MeasureDspLoad
+        {
+            get => _measureDspLoad;
+            set => _measureDspLoad = value;
+        }
+
+        /// <summary>
+        /// Exponentially smoothed DSP load: fraction of the DSP time budget used by
+        /// this instance. 0 = idle, 1 = full budget consumed, >1 = overload.
+        /// Only meaningful when <see cref="MeasureDspLoad"/> is true.
+        /// </summary>
+        public float DspLoad { get; private set; } = 0f;
+
+        private readonly System.Diagnostics.Stopwatch _dspSw = new System.Diagnostics.Stopwatch();
+        // Accumulated elapsed ticks for IAudioGenerator path (reset each DSP buffer).
+        private long   _dspAccumTicks  = 0;
+        private const float DspLoadAlpha = 0.05f;
+
+        private void UpdateDspLoad(double elapsedSec, double budgetSec)
+        {
+            float load = budgetSec > 0 ? (float)(elapsedSec / budgetSec) : 0f;
+            DspLoad = DspLoad * (1f - DspLoadAlpha) + load * DspLoadAlpha;
+        }
+
+        #endregion
 
         /// <summary>
         /// The delegate of the event OnCsoundInitialized
@@ -481,9 +590,23 @@ namespace Csound.Unity
         /// </summary>
         private Dictionary<string, int> _channelsIndexDict = new Dictionary<string, int>();
         [HideInInspector][SerializeField] private List<string> _availableAudioChannels = new List<string>();
+
+        /// <summary>
+        /// Number of Csound output channels (<c>nchnls</c>) parsed from the CSD at import
+        /// time.  Stored so the inspector and <see cref="AudioInputRouteDrawer"/> can
+        /// show the auto-generated spout channel entries (<c>main_out_0</c>, <c>main_out_1</c>, …)
+        /// without requiring Play mode.
+        /// </summary>
+        [HideInInspector][SerializeField] private int _nchnls = 0;
+
+        /// <summary>
+        /// Pre-computed names of the auto-generated spout channels
+        /// (<c>main_out_0</c>, <c>main_out_1</c>, …).  Sized to <c>nchnls</c> after
+        /// <c>Init()</c> so the audio thread never allocates strings.
+        /// </summary>
+        private string[] _spoutChannelNames = System.Array.Empty<string>();
         [HideInInspector][SerializeField] private List<string> _audioChannelsToAdd = new List<string>();
         [HideInInspector][SerializeField] private List<string> _audioChannelsToRemove = new List<string>();
-        [HideInInspector][SerializeField] private uint _audioChannelsBufferSize = 32;
         /// <summary>
         /// Inspector foldout settings
         /// </summary>
@@ -491,6 +614,7 @@ namespace Csound.Unity
         [HideInInspector][SerializeField] private bool _drawCsoundString = false;
         [HideInInspector][SerializeField] private bool _drawTestScore = false;
         [HideInInspector][SerializeField] private bool _drawSettings = false;
+        [HideInInspector][SerializeField] private bool _drawAudioInputRoutes = true;
         [HideInInspector][SerializeField] private bool _drawChannels = false;
         [HideInInspector][SerializeField] private bool _drawAudioChannels = false;
         [HideInInspector][SerializeField] private bool _drawPresets = false;
@@ -514,8 +638,70 @@ namespace Csound.Unity
 
         private bool initialized = false;
         private bool _initializing = false;
-        private uint ksmps = 32;
+        private uint _ksmps = 32;
         private uint ksmpsIndex = 0;
+
+        /// <summary>
+        /// Counts output frames produced since the last <c>Init()</c>.
+        /// A short linear fade-in is applied until this reaches
+        /// <see cref="StartupFadeSamples"/>, masking transients from chained
+        /// sources not yet having filled their buffers at startup.
+        /// </summary>
+        private int _startupFadeIndex = 0;
+
+        /// <summary>
+        /// Number of frames over which the startup fade ramps 0→1.
+        /// 2048 frames ≈ 43 ms at 48 kHz.
+        /// </summary>
+        private const int StartupFadeSamples = 2048;
+
+        /// <summary>
+        /// Number of frames pre-mixed per routing batch. Pre-mixing at buffer granularity
+        /// (rather than per ksmps) dramatically reduces overhead at small ksmps values
+        /// (e.g. ksmps=1 → 44100 route calls/sec → 86 calls/sec with audioRoutingBufferSize=512).
+        /// Must be >= ksmps; enforced at runtime by clamping to the next multiple of ksmps.
+        /// </summary>
+        [HideInInspector][SerializeField] private int _audioRoutingBufferSize = 512;
+
+        /// <summary>Pre-computed route mix for the current routing block. Size = audioRoutingBufferSize × maxSpinCh.</summary>
+        private float[] _routePreMixBuffer = System.Array.Empty<float>();
+        /// <summary>The bufferFrameOffset at which the current _routePreMixBuffer was computed.</summary>
+        private int _routingBlockStart = -1;
+        /// <summary>maxSpinCh used when _routePreMixBuffer was last allocated.</summary>
+        private int _routePreMixMaxSpinCh = 0;
+
+        /// <summary>
+        /// Per-route fade-in counters for <see cref="ApplyAudioInputRoutes"/>.
+        /// Each entry starts at -1 (not yet triggered). When a route's source becomes
+        /// ready for the first time the counter is set to 0 and ramps up to
+        /// <see cref="SpinFadeSamples"/>. This ensures that FM or AM modulation depth
+        /// ramps smoothly from zero instead of jumping full-amplitude the instant the
+        /// audio chain connects — even if that happens seconds after playback starts.
+        /// </summary>
+        private int[] _spinFadeIndices = System.Array.Empty<int>();
+
+        /// <summary>
+        /// True once at least one audio input route has been added. Used to keep
+        /// calling <see cref="ClearSpin"/> every ksmps after all routes are removed,
+        /// so Csound reads silence rather than stale samples.
+        /// </summary>
+        private bool _spinNeedsClearing;
+
+        /// <summary>
+        /// One-block staging buffer for <see cref="processClipAudio"/>.
+        /// Filled sample-by-sample during the current ksmps period and flushed
+        /// into Csound's spin buffer (via AddInputSample) at the next ksmps boundary,
+        /// so that clip audio and Audio Input Routes are mixed additively.
+        /// Sized to ksmps × numChannels; reallocated only when those values change.
+        /// </summary>
+        private float[] _clipSpinBuffer = System.Array.Empty<float>();
+
+        /// <summary>
+        /// Duration of the per-route spin-injection fade-in.
+        /// 4800 samples = 100 ms at 48 kHz — fast enough to be almost imperceptible
+        /// but long enough to cover any jitter in when chained instances become ready.
+        /// </summary>
+        private const int SpinFadeSamples = 4800;
         private float zerdbfs = 1;
         private bool compiledOk = false;
         private volatile bool performanceFinished;
@@ -527,6 +713,9 @@ namespace Csound.Unity
         private float[] bufferB;
         private int activeBufferIndex;
         private float[] outputBuffer;
+        // Full Csound output buffer: interleaved, sized frames * nchnls (all Csound channels, not just Unity's stereo).
+        // Rebuilt in ProcessBlock when updateOutputBuffer is true.
+        private float[] _csoundOutBuffer;
 
         private const string GLOBAL_TAG = "(GLOBAL)";
 
@@ -557,8 +746,20 @@ namespace Csound.Unity
 
 
             if (audioRate == 0 || !overrideSamplingRate) audioRate = AudioSettings.outputSampleRate;
-            // kr is independent of the sr toggle; clamp to sr so ksmps >= 1 always holds
-            if (controlRate == 0 || controlRate > audioRate) controlRate = audioRate;
+            // Snap kr so that ksmps = sr/kr is always a positive integer.
+            // Derive kr from the stored ksmps so that a device sr change
+            // (e.g. 48000 → 44100) keeps ksmps=32 and updates kr = sr/ksmps,
+            // rather than rounding from the old kr which would yield a different ksmps.
+            if (ksmps <= 0) ksmps = 32;
+            if (controlRate <= 0 || controlRate > audioRate)
+            {
+                controlRate = audioRate; // ksmps = 1
+                ksmps = 1;
+            }
+            else
+            {
+                controlRate = Mathf.Max(1, audioRate / ksmps);
+            }
 
             audioSource = GetComponent<AudioSource>();
 
@@ -593,7 +794,7 @@ namespace Csound.Unity
             /// the CsoundUnityBridge constructor the string with the csound code and a list of the Global Environment Variables Settings.
             /// It then calls createCsound() to create an instance of Csound and compile the csd string.
             /// After this we start the performance of Csound.
-            csound = new CsoundUnityBridge(_csoundString, environmentSettings, audioRate, controlRate);
+            csound = new CsoundUnityBridge(_csoundString, environmentSettings, audioRate, controlRate, ksmps);
             if (csound != null && csound.CompiledOk)
             {
                 /// channels are created when a csd file is selected in the inspector
@@ -602,6 +803,7 @@ namespace Csound.Unity
                     // initialise channels if found in xml descriptor..
                     for (int i = 0; i < channels.Count; i++)
                     {
+                        if (channels[i] == null || string.IsNullOrWhiteSpace(channels[i].channel)) continue;
                         if (channels[i].type.Contains("combobox"))
                         { csound.SetChannel(channels[i].channel, channels[i].value + 1); }
                         else
@@ -616,9 +818,10 @@ namespace Csound.Unity
                 }
                 foreach (var audioChannel in availableAudioChannels)
                 {
+                    if (string.IsNullOrWhiteSpace(audioChannel)) continue;
                     if (namedAudioChannelDataDict.ContainsKey(audioChannel)) continue;
                     namedAudioChannelDataDict.Add(audioChannel, new MYFLT[bufferSize]);
-                    namedAudioChannelTempBufferDict.Add(audioChannel, new MYFLT[_audioChannelsBufferSize]);
+                    namedAudioChannelTempBufferDict.Add(audioChannel, new MYFLT[Mathf.Max(1, ksmps)]);
                 }
 
                 // This coroutine prints the Csound output to the Unity console
@@ -635,8 +838,23 @@ namespace Csound.Unity
 
                     Debug.Log($"Csound zerdbfs: {zerdbfs}");
 
+                    // Sync _ksmps with the actual value Csound compiled with,
+                    // then resize any temp buffers that were allocated with a stale size.
+                    _ksmps = GetKsmps();
+                    foreach (var key in new System.Collections.Generic.List<string>(namedAudioChannelTempBufferDict.Keys))
+                    {
+                        if (namedAudioChannelTempBufferDict[key].Length != (int)_ksmps)
+                            namedAudioChannelTempBufferDict[key] = new MYFLT[(int)_ksmps];
+                    }
+
+                    // Build the spout channel table now that nchnls is known from Csound itself.
+                    InitSpoutChannels();
+
                     initialized = true;
                     _initializing = false;
+#if UNITY_6000_0_OR_NEWER
+                    OnInitializedGenerator();
+#endif
                     OnCsoundInitialized?.Invoke();
                 }
             }
@@ -765,8 +983,16 @@ namespace Csound.Unity
             // the native Csound object, avoiding a SIGSEGV use-after-free.
             initialized = false;
             _initializing = false;
+#if UNITY_6000_0_OR_NEWER
+            OnStoppedGenerator();
+#endif
             performanceFinished = false;
             ksmpsIndex = 0;
+            _startupFadeIndex = 0;
+            _spinFadeIndices      = System.Array.Empty<int>(); // reset so next Init re-arms all route fades
+            _routePreMixBuffer    = System.Array.Empty<float>();
+            _routingBlockStart    = -1;
+            _routePreMixMaxSpinCh = 0;
             _channelsIndexDict.Clear();
             namedAudioChannelDataDict.Clear();
             namedAudioChannelTempBufferDict.Clear();
@@ -894,6 +1120,13 @@ namespace Csound.Unity
                 }
             }
             this._availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
+            this._nchnls           = ParseCsdFileForNchnls(fileName);
+
+            // Parse ksmps from the CSD and store it as the intended value.
+            // The editor's SnapKrToSr will derive controlRate = audioRate / ksmps on next repaint.
+            int parsedKsmps = ParseCsdFileForKsmps(fileName);
+            if (parsedKsmps > 0)
+                this.ksmps = parsedKsmps;
 
             foreach (var name in availableAudioChannels)
             {
@@ -902,7 +1135,7 @@ namespace Csound.Unity
                 if (!namedAudioChannelDataDict.ContainsKey(name))
                 {
                     namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
-                    namedAudioChannelTempBufferDict.Add(name, new MYFLT[ksmps]);
+                    namedAudioChannelTempBufferDict.Add(name, new MYFLT[_ksmps]);
                 }
             }
 #endif
@@ -1006,6 +1239,95 @@ namespace Csound.Unity
 
         #endregion PERFORMANCE
 
+#if !UNITY_WEBGL || UNITY_EDITOR
+        #region MIDI
+
+        /// <summary>
+        /// Sends a MIDI Note On message to Csound.
+        /// The CSD must have a MIDI device option (e.g. <c>&lt;CsOptions&gt; -M0 &lt;/CsOptions&gt;)
+        /// for Csound to process MIDI events.
+        /// </summary>
+        /// <param name="channel">MIDI channel, 1–16</param>
+        /// <param name="note">Note number, 0–127</param>
+        /// <param name="velocity">Velocity, 0–127. Velocity 0 is treated as Note Off by convention.</param>
+        public void SendMidiNoteOn(int channel, int note, int velocity)
+        {
+            if (!IsInitialized || csound == null) return;
+            byte status = (byte)(0x90 | Mathf.Clamp(channel - 1, 0, 15));
+            csound.EnqueueMidiMessage(new byte[]
+            {
+                status,
+                (byte)Mathf.Clamp(note,     0, 127),
+                (byte)Mathf.Clamp(velocity, 0, 127)
+            });
+        }
+
+        /// <summary>
+        /// Sends a MIDI Note Off message to Csound.
+        /// </summary>
+        /// <param name="channel">MIDI channel, 1–16</param>
+        /// <param name="note">Note number, 0–127</param>
+        /// <param name="velocity">Release velocity, 0–127 (usually 0)</param>
+        public void SendMidiNoteOff(int channel, int note, int velocity = 0)
+        {
+            if (!IsInitialized || csound == null) return;
+            byte status = (byte)(0x80 | Mathf.Clamp(channel - 1, 0, 15));
+            csound.EnqueueMidiMessage(new byte[]
+            {
+                status,
+                (byte)Mathf.Clamp(note,     0, 127),
+                (byte)Mathf.Clamp(velocity, 0, 127)
+            });
+        }
+
+        /// <summary>
+        /// Sends a MIDI Control Change message to Csound.
+        /// </summary>
+        /// <param name="channel">MIDI channel, 1–16</param>
+        /// <param name="controller">Controller number, 0–127</param>
+        /// <param name="value">Controller value, 0–127</param>
+        public void SendMidiControlChange(int channel, int controller, int value)
+        {
+            if (!IsInitialized || csound == null) return;
+            byte status = (byte)(0xB0 | Mathf.Clamp(channel - 1, 0, 15));
+            csound.EnqueueMidiMessage(new byte[]
+            {
+                status,
+                (byte)Mathf.Clamp(controller, 0, 127),
+                (byte)Mathf.Clamp(value,       0, 127)
+            });
+        }
+
+        /// <summary>
+        /// Sends a MIDI Program Change message to Csound.
+        /// </summary>
+        /// <param name="channel">MIDI channel, 1–16</param>
+        /// <param name="program">Program number, 0–127</param>
+        public void SendMidiProgramChange(int channel, int program)
+        {
+            if (!IsInitialized || csound == null) return;
+            byte status = (byte)(0xC0 | Mathf.Clamp(channel - 1, 0, 15));
+            csound.EnqueueMidiMessage(new byte[]
+            {
+                status,
+                (byte)Mathf.Clamp(program, 0, 127)
+            });
+        }
+
+        /// <summary>
+        /// Sends a raw MIDI message (1–3 bytes) directly to Csound.
+        /// Use this for any MIDI message type not covered by the helper methods above.
+        /// </summary>
+        /// <param name="data">Raw MIDI bytes</param>
+        public void SendMidiMessage(byte[] data)
+        {
+            if (!IsInitialized || csound == null) return;
+            csound.EnqueueMidiMessage(data);
+        }
+
+        #endregion MIDI
+#endif
+
         #region CSD_PARSE
 
         /// <summary>
@@ -1013,6 +1335,93 @@ namespace Csound.Unity
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
+        /// <summary>
+        /// Reads the CSD file and returns the value of <c>nchnls</c> declared in the
+        /// orchestra header.  Returns 2 as a safe default when the line is not found.
+        /// </summary>
+        /// <summary>
+        /// Reads the CSD file and returns the value of <c>nchnls</c> (output channels)
+        /// declared in the orchestra header.  Correctly ignores <c>nchnls_i</c> (input
+        /// channels).  Returns 0 when the directive is absent — in that case Csound
+        /// defaults to 1, but callers should treat 0 as "unknown / not specified".
+        /// </summary>
+        public static int ParseCsdFileForNchnls(string filename)
+        {
+            if (!File.Exists(filename)) return 0;
+            foreach (var line in File.ReadAllLines(filename))
+            {
+                var t = line.TrimStart();
+                if (t.StartsWith(";")) continue;
+                if (!t.StartsWith("nchnls")) continue;
+
+                // Exclude nchnls_i — the character immediately after "nchnls" must be
+                // whitespace or '=' (not '_').
+                int afterKw = "nchnls".Length;
+                if (afterKw < t.Length && t[afterKw] == '_') continue;
+
+                var eq = t.IndexOf('=');
+                if (eq < 0) continue;
+                var valToken = t.Substring(eq + 1).TrimStart().Split(new char[]{' ', '\t', ';'}, 2)[0];
+                if (int.TryParse(valToken, out int n) && n > 0) return n;
+            }
+            return 0; // not specified — Csound default is 1
+        }
+
+        /// <summary>
+        /// Parses ksmps from the global header of the CSD's <c>&lt;CsInstruments&gt;</c> section.
+        /// Returns the explicit <c>ksmps</c> value if declared; otherwise computes
+        /// <c>round(sr / kr)</c> if both are present; otherwise returns 0 (not specified).
+        /// Only scans lines before the first <c>instr</c> declaration.
+        /// </summary>
+        public static int ParseCsdFileForKsmps(string filename)
+        {
+            if (!File.Exists(filename)) return 0;
+
+            var inInstruments = false;
+            int parsedSr = 0, parsedKr = 0;
+
+            foreach (var line in File.ReadAllLines(filename))
+            {
+                var t = line.TrimStart();
+
+                if (t.StartsWith("<CsInstruments"))  { inInstruments = true;  continue; }
+                if (t.StartsWith("</CsInstruments")) { break; }
+                if (!inInstruments) continue;
+
+                // Stop at first instr block — ksmps/sr/kr must be in the global header.
+                if (System.Text.RegularExpressions.Regex.IsMatch(t, @"^\binstr\b")) break;
+
+                if (t.StartsWith(";")) continue;
+
+                // Strip inline comment.
+                var semicolon = t.IndexOf(';');
+                var stmt = semicolon >= 0 ? t.Substring(0, semicolon) : t;
+
+                var eq = stmt.IndexOf('=');
+                if (eq < 0) continue;
+                var keyword = stmt.Substring(0, eq).Trim();
+                var valStr  = stmt.Substring(eq + 1).Trim().Split(new char[]{' ', '\t'}, 2)[0];
+
+                switch (keyword)
+                {
+                    case "ksmps" when int.TryParse(valStr, out var k) && k > 0:
+                        return k;
+                    case "sr":
+                        int.TryParse(valStr, out parsedSr);
+                        break;
+                    case "kr":
+                        int.TryParse(valStr, out parsedKr);
+                        break;
+                }
+            }
+
+            // ksmps not explicit — derive from sr/kr if both present.
+            if (parsedSr > 0 && parsedKr > 0)
+                return Mathf.Max(1, Mathf.RoundToInt(parsedSr / (float)parsedKr));
+
+            return 0;
+        }
+
         public static List<string> ParseCsdFileForAudioChannels(string filename)
         {
             if (!File.Exists(filename)) return null;
@@ -1222,24 +1631,19 @@ namespace Csound.Unity
                             }
                             var min = float.Parse(tokens[0], CultureInfo.InvariantCulture);
                             var max = float.Parse(tokens[1], CultureInfo.InvariantCulture);
-                            var val = 0f;
-                            var skew = 1f;
-                            var increment = 1f;
-
-                            if (tokens.Length > 2)
-                            {
-                                val = float.Parse(tokens[2], CultureInfo.InvariantCulture);
-                            }
-                            if (tokens.Length > 3)
-                            {
-                                skew = float.Parse(tokens[3], CultureInfo.InvariantCulture);
-                            }
+                            var val       = tokens.Length > 2 ? float.Parse(tokens[2], CultureInfo.InvariantCulture) : 0f;
+                            var skew      = tokens.Length > 3 ? float.Parse(tokens[3], CultureInfo.InvariantCulture) : 1f;
+                            // Only pass increment when explicitly declared in range() — otherwise
+                            // SetRange uses its own default (0.01f) so sliders behave as floats.
                             if (tokens.Length > 4)
                             {
-                                increment = float.Parse(tokens[4], CultureInfo.InvariantCulture);
+                                var increment = float.Parse(tokens[4], CultureInfo.InvariantCulture);
+                                controller.SetRange(min, max, val, skew, increment);
                             }
-                            // Debug.Log($"{tokens.Length}");
-                            controller.SetRange(min, max, val, skew, increment);
+                            else
+                            {
+                                controller.SetRange(min, max, val, skew);
+                            }
                         }
                     }
 
@@ -1298,11 +1702,7 @@ namespace Csound.Unity
         /// </summary>
         public void ClearSpin()
         {
-            if (csound != null)
-            {
-                Debug.Log("clear spin");
-                csound.ClearSpin();
-            }
+            csound?.ClearSpin();
         }
 
         /// <summary>
@@ -1465,9 +1865,43 @@ namespace Csound.Unity
         }
 
         /// <summary>
+        /// Zero-allocation overload: reads the named audio channel directly into
+        /// <paramref name="dest"/> without any managed or native heap allocation.
+        /// Prefer this on hot audio-thread paths (e.g. inside <c>OnAudioFilterRead</c>
+        /// or a ksmps callback) to avoid GC pressure and the periodic audio dropouts
+        /// it causes.
+        /// </summary>
+        /// <param name="channel">Name of the Csound audio channel to read.</param>
+        /// <param name="dest">Pre-allocated destination array (must be at least ksmps long).</param>
+        public void GetAudioChannel(string channel, MYFLT[] dest)
+        {
+            if (!IsInitialized || csound == null) return;
+            csound.GetAudioChannel(channel, dest);
+        }
+
+        /// <summary>
         /// This method updates the available audio channels that will be used in ProcessBlock
         /// It is called in <see cref="ProcessBlock(float[], int)"/> before further processing is executed
         /// </summary>
+        /// <summary>
+        /// Creates <c>namedAudioChannelDataDict</c> entries and pre-computes the name
+        /// strings for the auto-generated spout channels (<c>main_out_0</c>, <c>main_out_1</c>, …).
+        /// Called once after Csound compilation succeeds so <c>GetNchnls()</c> is accurate.
+        /// </summary>
+        private void InitSpoutChannels()
+        {
+            int nch = (int)GetNchnls();
+            if (nch <= 0) nch = 2;
+
+            _spoutChannelNames = new string[nch];
+            for (int ch = 0; ch < nch; ch++)
+            {
+                _spoutChannelNames[ch] = $"main_out_{ch}";
+                if (!namedAudioChannelDataDict.ContainsKey(_spoutChannelNames[ch]))
+                    namedAudioChannelDataDict.Add(_spoutChannelNames[ch], new MYFLT[bufferSize]);
+            }
+        }
+
         private void UpdateAvailableAudioChannels()
         {
             // add any new channel that could have been added in the meantime
@@ -1475,7 +1909,7 @@ namespace Csound.Unity
             {
                 _availableAudioChannels.Add(newChan);
                 namedAudioChannelDataDict.Add(newChan, new MYFLT[bufferSize]);
-                namedAudioChannelTempBufferDict.Add(newChan, new MYFLT[ksmps]);
+                namedAudioChannelTempBufferDict.Add(newChan, new MYFLT[_ksmps]);
             }
             _audioChannelsToAdd.Clear();
 
@@ -1551,6 +1985,160 @@ namespace Csound.Unity
         }
 
         #endregion AUDIO_CHANNELS
+
+        #region AUDIO_INPUT_ROUTES
+
+        /// <summary>
+        /// Adds a new audio input route to this instance at runtime.
+        /// </summary>
+        /// <remarks>
+        /// The route injects audio from <paramref name="source"/>'s named channel
+        /// <paramref name="sourceChannelName"/> into Csound's spin buffer at
+        /// <paramref name="destSpinChannel"/> before every <c>PerformKsmps</c>.
+        ///
+        /// <para>
+        /// If adding the route would create a circular dependency (e.g. A→B→A), the
+        /// method logs a warning and returns <c>false</c> without modifying the list.
+        /// </para>
+        /// </remarks>
+        /// <param name="source">The CsoundUnity instance to read audio from.</param>
+        /// <param name="sourceChannelName">
+        /// Named audio channel on the source (e.g. <c>"audioL"</c> or <c>"main_out_0"</c>).
+        /// </param>
+        /// <param name="destSpinChannel">Spin buffer channel index on this instance (default 0).</param>
+        /// <param name="level">Volume multiplier applied to the source signal (0–2, default 1).</param>
+        /// <returns>
+        /// An <see cref="AudioRouteResult"/> describing the outcome:
+        /// <list type="bullet">
+        ///   <item><see cref="AudioRouteResult.Added"/> — route added, graph is acyclic.</item>
+        ///   <item><see cref="AudioRouteResult.AddedWithCycle"/> — cycle detected but <paramref name="forceConnection"/> was <c>true</c>; route added anyway.</item>
+        ///   <item><see cref="AudioRouteResult.RejectedCycle"/> — cycle detected and route was NOT added.</item>
+        ///   <item><see cref="AudioRouteResult.InvalidSource"/> — <paramref name="source"/> is <c>null</c>; route was NOT added.</item>
+        /// </list>
+        /// </returns>
+        public AudioRouteResult AddAudioInputRoute(CsoundUnity source, string sourceChannelName,
+            int destSpinChannel = 0, float level = 1f, bool forceConnection = false)
+        {
+            if (source == null) return AudioRouteResult.InvalidSource;
+
+            if (audioInputRoutes.Exists(r =>
+                    r.source            == source            &&
+                    r.sourceChannelName == sourceChannelName &&
+                    r.destSpinChannel   == destSpinChannel))
+                return AudioRouteResult.AlreadyExists;
+
+            var hasCycle = WouldCreateCircle(source);
+            if (hasCycle && !forceConnection)
+            {
+                Debug.LogWarning($"[CsoundUnity] AddAudioInputRoute: adding '{source.name}' → '{name}' " +
+                                 "would create a circular dependency. Route not added. " +
+                                 "Pass forceConnection: true to override.");
+                return AudioRouteResult.RejectedCycle;
+            }
+            if (hasCycle)
+                Debug.LogWarning($"[CsoundUnity] AddAudioInputRoute: '{source.name}' → '{name}' " +
+                                 "creates a circular dependency (forceConnection = true, route added anyway).");
+
+            audioInputRoutes.Add(new AudioInputRoute
+            {
+                source            = source,
+                sourceChannelName = sourceChannelName,
+                destSpinChannel   = destSpinChannel,
+                level             = level,
+            });
+            // Invalidate the fade-index array so it is rebuilt on the next ksmps block.
+            _spinFadeIndices    = System.Array.Empty<int>();
+            _spinNeedsClearing  = true;
+            return hasCycle ? AudioRouteResult.AddedWithCycle : AudioRouteResult.Added;
+        }
+
+        /// <summary>
+        /// Removes the audio input route at <paramref name="index"/> in <see cref="audioInputRoutes"/>.
+        /// </summary>
+        public void RemoveAudioInputRoute(int index)
+        {
+            if (index < 0 || index >= audioInputRoutes.Count) return;
+            audioInputRoutes.RemoveAt(index);
+            _spinFadeIndices = System.Array.Empty<int>();
+        }
+
+        /// <summary>
+        /// Removes all audio input routes whose source is <paramref name="source"/>.
+        /// </summary>
+        public void RemoveAudioInputRoute(CsoundUnity source)
+        {
+            if (source == null) return;
+            audioInputRoutes.RemoveAll(r => r.source == source);
+            _spinFadeIndices = System.Array.Empty<int>();
+        }
+
+        /// <summary>
+        /// Removes the specific audio input route that matches all three key fields.
+        /// </summary>
+        public void RemoveAudioInputRoute(CsoundUnity source, string sourceChannelName, int destSpinChannel)
+        {
+            if (source == null) return;
+            audioInputRoutes.RemoveAll(r =>
+                r.source            == source            &&
+                r.sourceChannelName == sourceChannelName &&
+                r.destSpinChannel   == destSpinChannel);
+            _spinFadeIndices = System.Array.Empty<int>();
+        }
+
+        /// <summary>
+        /// Removes all audio input routes from this instance.
+        /// </summary>
+        public void RemoveAllAudioInputRoutes()
+        {
+            audioInputRoutes.Clear();
+            _spinFadeIndices = System.Array.Empty<int>();
+        }
+
+        /// <summary>
+        /// Returns <c>true</c> if routing audio from <paramref name="newSource"/> into this
+        /// instance would create a circular dependency in the audio graph.
+        /// </summary>
+        /// <remarks>
+        /// The algorithm performs a BFS starting from <c>this</c> node and follows
+        /// <em>outgoing</em> edges — i.e. it finds every instance X that lists any
+        /// already-reachable node as one of its <see cref="audioInputRoutes"/> sources,
+        /// then checks whether X equals <paramref name="newSource"/>.
+        ///
+        /// Because <see cref="audioInputRoutes"/> only stores incoming edges, the search
+        /// must inspect all live <see cref="CsoundUnity"/> instances in the scene.
+        /// </remarks>
+        public bool WouldCreateCircle(CsoundUnity newSource)
+        {
+            // A self-loop is always a cycle.
+            if (newSource == this) return true;
+
+            var allInstances = FindObjectsByType<CsoundUnity>(FindObjectsSortMode.None);
+            var visited = new System.Collections.Generic.HashSet<CsoundUnity>();
+            var queue   = new System.Collections.Generic.Queue<CsoundUnity>();
+            queue.Enqueue(this);
+
+            while (queue.Count > 0)
+            {
+                var node = queue.Dequeue();
+                if (!visited.Add(node)) continue;  // already explored
+
+                // Find every instance whose audioInputRoutes contain `node` as a source
+                // — those are the downstream consumers of `node`'s audio output.
+                foreach (var inst in allInstances)
+                {
+                    if (inst == null || inst.audioInputRoutes == null) continue;
+                    foreach (var route in inst.audioInputRoutes)
+                    {
+                        if (route?.source != node) continue;
+                        if (inst == newSource) return true;   // cycle detected
+                        queue.Enqueue(inst);
+                    }
+                }
+            }
+            return false;
+        }
+
+        #endregion AUDIO_INPUT_ROUTES
 
         #region TABLES
 
@@ -2362,7 +2950,11 @@ namespace Csound.Unity
             {
                 request.downloadHandler = new DownloadHandlerBuffer();
                 yield return request.SendWebRequest();
+#if UNITY_2020_2_OR_NEWER
+                if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+#else
                 if (request.isNetworkError || request.isHttpError)
+#endif
                 {
                     Debug.Log($"Couldn't load data at path: {path}: {request.error}");
                     onDataLoaded?.Invoke(null);
@@ -2676,9 +3268,32 @@ namespace Csound.Unity
 
         void OnAudioFilterRead(float[] data, int channels)
         {
+#if UNITY_6000_0_OR_NEWER
+            // When IAudioGenerator path is active, CsoundRealtime.Process() already produced the
+            // audio — do NOT run ProcessBlock (that would call PerformKsmps a second time on the
+            // same bridge). However, Unity still calls OnAudioFilterRead with the generator output
+            // in 'data', so we use this opportunity to fill outputBuffer (waveform analysers) and
+            // namedAudioChannelDataDict is already filled by the ksmps callbacks in the registry.
+            if (_audioPath == AudioPath.IAudioGenerator)
+            {
+                UpdateOutputBuffer(data, channels);
+                return;
+            }
+#endif
             if (csound != null && initialized)
             {
-                ProcessBlock(data, channels);
+                if (_measureDspLoad)
+                {
+                    _dspSw.Restart();
+                    ProcessBlock(data, channels);
+                    _dspSw.Stop();
+                    double budget = audioRate > 0 ? (data.Length / (double)channels) / audioRate : 0;
+                    UpdateDspLoad(_dspSw.Elapsed.TotalSeconds, budget);
+                }
+                else
+                {
+                    ProcessBlock(data, channels);
+                }
             }
         }
 
@@ -2691,10 +3306,45 @@ namespace Csound.Unity
         {
             if (compiledOk && initialized && !_quitting)
             {
+                // DSP buffer — invalidate the route pre-mix cache so PrecomputeRouteMix
+                // runs fresh for the first ksmps of this buffer, even when blockStart == 0.
+                _routingBlockStart = -1;
+
                 UpdateAvailableAudioChannels();
 
-                for (int i = 0; i < samples.Length; i += numChannels, ksmpsIndex++)
+                var nchnls = (int)GetNchnls();
+                if (nchnls == 0) nchnls = numChannels;
+                var frames = samples.Length / numChannels;
+                var ksmpsLen = GetKsmps();
+                var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
+
+                // Ensure the clip staging buffer is sized before any per-sample write.
+                // The ksmps-boundary resize alone is not enough: ksmpsIndex starts at 0
+                // so the boundary fires only after the first ksmps samples, but writes
+                // start at sample 0 of the very first ProcessBlock call.
+                if (processClipAudio && ksmpsLen > 0)
                 {
+                    int needed = (int)ksmpsLen * numChannels;
+                    if (_clipSpinBuffer.Length != needed)
+                        _clipSpinBuffer = new float[needed];
+                }
+
+                // Ensure the full-channel output buffer is correctly sized (frames * nchnls).
+                if (updateOutputBuffer)
+                {
+                    var needed = frames * nchnls;
+                    if (_csoundOutBuffer == null || _csoundOutBuffer.Length != needed)
+                        _csoundOutBuffer = new float[needed];
+                }
+
+                for (int i = 0, frame = 0; i < samples.Length; i += numChannels, frame++, ksmpsIndex++)
+                {
+                    // Startup fade-in: ramps 0→1 over StartupFadeSamples frames to mask
+                    // transients caused by chained sources not yet having filled their buffers.
+                    var startupFade = _startupFadeIndex < StartupFadeSamples
+                        ? _startupFadeIndex++ / (float)StartupFadeSamples
+                        : 1f;
+
                     for (uint channel = 0; channel < numChannels; channel++)
                     {
                         // necessary to avoid calling csound functions when quitting or stopping while reading this block of samples
@@ -2707,8 +3357,26 @@ namespace Csound.Unity
                         }
                         else
                         {
-                            if (!performanceFinished && (ksmpsIndex >= GetKsmps()) && (GetKsmps() > 0))
+                            if (!performanceFinished && ksmpsLen > 0 && ksmpsIndex >= ksmpsLen)
                             {
+                                // Clear spin once per ksmps block so all contributors start from zero
+                                // and mix additively without stale data from the previous block.
+                                // Only paid when spin is actually in use (routes, clip audio, or recently cleared).
+                                var spinInUse = processClipAudio
+                                                || (audioInputRoutes != null && audioInputRoutes.Count > 0)
+                                                || _spinNeedsClearing;
+                                if (spinInUse)
+                                {
+                                    ClearSpin();
+
+                                    // Flush clip audio from the previous period's staging buffer.
+                                    if (processClipAudio)
+                                        FlushClipSpinBuffer(numChannels);
+
+                                    // Add audio from input routes (uses AddInputSample — additive).
+                                    ApplyAudioInputRoutes(frame, numChannels);
+                                }
+
                                 var res = PerformKsmps();
                                 performanceFinished = res != 0;
                                 ksmpsIndex = 0;
@@ -2716,7 +3384,8 @@ namespace Csound.Unity
                                 foreach (var chanName in availableAudioChannels)
                                 {
                                     if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
-                                    namedAudioChannelTempBufferDict[chanName] = GetAudioChannel(chanName);
+                                    // Use the zero-allocation overload to avoid GC pressure on the audio thread.
+                                    GetAudioChannel(chanName, namedAudioChannelTempBufferDict[chanName]);
                                 }
 
                                 OnCsoundPerformKsmps?.Invoke();
@@ -2732,12 +3401,15 @@ namespace Csound.Unity
                             {
                                 if (processClipAudio)
                                 {
-                                    SetInputSample((int)ksmpsIndex, (int)channel, samples[i + channel] * (float)csound.Get0dbfs());
+                                    // Stage clip sample into the per-ksmps buffer.
+                                    // It will be flushed into spin at the next ksmps boundary,
+                                    // so it mixes additively with any Audio Input Routes.
+                                    _clipSpinBuffer[(int)ksmpsIndex * numChannels + (int)channel] =
+                                        samples[i + channel] * zerdbfs;
                                 }
 
-                                //if csound nChnls are more than the current channel, set the last csound channel available on the sample (assumes GetNchnls above 0)
-                                var outputSampleChannel = channel < GetNchnls() ? channel : GetNchnls() - 1;
-                                var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) / (float)csound.Get0dbfs();
+                                var outputSampleChannel = channel < (uint)nchnls ? channel : (uint)(nchnls - 1);
+                                var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) * inv0dbfs * startupFade;
                                 // multiply Csound output by the sample value to maintain spatialization set by Unity.
                                 // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
                                 samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
@@ -2748,6 +3420,27 @@ namespace Csound.Unity
                                     Debug.LogWarning("Volume is too high! Clearing output");
                                 }
                             }
+                        }
+                    }
+
+                    // Capture ALL Csound output channels (up to nchnls) into the full-channel buffer
+                    // for visualisations and future audio routing. Only when needed and performance is running.
+                    if (updateOutputBuffer && !mute && !performanceFinished && _csoundOutBuffer != null)
+                    {
+                        for (int ch = 0; ch < nchnls; ch++)
+                            _csoundOutBuffer[frame * nchnls + ch] = (float)GetOutputSample((int)ksmpsIndex, ch) * inv0dbfs;
+                    }
+
+                    // Auto-populate spout named channels (main_out_0, main_out_1, ...) so that any
+                    // CsoundUnity instance can be used as an audio source in AudioInputRoutes
+                    // without modifying the CSD to add chnset lines.
+                    if (!mute && !performanceFinished && _spoutChannelNames.Length > 0)
+                    {
+                        for (int ch = 0; ch < _spoutChannelNames.Length; ch++)
+                        {
+                            if (!namedAudioChannelDataDict.TryGetValue(_spoutChannelNames[ch], out var spoutBuf)) continue;
+                            if (frame < spoutBuf.Length)
+                                spoutBuf[frame] = GetOutputSample((int)ksmpsIndex, ch) * inv0dbfs;
                         }
                     }
 
@@ -2767,18 +3460,9 @@ namespace Csound.Unity
                         }
                     }
                 }
-                if (updateOutputBuffer)
-                {
-                    if (bufferA.Length != samples.Length)
-                    {
-                        bufferA = new float[samples.Length];
-                        bufferB = new float[samples.Length];
-                    }
-                    Array.Copy(samples, activeBufferIndex == 0 ? bufferA : bufferB, samples.Length);
-                    outputBuffer = activeBufferIndex == 0 ? bufferA : bufferB;
-                    activeBufferIndex = activeBufferIndex == 0 ? 1 : 0;
-                    OutputChannels = numChannels;
-                }
+
+                if (updateOutputBuffer && _csoundOutBuffer != null)
+                    UpdateOutputBuffer(_csoundOutBuffer, nchnls);
             }
         }
 
@@ -2791,6 +3475,160 @@ namespace Csound.Unity
             //print Csound message to Unity console....
             for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
                 print(csound.GetCsoundMessage());
+        }
+
+        /// <summary>
+        /// Flushes the clip-audio staging buffer (<see cref="_clipSpinBuffer"/>) into Csound's
+        /// spin buffer via <see cref="AddInputSample"/>, so it mixes additively with any routes.
+        /// Called once per ksmps boundary, before <see cref="PerformKsmps"/>, when
+        /// <see cref="processClipAudio"/> is enabled.
+        /// </summary>
+        private void FlushClipSpinBuffer(int numChannels)
+        {
+            int k = (int)GetKsmps();
+            for (int frame = 0; frame < k; frame++)
+                for (int ch = 0; ch < numChannels; ch++)
+                {
+                    int idx = frame * numChannels + ch;
+                    if (idx >= _clipSpinBuffer.Length) return;
+                    AddInputSample(frame, ch, _clipSpinBuffer[idx]);
+                }
+        }
+
+        /// <summary>
+        /// Injects audio from <see cref="audioInputRoutes"/> into this instance's Csound spin buffer
+        /// via <see cref="AddInputSample"/> (additive — caller is responsible for <see cref="ClearSpin"/>).
+        /// This is a thin wrapper: it pre-computes the route mix once per routing block
+        /// (every <see cref="_audioRoutingBufferSize"/> frames) and then copies the cached
+        /// result into Csound's spin buffer for this ksmps block. At ksmps=1 this reduces
+        /// route evaluation from 44100 calls/sec to ~86 calls/sec (with buffer size 512).
+        /// </summary>
+        /// <param name="blockFrameOffset">Index of the first frame of this ksmps block within the current DSP buffer.</param>
+        /// <param name="destNumChannels">Number of Unity audio channels on this instance (unused, kept for API compatibility).</param>
+        private void ApplyAudioInputRoutes(int blockFrameOffset, int destNumChannels)
+        {
+            if (audioInputRoutes == null || audioInputRoutes.Count == 0 || muteAudioInputRoutes) return;
+
+            int ksmps       = (int)GetKsmps();
+            int routingSize = Mathf.Max(_audioRoutingBufferSize, ksmps);
+            int blockStart  = (blockFrameOffset / routingSize) * routingSize;
+
+            if (blockStart != _routingBlockStart)
+                PrecomputeRouteMix(blockStart);
+
+            ApplyPreMixToSpin(blockFrameOffset);
+        }
+
+        /// <summary>
+        /// Pre-computes the full route mix for one routing block of <see cref="_audioRoutingBufferSize"/>
+        /// frames and caches it in <see cref="_routePreMixBuffer"/>. Called once per routing block
+        /// (every <c>audioRoutingBufferSize</c> frames) rather than once per ksmps, dramatically
+        /// reducing overhead at low ksmps values.
+        /// </summary>
+        /// <param name="blockStart">The frame offset at which this routing block begins.</param>
+        private void PrecomputeRouteMix(int blockStart)
+        {
+            if (audioInputRoutes == null || audioInputRoutes.Count == 0 || muteAudioInputRoutes) return;
+
+            int count       = audioInputRoutes.Count;
+            int ksmps       = (int)GetKsmps();
+            int routingSize = Mathf.Max(_audioRoutingBufferSize, ksmps); // must be >= ksmps
+
+            // Keep per-route fade array in sync.
+            if (_spinFadeIndices.Length != count)
+            {
+                var next = new int[count];
+                for (int i = 0; i < count; i++) next[i] = -1;
+                _spinFadeIndices = next;
+            }
+
+            // Find max destination spin channel.
+            int maxSpinCh = 0;
+            for (int r = 0; r < count; r++)
+                if (audioInputRoutes[r] != null)
+                    maxSpinCh = System.Math.Max(maxSpinCh, audioInputRoutes[r].destSpinChannel + 1);
+            if (maxSpinCh <= 0) return;
+
+            // Resize pre-mix buffer if needed.
+            int bufSize = routingSize * maxSpinCh;
+            if (_routePreMixBuffer.Length != bufSize || _routePreMixMaxSpinCh != maxSpinCh)
+            {
+                _routePreMixBuffer    = new float[bufSize];
+                _routePreMixMaxSpinCh = maxSpinCh;
+            }
+            else
+            {
+                System.Array.Clear(_routePreMixBuffer, 0, bufSize);
+            }
+            _routingBlockStart = blockStart;
+
+            for (int r = 0; r < count; r++)
+            {
+                var route = audioInputRoutes[r];
+                if (route == null || route.source == null || !route.source.IsInitialized) continue;
+                if (string.IsNullOrEmpty(route.sourceChannelName)) continue;
+                if (!route.source.namedAudioChannelDataDict.TryGetValue(route.sourceChannelName, out var srcData)) continue;
+
+                if (_spinFadeIndices[r] < 0) _spinFadeIndices[r] = 0;
+
+                int   spinCh     = route.destSpinChannel;
+                float routeLevel = route.level;
+
+                for (int k = 0; k < routingSize; k++)
+                {
+                    int srcFrame = blockStart + k;
+                    if (srcFrame >= srcData.Length) break;
+
+                    float spinFade = _spinFadeIndices[r] < SpinFadeSamples
+                        ? _spinFadeIndices[r]++ / (float)SpinFadeSamples
+                        : 1f;
+
+                    _routePreMixBuffer[k * maxSpinCh + spinCh] +=
+                        (float)srcData[srcFrame] * zerdbfs * spinFade * routeLevel;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Copies the pre-computed route mix for the current ksmps block from
+        /// <see cref="_routePreMixBuffer"/> into Csound's spin buffer via
+        /// <see cref="AddInputSample"/>. Cheap — no per-route work, just a strided copy.
+        /// </summary>
+        /// <param name="blockFrameOffset">Index of the first frame of this ksmps block within the current DSP buffer.</param>
+        private void ApplyPreMixToSpin(int blockFrameOffset)
+        {
+            if (_routePreMixBuffer.Length == 0 || _routePreMixMaxSpinCh <= 0) return;
+            int ksmps       = (int)GetKsmps();
+            int routingSize = Mathf.Max(_audioRoutingBufferSize, ksmps);
+            int localOffset = blockFrameOffset - _routingBlockStart;
+
+            for (int k = 0; k < ksmps; k++)
+            {
+                int localIdx = localOffset + k;
+                if (localIdx < 0 || localIdx >= routingSize) break;
+                for (int ch = 0; ch < _routePreMixMaxSpinCh; ch++)
+                    AddInputSample(k, ch, _routePreMixBuffer[localIdx * _routePreMixMaxSpinCh + ch]);
+            }
+        }
+
+        /// <summary>
+        /// Copies <paramref name="samples"/> into the double-buffer exposed as <see cref="OutputBuffer"/>.
+        /// <paramref name="numChannels"/> should reflect the actual Csound <c>nchnls</c> so that all
+        /// output channels (not just Unity's stereo pair) are available to visualisers and audio routing.
+        /// No-op when <see cref="updateOutputBuffer"/> is false.
+        /// </summary>
+        private void UpdateOutputBuffer(float[] samples, int numChannels)
+        {
+            if (!updateOutputBuffer) return;
+            if (bufferA.Length != samples.Length)
+            {
+                bufferA = new float[samples.Length];
+                bufferB = new float[samples.Length];
+            }
+            Array.Copy(samples, activeBufferIndex == 0 ? bufferA : bufferB, samples.Length);
+            outputBuffer = activeBufferIndex == 0 ? bufferA : bufferB;
+            activeBufferIndex = activeBufferIndex == 0 ? 1 : 0;
+            OutputChannels = numChannels;
         }
 
         /// <summary>
@@ -2840,11 +3678,28 @@ namespace Csound.Unity
         }
 
         private bool _quitting = false;
+
+#if UNITY_6000_0_OR_NEWER
+        /// <summary>
+        /// Implemented in <c>CsoundUnity.Generator.cs</c>.
+        /// Called from <see cref="OnApplicationQuit"/> to eagerly clear the
+        /// IAudioGenerator DSP connection before FMOD tears down.
+        /// </summary>
+        partial void OnApplicationQuitGenerator();
+#endif
+
         /// <summary>
         /// Called automatically when the game stops. Needed so that Csound stops when your game does
         /// </summary>
         void OnApplicationQuit()
         {
+#if UNITY_6000_0_OR_NEWER
+            // Clear the IAudioGenerator connection BEFORE FMOD starts tearing down
+            // its DSP graph.  OnDisable/OnDestroy fire too late (scene restore happens
+            // after FMOD system objects are freed), causing a null-pointer crash inside
+            // flushDSPConnectionRequests.
+            OnApplicationQuitGenerator();
+#endif
             _quitting = true;
             if (LoggingCoroutine != null)
                 StopCoroutine(LoggingCoroutine);
@@ -2859,7 +3714,7 @@ namespace Csound.Unity
 
         #region WEBGL
 
-        public List<string> webGLAssetsList;
+        [HideInInspector] public List<string> webGLAssetsList;
 #if UNITY_WEBGL && !UNITY_EDITOR
     private static AudioListener _activeAudioListener;
     public static AudioListener ActiveAudioListener

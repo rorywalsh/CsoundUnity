@@ -45,7 +45,7 @@ namespace Csound.Unity
     /// CsoundUnityChild is a component that can output AudioChannels found in the csd of the associated CsoundUnity gameObject
     /// </summary>
     [RequireComponent(typeof(AudioSource))]
-    public class CsoundUnityChild : MonoBehaviour
+    public partial class CsoundUnityChild : MonoBehaviour
     {
         #region PUBLIC_FIELDS
 
@@ -194,15 +194,57 @@ namespace Csound.Unity
         void Start()
         {
             if (csoundUnity) zerodbfs = csoundUnity.Get0dbfs();
+#if UNITY_6000_0_OR_NEWER
+            OnStartGenerator();
+#endif
         }
 
         void OnAudioFilterRead(float[] data, int channels)
         {
+#if UNITY_6000_0_OR_NEWER
+            // When IAudioGenerator path is active, audio is produced by CsoundChildRealtime.
+            // Skip the classic multiplication loop so we don't double-process.
+            if (_childUsingIAudioGenerator) return;
+#endif
             if (csoundUnity != null)
             {
                 ProcessBlock(data, channels);
             }
         }
+
+#if UNITY_6000_0_OR_NEWER
+        /// <summary>Set to true by CsoundUnityChild.Generator.cs when IAudioGenerator path is active.</summary>
+        private bool _childUsingIAudioGenerator;
+
+        /// <summary>Set to true in OnApplicationQuit so teardown skips FMOD DSP calls.</summary>
+        private bool _quitting;
+
+        partial void OnStartGenerator();
+
+        private void OnApplicationQuit()
+        {
+            // Clear the generator BEFORE FMOD starts tearing down its DSP graph.
+            // OnDisable/OnDestroy fire too late (after FMOD system objects are freed),
+            // which causes a null-pointer crash inside flushDSPConnectionRequests.
+            if (_childUsingIAudioGenerator && audioSource != null)
+                audioSource.generator = null;
+
+            _quitting = true;
+        }
+
+        private void OnDisable()
+        {
+            OnDisableGenerator();
+        }
+
+        private void OnDestroy()
+        {
+            OnDestroyGenerator();
+        }
+
+        partial void OnDisableGenerator();
+        partial void OnDestroyGenerator();
+#endif
 
         void ProcessBlock(float[] samples, int numChannels)
         {

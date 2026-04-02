@@ -60,10 +60,10 @@ namespace Csound.Unity
         SerializedProperty m_overrideSamplingRate;
     	SerializedProperty m_audioRate;
     	SerializedProperty m_controlRate;
+        SerializedProperty m_ksmps;
         SerializedProperty m_enviromentSettings;
         SerializedProperty m_channelControllers;
         SerializedProperty m_availableAudioChannels;
-        SerializedProperty m_audioChannelsBufferSize;
         SerializedProperty m_drawTestScore;
         SerializedProperty m_drawSettings;
         SerializedProperty m_drawChannels;
@@ -76,6 +76,17 @@ namespace Csound.Unity
         SerializedProperty m_drawPresetsLoad;
         SerializedProperty m_drawPresetsSave;
         SerializedProperty m_drawPresetsImport;
+        SerializedProperty m_audioInputRoutes;
+        SerializedProperty m_drawAudioInputRoutes;
+        SerializedProperty m_muteAudioInputRoutes;
+        ReorderableList audioInputRoutesList;
+        SerializedProperty m_webGLAssetsList;
+        SerializedProperty m_measureDspLoad;
+#if UNITY_6000_0_OR_NEWER
+        SerializedProperty m_audioPath;
+        SerializedProperty m_generatorStartupDelay;
+        SerializedProperty m_audioRoutingBufferSize;
+#endif
 
         private Vector2 scrollPos;
         private Vector2 presetsScrollPos;
@@ -107,6 +118,7 @@ namespace Csound.Unity
         void OnEnable()
         {
             csoundUnity = (CsoundUnity)target;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 
             m_csoundFileName = this.serializedObject.FindProperty("_csoundFileName");
             m_currentPreset = this.serializedObject.FindProperty("_currentPreset");
@@ -124,10 +136,10 @@ namespace Csound.Unity
             m_overrideSamplingRate = this.serializedObject.FindProperty("overrideSamplingRate");
         	m_audioRate = this.serializedObject.FindProperty("audioRate");
         	m_controlRate = this.serializedObject.FindProperty("controlRate");
+            m_ksmps = this.serializedObject.FindProperty("ksmps");
             m_enviromentSettings = this.serializedObject.FindProperty("environmentSettings");
             m_channelControllers = this.serializedObject.FindProperty("_channels");
             m_availableAudioChannels = this.serializedObject.FindProperty("_availableAudioChannels");
-            m_audioChannelsBufferSize = this.serializedObject.FindProperty("_audioChannelsBufferSize");
             m_drawCsoundString = this.serializedObject.FindProperty("_drawCsoundString");
             m_drawTestScore = this.serializedObject.FindProperty("_drawTestScore");
             m_drawSettings = this.serializedObject.FindProperty("_drawSettings");
@@ -140,6 +152,34 @@ namespace Csound.Unity
             m_drawPresetsLoad = this.serializedObject.FindProperty("_drawPresetsLoad");
             m_drawPresetsSave = this.serializedObject.FindProperty("_drawPresetsSave");
             m_drawPresetsImport = this.serializedObject.FindProperty("_drawPresetsImport");
+            m_audioInputRoutes      = this.serializedObject.FindProperty("audioInputRoutes");
+            m_drawAudioInputRoutes  = this.serializedObject.FindProperty("_drawAudioInputRoutes");
+            m_muteAudioInputRoutes  = this.serializedObject.FindProperty("muteAudioInputRoutes");
+            m_webGLAssetsList      = this.serializedObject.FindProperty("webGLAssetsList");
+            m_measureDspLoad       = this.serializedObject.FindProperty("_measureDspLoad");
+
+            // displayHeader = false: the foldout in DrawAudioInputRoutes acts as the header.
+            audioInputRoutesList = new ReorderableList(serializedObject, m_audioInputRoutes,
+                draggable: true, displayHeader: false, displayAddButton: true, displayRemoveButton: true)
+            {
+                elementHeightCallback = index =>
+                {
+                    var elem = m_audioInputRoutes.GetArrayElementAtIndex(index);
+                    return EditorGUI.GetPropertyHeight(elem, GUIContent.none, true) + 4f;
+                },
+                drawElementCallback = (rect, index, isActive, isFocused) =>
+                {
+                    rect.y      += 2f;
+                    rect.height -= 4f;
+                    var elem = m_audioInputRoutes.GetArrayElementAtIndex(index);
+                    EditorGUI.PropertyField(rect, elem, GUIContent.none, true);
+                }
+            };
+#if UNITY_6000_0_OR_NEWER
+            m_audioPath              = serializedObject.FindProperty("_audioPath");
+            m_generatorStartupDelay  = serializedObject.FindProperty("_generatorStartupDelay");
+            m_audioRoutingBufferSize = serializedObject.FindProperty("_audioRoutingBufferSize");
+#endif
 
             envList = new ReorderableList(serializedObject, m_enviromentSettings, true, true, true, true)
             {
@@ -155,21 +195,63 @@ namespace Csound.Unity
         void OnDisable()
         {
             _audioMonitor.Dispose();
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+        }
+        
+        // MissingReferenceException in DrawEditorSmallHeader → DoInspectorTitlebar
+        // → behaviour.get_enabled() occurs when Domain Reload is ENABLED (the default).
+        // During the domain reload Unity tears down and rebuilds the C# layer. There is
+        // a brief repaint window after the old objects are invalidated but before the
+        // new editor instances are ready; the inspector renders the component header for
+        // the now-destroyed CsoundUnity and crashes.
+        //
+        // With Domain Reload DISABLED the transition is handled differently and the
+        // crash does not occur.
+        //
+        // MITIGATION: temporarily clear the inspector selection at ExitingEdit/PlayMode
+        // so no stale header is rendered during the destruction window.  The selection
+        // is restored once the new objects are live (Entered*).
+        //
+        private static UnityEngine.Object[] s_savedSelection;
+
+        private static void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            switch (state)
+            {
+                case PlayModeStateChange.ExitingEditMode:
+                case PlayModeStateChange.ExitingPlayMode:
+                    // Clear selection before objects are destroyed so the inspector
+                    // has nothing stale to render during the transition window.
+                    s_savedSelection  = Selection.objects;
+                    Selection.objects = System.Array.Empty<UnityEngine.Object>();
+                    ActiveEditorTracker.sharedTracker.ForceRebuild();
+                    break;
+
+                case PlayModeStateChange.EnteredPlayMode:
+                case PlayModeStateChange.EnteredEditMode:
+                    // New objects are live — restore the selection.
+                    ActiveEditorTracker.sharedTracker.ForceRebuild();
+                    if (s_savedSelection != null)
+                    {
+                        Selection.objects = s_savedSelection;
+                        s_savedSelection  = null;
+                    }
+                    break;
+            }
         }
 
         public override void OnInspectorGUI()
         {
-            try
-        	{
-            	base.DrawDefaultInspector();
-        	}
-        	catch (NullReferenceException ex)
-        	{
-                // this try catch section is needed to avoid (harmless) null references 
-                // in the inspector when going on play mode in the editor
-                Debug.Log($"Default Inspector failed to draw, with error: {ex.Message}, {ex.StackTrace}");
-        	}
-        	this.serializedObject.Update();
+            // DrawDefaultInspector renders the AudioFilterGUI bars (VU + DSP time) that
+            // Unity draws for any MonoBehaviour with OnAudioFilterRead — we want those.
+            // All public fields are [HideInInspector] so only the audio bars appear here.
+            // The try-catch is intentionally silent: AudioFilterGUI.DrawAudioFilterGUI
+            // throws a NullReferenceException on the frame Unity destroys a play-mode
+            // component (play→edit transition). That exception is harmless and expected.
+            try { base.DrawDefaultInspector(); }
+            catch { /* AudioFilterGUI crash on destroyed object — safe to ignore */ }
+
+            this.serializedObject.Update();
 
             EditorGUILayout.Space();
             DrawCaption();
@@ -189,6 +271,9 @@ namespace Csound.Unity
             DrawChannelControllers();
 
             EditorGUILayout.Space();
+            DrawAudioInputRoutes();
+
+            EditorGUILayout.Space();
             DrawAvailableChannelsList();
 
             EditorGUILayout.Space();
@@ -196,6 +281,9 @@ namespace Csound.Unity
 
             EditorGUILayout.Space();
             DrawAudioMonitor();
+
+            EditorGUILayout.Space();
+            DrawWebGLAssets();
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -213,46 +301,51 @@ namespace Csound.Unity
             {
                 // sr — editable; clamp kr whenever sr shrinks below it
                 EditorGUI.BeginChangeCheck();
-                int newSr = EditorGUILayout.IntField("Sample Rate (sr)", m_audioRate.intValue);
+                var newSr = EditorGUILayout.IntField("Sample Rate (sr)", m_audioRate.intValue);
                 if (EditorGUI.EndChangeCheck())
                 {
                     m_audioRate.intValue = Mathf.Max(1, newSr);
-                    m_controlRate.intValue = Mathf.Min(m_controlRate.intValue, m_audioRate.intValue);
+                    SnapKrToSr(m_audioRate.intValue, m_controlRate, m_ksmps);
                 }
             }
             else
             {
-                // sr — locked to device rate; clamp kr in case it was set above device sr
+                // sr — locked to device rate; snap kr whenever device sr differs from serialized value
                 m_audioRate.intValue = AudioSettings.outputSampleRate;
-                m_controlRate.intValue = Mathf.Min(m_controlRate.intValue, m_audioRate.intValue);
+                SnapKrToSr(m_audioRate.intValue, m_controlRate, m_ksmps);
                 EditorGUILayout.LabelField("Sample Rate (sr)", $"{AudioSettings.outputSampleRate} Hz  (AudioSettings.outputSampleRate)");
             }
 
             // kr — always editable (independent of the sr toggle)
             {
                 EditorGUI.BeginChangeCheck();
-                int newKr = EditorGUILayout.IntField("Control Rate (kr)", m_controlRate.intValue);
+                var newKr = EditorGUILayout.IntField("Control Rate (kr)", m_controlRate.intValue);
                 if (EditorGUI.EndChangeCheck())
-                    m_controlRate.intValue = Mathf.Clamp(newKr, 1, m_audioRate.intValue);
+                {
+                    int clampedKr = Mathf.Clamp(newKr, 1, m_audioRate.intValue);
+                    m_controlRate.intValue = clampedKr;
+                    // Keep ksmps in sync when user edits kr directly.
+                    if (m_ksmps != null && clampedKr > 0)
+                        m_ksmps.intValue = Mathf.Max(1, m_audioRate.intValue / clampedKr);
+                }
             }
 
-            // ksmps — editable shortcut: editing it updates kr = sr / ksmps
+            // ksmps — editable shortcut: editing it updates kr = sr / ksmps and stores ksmps
             {
-                int sr    = m_audioRate.intValue;
-                int kr    = Mathf.Max(1, m_controlRate.intValue);
-                int ksmps = Mathf.Max(1, Mathf.RoundToInt(sr / (float)kr));
+                var sr    = m_audioRate.intValue;
+                var kr    = Mathf.Max(1, m_controlRate.intValue);
+                var ksmps = m_ksmps != null && m_ksmps.intValue > 0
+                    ? m_ksmps.intValue
+                    : Mathf.Max(1, Mathf.RoundToInt(sr / (float)kr));
 
                 EditorGUI.BeginChangeCheck();
-                int newKsmps = EditorGUILayout.IntField("ksmps  (= sr / kr)", ksmps);
+                var newKsmps = EditorGUILayout.IntField("ksmps  (= sr / kr)", ksmps);
                 if (EditorGUI.EndChangeCheck())
                 {
                     newKsmps = Mathf.Max(1, newKsmps);
                     m_controlRate.intValue = Mathf.Max(1, sr / newKsmps);
+                    if (m_ksmps != null) m_ksmps.intValue = newKsmps;
                 }
-
-                // keep the audio channels buffer size always at least ksmps
-                if (m_audioChannelsBufferSize.intValue < ksmps)
-                    m_audioChannelsBufferSize.intValue = ksmps;
             }
 
             EditorGUI.EndDisabledGroup();
@@ -265,9 +358,9 @@ namespace Csound.Unity
 
             // Warning when ksmps == 1
             {
-                int sr    = m_audioRate.intValue;
-                int kr    = Mathf.Max(1, m_controlRate.intValue);
-                int ksmps = Mathf.Max(1, Mathf.RoundToInt(sr / (float)kr));
+                var sr    = m_audioRate.intValue;
+                var kr    = Mathf.Max(1, m_controlRate.intValue);
+                var ksmps = Mathf.Max(1, Mathf.RoundToInt(sr / (float)kr));
                 if (ksmps <= 1)
                 {
                     int suggestedKr = Mathf.Max(1, sr / 20);
@@ -278,7 +371,7 @@ namespace Csound.Unity
                 }
             }
                 EditorGUI.BeginChangeCheck();
-                m_processAudio.boolValue = EditorGUILayout.Toggle("Process Clip Audio", m_processAudio.boolValue);
+                m_processAudio.boolValue = EditorGUILayout.Toggle("Process Audio Clip", m_processAudio.boolValue);
                 if (EditorGUI.EndChangeCheck())
                 {
                     csoundUnity.ClearSpin();
@@ -293,6 +386,35 @@ namespace Csound.Unity
                 m_updateOutputBuffer.boolValue = EditorGUILayout.Toggle("Update Output Buffer", m_updateOutputBuffer.boolValue);
 
                 EditorGUILayout.Space();
+#if UNITY_6000_0_OR_NEWER
+                if (m_audioPath != null)
+                {
+                    EditorGUILayout.Space();
+                    EditorGUILayout.LabelField("IAudioGenerator (Unity 6+)", EditorStyles.boldLabel);
+
+                    EditorGUI.BeginDisabledGroup(Application.isPlaying);
+                    EditorGUILayout.PropertyField(m_audioPath, new GUIContent("Audio Path",
+                        "OnAudioFilterRead: classic path, works on all Unity versions.\n" +
+                        "IAudioGenerator: Unity 6+ path, drives the AudioSource directly."));
+
+                    if (m_audioPath.enumValueIndex == (int)Csound.Unity.AudioPath.IAudioGenerator)
+                    {
+                        EditorGUI.indentLevel++;
+                        EditorGUILayout.Slider(m_generatorStartupDelay, 0f, 2f,
+                            new GUIContent("Startup Delay (s)",
+                                "Seconds to wait after Csound initialises before AudioSource.Play() is called.\n" +
+                                "Useful when this instance receives audio via Audio Input Routes: a small delay\n" +
+                                "(e.g. 0.1 s) lets all chained sources finish initialising before playback starts."));
+                        EditorGUI.indentLevel--;
+                    }
+                    EditorGUI.EndDisabledGroup();
+                }
+#endif
+
+                EditorGUILayout.Space();
+                DrawDspLoad();
+
+                EditorGUILayout.Space();
                 EditorGUI.indentLevel++;
                 drawEnvSettings = EditorGUILayout.Foldout(drawEnvSettings, "Csound Global Environment Folders");
                 if (drawEnvSettings)
@@ -304,6 +426,56 @@ namespace Csound.Unity
 
                 EditorGUI.indentLevel--;
             }
+        }
+
+        private void DrawAudioInputRoutes()
+        {
+            if (audioInputRoutesList == null || m_drawAudioInputRoutes == null) return;
+
+            EditorGUILayout.BeginHorizontal();
+            m_drawAudioInputRoutes.boolValue = EditorGUILayout.Foldout(
+                m_drawAudioInputRoutes.boolValue, "Audio Input Routes", true);
+            if (m_muteAudioInputRoutes != null)
+            {
+                var muteLabel = new GUIContent("Mute", "Silence all routes without removing them");
+                var wasMuted = m_muteAudioInputRoutes.boolValue;
+                var nowMuted = GUILayout.Toggle(wasMuted, muteLabel, GUI.skin.button, GUILayout.Width(48));
+                if (nowMuted != wasMuted) m_muteAudioInputRoutes.boolValue = nowMuted;
+            }
+            if (GUILayout.Button(new GUIContent("⬡", "Open Audio Route Graph window"), GUILayout.Width(24), GUILayout.Height(18)))
+                AudioRouteGraphWindow.Open();
+            EditorGUILayout.EndHorizontal();
+
+            if (!m_drawAudioInputRoutes.boolValue) return;
+            if (m_audioRoutingBufferSize != null)
+            {
+                var routingSizes  = new[] { 64, 128, 256, 512, 1024, 2048, 4096, 8192 };
+                var routingLabels = new[] { "64", "128", "256", "512 (default)", "1024", "2048", "4096", "8192" };
+                var currentSize = m_audioRoutingBufferSize.intValue;
+                var currentIdx  = System.Array.IndexOf(routingSizes, currentSize);
+                if (currentIdx < 0) currentIdx = 3; // default to 512
+                EditorGUI.BeginChangeCheck();
+                var newIdx = EditorGUILayout.Popup(
+                    new GUIContent("Routing Buffer Size",
+                        "Number of frames pre-mixed per routing batch.\n\n" +
+                        "Larger values reduce CPU overhead at the cost of slightly higher latency " +
+                        "for routing changes. At ksmps=1 a size of 512 reduces route evaluations " +
+                        "from 44100/sec to ~86/sec. Must be >= ksmps (clamped automatically)."),
+                    currentIdx, routingLabels);
+                if (EditorGUI.EndChangeCheck())
+                    m_audioRoutingBufferSize.intValue = routingSizes[newIdx];
+            }
+            audioInputRoutesList.DoLayoutList();
+        }
+
+        private void DrawWebGLAssets()
+        {
+            if (m_webGLAssetsList == null) return;
+            EditorGUILayout.PropertyField(m_webGLAssetsList,
+                new GUIContent("WebGL Assets List",
+                    "Assets that must be present in StreamingAssets for WebGL builds.\n" +
+                    "Populated automatically by ScanWebGLAssets() when a WebGL environment setting is configured."),
+                true);
         }
 
         private void DrawCaption()
@@ -385,13 +557,6 @@ namespace Csound.Unity
                         return;
                     }
 
-				EditorGUILayout.HelpBox("Warning: change the buffer size setting very carefully to avoid crashes", MessageType.None);
-                m_audioChannelsBufferSize.intValue =
-                    EditorGUILayout.IntField("Audio Channels Buffer Size", m_audioChannelsBufferSize.intValue);
-                if (m_audioChannelsBufferSize.intValue < csoundUnity.GetKsmps())
-                {
-                    m_audioChannelsBufferSize.intValue = (int)csoundUnity.GetKsmps();
-                }
                     EditorGUILayout.HelpBox("Available Audio Channels", MessageType.None);
                     for (int i = 0; i < m_availableAudioChannels.arraySize; i++)
                     {
@@ -1321,6 +1486,45 @@ namespace Csound.Unity
             return _powerSliderMethod;
         }
 
+        private void DrawDspLoad()
+        {
+            if (m_measureDspLoad == null) return;
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                EditorGUILayout.PropertyField(m_measureDspLoad,
+                    new GUIContent("Measure DSP Load",
+                        "Enables per-instance DSP load measurement.\n" +
+                        "Shows what fraction of the DSP time budget this instance consumes.\n" +
+                        "Useful for comparing OnAudioFilterRead vs IAudioGenerator paths.\n" +
+                        "Disable in production — uses a Stopwatch on the audio thread."));
+
+                if (Application.isPlaying && csoundUnity != null && m_measureDspLoad.boolValue)
+                {
+                    if (GUILayout.Button("⬡ Graph", GUILayout.Width(58), GUILayout.Height(18)))
+                        AudioRouteGraphWindow.Open();
+                }
+            }
+
+            if (!Application.isPlaying || csoundUnity == null || !m_measureDspLoad.boolValue) return;
+
+            var load  = csoundUnity.DspLoad;
+            var color = load < 0.5f ? new Color(0.2f, 0.8f, 0.3f) :
+                          load < 0.8f ? new Color(0.9f, 0.7f, 0.1f) :
+                                        new Color(0.9f, 0.2f, 0.1f);
+
+            var barRect = GUILayoutUtility.GetRect(GUIContent.none, GUIStyle.none,
+                GUILayout.Height(14), GUILayout.ExpandWidth(true));
+            EditorGUI.DrawRect(barRect, new Color(0.15f, 0.15f, 0.15f));
+            var fill = new Rect(barRect.x, barRect.y, barRect.width * Mathf.Clamp01(load), barRect.height);
+            EditorGUI.DrawRect(fill, color);
+            EditorGUI.LabelField(barRect,
+                $"  DSP {load * 100f:F1}%",
+                new GUIStyle(EditorStyles.miniLabel) { normal = { textColor = Color.white } });
+
+            Repaint();
+        }
+
         private void DrawAudioMonitor()
         {
             if (!Application.isPlaying) return;
@@ -1349,5 +1553,40 @@ namespace Csound.Unity
 
         public override bool RequiresConstantRepaint() =>
             Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
+
+        /// <summary>
+        /// Recomputes kr = sr / ksmps and writes it back to <paramref name="krProp"/>.
+        /// Uses <paramref name="ksmps"/> as the source of truth so that changing
+        /// the audio device (sr change) keeps ksmps constant instead of drifting.
+        /// Only writes when the value actually changes to avoid spurious scene dirtying.
+        /// </summary>
+        private static void SnapKrToSr(int sr, SerializedProperty krProp, SerializedProperty ksmpsProp = null)
+        {
+            if (sr <= 0) return;
+            var kr = krProp.intValue;
+            if (kr <= 0 || kr > sr)
+            {
+                krProp.intValue = sr;
+                if (ksmpsProp != null) ksmpsProp.intValue = 1;
+                return;
+            }
+
+            int ksmps;
+            if (ksmpsProp is { intValue: > 0 })
+            {
+                // Use stored ksmps so sr changes keep ksmps stable.
+                ksmps = ksmpsProp.intValue;
+            }
+            else
+            {
+                // Fallback: round from current kr (first-time migration).
+                ksmps = Mathf.Max(1, Mathf.RoundToInt(sr / (float)kr));
+                if (ksmpsProp != null) ksmpsProp.intValue = ksmps;
+            }
+
+            var snapped = Mathf.Max(1, sr / ksmps);
+            if (krProp.intValue != snapped)
+                krProp.intValue = snapped;
+        }
     }
 }
