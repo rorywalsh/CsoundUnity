@@ -1,19 +1,27 @@
 ## [4.0.0]
 
-- [Add] Unity Timelines integration: Channel and Score clips, Step Sequencer mode, pattern mode, CsoundTimelineStarter
+- [Add] Unity Timelines integration: Channel (Fixed/Random/RandomSmooth) and Score (Score/Swarm/Arpeggio/Euclidean/Stochastic/Chord/Pattern/Step) clips, CsoundTimelineStarter
+- [Add] Audio Input Routing: connect CsoundUnity instances to feed audio into another instance's spin buffer, with cycle detection, mute toggle and per-route level control
+- [Add] AudioRouteGraphWindow: interactive node/edge editor to visualise and edit the audio route graph across all scene instances
+- [Add] IAudioGenerator audio path for Unity 6+: drives the AudioSource directly via CsoundUnity.Process, set as default on Unity 6 (OnAudioFilterRead remains available)
+- [Add] Lifecycle API: initializeOnAwake toggle, Initialize(), Stop(), Restart()
+- [Add] CsoundUnityMidiInput: platform-agnostic MIDI input component (macOS/iOS/visionOS via CoreMIDI, Android via android.media.midi API 23+)
+- [Add] Waveform, spectrum and Lissajous audio monitor in inspector (play mode, with zoom sliders)
+- [Add] OutputBuffer and OnCsoundPerformKsmps callback
 - [Add] MusicUtils: music theory utilities (scales, chords, arpeggios, Euclidean rhythms)
+- [Add] Utility scripts: AudioDisplay, FFTUtils, TableLoader, WriteAudioFileUtils, CopyFilesToPersistentDataPath, RemapUtils
+- [Add] AudioSamplesUtils.Rms() and Peak() helpers
 - [Add] CsoundUnityVectorMorph: bilinear blending between four CsoundUnityPresets with interactive editor
 - [Add] UI components: CsoundUnitySlider, CsoundUnityButton, CsoundUnityToggle, CsoundUnityDropdown, CsoundUnityXYPad with prefabs
 - [Add] xypad Cabbage widget support in parser and inspector
 - [Add] CSD refresh button and CREATE from template button in inspector
 - [Add] Many new samples across new and existing categories: Timelines, UI, Samplers, Collisions, Miscellaneous, Presets, Engines
-- [Add] Utility scripts: AudioDisplay, FFTUtils, TableLoader, WriteAudioFileUtils, CopyFilesToPersistentDataPath, RemapUtils
-- [Add] Waveform, spectrum and Lissajous audio monitor in inspector (play mode, with zoom sliders)
-- [Add] OutputBuffer and OnCsoundPerformKsmps callback
 - [Add] Context menu shortcuts to quickly create CsoundUnity GameObjects
-- [Add] Lifecycle API: initializeOnAwake toggle, Initialize(), Stop(), Restart()
 - [Add] OnCsoundStopped and OnCsoundPerformanceFinished events
+- [Update] Csound native libraries updated to **Csound 7.0** across all platforms (macOS, Windows, iOS, visionOS, Android)
+- [Update] CsoundCsharp.cs and CsoundUnityBridge.cs updated for the Csound 7 API (breaking changes: csoundCreate, csoundCompileOrc, csoundCompileCSD, csoundEventString, csoundGetChannels and others)
 - [Update] Inspector: sr/kr/ksmps redesign with single override toggle
+- [Update] CsoundUnitySlider now applies skew (logarithmic/exponential mapping) and increment (stepped values) from ChannelController
 - [Fix] CsoundFileWatcher: handle atomic saves from modern editors
 
 ## [3.5.2] - 2025-04-28
