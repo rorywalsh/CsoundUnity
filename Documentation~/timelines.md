@@ -1,5 +1,7 @@
 # CsoundUnity Timelines
 
+> **New in v4.0.0**
+
 CsoundUnity Timelines integrates Csound deeply with Unity's Timeline editor. You can trigger score events — single notes, procedural granular swarms, melodic arpeggios, euclidean rhythms, stochastic patterns, and chords, all sample-accurately scheduled inside Csound — and automate any named Csound channel over time to control parameters like filter cutoff, reverb amount, or volume directly from the Timeline.
 
 ---
