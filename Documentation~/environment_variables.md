@@ -2,7 +2,7 @@
 
 New in **CsoundUnity** 3.2.0, it is now possible to set the **Csound** *Environment Variables* independently for each **CsoundUnity** instance in your scene.  
 You can use the *Environment Variables* to set the directories where **Csound** will look for specific files.  
-Those files include *audio* files (in any format supported by **Csound**), *sound font* files, *htrf* files, but also plugins and other formats.  
+Those files include *audio* files (in any format supported by **Csound**), *sound font* files, *hrtf* files, but also plugins and other formats.  
 See the [Csound Environment Variables Page](https://csound.com/docs/manual/CommandEnvironment.html) from the **Csound** manual for more information.  
 
 You can add as many Environment Variables as you want. Be aware that a duplicated setting (same Platform and same Type) will cause the second setting in the list to be picked.  

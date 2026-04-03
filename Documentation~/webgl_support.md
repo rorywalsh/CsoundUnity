@@ -128,8 +128,8 @@ In the above example there's no binaural 3d processing when isWebGL is set to fa
 
 Other methods will come with later versions.
 
-- SetChannel(string channel)
-- GetChannel(string channel, Action<MYFLT> callback);
+- `SetChannel(string channel, MYFLT value)`
+- `GetChannel(string channel, Action<MYFLT> callback)`
 
 #### GetChannel
 
@@ -141,12 +141,14 @@ because the call is async and we need to wait for the javascript Promise to comp
 It can be used in C# like this:  
 
 ```cs
+using Csound.Unity;
+
 float _testChannel;
 
 void Update()
 {
      if (!csound || !csound.IsInitialized) return;
-            
+
 #if UNITY_WEBGL && !UNITY_EDITOR
      csound.GetChannel("test", (value) => _testChannel = value);
 #else
@@ -162,7 +164,7 @@ In this way the script supports every platform, since it only executes the async
 
 ### Audio input
 
-Audio input from Unity is not supported yet (so you can't use CsoundUnity.ProcessClipAudio to gather data from an AudioClip and send it to Csound).
+Audio input from Unity is not supported yet (so you can't gather data from an AudioClip and send it to Csound the way the *Process Clip Audio* sample does on other platforms).
 
 Microphone input on the browser is supported out of the box if you use any of the opcodes that grab audio input, like [inch](https://csound.com/docs/manual/inch.html), there's no need to use Unity's Microphone API.
 

@@ -99,4 +99,4 @@ There are lots of methods that can help you save and load presets at runtime.
 Consider that saving a **CsoundUnityPreset** as a *ScriptableObject* won't work at runtime (it is meant to be used in the Editor), so you will have to save it as a JSON.  
 But you can of course load the *ScriptableObjects* presets at runtime. You can assign the **CsoundUnityPresets** as fields in your scripts like you would do with any other **Unity** asset.  
 
-Be sure to check the [CsoundUnity API](http://rorywalsh.github.io/CsoundUnity/html/index.html) for the description of each method.
+Be sure to check the CsoundUnity API documentation for the description of each method. Note: the old API reference at `http://rorywalsh.github.io/CsoundUnity/html/index.html` is outdated; refer to the source XML docs or the package's bundled documentation instead.
