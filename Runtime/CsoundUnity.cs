@@ -81,6 +81,14 @@ namespace Csound.Unity
         [SerializeField] public float maxY;
         /// <summary>Initial Y value. Used by xypad (rangeY third token).</summary>
         [SerializeField] public float value2;
+        /// <summary>Horizontal position in pixels, from the Cabbage <c>bounds()</c> attribute.</summary>
+        [SerializeField] public int x;
+        /// <summary>Vertical position in pixels, from the Cabbage <c>bounds()</c> attribute.</summary>
+        [SerializeField] public int y;
+        /// <summary>Width in pixels, from the Cabbage <c>bounds()</c> attribute.</summary>
+        [SerializeField] public int width;
+        /// <summary>Height in pixels, from the Cabbage <c>bounds()</c> attribute.</summary>
+        [SerializeField] public int height;
 
         /// <summary>
         /// Sets the numeric range and default value for this channel controller.
@@ -1568,6 +1576,8 @@ namespace Csound.Unity
                     var controller = new CsoundChannelController();
                     controller.type = control;
 
+                    ParseBounds(trimmd, controller);
+
                     if (trimmd.IndexOf("text(") > -1)
                     {
                         var text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
@@ -1625,6 +1635,9 @@ namespace Csound.Unity
                 {
                     var controller = new CsoundChannelController();
                     controller.type = control;
+
+                    ParseBounds(trimmd, controller);
+
                     if (trimmd.IndexOf("caption(") > -1)
                     {
                         var infoText = trimmd.Substring(trimmd.IndexOf("caption(") + 9);
@@ -1737,6 +1750,26 @@ namespace Csound.Unity
                 }
             }
             return locaChannelControllers;
+        }
+
+        /// <summary>
+        /// Parses the <c>bounds(x, y, width, height)</c> attribute from a Cabbage widget line
+        /// and writes the values into the supplied <see cref="CsoundChannelController"/>.
+        /// Does nothing if the attribute is absent or malformed.
+        /// </summary>
+        private static void ParseBounds(string line, CsoundChannelController controller)
+        {
+            var idx = line.IndexOf("bounds(", StringComparison.OrdinalIgnoreCase);
+            if (idx < 0) return;
+            var inner = line.Substring(idx + 7);
+            var end = inner.IndexOf(')');
+            if (end < 0) return;
+            var tokens = inner.Substring(0, end).Split(',');
+            if (tokens.Length < 4) return;
+            if (int.TryParse(tokens[0].Trim(), out var x))      controller.x      = x;
+            if (int.TryParse(tokens[1].Trim(), out var y))      controller.y      = y;
+            if (int.TryParse(tokens[2].Trim(), out var width))  controller.width  = width;
+            if (int.TryParse(tokens[3].Trim(), out var height)) controller.height = height;
         }
 
         #endregion CSD_PARSE
