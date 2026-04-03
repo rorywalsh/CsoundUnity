@@ -160,8 +160,8 @@ namespace Csound.Unity
         {
             if (msg == null || msg.Length == 0) return;
 
-            int status  = msg[0] & 0xF0;
-            int channel = (msg[0] & 0x0F) + 1; // 1-based
+            var status  = msg[0] & 0xF0;
+            var channel = (msg[0] & 0x0F) + 1; // 1-based
 
             switch (status)
             {
@@ -193,10 +193,10 @@ namespace Csound.Unity
         /// </summary>
         private void OnAndroidMidiMessage(string data)
         {
-            string[] parts = data.Split(',');
-            byte[] msg = new byte[parts.Length];
-            for (int i = 0; i < parts.Length; i++)
-                if (int.TryParse(parts[i], out int b))
+            var parts = data.Split(',');
+            var msg = new byte[parts.Length];
+            for (var i = 0; i < parts.Length; i++)
+                if (int.TryParse(parts[i], out var b))
                     msg[i] = (byte)b;
             HandleMidiMessage(msg);
         }

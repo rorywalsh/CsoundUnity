@@ -79,7 +79,7 @@ namespace Csound.Unity
         /// </summary>
         internal static int Register(CsoundChildEntry entry)
         {
-            int id = _entries.Count;
+            var id = _entries.Count;
             _entries.Add(entry);
             return id;
         }

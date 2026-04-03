@@ -75,7 +75,6 @@ namespace Csound.Unity
             var bridge = CsoundBridgeRegistry.GetBridge(InstanceId);
             var queue  = CsoundBridgeRegistry.GetCommandQueue(InstanceId);
 
-            // Drain command queue: apply SetChannel / MIDI from main thread.
             while (queue != null && queue.TryDequeue(out var cmd))
             {
                 switch (cmd.Type)
@@ -93,7 +92,6 @@ namespace Csound.Unity
             // Sync instance id so the audio thread can resolve the bridge.
             realtime.InstanceId = InstanceId;
 
-            // Use the convenience constructor — Setup is a readonly struct.
             setup = new GeneratorInstance.Setup(in format);
         }
 

@@ -144,8 +144,8 @@ namespace Csound.Unity.MIDI.Internal
         {
             _current = this;
 
-            IntPtr clientName = CFStringCreateWithCString(IntPtr.Zero, "CsoundUnity", 0x08000100);
-            int err = MIDIClientCreate(clientName, IntPtr.Zero, IntPtr.Zero, out _midiClient);
+            var clientName = CFStringCreateWithCString(IntPtr.Zero, "CsoundUnity", 0x08000100);
+            var err = MIDIClientCreate(clientName, IntPtr.Zero, IntPtr.Zero, out _midiClient);
             CFRelease(clientName);
 
             if (err != 0)
@@ -156,7 +156,7 @@ namespace Csound.Unity.MIDI.Internal
 
             _readProc = OnMidiReadStatic;
 
-            IntPtr portName = CFStringCreateWithCString(IntPtr.Zero, "CsoundUnity Input", 0x08000100);
+            var portName = CFStringCreateWithCString(IntPtr.Zero, "CsoundUnity Input", 0x08000100);
             err = MIDIInputPortCreate(_midiClient, portName, _readProc, IntPtr.Zero, out _inputPort);
             CFRelease(portName);
 
@@ -166,13 +166,13 @@ namespace Csound.Unity.MIDI.Internal
                 return;
             }
 
-            int numSources = MIDIGetNumberOfSources();
+            var numSources = MIDIGetNumberOfSources();
             Debug.Log($"[CoreMIDI] {numSources} MIDI source(s) found");
 
-            for (int i = 0; i < numSources; i++)
+            for (var i = 0; i < numSources; i++)
             {
-                IntPtr source = MIDIGetSource(i);
-                string sourceName = GetSourceName(source);
+                var source     = MIDIGetSource(i);
+                var sourceName = GetSourceName(source);
 
                 if (!ShouldInclude(sourceName))
                 {
@@ -194,6 +194,30 @@ namespace Csound.Unity.MIDI.Internal
             }
         }
 
+        public void Stop()
+        {
+            if (_inputPort != IntPtr.Zero)
+            {
+                var n = MIDIGetNumberOfSources();
+                for (var i = 0; i < n; i++)
+                    MIDIPortDisconnectSource(_inputPort, MIDIGetSource(i));
+
+                MIDIPortDispose(_inputPort);
+                _inputPort = IntPtr.Zero;
+            }
+
+            if (_midiClient != IntPtr.Zero)
+            {
+                MIDIClientDispose(_midiClient);
+                _midiClient = IntPtr.Zero;
+            }
+
+            if (_current == this) _current = null;
+        }
+
+        #endregion
+        #region Private helpers
+
         /// <summary>
         /// Reads the "name" property of a MIDIObjectRef via MIDIObjectGetStringProperty.
         /// kMIDIPropertyName == CFString "name" — we construct it here to avoid
@@ -201,8 +225,8 @@ namespace Csound.Unity.MIDI.Internal
         /// </summary>
         private static string GetSourceName(IntPtr source)
         {
-            IntPtr nameProp = CFStringCreateWithCString(IntPtr.Zero, "name", 0x08000100);
-            int err = MIDIObjectGetStringProperty(source, nameProp, out IntPtr nameStr);
+            var nameProp = CFStringCreateWithCString(IntPtr.Zero, "name", 0x08000100);
+            var err = MIDIObjectGetStringProperty(source, nameProp, out var nameStr);
             CFRelease(nameProp);
 
             if (err != 0 || nameStr == IntPtr.Zero)
@@ -215,7 +239,7 @@ namespace Csound.Unity.MIDI.Internal
         }
 
         /// <summary>
-        /// Returns true if the source passes the whitelist check.
+        /// Returns true if the source passes the allowlist check.
         /// When _includeOnly is empty/null → all sources pass.
         /// When _includeOnly has entries → source must match at least one.
         /// </summary>
@@ -241,27 +265,6 @@ namespace Csound.Unity.MIDI.Internal
             return false;
         }
 
-        public void Stop()
-        {
-            if (_inputPort != IntPtr.Zero)
-            {
-                int n = MIDIGetNumberOfSources();
-                for (int i = 0; i < n; i++)
-                    MIDIPortDisconnectSource(_inputPort, MIDIGetSource(i));
-
-                MIDIPortDispose(_inputPort);
-                _inputPort = IntPtr.Zero;
-            }
-
-            if (_midiClient != IntPtr.Zero)
-            {
-                MIDIClientDispose(_midiClient);
-                _midiClient = IntPtr.Zero;
-            }
-
-            if (_current == this) _current = null;
-        }
-
         #endregion
         #region Packet parsing
 
@@ -282,21 +285,21 @@ namespace Csound.Unity.MIDI.Internal
         /// </summary>
         private void ParsePacketList(IntPtr pktList)
         {
-            int offset = 0;
-            int numPackets = Marshal.ReadInt32(pktList, offset);
+            var offset = 0;
+            var numPackets = Marshal.ReadInt32(pktList, offset);
             offset += 4;
 
-            for (int p = 0; p < numPackets; p++)
+            for (var p = 0; p < numPackets; p++)
             {
                 offset += 8; // skip timeStamp
 
-                int length = (ushort)Marshal.ReadInt16(pktList, offset);
+                var length = (ushort)Marshal.ReadInt16(pktList, offset);
                 offset += 2;
 
                 if (length > 0 && length <= 3)
                 {
-                    byte[] msg = new byte[length];
-                    for (int b = 0; b < length; b++)
+                    var msg = new byte[length];
+                    for (var b = 0; b < length; b++)
                         msg[b] = Marshal.ReadByte(pktList, offset + b);
 
                     _onMessage?.Invoke(msg);

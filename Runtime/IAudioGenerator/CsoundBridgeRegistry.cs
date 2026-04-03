@@ -56,7 +56,7 @@ namespace Csound.Unity
         /// </summary>
         internal static int Register(CsoundUnityBridge bridge, ConcurrentQueue<CsoundCommand> queue = null)
         {
-            int id = _bridges.Count;
+            var id = _bridges.Count;
             _bridges.Add(bridge);
             _queues.Add(queue);
             return id;

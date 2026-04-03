@@ -107,8 +107,8 @@ namespace Csound.Unity
             if (bridge == null)
             {
                 // Bridge not ready yet — write explicit silence.
-                for (int f = 0; f < totalFrames; f++)
-                    for (int ch = 0; ch < buffer.channelCount; ch++)
+                for (var f = 0; f < totalFrames; f++)
+                    for (var ch = 0; ch < buffer.channelCount; ch++)
                         buffer[ch, f] = 0f;
                 return totalFrames;
             }
@@ -128,13 +128,13 @@ namespace Csound.Unity
 
             // _ksmpsIndex tracks position within the current ksmps block and
             // persists between Process() calls (stored in unmanaged memory).
-            for (int f = 0; f < totalFrames; f++, _ksmpsIndex++)
+            for (var f = 0; f < totalFrames; f++, _ksmpsIndex++)
             {
                 if (_ksmpsIndex >= ksmps)
                 {
                     CsoundBridgeRegistry.InvokeSpinFillCallback(InstanceId, f);
 
-                    int result = bridge.PerformKsmps();
+                    var result = bridge.PerformKsmps();
                     _ksmpsIndex = 0;
 
                     // Notify CsoundUnity (when in IAudioGenerator mode) so it can fill
