@@ -2542,7 +2542,7 @@ namespace Csound.Unity
             // convert to a path inside the project
             var assetsIndex = path.IndexOf("Assets");
 
-            if (assetsIndex < "Assets".Length)
+            if (assetsIndex < 0)
             {
                 Debug.LogError("Error, couldn't find the Assets folder!");
                 return;
@@ -2550,7 +2550,7 @@ namespace Csound.Unity
 
             path = path.Substring(assetsIndex, path.Length - assetsIndex);
 
-            if (!File.Exists(path))
+            if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
@@ -2636,14 +2636,18 @@ namespace Csound.Unity
             try
             {
                 Debug.Log($"Saving JSON preset at {fullPath}");
-                File.WriteAllText($"{fullPath}", presetData);
+                File.WriteAllText(fullPath, presetData);
             }
             catch (IOException ex)
             {
                 Debug.Log(ex.Message);
             }
 #if UNITY_EDITOR
-            AssetDatabase.ImportAsset(fullPath);
+            if (fullPath.StartsWith(Application.dataPath))
+            {
+                var relativePath = "Assets" + fullPath.Substring(Application.dataPath.Length);
+                AssetDatabase.ImportAsset(relativePath);
+            }
 #endif
         }
 
@@ -2706,7 +2710,11 @@ namespace Csound.Unity
                 Debug.Log(ex.Message);
             }
 #if UNITY_EDITOR
-            AssetDatabase.ImportAsset(fullPath);
+            if (fullPath.StartsWith(Application.dataPath))
+            {
+                var relativePath = "Assets" + fullPath.Substring(Application.dataPath.Length);
+                AssetDatabase.ImportAsset(relativePath);
+            }
 #endif
         }
 
@@ -2768,15 +2776,16 @@ namespace Csound.Unity
         /// <param name="preset">The preset to apply to this instance.</param>
         public void SetPreset(CsoundUnityPreset preset)
         {
+            if (preset == null)
+            {
+                Debug.LogError("Couldn't load a null CsoundUnityPreset!");
+                return;
+            }
             if (this.csoundFileName != preset.csoundFileName)
             {
                 Debug.LogError($"Couldn't set preset {preset.presetName} to this CsoundUnity instance {this.name}, " +
                     $"this instance uses csd: {this.csoundFileName}, the preset was saved with csd: {preset.csoundFileName} instead");
                 return;
-            }
-            if (preset == null)
-            {
-                Debug.LogError("Couldn't load a null CsoundUnityPreset!");
             }
 
             _currentPreset = preset.presetName;
@@ -2832,6 +2841,7 @@ namespace Csound.Unity
             if (d == null)
             {
                 onPresetLoaded?.Invoke(null);
+                return;
             }
             var preset = CreatePreset(presetName, d);
             onPresetLoaded?.Invoke(preset);
@@ -2846,7 +2856,7 @@ namespace Csound.Unity
             var preset = CreatePreset(presetName, data);
             if (preset == null)
             {
-                Debug.LogError("Couldn't create preset from path: {path}");
+                Debug.LogError($"Couldn't create preset from path: {path}");
                 onPresetLoaded?.Invoke(null);
                 return;
             }

@@ -99,6 +99,10 @@ namespace Csound.Unity
         private string[] _jsonPresetsPaths;
         private List<CsoundUnityPreset> _assignablePresets;
         private int _assignablePresetsSpace = 10;
+        // Lazy flag: preset lists are populated the first time the Presets foldout
+        // is opened (or on CSD change / Refresh click) to avoid scanning all project
+        // JSON files on every OnEnable.
+        private bool _presetsInitialized = false;
         private string _currentPresetImportFolder;
         private string _currentPresetImportFolderSave;
         // Transient Y-axis state for xypad widgets (not serialized, lives only in this editor session)
@@ -195,16 +199,23 @@ namespace Csound.Unity
                 elementHeightCallback = EnvironmentSettingsHeightCallback
             };
 
-            UpdateAssignablePresets();
+            _jsonPresetsPaths = new string[] { };
+            _csoundUnityPresetAssetsGUIDs = new string[] { };
+            _assignablePresets = new List<CsoundUnityPreset>();
+            _presetsInitialized = false;
+            EditorApplication.projectChanged += OnProjectChanged;
         }
 
         void OnDisable()
         {
             _audioMonitor.Dispose();
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            EditorApplication.projectChanged -= OnProjectChanged;
         }
 
         #endregion
+
+        private void OnProjectChanged() => _presetsInitialized = false;
 
         #region Play mode state / selection guard
 
@@ -1042,6 +1053,8 @@ namespace Csound.Unity
             m_drawPresets.boolValue = EditorGUILayout.Foldout(m_drawPresets.boolValue, "Presets", true);
             if (m_drawPresets.boolValue)
             {
+                if (!_presetsInitialized)
+                    UpdateAssignablePresets();
                 EditorGUILayout.HelpBox($"CURRENT PRESET: {m_currentPreset.stringValue}", MessageType.None);
                 EditorGUILayout.Space();
 
@@ -1132,7 +1145,14 @@ namespace Csound.Unity
                     }
                     if (GUILayout.Button("To JSON", GUILayout.Width(80)))
                     {
-                        CsoundUnity.SavePresetAsJSON(preset, m_currentPresetLoadFolder.stringValue);
+                        // If no load folder is set, save alongside the ScriptableObject asset itself.
+                        var destFolder = string.IsNullOrWhiteSpace(m_currentPresetLoadFolder.stringValue)
+                            ? Path.GetDirectoryName(Path.Combine(
+                                Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length),
+                                AssetDatabase.GetAssetPath(preset)))
+                            : m_currentPresetLoadFolder.stringValue;
+                        CsoundUnity.SavePresetAsJSON(preset, destFolder);
+                        RefreshPresets();
                     }
                     EditorGUILayout.EndHorizontal();
                 }
@@ -1300,14 +1320,13 @@ namespace Csound.Unity
 
         private void SetPreset(CsoundUnityPreset preset)
         {
-            //Debug.Log($"SetPreset {preset.presetName}, " +
-            //    $"this channels size: {m_channelControllers.arraySize}, " +
-            //    $"preset channels count: {preset.channels.Count}");
-            //if (m_channelControllers.arraySize != preset.channels.Count)
-            //{
-            //    Debug.LogError("Cannot set preset, the number of channels has changed! Was this created with an old version?");
-            //    return;
-            //}
+            if (preset == null) return;
+            if (preset.csoundFileName != m_csoundFileName.stringValue)
+            {
+                Debug.LogError($"[CsoundUnity] Cannot apply preset '{preset.presetName}': " +
+                    $"preset was saved with '{preset.csoundFileName}', this instance uses '{m_csoundFileName.stringValue}'.");
+                return;
+            }
 
             for (var i = 0; i < m_channelControllers.arraySize; i++)
             {
@@ -1375,11 +1394,12 @@ namespace Csound.Unity
             _csoundUnityPresetAssetsGUIDs = new string[] { };
             _assignablePresets = new List<CsoundUnityPreset>();
 
+            string[] allJsonPaths;
+
             if (string.IsNullOrWhiteSpace(m_currentPresetLoadFolder.stringValue))
             {
                 _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset");
-                // Collects all JSONs under dataPath — not all may be CsoundUnityPresets.
-                _jsonPresetsPaths = Directory.GetFiles(Application.dataPath, "*.json", SearchOption.AllDirectories);
+                allJsonPaths = Directory.GetFiles(Application.dataPath, "*.json", SearchOption.AllDirectories);
             }
             else
             {
@@ -1390,19 +1410,44 @@ namespace Csound.Unity
                 }
 
                 if (m_currentPresetLoadFolder.stringValue.Contains("Assets"))
-                {
                     _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset", new string[] { assetsFolderPath });
-                }
 
-                _jsonPresetsPaths = Directory.GetFiles(m_currentPresetLoadFolder.stringValue, "*.json");
+                allJsonPaths = Directory.GetFiles(m_currentPresetLoadFolder.stringValue, "*.json");
             }
+
+            // Filter JSON files to those that are CsoundUnityPresets for this CSD.
+            // Each file is read once to extract csoundFileName — cost is identical to
+            // showing a per-row warning, so we filter upfront instead.
+            var thisCsd = m_csoundFileName.stringValue;
+            var filteredJson = new List<string>();
+            foreach (var path in allJsonPaths)
+            {
+                try
+                {
+                    var header = JsonUtility.FromJson<JsonPresetHeader>(File.ReadAllText(path));
+                    if (header.csoundFileName == thisCsd)
+                        filteredJson.Add(path);
+                }
+                catch { /* not a valid CsoundUnityPreset JSON — skip */ }
+            }
+            _jsonPresetsPaths = filteredJson.ToArray();
 
             foreach (var guid in _csoundUnityPresetAssetsGUIDs)
             {
                 var asset = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guid), typeof(CsoundUnityPreset)) as CsoundUnityPreset;
-                if (asset.csoundFileName != m_csoundFileName.stringValue) continue;
+                if (asset == null || asset.csoundFileName != thisCsd) continue;
                 _assignablePresets.Add(asset);
             }
+
+            _presetsInitialized = true;
+        }
+
+        [Serializable]
+        private struct JsonPresetHeader
+        {
+            // Minimal struct used only to check the csoundFileName field of a preset JSON
+            // without fully deserializing the entire CsoundUnityPreset.
+            public string csoundFileName;
         }
 
         private string ExtractAssetsFolderFromPath(SerializedProperty pathProperty)

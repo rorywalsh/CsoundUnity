@@ -46,8 +46,8 @@ Hovering on the button will show you the path to that preset.
 You cannot have more than one preset with the same name in the same folder.  
 CsoundUnityPresets come with the *.asset* extension.
 
-The *To JSON* button next to each preset name lets you convert that preset in the JSON format.  
-It will be saved in the same folder of the **CsoundUnityPreset** you're trying to convert.
+The *To JSON* button next to each preset name lets you convert that preset in the JSON format.
+It will be saved in the same folder as the **CsoundUnityPreset** you're converting, unless a *Load Folder* is explicitly set — in that case the JSON is saved there instead.
 
 <a name="json-presets"></a>
 ##### JSON Presets
