@@ -23,6 +23,7 @@
 - [Update] Inspector: sr/kr/ksmps redesign with single override toggle
 - [Update] CsoundUnitySlider now applies skew (logarithmic/exponential mapping) and increment (stepped values) from ChannelController
 - [Fix] CsoundFileWatcher: handle atomic saves from modern editors
+- [Fix] Presets: AssetDatabase.ImportAsset crash on JSON save, null checks in SetPreset/UpdateAssignablePresets, "To JSON" now saves alongside the SO asset by default, JSON list filtered to current CSD
 
 ## [3.5.2] - 2025-04-28
 
