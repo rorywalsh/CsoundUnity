@@ -44,11 +44,10 @@ using MYFLT = System.Single;
 
 namespace Csound.Unity
 {
-    /*
-     * CsoundUnityBridge class
-     */
     public class CsoundUnityBridge
     {
+        #region Fields
+
         public bool CompiledOk => compiledOk;
         public IntPtr csound;
         bool compiledOk = false;
@@ -87,7 +86,11 @@ namespace Csound.Unity
         private Csound6.NativeMethods.MidiInCloseCallbackProxy _midiInCloseCallback;
 #endif
 
+        #endregion Fields
+
 #if !UNITY_WEBGL || UNITY_EDITOR
+        #region Initialization
+
         private void SetEnvironmentSettings(List<EnvironmentSettings> environmentSettings)
         {
             if (environmentSettings == null || environmentSettings.Count == 0) return;
@@ -120,7 +123,6 @@ namespace Csound.Unity
                         {
                             Debug.Log($"Setting {env.GetTypeString()} for Android to: {path}");
                             Csound6.NativeMethods.csoundSetGlobalEnv(env.GetTypeString(), path);
-                            //Debug.Log($"baseFolder: {env.baseFolder}");
                             if (env.baseFolder.Equals(EnvironmentPathOrigin.Plugins))
                             {
                                 if (onCsoundCreated == null || onCsoundCreated.GetInvocationList().Length == 0)
@@ -150,10 +152,14 @@ namespace Csound.Unity
             }
         }
 
+        #endregion Initialization
+
+        #region Constructors
+
         public CsoundUnityBridge() { }
 
         /// <summary>
-        /// The CsoundUnityBridge constructor sets up the Csound Global Environment Variables set by the user. 
+        /// The CsoundUnityBridge constructor sets up the Csound Global Environment Variables set by the user.
         /// Then it creates an instance of Csound and compiles the full csdFile passed as a string.
         /// Then it starts Csound.
         /// </summary>
@@ -221,6 +227,10 @@ namespace Csound.Unity
                 $"GetKsmps: {GetKsmps()}");
         }
 
+        #endregion Constructors
+
+        #region MIDI
+
         /// <summary>
         /// Registers the host MIDI I/O callbacks with Csound.
         /// Must be called after csoundCreate and before csoundCompileCSD.
@@ -261,7 +271,7 @@ namespace Csound.Unity
         [AOT.MonoPInvokeCallback(typeof(Csound6.NativeMethods.MidiReadCallbackProxy))]
         private static int MidiReadCallback(IntPtr csound, IntPtr userData, IntPtr buf, int nBytes)
         {
-            int written = 0;
+            var written = 0;
             var queue = _staticMidiQueue;
             while (written + 3 <= nBytes && queue != null && queue.TryDequeue(out byte[] msg))
             {
@@ -286,6 +296,8 @@ namespace Csound.Unity
         {
             _midiQueue.Enqueue(data);
         }
+
+        #endregion MIDI
 
 #endif
 
@@ -359,7 +371,6 @@ namespace Csound.Unity
 
         #region Instantiation
 
-
 #if !UNITY_IOS || UNITY_VISIONOS
         public int LoadPlugins(string dir)
         {
@@ -371,7 +382,6 @@ namespace Csound.Unity
         }
 #endif
 
-        #endregion
         public int GetVersion()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -380,6 +390,10 @@ namespace Csound.Unity
         return 0;
 #endif
         }
+
+        #endregion Instantiation
+
+        #region Lifecycle
 
         public virtual void OnApplicationQuit()
         {
@@ -400,6 +414,10 @@ namespace Csound.Unity
         {
             return compiledOk;
         }
+
+        #endregion Lifecycle
+
+        #region Performance
 
         public int CompileOrc(string orchStr)
         {
@@ -428,6 +446,10 @@ namespace Csound.Unity
 #endif
         }
 
+        #endregion Performance
+
+        #region Attributes
+
         public MYFLT Get0dbfs()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -445,6 +467,10 @@ namespace Csound.Unity
         return 0;
 #endif
         }
+
+        #endregion Attributes
+
+        #region Score
 
         public void SendScoreEvent(string scoreEvent)
         {
@@ -467,12 +493,15 @@ namespace Csound.Unity
 #endif
         }
 
+        #endregion Score
+
+        #region Channels
+
         public void SetChannel(string channel, MYFLT value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             Csound6.NativeMethods.csoundSetControlChannel(csound, channel, value);
 #else
-        // Debug.Log($"[CsoundUnity] Calling WebGL SetChannel for instance {_assignedInstanceId}, channel: {channel}, value: {value}");
         CsoundWebGL.Csound6.NativeMethods.csoundSetChannel(_assignedInstanceId, channel, value);
 #endif
         }
@@ -498,7 +527,7 @@ namespace Csound.Unity
         public MYFLT[] GetAudioChannel(string name)
         {
             var bufsiz = GetKsmps();
-            MYFLT[] dest = new MYFLT[(int)bufsiz];
+            var dest = new MYFLT[(int)bufsiz];
             GetAudioChannel(name, dest);
             return dest;
         }
@@ -526,13 +555,19 @@ namespace Csound.Unity
 
         public string GetStringChannel(string name)
         {
-            var bufferSize = 32768; // we need a better way to retrieve the length of the string
-            IntPtr channelStr = Marshal.AllocHGlobal(bufferSize);
+            // 32768 bytes is a generous upper-bound for Csound string channels
+            var bufferSize = 32768;
+            var channelStr = Marshal.AllocHGlobal(bufferSize);
             Csound6.NativeMethods.csoundGetStringChannel(csound, name, channelStr);
             var stringChannel = GetMessageText(channelStr);
             Marshal.FreeHGlobal(channelStr);
             return stringChannel;
         }
+
+        #endregion Channels
+
+        #region Tables
+
         /// <summary>
         /// Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
         /// </summary>
@@ -551,10 +586,9 @@ namespace Csound.Unity
         public MYFLT GetTable(int table, int index)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            IntPtr tablePtr;
-            int len = Csound6.NativeMethods.csoundGetTable(csound, out tablePtr, table);
+            var len = Csound6.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
             if (len < 0 || index >= len || tablePtr == IntPtr.Zero) return 0;
-            int elemSize = Marshal.SizeOf(typeof(MYFLT));
+            var elemSize = Marshal.SizeOf(typeof(MYFLT));
             var arr = new MYFLT[1];
             Marshal.Copy(tablePtr + index * elemSize, arr, 0, 1);
             return arr[0];
@@ -569,10 +603,9 @@ namespace Csound.Unity
         public void SetTable(int table, int index, MYFLT value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            IntPtr tablePtr;
-            int len = Csound6.NativeMethods.csoundGetTable(csound, out tablePtr, table);
+            var len = Csound6.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
             if (len < 0 || index >= len || tablePtr == IntPtr.Zero) return;
-            int elemSize = Marshal.SizeOf(typeof(MYFLT));
+            var elemSize = Marshal.SizeOf(typeof(MYFLT));
             var arr = new MYFLT[] { value };
             Marshal.Copy(arr, 0, tablePtr + index * elemSize, 1);
 #endif
@@ -584,7 +617,7 @@ namespace Csound.Unity
         public void TableCopyOut(int table, out MYFLT[] dest)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            int len = Csound6.NativeMethods.csoundTableLength(csound, table);
+            var len = Csound6.NativeMethods.csoundTableLength(csound, table);
             if (len < 1)
             {
                 dest = null;
@@ -592,7 +625,7 @@ namespace Csound.Unity
             }
 
             dest = new MYFLT[len];
-            IntPtr des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
+            var des = Marshal.AllocHGlobal(sizeof(MYFLT) * dest.Length);
             Csound6.NativeMethods.csoundTableCopyOut(csound, table, des, 0);
             Marshal.Copy(des, dest, 0, len);
             Marshal.FreeHGlobal(des);
@@ -610,7 +643,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             var len = Csound6.NativeMethods.csoundTableLength(csound, table);
             if (len < 1 || len < source.Length) return;
-            IntPtr src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
+            var src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
             Marshal.Copy(source, 0, src, source.Length);
             Csound6.NativeMethods.csoundTableCopyIn(csound, table, src, 0);
             Marshal.FreeHGlobal(src);
@@ -624,16 +657,15 @@ namespace Csound.Unity
         public int GetTable(out MYFLT[] tableValues, int numTable)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            int len = Csound6.NativeMethods.csoundTableLength(csound, numTable);
+            var len = Csound6.NativeMethods.csoundTableLength(csound, numTable);
             if (len < 1)
             {
                 tableValues = null;
                 return -1;
             }
 
-            IntPtr tablePtr = new IntPtr();
             tableValues = new MYFLT[len];
-            int res = Csound6.NativeMethods.csoundGetTable(csound, out tablePtr, numTable);
+            var res = Csound6.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, numTable);
             if (res != -1)
                 Marshal.Copy(tablePtr, tableValues, 0, len);
             else tableValues = null;
@@ -651,9 +683,8 @@ namespace Csound.Unity
         /// </summary>
         public int GetTableArgs(out MYFLT[] args, int index)
         {
-#if !UNITY_WEBGL || UNITY_EDITOR          	
-            IntPtr addr = new IntPtr();
-            int len = Csound6.NativeMethods.csoundGetTableArgs(csound, out addr, index);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            var len = Csound6.NativeMethods.csoundGetTableArgs(csound, out IntPtr addr, index);
             args = new MYFLT[len];
             if (len != -1)
                 Marshal.Copy(addr, args, 0, len);
@@ -665,6 +696,10 @@ namespace Csound.Unity
         return 0;
 #endif
         }
+
+        #endregion Tables
+
+        #region Audio I/O
 
         public MYFLT GetSr()
         {
@@ -813,8 +848,7 @@ namespace Csound.Unity
         public MYFLT GetChannel(string channel)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            Int32 err;
-            return Csound6.NativeMethods.csoundGetControlChannel(csound, channel, out err);
+            return Csound6.NativeMethods.csoundGetControlChannel(csound, channel, out _);
 #else
         Debug.LogError("use GetChannel(channel, callback) on the WebGL platform");
         return 0;
@@ -846,7 +880,12 @@ namespace Csound.Unity
         return 0;
 #endif
         }
+
+        #endregion Audio I/O
+
 #if !UNITY_WEBGL || UNITY_EDITOR
+
+        #region Messages
 
         public int GetCsoundMessageCount()
         {
@@ -864,7 +903,12 @@ namespace Csound.Unity
         {
             return CharPtr2String(message);
         }
+
+        #endregion Messages
 #endif
+
+        #region Channel List
+
         /// <summary>
         /// Provides a dictionary of all currently defined channels resulting from compilation of an orchestra
         /// containing channel definitions.
@@ -874,29 +918,26 @@ namespace Csound.Unity
         /// <returns>a dictionary of all currently defined channels keyed by their name to its ChannelInfo</returns>
         public IDictionary<string, ChannelInfo> GetChannelList()
         {
-            IDictionary<string, ChannelInfo> channels = new SortedDictionary<string, ChannelInfo>();
+            var channels = new SortedDictionary<string, ChannelInfo>();
 #if !UNITY_WEBGL || UNITY_EDITOR
-            IntPtr ppChannels = IntPtr.Zero;
-            int size = Csound6.NativeMethods.csoundListChannels(csound, out ppChannels);
-            if ((size > 0) && (ppChannels != IntPtr.Zero))
+            var size = Csound6.NativeMethods.csoundListChannels(csound, out IntPtr ppChannels);
+            if (size > 0 && ppChannels != IntPtr.Zero)
             {
-                int proxySize = Marshal.SizeOf(typeof(ChannelInfoProxy));
+                var proxySize = Marshal.SizeOf(typeof(ChannelInfoProxy));
                 for (int i = 0; i < size; i++)
                 {
-                    var proxy = Marshal.PtrToStructure(ppChannels + (i * proxySize), typeof(ChannelInfoProxy)) as ChannelInfoProxy;
-                    string chanName = CharPtr2String(proxy.name);
-
-                    ChannelInfo info = new ChannelInfo(chanName, (ChannelType)(proxy.type & 15), (ChannelDirection)(proxy.type >> 4));
+                    var proxy    = Marshal.PtrToStructure(ppChannels + (i * proxySize), typeof(ChannelInfoProxy)) as ChannelInfoProxy;
+                    var chanName = CharPtr2String(proxy.name);
+                    var info     = new ChannelInfo(chanName, (ChannelType)(proxy.type & 15), (ChannelDirection)(proxy.type >> 4));
                     var hintProxy = proxy.hints;
-                    var hints = new ChannelHints((ChannelBehavior)hintProxy.behav, hintProxy.dflt, hintProxy.min, hintProxy.max)
+                    info.Hints = new ChannelHints((ChannelBehavior)hintProxy.behav, hintProxy.dflt, hintProxy.min, hintProxy.max)
                     {
-                        x = hintProxy.x,
-                        y = hintProxy.y,
-                        height = hintProxy.height,
-                        width = hintProxy.width,
+                        x          = hintProxy.x,
+                        y          = hintProxy.y,
+                        height     = hintProxy.height,
+                        width      = hintProxy.width,
                         attributes = CharPtr2String(proxy.name)
                     };
-                    info.Hints = hints;
                     channels.Add(chanName, info);
                 }
                 Csound6.NativeMethods.csoundDeleteChannelList(csound, ppChannels);
@@ -1039,6 +1080,10 @@ namespace Csound.Unity
             Output = 2
         }
 
+        #endregion Channel List
+
+        #region Environment
+
         /// <summary>
         /// Gets a string value from csound's environment values.
         /// Meaningful values include the contents of Windows' OS environment values 
@@ -1066,26 +1111,29 @@ namespace Csound.Unity
         public int SetGlobalEnv(string name, string value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-
             return Csound6.NativeMethods.csoundSetGlobalEnv(name, value);
 #else
         return 0;
 #endif
         }
 
+        #endregion Environment
+
+        #region Helpers
+
         /// <summary>
         /// Converts the char* for an ascii "c" string represented by the provided IntPtr
         /// into a managed string.  Usually used for values returning a const char * from
         /// a csound routine.
-        /// Using this method avoids pInvoke's default automatic attpempted deletion
+        /// Using this method avoids pInvoke's default automatic attempted deletion
         /// of the returned char[] when string is expressly given as a marshalling type.
         /// </summary>
-        /// <param name="pString"></param>
-        /// <returns></returns>
-        internal static String CharPtr2String(IntPtr pString)
+        internal static string CharPtr2String(IntPtr pString)
         {
-            return ((pString != null) && (pString != IntPtr.Zero)) ? Marshal.PtrToStringAnsi(pString) : string.Empty;
+            return pString != null && pString != IntPtr.Zero ? Marshal.PtrToStringAnsi(pString) : string.Empty;
         }
+
+        #endregion Helpers
 
         #region WEBGL
 
@@ -1101,18 +1149,13 @@ namespace Csound.Unity
         public int Id => Item2;
     }
 
-    // dictionary to store the user GetChannel callbacks by channel and instanceId
     private Dictionary<CallbackId, Action<MYFLT>> _userCallbacksByChannel = new Dictionary<CallbackId, Action<MYFLT>>();
-   // dictionary to store the internal GetChannel callbacks by channel and instanceId
     private static Dictionary<CallbackId, Action<int, string, MYFLT>> _getChannelCallbacks = new Dictionary<CallbackId, Action<int, string, MYFLT>>();
-    
+
     internal void GetChannel(string channel, Action<MYFLT> callback)
     {
-        // create the key to store the callback in a dictionary, to be recalled later filtering by channel and id
-        // the key is a tuple <channel, id>
         var callbackId = new CallbackId(channel, this._assignedInstanceId);
         _userCallbacksByChannel[callbackId] = callback;
-        // Debug.Log($"GetChannel for instance: {this._assignedInstanceId}, channel: {channel}");
         _getChannelCallbacks[callbackId] = OnGetChannelCompleted;
         CsoundWebGL.Csound6.NativeMethods.csoundGetChannel(this._assignedInstanceId, channel, Marshal
             .GetFunctionPointerForDelegate((CsoundWebGL.Csound6.CsoundGetChannelCallback)OnCsoundGetChannel)
@@ -1122,24 +1165,16 @@ namespace Csound.Unity
     [AOT.MonoPInvokeCallback(typeof(CsoundWebGL.Csound6.CsoundGetChannelCallback))]
     private static void OnCsoundGetChannel(int instanceId, string channel, MYFLT value)
     {
-        // Debug.Log($"OnCsoundGetChannel for instance {instanceId}, channel: {channel}, value: {value}");
         var callbackId = new CallbackId(channel, instanceId);
         _getChannelCallbacks[callbackId]?.Invoke(instanceId, channel, value);
     }
-    
+
     private void OnGetChannelCompleted(int instanceId, string channel, MYFLT value)
     {
-        // abort if the callback is not related with this instanceId
         if (this._assignedInstanceId != instanceId) return;
-        // create the key to look in the dictionary of getChannel and user callbacks
-        // the key is a tuple <channel, id>
         var callbackId = new CallbackId(channel, this._assignedInstanceId);
-        //Debug.Log($"OnGetChannelCompleted {instanceId}: channel: {channel}, value: {value}");
-        // remove the callback from the dictionary since we're now sure the received value is for this instanceId
         _getChannelCallbacks[callbackId] = null;
         _getChannelCallbacks.Remove(callbackId);
-        
-        // we select the user callback by callbackId and invoke it
         _userCallbacksByChannel[callbackId]?.Invoke(value);
     }
 

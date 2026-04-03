@@ -97,6 +97,8 @@ namespace Csound.Unity
 
         #endregion PRIVATE_FIELDS
 
+        #region Unity Messages
+
         private void Awake()
         {
             if (csoundUnityGameObject)
@@ -116,21 +118,13 @@ namespace Csound.Unity
             audioSource.spatialBlend = 1.0f;
             audioSource.spatializePostEffects = true;
 
-            // this will invert the audio channels
-            // 0---------180-----360
-            // normal----mono----reverse
-            // audioSource.spread = 360.0f; 
-
-            /* FIX SPATIALIZATION ISSUES
-            */
+            // FIX SPATIALIZATION ISSUES: requires a dummy clip so FMOD creates an audio DSP node
             if (audioSource.clip == null)
             {
                 var ac = AudioClip.Create("DummyClip", 32, 1, AudioSettings.outputSampleRate, false);
                 var data = new float[32];
                 for (var i = 0; i < data.Length; i++)
-                {
                     data[i] = 1;
-                }
                 ac.SetData(data, 0);
 
                 audioSource.clip = ac;
@@ -139,16 +133,57 @@ namespace Csound.Unity
             }
 
             if (namedAudioChannelData.Count == 0)
-            { 
                 for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
-                {
                     namedAudioChannelData.Add(new MYFLT[bufferSize]);
-                }
-            }
+
             if (selectedAudioChannelIndexByChannel == null) selectedAudioChannelIndexByChannel = new int[2];
-            // TODO: force doppler level of the AudioSource to 0, to avoid audio artefacts ?
-            // audioSource.dopplerLevel = 0;
         }
+
+        void Start()
+        {
+            if (csoundUnity) zerodbfs = csoundUnity.Get0dbfs();
+#if UNITY_6000_0_OR_NEWER
+            OnStartGenerator();
+#endif
+        }
+
+        void OnAudioFilterRead(float[] data, int channels)
+        {
+#if UNITY_6000_0_OR_NEWER
+            // When IAudioGenerator path is active, audio is produced by CsoundChildRealtime.
+            // Skip the classic multiplication loop so we don't double-process.
+            if (_childUsingIAudioGenerator) return;
+#endif
+            if (csoundUnity != null)
+                ProcessBlock(data, channels);
+        }
+
+#if UNITY_6000_0_OR_NEWER
+        private void OnApplicationQuit()
+        {
+            // Clear the generator BEFORE FMOD starts tearing down its DSP graph.
+            // OnDisable/OnDestroy fire too late (after FMOD system objects are freed),
+            // which causes a null-pointer crash inside flushDSPConnectionRequests.
+            if (_childUsingIAudioGenerator && audioSource != null)
+                audioSource.generator = null;
+
+            _quitting = true;
+        }
+
+        private void OnDisable()
+        {
+            OnDisableGenerator();
+        }
+
+        private void OnDestroy()
+        {
+            OnDestroyGenerator();
+        }
+#endif
+
+        #endregion Unity Messages
+
+        #region Public API
 
         /// <summary>
         /// Initializes this CsoundUnityChild instance setting the CsoundUnity reference and the audioChannels settings.
@@ -176,7 +211,6 @@ namespace Csound.Unity
         /// <param name="audioChannel">The CsoundUnity audioChannel index in the CsoundUnity.availableAudioChannels list</param>
         public void SetAudioChannel(int channel, int audioChannel)
         {
-            //Debug.Log($"CsoundUnityChild SetAudioChannel channel: {channel}, audioChannel: {audioChannel}");
             selectedAudioChannelIndexByChannel[channel] = audioChannel;
         }
 
@@ -191,26 +225,9 @@ namespace Csound.Unity
         }
 #endif
 
-        void Start()
-        {
-            if (csoundUnity) zerodbfs = csoundUnity.Get0dbfs();
-#if UNITY_6000_0_OR_NEWER
-            OnStartGenerator();
-#endif
-        }
+        #endregion Public API
 
-        void OnAudioFilterRead(float[] data, int channels)
-        {
-#if UNITY_6000_0_OR_NEWER
-            // When IAudioGenerator path is active, audio is produced by CsoundChildRealtime.
-            // Skip the classic multiplication loop so we don't double-process.
-            if (_childUsingIAudioGenerator) return;
-#endif
-            if (csoundUnity != null)
-            {
-                ProcessBlock(data, channels);
-            }
-        }
+        #region Private Helpers
 
 #if UNITY_6000_0_OR_NEWER
         /// <summary>Set to true by CsoundUnityChild.Generator.cs when IAudioGenerator path is active.</summary>
@@ -220,39 +237,14 @@ namespace Csound.Unity
         private bool _quitting;
 
         partial void OnStartGenerator();
-
-        private void OnApplicationQuit()
-        {
-            // Clear the generator BEFORE FMOD starts tearing down its DSP graph.
-            // OnDisable/OnDestroy fire too late (after FMOD system objects are freed),
-            // which causes a null-pointer crash inside flushDSPConnectionRequests.
-            if (_childUsingIAudioGenerator && audioSource != null)
-                audioSource.generator = null;
-
-            _quitting = true;
-        }
-
-        private void OnDisable()
-        {
-            OnDisableGenerator();
-        }
-
-        private void OnDestroy()
-        {
-            OnDestroyGenerator();
-        }
-
         partial void OnDisableGenerator();
         partial void OnDestroyGenerator();
 #endif
 
         void ProcessBlock(float[] samples, int numChannels)
         {
-            // print("CsoundUnityChild DSP Time - " + AudioSettings.dspTime * 48000);
             if (availableAudioChannels == null || availableAudioChannels.Count < 1 || !csoundUnity.IsInitialized)
-            {
                 return;
-            }
 
             for (int i = 0; i < (int)AudioChannelsSetting; i++)
             {
@@ -269,8 +261,7 @@ namespace Csound.Unity
                     switch (AudioChannelsSetting)
                     {
                         case AudioChannels.MONO:
-                            // sample is multiplied by 0.5f to obtain the same volume as the original audio file, 
-                            // since the mono channel is duplicated between the channels
+                            // 0.5f compensates for the mono channel being duplicated to both output channels
                             samples[i + channel] = samples[i + channel] * (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs * 0.5f);
                             break;
                         case AudioChannels.STEREO:
@@ -280,6 +271,8 @@ namespace Csound.Unity
                 }
             }
         }
+
+        #endregion Private Helpers
     }
 }
 #endif

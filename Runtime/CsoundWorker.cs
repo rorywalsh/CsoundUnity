@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -17,18 +17,16 @@ namespace Csound.Unity
 {
     public class CsoundWorker : CsoundUnityBridge
     {
+        #region Fields
+
         Thread performance;
 
         private static string _csdEmptyTemplate =
             "<CsoundSynthesizer>\n" +
-            // "<CsOptions>\n" +
-            // "- n - d\n" +
-            // "</CsOptions>\n" +
             "<CsInstruments>\n" +
             "0dbfs = 1\n" +
             "ksmps = 1\n\n" +
             "instr 9999\n" +
-            //"printks \"alive\", .1\n" +
             "endin\n" +
             "</CsInstruments>\n" +
             "</CsoundSynthesizer>" +
@@ -50,6 +48,15 @@ namespace Csound.Unity
 
         public bool IsInitialized { get; set; }
 
+        protected bool m_disposed = false;
+        private IDictionary<string, GCHandle> m_callbacks = new Dictionary<string, GCHandle>();
+
+        int nOperation = 1;
+
+        #endregion Fields
+
+        #region Constructors
+
         public CsoundWorker() : base()
         {
             Debug.Log("CsoundWorker construction");
@@ -69,7 +76,7 @@ namespace Csound.Unity
             NativeMethods.csoundSetOption(csound, "-d");
             NativeMethods.csoundSetOption(csound, $"--sample-rate={AudioSettings.outputSampleRate}");
 
-            int ret = NativeMethods.csoundCompileCSD(csound, _csdEmptyTemplate, 1, 0, null);
+            var ret = NativeMethods.csoundCompileCSD(csound, _csdEmptyTemplate, 1, 0, null);
             NativeMethods.csoundStart(csound);
             var compiledOk = ret == 0;
             Debug.Log($"CsoundWorker created and started. CsoundCompile: {compiledOk}\n" +
@@ -79,7 +86,6 @@ namespace Csound.Unity
                 $"Get0dbfs: {Get0dbfs()}\n" +
                 $"GetKsmps: {GetKsmps()}");
 
-            // Create a new thread and start it
             performance = new Thread(PerformanceThread);
             performance.Start();
             _running = true;
@@ -87,75 +93,93 @@ namespace Csound.Unity
             IsInitialized = true;
         }
 
-        //~CsoundWorker()
-        //{
-        //    base.OnApplicationQuit();
-        //    Dispose();
-        //}
+        #endregion Constructors
 
-        protected bool m_disposed = false;
+        #region Lifecycle
+
+        public override void OnApplicationQuit()
+        {
+            _running = false;
+            Debug.Log("Worker OnApplicationQuit");
+            base.OnApplicationQuit();
+            Dispose();
+        }
+
+        public void Destroy()
+        {
+            OnApplicationQuit();
+        }
 
         protected virtual void Dispose()
         {
-            if (!m_disposed)
+            if (m_disposed) return;
+
+            Debug.Log("Disposing");
+
+            if (m_callbacks != null)
             {
-                Debug.Log("Disposing");
-                
-                //ReleaseProtectedPointer(NativeMethods.csoundGetHostData(csound));
-
-                //dispose of unmanaged resources
-                if (m_callbacks != null)
-                {
-                    foreach (GCHandle gch in m_callbacks.Values) gch.Free();
-                    m_callbacks.Clear();
-                    m_callbacks = null;
-                }
-
-                Debug.Log("Joining CsoundWorker thread");
-                performance.Join();
-                performance = null;
-
-                m_disposed = true;
-                Debug.Log("CsoundWorker Disposed");
-                //GC.SuppressFinalize(this);
+                foreach (GCHandle gch in m_callbacks.Values) gch.Free();
+                m_callbacks.Clear();
+                m_callbacks = null;
             }
+
+            Debug.Log("Joining CsoundWorker thread");
+            performance.Join();
+            performance = null;
+
+            m_disposed = true;
+            Debug.Log("CsoundWorker Disposed");
         }
 
-        protected void ReleaseProtectedPointer(IntPtr pgcData)
-        {
-            if ((pgcData != null) && (pgcData != IntPtr.Zero))
-            {
-                GCHandle gcData = GCHandle.FromIntPtr(pgcData);
-                gcData.Free();
-            }
-        }
+        #endregion Lifecycle
 
-        public void PerformanceThread()
-        {
-            while (_running)
-            {
-                try
-                {
-                    int result = NativeMethods.csoundPerformKsmps(csound);
-                    if (result != 0) break; // non-zero means end of score or error
-                }
-                catch (ThreadAbortException)
-                {
-                    Debug.Log("Thread aborted");
-                    break;
-                }
-            }
-            // Delay the thread for a certain amount of time
-            //Thread.Sleep((int)(1f / GetKr() * 1000f)); 
-            //}
-        }
+        #region Public API
 
         public static CsoundWorker Create()
         {
             return new CsoundWorker();
         }
 
-        int nOperation = 1;
+        /// <summary>
+        /// Creates a table with the supplied samples.
+        /// Can be called during performance.
+        /// </summary>
+        /// <param name="tableNumber">The table number</param>
+        /// <param name="samples"></param>
+        /// <returns></returns>
+        public int CreateTable(int tableNumber, MYFLT[] samples)
+        {
+            if (samples.Length < 1) return -1;
+            if (_createdTables.Contains(tableNumber))
+            {
+                TableCopyIn(tableNumber, samples);
+                return 0;
+            }
+
+            var resTable = CreateTableInstrument(tableNumber, samples.Length);
+            if (resTable != 0)
+                return -1;
+
+            _createdTables.Add(tableNumber);
+            TableCopyIn(tableNumber, samples);
+
+            return resTable;
+        }
+
+        /// <summary>
+        /// Creates an empty table, to be filled with samples later.
+        /// Please note that trying to read the samples from an empty table will produce a crash.
+        /// Can be called during performance.
+        /// </summary>
+        /// <param name="tableNumber">The number of the newly created table</param>
+        /// <param name="tableLength">The length of the table in samples</param>
+        /// <returns>0 If the table could be created</returns>
+        public int CreateTableInstrument(int tableNumber, int tableLength)
+        {
+            var createTableInstrument = string.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -7, 0, 0", tableNumber, -tableLength);
+            Debug.Log($"orc to create table {tableNumber}, length: {tableLength}: \n" + createTableInstrument);
+            return CompileOrc(createTableInstrument);
+        }
 
         // uses a table to store the samples and creates an instrument to save data on disk
         public bool SaveAudioFile(string destination, float[] samples, int bitsPerSample = 16)
@@ -191,11 +215,7 @@ namespace Csound.Unity
 
             CreateTable(nOperation, Utilities.AudioSamplesUtils.ConvertToMYFLT(samples));
             if (_createdInstruments.ContainsKey(nOperation))
-            {
-                //SendScoreEvent("i100, 0, 1");
-                //return true;
                 return ScheduleInstrument(nOperation, 0, 1) == 0;
-            }
 
             var instr = string.Format(_saveFileInstrTemplate, nOperation, destination, format);
             Debug.Log($"SaveAudioFile instr:\n{instr}");
@@ -207,7 +227,6 @@ namespace Csound.Unity
                 _createdInstruments.Add(nOperation, "SaveFile");
                 nOperation++;
             }
-            //SendScoreEvent("i100 0 1");
             return res == 0;
         }
 
@@ -221,56 +240,39 @@ namespace Csound.Unity
             return CompileOrc(msg);
         }
 
-        /// <summary>
-        /// Creates a table with the supplied samples.
-        /// Can be called during performance.
-        /// </summary>
-        /// <param name="tableNumber">The table number</param>
-        /// <param name="samples"></param>
-        /// <returns></returns>
-        public int CreateTable(int tableNumber, MYFLT[] samples)
+        #endregion Public API
+
+        #region Private Helpers
+
+        public void PerformanceThread()
         {
-            if (samples.Length < 1) return -1;
-            if (_createdTables.Contains(tableNumber))
+            while (_running)
             {
-                // copy samples to the existing table
-                TableCopyIn(tableNumber, samples);
-                return 0;
+                try
+                {
+                    var result = NativeMethods.csoundPerformKsmps(csound);
+                    if (result != 0) break; // non-zero means end of score or error
+                }
+                catch (ThreadAbortException)
+                {
+                    Debug.Log("Thread aborted");
+                    break;
+                }
             }
-
-            var resTable = CreateTableInstrument(tableNumber, samples.Length);
-            if (resTable != 0)
-                return -1;
-
-            _createdTables.Add(tableNumber);
-
-            // copy samples to the newly created table
-            TableCopyIn(tableNumber, samples);
-
-            return resTable;
         }
 
-        /// <summary>
-        /// Creates an empty table, to be filled with samples later. 
-        /// Please note that trying to read the samples from an empty table will produce a crash.
-        /// Can be called during performance.
-        /// </summary>
-        /// <param name="tableNumber">The number of the newly created table</param>
-        /// <param name="tableLength">The length of the table in samples</param>
-        /// <returns>0 If the table could be created</returns>
-        public int CreateTableInstrument(int tableNumber, int tableLength)
+        protected void ReleaseProtectedPointer(IntPtr pgcData)
         {
-            string createTableInstrument = string.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -7, 0, 0", tableNumber, -tableLength);
-            Debug.Log($"orc to create table {tableNumber}, length: {tableLength}: \n" + createTableInstrument);
-            var res = CompileOrc(createTableInstrument);
-            return res;
+            if ((pgcData != null) && (pgcData != IntPtr.Zero))
+            {
+                var gcData = GCHandle.FromIntPtr(pgcData);
+                gcData.Free();
+            }
         }
 
         private void RawMessageCallback(IntPtr csound, Int32 attr, string message)
         {
             Debug.Log($"[CSOUNDWORKER] {message} {attr}");
-
-           // PrintMessages();
         }
 
         private void PrintMessages()
@@ -285,31 +287,18 @@ namespace Csound.Unity
 
         internal GCHandle SetMessageCallback(MessageStrCallbackProxy callback)
         {
-            GCHandle gch = FreezeCallbackInHeap(callback);
+            var gch = FreezeCallbackInHeap(callback);
             NativeMethods.csoundSetMessageStringCallback(csound, callback);
             return gch;
         }
 
-        private IDictionary<string, GCHandle> m_callbacks = new Dictionary<string, GCHandle>();
-
         internal GCHandle FreezeCallbackInHeap(Delegate callback)
         {
-            string name = callback.Method.Name;
+            var name = callback.Method.Name;
             if (!m_callbacks.ContainsKey(name)) m_callbacks.Add(name, GCHandle.Alloc(callback));
             return m_callbacks[name];
         }
 
-        public void Destroy()
-        {
-            OnApplicationQuit();
-        }
-
-        public override void OnApplicationQuit()
-        {
-            _running = false;
-            Debug.Log("Worker OnApplicationQuit");
-            base.OnApplicationQuit();
-            Dispose();
-        }
+        #endregion Private Helpers
     }
 }

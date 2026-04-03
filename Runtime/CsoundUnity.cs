@@ -164,7 +164,6 @@ namespace Csound.Unity
         public string GetPath(bool runtime = false)
         {
             var path = string.Empty;
-            //Debug.Log($"EnvironmentSettings GetPath from {baseFolder}");
             switch (baseFolder)
             {
                 case EnvironmentPathOrigin.PersistentDataPath:
@@ -249,7 +248,6 @@ namespace Csound.Unity
 
         private string GetPluginsPath(SupportedPlatform supportedPlatform, bool runtime)
         {
-            //Debug.Log($"GetPluginsPath for platform: {supportedPlatform}");
             var res = Path.Combine(Application.dataPath, "Plugins");
             switch (supportedPlatform)
             {
@@ -261,7 +259,6 @@ namespace Csound.Unity
                     break;
                 case SupportedPlatform.Android:
 #if UNITY_ANDROID && !UNITY_EDITOR
-                //Debug.Log("1 - GET ANDROID NATIVE LIBRARY DIR");
                 res = GetAndroidNativeLibraryDir();
 #else
                     res = runtime ? $"/data/app/<random chars>/{Application.identifier}-<random chars>/lib/arm64-v8a" : res;
@@ -287,21 +284,17 @@ namespace Csound.Unity
     public static AndroidJavaObject GetUnityContext()
     {
         var activity = GetUnityActivity();
-        //Debug.Log($"2 - GetUnityContext, activity null? {activity == null}");
         return activity.Call<AndroidJavaObject>("getApplicationContext");
     }
 
     public static AndroidJavaObject GetApplicationInfo()
     {
-        var context = GetUnityContext();
-        //Debug.Log($"3 - GetApplicationInfo, context null? {context == null}");
         return GetUnityContext().Call<AndroidJavaObject>("getApplicationInfo");
     }
 
     public static string GetAndroidNativeLibraryDir()
     {
         var info = GetApplicationInfo();
-        //Debug.Log($"4 - GetAndroidNativeLibraryDir, info null? {info == null}");
         return info.Get<string>("nativeLibraryDir");
     }
 #endif
@@ -508,7 +501,7 @@ namespace Csound.Unity
             DspLoad = DspLoad * (1f - DspLoadAlpha) + load * DspLoadAlpha;
         }
 
-        #endregion
+        #endregion DSP load measurement
 
         /// <summary>
         /// The delegate of the event OnCsoundInitialized
@@ -724,7 +717,7 @@ namespace Csound.Unity
         /// </summary>
         private Dictionary<string, MYFLT[]> namedAudioChannelTempBufferDict = new Dictionary<string, MYFLT[]>();
 
-        #endregion
+        #endregion PRIVATE_FIELDS
 
         /// <summary>
         /// CsoundUnity Awake function. Called when this script is first instantiated. This should never be called directly. 
@@ -1078,7 +1071,6 @@ namespace Csound.Unity
         {
 #if UNITY_EDITOR //for now setting csd is permitted from editor only, via asset guid
 
-            // Debug.Log($"SET CSD guid: {guid}");
             if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out Guid guidResult))
             {
                 Debug.LogWarning($"GUID NOT VALID, Resetting fields");
@@ -1426,10 +1418,10 @@ namespace Csound.Unity
         {
             if (!File.Exists(filename)) return null;
 
-            string[] fullCsdText = File.ReadAllLines(filename);
+            var fullCsdText = File.ReadAllLines(filename);
             if (fullCsdText.Length < 1) return null;
 
-            List<string> locaAudioChannels = new List<string>();
+            var locaAudioChannels = new List<string>();
 
             foreach (string line in fullCsdText)
             {
@@ -1442,7 +1434,6 @@ namespace Csound.Unity
                 var split = prms.Split(',');
                 if (!split[0].StartsWith("a") && !split[0].StartsWith("ga"))
                     continue; //discard non audio variables
-                              // Debug.Log("found audio channel");
 
                 // discard channels that are not plain strings, since they cannot be interpreted afterwards
                 // "validChan" vs SinvalidChan
@@ -1467,11 +1458,10 @@ namespace Csound.Unity
         {
             if (!File.Exists(filename)) return null;
 
-            string[] fullCsdText = File.ReadAllLines(filename);
+            var fullCsdText = File.ReadAllLines(filename);
             if (fullCsdText.Length < 1) return null;
 
-            List<CsoundChannelController> locaChannelControllers;
-            locaChannelControllers = new List<CsoundChannelController>();
+            var locaChannelControllers = new List<CsoundChannelController>();
 
             foreach (string line in fullCsdText)
             {
@@ -1482,19 +1472,16 @@ namespace Csound.Unity
                 var trimmd = line.TrimStart();
                 //discard csound comments in cabbage widgets
                 if (trimmd.StartsWith(";"))
-                {
-                    //Debug.Log("discarding "+line);
                     continue;
-                }
                 var control = trimmd.Substring(0, trimmd.IndexOf(" ") > -1 ? trimmd.IndexOf(" ") : 0);
                 if (control == "xypad")
                 {
-                    CsoundChannelController controller = new CsoundChannelController();
+                    var controller = new CsoundChannelController();
                     controller.type = control;
 
                     if (trimmd.IndexOf("text(") > -1)
                     {
-                        string text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
+                        var text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
                         text = text.Substring(0, text.IndexOf(")") - 1);
                         controller.text = text.Replace("\"", "").Trim();
                     }
@@ -1502,7 +1489,7 @@ namespace Csound.Unity
                     // channel("xchan", "ychan")
                     if (trimmd.IndexOf("channel(") > -1)
                     {
-                        string chanStr = trimmd.Substring(trimmd.IndexOf("channel(") + 8);
+                        var chanStr = trimmd.Substring(trimmd.IndexOf("channel(") + 8);
                         chanStr = chanStr.Substring(0, chanStr.IndexOf(")")).Replace("\"", "");
                         var parts = chanStr.Split(',');
                         controller.channel = parts[0].Trim();
@@ -1515,7 +1502,7 @@ namespace Csound.Unity
                     int rxIdx = trimmd.IndexOf("rangex(", StringComparison.OrdinalIgnoreCase);
                     if (rxIdx > -1)
                     {
-                        string range = trimmd.Substring(rxIdx + 7);
+                        var range = trimmd.Substring(rxIdx + 7);
                         range = range.Substring(0, range.IndexOf(")"));
                         var tokens = range.Split(',');
                         float xMin = tokens.Length > 0 ? float.Parse(tokens[0].Trim(), CultureInfo.InvariantCulture) : 0;
@@ -1531,7 +1518,7 @@ namespace Csound.Unity
                     int ryIdx = trimmd.IndexOf("rangey(", StringComparison.OrdinalIgnoreCase);
                     if (ryIdx > -1)
                     {
-                        string range = trimmd.Substring(ryIdx + 7);
+                        var range = trimmd.Substring(ryIdx + 7);
                         range = range.Substring(0, range.IndexOf(")"));
                         var tokens = range.Split(',');
                         float yMin = tokens.Length > 0 ? float.Parse(tokens[0].Trim(), CultureInfo.InvariantCulture) : 0;
@@ -1547,25 +1534,24 @@ namespace Csound.Unity
                 else if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox")
                     || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox") || control.Contains("label"))
                 {
-                    CsoundChannelController controller = new CsoundChannelController();
+                    var controller = new CsoundChannelController();
                     controller.type = control;
                     if (trimmd.IndexOf("caption(") > -1)
                     {
-                        string infoText = trimmd.Substring(trimmd.IndexOf("caption(") + 9);
+                        var infoText = trimmd.Substring(trimmd.IndexOf("caption(") + 9);
                         infoText = infoText.Substring(0, infoText.IndexOf(")") - 1);
                         controller.caption = infoText;
                     }
 
                     if (trimmd.IndexOf("text(") > -1)
                     {
-                        string text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
+                        var text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
                         text = text.Substring(0, text.IndexOf(")") - 1);
                         text = text.Replace("\"", "");
                         text = text.Replace('"', new char());
                         if (controller.type == "combobox") //if combobox, text() contains options not a label
                         {
-                            char[] delimiterChars = { ',' };
-                            string[] tokens = text.Split(delimiterChars);
+                            var tokens = text.Split(',');
                             controller.SetRange(1, tokens.Length, 0);
 
                             for (var o = 0; o < tokens.Length; o++)
@@ -1582,15 +1568,14 @@ namespace Csound.Unity
 
                     if (trimmd.IndexOf("items(") > -1)
                     {
-                        string text = trimmd.Substring(trimmd.IndexOf("items(") + 7);
+                        var text = trimmd.Substring(trimmd.IndexOf("items(") + 7);
                         text = text.Substring(0, text.IndexOf(")") - 1);
                         //TODO THIS OVERRIDES TEXT!
                         text = text.Replace("\"", "");
                         text = text.Replace('"', new char());
                         if (controller.type == "combobox")
                         {
-                            char[] delimiterChars = { ',' };
-                            string[] tokens = text.Split(delimiterChars);
+                            var tokens = text.Split(',');
                             controller.SetRange(1, tokens.Length, 0);
 
                             for (var o = 0; o < tokens.Length; o++)
@@ -1603,20 +1588,20 @@ namespace Csound.Unity
 
                     if (trimmd.IndexOf("channel(") > -1)
                     {
-                        string channel = trimmd.Substring(trimmd.IndexOf("channel(") + 9);
+                        var channel = trimmd.Substring(trimmd.IndexOf("channel(") + 9);
                         channel = channel.Substring(0, channel.IndexOf(")") - 1);
                         controller.channel = channel;
                     }
 
                     if (trimmd.IndexOf("range(") > -1)
                     {
-                        int rangeAt = trimmd.IndexOf("range(");
+                        var rangeAt = trimmd.IndexOf("range(");
                         if (rangeAt != -1)
                         {
-                            string range = trimmd.Substring(rangeAt + 6);
+                            var range = trimmd.Substring(rangeAt + 6);
                             range = range.Substring(0, range.IndexOf(")"));
-                            char[] delimiterChars = { ',' };
-                            string[] tokens = range.Split(delimiterChars);
+                            var delimiterChars = new char[] { ',' };
+                            var tokens = range.Split(delimiterChars);
                             for (var i = 0; i < tokens.Length; i++)
                             {
                                 tokens[i] = string.Join("", tokens[i].Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
@@ -1649,7 +1634,7 @@ namespace Csound.Unity
 
                     if (line.IndexOf("value(") > -1)
                     {
-                        string value = trimmd.Substring(trimmd.IndexOf("value(") + 6);
+                        var value = trimmd.Substring(trimmd.IndexOf("value(") + 6);
                         value = value.Substring(0, value.IndexOf(")"));
                         value = value.Replace("\"", "");
                         controller.value = value.Length > 0 ? float.Parse(value, CultureInfo.InvariantCulture) : 0;
@@ -1657,7 +1642,6 @@ namespace Csound.Unity
                         {
                             //Cabbage combobox index starts from 1
                             controller.value = controller.value - 1;
-                            // Debug.Log("combobox value in parse: " + controller.value);
                         }
                     }
                     locaChannelControllers.Add(controller);
@@ -2184,8 +2168,7 @@ namespace Csound.Unity
         /// <returns>0 If the table could be created</returns>
         public int CreateTableInstrument(int tableNumber, int tableLength)
         {
-            string createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -7, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
-            // Debug.Log("orc to create table: \n" + createTableInstrument);
+            var createTableInstrument = String.Format(@"gisampletable{0} ftgen {0}, 0, {1}, -7, 0, 0", tableNumber, -tableLength /** AudioSettings.outputSampleRate*/);
             return CompileOrc(createTableInstrument);
         }
 
@@ -2639,10 +2622,8 @@ namespace Csound.Unity
         public void ConvertPresetToScriptableObject(string path, string destination)
         {
 #if UNITY_EDITOR
-            //Debug.Log($"ConvertPresetToScriptableObject at path: {path}, to dest: {destination}");
             LoadPreset(path, (preset) =>
             {
-                //Debug.Log($"Loaded Preset Name: {preset.presetName}");
                 WritePreset(preset, destination);
             });
 #endif
@@ -2813,32 +2794,24 @@ namespace Csound.Unity
         /// <returns></returns>
         public static List<CsoundUnityPreset> ParseSnap(string csdPath, string snapPath)
         {
-            //Debug.Log($"Parse snap: csdPath: {csdPath}, snapPath: {snapPath}");
-
             var snap = File.ReadAllText(snapPath);
             var snapStart = snap.IndexOf("{");
             var snapEnd = snap.LastIndexOf("}");
             var presets = snap.Substring(snapStart + 1, snapEnd - snapStart - 2);
             var csdName = Path.GetFileName(csdPath);
-
-            //Debug.Log($"presets: {presets}");
             var parsedPresets = ParsePresets(csdName, presets);
             var originalChannels = ParseCsdFile(csdPath);
             if (originalChannels == null || originalChannels.Count == 0)
             {
-                if (originalChannels == null || originalChannels.Count == 0)
-                {
-                    Debug.LogWarning($"Couldn't fix preset channels for snap {snapPath}, csd path: {csdPath}, preset channels will not be visible on Editor, " +
-                        $"but you should still be able to use them. Be aware that Comboboxes will be broken. " +
-                        $"Please ensure that a '.csd' file with the same name of the '.snaps' file is present at the same location.");
-                    return parsedPresets;
-                }
+                Debug.LogWarning($"Couldn't fix preset channels for snap {snapPath}, csd path: {csdPath}, preset channels will not be visible on Editor, " +
+                    $"but you should still be able to use them. Be aware that Comboboxes will be broken. " +
+                    $"Please ensure that a '.csd' file with the same name of the '.snaps' file is present at the same location.");
+                return parsedPresets;
             }
             foreach (var preset in parsedPresets)
             {
                 FixPresetChannels(originalChannels, preset.channels);
             }
-            Debug.Log($"originalChannels: {originalChannels.Count}");
             return parsedPresets;
         }
 
@@ -2849,18 +2822,8 @@ namespace Csound.Unity
 
             foreach (var preset in splitPresets)
             {
-                //Debug.Log($"--> preset: {preset}");
                 parsedPresets.Add(ParsePreset(snapName, preset));
             }
-
-            //foreach (var preset in parsedPresets)
-            //{
-            //    Debug.Log($"<color=green>Preset: {preset.presetName}, csd: {preset.csoundFileName}, num channels: {preset.channels.Count}</color>");
-            //    foreach (var channel in preset.channels)
-            //    {
-            //        Debug.Log($"<color=orange>Channel: {channel.channel} = {channel.value}</color>");
-            //    }
-            //}
             return parsedPresets;
         }
 
@@ -2868,18 +2831,14 @@ namespace Csound.Unity
         {
             var presetNameStart = preset.IndexOf("\"");
             var subPreset = preset.Substring(presetNameStart + 1, preset.Length - presetNameStart - 1);
-            //Debug.Log($"SubPreset: {subPreset}");
             var presetNameEnd = subPreset.IndexOf("\"");
             var presetName = subPreset.Substring(0, presetNameEnd);
-            //Debug.Log($"--> presetName: {presetName}");
             var presetContentStart = preset.IndexOf("{");
             var presetContent = preset.Substring(presetContentStart + 1, preset.Length - presetContentStart - 1);
-            //Debug.Log($"presetContent: {presetContent}");
             var splitPresetContent = presetContent.Split(new string[] { "," }, StringSplitOptions.None);
             var presetChannels = new List<CsoundChannelController>();
             foreach (var chan in splitPresetContent)
             {
-                //Debug.Log($"chan: {chan}");
                 presetChannels.Add(ParseChannel(chan).Clone());
             }
 
@@ -2889,18 +2848,15 @@ namespace Csound.Unity
         private static CsoundChannelController ParseChannel(string chan)
         {
             var split = chan.Split(new string[] { ":" }, StringSplitOptions.None);
-            var chanName = split[0];//.Replace('"', new char());
+            var chanName = split[0];
             var chanValue = split[1];
-            //Debug.Log($"Channel Name: {chanName}, Value: {chanValue}");
-            var cleanChanName = chanName.Replace("\"", "").Trim(); //Trim(new char[] { '"' });
+            var cleanChanName = chanName.Replace("\"", "").Trim();
             float.TryParse(chanValue, out float chanValueFloat);
-            //Debug.Log($"Clean chan name: {cleanChanName}, float value: {chanValueFloat}");
             var cc = new CsoundChannelController()
             {
                 channel = cleanChanName,
                 value = chanValueFloat
             };
-            //Debug.Log($"Created channel controller: {cc.channel}, value: {cc.value}");
             return cc;
         }
 
@@ -3752,12 +3708,10 @@ namespace Csound.Unity
         var elevation =
             Mathf.Atan2(localDirection.y, new Vector2(localDirection.x, localDirection.z).magnitude) * Mathf.Rad2Deg;
 
-        //Debug.Log($"Distance: {distance}, Azimuth: {azimuth}, Elevation: {elevation}");
         var rolloffCurve = audioSource.GetCustomCurve(AudioSourceCurveType.CustomRolloff);
         var normalized = (distance / (audioSource.maxDistance - audioSource.minDistance));
         normalized = Mathf.Clamp01(normalized);
         var rolloff = rolloffCurve.Evaluate(normalized);
-        //Debug.Log($"distance: {distance}, normalized: {normalized} rolloff: {rolloff}");
     
         SetChannel("rolloff", rolloff);
         SetChannel("azimuth", azimuth);
