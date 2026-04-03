@@ -11,9 +11,15 @@ namespace Csound.Unity.Utilities.Components.UI
     [RequireComponent(typeof(Toggle))]
     public class CsoundUnityToggle : MonoBehaviour
     {
+        #region Serialized fields
+
         [SerializeField] CsoundUnity _csound;
         [SerializeField] string _channel;
         [SerializeField] Text _labelText;
+
+        #endregion Serialized fields
+
+        #region Properties
 
         public bool IsOn
         {
@@ -23,9 +29,17 @@ namespace Csound.Unity.Utilities.Components.UI
 
         public bool IsInitialized => _csound != null && _csound.IsInitialized && _isInitialized;
 
+        #endregion Properties
+
+        #region Fields
+
         private Toggle _toggle;
         private CsoundChannelController _channelController;
         private bool _isInitialized = false;
+
+        #endregion Fields
+
+        #region Unity messages
 
         IEnumerator Start()
         {
@@ -59,6 +73,10 @@ namespace Csound.Unity.Utilities.Components.UI
             _csound.OnCsoundInitialized -= OnCsoundInitialized;
             _csound.OnCsoundStopped -= OnCsoundStopped;
         }
+
+        #endregion Unity messages
+
+        #region Private helpers
 
         private void OnCsoundInitialized()
         {
@@ -102,5 +120,7 @@ namespace Csound.Unity.Utilities.Components.UI
             if (!_isInitialized) return;
             _csound.SetChannel(_channel, value ? 1f : 0f);
         }
+
+        #endregion Private helpers
     }
 }

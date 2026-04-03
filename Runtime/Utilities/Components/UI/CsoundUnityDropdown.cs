@@ -13,9 +13,15 @@ namespace Csound.Unity.Utilities.Components.UI
     [RequireComponent(typeof(Dropdown))]
     public class CsoundUnityDropdown : MonoBehaviour
     {
+        #region Serialized fields
+
         [SerializeField] CsoundUnity _csound;
         [SerializeField] string _channel;
         [SerializeField] Text _channelLabelText;
+
+        #endregion Serialized fields
+
+        #region Properties
 
         /// <summary>Current 0-based dropdown index.</summary>
         public int Index
@@ -29,9 +35,17 @@ namespace Csound.Unity.Utilities.Components.UI
 
         public bool IsInitialized => _csound != null && _csound.IsInitialized && _isInitialized;
 
+        #endregion Properties
+
+        #region Fields
+
         private Dropdown _dropdown;
         private CsoundChannelController _channelController;
         private bool _isInitialized = false;
+
+        #endregion Fields
+
+        #region Unity messages
 
         IEnumerator Start()
         {
@@ -66,6 +80,10 @@ namespace Csound.Unity.Utilities.Components.UI
             _csound.OnCsoundStopped -= OnCsoundStopped;
         }
 
+        #endregion Unity messages
+
+        #region Private helpers
+
         private void OnCsoundInitialized()
         {
             StartCoroutine(ReinitDropdown());
@@ -97,7 +115,6 @@ namespace Csound.Unity.Utilities.Components.UI
                     ? _channel
                     : _channelController.caption;
 
-            // Populate options from the controller
             _dropdown.ClearOptions();
             var options = new List<string>();
             if (_channelController.options != null && _channelController.options.Length > 0)
@@ -106,7 +123,7 @@ namespace Csound.Unity.Utilities.Components.UI
                 Debug.LogWarning($"CsoundUnityDropdown {name}: no options found for channel '{_channel}'");
             _dropdown.AddOptions(options);
 
-            // Set initial value: Cabbage combobox is 1-based, dropdown is 0-based
+            // Cabbage combobox is 1-based; Unity Dropdown is 0-based
             _dropdown.value = Mathf.Clamp(Mathf.RoundToInt(_channelController.value) - 1, 0, options.Count - 1);
 
             _dropdown.onValueChanged.RemoveListener(OnDropdownChanged);
@@ -120,5 +137,7 @@ namespace Csound.Unity.Utilities.Components.UI
             // Cabbage combobox expects 1-based index
             _csound.SetChannel(_channel, index + 1f);
         }
+
+        #endregion Private helpers
     }
 }

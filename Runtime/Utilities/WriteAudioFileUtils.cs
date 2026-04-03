@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using UnityEngine;
@@ -10,6 +10,8 @@ namespace Csound.Unity.Utilities
     /// </summary>
     public static class WriteAudioFileUtils
     {
+        #region Public API
+
         /// <summary>
         /// Writes an audio file from the provided AudioClip to the specified destination.
         /// </summary>
@@ -27,7 +29,7 @@ namespace Csound.Unity.Utilities
             {
                 destination += "wav";
             }
-            
+
             switch (extension.ToLower())
             {
                 case ".aif":
@@ -61,34 +63,29 @@ namespace Csound.Unity.Utilities
         {
             try
             {
-                using (FileStream fileStream = new FileStream(destination, FileMode.Create))
-                using (BinaryWriter writer = new BinaryWriter(fileStream))
+                using (var fileStream = new FileStream(destination, FileMode.Create))
+                using (var writer = new BinaryWriter(fileStream))
                 {
-                    // Write AIFF header
                     writer.Write(Encoding.ASCII.GetBytes("FORM"));
                     writer.Write(0); // Placeholder for file size
                     writer.Write(Encoding.ASCII.GetBytes("AIFF"));
 
-                    // Create COMM chunk
                     writer.Write(Encoding.ASCII.GetBytes("COMM"));
                     writer.Write(SwapEndian(18));
                     writer.Write(SwapEndian((short)channels));
-                    long commSampleCountPos = fileStream.Position;
+                    var commSampleCountPos = fileStream.Position;
                     writer.Write(0); // Placeholder for total number of samples
                     writer.Write(SwapEndian((short)bitsPerSample));
                     writer.Write(ConvertToIeeeExtended(frequency));
 
-                    // Create SSND chunk header
                     writer.Write(Encoding.ASCII.GetBytes("SSND"));
-                    long dataSizePos = fileStream.Position;
+                    var dataSizePos = fileStream.Position;
                     writer.Write(0); // Placeholder for data size
                     writer.Write(0); // Zero offset
                     writer.Write(SwapEndian((int)(channels * bitsPerSample / 8)));
 
-                    // Write data
                     WriteSamples(writer, samples, bitsPerSample);
 
-                    // Update header
                     writer.Seek(4, SeekOrigin.Begin);
                     writer.Write(SwapEndian((int)(fileStream.Length - 8)));
                     writer.Seek((int)commSampleCountPos, SeekOrigin.Begin);
@@ -96,7 +93,6 @@ namespace Csound.Unity.Utilities
                     writer.Seek((int)dataSizePos, SeekOrigin.Begin);
                     writer.Write(SwapEndian((int)(fileStream.Length - dataSizePos - 4)));
 
-                    // Dispose writer and file stream
                     writer.Close();
                     fileStream.Close();
 
@@ -124,12 +120,10 @@ namespace Csound.Unity.Utilities
             {
                 using (var writer = new BinaryWriter(File.Open(destination, FileMode.Create)))
                 {
-                    // Write the WAV header
                     writer.Write(Encoding.ASCII.GetBytes("RIFF"));
                     writer.Write(0); // Placeholder for the chunk size
                     writer.Write(Encoding.ASCII.GetBytes("WAVE"));
 
-                    // Write the fmt subchunk
                     writer.Write(Encoding.ASCII.GetBytes("fmt "));
                     writer.Write(16); // Subchunk1Size
                     writer.Write((short)1); // AudioFormat
@@ -139,31 +133,29 @@ namespace Csound.Unity.Utilities
                     writer.Write((short)(channels * (bitsPerSample / 8))); // BlockAlign
                     writer.Write((short)bitsPerSample);
 
-                    // Write the data subchunk
                     writer.Write(Encoding.ASCII.GetBytes("data"));
                     writer.Write((int)(samples.Length * (bitsPerSample / 8))); // Subchunk2Size
 
-                    // Convert and write the samples
                     switch (bitsPerSample)
                     {
                         case 8:
                             for (int i = 0; i < samples.Length; i++)
                             {
-                                byte sample = ConvertTo8Bit(samples[i]);
+                                var sample = ConvertTo8Bit(samples[i]);
                                 writer.Write(sample);
                             }
                             break;
                         case 16:
                             for (int i = 0; i < samples.Length; i++)
                             {
-                                short sample = ConvertTo16Bit(samples[i]);
+                                var sample = ConvertTo16Bit(samples[i]);
                                 writer.Write(sample);
                             }
                             break;
                         case 24:
                             for (int i = 0; i < samples.Length; i++)
                             {
-                                byte[] sample = ConvertTo24Bit(samples[i]);
+                                var sample = ConvertTo24Bit(samples[i]);
                                 writer.Write(sample);
                             }
                             break;
@@ -178,8 +170,7 @@ namespace Csound.Unity.Utilities
                             return false;
                     }
 
-                    // Update the chunk size in the header
-                    long fileSize = writer.BaseStream.Length;
+                    var fileSize = writer.BaseStream.Length;
                     writer.Seek(4, SeekOrigin.Begin);
                     writer.Write((int)(fileSize - 8));
                 }
@@ -193,6 +184,10 @@ namespace Csound.Unity.Utilities
                 return false;
             }
         }
+
+        #endregion Public API
+
+        #region Private helpers
 
         private static void WriteSamples(BinaryWriter writer, float[] samples, int bitsPerSample)
         {
@@ -235,7 +230,7 @@ namespace Csound.Unity.Utilities
 
         private static byte[] SwapEndian(float value)
         {
-            int intValue = BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
+            var intValue = BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
             return SwapEndian(intValue);
         }
 
@@ -264,11 +259,11 @@ namespace Csound.Unity.Utilities
             {
                 fMant = Frexp(value, out expon);
                 if ((expon > 16384) || !(fMant < 1))
-                {   //  Infinity or NaN 
-                    expon = sign | 0x7FFF; hiMant = 0; loMant = 0; // infinity 
+                {   //  Infinity or NaN
+                    expon = sign | 0x7FFF; hiMant = 0; loMant = 0; // infinity
                 }
                 else
-                {    // Finite 
+                {    // Finite
                     expon += 16382;
                     if (expon < 0)
                     {    // denormalized
@@ -285,7 +280,7 @@ namespace Csound.Unity.Utilities
                 }
             }
 
-            byte[] bytes = new byte[10];
+            var bytes = new byte[10];
 
             bytes[0] = (byte)(expon >> 8);
             bytes[1] = (byte)(expon);
@@ -329,7 +324,7 @@ namespace Csound.Unity.Utilities
 
         private static byte[] ConvertTo24Bit(float sample)
         {
-            int value = (int)(sample * int.MaxValue);
+            var value = (int)(sample * int.MaxValue);
             return new[]
             {
                 (byte)((value >> 16) & 0xFF),
@@ -337,5 +332,7 @@ namespace Csound.Unity.Utilities
                 (byte)(value & 0xFF)
             };
         }
+
+        #endregion Private helpers
     }
 }

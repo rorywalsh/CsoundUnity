@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +27,8 @@ namespace Csound.Unity.Utilities
         /// <para>An absolute path, can be external of the Unity Project</para>
         /// </summary>
         public enum SamplesOrigin { Resources, StreamingAssets, PersistentDataPath, Absolute }
+
+        #region Public API
 
         /// <summary>
         /// Creates an array of MYFLTs (doubles) from an array of floats
@@ -78,7 +80,6 @@ namespace Csound.Unity.Utilities
                 return res;
             }
 
-            // Validate resultChannels parameter and set to default (MONO) if null or empty
             if (resultChannels == null || resultChannels.Length == 0)
             {
                 Debug.Log("CsoundUnity.GetChannelData, defaulting to first (LEFT) channel");
@@ -100,7 +101,6 @@ namespace Csound.Unity.Utilities
             res = new MYFLT[resSize];
             var s = writeChannelData ? 1 : 0;
 
-            // Extract channel data from the source array
             for (var i = 0; i < sourceData.Length; i += channels)
             {
                 foreach (var resultChannel in resultChannels)
@@ -111,7 +111,6 @@ namespace Csound.Unity.Utilities
                 }
             }
 
-            // Write the number of result channels as the first element if writeChannelData is true
             if (writeChannelData)
             {
                 res[0] = numResultChannels;
@@ -122,18 +121,18 @@ namespace Csound.Unity.Utilities
 
         /// <summary>
         /// Retrieves audio sample data from the specified AudioClip based on the specified channels to read.
-        /// This will return an interleaved array of samples, with the first index used to specify the number of channels. 
-        /// This array can be passed to the CsoundUnity.CreateTable() method for processing by Csound. 
+        /// This will return an interleaved array of samples, with the first index used to specify the number of channels.
+        /// This array can be passed to the CsoundUnity.CreateTable() method for processing by Csound.
         /// Use async version to load very large files, or load from external paths
-        /// Note: You need to be careful that your AudioClips match the SR of the 
+        /// Note: You need to be careful that your AudioClips match the SR of the
         /// project. If not, you will hear some re-pitching issues with your audio when
-        /// you play it back with a table reader opcode. 
+        /// you play it back with a table reader opcode.
         /// </summary>
         /// <param name="clip">The AudioClip to extract sample data from.</param>
-        /// <param name="channelsToRead">An array of channel indices to read data from. Only the specified channels will be included in the result. 
+        /// <param name="channelsToRead">An array of channel indices to read data from. Only the specified channels will be included in the result.
         /// If null or empty, only the first channel (MONO) will be read.</param>
         /// <param name="writeChannelData">Flag indicating whether to write the number of result channels as the first element of the result array.</param>
-        /// <returns>An array containing the requested audio sample data. 
+        /// <returns>An array containing the requested audio sample data.
         /// The length of the result array depends on the number of channelsToRead and the length of the audio clip.
         /// If the AudioClip is null, or some errors retrieving its samples occur, it returns an empty array.</returns>
         public static MYFLT[] GetSamples(AudioClip clip, int[] channelsToRead = null, bool writeChannelData = false)
@@ -153,10 +152,10 @@ namespace Csound.Unity.Utilities
         /// Same as <see cref="GetSamples(AudioClip, int[], bool)"/> using the AudioClip found at a "source" path under a "Resources" folder.
         /// </summary>
         /// <param name="source">The path of the audio source relative to a "Resources" folder</param>
-        /// <param name="channelsToRead">An array of channel indices to read data from. Only the specified channels will be included in the result. 
+        /// <param name="channelsToRead">An array of channel indices to read data from. Only the specified channels will be included in the result.
         /// If null or empty, only the first channel (MONO) will be read.</param>
         /// <param name="writeChannelData">Flag indicating whether to write the number of result channels as the first element of the result array.</param>
-        /// <returns>An array containing the requested audio sample data. 
+        /// <returns>An array containing the requested audio sample data.
         /// The length of the result array depends on the number of channelsToRead and the length of the audio clip.
         /// If no AudioClip was found under a Resources folder, or some errors retrieving its samples occur, it returns an empty array.</returns>
         public static MYFLT[] GetSamples(string source, int[] channelsToRead = null, bool writeChannelData = false)
@@ -189,7 +188,7 @@ namespace Csound.Unity.Utilities
         /// <param name="onSamplesLoaded">This action is executed when samples are loaded, passing the requested audio sample data.
         /// The length of the result array depends on the number of channelsToRead and the length of the loaded audio clip.
         /// If no AudioClip was found at the specified location, or some errors retrieving its samples occur, the action will pass an empty array.</param>
-        /// <param name="channelsToRead">An array of channel indices to read data from. Only the specified channels will be included in the result. 
+        /// <param name="channelsToRead">An array of channel indices to read data from. Only the specified channels will be included in the result.
         /// If null or empty, only the first channel (MONO) will be read.</param>
         /// <param name="writeChannelData">Flag indicating whether to write the number of result channels as the first element of the result array.</param>
         /// <returns>An IEnumerator object representing the asynchronous operation.</returns>
@@ -229,7 +228,7 @@ namespace Csound.Unity.Utilities
         }
 
         /// <summary>
-        /// Get samples from an AudioClip as a MYFLT (double) array. 
+        /// Get samples from an AudioClip as a MYFLT (double) array.
         /// Same as <see cref="GetSamples(string, int[], bool)"/>.
         /// The number of the used channels depends on the audioClip.channels.
         /// The first element of the returned array will contain the number of channels.
@@ -280,8 +279,8 @@ namespace Csound.Unity.Utilities
         }
 
         /// <summary>
-        /// Same as <see cref="GetSamples(string, int[], bool)"/>, passing stereo channels {0, 1} as channelsToRead, 
-        /// and true to writeChannelData, so the first index in the returned array 
+        /// Same as <see cref="GetSamples(string, int[], bool)"/>, passing stereo channels {0, 1} as channelsToRead,
+        /// and true to writeChannelData, so the first index in the returned array
         /// will have its value set to 2 like the number of channels.
         /// </summary>
         /// <param name="source">The path of the audio source relative to a "Resources" folder</param>
@@ -302,8 +301,8 @@ namespace Csound.Unity.Utilities
         }
 
         /// <summary>
-        /// Same as <see cref="GetSamples(string, int[], bool)"/>, passing a single mono channel {channelNumber} as channelsToRead, 
-        /// and false to writeChannelData, so no information about the channels will be 
+        /// Same as <see cref="GetSamples(string, int[], bool)"/>, passing a single mono channel {channelNumber} as channelsToRead,
+        /// and false to writeChannelData, so no information about the channels will be
         /// written to the first element of the returned array.
         /// </summary>
         /// <param name="source">The name of the source to retrieve</param>
@@ -333,15 +332,74 @@ namespace Csound.Unity.Utilities
         /// <returns></returns>
         public static MYFLT[] GetMonoSamples(AudioClip audioClip, int channel = 0)
         {
-            var res = new MYFLT[0];
             if (channel >= audioClip.channels || channel < 0)
             {
                 Debug.LogError($"CsoundUnity.GetMonoSamples ERROR: Invalid channel index. AudioClip has {audioClip.channels} channels. Specified channel: {channel}");
-                return res;
+                return new MYFLT[0];
             }
 
             return GetSamples(audioClip, new int[] { channel });
         }
+
+        /// <summary>
+        /// Computes the Root Mean Square (RMS) amplitude of a float sample buffer.
+        /// Returns 0 if the buffer is null or empty.
+        /// </summary>
+        public static float Rms(float[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0) return 0f;
+            float sum = 0f;
+            foreach (var s in buffer) sum += s * s;
+            return (float)Math.Sqrt(sum / buffer.Length);
+        }
+
+        /// <summary>
+        /// Computes the Root Mean Square (RMS) amplitude of a MYFLT sample buffer.
+        /// Returns 0 if the buffer is null or empty.
+        /// </summary>
+        public static float Rms(MYFLT[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0) return 0f;
+            double sum = 0;
+            foreach (var s in buffer) sum += s * s;
+            return (float)Math.Sqrt(sum / buffer.Length);
+        }
+
+        /// <summary>
+        /// Returns the peak (maximum absolute value) of a float sample buffer.
+        /// Returns 0 if the buffer is null or empty.
+        /// </summary>
+        public static float Peak(float[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0) return 0f;
+            float peak = 0f;
+            foreach (var s in buffer)
+            {
+                float abs = Math.Abs(s);
+                if (abs > peak) peak = abs;
+            }
+            return peak;
+        }
+
+        /// <summary>
+        /// Returns the peak (maximum absolute value) of a MYFLT sample buffer.
+        /// Returns 0 if the buffer is null or empty.
+        /// </summary>
+        public static float Peak(MYFLT[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0) return 0f;
+            float peak = 0f;
+            foreach (var s in buffer)
+            {
+                float abs = (float)Math.Abs(s);
+                if (abs > peak) peak = abs;
+            }
+            return peak;
+        }
+
+        #endregion Public API
+
+        #region Private helpers
 
         static IEnumerator LoadingClip(string path, Action<AudioClip> onEnd)
         {
@@ -412,60 +470,6 @@ namespace Csound.Unity.Utilities
             }
         }
 
-        /// <summary>
-        /// Computes the Root Mean Square (RMS) amplitude of a float sample buffer.
-        /// Returns 0 if the buffer is null or empty.
-        /// </summary>
-        public static float Rms(float[] buffer)
-        {
-            if (buffer == null || buffer.Length == 0) return 0f;
-            float sum = 0f;
-            foreach (var s in buffer) sum += s * s;
-            return (float)Math.Sqrt(sum / buffer.Length);
-        }
-
-        /// <summary>
-        /// Computes the Root Mean Square (RMS) amplitude of a MYFLT sample buffer.
-        /// Returns 0 if the buffer is null or empty.
-        /// </summary>
-        public static float Rms(MYFLT[] buffer)
-        {
-            if (buffer == null || buffer.Length == 0) return 0f;
-            double sum = 0;
-            foreach (var s in buffer) sum += s * s;
-            return (float)Math.Sqrt(sum / buffer.Length);
-        }
-
-        /// <summary>
-        /// Returns the peak (maximum absolute value) of a float sample buffer.
-        /// Returns 0 if the buffer is null or empty.
-        /// </summary>
-        public static float Peak(float[] buffer)
-        {
-            if (buffer == null || buffer.Length == 0) return 0f;
-            float peak = 0f;
-            foreach (var s in buffer)
-            {
-                float abs = Math.Abs(s);
-                if (abs > peak) peak = abs;
-            }
-            return peak;
-        }
-
-        /// <summary>
-        /// Returns the peak (maximum absolute value) of a MYFLT sample buffer.
-        /// Returns 0 if the buffer is null or empty.
-        /// </summary>
-        public static float Peak(MYFLT[] buffer)
-        {
-            if (buffer == null || buffer.Length == 0) return 0f;
-            float peak = 0f;
-            foreach (var s in buffer)
-            {
-                float abs = (float)Math.Abs(s);
-                if (abs > peak) peak = abs;
-            }
-            return peak;
-        }
+        #endregion Private helpers
     }
 }

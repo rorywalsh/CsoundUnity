@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Csound.Unity.Utilities
 {
@@ -6,8 +6,10 @@ namespace Csound.Unity.Utilities
     {
         public enum SkewMode { Cabbage, Normalized };
 
+        #region Public API
+
         /// <summary>
-        /// Remaps a float value from one range to another with optional clamping and skewing. 
+        /// Remaps a float value from one range to another with optional clamping and skewing.
         /// There are two possible modes for skewing: Cabbage and Normalized.
         /// <para>
         /// In Cabbage mode, the skew factor has no upper limit and the mapping behaves as follows:
@@ -57,8 +59,8 @@ namespace Csound.Unity.Utilities
         }
 
         /// <summary>
-        /// Remap a value to a normalized (0-1) value specifying its expected "from" and "to" values, 
-        /// and the skew of the exponential curve of the remapping. 
+        /// Remap a value to a normalized (0-1) value specifying its expected "from" and "to" values,
+        /// and the skew of the exponential curve of the remapping.
         /// If skew is 1 the remapping is linear, if 0.5 it's exponential.
         /// </summary>
         /// <param name="value"></param>
@@ -79,8 +81,8 @@ namespace Csound.Unity.Utilities
         }
 
         /// <summary>
-        /// Remap a normalized (0-1) value to a value in another range, specifying its "from" and "to" values, 
-        /// and the skew of the exponential curve of the remapping. 
+        /// Remap a normalized (0-1) value to a value in another range, specifying its "from" and "to" values,
+        /// and the skew of the exponential curve of the remapping.
         /// If skew is 1 the remapping is linear, if 0.5 it's exponential.
         /// </summary>
         /// <param name="value"></param>
@@ -99,5 +101,7 @@ namespace Csound.Unity.Utilities
 
             return from + (to - from) * proportion;
         }
+
+        #endregion Public API
     }
 }

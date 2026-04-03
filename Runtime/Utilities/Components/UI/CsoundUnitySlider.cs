@@ -15,11 +15,17 @@ namespace Csound.Unity.Utilities.Components.UI
     [RequireComponent(typeof(Slider))]
     public class CsoundUnitySlider : MonoBehaviour
     {
+        #region Serialized fields
+
         [SerializeField] CsoundUnity _csound;
         [SerializeField] string _channel;
         [SerializeField] Text _labelText;
         [SerializeField] Text _valueText;
         [SerializeField, Range(0, 1)] float _smoothingTime = 0f;
+
+        #endregion Serialized fields
+
+        #region Properties
 
         public float Value
         {
@@ -60,6 +66,10 @@ namespace Csound.Unity.Utilities.Components.UI
 
         public bool IsInitialized => _csound.IsInitialized && _isInitialized;
 
+        #endregion Properties
+
+        #region Fields
+
         private Slider _slider;
         private CsoundChannelController _channelController;
         private bool _active = false;
@@ -67,6 +77,10 @@ namespace Csound.Unity.Utilities.Components.UI
         private float _targetValue;
         private float _currentValue;
         private float _velocity;
+
+        #endregion Fields
+
+        #region Unity messages
 
         IEnumerator Start()
         {
@@ -100,6 +114,17 @@ namespace Csound.Unity.Utilities.Components.UI
             _csound.OnCsoundInitialized -= OnCsoundInitialized;
             _csound.OnCsoundStopped -= OnCsoundStopped;
         }
+
+        private void Update()
+        {
+            if (!_isInitialized || _smoothingTime <= 0) return;
+            _currentValue = Mathf.SmoothDamp(_currentValue, _targetValue, ref _velocity, _smoothingTime);
+            _csound.SetChannel(_channel, _currentValue);
+        }
+
+        #endregion Unity messages
+
+        #region Private helpers
 
         private void OnCsoundInitialized()
         {
@@ -140,13 +165,6 @@ namespace Csound.Unity.Utilities.Components.UI
             _isInitialized = true;
         }
 
-        private void Update()
-        {
-            if (!_isInitialized || _smoothingTime <= 0) return;
-            _currentValue = Mathf.SmoothDamp(_currentValue, _targetValue, ref _velocity, _smoothingTime);
-            _csound.SetChannel(_channel, _currentValue);
-        }
-
         private void UpdateSlider(float value)
         {
             if (!_isInitialized) return;
@@ -162,5 +180,7 @@ namespace Csound.Unity.Utilities.Components.UI
             if (_smoothingTime <= 0)
                 _csound.SetChannel(_channel, remapped);
         }
+
+        #endregion Private helpers
     }
 }

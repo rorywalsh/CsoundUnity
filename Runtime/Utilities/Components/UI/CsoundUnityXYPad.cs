@@ -20,6 +20,8 @@ namespace Csound.Unity.Utilities.Components.UI
     public class CsoundUnityXYPad : MonoBehaviour,
         IPointerDownHandler, IDragHandler, IPointerUpHandler
     {
+        #region Nested types
+
         public enum XYPadMode
         {
             /// <summary>Reads channel names and ranges from a Cabbage xypad widget in the CSD.</summary>
@@ -27,6 +29,10 @@ namespace Csound.Unity.Utilities.Components.UI
             /// <summary>Uses two independently specified Csound channels with manually set ranges.</summary>
             Manual
         }
+
+        #endregion Nested types
+
+        #region Serialized fields
 
         [SerializeField] CsoundUnity _csound;
         [SerializeField] XYPadMode _mode = XYPadMode.Widget;
@@ -47,6 +53,10 @@ namespace Csound.Unity.Utilities.Components.UI
         [Header("Smoothing")]
         [SerializeField, Range(0, 1)] float _smoothingTime = 0f;
 
+        #endregion Serialized fields
+
+        #region Properties
+
         /// <summary>Current normalised position (0-1, 0-1) of the dot.</summary>
         public Vector2 NormalizedPosition => _normalizedPos;
 
@@ -66,6 +76,10 @@ namespace Csound.Unity.Utilities.Components.UI
             }
         }
 
+        #endregion Properties
+
+        #region Fields
+
         private RectTransform _rect;
         private CsoundChannelController _controller;
         private float _xMin, _xMax, _yMin, _yMax;
@@ -75,6 +89,10 @@ namespace Csound.Unity.Utilities.Components.UI
         private Vector2 _targetValue;
         private Vector2 _velocity;
         private bool _isInitialized;
+
+        #endregion Fields
+
+        #region Unity messages
 
         IEnumerator Start()
         {
@@ -104,6 +122,25 @@ namespace Csound.Unity.Utilities.Components.UI
             _csound.OnCsoundInitialized -= OnCsoundInitialized;
             _csound.OnCsoundStopped -= OnCsoundStopped;
         }
+
+        private void Update()
+        {
+            if (!_isInitialized || _smoothingTime <= 0) return;
+            _channelValue = Vector2.SmoothDamp(_channelValue, _targetValue, ref _velocity, _smoothingTime);
+            _normalizedPos = new Vector2(
+                Mathf.InverseLerp(_xMin, _xMax, _channelValue.x),
+                Mathf.InverseLerp(_yMin, _yMax, _channelValue.y));
+            MoveDot(_normalizedPos);
+            SendChannels();
+        }
+
+        public void OnPointerDown(PointerEventData eventData) => UpdateFromPointer(eventData);
+        public void OnDrag(PointerEventData eventData)        => UpdateFromPointer(eventData);
+        public void OnPointerUp(PointerEventData eventData)   => UpdateFromPointer(eventData);
+
+        #endregion Unity messages
+
+        #region Private helpers
 
         private void OnCsoundInitialized()
         {
@@ -181,21 +218,6 @@ namespace Csound.Unity.Utilities.Components.UI
             _isInitialized = true;
         }
 
-        private void Update()
-        {
-            if (!_isInitialized || _smoothingTime <= 0) return;
-            _channelValue = Vector2.SmoothDamp(_channelValue, _targetValue, ref _velocity, _smoothingTime);
-            _normalizedPos = new Vector2(
-                Mathf.InverseLerp(_xMin, _xMax, _channelValue.x),
-                Mathf.InverseLerp(_yMin, _yMax, _channelValue.y));
-            MoveDot(_normalizedPos);
-            SendChannels();
-        }
-
-        public void OnPointerDown(PointerEventData eventData) => UpdateFromPointer(eventData);
-        public void OnDrag(PointerEventData eventData)        => UpdateFromPointer(eventData);
-        public void OnPointerUp(PointerEventData eventData)   => UpdateFromPointer(eventData);
-
         private void UpdateFromPointer(PointerEventData eventData)
         {
             if (!_isInitialized) return;
@@ -242,5 +264,7 @@ namespace Csound.Unity.Utilities.Components.UI
             if (_labelX != null) _labelX.text = $"{_channelX}: {_channelValue.x:F2}";
             if (_labelY != null) _labelY.text = $"{_channelY}: {_channelValue.y:F2}";
         }
+
+        #endregion Private helpers
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
@@ -16,6 +16,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
     /// </summary>
     public class CopyFilesToPersistentDataPath : MonoBehaviour
     {
+        #region Serialized fields
+
         [Tooltip("Those audio files will be searched into the Resources folder, and copied into the Persistent Data path. " +
             "Please specify the destination extension, only wav or aif are supported")]
         [SerializeField] private AudioFileInfo[] _audioFiles;
@@ -35,10 +37,18 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         [SerializeField] private bool _autoStart = true;
         [SerializeField] private bool _fallbackToWav = true;
 
+        #endregion Serialized fields
+
+        #region Fields
+
         public bool copyCompleted = false;
 
         private int _filesToCopy;
         private int _copiedFiles;
+
+        #endregion Fields
+
+        #region Unity messages
 
         void Awake()
         {
@@ -47,6 +57,10 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 Copy();
             }
         }
+
+        #endregion Unity messages
+
+        #region Public API
 
         /// <summary>
         /// Set the AudioFiles to load before calling Copy. Intended usage of this function is when autoStart is false
@@ -64,7 +78,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         }
 
         /// <summary>
-        /// Start the copy process 
+        /// Start the copy process
         /// </summary>
         public void Copy()
         {
@@ -131,9 +145,12 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 _copiedFiles++;
             }
 
-            // start waiting for all the files to be copied, at the end enable all the CsoundUnity instances
             StartCoroutine(WaitForCopy());
         }
+
+        #endregion Public API
+
+        #region Private helpers
 
         IEnumerator CopyAudioFiles()
         {
@@ -155,7 +172,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 {
                     Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Copying audio file from Resources: {audioFile.FileName}, dir {audioFile.Directory}, destinationPath: {destinationPath}, file Exists? {File.Exists(destinationPath)}");
                     CopyAudioFileFromResources(filePath, destinationPath);
-                    // wait one frame between each copy to avoid locking too much the main thread
+                    // wait one frame between each copy to avoid locking the main thread for too long
                     yield return null;
                 }
 
@@ -172,7 +189,6 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
             copyCompleted = true;
 
-            // finally enable all the Csound instances
             foreach (var csound in _csoundUnitys)
             {
                 csound.gameObject.SetActive(true);
@@ -265,18 +281,22 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         private static void WriteFile(byte[] bytes, string destination)
         {
             Debug.Log($"Csound.Unity.CopyFilesToPersistentDataPath: Writing file ({bytes.Length} bytes) at path: {destination}");
-            Stream s = new MemoryStream(bytes);
-            BinaryReader br = new BinaryReader(s);
+            var s = new MemoryStream(bytes);
+            var br = new BinaryReader(s);
             var dir = Path.GetDirectoryName(destination);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
-            using (BinaryWriter bw = new BinaryWriter(File.Open(destination, FileMode.OpenOrCreate)))
+            using (var bw = new BinaryWriter(File.Open(destination, FileMode.OpenOrCreate)))
             {
                 bw.Write(br.ReadBytes(bytes.Length));
             }
         }
+
+        #endregion Private helpers
+
+        #region Nested types
 
         [Serializable]
         public class AdditionalFileInfo
@@ -297,5 +317,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             [Tooltip("The directory where the file is contained / will be placed after copy")]
             public string Directory;
         }
+
+        #endregion Nested types
     }
 }

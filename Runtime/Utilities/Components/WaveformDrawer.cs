@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Csound.Unity.Utilities.MonoBehaviours
@@ -8,6 +8,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
     /// </summary>
     public class WaveformDrawer : MonoBehaviour
     {
+        #region Serialized fields
+
         [Tooltip("The raw image where the waveform will be drawn")]
         [SerializeField] RawImage _targetImage;
         [Tooltip("The audioclip that will be used as a source")]
@@ -26,8 +28,16 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             "If empty, the CsoundUnity component will be searched in this GameObject")]
         [SerializeField] CsoundUnity _csound;
 
+        #endregion Serialized fields
+
+        #region Fields
+
         private RectTransform _progressBarRT;
         private float _targetImageWidth;
+
+        #endregion Fields
+
+        #region Unity messages
 
         void Start()
         {
@@ -53,6 +63,10 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             }
         }
 
+        #endregion Unity messages
+
+        #region Public API
+
         public static Texture2D DrawWaveformSpectrum(AudioClip audio, int width, int height, Color col)
         {
             var tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
@@ -68,7 +82,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 var actualBlockSize = Mathf.Min(blockSize, audio.samples - i); // Handle the last block if it's smaller
                 for (var s = 0; s < actualBlockSize; s++)
                 {
-                    sum += Mathf.Abs(samples[i + s]); 
+                    sum += Mathf.Abs(samples[i + s]);
                 }
                 var avg = sum / actualBlockSize;
                 waveform[blockIndex] = avg;
@@ -95,5 +109,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             tex.Apply();
             return tex;
         }
+
+        #endregion Public API
     }
 }

@@ -37,6 +37,8 @@ namespace Csound.Unity
     [AddComponentMenu("CsoundUnity/Vector Morph")]
     public class CsoundUnityVectorMorph : MonoBehaviour
     {
+        #region Serialized fields
+
         [Header("Presets (corners)")]
         [Tooltip("Bottom-left corner (0, 0)")]
         public CsoundUnityPreset bottomLeft;
@@ -69,9 +71,17 @@ namespace Csound.Unity
         [Min(0f)]
         public float automationSpeed = 0.5f;
 
+        #endregion Serialized fields
+
+        #region Fields
+
         private CsoundUnity _csound;
         private float _autoTime;
         private Vector2 _rwVelocity;
+
+        #endregion Fields
+
+        #region Unity messages
 
         void Awake()
         {
@@ -88,6 +98,10 @@ namespace Csound.Unity
             if (AllPresetsSet())
                 _csound.BlendPresets(bottomLeft, bottomRight, topLeft, topRight, position, discreteBlendMode);
         }
+
+        #endregion Unity messages
+
+        #region Private helpers
 
         private bool AllPresetsSet() =>
             bottomLeft != null && bottomRight != null && topLeft != null && topRight != null;
@@ -126,6 +140,10 @@ namespace Csound.Unity
             return new Vector2(Mathf.Clamp01(next.x), Mathf.Clamp01(next.y));
         }
 
+        #endregion Private helpers
+
+        #region Nested types
+
         /// <summary>Available automation paths for vector position movement.</summary>
         public enum AutomationMode
         {
@@ -136,5 +154,7 @@ namespace Csound.Unity
             /// <summary>Random walk with bouncing boundaries.</summary>
             RandomWalk,
         }
+
+        #endregion Nested types
     }
 }

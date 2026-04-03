@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -12,7 +12,13 @@ namespace Csound.Unity.Tests
 {
     public class GetChannelDataTest
     {
+        #region Fields
+
         int _testId = 0;
+
+        #endregion Fields
+
+        #region Tests
 
         [Test]
         public void RunTest()
@@ -79,6 +85,10 @@ namespace Csound.Unity.Tests
             Assert.IsTrue(result);
         }
 
+        #endregion Tests
+
+        #region Private helpers
+
         bool TestChannelData(MYFLT[] sourceData, int channels, int[] resultChannels, bool writeChannelData, MYFLT[] expectedResult)
         {
             // resultChannels can be null as default, in that case the GetChannelsData method will default to an int array containing 0, indicating only the first (LEFT) channel
@@ -93,7 +103,6 @@ namespace Csound.Unity.Tests
 
             Debug.Log($"RESULT: {string.Join(", ", result)}");
 
-            // Check if the lengths of the result and expected result arrays match
             if (result.Length != expectedResult.Length)
             {
                 Debug.Log($"<color=red>FAIL: Array length mismatch, result: {string.Join(", ", result)}. Parameters - sourceData: {string.Join(", ", sourceData)}, channels: {channels}, " +
@@ -101,7 +110,6 @@ namespace Csound.Unity.Tests
                 return false;
             }
 
-            // Compare each element in the result and expected result arrays
             for (int i = 0; i < result.Length; i++)
             {
                 if (result[i] != expectedResult[i])
@@ -117,5 +125,7 @@ namespace Csound.Unity.Tests
             Debug.Log("<color=green>SUCCESS!</color>");
             return true;
         }
+
+        #endregion Private helpers
     }
 }

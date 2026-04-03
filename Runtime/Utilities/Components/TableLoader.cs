@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -14,6 +14,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
     /// </summary>
     public class TableLoader : MonoBehaviour
     {
+        #region Serialized fields
+
         [Tooltip("The AudioClip from which the samples will be loaded")]
         [SerializeField] AudioClip _source;
 
@@ -45,6 +47,10 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             "If empty, the CsoundUnity component will be searched in this GameObject")]
         [SerializeField] CsoundUnity _csound;
 
+        #endregion Serialized fields
+
+        #region Unity messages
+
         IEnumerator Start()
         {
             if (_autoLoad)
@@ -53,6 +59,10 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             }
         }
 
+        #endregion Unity messages
+
+        #region Public API
+
         public void Load(AudioClip audioClip, float startPoint = 0, float endPoint = 0)
         {
             _source = audioClip;
@@ -60,6 +70,10 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             _endPoint = endPoint;
             StartCoroutine(Loading(audioClip));
         }
+
+        #endregion Public API
+
+        #region Private helpers
 
         IEnumerator Loading(AudioClip audioClip)
         {
@@ -78,7 +92,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 yield return null; //waiting for initialization
             }
 
-            if (_forceToMono) // only reading one channel from the source AudioClip
+            if (_forceToMono)
             {
                 if (_splitChannels)
                 {
@@ -93,7 +107,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     if (resMono == 0) Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: Created table {_tableNumber} from audioClip {audioClip.name}!");
                     else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {_tableNumber} from audioClip {audioClip.name}");
                 }
-                else // if splitChannels is false, create a table where the first element is the number of channels, 1
+                else
                 {
                     var selectedSamples = GetSamples(true, audioClip, _channel, _startPoint, _endPoint);
                     if (selectedSamples.Length == 0)
@@ -109,7 +123,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             }
             else
             {
-                if (_splitChannels) // creating a table for each channel found in the source AudioClip
+                if (_splitChannels)
                 {
                     for (var i = 0; i < audioClip.channels; i++)
                     {
@@ -126,7 +140,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                         else Debug.LogError($"Csound.Unity.Utilities.LoadFiles.TableLoader: Cannot create table {tableNumber} from audioClip {audioClip.name}");
                     }
                 }
-                else // creating interleaved table
+                else
                 {
                     var selectedSamples = GetSamples(false, audioClip, 0, _startPoint, _endPoint);
                     Debug.Log($"Csound.Unity.Utilities.LoadFiles.TableLoader: samples loaded: {selectedSamples.Length}, creating table #{_tableNumber} from audioClip {audioClip.name}");
@@ -163,21 +177,20 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                         selectedSamples[i] = channelSamples[i + start];
                     }
                 }
-                else // if not splitting channels fill the array with selected sample data only
+                else
                 {
                     selectedSamples = new MYFLT[end - start + 1];
                     for (var i = 1; i < (end - start + 1); i++)
                     {
                         selectedSamples[i] = channelSamples[i + start];
                     }
-                    // copy the number of channels in the first element of the array
                     selectedSamples[0] = 1;
                 }
             }
             else
             {
                 var interleavedSamples = ASU.GetSamples(audioClip);
-                // AudioSampleUtils.GetSamples returns an interleaved table where the first index is the number of channels
+                // AudioSampleUtils.GetSamples returns an interleaved table where the first index is the number of channels,
                 // that's why we have to add 1 here
                 start = Mathf.CeilToInt(startPoint * audioClip.frequency * audioClip.channels + 1);
                 end = Mathf.CeilToInt(endPoint * audioClip.frequency * audioClip.channels + 1);
@@ -192,10 +205,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 selectedSamples = new MYFLT[end - start + 1];
                 for (int i = 1; i < (end - start + 1); i++)
                 {
-                    //Debug.Log($"i: {i}, j: {j}, channels: {audioClip.channels}, start: {start}, end: {end}, start + j: {start + j}, length: {end - start}, selectedSamples.length: {selectedSamples.Length}, interleavedSamples.Length: {interleavedSamples.Length}");
                     selectedSamples[i] = interleavedSamples[start + i];
                 }
-                // copy the number of channels in the first element of the array
                 selectedSamples[0] = interleavedSamples[0];
             }
             if (selectedSamples.Length == 0)
@@ -204,5 +215,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             }
             return selectedSamples;
         }
+
+        #endregion Private helpers
     }
 }

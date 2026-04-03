@@ -137,7 +137,9 @@ namespace Csound.Unity.Utilities
     /// </summary>
     public static class MusicUtils
     {
-        // --- Scale interval tables (semitones within one octave) ---
+        #region Scale and chord interval tables
+
+        // Scale interval tables (semitones within one octave)
 
         public static readonly int[] IntervalsChromatic     = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
         public static readonly int[] IntervalsMajor       = { 0, 2, 4, 5, 7, 9, 11 };
@@ -149,7 +151,7 @@ namespace Csound.Unity.Utilities
         public static readonly int[] IntervalsMixolydian  = { 0, 2, 4, 5, 7, 9, 10 };
         public static readonly int[] IntervalsHarmonicMinor  = { 0, 2, 3, 5, 7, 8, 11 };
 
-        // --- Chord interval tables (semitones from root, may span > 1 octave) ---
+        // Chord interval tables (semitones from root, may span > 1 octave)
 
         public static readonly int[] ChordUnison             = { 0 };
         public static readonly int[] ChordMinorThird         = { 0, 3 };
@@ -180,6 +182,10 @@ namespace Csound.Unity.Utilities
         public static readonly int[] ChordMajor13           = { 0, 4, 7, 11, 14, 17, 21 };
         public static readonly int[] ChordMinor13           = { 0, 3, 7, 10, 14, 17, 21 };
         public static readonly int[] ChordDominant13        = { 0, 4, 7, 10, 14, 17, 21 };
+
+        #endregion Scale and chord interval tables
+
+        #region Public API
 
         /// <summary>Returns the semitone interval array for the given scale.</summary>
         public static int[] GetIntervals(Scale scale)
@@ -419,18 +425,18 @@ namespace Csound.Unity.Utilities
                 }
             }
 
-            // concatenate final string
             var sb = new System.Text.StringBuilder();
             for (int i = 0; i < left;  i++) sb.Append(Sleft);
             for (int i = 0; i < right; i++) sb.Append(Sright);
-            string result = sb.ToString();
+            var result = sb.ToString();
 
-            // fill pattern array and apply rotation
             rotation = ((rotation % steps) + steps) % steps;
             for (int i = 0; i < steps; i++)
                 pattern[(i + rotation) % steps] = result[i] == '1';
 
             return pattern;
         }
+
+        #endregion Public API
     }
 }

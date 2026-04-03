@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,11 +13,17 @@ namespace Csound.Unity.Utilities.Components.UI
     [RequireComponent(typeof(Button))]
     public class CsoundUnityButton : MonoBehaviour
     {
+        #region Serialized fields
+
         [SerializeField] CsoundUnity _csound;
         [SerializeField] ButtonMode _mode = ButtonMode.Score;
         [SerializeField] string _channel;
         [SerializeField] string _score;
         [SerializeField] Text _labelText;
+
+        #endregion Serialized fields
+
+        #region Nested types
 
         public enum ButtonMode
         {
@@ -25,8 +31,16 @@ namespace Csound.Unity.Utilities.Components.UI
             Score
         }
 
+        #endregion Nested types
+
+        #region Fields
+
         private Button _button;
         private CsoundChannelController _channelController;
+
+        #endregion Fields
+
+        #region Unity messages
 
         IEnumerator Start()
         {
@@ -78,5 +92,7 @@ namespace Csound.Unity.Utilities.Components.UI
                 }
             });
         }
+
+        #endregion Unity messages
     }
 }
