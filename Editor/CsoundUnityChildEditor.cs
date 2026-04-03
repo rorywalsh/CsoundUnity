@@ -35,6 +35,8 @@ namespace Csound.Unity
     [System.Serializable]
     public class CsoundUnityChildEditor : Editor
     {
+        #region Fields
+
         SerializedProperty m_selectedAudioChannelIndexByChan;
         SerializedProperty m_csoundUnityGO;
         SerializedProperty m_channels;
@@ -44,6 +46,10 @@ namespace Csound.Unity
         private readonly AudioMonitorGUI _audioMonitor = new AudioMonitorGUI();
         // Interleaved float[] built every frame from the Child's per-channel MYFLT[] data.
         private float[] _monitorBuffer;
+
+        #endregion
+
+        #region Unity messages
 
         private void OnEnable()
         {
@@ -58,6 +64,10 @@ namespace Csound.Unity
         {
             _audioMonitor.Dispose();
         }
+
+        #endregion
+
+        #region Inspector GUI
 
         public override void OnInspectorGUI()
         {
@@ -87,11 +97,11 @@ namespace Csound.Unity
                     m_selectedAudioChannelIndexByChan.arraySize = csd.availableAudioChannels.Count;
                     for (var i = 0; i < csd.availableAudioChannels.Count; i++)
                     {
-                        SerializedProperty chanName = m_availableAudioChannels.GetArrayElementAtIndex(i);
+                        var chanName = m_availableAudioChannels.GetArrayElementAtIndex(i);
                         chanName.stringValue = csd.availableAudioChannels[i];
                         Debug.Log($"added serialized property chanName {chanName.stringValue} at pos {i}");
                         m_selectedAudioChannelIndexByChan.InsertArrayElementAtIndex(i);
-                        SerializedProperty chanIndx = m_selectedAudioChannelIndexByChan.GetArrayElementAtIndex(i);
+                        var chanIndx = m_selectedAudioChannelIndexByChan.GetArrayElementAtIndex(i);
                         chanIndx.intValue = 0;
                         Debug.Log($"added serialized property chanIndx {chanIndx.intValue} at pos {i}");
                     }
@@ -100,26 +110,22 @@ namespace Csound.Unity
                 if (m_selectedAudioChannelIndexByChan.arraySize > 0 && m_availableAudioChannels.arraySize > 0)
                 {
                     if (Application.isPlaying)
-                    {
                         EditorGUILayout.LabelField("Buffer Size: " + m_bufferSize.intValue + "");
-                    }
 
                     var options = new string[m_availableAudioChannels.arraySize];
                     for (var o = 0; o < m_availableAudioChannels.arraySize; o++)
-                    {
                         options[o] = m_availableAudioChannels.GetArrayElementAtIndex(o).stringValue;
-                    }
+
                     for (var c = 0; c < m_channels.intValue; c++)
                     {
                         EditorGUILayout.LabelField($"CHANNEL {c}");
-
-                        m_selectedAudioChannelIndexByChan.GetArrayElementAtIndex(c).intValue = (int)EditorGUILayout.Popup(m_selectedAudioChannelIndexByChan.GetArrayElementAtIndex(c).intValue, options);
-                        // Debug.Log($"chan {c} selected: " + m_selectedAudioChannelIndexByChan.GetArrayElementAtIndex(c).intValue);
+                        m_selectedAudioChannelIndexByChan.GetArrayElementAtIndex(c).intValue =
+                            (int)EditorGUILayout.Popup(m_selectedAudioChannelIndexByChan.GetArrayElementAtIndex(c).intValue, options);
                     }
                 }
                 else
                 {
-                    GUIStyle s = new GUIStyle
+                    var s = new GUIStyle
                     {
                         fontStyle = FontStyle.Bold,
                         wordWrap = true,
@@ -134,6 +140,13 @@ namespace Csound.Unity
                 DrawAudioMonitor();
         }
 
+        public override bool RequiresConstantRepaint() =>
+            Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
+
+        #endregion
+
+        #region Private helpers
+
         private void DrawAudioMonitor()
         {
             var child = (CsoundUnityChild)target;
@@ -143,9 +156,9 @@ namespace Csound.Unity
 
             // Build an interleaved float[] from the per-channel MYFLT[] buffers.
             // CsoundUnityChild is always MONO (1 ch) or STEREO (2 ch).
-            int nCh    = (int)child.AudioChannelsSetting;
-            int frames = srcData[0].Length;
-            int needed = frames * nCh;
+            var nCh    = (int)child.AudioChannelsSetting;
+            var frames = srcData[0].Length;
+            var needed = frames * nCh;
 
             if (_monitorBuffer == null || _monitorBuffer.Length != needed)
                 _monitorBuffer = new float[needed];
@@ -158,21 +171,19 @@ namespace Csound.Unity
             _audioMonitor.Draw(_monitorBuffer, nCh);
         }
 
-        public override bool RequiresConstantRepaint() =>
-            Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
-
-        //assumes list are ordered
+        // Assumes lists are ordered — only checks element-by-element equality.
         private bool CheckListEquality(SerializedProperty first, List<string> second)
         {
             if (first == null && second == null) return true;
-            if ((first != null && second == null) || (first == null && second != null)) return false;
+            if (first == null || second == null) return false;
             if (first.arraySize != second.Count) return false;
             for (var i = 0; i < first.arraySize; i++)
             {
-                if (first.GetArrayElementAtIndex(i).stringValue.Equals(second[i])) continue;
-                else return false;
+                if (!first.GetArrayElementAtIndex(i).stringValue.Equals(second[i])) return false;
             }
             return true;
         }
+
+        #endregion
     }
 }

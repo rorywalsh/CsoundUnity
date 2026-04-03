@@ -34,14 +34,24 @@ namespace Csound.Unity.Timelines.Editor
     [CustomEditor(typeof(CsoundUnityChannelTrack))]
     public class CsoundUnityChannelTrackEditor : UnityEditor.Editor
     {
+        #region Fields
+
         SerializedProperty m_channel;
         SerializedProperty m_verboseLog;
+
+        #endregion
+
+        #region Unity messages
 
         private void OnEnable()
         {
             m_channel    = serializedObject.FindProperty("channel");
             m_verboseLog = serializedObject.FindProperty("verboseLog");
         }
+
+        #endregion
+
+        #region Inspector GUI
 
         public override void OnInspectorGUI()
         {
@@ -51,15 +61,14 @@ namespace Csound.Unity.Timelines.Editor
 
             if (csound != null && csound.channels != null && csound.channels.Count > 0)
             {
-                // Build dropdown from channels parsed from the CSD file
                 var channelNames = csound.channels.Select(c => c.channel).ToArray();
                 var currentName  = m_channel.stringValue;
-                int currentIndex = System.Array.IndexOf(channelNames, currentName);
+                var currentIndex = System.Array.IndexOf(channelNames, currentName);
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Channel", GUILayout.Width(EditorGUIUtility.labelWidth));
 
-                int newIndex = EditorGUILayout.Popup(
+                var newIndex = EditorGUILayout.Popup(
                     Mathf.Max(0, currentIndex),
                     channelNames);
 
@@ -93,6 +102,8 @@ namespace Csound.Unity.Timelines.Editor
 
             serializedObject.ApplyModifiedProperties();
         }
+
+        #endregion
     }
 }
 

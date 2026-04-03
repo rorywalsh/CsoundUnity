@@ -40,6 +40,8 @@ namespace Csound.Unity
     [System.Serializable]
     public class CsoundUnityEditor : Editor
     {
+        #region Fields
+
         CsoundUnity csoundUnity;
 
         public static CsoundUnityEditor window;
@@ -58,8 +60,8 @@ namespace Csound.Unity
         SerializedProperty m_loudWarningThreshold;
         SerializedProperty m_updateOutputBuffer;
         SerializedProperty m_overrideSamplingRate;
-    	SerializedProperty m_audioRate;
-    	SerializedProperty m_controlRate;
+        SerializedProperty m_audioRate;
+        SerializedProperty m_controlRate;
         SerializedProperty m_ksmps;
         SerializedProperty m_enviromentSettings;
         SerializedProperty m_channelControllers;
@@ -107,6 +109,8 @@ namespace Csound.Unity
 
         private const string CsdTemplatePath = "Packages/com.csound.csoundunity/Editor/Templates/CsoundTemplate.csd";
 
+        #endregion
+
         private static string LoadCsdTemplate()
         {
             if (File.Exists(CsdTemplatePath))
@@ -114,6 +118,8 @@ namespace Csound.Unity
             Debug.LogWarning($"[CsoundUnity] CSD template not found at {CsdTemplatePath}. Using built-in fallback.");
             return "<CsoundSynthesizer>\n<CsOptions>\n-n -d\n</CsOptions>\n<CsInstruments>\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ninstr 1\nendin\n</CsInstruments>\n<CsScore>\nf0 z\n</CsScore>\n</CsoundSynthesizer>";
         }
+
+        #region Unity messages
 
         void OnEnable()
         {
@@ -197,7 +203,11 @@ namespace Csound.Unity
             _audioMonitor.Dispose();
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
         }
-        
+
+        #endregion
+
+        #region Play mode state / selection guard
+
         // MissingReferenceException in DrawEditorSmallHeader → DoInspectorTitlebar
         // → behaviour.get_enabled() occurs when Domain Reload is ENABLED (the default).
         // During the domain reload Unity tears down and rebuilds the C# layer. There is
@@ -239,6 +249,10 @@ namespace Csound.Unity
                     break;
             }
         }
+
+        #endregion
+
+        #region Inspector GUI
 
         public override void OnInspectorGUI()
         {
@@ -351,7 +365,6 @@ namespace Csound.Unity
 
             EditorGUI.EndDisabledGroup();
 
-            // Explanatory note (always visible)
             EditorGUILayout.HelpBox(
                 "ksmps = sr / kr.  Higher ksmps → lower CPU usage, lower control-rate precision.\n" +
                 "Typical values: 10–64.  ksmps = 1 is accurate but CPU-intensive.",
@@ -484,8 +497,7 @@ namespace Csound.Unity
             var infoText = "";
             if (m_channelControllers != null)
             {
-                //look for caption in channelControllers
-                bool captionFound = false;
+                var captionFound = false;
                 for (int i = 0; i < m_channelControllers.arraySize && !captionFound; i++)
                 {
                     var cc = m_channelControllers.GetArrayElementAtIndex(i);
@@ -607,14 +619,11 @@ namespace Csound.Unity
 
         public void DropAreaGUI()
         {
+            // Ensure the reference stays null (not a stale non-DefaultAsset) if assignment fails.
             if (m_csoundAsset.objectReferenceValue as DefaultAsset == null)
-            {
-                // reset the m_csoundAsset.objectReferenceValue in case something goes wrong when setting global presets
                 m_csoundAsset.objectReferenceValue = null;
-            }
 
-            DefaultAsset obj = (DefaultAsset)m_csoundAsset.objectReferenceValue;
-            //
+            var obj = (DefaultAsset)m_csoundAsset.objectReferenceValue;
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
             obj = (DefaultAsset)EditorGUILayout.ObjectField("Csd Asset", obj, typeof(DefaultAsset), false);
@@ -633,21 +642,15 @@ namespace Csound.Unity
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(target, "Set Csd");
-                // Debug.Log("selected new asset!");
                 if (obj == null ||
                     !AssetDatabase.GetAssetPath(obj).EndsWith(".csd", true, System.Globalization.CultureInfo.CurrentCulture))
                 {
-                    // Debug.Log("asset is not valid, set Csd NULL");
                     SetCsd(null);
                 }
                 else
                 {
-                    //Debug.Log("change asset, it is valid! setting csd");
-                    if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out string guid, out long localId))
-                    {
-                        // Debug.Log("guid valid: " + guid + " loc " + localId);
+                    if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out string guid, out long _))
                         SetCsd(guid);
-                    }
                     else
                     {
                         Debug.LogWarning("GUID NOT FOUND");
@@ -701,7 +704,6 @@ namespace Csound.Unity
 
                 EditorGUILayout.HelpBox("Control Channels", MessageType.None);
                 if (m_channelControllers != null)
-                    //create controls for each Csound channel found in the file descriptor
                     for (int i = 0; i < m_channelControllers.arraySize; i++)
                     {
                         var cc = m_channelControllers.GetArrayElementAtIndex(i);
@@ -882,9 +884,8 @@ namespace Csound.Unity
 
         void EnvironmentSettingAddCallback(ReorderableList list)
         {
-            SerializedProperty addedElement;
             list.serializedProperty.arraySize++;
-            addedElement = list.serializedProperty.GetArrayElementAtIndex(list.serializedProperty.arraySize - 1);
+            var addedElement = list.serializedProperty.GetArrayElementAtIndex(list.serializedProperty.arraySize - 1);
             addedElement.FindPropertyRelative("foldout").boolValue = true;
         }
 
@@ -979,11 +980,11 @@ namespace Csound.Unity
 
         void DrawEnvironmentSettingContextMenu(Rect rect, object settings, int index)
         {
-            Event current = Event.current;
+            var current = Event.current;
 
             if (rect.Contains(current.mousePosition) && current.type == EventType.ContextClick)
             {
-                GenericMenu menu = new GenericMenu();
+                var menu = new GenericMenu();
                 menu.AddItem(new GUIContent("Copy"), false, CopyEnvSetting, settings);
                 menu.AddItem(new GUIContent("Paste"), false, PasteEnvSetting, index);
                 menu.AddSeparator("");
@@ -1013,12 +1014,11 @@ namespace Csound.Unity
 
         void CopyEnvSettings()
         {
-            var container = new EnvironmentSettingsContainer();
-            container.environmentSettings = csoundUnity.environmentSettings;
-            var data = JsonUtility.ToJson(container);
-
-            EditorGUIUtility.systemCopyBuffer = data;
-            //Debug.Log($"Copied {data}");
+            var container = new EnvironmentSettingsContainer
+            {
+                environmentSettings = csoundUnity.environmentSettings
+            };
+            EditorGUIUtility.systemCopyBuffer = JsonUtility.ToJson(container);
         }
 
         void PasteEnvSettings()
@@ -1253,7 +1253,7 @@ namespace Csound.Unity
                 EditorGUI.indentLevel++;
                 if (GUILayout.Button("Select parsed presets destination folder"))
                 {
-                    _currentPresetImportFolderSave = EditorUtility.OpenFolderPanel("Select parsed presets destination folder", _currentPresetImportFolder, ""); ;
+                    _currentPresetImportFolderSave = EditorUtility.OpenFolderPanel("Select parsed presets destination folder", _currentPresetImportFolder, "");
 
                 }
                 EditorGUI.indentLevel--;
@@ -1266,18 +1266,14 @@ namespace Csound.Unity
                         _currentPresetImportFolder = Application.dataPath;
                     }
                     var files = Directory.GetFiles(_currentPresetImportFolder, "*.snaps", SearchOption.AllDirectories);
-                    //Debug.Log($"Found {files.Length} files");
                     foreach (var file in files)
                     {
                         Debug.Log($"found snap: {file}");
-                        // assumes to find a csd with the same fileName in the folder
+                        // Expects a .csd with the same base name in the same folder as the .snaps file.
                         var csdFilePath = Path.ChangeExtension(file, "csd");
                         var presets = CsoundUnity.ParseSnap(csdFilePath, file);
-                        //Debug.Log($"{presets.Count} presets read");
                         foreach (var preset in presets)
-                        {
                             CsoundUnity.WritePreset(preset, _currentPresetImportFolderSave);
-                        }
                     }
                 }
             }
@@ -1293,18 +1289,13 @@ namespace Csound.Unity
 
         private void LoadPreset(string path)
         {
-            var fileName = Path.GetFileName(path);
-
-            if (fileName.ToLower().Contains("global"))
+            if (Path.GetFileName(path).ToLower().Contains("global"))
             {
                 csoundUnity.LoadGlobalPreset(path);
                 return;
             }
 
-            csoundUnity.LoadPreset(path, (preset) =>
-            {
-                SetPreset(preset);
-            });
+            csoundUnity.LoadPreset(path, preset => SetPreset(preset));
         }
 
         private void SetPreset(CsoundUnityPreset preset)
@@ -1337,22 +1328,18 @@ namespace Csound.Unity
 
         private void SetChannelPropertyValue(SerializedProperty property, CsoundChannelController channel)
         {
-            //Debug.Log($"Setting channel {channel.channel}, value: {channel.value}");
-            // don't set buttons when copying channels to the serialized property
+            // Don't set buttons when copying channels to the serialized property.
             if (channel.type.Contains("button")) return;
 
             var chan = property.FindPropertyRelative("channel");
-            //Debug.Log($"Setting Channel {chan.stringValue} from {channel.channel}, new value: {channel.value}");
             if (chan.stringValue != channel.channel) return;
 
             var chanValue = property.FindPropertyRelative("value");
-            //Debug.Log($"CsoundUnityEditor.SetChannelPropertyValue for channel: {chan.stringValue} to value: {channel.value}");
-
             chanValue.floatValue = channel.value;
 
             if (Application.isPlaying && csoundUnity != null)
             {
-                var value = (channel.type.Contains("combobox")) ? chanValue.floatValue + 1 : chanValue.floatValue;
+                var value = channel.type.Contains("combobox") ? chanValue.floatValue + 1 : chanValue.floatValue;
                 csoundUnity.SetChannel(channel.channel, value);
             }
         }
@@ -1365,14 +1352,14 @@ namespace Csound.Unity
             EditorApplication.update += WaitOneFrameToUpdatePresets;
         }
 
-        // this is needed because it takes two Editor frames to update the serialized object
+        // Two editor frames must pass before the serialized object reflects the updated data
+        // after SetCsd() or RefreshPresets() — so this callback defers the final update by one cycle.
         private void WaitOneFrameToUpdatePresets()
         {
             EditorApplication.update -= WaitOneFrameToUpdatePresets;
             EditorApplication.update += UpdatePresets;
         }
 
-        // finally update the Assignable Presets
         private void UpdatePresets()
         {
             EditorApplication.update -= UpdatePresets;
@@ -1383,17 +1370,15 @@ namespace Csound.Unity
         private void UpdateAssignablePresets()
         {
             var assetsFolderPath = ExtractAssetsFolderFromPath(m_currentPresetLoadFolder);
-            //Debug.Log($"UpdateAssignablePresets, folder: {m_currentPresetLoadFolder.stringValue}, assetsFolderPath: {assetsFolderPath}");
 
             _jsonPresetsPaths = new string[] { };
             _csoundUnityPresetAssetsGUIDs = new string[] { };
             _assignablePresets = new List<CsoundUnityPreset>();
 
-            // look in the whole project for CsoundUnityPreset scriptable objects and jsons
             if (string.IsNullOrWhiteSpace(m_currentPresetLoadFolder.stringValue))
             {
                 _csoundUnityPresetAssetsGUIDs = AssetDatabase.FindAssets("t:CsoundUnityPreset");
-                // this will collect all jsons found in the Application.dataPath folder, be aware that they could not be CsoundUnityPresets!
+                // Collects all JSONs under dataPath — not all may be CsoundUnityPresets.
                 _jsonPresetsPaths = Directory.GetFiles(Application.dataPath, "*.json", SearchOption.AllDirectories);
             }
             else
@@ -1415,7 +1400,6 @@ namespace Csound.Unity
             foreach (var guid in _csoundUnityPresetAssetsGUIDs)
             {
                 var asset = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guid), typeof(CsoundUnityPreset)) as CsoundUnityPreset;
-                // Debug.Log($"Checking {guid}, preset name: {asset.presetName}, preset fileName: {asset.csoundFileName} this filename: {m_csoundFileName.stringValue}");
                 if (asset.csoundFileName != m_csoundFileName.stringValue) continue;
                 _assignablePresets.Add(asset);
             }
@@ -1435,42 +1419,26 @@ namespace Csound.Unity
             relativeToAssetsPath = relativeToAssetsPath.Length >= "Assets".Length ? relativeToAssetsPath : path;
             return relativeToAssetsPath;
         }
-	/// <summary>
-    /// Scans the folder at path and returns a list of strings with the paths of the found files
-    /// </summary>
-    /// <param name="path">The path of the folder to scan</param>
-    /// <returns>A list of strings of the paths</returns>
     private List<string> ScanWebGLAssets()
     {
         var webGLAssetsList = new List<string>();
         var settings = csoundUnity.environmentSettings;
         foreach (var setting in settings)
         {
-            //Debug.Log($"ScanWebGLAssets {setting.GetPath()} {setting.GetPlatformString()} {setting.baseFolder} {setting.suffix}");
             if (setting.baseFolder != EnvironmentPathOrigin.StreamingAssets ||
                 setting.platform != SupportedPlatform.WebGL) continue;
             var path = Path.Combine(Application.streamingAssetsPath, setting.suffix);
-            //Debug.Log($"ScanWebGLAssets at path: {path}");
             if (!Directory.Exists(path)) continue;
             var files = Directory.GetFiles(path);
             foreach (var file in files)
             {
+                var ext = Path.GetExtension(file);
+                if (ext == ".meta") continue; // meta files are Unity-internal, not needed at runtime
                 var prefix = $"./StreamingAssets/{setting.suffix}";
                 var fileName = Path.GetFileName(file);
-                var ext = Path.GetExtension(file);
-                if (ext == ".meta")
-                {
-                    // discard meta files
-                    continue;
-                }
-                //Debug.Log($"ScanWebGLAssets found file: {file}");
                 webGLAssetsList.Add($"{prefix}/{fileName}");
             }
         }
-        // foreach (var path in webGLAssetsList)
-        // {
-        //     Debug.Log($"webGLAssetsList: {path}");
-        // }
         return webGLAssetsList;
     }
 
@@ -1555,6 +1523,10 @@ namespace Csound.Unity
         public override bool RequiresConstantRepaint() =>
             target != null && Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
 
+        #endregion
+
+        #region Private helpers
+
         /// <summary>
         /// Recomputes kr = sr / ksmps and writes it back to <paramref name="krProp"/>.
         /// Uses <paramref name="ksmps"/> as the source of truth so that changing
@@ -1589,5 +1561,7 @@ namespace Csound.Unity
             if (krProp.intValue != snapped)
                 krProp.intValue = snapped;
         }
+
+        #endregion
     }
 }

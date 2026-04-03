@@ -440,7 +440,6 @@ namespace Csound.Unity.Timelines
                     var orig = EditorGUIUtility.labelWidth;
                     EditorGUIUtility.labelWidth = orig / 8;
 
-                    // Row 1: scheduling
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
@@ -484,7 +483,6 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.Space();
 
-                    // Row 2: pitch
                     EditorGUILayout.LabelField("Pitch (p4)", EditorStyles.boldLabel);
                     EditorGUILayout.BeginHorizontal();
 
@@ -513,7 +511,6 @@ namespace Csound.Unity.Timelines
                     var orig = EditorGUIUtility.labelWidth;
                     EditorGUIUtility.labelWidth = orig / 8;
 
-                    // Row 1: instrument + timing
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
@@ -563,7 +560,6 @@ namespace Csound.Unity.Timelines
                             EditorStyles.miniLabel);
                     }
 
-                    // Scheduling hint
                     EditorGUILayout.LabelField(
                         m_arpPerNoteBpm.boolValue
                             ? "BPM-note: animate BPM within cycle — timing ±1 frame, scrub ≤1 stale note"
@@ -572,7 +568,6 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.Space();
 
-                    // Row 2: pitch + note source + direction + octaves
                     EditorGUILayout.LabelField("Arpeggio", EditorStyles.boldLabel);
                     EditorGUILayout.BeginHorizontal();
 
@@ -600,7 +595,7 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.EndHorizontal();
 
-                    // Row 3: Scale or Chord selector (depends on Note Source)
+                    // Scale or Chord selector depends on which Note Source is active.
                     EditorGUILayout.BeginHorizontal();
                     var noteSource = (ArpNoteSource)m_arpNoteSource.intValue;
                     if (noteSource == ArpNoteSource.Scale)
@@ -627,8 +622,7 @@ namespace Csound.Unity.Timelines
                         EditorGUILayout.Space(2);
                         EditorGUILayout.LabelField("Custom intervals (semitones from root):", EditorStyles.miniLabel);
                         EditorGUILayout.BeginHorizontal();
-                        int size = m_arpCustomIntervals.arraySize;
-                        // show each element
+                        var size = m_arpCustomIntervals.arraySize;
                         for (int i = 0; i < size; i++)
                         {
                             var elem = m_arpCustomIntervals.GetArrayElementAtIndex(i);
@@ -681,7 +675,7 @@ namespace Csound.Unity.Timelines
                         noteCount = MusicUtils.BuildPitchArray(1f, scale, octavesInt, includeClosing).Length;
                     }
                     float patternDuration;
-                    bool hasPattern = true;
+                    var hasPattern = true;
                     switch (direction)
                     {
                         case ArpDirection.Up:
@@ -760,7 +754,6 @@ namespace Csound.Unity.Timelines
                     var orig = EditorGUIUtility.labelWidth;
                     EditorGUIUtility.labelWidth = orig / 8;
 
-                    // Row 1: instrument + pattern parameters
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
@@ -790,7 +783,6 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.Space();
 
-                    // Row 2: tempo + pitch + note duration
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
@@ -874,7 +866,7 @@ namespace Csound.Unity.Timelines
                     var orig = EditorGUIUtility.labelWidth;
                     EditorGUIUtility.labelWidth = orig / 8;
 
-                    // Row 1: Instr # + tempo + division + note duration
+
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
@@ -902,7 +894,7 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.Space();
 
-                    // Row 2: pitch + note source + octaves
+
                     EditorGUILayout.LabelField("Pitch", EditorStyles.boldLabel);
                     EditorGUILayout.BeginHorizontal();
 
@@ -925,7 +917,7 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.EndHorizontal();
 
-                    // Row 3: scale or chord selector
+
                     EditorGUILayout.BeginHorizontal();
                     var stocNoteSource = (ArpNoteSource)m_stochasticNoteSource.intValue;
                     if (stocNoteSource == ArpNoteSource.Scale)
@@ -948,7 +940,7 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.Space();
 
-                    // Row 4: randomisation controls
+
                     EditorGUILayout.LabelField("Randomisation", EditorStyles.boldLabel);
                     EditorGUILayout.BeginHorizontal();
 
@@ -994,7 +986,7 @@ namespace Csound.Unity.Timelines
                     var orig = EditorGUIUtility.labelWidth;
                     EditorGUIUtility.labelWidth = orig / 8;
 
-                    // Row 1: Instr # + trigger mode
+
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
@@ -1027,7 +1019,7 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.Space();
 
-                    // Row 2: pitch + note source + octaves + note duration + strum
+
                     EditorGUILayout.LabelField("Voicing", EditorStyles.boldLabel);
                     EditorGUILayout.BeginHorizontal();
 
@@ -1063,7 +1055,7 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.Space();
 
-                    // Row 3: Scale or Chord selector
+
                     EditorGUILayout.BeginHorizontal();
                     var chordNoteSource = (ArpNoteSource)m_chordNoteSource.intValue;
                     if (chordNoteSource == ArpNoteSource.Scale)
@@ -1169,7 +1161,7 @@ namespace Csound.Unity.Timelines
                     var orig = EditorGUIUtility.labelWidth;
                     EditorGUIUtility.labelWidth = orig / 8;
 
-                    // Row 1: BPM + Division + Steps + Lookahead + Scheduling
+
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
@@ -1603,7 +1595,7 @@ namespace Csound.Unity.Timelines
                     var orig = EditorGUIUtility.labelWidth;
                     EditorGUIUtility.labelWidth = orig / 8;
 
-                    // Row 1: BPM + Division + Steps + Lookahead + Scheduling
+
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUILayout.BeginVertical();
@@ -1669,7 +1661,7 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.LabelField("Randomize", EditorStyles.boldLabel);
 
-                    // Row 1: Scale · Root · Octave range
+
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField("Scale", GUILayout.Width(36));
                     _stepRndScale = EditorGUILayout.Popup(_stepRndScale, s_scaleNames, GUILayout.Width(90));
@@ -1683,7 +1675,7 @@ namespace Csound.Unity.Timelines
                     _stepRndOctMax = Mathf.Clamp(Mathf.Max(_stepRndOctMax, _stepRndOctMin), 0, 8);
                     EditorGUILayout.EndHorizontal();
 
-                    // Row 2: Pitches only toggle · Fill · Vel range · Randomize button
+
                     EditorGUILayout.BeginHorizontal();
                     _stepRndPitchOnly = EditorGUILayout.ToggleLeft("Pitches only", _stepRndPitchOnly, GUILayout.Width(92));
                     EditorGUI.BeginDisabledGroup(_stepRndPitchOnly);

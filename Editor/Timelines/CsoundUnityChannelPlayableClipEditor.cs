@@ -33,6 +33,8 @@ namespace Csound.Unity.Timelines.Editor
     [CustomEditor(typeof(CsoundUnityChannelPlayableClip))]
     public class CsoundUnityChannelPlayableClipEditor : UnityEditor.Editor
     {
+        #region Fields
+
         SerializedProperty m_template;
         SerializedProperty m_mode;
         SerializedProperty m_value;
@@ -46,6 +48,10 @@ namespace Csound.Unity.Timelines.Editor
         // leaf property name → full AnimationClip binding path (e.g. "value" → "template.value")
         readonly Dictionary<string, string> _animBindings = new Dictionary<string, string>();
 
+        #endregion
+
+        #region Unity messages
+
         private void OnEnable()
         {
             m_template  = serializedObject.FindProperty("template");
@@ -56,45 +62,15 @@ namespace Csound.Unity.Timelines.Editor
             m_rate      = m_template.FindPropertyRelative("rate");
         }
 
-        void RefreshAnimBindings()
-        {
-            _animBindings.Clear();
-            var curves = TimelineEditor.selectedClip?.curves;
-            if (curves == null) return;
-            foreach (var b in AnimationUtility.GetCurveBindings(curves))
-            {
-                var full = b.propertyName;
-                var dot  = full.LastIndexOf('.');
-                var leaf = dot >= 0 ? full.Substring(dot + 1) : full;
-                if (!_animBindings.ContainsKey(leaf))
-                    _animBindings[leaf] = full;
-            }
-        }
+        #endregion
 
-        bool IsAnimated(string prop) => _animBindings.ContainsKey(prop);
-
-        Color GetPropColor(string prop)
-        {
-            var path = _animBindings.TryGetValue(prop, out var fp) ? fp : prop;
-            var c    = UnityCurveColorUtility.GetAnimatedPropertyColor(path);
-            return c != Color.gray ? c : k_AnimColor;
-        }
-
-        // Draws a label tinted with the curve colour when the property is animated.
-        void AL(string label, string prop)
-        {
-            var prev = GUI.contentColor;
-            if (IsAnimated(prop)) GUI.contentColor = GetPropColor(prop);
-            EditorGUILayout.LabelField(label);
-            GUI.contentColor = prev;
-        }
+        #region Inspector GUI
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
             RefreshAnimBindings();
 
-            // Show which channel this clip is controlling
             var clip  = TimelineEditor.selectedClip;
             var track = clip?.GetParentTrack() as CsoundUnityChannelTrack;
             var channelName = track != null && !string.IsNullOrEmpty(track.channel)
@@ -170,7 +146,7 @@ namespace Csound.Unity.Timelines.Editor
                     EditorGUILayout.EndHorizontal();
 
                     EditorGUILayout.Space(2);
-                    float interval = m_rate.floatValue > 0 ? 1f / m_rate.floatValue : 0f;
+                    var interval = m_rate.floatValue > 0 ? 1f / m_rate.floatValue : 0f;
                     var modeLabel = (CsoundUnityChannelPlayableBehaviour.ChannelMode)m_mode.intValue
                         == CsoundUnityChannelPlayableBehaviour.ChannelMode.Random
                         ? "S&H — value jumps to a new random every"
@@ -182,6 +158,45 @@ namespace Csound.Unity.Timelines.Editor
             EditorGUIUtility.labelWidth = orig;
             serializedObject.ApplyModifiedProperties();
         }
+
+        #endregion
+
+        #region Private helpers
+
+        void RefreshAnimBindings()
+        {
+            _animBindings.Clear();
+            var curves = TimelineEditor.selectedClip?.curves;
+            if (curves == null) return;
+            foreach (var b in AnimationUtility.GetCurveBindings(curves))
+            {
+                var full = b.propertyName;
+                var dot  = full.LastIndexOf('.');
+                var leaf = dot >= 0 ? full.Substring(dot + 1) : full;
+                if (!_animBindings.ContainsKey(leaf))
+                    _animBindings[leaf] = full;
+            }
+        }
+
+        bool IsAnimated(string prop) => _animBindings.ContainsKey(prop);
+
+        Color GetPropColor(string prop)
+        {
+            var path = _animBindings.TryGetValue(prop, out var fp) ? fp : prop;
+            var c    = UnityCurveColorUtility.GetAnimatedPropertyColor(path);
+            return c != Color.gray ? c : k_AnimColor;
+        }
+
+        // Draws a label tinted with the curve colour when the property is animated.
+        void AL(string label, string prop)
+        {
+            var prev = GUI.contentColor;
+            if (IsAnimated(prop)) GUI.contentColor = GetPropColor(prop);
+            EditorGUILayout.LabelField(label);
+            GUI.contentColor = prev;
+        }
+
+        #endregion
     }
 }
 

@@ -31,6 +31,8 @@ namespace Csound.Unity
     [CustomEditor(typeof(CsoundUnityVectorMorph))]
     public class CsoundUnityVectorMorphEditor : Editor
     {
+        #region Constants and colors
+
         const float PadSize    = 160f;
         const float DotRadius  = 5f;
         const float LabelWidth = 80f;
@@ -44,6 +46,10 @@ namespace Csound.Unity
         static readonly Color CrosshairColor   = new Color(0.20f, 0.80f, 1.00f, 0.25f);
         static readonly Color LabelColor       = new Color(0.70f, 0.70f, 0.70f);
 
+        #endregion
+
+        #region Inspector GUI
+
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
@@ -54,18 +60,22 @@ namespace Csound.Unity
             DrawPad();
         }
 
+        public override bool RequiresConstantRepaint() => Application.isPlaying;
+
+        #endregion
+
+        #region Private helpers
+
         void DrawPad()
         {
             var morph = (CsoundUnityVectorMorph)target;
 
-            // Reserve a centered square
-            float viewWidth = EditorGUIUtility.currentViewWidth;
+            var viewWidth = EditorGUIUtility.currentViewWidth;
             var rect = GUILayoutUtility.GetRect(PadSize, PadSize);
             rect.x     = (viewWidth - PadSize) * 0.5f;
             rect.width = PadSize;
 
-            // Handle mouse input when automation is off
-            bool interactive = !morph.automate;
+            var interactive = !morph.automate;
             if (interactive)
             {
                 var e = Event.current;
@@ -95,21 +105,20 @@ namespace Csound.Unity
             DrawGridLine(rect, horizontal: false, t: 0.50f);
             DrawGridLine(rect, horizontal: false, t: 0.75f);
 
-            // Corner labels — Y is flipped (screen Y grows down, position.y grows up)
+            // Corner labels — Y is flipped (screen Y grows down, position.y grows up).
             var leftStyle  = CornerStyle(TextAnchor.MiddleLeft);
             var rightStyle = CornerStyle(TextAnchor.MiddleRight);
 
-            string bl = PresetName(morph.bottomLeft);
-            string br = PresetName(morph.bottomRight);
-            string tl = PresetName(morph.topLeft);
-            string tr = PresetName(morph.topRight);
+            var bl = PresetName(morph.bottomLeft);
+            var br = PresetName(morph.bottomRight);
+            var tl = PresetName(morph.topLeft);
+            var tr = PresetName(morph.topRight);
 
             GUI.Label(new Rect(rect.x + Padding,                 rect.y + Padding,              LabelWidth, LabelH), tl, leftStyle);
             GUI.Label(new Rect(rect.xMax - LabelWidth - Padding, rect.y + Padding,              LabelWidth, LabelH), tr, rightStyle);
             GUI.Label(new Rect(rect.x + Padding,                 rect.yMax - LabelH - Padding,  LabelWidth, LabelH), bl, leftStyle);
             GUI.Label(new Rect(rect.xMax - LabelWidth - Padding, rect.yMax - LabelH - Padding,  LabelWidth, LabelH), br, rightStyle);
 
-            // "drag to control" hint when interactive
             if (interactive)
             {
                 var hintStyle = new GUIStyle(EditorStyles.centeredGreyMiniLabel) { normal = { textColor = new Color(0.5f, 0.5f, 0.5f) } };
@@ -128,7 +137,7 @@ namespace Csound.Unity
             using (new EditorGUI.DisabledScope(true))
                 EditorGUILayout.Vector2Field("", pos);
 
-            // Keep repainting in play mode so the dot follows live position
+            // Keep repainting in play mode so the dot follows live position.
             if (Application.isPlaying)
                 Repaint();
         }
@@ -150,6 +159,6 @@ namespace Csound.Unity
             normal    = { textColor = LabelColor }
         };
 
-        public override bool RequiresConstantRepaint() => Application.isPlaying;
+        #endregion
     }
 }
