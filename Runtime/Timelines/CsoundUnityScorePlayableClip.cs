@@ -42,6 +42,8 @@ namespace Csound.Unity.Timelines
     [Serializable]
     public class CsoundUnityScorePlayableClip : PlayableAsset, ITimelineClipAsset
     {
+        #region Public API
+
         public CsoundUnityScorePlayableBehaviour template = new CsoundUnityScorePlayableBehaviour();
 
         /// <summary>
@@ -54,6 +56,8 @@ namespace Csound.Unity.Timelines
         {
             return ScriptPlayable<CsoundUnityScorePlayableBehaviour>.Create(graph, template);
         }
+
+        #endregion Public API
     }
 }
 

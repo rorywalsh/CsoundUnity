@@ -43,10 +43,14 @@ namespace Csound.Unity.Timelines
     [TrackBindingType(typeof(CsoundUnity))]
     public class CsoundUnityScoreTrack : TrackAsset
     {
+        #region Public API
+
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
             return ScriptPlayable<CsoundUnityScoreMixerBehaviour>.Create(graph, inputCount);
         }
+
+        #endregion Public API
     }
 }
 

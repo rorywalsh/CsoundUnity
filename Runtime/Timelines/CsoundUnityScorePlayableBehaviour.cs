@@ -270,7 +270,6 @@ namespace Csound.Unity.Timelines
 
         #region Animatable parameters — Score
 
-        // Score
         public string score = "i1 0 1";
 
         #endregion Animatable parameters — Score
@@ -353,7 +352,6 @@ namespace Csound.Unity.Timelines
         private double _previousTime        = -1;
         private double _csoundClockDrift    = 0;
 
-        // Swarm
         private double _swarmNextNoteTime = 0;
 
         #endregion Runtime state
@@ -907,7 +905,7 @@ namespace Csound.Unity.Timelines
                         _eucCurrentStep   = (_eucCurrentStep + missed) % scoreInfo.euclideanSteps;
                     }
 
-                    bool[] eucPattern = MusicUtils.BuildEuclideanPattern(EffEucHits(), scoreInfo.euclideanSteps, EffEucRot());
+                    var eucPattern = MusicUtils.BuildEuclideanPattern(EffEucHits(), scoreInfo.euclideanSteps, EffEucRot());
 
                     while (currentTime >= _eucNextStepTime - noteLah && _eucNextStepTime < clipDur)
                     {
@@ -1040,7 +1038,7 @@ namespace Csound.Unity.Timelines
                     // Frame-drop recovery: skip ahead rather than fire catch-up bursts
                     if (_patternNextStepTime > 0 && currentTime > _patternNextStepTime + cycleDur)
                     {
-                        int missed = (int)Math.Ceiling((currentTime - _patternNextStepTime) / stepDur);
+                        var missed = (int)Math.Ceiling((currentTime - _patternNextStepTime) / stepDur);
                         _patternNextStepTime += missed * stepDur;
                         _patternStep          = (_patternStep + missed) % scoreInfo.patternSteps;
                     }
@@ -1465,7 +1463,6 @@ namespace Csound.Unity.Timelines
 
         #region Runtime API
 
-        // Unified setters (shared across modes)
         public void SetBpm(float value)              => bpm = Mathf.Max(1f, value);
         public void SetPitchBase(float hz)           { pitchBase = Mathf.Max(1f, hz); _arpPitchCache = null; }
         public void SetNoteDuration(float s)         => noteDuration = Mathf.Max(0.001f, s);
@@ -1473,7 +1470,6 @@ namespace Csound.Unity.Timelines
         public void SetScaleIndex(Scale scale)       { scaleIndex = (int)scale; _arpPitchCache = null; }
         public void SetChordTypeIndex(Chord chord)   { chordTypeIndex = (int)chord; _arpPitchCache = null; }
 
-        // Arpeggio-specific setters
         public void SetArpBpm(float value)             => SetBpm(value);
         public void SetArpDivision(RhythmicDivision d) => scoreInfo.arpDivision = d;
         public void SetArpPitchBase(float hz)          => SetPitchBase(hz);
@@ -1485,7 +1481,6 @@ namespace Csound.Unity.Timelines
         public void SetArpNoteSource(ArpNoteSource s)  { scoreInfo.arpNoteSource = s; _arpPitchCache = null; }
         public void SetArpCustomIntervals(int[] i)     { scoreInfo.arpCustomIntervals = i; _arpPitchCache = null; }
 
-        // Swarm-specific setters
         public void SetSwarmPitchBase(float hz)             => SetPitchBase(hz);
         public void SetSwarmPitchSpread(float hz)           => swarmPitchSpread = Mathf.Max(0f, hz);
         public void SetSwarmDelay(float s)                  => swarmDelay = Mathf.Max(0.001f, s);
@@ -1493,7 +1488,6 @@ namespace Csound.Unity.Timelines
         public void SetSwarmGrainDuration(float s)          => SetNoteDuration(s);
         public void SetSwarmNoteDurationVariation(float v)  => swarmNoteDurationVariation = Mathf.Clamp01(v);
 
-        // Euclidean-specific setters
         public void SetEuclideanHits(int hits)               => euclideanHits = Mathf.Clamp(hits, 1, scoreInfo.euclideanSteps);
         public void SetEuclideanSteps(int steps)             { scoreInfo.euclideanSteps = Mathf.Clamp(steps, 1, 32); euclideanHits = Mathf.Clamp(EffEucHits(), 1, scoreInfo.euclideanSteps); }
         public void SetEuclideanRotation(int r)              => euclideanRotation = r;
@@ -1502,7 +1496,6 @@ namespace Csound.Unity.Timelines
         public void SetEuclideanPitch(float hz)              => SetPitchBase(hz);
         public void SetEuclideanNoteDuration(float s)        => SetNoteDuration(s);
 
-        // Pattern-specific setters
         /// <summary>Toggle a single step on or off for the given lane index.</summary>
         public void SetPatternStep(int lane, int step, bool active)
         {
@@ -1551,7 +1544,6 @@ namespace Csound.Unity.Timelines
         public void SetPatternBpm(float value)              => SetBpm(value);
         public void SetPatternDivision(RhythmicDivision d)  => scoreInfo.patternDivision = d;
 
-        // Common
         public void SetInstrN(string n)  => scoreInfo.instrN = n;
         public void SetMode(ScoreMode m) => scoreInfo.mode = m;
 

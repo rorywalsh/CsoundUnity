@@ -36,11 +36,13 @@ namespace Csound.Unity.Timelines
     /// <summary>
     /// The PlayableBehaviour for a single clip on a <see cref="CsoundUnityChannelTrack"/>.
     /// Holds the target value for the Csound channel that will be blended by <see cref="CsoundUnityMixerBehaviour"/>.
-    /// Supports three modes: Fixed (constant value), Random (S&H stepped), RandomSmooth (interpolated).
+    /// Supports three modes: Fixed (constant value), Random (S&amp;H stepped), RandomSmooth (interpolated).
     /// </summary>
     [Serializable]
     public class CsoundUnityChannelPlayableBehaviour : PlayableBehaviour
     {
+        #region Config
+
         public enum ChannelMode { Fixed, Random, RandomSmooth }
 
         public ChannelMode mode = ChannelMode.Fixed;
@@ -57,13 +59,20 @@ namespace Csound.Unity.Timelines
         /// <summary>How many new random values per second (Random / RandomSmooth modes).</summary>
         public float rate = 2f;
 
-        // --- Runtime state (not serialized) ---
+        #endregion Config
+
+        #region Runtime State
+
         private double _nextStepTime = 0;
         private float  _fromValue    = 0;
         private float  _toValue      = 0;
         private double _stepStart    = 0;
         private bool   _initialized  = false;
         private double _previousTime = -1;
+
+        #endregion Runtime State
+
+        #region PlayableBehaviour Overrides
 
         public override void OnBehaviourPlay(Playable playable, FrameData info)
         {
@@ -75,8 +84,8 @@ namespace Csound.Unity.Timelines
         {
             if (mode == ChannelMode.Fixed) return;
 
-            var t        = playable.GetTime();
-            var stepDur  = rate > 0 ? 1.0 / rate : 1.0;
+            var t       = playable.GetTime();
+            var stepDur = rate > 0 ? 1.0 / rate : 1.0;
 
             // Detect timeline loop: time jumped backwards — reset state
             if (_initialized && _previousTime >= 0 && t < _previousTime - 0.1)
@@ -85,12 +94,12 @@ namespace Csound.Unity.Timelines
 
             if (!_initialized)
             {
-                _fromValue   = UnityEngine.Random.Range(randomMin, randomMax);
-                _toValue     = UnityEngine.Random.Range(randomMin, randomMax);
-                _stepStart   = t;
+                _fromValue    = UnityEngine.Random.Range(randomMin, randomMax);
+                _toValue      = UnityEngine.Random.Range(randomMin, randomMax);
+                _stepStart    = t;
                 _nextStepTime = t + stepDur;
-                _initialized = true;
-                value        = _fromValue;
+                _initialized  = true;
+                value         = _fromValue;
             }
 
             if (t >= _nextStepTime)
@@ -107,10 +116,12 @@ namespace Csound.Unity.Timelines
             }
             else // RandomSmooth
             {
-                float progress = stepDur > 0 ? (float)((t - _stepStart) / stepDur) : 1f;
+                var progress = stepDur > 0 ? (float)((t - _stepStart) / stepDur) : 1f;
                 value = Mathf.Lerp(_fromValue, _toValue, Mathf.Clamp01(progress));
             }
         }
+
+        #endregion PlayableBehaviour Overrides
     }
 }
 

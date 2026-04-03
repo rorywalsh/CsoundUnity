@@ -43,9 +43,15 @@ namespace Csound.Unity.Timelines
     [TrackBindingType(typeof(CsoundUnity))]
     public class CsoundUnityChannelTrack : TrackAsset
     {
+        #region Fields
+
         public string channel;
         /// <summary>Enable diagnostic logging for this channel track. Logs channel value changes at runtime.</summary>
         public bool verboseLog = false;
+
+        #endregion Fields
+
+        #region Public API
 
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
@@ -55,6 +61,8 @@ namespace Csound.Unity.Timelines
             b.verboseLog = verboseLog;
             return mixerPlayable;
         }
+
+        #endregion Public API
     }
 }
 

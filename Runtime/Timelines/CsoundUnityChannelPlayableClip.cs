@@ -42,6 +42,8 @@ namespace Csound.Unity.Timelines
     [Serializable]
     public class CsoundUnityChannelPlayableClip : PlayableAsset, ITimelineClipAsset
     {
+        #region Public API
+
         public CsoundUnityChannelPlayableBehaviour template = new CsoundUnityChannelPlayableBehaviour();
         public ClipCaps clipCaps => ClipCaps.Blending;
 
@@ -49,6 +51,8 @@ namespace Csound.Unity.Timelines
         {
             return ScriptPlayable<CsoundUnityChannelPlayableBehaviour>.Create(graph, template);
         }
+
+        #endregion Public API
     }
 }
 

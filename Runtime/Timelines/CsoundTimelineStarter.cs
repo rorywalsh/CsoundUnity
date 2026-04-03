@@ -37,6 +37,8 @@ namespace Csound.Unity.Timelines
     /// </summary>
     public class CsoundTimelineStarter : MonoBehaviour
     {
+        #region Fields
+
         [Tooltip("The PlayableDirector to start once Csound is ready.")]
         public PlayableDirector director;
 
@@ -49,6 +51,10 @@ namespace Csound.Unity.Timelines
         public float extraDelay = 0.1f;
 
         private bool _started = false;
+
+        #endregion Fields
+
+        #region Unity Messages
 
         private void Start()
         {
@@ -73,6 +79,16 @@ namespace Csound.Unity.Timelines
                 csound.OnCsoundInitialized += OnReady;
         }
 
+        private void OnDestroy()
+        {
+            if (csound != null)
+                csound.OnCsoundInitialized -= OnReady;
+        }
+
+        #endregion Unity Messages
+
+        #region Private Helpers
+
         private void OnReady()
         {
             csound.OnCsoundInitialized -= OnReady;
@@ -84,19 +100,13 @@ namespace Csound.Unity.Timelines
             if (extraDelay > 0f)
                 yield return new WaitForSeconds(extraDelay);
 
-            if (!_started)
-            {
-                _started = true;
-                Debug.Log($"[CsoundTimelineStarter] Csound ready — starting Timeline at realT={Time.realtimeSinceStartup:F3}");
-                director.Play();
-            }
+            if (_started) yield break;
+            _started = true;
+            Debug.Log($"[CsoundTimelineStarter] Csound ready — starting Timeline at realT={Time.realtimeSinceStartup:F3}");
+            director.Play();
         }
 
-        private void OnDestroy()
-        {
-            if (csound != null)
-                csound.OnCsoundInitialized -= OnReady;
-        }
+        #endregion Private Helpers
     }
 }
 

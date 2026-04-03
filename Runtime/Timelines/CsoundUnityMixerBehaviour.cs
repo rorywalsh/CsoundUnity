@@ -39,6 +39,8 @@ namespace Csound.Unity.Timelines
     /// </summary>
     public class CsoundUnityMixerBehaviour : PlayableBehaviour
     {
+        #region Fields
+
         public string channel;
         /// <summary>Enable diagnostic logging for this channel track (logs when value changes by > 0.001).</summary>
         public bool verboseLog = false;
@@ -46,6 +48,10 @@ namespace Csound.Unity.Timelines
         private bool  _isFirstFrame  = true;
         private CsoundUnity _csound;
         private float _lastLoggedValue = float.MinValue;
+
+        #endregion Fields
+
+        #region PlayableBehaviour Overrides
 
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
@@ -63,10 +69,10 @@ namespace Csound.Unity.Timelines
             float finalValue    = 0f;
             bool  hasActiveClip = false;
 
-            int inputCount = playable.GetInputCount();
+            var inputCount = playable.GetInputCount();
             for (int i = 0; i < inputCount; i++)
             {
-                float inputWeight = playable.GetInputWeight(i);
+                var inputWeight = playable.GetInputWeight(i);
                 if (inputWeight <= 0f) continue;
                 hasActiveClip = true;
                 var inputPlayable = (ScriptPlayable<CsoundUnityChannelPlayableBehaviour>)playable.GetInput(i);
@@ -90,6 +96,8 @@ namespace Csound.Unity.Timelines
                 _lastLoggedValue = float.MinValue;
             }
         }
+
+        #endregion PlayableBehaviour Overrides
     }
 }
 
