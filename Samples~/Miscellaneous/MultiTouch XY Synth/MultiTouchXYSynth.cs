@@ -1,4 +1,3 @@
-﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using RU = Csound.Unity.Utilities.RemapUtils;
@@ -8,9 +7,12 @@ namespace Csound.Unity.Samples.Miscellaneous
     [RequireComponent(typeof(CsoundUnity))]
     public class MultiTouchXYSynth : MonoBehaviour
     {
+        #region Fields
         CsoundUnity _csound;
         private Dictionary<int, Vector2> inputPositions = new Dictionary<int, Vector2>();
+        #endregion
 
+        #region Unity Messages
         void Start()
         {
             _csound = GetComponent<CsoundUnity>();
@@ -32,7 +34,7 @@ namespace Csound.Unity.Samples.Miscellaneous
 
                 if (Input.GetMouseButton(0))
                 {
-                    Vector2 mousePosition = Input.mousePosition;
+                    var mousePosition = (Vector2)Input.mousePosition;
                     Debug.Log("Mouse moving at position: " + mousePosition);
 
                     inputPositions[0] = Input.mousePosition;
@@ -40,7 +42,7 @@ namespace Csound.Unity.Samples.Miscellaneous
 
                 if (Input.GetMouseButtonUp(0))
                 {
-                    inputPositions.Remove(0);// = new Vector2[] { };
+                    inputPositions.Remove(0);
                     _csound.SendScoreEvent($"i-1.{0} 0 0 {0}");
                 }
             }
@@ -89,21 +91,17 @@ namespace Csound.Unity.Samples.Miscellaneous
                 }
             }
 
-            if (inputPositions == null || inputPositions.Count == 0)
+            if (inputPositions == null || inputPositions.Count == 0) return;
+
+            foreach (var pos in inputPositions)
             {
-                return;
-            }
-            else
-            {
-                foreach (var pos in inputPositions)
-                {
-                    var x = RU.Remap(pos.Value.x, 0, Screen.width, 0f, 1f, true, 0.25f, RU.SkewMode.Normalized);
-                    var y = RU.Remap(pos.Value.y, 0, Screen.height, 0f, 1f, true, 0.25f, RU.SkewMode.Normalized);
-                    Debug.Log($"POS[{pos.Key}]: [{x},{y}]");
-                    _csound.SetChannel($"touch.{pos.Key}.x", x);
-                    _csound.SetChannel($"touch.{pos.Key}.y", y);
-                }
+                var x = RU.Remap(pos.Value.x, 0, Screen.width, 0f, 1f, true, 0.25f, RU.SkewMode.Normalized);
+                var y = RU.Remap(pos.Value.y, 0, Screen.height, 0f, 1f, true, 0.25f, RU.SkewMode.Normalized);
+                Debug.Log($"POS[{pos.Key}]: [{x},{y}]");
+                _csound.SetChannel($"touch.{pos.Key}.x", x);
+                _csound.SetChannel($"touch.{pos.Key}.y", y);
             }
         }
+        #endregion
     }
 }

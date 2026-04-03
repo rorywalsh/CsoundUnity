@@ -1,5 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,18 +5,21 @@ using UnityEngine.UI;
 namespace Csound.Unity.Samples.BasicPresetUsage
 {
     /// <summary>
-    /// This example saves presets in the Persistent Data Path, 
+    /// This example saves presets in the Persistent Data Path,
     /// and loads presets set in the inspector or from the PersistentDataPath
     /// </summary>
     public class BasicPresetsUsage : MonoBehaviour
     {
+        #region Fields
         [SerializeField] CsoundUnity csound;
         [SerializeField] CsoundUnityPreset[] testPresets;
         [SerializeField] Text presetText;
-        
+        #endregion
+
+        #region Unity Messages
         void Update()
         {
-            /// SAVE PRESETS
+            #region Save Presets
             if (Input.GetKeyUp(KeyCode.G))
             {
                 // Save the whole CsoundUnity object as a JSON in the Persistant Data Path
@@ -35,10 +36,11 @@ namespace Csound.Unity.Samples.BasicPresetUsage
                 // this can be used at runtime but it won't be loadable on a build
                 csound.SavePresetAsScriptableObject("test_scriptable_object");
             }
+            #endregion
 
-            /// LOAD GLOBAL PRESETS
-            /// This will override the whole CsoundUnity object and its settings
-            /// Be sure to use presets saved from the same Csd!
+            #region Load Global Presets
+            // This will override the whole CsoundUnity object and its settings
+            // Be sure to use presets saved from the same Csd!
             if (Input.GetKeyUp(KeyCode.L))
             {
                 // this loads and sets the global preset
@@ -51,8 +53,9 @@ namespace Csound.Unity.Samples.BasicPresetUsage
                 // this sets the global data
                 csound.SetGlobalPreset("test_global", data);
             }
+            #endregion
 
-            /// LOAD SCRIPTABLE OBJECT PRESETS
+            #region Load Scriptable Object Presets
             if (Input.GetKeyUp(KeyCode.Alpha0))
             {
                 csound.SetPreset(testPresets[0]);
@@ -94,8 +97,9 @@ namespace Csound.Unity.Samples.BasicPresetUsage
             {
                 csound.SetPreset(testPresets[9]);
             }
+            #endregion
 
-            /// LOAD PRESET FROM JSON
+            #region Load Preset from JSON
             if (Input.GetKeyUp(KeyCode.P))
             {
                 // this loads and sets the preset
@@ -108,14 +112,18 @@ namespace Csound.Unity.Samples.BasicPresetUsage
                 // this sets the preset data
                 csound.SetPreset("test", data);
             }
+            #endregion
 
             presetText.text = $"Current Preset: {csound.CurrentPreset}";
         }
+        #endregion
 
+        #region Public API
         public void LoadRandomPreset()
         {
             var rand = Random.Range(0, testPresets.Length);
             csound.SetPreset(testPresets[rand]);
         }
+        #endregion
     }
 }

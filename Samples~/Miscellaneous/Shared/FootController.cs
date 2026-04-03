@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
+using UnityEngine;
 
 namespace Csound.Unity.Samples.Miscellaneous
 {
@@ -17,13 +16,9 @@ namespace Csound.Unity.Samples.Miscellaneous
         void Update()
         {
             if (shouldPlay)
-            {
                 _animation.Play();
-            }
             else
-            {
                 _animation.Stop();
-            }
         }
     }
 }

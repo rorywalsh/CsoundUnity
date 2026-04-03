@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,6 +18,7 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
     [RequireComponent(typeof(CsoundUnity))]
     public class TrappedInConvert : MonoBehaviour
     {
+        #region Fields
         private CsoundUnity _csound;
         [SerializeField] List<InstrumentData> instruments = new();
         [SerializeField] TrappedInstrument _instrumentPrefab;
@@ -28,7 +28,9 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
 
         private Dictionary<int, int> _instrumentInstanceCounter = new();
         private Dictionary<int, InstrumentData> _instrumentDataByNumber = new();
+        #endregion
 
+        #region Unity Messages
         void Start()
         {
             _csound = GetComponent<CsoundUnity>();
@@ -41,7 +43,28 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
                 _instrumentDataByNumber.Add(instr.number, instr);
             }
         }
+        #endregion
 
+        #region Public API
+        /// <summary>
+        /// Called by <see cref="DropSpace"/> when a <see cref="DraggableIcon"/> is released
+        /// over the 3D scene. Creates the instrument at the drop position and restores the icon.
+        /// </summary>
+        public void OnInstrumentDropped(PointerEventData eventData)
+        {
+            Debug.Log($"OnInstrumentDropped {eventData.pointerDrag}, {eventData.position}");
+            var icon = eventData.pointerDrag.GetComponent<DraggableIcon>();
+
+            if (!icon) return;
+
+            CreateInstrument(icon.InstrumentData.number, eventData.position);
+
+            // restore the dropped icon in the UI grid
+            icon.RestorePosition();
+        }
+        #endregion
+
+        #region Private Helpers
         /// <summary>
         /// Instantiates a <see cref="TrappedInstrument"/> in world space at <paramref name="position"/>
         /// and initialises it with unique channel names and randomised parameters.
@@ -78,23 +101,7 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
             Debug.Log($"score: {score}");
             return score;
         }
-
-        /// <summary>
-        /// Called by <see cref="DropSpace"/> when a <see cref="DraggableIcon"/> is released
-        /// over the 3D scene. Creates the instrument at the drop position and restores the icon.
-        /// </summary>
-        public void OnInstrumentDropped(PointerEventData eventData)
-        {
-            Debug.Log($"OnInstrumentDropped {eventData.pointerDrag}, {eventData.position}");
-            var icon = eventData.pointerDrag.GetComponent<DraggableIcon>();
-
-            if (!icon) return;
-
-            CreateInstrument(icon.InstrumentData.number, eventData.position);
-
-            // restore the dropped icon in the UI grid
-            icon.RestorePosition();
-        }
+        #endregion
     }
 
     /// <summary>
@@ -117,8 +124,8 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
         public void SetIndex(int index)
         {
             Debug.Log($"Data set index: {index}");
-            _index = index;  
-        } 
+            _index = index;
+        }
     }
 
     /// <summary>

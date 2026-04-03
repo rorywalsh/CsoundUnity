@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using UnityEngine;
 
 namespace Csound.Unity.EnvironmentVars
@@ -22,7 +22,6 @@ namespace Csound.Unity.EnvironmentVars
             "Setting the Environment Variables on a running Csound instance can have unintended effects.")]
         public CsoundUnity CsoundUnity;
 
-        // Start is called before the first frame update
         void Start()
         {
             foreach (var sfName in _soundFontsNames)
@@ -36,9 +35,9 @@ namespace Csound.Unity.EnvironmentVars
                 {
                     var sf = Resources.Load<TextAsset>(sfName);
                     Debug.Log($"Writing sf file at path: {destinationPath}");
-                    Stream s = new MemoryStream(sf.bytes);
-                    BinaryReader br = new BinaryReader(s);
-                    using (BinaryWriter bw = new BinaryWriter(File.Open(destinationPath, FileMode.OpenOrCreate)))
+                    var s = new MemoryStream(sf.bytes);
+                    var br = new BinaryReader(s);
+                    using (var bw = new BinaryWriter(File.Open(destinationPath, FileMode.OpenOrCreate)))
                     {
                         bw.Write(br.ReadBytes(sf.bytes.Length));
                     }

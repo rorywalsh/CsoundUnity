@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
@@ -6,6 +6,7 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
 {
     public class ParameterSetter : MonoBehaviour
     {
+        #region Fields
         [Tooltip("The world canvas to be used for the caption")]
         [SerializeField] private Canvas _captionCanvas;
         [Tooltip("The caption inside the above canvas")]
@@ -24,7 +25,9 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
         private Vector2 _maxPos;
         private Vector3 _lastPos;
         private GameObject _player;
+        #endregion
 
+        #region Public API
         public void Init(CsoundUnity csound, GameObject player, CsoundChannelController xChannel, CsoundChannelController zChannel, Vector2 minPos, Vector2 maxPos)
         {
             this._csound = csound;
@@ -45,7 +48,9 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
             RemapCanvas(_player.transform.position);
             _lastPos = transform.position;
         }
+        #endregion
 
+        #region Unity Messages
         void Update()
         {
             if (transform.position != _lastPos)
@@ -54,7 +59,6 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
                 var pos = this.transform.position;
                 var valX = RU.Remap(pos.x, _minPos.x, _maxPos.x, _xChan.min, _xChan.max, true);
                 this._caption.text = $"x: {_xChan.channel}: {valX:0.00}\n";
-                //Debug.Log($"setting channel {_xChan.channel} to val: {valX}, minPos: {_minPos.x}, maxPos: {_maxPos.x}, min: {_xChan.min}, max: {_xChan.max}");
                 _csound.SetChannel(_xChan.channel, valX);
                 if (_zChan != null)
                 {
@@ -66,6 +70,17 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
             RemapCanvas(_player.transform.position);
         }
 
+        private void OnCollisionStay(Collision collision)
+        {
+            // if colliding with another ParameterSetter push it away
+            if (collision.transform.GetComponent<ParameterSetter>() != null)
+            {
+                collision.rigidbody.AddForce(new Vector3(_posCorrectionForce, 0, _posCorrectionForce));
+            }
+        }
+        #endregion
+
+        #region Private Helpers
         private void RemapCanvas(Vector3 _playerPos)
         {
             this._captionCanvas.transform.LookAt(_playerPos);
@@ -75,15 +90,7 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
             var remapPos = RU.Remap(dist, 0, Vector3.Distance(_minPos, _maxPos), _canvasPosRange.x, _canvasPosRange.y);
             var curPos = this._captionCanvas.transform.localPosition;
             this._captionCanvas.transform.localPosition = new Vector3(curPos.x, remapPos, curPos.z);
-
         }
-        private void OnCollisionStay(Collision collision)
-        {
-            // if colliding with another ParameterSetter push it away
-            if (collision.transform.GetComponent<ParameterSetter>() != null)
-            {
-                collision.rigidbody.AddForce(new Vector3(_posCorrectionForce, 0, _posCorrectionForce));
-            }
-        }
+        #endregion
     }
 }

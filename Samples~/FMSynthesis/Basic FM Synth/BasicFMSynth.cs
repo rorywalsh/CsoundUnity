@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
 namespace Csound.Unity.Samples.BasicFMSynth
@@ -7,13 +7,12 @@ namespace Csound.Unity.Samples.BasicFMSynth
     public class BasicFMSynth : MonoBehaviour
     {
         CsoundUnity _csound;
-        // Start is called before the first frame update
+
         void Start()
         {
             _csound = GetComponent<CsoundUnity>();
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (!_csound.IsInitialized) return;

@@ -32,6 +32,7 @@ namespace Csound.Unity.Samples.Engines
     [RequireComponent(typeof(CsoundUnity))]
     public class EngineAudioController : MonoBehaviour
     {
+        #region Fields
         [SerializeField] VehicleController _vehicle;
 
         [SerializeField] List<EnginePreset> _presets = new()
@@ -54,13 +55,17 @@ namespace Csound.Unity.Samples.Engines
 
         CsoundUnity _csound;
         int _activeIndex = -1;
+        #endregion
 
+        #region Properties
         /// <summary>Read-only view of the preset list, for populating UI dropdowns.</summary>
         public IReadOnlyList<EnginePreset> Presets => _presets;
 
         /// <summary>Index of the currently active preset, or -1 if none has started yet.</summary>
         public int ActiveIndex => _activeIndex;
+        #endregion
 
+        #region Unity Messages
         void Awake()
         {
             _csound = GetComponent<CsoundUnity>();
@@ -75,21 +80,14 @@ namespace Csound.Unity.Samples.Engines
                 _csound.OnCsoundInitialized -= OnCsoundReady;
         }
 
-        private void OnCsoundReady()
-        {
-            // Reset so SwitchPreset re-triggers cleanly after reinitialization
-            var indexToRestore = _activeIndex >= 0 ? _activeIndex : 0;
-            _activeIndex = -1;
-            SwitchPreset(indexToRestore);
-        }
-
         void Update()
         {
             if (!_csound.IsInitialized) return;
             _csound.SetChannel("Speed", _vehicle != null ? _vehicle.NormalizedSpeed : 0f);
-            // Debug.Log($"speed: {_csound.GetChannel("Speed")}, norm speed: {_vehicle.NormalizedSpeed}");
         }
+        #endregion
 
+        #region Public API
         /// <summary>Stops the currently active engine instrument. Safe to call from a UI button.</summary>
         public void StopCurrentEngine()
         {
@@ -134,5 +132,16 @@ namespace Csound.Unity.Samples.Engines
 
             Debug.Log($"[EngineAudioController] Preset → {_presets[_activeIndex].label}");
         }
+        #endregion
+
+        #region Private Helpers
+        private void OnCsoundReady()
+        {
+            // Reset so SwitchPreset re-triggers cleanly after reinitialization
+            var indexToRestore = _activeIndex >= 0 ? _activeIndex : 0;
+            _activeIndex = -1;
+            SwitchPreset(indexToRestore);
+        }
+        #endregion
     }
 }

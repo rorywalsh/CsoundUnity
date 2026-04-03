@@ -1,28 +1,24 @@
-﻿using UnityEngine;
-using System.Collections;
+using UnityEngine;
 
 namespace Csound.Unity.Samples.Miscellaneous
 {
     public class SmoothFollow : MonoBehaviour
     {
+        #region Fields
         // The target we are following
         public Transform target;
         // The distance in the x-z plane to the target
         public float distance = 10.0f;
         // the height we want the camera to be above the target
         public float height = 5.0f;
-        // How much we 
+        // How much we
         public float heightDamping = 2.0f;
         public float rotationDamping = 3.0f;
+        #endregion
 
-        void Awake()
-        {
-
-        }
-
+        #region Unity Messages
         void LateUpdate()
         {
-            // Early out if we don't have a target
             if (!target) return;
 
             // Calculate the current rotation angles
@@ -52,5 +48,6 @@ namespace Csound.Unity.Samples.Miscellaneous
             // Always look at the target
             transform.LookAt(target);
         }
+        #endregion
     }
 }

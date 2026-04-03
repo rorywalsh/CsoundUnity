@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Csound.Unity.GranularSynthesis.Partikkel
 {
     public class MoveLookAndPush : MonoBehaviour
     {
+        #region Fields
         [SerializeField] float _mouseSpeed = 3;
         [SerializeField] float _speed = 50;
         [Tooltip("The push power of the player towards the rigidbodies")]
@@ -12,8 +13,9 @@ namespace Csound.Unity.GranularSynthesis.Partikkel
         private CharacterController _controller;
         private float _startY;
         private Vector2 _rotation = Vector2.zero;
+        #endregion
 
-        // Start is called before the first frame update
+        #region Unity Messages
         void Start()
         {
             _controller = GetComponent<CharacterController>();
@@ -38,21 +40,20 @@ namespace Csound.Unity.GranularSynthesis.Partikkel
 
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
-            Rigidbody body = hit.collider.attachedRigidbody;
+            var body = hit.collider.attachedRigidbody;
             // do nothing if there's no rigidbody
-            if (body == null || body.isKinematic)
-                return;
+            if (body == null || body.isKinematic) return;
             // this could be superfluous, discards the cases where the player pushes the objects downwards
-            if (hit.moveDirection.y < -0.1f)
-                return;
+            if (hit.moveDirection.y < -0.1f) return;
 
             // Calculate push direction from move direction,
             // only push objects to the sides, never up and down
-            Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
+            var pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
 
             // Apply the push
             // use a point slightly above the center of the object as the hit position
             body.AddForceAtPosition(pushDir * _speed * _pushPower, new Vector3(0, 0.5f, 0));
         }
+        #endregion
     }
 }

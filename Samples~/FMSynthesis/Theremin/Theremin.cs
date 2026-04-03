@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
@@ -24,8 +23,7 @@ namespace Csound.Unity.TableMorph.Theremin
 
         void Update()
         {
-            if (!_csound.IsInitialized)
-                return;
+            if (!_csound.IsInitialized) return;
 
             if (Input.GetKey(KeyCode.LeftShift) || Input.touchCount > 1)
             {

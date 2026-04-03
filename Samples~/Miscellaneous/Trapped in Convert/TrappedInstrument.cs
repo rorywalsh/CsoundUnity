@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Csound.Unity.Utilities.MonoBehaviours;
@@ -39,10 +39,10 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
     /// </summary>
     public class TrappedInstrument : MonoBehaviour
     {
+        #region Fields
         [SerializeField] float _safeInterruptionTime = 0.1f;
         [SerializeField] AudioDisplay _spectrumDisplayL;
         [SerializeField] AudioDisplay _spectrumDisplayR;
-
 
         private CsoundUnity _csound;
         private string _chanL;
@@ -58,8 +58,9 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
         private bool _canBeDestroyed;
         private float[] _leftSamples;
         private float[] _rightSamples;
+        #endregion
 
-
+        #region Public API
         /// <summary>
         /// Initialises the instrument: sets up the AudioSource, registers the Csound audio channels,
         /// randomises all p-field parameters within the ranges defined by <paramref name="data"/>,
@@ -86,7 +87,6 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
             AudioSettings.GetDSPBufferSize(out var dspBufferSize, out _);
             _leftSamples = new float[dspBufferSize];
             _rightSamples = new float[dspBufferSize];
-
 
             if (_spectrumDisplayL != null)
             {
@@ -128,7 +128,30 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
 
             _initialized = true;
         }
+        #endregion
 
+        #region Unity Messages
+        private void Update()
+        {
+            if (_canBeDestroyed)
+            {
+                _csound.RemoveAudioChannel(_chanL);
+                _csound.RemoveAudioChannel(_chanR);
+
+                Destroy(this.gameObject);
+            }
+            if (_spectrumDisplayL != null)
+            {
+                _spectrumDisplayL.SetSamples(_leftSamples);
+            }
+            if (_spectrumDisplayR != null)
+            {
+                _spectrumDisplayR.SetSamples(_rightSamples);
+            }
+        }
+        #endregion
+
+        #region Private Helpers
         private void InitAudioSource()
         {
             _audioSource = GetComponent<AudioSource>();
@@ -224,29 +247,10 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
         {
             for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
             {
-                leftSamples[sampleIndex] = samples[i]; // Left channel
-                rightSamples[sampleIndex] = samples[i + 1]; // Right channel
+                leftSamples[sampleIndex] = samples[i];
+                rightSamples[sampleIndex] = samples[i + 1];
             }
         }
-
-        private void Update()
-        {
-            if (_canBeDestroyed)
-            {
-                _csound.RemoveAudioChannel(_chanL);
-                _csound.RemoveAudioChannel(_chanR);
-
-                Destroy(this.gameObject);
-            }
-            if (_spectrumDisplayL != null)
-            {
-                _spectrumDisplayL.SetSamples(_leftSamples);
-            }
-            if (_spectrumDisplayR != null)
-            {
-                _spectrumDisplayR.SetSamples(_rightSamples);
-            }
-        }
-
+        #endregion
     }
 }

@@ -23,6 +23,7 @@ namespace Csound.Unity.Samples
     /// </summary>
     public class CsoundUnityLifecycleDemo : MonoBehaviour
     {
+        #region Fields
         [SerializeField] CsoundUnity _csound;
 
         [Header("Delayed Init")]
@@ -36,7 +37,9 @@ namespace Csound.Unity.Samples
         [SerializeField] float _restartDelay = 2f;
 
         private bool _performanceFinished;
+        #endregion
 
+        #region Unity Messages
         IEnumerator Start()
         {
             if (_csound == null)
@@ -98,11 +101,14 @@ namespace Csound.Unity.Samples
             if (_csound == null) return;
             _csound.OnCsoundPerformanceFinished -= OnPerformanceFinished;
         }
+        #endregion
 
+        #region Private Helpers
         private void OnPerformanceFinished()
         {
             Debug.Log("[LifecycleDemo] OnCsoundPerformanceFinished fired");
             _performanceFinished = true;
         }
+        #endregion
     }
 }

@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
 {
     [RequireComponent(typeof(CsoundUnity))]
     public class ParametersController : MonoBehaviour
     {
+        #region Fields
         [Tooltip("The prefab to be used as ParameterSetter. Requires a ParameterSetter script")]
         [SerializeField] GameObject _parameterCubePrefab;
         [Tooltip("The area to which the parameters will be remapped to")]
@@ -13,7 +14,9 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
         [SerializeField] GameObject _player;
 
         CsoundUnity _csound;
+        #endregion
 
+        #region Unity Messages
         void Start()
         {
             _csound = GetComponent<CsoundUnity>();
@@ -36,5 +39,6 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
                 setter.Init(_csound, _player, chanList[i], zChan, minPosition, maxPosition);
             }
         }
+        #endregion
     }
 }

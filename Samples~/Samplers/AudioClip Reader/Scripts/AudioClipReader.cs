@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
 #elif UNITY_ANDROID || UNITY_IOS
@@ -13,7 +13,6 @@ namespace Csound.Unity.Samples.AudioClipReader
         private CsoundUnity csoundUnity;
         public AudioClip audioClip;
 
-        // Start is called before the first frame update
         void Start()
         {
             csoundUnity = GameObject.Find("CsoundUnity").GetComponent<CsoundUnity>();

@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 namespace Csound.Unity.Samples.Collisions.Dripwater
 {
     public class DropCreator : MonoBehaviour
     {
+        #region Fields
         [SerializeField] GameObject _dropPrefab;
         [SerializeField] float _rate = 10; // drops / s
         [SerializeField] CsoundUnity _csound;
@@ -14,18 +14,28 @@ namespace Csound.Unity.Samples.Collisions.Dripwater
 
         Coroutine _spawnCor;
         private bool _spawning;
+        #endregion
 
+        #region Public API
         public void SetSpawning(bool spawn)
         {
             _spawning = spawn;
         }
+        #endregion
 
-        // Start is called before the first frame update
+        #region Unity Messages
         void Start()
         {
             _spawnCor = StartCoroutine(Spawning());
         }
 
+        private void OnDestroy()
+        {
+            StopCoroutine(_spawnCor);
+        }
+        #endregion
+
+        #region Private Helpers
         IEnumerator Spawning()
         {
             while (true)
@@ -43,17 +53,12 @@ namespace Csound.Unity.Samples.Collisions.Dripwater
                     {
                         Destroy(dropGO);
                     };
-                    // wait before spawning again
                     yield return new WaitForSeconds(1 / _rate);
                 }
                 // continue executing the routine to keep it alive
                 yield return null;
             }
         }
-
-        private void OnDestroy()
-        {
-            StopCoroutine(_spawnCor);
-        }
+        #endregion
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,16 +5,18 @@ namespace Csound.Unity.Samples.TestWebGL
 {
     public class CsoundInfo : MonoBehaviour
     {
+        #region Fields
         [SerializeField] private CsoundUnity csound;
         [SerializeField] private Text infoText;
-        
+
         private int _id;
         float _azimuth = 0;
         float _elevation = 0;
         float _rolloff = 0;
         private string InfoString => $"Csound #{_id}, csd: {csound.csoundFileName}\n";
+        #endregion
 
-        // Start is called before the first frame update
+        #region Unity Messages
         void Start()
         {
             if (!csound) GetComponent<CsoundUnity>();
@@ -24,19 +24,10 @@ namespace Csound.Unity.Samples.TestWebGL
             csound.OnCsoundInitialized += OnCsoundInitialized;
         }
 
-        private void OnCsoundInitialized()
-        {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            _id = csound.InstanceId;
-#endif
-            infoText.text = InfoString;
-        }
-
-        // Update is called once per frame
         void Update()
         {
             if (!csound || !csound.IsInitialized) return;
-            
+
 #if UNITY_WEBGL && !UNITY_EDITOR
             csound.GetChannel("azimuth", (value) => _azimuth = value);
             csound.GetChannel("elevation", (value) => _elevation = value);
@@ -50,5 +41,16 @@ namespace Csound.Unity.Samples.TestWebGL
 #endif
             infoText.text = $"{InfoString}\nazimuth: {_azimuth}\nelevation: {_elevation}\nrolloff: {_rolloff}";
         }
+        #endregion
+
+        #region Private Helpers
+        private void OnCsoundInitialized()
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            _id = csound.InstanceId;
+#endif
+            infoText.text = InfoString;
+        }
+        #endregion
     }
 }

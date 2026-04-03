@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,13 +11,16 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
     /// </summary>
     public class DraggableIcon : MonoBehaviour, IDragHandler
     {
+        #region Fields
         [SerializeField] Image _image;
 
         RectTransform _rt;
         [SerializeField] Vector2 _defaultPosition;
 
         public InstrumentData InstrumentData { get; private set; }
+        #endregion
 
+        #region Public API
         public void Init(InstrumentData data)
         {
             this.name = $"[{data.Index}] {data.name}_draggable";
@@ -25,12 +28,6 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
             InstrumentData = data;
             _rt = GetComponent<RectTransform>();
             StartCoroutine(WaitBeforeGrabbingDefaultPosition());
-        }
-
-        IEnumerator WaitBeforeGrabbingDefaultPosition()
-        {
-            yield return new WaitForEndOfFrame();
-            _defaultPosition = _rt.anchoredPosition;
         }
 
         public void RestorePosition()
@@ -45,7 +42,6 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
 
         public void OnDrag(PointerEventData data)
         {
-            //Debug.Log($"OnDrag {data.selectedObject}");
             this.transform.position = Input.mousePosition;
         }
 
@@ -53,5 +49,14 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
         {
             Debug.Log($"OnDragEnded {data.selectedObject}");
         }
+        #endregion
+
+        #region Private Helpers
+        IEnumerator WaitBeforeGrabbingDefaultPosition()
+        {
+            yield return new WaitForEndOfFrame();
+            _defaultPosition = _rt.anchoredPosition;
+        }
+        #endregion
     }
 }

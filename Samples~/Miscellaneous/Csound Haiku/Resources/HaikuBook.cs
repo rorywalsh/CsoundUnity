@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +8,7 @@ namespace Csound.Unity.Samples.Miscellaneous.Haiku
 {
     public class HaikuBook : MonoBehaviour
     {
+        #region Fields
         [SerializeField] CsoundUnity _allHaikus;
         [SerializeField] ToggleGroup _toggleGroup;
         [SerializeField] Button _previousButton;
@@ -30,11 +31,13 @@ namespace Csound.Unity.Samples.Miscellaneous.Haiku
             { 8, "VIII"},
             { 9, "IX"},
         };
+        #endregion
 
+        #region Public API
         public void SwitchOff()
         {
             GoToPage(0);
-            foreach(var page in _toggles)
+            foreach (var page in _toggles)
             {
                 page.isOn = false;
             }
@@ -44,44 +47,9 @@ namespace Csound.Unity.Samples.Miscellaneous.Haiku
         {
             Application.OpenURL("http://iainmccurdy.org/compositions.html");
         }
+        #endregion
 
-        private void GoToPage(int page)
-        {
-            //Debug.Log($"Go to Page: {page}");
-
-            if (page == _currentPage) return;
-
-            if (_currentPage != -1)
-            { 
-                _allHaikus.SetChannel(PageToChannelDict[_currentPage], 0);
-            }
-
-            _currentPage = page;
-            //var channel = PageToChannelDict[page];
-            //Debug.Log($"Channel: {channel}");
-            _allHaikus.SetChannel(PageToChannelDict[page], 1);
-        }
-
-        private void NextPage()
-        {
-            var page = _currentPage + 1;
-            if (page > _numberOfPages - 1)
-            {
-                page = 1; 
-            }
-            _toggles[page].isOn = true;
-        }
-
-        private void PreviousPage()
-        {
-            var page = _currentPage - 1;
-            if (page < 1)
-            {
-                page = _numberOfPages - 1;
-            }
-            _toggles[page].isOn = true;
-        }
-
+        #region Unity Messages
         IEnumerator Start()
         {
             _toggles = _toggleGroup.GetComponentsInChildren<Toggle>();
@@ -94,7 +62,7 @@ namespace Csound.Unity.Samples.Miscellaneous.Haiku
                 toggle.onValueChanged.AddListener((enable) =>
                 {
                     if (enable)
-                    { 
+                    {
                         GoToPage(i);
                     }
                 });
@@ -113,5 +81,41 @@ namespace Csound.Unity.Samples.Miscellaneous.Haiku
 
             GoToPage(1);
         }
+        #endregion
+
+        #region Private Helpers
+        private void GoToPage(int page)
+        {
+            if (page == _currentPage) return;
+
+            if (_currentPage != -1)
+            {
+                _allHaikus.SetChannel(PageToChannelDict[_currentPage], 0);
+            }
+
+            _currentPage = page;
+            _allHaikus.SetChannel(PageToChannelDict[page], 1);
+        }
+
+        private void NextPage()
+        {
+            var page = _currentPage + 1;
+            if (page > _numberOfPages - 1)
+            {
+                page = 1;
+            }
+            _toggles[page].isOn = true;
+        }
+
+        private void PreviousPage()
+        {
+            var page = _currentPage - 1;
+            if (page < 1)
+            {
+                page = _numberOfPages - 1;
+            }
+            _toggles[page].isOn = true;
+        }
+        #endregion
     }
 }

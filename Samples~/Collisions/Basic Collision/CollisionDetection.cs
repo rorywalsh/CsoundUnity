@@ -1,5 +1,3 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
@@ -7,18 +5,14 @@ namespace Csound.Unity.Samples.Collisions.BasicCollision
 {
     public class CollisionDetection : MonoBehaviour
     {
+        #region Fields
         [SerializeField] CsoundUnity _csound;
         [SerializeField] GameObject _testObject;
         [SerializeField] Vector2 RangeX = new Vector2(-2.5f, 2.5f);
         [SerializeField] Vector2 RangeY = new Vector2(-2.5f, 2.5f);
+        #endregion
 
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
+        #region Unity Messages
         void Update()
         {
             if (!_csound || !_csound.IsInitialized) return;
@@ -46,10 +40,11 @@ namespace Csound.Unity.Samples.Collisions.BasicCollision
 
         private void OnCollisionStay(Collision collision)
         {
-            //Debug.Log("collision: "+collision.contacts[0].point);
             SetData(collision);
         }
+        #endregion
 
+        #region Private Helpers
         void SetData(Collision collision)
         {
             var contacts = new ContactPoint[collision.contactCount];
@@ -57,5 +52,6 @@ namespace Csound.Unity.Samples.Collisions.BasicCollision
             _csound.SetChannel("modIndex", RU.Remap(contacts[0].point.x, RangeX.x, RangeX.y, 2f, 0.1f));
             _csound.SetChannel("modFreq", RU.Remap(contacts[0].point.y, RangeY.x, RangeY.y, 0f, 110f));
         }
+        #endregion
     }
 }

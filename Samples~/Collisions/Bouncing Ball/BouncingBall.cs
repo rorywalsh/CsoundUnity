@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
 namespace Csound.Unity.Samples.Collisions
 {
     public class BouncingBall : MonoBehaviour
     {
+        #region Fields
         [SerializeField] CsoundUnity _csound;
         [SerializeField] float _maxImpulseForce = 16;
         [SerializeField] float _minImpulseForce = 0;
@@ -15,31 +16,29 @@ namespace Csound.Unity.Samples.Collisions
         [SerializeField] float _horizontalForce = 10f;
 
         private Rigidbody _rigidBody;
+        #endregion
 
-        // Start is called before the first frame update
+        #region Unity Messages
         void Start()
         {
             if (_csound == null)
-            {
                 _csound = GetComponent<CsoundUnity>();
-            }
+
             this.transform.position = new Vector3(0, _startingBallHeight, 0);
-            this._rigidBody = GetComponent<Rigidbody>();
+            _rigidBody = GetComponent<Rigidbody>();
         }
 
-        // Update is called once per frame
         void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                this.transform.position = new Vector3(0, _startingBallHeight, 0);
-                var normPos = RU.Remap(Input.mousePosition.x, 0, Screen.width, -1f, 1f);
-                // first reset the current velocity to avoid summing up when fast clicking
-                _rigidBody.velocity = Vector3.zero;
-                _rigidBody.angularVelocity = Vector3.zero;
-                
-                _rigidBody.AddForce(_horizontalForce * normPos, 0, 0, ForceMode.Force);
-            }
+            if (!Input.GetMouseButtonDown(0)) return;
+
+            this.transform.position = new Vector3(0, _startingBallHeight, 0);
+            var normPos = RU.Remap(Input.mousePosition.x, 0, Screen.width, -1f, 1f);
+            // first reset the current velocity to avoid summing up when fast clicking
+            _rigidBody.velocity = Vector3.zero;
+            _rigidBody.angularVelocity = Vector3.zero;
+
+            _rigidBody.AddForce(_horizontalForce * normPos, 0, 0, ForceMode.Force);
         }
 
         private void OnCollisionEnter(Collision other)
@@ -52,8 +51,8 @@ namespace Csound.Unity.Samples.Collisions
             // sum the impulse of the 3 axis
             var impulse = (impulseX + impulseY + impulseZ);
 
-            var impulseDur = RU.Remap(impulse, 0, 3f, 0, _maxImpulseDur);
             _csound.SendScoreEvent($"i2 0 {_maxImpulseDur} {impulse} {_impulseModFreq} {_impulseCarFreq}");
         }
+        #endregion
     }
 }

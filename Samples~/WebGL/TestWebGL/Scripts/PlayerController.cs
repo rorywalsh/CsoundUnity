@@ -1,13 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Csound.Unity.Samples.TestWebGL
 {
     public class PlayerController : MonoBehaviour
     {
+        #region Fields
         public Camera lookCamera;
-        
-        //public variables to control movement
+
         public float speed = 3.0F;
         public float jumpSpeed = 15;
         public int gravity = 20;
@@ -28,21 +28,17 @@ namespace Csound.Unity.Samples.TestWebGL
         private Vector3 moveDirection;
         private Vector2 movementJoystickDirection;
         private Vector2 lookJoystickDirection;
+        #endregion
 
+        #region Properties
         private float VerticalAxis
         {
-            get
-            {
-                return IsMobile ? movementJoystickDirection.y : Input.GetAxis("Vertical");
-            }
+            get { return IsMobile ? movementJoystickDirection.y : Input.GetAxis("Vertical"); }
         }
 
         private float HorizontalAxis
         {
-            get
-            {
-                return IsMobile ? movementJoystickDirection.x : Input.GetAxis("Horizontal");
-            }
+            get { return IsMobile ? movementJoystickDirection.x : Input.GetAxis("Horizontal"); }
         }
 
         private Quaternion LookRotation
@@ -58,7 +54,6 @@ namespace Csound.Unity.Samples.TestWebGL
                 {
                     currentRotation.x += Input.GetAxis("Mouse X") * rotationSensitivity;
                     currentRotation.y -= Input.GetAxis("Mouse Y") * rotationSensitivity;
-
                 }
                 currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
                 currentRotation.y = Mathf.Clamp(currentRotation.y, -maxYAngle, maxYAngle);
@@ -66,12 +61,12 @@ namespace Csound.Unity.Samples.TestWebGL
                 return target;
             }
         }
+        #endregion
 
+        #region Unity Messages
         void Awake()
         {
             charController = GetComponent<CharacterController>();
-            //assign csoundUnity member
-            //csoundUnity = GetComponent<CsoundUnity>();
 
             Debug.Log("IsMobile: " + IsMobile);
 
@@ -88,31 +83,19 @@ namespace Csound.Unity.Samples.TestWebGL
 
         private void Start()
         {
-            if (IsMobile)
-            {
-                if (movementJoystick) { movementJoystick.MovedEvent += MovementJoystick_MovedEvent; }
-                if (lookJoystick) { lookJoystick.MovedEvent += LookJoystick_MovedEvent; }
-                if (mobileButton) { mobileButton.onClick.AddListener(Jump); }
-            }
-        }
+            if (!IsMobile) return;
 
-        private void MovementJoystick_MovedEvent(Vector2 dir)
-        {
-            //Debug.Log("MovementJoystick Moved: " + dir.x);
-            movementJoystickDirection = dir;
+            if (movementJoystick) { movementJoystick.MovedEvent += MovementJoystick_MovedEvent; }
+            if (lookJoystick) { lookJoystick.MovedEvent += LookJoystick_MovedEvent; }
+            if (mobileButton) { mobileButton.onClick.AddListener(Jump); }
         }
-        private void LookJoystick_MovedEvent(Vector2 dir)
-        {
-            lookJoystickDirection = dir;
-        }
-
 
         void Update()
         {
             // Handle rotation
-            Quaternion lookRotation = LookRotation; 
-            transform.eulerAngles = new Vector2(0, LookRotation.eulerAngles.y);
-            lookCamera.transform.localRotation = Quaternion.Euler(LookRotation.eulerAngles.x, 0, 0);
+            var lookRotation = LookRotation;
+            transform.eulerAngles = new Vector2(0, lookRotation.eulerAngles.y);
+            lookCamera.transform.localRotation = Quaternion.Euler(lookRotation.eulerAngles.x, 0, 0);
             // Handle movement
             if (charController.isGrounded)
             {
@@ -126,7 +109,7 @@ namespace Csound.Unity.Samples.TestWebGL
             }
             else
             {
-                Vector3 moveDirectionTemp = new Vector3(HorizontalAxis, moveDirection.y, VerticalAxis);
+                var moveDirectionTemp = new Vector3(HorizontalAxis, moveDirection.y, VerticalAxis);
                 moveDirectionTemp = transform.TransformDirection(moveDirectionTemp);
                 moveDirection.x = moveDirectionTemp.x * speed;
                 moveDirection.z = moveDirectionTemp.z * speed;
@@ -135,10 +118,23 @@ namespace Csound.Unity.Samples.TestWebGL
             moveDirection.y -= gravity * Time.deltaTime;
             charController.Move(moveDirection * Time.deltaTime);
         }
+        #endregion
+
+        #region Private Helpers
+        private void MovementJoystick_MovedEvent(Vector2 dir)
+        {
+            movementJoystickDirection = dir;
+        }
+
+        private void LookJoystick_MovedEvent(Vector2 dir)
+        {
+            lookJoystickDirection = dir;
+        }
 
         private void Jump()
         {
             moveDirection.y = jumpSpeed;
         }
+        #endregion
     }
 }

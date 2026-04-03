@@ -9,6 +9,7 @@ namespace Csound.Unity.Samples.Engines
     /// </summary>
     public class VehicleController : MonoBehaviour
     {
+        #region Fields
         [SerializeField] float _maxSpeed = 10f;
         [SerializeField] float _acceleration = 8f;
         [SerializeField] float _deceleration = 6f;
@@ -17,13 +18,17 @@ namespace Csound.Unity.Samples.Engines
 
         float _currentSpeed;
         Camera _cam;
+        #endregion
 
+        #region Properties
         /// <summary>
         /// Current speed normalised to [0, 1], where 1 = max speed.
         /// Feed this into the Csound <c>"Speed"</c> channel.
         /// </summary>
         public float NormalizedSpeed => _maxSpeed > 0f ? _currentSpeed / _maxSpeed : 0f;
+        #endregion
 
+        #region Unity Messages
         void Awake()
         {
             _cam = Camera.main;
@@ -34,7 +39,9 @@ namespace Csound.Unity.Samples.Engines
             SteerTowardCursor();
             Drive();
         }
+        #endregion
 
+        #region Private Helpers
         /// <summary>
         /// Rotates the vehicle toward the point where a ray from the camera through
         /// the mouse cursor intersects the y = 0 ground plane.
@@ -81,5 +88,6 @@ namespace Csound.Unity.Samples.Engines
 
             transform.position = pos;
         }
+        #endregion
     }
 }

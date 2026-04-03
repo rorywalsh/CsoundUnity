@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using RU = Csound.Unity.Utilities.RemapUtils;
 
@@ -6,6 +6,7 @@ namespace Csound.Unity.Samples.Basic
 {
     public class RemapTest : MonoBehaviour
     {
+        #region Fields
         [SerializeField] float _min = 20f;
         [SerializeField] float _max = 20000f;
         [Range(0f, 10f)]
@@ -18,12 +19,16 @@ namespace Csound.Unity.Samples.Basic
         [SerializeField] Text _infoText;
 
         Vector3[] _points;
+        #endregion
 
+        #region Public API
         public void OnRemapModeChanged(int mode)
         {
             _mode = (RU.SkewMode)mode;
         }
+        #endregion
 
+        #region Unity Messages
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
@@ -35,28 +40,6 @@ namespace Csound.Unity.Samples.Basic
             for (int i = 0; i < _points.Length - 1; i++)
             {
                 Debug.DrawLine(_points[i], _points[i + 1]);
-            }
-        }
-
-        void CalculatePoints()
-        {
-            if (_points == null || _points.Length != _numberOfPoints)
-            {
-                _points = new Vector3[_numberOfPoints];
-            }
-            if (_lineRenderer.positionCount != _numberOfPoints)
-            {
-                _lineRenderer.positionCount = _numberOfPoints;
-            }
-            for (int i = 0; i < _numberOfPoints; i++)
-            {
-                float t = (float)i / (_numberOfPoints - 1);
-                float value = RU.Remap(t, 0f, 1f, _min, _max, _clamp, _skew, _mode);
-
-                float x = t * 10f; // Adjust the scale of the x-axis
-                float y = (value - _min) / (_max - _min) * 10f; // Adjust the scale of the y-axis
-
-                _points[i] = transform.position + new Vector3(x, y, 0f);
             }
         }
 
@@ -78,5 +61,30 @@ namespace Csound.Unity.Samples.Basic
             _infoText.text = $"SKEW\n{_skew:F3}";
             _infoText.transform.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y + 50f);
         }
+        #endregion
+
+        #region Private Helpers
+        void CalculatePoints()
+        {
+            if (_points == null || _points.Length != _numberOfPoints)
+            {
+                _points = new Vector3[_numberOfPoints];
+            }
+            if (_lineRenderer.positionCount != _numberOfPoints)
+            {
+                _lineRenderer.positionCount = _numberOfPoints;
+            }
+            for (int i = 0; i < _numberOfPoints; i++)
+            {
+                float t = (float)i / (_numberOfPoints - 1);
+                float value = RU.Remap(t, 0f, 1f, _min, _max, _clamp, _skew, _mode);
+
+                float x = t * 10f; // Adjust the scale of the x-axis
+                float y = (value - _min) / (_max - _min) * 10f; // Adjust the scale of the y-axis
+
+                _points[i] = transform.position + new Vector3(x, y, 0f);
+            }
+        }
+        #endregion
     }
 }

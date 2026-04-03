@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace Csound.Unity.Samples.Sequencer
@@ -8,7 +6,7 @@ namespace Csound.Unity.Samples.Sequencer
     public class PadController : MonoBehaviour
     {
         private Sequencer sequencer;
-        // Start is called before the first frame update
+
         void Start()
         {
             sequencer = GameObject.Find("CsoundUnity").GetComponent<Sequencer>();

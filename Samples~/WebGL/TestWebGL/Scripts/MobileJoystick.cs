@@ -1,14 +1,15 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Csound.Unity.Samples.TestWebGL
 {
     /// <summary>
-    /// A simple Joystick handle. 
+    /// A simple Joystick handle.
     /// Put this script in a gameObject with a graphic element with Raycast target enabled
     /// </summary>
     public class MobileJoystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
+        #region Fields
         public const float speedMul = 75.0f;
 
         public delegate void Moved(Vector2 dir);
@@ -22,7 +23,9 @@ namespace Csound.Unity.Samples.TestWebGL
         private Vector2 _defaultPos;
         private Vector2 _startPos;
         private RectTransform _rt;
+        #endregion
 
+        #region Unity Messages
         private void Start()
         {
             this._rt = this.gameObject.GetComponent<RectTransform>();
@@ -43,22 +46,18 @@ namespace Csound.Unity.Samples.TestWebGL
                 var dir = new Vector2(Mathf.Clamp((this._rt.position.x - this._defaultPos.x) / speedMul, -1.0f, 1.0f),
                                       Mathf.Clamp((this._rt.position.y - this._defaultPos.y) / speedMul, -1.0f, 1.0f));
 
-                //invoke the event when moved
                 MovedEvent?.Invoke(dir);
                 Debug.Log(dir);
             }
             else
             {
-                //restore the default position
                 this._rt.position = this._defaultPos;
-                //invoke the moved event with a zero Vector2
                 MovedEvent?.Invoke(Vector2.zero);
             }
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            //Debug.Log("OnPointerDown");
             if (this._pressed) return;
 
             this._pressed = true;
@@ -68,12 +67,12 @@ namespace Csound.Unity.Samples.TestWebGL
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            //Debug.Log("OnPointerUp");
             if (eventData.pointerId != this._touchId) return;
 
             this._pressed = false;
             this._touchId = -1;
             this._startPos = Vector2.zero;
         }
+        #endregion
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +8,7 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
     [RequireComponent(typeof(CsoundUnity))]
     public class VUMeters : MonoBehaviour
     {
+        #region Fields
         [Tooltip("The prefab that will be used as a VUMeter. It requires a Slider component")]
         [SerializeField] private GameObject _VUMeterUIPrefab;
         [Tooltip("The transform where the VUMeters will be parented to")]
@@ -15,12 +16,14 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
 
         private CsoundUnity _csound;
         private Dictionary<string, Slider> _vuMeters;
+        #endregion
 
+        #region Unity Messages
         IEnumerator Start()
         {
             _csound = this.GetComponent<CsoundUnity>();
             if (!_csound) yield break;
-            
+
             while (!_csound.IsInitialized)
             {
                 yield return null;
@@ -44,5 +47,6 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
                 meter.Value.value = (float)_csound.GetChannel(meter.Key + "Vol") / (float)_csound.Get0dbfs();
             }
         }
+        #endregion
     }
 }

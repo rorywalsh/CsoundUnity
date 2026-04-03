@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +7,7 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
     [RequireComponent(typeof(CsoundUnity))]
     public class ChildrenCreator : MonoBehaviour
     {
+        #region Fields
         [Tooltip("The radius of the circle where the children will be placed, starting from the position of this GameObject")]
         [SerializeField] private float _radius = 200f;
         [Tooltip("How many meters more the sources will be audible from. This value will be summed to the radius. " +
@@ -17,7 +18,9 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
 
         private CsoundUnity _csound;
         private Dictionary<string, Child3DMeter> _meters;
+        #endregion
 
+        #region Unity Messages
         IEnumerator Start()
         {
             _csound = GetComponent<CsoundUnity>();
@@ -46,8 +49,8 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
                 // set doppler level to 0 to avoid artefacts when the camera moves
                 aS.dopplerLevel = 0;
                 aS.rolloffMode = AudioRolloffMode.Custom;
-                // when the audio listener is 'radius' meters far from the audio source, there will be no sound, 
-                // since the rolloff function will lower the volume accordingly to the custom curve, and at maxDistance the volume will be 0. 
+                // when the audio listener is 'radius' meters far from the audio source, there will be no sound,
+                // since the rolloff function will lower the volume accordingly to the custom curve, and at maxDistance the volume will be 0.
                 // Let's add 'rollofTolerance' meters more to have some sound when the listener is equidistant from the created sources
                 aS.maxDistance = _radius + _rollofTolerance;
             }
@@ -60,5 +63,6 @@ namespace Csound.Unity.Samples.GranularSynthesis.Partikkel
                 meter.Value.SetValue((float)_csound.GetChannel(meter.Key + "Vol") / (float)_csound.Get0dbfs());
             }
         }
+        #endregion
     }
 }

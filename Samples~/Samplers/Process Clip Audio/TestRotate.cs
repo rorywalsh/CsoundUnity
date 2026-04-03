@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Csound.Samples.Samplers.ProcessClipAudio
 {
