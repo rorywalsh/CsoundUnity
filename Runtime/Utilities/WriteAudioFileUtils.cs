@@ -14,10 +14,12 @@ namespace Csound.Unity.Utilities
 
         /// <summary>
         /// Writes an audio file from the provided AudioClip to the specified destination.
+        /// The output format is determined by the file extension of <paramref name="destination"/>; WAV and AIFF are supported.
         /// </summary>
         /// <param name="clip">The AudioClip containing the audio data.</param>
-        /// <param name="destination">The destination path for the output audio file. </param>
+        /// <param name="destination">The destination path for the output audio file, including the file extension.</param>
         /// <param name="bitsPerSample">The desired bits per sample of the output audio file (default: 16).</param>
+        /// <param name="fallbackToWav">When <c>true</c>, falls back to WAV format if the destination has no extension or an unsupported one. Default is <c>false</c>.</param>
         /// <returns>True if the writing succeeds; false otherwise.</returns>
         public static bool WriteAudioFile(AudioClip clip, string destination, int bitsPerSample = 16, bool fallbackToWav = false)
         {

@@ -34,15 +34,24 @@ namespace Csound.Unity.Utilities
     [Serializable]
     public enum Scale
     {
-        Chromatic,      // All 12 semitones
-        Major,          // Ionian mode
-        Minor,          // Aeolian (natural minor)
-        Pentatonic,     // Major pentatonic
-        Dorian,         // Dorian mode
-        Phrygian,       // Phrygian mode
-        Lydian,         // Lydian mode
-        Mixolydian,     // Mixolydian mode
-        HarmonicMinor,  // Harmonic minor
+        /// <summary>All 12 semitones of the chromatic scale.</summary>
+        Chromatic,
+        /// <summary>Ionian (natural major) mode: W W H W W W H.</summary>
+        Major,
+        /// <summary>Aeolian (natural minor) mode: W H W W H W W.</summary>
+        Minor,
+        /// <summary>Major pentatonic scale: 5 notes per octave, omitting the 4th and 7th degrees.</summary>
+        Pentatonic,
+        /// <summary>Dorian mode: natural minor with a raised 6th.</summary>
+        Dorian,
+        /// <summary>Phrygian mode: natural minor with a lowered 2nd.</summary>
+        Phrygian,
+        /// <summary>Lydian mode: major scale with a raised 4th.</summary>
+        Lydian,
+        /// <summary>Mixolydian mode: major scale with a lowered 7th.</summary>
+        Mixolydian,
+        /// <summary>Harmonic minor scale: natural minor with a raised 7th.</summary>
+        HarmonicMinor,
     }
 
     /// <summary>
@@ -51,9 +60,13 @@ namespace Csound.Unity.Utilities
     [Serializable]
     public enum ArpDirection
     {
+        /// <summary>Plays notes in ascending pitch order, looping back to the lowest after the top.</summary>
         Up,
+        /// <summary>Plays notes in descending pitch order, looping back to the highest after the bottom.</summary>
         Down,
-        UpDown,   // Bounce: ascends then descends
+        /// <summary>Bounce: ascends to the top then descends back to the bottom, then repeats.</summary>
+        UpDown,
+        /// <summary>Selects a random pitch from the array on each step.</summary>
         Random,
     }
 
@@ -63,7 +76,9 @@ namespace Csound.Unity.Utilities
     [Serializable]
     public enum ArpNoteSource
     {
+        /// <summary>Pitches are built from a <see cref="Scale"/> interval table.</summary>
         Scale,
+        /// <summary>Pitches are built from a <see cref="Chord"/> interval table.</summary>
         Chord,
     }
 
@@ -75,46 +90,76 @@ namespace Csound.Unity.Utilities
     public enum Chord
     {
         // --- Single note ---
-        Unison,             // 0  (repeats the root across octaves)
+        /// <summary>Single root note (interval: 0). Repeats the root across octaves.</summary>
+        Unison,
 
         // --- Dyads ---
-        MinorThird,         // 0, 3
-        MajorThird,         // 0, 4
-        Fourth,             // 0, 5
-        Fifth,              // 0, 7
+        /// <summary>Minor third dyad (intervals: 0, 3).</summary>
+        MinorThird,
+        /// <summary>Major third dyad (intervals: 0, 4).</summary>
+        MajorThird,
+        /// <summary>Perfect fourth dyad (intervals: 0, 5).</summary>
+        Fourth,
+        /// <summary>Perfect fifth dyad (intervals: 0, 7).</summary>
+        Fifth,
 
         // --- Triads ---
-        Major,              // 0, 4, 7
-        Minor,              // 0, 3, 7
-        Diminished,         // 0, 3, 6
-        Augmented,          // 0, 4, 8
-        Sus2,               // 0, 2, 7
-        Sus4,               // 0, 5, 7
+        /// <summary>Major triad (intervals: 0, 4, 7).</summary>
+        Major,
+        /// <summary>Minor triad (intervals: 0, 3, 7).</summary>
+        Minor,
+        /// <summary>Diminished triad (intervals: 0, 3, 6).</summary>
+        Diminished,
+        /// <summary>Augmented triad (intervals: 0, 4, 8).</summary>
+        Augmented,
+        /// <summary>Suspended 2nd triad (intervals: 0, 2, 7).</summary>
+        Sus2,
+        /// <summary>Suspended 4th triad (intervals: 0, 5, 7).</summary>
+        Sus4,
 
         // --- Tetrads (seventh chords) ---
-        Major7,             // 0, 4, 7, 11
-        Minor7,             // 0, 3, 7, 10
-        Dominant7,          // 0, 4, 7, 10
-        Diminished7,        // 0, 3, 6, 9
-        HalfDiminished7,    // 0, 3, 6, 10
-        MinorMajor7,        // 0, 3, 7, 11
-        Augmented7,         // 0, 4, 8, 10
-        AugmentedMajor7,    // 0, 4, 8, 11
+        /// <summary>Major seventh chord (intervals: 0, 4, 7, 11).</summary>
+        Major7,
+        /// <summary>Minor seventh chord (intervals: 0, 3, 7, 10).</summary>
+        Minor7,
+        /// <summary>Dominant seventh chord (intervals: 0, 4, 7, 10).</summary>
+        Dominant7,
+        /// <summary>Diminished seventh chord (intervals: 0, 3, 6, 9).</summary>
+        Diminished7,
+        /// <summary>Half-diminished seventh chord (intervals: 0, 3, 6, 10).</summary>
+        HalfDiminished7,
+        /// <summary>Minor-major seventh chord (intervals: 0, 3, 7, 11).</summary>
+        MinorMajor7,
+        /// <summary>Augmented seventh chord (intervals: 0, 4, 8, 10).</summary>
+        Augmented7,
+        /// <summary>Augmented major seventh chord (intervals: 0, 4, 8, 11).</summary>
+        AugmentedMajor7,
 
         // --- Extensions ---
-        Major9,             // 0, 4, 7, 11, 14
-        Minor9,             // 0, 3, 7, 10, 14
-        Dominant9,          // 0, 4, 7, 10, 14
-        Add9,               // 0, 4, 7, 14  (no 7th)
-        Major11,            // 0, 4, 7, 11, 14, 17
-        Minor11,            // 0, 3, 7, 10, 14, 17
-        Dominant11,         // 0, 4, 7, 10, 14, 17
-        Major13,            // 0, 4, 7, 11, 14, 17, 21
-        Minor13,            // 0, 3, 7, 10, 14, 17, 21
-        Dominant13,         // 0, 4, 7, 10, 14, 17, 21
+        /// <summary>Major ninth chord (intervals: 0, 4, 7, 11, 14).</summary>
+        Major9,
+        /// <summary>Minor ninth chord (intervals: 0, 3, 7, 10, 14).</summary>
+        Minor9,
+        /// <summary>Dominant ninth chord (intervals: 0, 4, 7, 10, 14).</summary>
+        Dominant9,
+        /// <summary>Add9 chord — major triad with added 9th, no 7th (intervals: 0, 4, 7, 14).</summary>
+        Add9,
+        /// <summary>Major eleventh chord (intervals: 0, 4, 7, 11, 14, 17).</summary>
+        Major11,
+        /// <summary>Minor eleventh chord (intervals: 0, 3, 7, 10, 14, 17).</summary>
+        Minor11,
+        /// <summary>Dominant eleventh chord (intervals: 0, 4, 7, 10, 14, 17).</summary>
+        Dominant11,
+        /// <summary>Major thirteenth chord (intervals: 0, 4, 7, 11, 14, 17, 21).</summary>
+        Major13,
+        /// <summary>Minor thirteenth chord (intervals: 0, 3, 7, 10, 14, 17, 21).</summary>
+        Minor13,
+        /// <summary>Dominant thirteenth chord (intervals: 0, 4, 7, 10, 14, 17, 21).</summary>
+        Dominant13,
 
         // --- User-defined ---
-        Custom,             // intervals provided separately via arpCustomIntervals
+        /// <summary>User-defined chord. Intervals must be provided separately (e.g. via <c>arpCustomIntervals</c>).</summary>
+        Custom,
     }
 
     /// <summary>
@@ -123,12 +168,18 @@ namespace Csound.Unity.Utilities
     [Serializable]
     public enum RhythmicDivision
     {
-        Whole,          // 1/1
-        Half,           // 1/2
-        Quarter,        // 1/4
-        Eighth,         // 1/8
-        Sixteenth,      // 1/16
-        Thirtysecond,   // 1/32
+        /// <summary>Whole note (1/1): 4 beats.</summary>
+        Whole,
+        /// <summary>Half note (1/2): 2 beats.</summary>
+        Half,
+        /// <summary>Quarter note (1/4): 1 beat.</summary>
+        Quarter,
+        /// <summary>Eighth note (1/8): half a beat.</summary>
+        Eighth,
+        /// <summary>Sixteenth note (1/16): quarter of a beat.</summary>
+        Sixteenth,
+        /// <summary>Thirty-second note (1/32): an eighth of a beat.</summary>
+        Thirtysecond,
     }
 
     /// <summary>
@@ -141,46 +192,84 @@ namespace Csound.Unity.Utilities
 
         // Scale interval tables (semitones within one octave)
 
+        /// <summary>Semitone intervals for the <see cref="Scale.Chromatic"/> scale (all 12 semitones).</summary>
         public static readonly int[] IntervalsChromatic     = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
+        /// <summary>Semitone intervals for the <see cref="Scale.Major"/> (Ionian) scale.</summary>
         public static readonly int[] IntervalsMajor       = { 0, 2, 4, 5, 7, 9, 11 };
+        /// <summary>Semitone intervals for the <see cref="Scale.Minor"/> (Aeolian) scale.</summary>
         public static readonly int[] IntervalsMinor       = { 0, 2, 3, 5, 7, 8, 10 };
+        /// <summary>Semitone intervals for the <see cref="Scale.Pentatonic"/> (major pentatonic) scale.</summary>
         public static readonly int[] IntervalsPentatonic  = { 0, 2, 4, 7, 9 };
+        /// <summary>Semitone intervals for the <see cref="Scale.Dorian"/> mode.</summary>
         public static readonly int[] IntervalsDorian      = { 0, 2, 3, 5, 7, 9, 10 };
+        /// <summary>Semitone intervals for the <see cref="Scale.Phrygian"/> mode.</summary>
         public static readonly int[] IntervalsPhrygian    = { 0, 1, 3, 5, 7, 8, 10 };
+        /// <summary>Semitone intervals for the <see cref="Scale.Lydian"/> mode.</summary>
         public static readonly int[] IntervalsLydian      = { 0, 2, 4, 6, 7, 9, 11 };
+        /// <summary>Semitone intervals for the <see cref="Scale.Mixolydian"/> mode.</summary>
         public static readonly int[] IntervalsMixolydian  = { 0, 2, 4, 5, 7, 9, 10 };
+        /// <summary>Semitone intervals for the <see cref="Scale.HarmonicMinor"/> scale.</summary>
         public static readonly int[] IntervalsHarmonicMinor  = { 0, 2, 3, 5, 7, 8, 11 };
 
         // Chord interval tables (semitones from root, may span > 1 octave)
 
+        /// <summary>Semitone intervals for the <see cref="Chord.Unison"/> (root only).</summary>
         public static readonly int[] ChordUnison             = { 0 };
+        /// <summary>Semitone intervals for the <see cref="Chord.MinorThird"/> dyad.</summary>
         public static readonly int[] ChordMinorThird         = { 0, 3 };
+        /// <summary>Semitone intervals for the <see cref="Chord.MajorThird"/> dyad.</summary>
         public static readonly int[] ChordMajorThird         = { 0, 4 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Fourth"/> dyad.</summary>
         public static readonly int[] ChordFourth             = { 0, 5 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Fifth"/> dyad.</summary>
         public static readonly int[] ChordFifth              = { 0, 7 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Major"/> triad.</summary>
         public static readonly int[] ChordMajor             = { 0, 4, 7 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Minor"/> triad.</summary>
         public static readonly int[] ChordMinor             = { 0, 3, 7 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Diminished"/> triad.</summary>
         public static readonly int[] ChordDiminished        = { 0, 3, 6 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Augmented"/> triad.</summary>
         public static readonly int[] ChordAugmented         = { 0, 4, 8 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Sus2"/> triad.</summary>
         public static readonly int[] ChordSus2              = { 0, 2, 7 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Sus4"/> triad.</summary>
         public static readonly int[] ChordSus4              = { 0, 5, 7 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Major7"/> chord.</summary>
         public static readonly int[] ChordMajor7            = { 0, 4, 7, 11 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Minor7"/> chord.</summary>
         public static readonly int[] ChordMinor7            = { 0, 3, 7, 10 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Dominant7"/> chord.</summary>
         public static readonly int[] ChordDominant7         = { 0, 4, 7, 10 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Diminished7"/> chord.</summary>
         public static readonly int[] ChordDiminished7       = { 0, 3, 6, 9 };
+        /// <summary>Semitone intervals for the <see cref="Chord.HalfDiminished7"/> chord.</summary>
         public static readonly int[] ChordHalfDiminished7   = { 0, 3, 6, 10 };
+        /// <summary>Semitone intervals for the <see cref="Chord.MinorMajor7"/> chord.</summary>
         public static readonly int[] ChordMinorMajor7       = { 0, 3, 7, 11 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Augmented7"/> chord.</summary>
         public static readonly int[] ChordAugmented7        = { 0, 4, 8, 10 };
+        /// <summary>Semitone intervals for the <see cref="Chord.AugmentedMajor7"/> chord.</summary>
         public static readonly int[] ChordAugmentedMajor7   = { 0, 4, 8, 11 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Major9"/> chord.</summary>
         public static readonly int[] ChordMajor9            = { 0, 4, 7, 11, 14 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Minor9"/> chord.</summary>
         public static readonly int[] ChordMinor9            = { 0, 3, 7, 10, 14 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Dominant9"/> chord.</summary>
         public static readonly int[] ChordDominant9         = { 0, 4, 7, 10, 14 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Add9"/> chord (major triad + 9th, no 7th).</summary>
         public static readonly int[] ChordAdd9              = { 0, 4, 7, 14 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Major11"/> chord.</summary>
         public static readonly int[] ChordMajor11           = { 0, 4, 7, 11, 14, 17 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Minor11"/> chord.</summary>
         public static readonly int[] ChordMinor11           = { 0, 3, 7, 10, 14, 17 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Dominant11"/> chord.</summary>
         public static readonly int[] ChordDominant11        = { 0, 4, 7, 10, 14, 17 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Major13"/> chord.</summary>
         public static readonly int[] ChordMajor13           = { 0, 4, 7, 11, 14, 17, 21 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Minor13"/> chord.</summary>
         public static readonly int[] ChordMinor13           = { 0, 3, 7, 10, 14, 17, 21 };
+        /// <summary>Semitone intervals for the <see cref="Chord.Dominant13"/> chord.</summary>
         public static readonly int[] ChordDominant13        = { 0, 4, 7, 10, 14, 17, 21 };
 
         #endregion Scale and chord interval tables

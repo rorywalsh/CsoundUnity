@@ -2,9 +2,27 @@ using UnityEngine;
 
 namespace Csound.Unity.Utilities
 {
+    /// <summary>
+    /// Utility class for remapping numeric values between ranges, with optional clamping and exponential skewing.
+    /// </summary>
     public static class RemapUtils
     {
-        public enum SkewMode { Cabbage, Normalized };
+        /// <summary>
+        /// Controls how the skew factor is interpreted when remapping values.
+        /// </summary>
+        public enum SkewMode
+        {
+            /// <summary>
+            /// Skew factor has no upper bound. Values below 1 produce exponential mapping,
+            /// 1 produces linear mapping, and values above 1 produce logarithmic mapping.
+            /// </summary>
+            Cabbage,
+            /// <summary>
+            /// Skew factor is normalised to the 0–1 range. Values below 0.5 produce exponential
+            /// mapping, 0.5 produces linear mapping, and values above 0.5 produce logarithmic mapping.
+            /// </summary>
+            Normalized,
+        };
 
         #region Public API
 
@@ -59,15 +77,14 @@ namespace Csound.Unity.Utilities
         }
 
         /// <summary>
-        /// Remap a value to a normalized (0-1) value specifying its expected "from" and "to" values,
-        /// and the skew of the exponential curve of the remapping.
-        /// If skew is 1 the remapping is linear, if 0.5 it's exponential.
+        /// Remaps a value from the given range to a normalised 0–1 value, with an optional power-curve skew.
+        /// A skew of 1 gives a linear mapping; values below 1 compress the lower end (exponential feel).
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <param name="skew"></param>
-        /// <returns></returns>
+        /// <param name="value">The input value to remap.</param>
+        /// <param name="from">The lower bound of the input range.</param>
+        /// <param name="to">The upper bound of the input range.</param>
+        /// <param name="skew">Power-curve exponent applied after normalisation. Defaults to 1 (linear).</param>
+        /// <returns>A 0–1 float representing the remapped position of <paramref name="value"/> within [<paramref name="from"/>, <paramref name="to"/>].</returns>
         public static float RemapTo0to1(float value, float from, float to, float skew = 1f)
         {
             if ((to - from) == 0) return 0;
@@ -81,15 +98,14 @@ namespace Csound.Unity.Utilities
         }
 
         /// <summary>
-        /// Remap a normalized (0-1) value to a value in another range, specifying its "from" and "to" values,
-        /// and the skew of the exponential curve of the remapping.
-        /// If skew is 1 the remapping is linear, if 0.5 it's exponential.
+        /// Remaps a normalised 0–1 value to the given output range, with an optional power-curve skew.
+        /// A skew of 1 gives a linear mapping; values below 1 compress the lower end (exponential feel).
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <param name="skew"></param>
-        /// <returns></returns>
+        /// <param name="value">The normalised input value (0–1). Values outside this range are clamped.</param>
+        /// <param name="from">The lower bound of the output range.</param>
+        /// <param name="to">The upper bound of the output range.</param>
+        /// <param name="skew">Power-curve exponent applied before scaling. Defaults to 1 (linear).</param>
+        /// <returns>A float in the range [<paramref name="from"/>, <paramref name="to"/>] corresponding to the remapped input.</returns>
         public static float RemapFrom0to1(float value, float from, float to, float skew = 1f)
         {
             if (skew == 0) return to;

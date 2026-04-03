@@ -48,7 +48,14 @@ namespace Csound.Unity
     {
         #region Fields
 
+        /// <summary>
+        /// Returns <c>true</c> if the last CSD compilation completed without errors.
+        /// </summary>
         public bool CompiledOk => compiledOk;
+
+        /// <summary>
+        /// The raw Csound instance handle used for all native P/Invoke calls.
+        /// </summary>
         public IntPtr csound;
         bool compiledOk = false;
         Action onCsoundCreated;
@@ -156,6 +163,9 @@ namespace Csound.Unity
 
         #region Constructors
 
+        /// <summary>
+        /// Default parameterless constructor. Creates an uninitialised bridge instance.
+        /// </summary>
         public CsoundUnityBridge() { }
 
         /// <summary>
@@ -372,6 +382,12 @@ namespace Csound.Unity
         #region Instantiation
 
 #if !UNITY_IOS || UNITY_VISIONOS
+        /// <summary>
+        /// Loads all Csound plugins found in the specified directory.
+        /// Not available on iOS; use the conditional compilation guard before calling.
+        /// </summary>
+        /// <param name="dir">Path to the directory containing Csound plugin libraries.</param>
+        /// <returns>Zero on success, or a non-zero error code on failure.</returns>
         public int LoadPlugins(string dir)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -382,6 +398,11 @@ namespace Csound.Unity
         }
 #endif
 
+        /// <summary>
+        /// Returns the Csound library version as an integer (e.g. 6180 for version 6.18.0).
+        /// Returns 0 on WebGL.
+        /// </summary>
+        /// <returns>Csound version number.</returns>
         public int GetVersion()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -395,6 +416,10 @@ namespace Csound.Unity
 
         #region Lifecycle
 
+        /// <summary>
+        /// Cleans up native Csound resources when the application quits.
+        /// Destroys the message buffer and the Csound instance.
+        /// </summary>
         public virtual void OnApplicationQuit()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -403,6 +428,9 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Resets the Csound instance to its initial state, allowing it to be reused for a new performance.
+        /// </summary>
         public void Reset()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -410,6 +438,10 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Returns <c>true</c> if the CSD compiled without errors; equivalent to reading <see cref="CompiledOk"/>.
+        /// </summary>
+        /// <returns><c>true</c> when compilation succeeded.</returns>
         public bool CompiledWithoutError()
         {
             return compiledOk;
@@ -419,6 +451,11 @@ namespace Csound.Unity
 
         #region Performance
 
+        /// <summary>
+        /// Compiles the given Csound orchestra string at runtime, adding new instruments and UDOs to the running instance.
+        /// </summary>
+        /// <param name="orchStr">A valid Csound orchestra string to compile.</param>
+        /// <returns>Zero on success, or a non-zero error code on failure.</returns>
         public int CompileOrc(string orchStr)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -428,6 +465,11 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Processes one ksmps-worth of audio, advancing the score and filling the spout buffer.
+        /// Also caches the spout/spin pointers on the first successful call.
+        /// </summary>
+        /// <returns>Zero while the performance is ongoing, or a positive value when the score has ended.</returns>
         public int PerformKsmps()
         {
             if (csound == IntPtr.Zero) return -1;
@@ -450,6 +492,10 @@ namespace Csound.Unity
 
         #region Attributes
 
+        /// <summary>
+        /// Returns the 0 dBFS value (full-scale amplitude) for this Csound instance, as set by the <c>0dbfs</c> header statement.
+        /// </summary>
+        /// <returns>The 0 dBFS amplitude value.</returns>
         public MYFLT Get0dbfs()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -459,6 +505,10 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Returns the current performance position in samples from the start of the performance.
+        /// </summary>
+        /// <returns>Number of samples elapsed since the performance began.</returns>
         public long GetCurrentTimeSamples()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -472,6 +522,10 @@ namespace Csound.Unity
 
         #region Score
 
+        /// <summary>
+        /// Sends a score event string to Csound (e.g. <c>"i 1 0 1 0.5 440"</c>) for immediate processing.
+        /// </summary>
+        /// <param name="scoreEvent">A valid Csound score event string.</param>
         public void SendScoreEvent(string scoreEvent)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -479,6 +533,9 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Rewinds the score to the beginning, allowing the performance to repeat from time zero.
+        /// </summary>
         public void RewindScore()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -486,6 +543,10 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Sets the score time offset in seconds, causing performance to start from the given point in the score.
+        /// </summary>
+        /// <param name="value">Score offset in seconds.</param>
         public void CsoundSetScoreOffsetSeconds(MYFLT value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -497,6 +558,11 @@ namespace Csound.Unity
 
         #region Channels
 
+        /// <summary>
+        /// Sets the value of a named Csound control channel.
+        /// </summary>
+        /// <param name="channel">The name of the control channel.</param>
+        /// <param name="value">The value to write to the channel.</param>
         public void SetChannel(string channel, MYFLT value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -506,6 +572,11 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Sets the value of a named Csound string channel.
+        /// </summary>
+        /// <param name="channel">The name of the string channel.</param>
+        /// <param name="value">The string value to write to the channel.</param>
         public void SetStringChannel(string channel, string value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -513,6 +584,12 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Writes a ksmps-length audio buffer into the named Csound audio channel.
+        /// Only the first <c>ksmps</c> samples are used; excess samples are ignored.
+        /// </summary>
+        /// <param name="name">The name of the audio channel.</param>
+        /// <param name="audio">Array of audio samples to write. Must contain at least one sample.</param>
         public void SetAudioChannel(string name, MYFLT[] audio)
         {
             var bufsiz = GetKsmps();
@@ -524,6 +601,12 @@ namespace Csound.Unity
             Marshal.FreeHGlobal(buffer);
         }
 
+        /// <summary>
+        /// Reads the named Csound audio channel into a newly allocated array of length <c>ksmps</c>.
+        /// Use the zero-allocation overload on hot audio-thread paths to avoid GC pressure.
+        /// </summary>
+        /// <param name="name">The name of the audio channel.</param>
+        /// <returns>A new <see cref="MYFLT"/> array containing the channel's current audio data.</returns>
         public MYFLT[] GetAudioChannel(string name)
         {
             var bufsiz = GetKsmps();
@@ -537,6 +620,8 @@ namespace Csound.Unity
         /// <paramref name="dest"/> without any managed or native heap allocation.
         /// Use this on hot audio-thread paths to avoid GC pressure.
         /// </summary>
+        /// <param name="name">The name of the audio channel.</param>
+        /// <param name="dest">Caller-supplied buffer to receive the audio data. Must be non-null and non-empty.</param>
         public void GetAudioChannel(string name, MYFLT[] dest)
         {
             if (dest == null || dest.Length == 0) return;
@@ -553,6 +638,11 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Reads the current value of the named Csound string channel.
+        /// </summary>
+        /// <param name="name">The name of the string channel.</param>
+        /// <returns>The channel's current string value, or an empty string if unavailable.</returns>
         public string GetStringChannel(string name)
         {
             // 32768 bytes is a generous upper-bound for Csound string channels
@@ -571,6 +661,8 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
         /// </summary>
+        /// <param name="table">The function table number.</param>
+        /// <returns>The table length, or -1 if the table does not exist.</returns>
         public int TableLength(int table)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -583,6 +675,9 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the value of a slot in a function table. The table number and index are assumed to be valid.
         /// </summary>
+        /// <param name="table">The function table number.</param>
+        /// <param name="index">Zero-based index of the slot to read.</param>
+        /// <returns>The value at the specified slot, or 0 if the table or index is out of range.</returns>
         public MYFLT GetTable(int table, int index)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -600,6 +695,9 @@ namespace Csound.Unity
         /// <summary>
         /// Sets the value of a slot in a function table. The table number and index are assumed to be valid.
         /// </summary>
+        /// <param name="table">The function table number.</param>
+        /// <param name="index">Zero-based index of the slot to write.</param>
+        /// <param name="value">The value to store at the specified slot.</param>
         public void SetTable(int table, int index, MYFLT value)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -612,8 +710,11 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Copy the contents of a function table into a supplied array dest 
-        /// The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
+        /// Copies the contents of a function table into a supplied array.
+        /// The table number is assumed to be valid, and the destination will be resized to fit all table contents.
+        /// </summary>
+        /// <param name="table">The function table number.</param>
+        /// <param name="dest">Output array populated with the table's values, or <c>null</c> if the table is empty or does not exist.</param>
         public void TableCopyOut(int table, out MYFLT[] dest)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -635,9 +736,11 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Copy the contents of an array source into a given function table
-        /// The table number is assumed to be valid, and the table needs to have sufficient space to receive all the array contents.
+        /// Copies the contents of an array into a given function table.
+        /// The table number is assumed to be valid, and the table must have sufficient space to receive all array contents.
         /// </summary>
+        /// <param name="table">The function table number.</param>
+        /// <param name="source">Array of values to copy into the table.</param>
         public void TableCopyIn(int table, MYFLT[] source)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -651,9 +754,12 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Stores values to function table 'tableNum' in tableValues, and returns the table length (not including the guard point). 
-        /// If the table does not exist, tableValues is set to NULL and -1 is returned.
+        /// Stores values of function table <paramref name="numTable"/> in <paramref name="tableValues"/>, and returns the table length (not including the guard point).
+        /// If the table does not exist, <paramref name="tableValues"/> is set to <c>null</c> and -1 is returned.
         /// </summary>
+        /// <param name="tableValues">Output array populated with the table's values.</param>
+        /// <param name="numTable">The function table number to read.</param>
+        /// <returns>The length of the table, or -1 if the table does not exist.</returns>
         public int GetTable(out MYFLT[] tableValues, int numTable)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -677,10 +783,13 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Stores the arguments used to generate function table 'tableNum' in args, and returns the number of arguments used. 
-        /// If the table does not exist, args is set to NULL and -1 is returned. 
-        /// NB: the argument list starts with the GEN number and is followed by its parameters. eg. f 1 0 1024 10 1 0.5 yields the list {10.0,1.0,0.5}
+        /// Stores the arguments used to generate function table <paramref name="index"/> in <paramref name="args"/>, and returns the number of arguments used.
+        /// If the table does not exist, <paramref name="args"/> is set to <c>null</c> and -1 is returned.
         /// </summary>
+        /// <remarks>The argument list starts with the GEN number followed by its parameters; e.g. <c>f 1 0 1024 10 1 0.5</c> yields <c>{10.0, 1.0, 0.5}</c>.</remarks>
+        /// <param name="args">Output array populated with the GEN generator arguments.</param>
+        /// <param name="index">The function table number.</param>
+        /// <returns>The number of arguments, or -1 if the table does not exist.</returns>
         public int GetTableArgs(out MYFLT[] args, int index)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -701,6 +810,10 @@ namespace Csound.Unity
 
         #region Audio I/O
 
+        /// <summary>
+        /// Returns the audio sample rate (<c>sr</c>) of the current Csound instance.
+        /// </summary>
+        /// <returns>Sample rate in Hz.</returns>
         public MYFLT GetSr()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -710,6 +823,10 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Returns the control rate (<c>kr</c>) of the current Csound instance.
+        /// </summary>
+        /// <returns>Control rate in Hz.</returns>
         public MYFLT GetKr()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -719,6 +836,11 @@ namespace Csound.Unity
 #endif
         }
 
+        /// <summary>
+        /// Returns the number of samples per control period (<c>ksmps</c>).
+        /// Returns the cached value when available (set after <c>csoundStart</c>) to avoid a P/Invoke on the hot path.
+        /// </summary>
+        /// <returns>Samples per control block.</returns>
         public uint GetKsmps()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -843,8 +965,11 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Get a a control channel
-        /// <summary>
+        /// Returns the current value of the named Csound control channel.
+        /// On WebGL, use the callback-based overload instead.
+        /// </summary>
+        /// <param name="channel">The name of the control channel.</param>
+        /// <returns>The channel's current floating-point value.</returns>
         public MYFLT GetChannel(string channel)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -887,11 +1012,19 @@ namespace Csound.Unity
 
         #region Messages
 
+        /// <summary>
+        /// Returns the number of pending messages in Csound's message buffer.
+        /// </summary>
+        /// <returns>Number of unread messages.</returns>
         public int GetCsoundMessageCount()
         {
             return Csound6.NativeMethods.csoundGetMessageCnt(csound);
         }
 
+        /// <summary>
+        /// Retrieves and removes the first pending message from Csound's message buffer.
+        /// </summary>
+        /// <returns>The message text, or an empty string if the buffer is empty.</returns>
         public string GetCsoundMessage()
         {
             string message = GetMessageText(Csound6.NativeMethods.csoundGetFirstMessage(csound));
@@ -899,6 +1032,11 @@ namespace Csound.Unity
             return message;
         }
 
+        /// <summary>
+        /// Converts a native char pointer returned by Csound into a managed <see cref="string"/>.
+        /// </summary>
+        /// <param name="message">An unmanaged pointer to a null-terminated ASCII string.</param>
+        /// <returns>The corresponding managed string, or an empty string for a null pointer.</returns>
         public static string GetMessageText(IntPtr message)
         {
             return CharPtr2String(message);
@@ -947,12 +1085,15 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Defines a class to hold out and in types, and flags
+        /// Holds the output type string, input type string, and flags for a Csound opcode.
         /// </summary>
         public class OpcodeArgumentTypes
         {
+            /// <summary>Output type signature string for the opcode (e.g. <c>"k"</c> for a k-rate output).</summary>
             public string outypes;
+            /// <summary>Input type signature string for the opcode.</summary>
             public string intypes;
+            /// <summary>Opcode flags bitmask.</summary>
             public int flags;
         }
 
@@ -992,17 +1133,30 @@ namespace Csound.Unity
             public IntPtr attributes;
         }
 
+        /// <summary>
+        /// Describes a single Csound software-bus channel: its name, data type, direction, and optional control hints.
+        /// </summary>
         public class ChannelInfo
         {
+            /// <summary>
+            /// Initialises a new <see cref="ChannelInfo"/> with the given name, type, and direction.
+            /// </summary>
+            /// <param name="_name">The channel name as defined in the Csound orchestra.</param>
+            /// <param name="_type">The data type of the channel.</param>
+            /// <param name="_direction">Whether the channel is input, output, or both.</param>
             public ChannelInfo(string _name, ChannelType _type, ChannelDirection _direction)
             {
                 Name = _name;
                 Type = _type;
                 Direction = _direction;
             }
+            /// <summary>The channel name as defined in the Csound orchestra.</summary>
             public string Name;
+            /// <summary>The data type of the channel (control, audio, string, etc.).</summary>
             public ChannelType Type;
+            /// <summary>Indicates whether the channel is readable, writable, or both.</summary>
             public ChannelDirection Direction;
+            /// <summary>Optional parameter hints for control channels (range, default, behavior).</summary>
             public ChannelHints Hints;
         };
 
@@ -1019,12 +1173,12 @@ namespace Csound.Unity
             }
 
             /// <summary>
-            /// Creates a channel hint initialized with the most common Control Channel values as provided.
+            /// Creates a channel hint initialized with the most common control channel values.
             /// </summary>
-            /// <param name="ibehav">Linear, Exponential or </param>
-            /// <param name="idflt"></param>
-            /// <param name="imin"></param>
-            /// <param name="imax"></param>
+            /// <param name="ibehav">The interpolation behavior (None, Integer, Linear, or Exponential).</param>
+            /// <param name="idflt">The default value for the channel.</param>
+            /// <param name="imin">The minimum value for the channel.</param>
+            /// <param name="imax">The maximum value for the channel.</param>
             public ChannelHints(ChannelBehavior ibehav, MYFLT idflt, MYFLT imin, MYFLT imax)
             {
                 behav = ibehav;
@@ -1038,45 +1192,69 @@ namespace Csound.Unity
                 attributes = null;
             }
 
+            /// <summary>The interpolation behavior of the channel (None, Integer, Linear, or Exponential).</summary>
             public ChannelBehavior behav;
+            /// <summary>Default value for the channel.</summary>
             public MYFLT dflt;
+            /// <summary>Minimum value for the channel.</summary>
             public MYFLT min;
+            /// <summary>Maximum value for the channel.</summary>
             public MYFLT max;
+            /// <summary>Suggested horizontal position hint for a GUI widget.</summary>
             public int x;
+            /// <summary>Suggested vertical position hint for a GUI widget.</summary>
             public int y;
+            /// <summary>Suggested width hint for a GUI widget.</summary>
             public int width;
+            /// <summary>Suggested height hint for a GUI widget.</summary>
             public int height;
+            /// <summary>Optional additional attributes string associated with the channel.</summary>
             public string attributes;
         }
 
         /// <summary>
-        /// 
+        /// Defines the interpolation behavior of a Csound control channel.
         /// </summary>
         public enum ChannelBehavior
         {
+            /// <summary>No specific interpolation behavior.</summary>
             None = 0,
+            /// <summary>The channel value is an integer.</summary>
             Integer = 1,
+            /// <summary>The channel value is interpolated linearly between min and max.</summary>
             Linear = 2,
+            /// <summary>The channel value is interpolated exponentially between min and max.</summary>
             Exponential = 3
         }
 
         /// <summary>
-        /// 
+        /// Identifies the data type carried by a Csound software-bus channel.
         /// </summary>
         public enum ChannelType
         {
-            None = 0, //error return type only, meaningless in input
+            /// <summary>No type; used only as an error return value.</summary>
+            None = 0,
+            /// <summary>k-rate (control) channel carrying a single floating-point value.</summary>
             Control = 1,
+            /// <summary>a-rate (audio) channel carrying a ksmps-length sample buffer.</summary>
             Audio = 2,
+            /// <summary>String channel.</summary>
             String = 3,
+            /// <summary>Phase vocoder streaming (pvs) channel.</summary>
             Pvs = 4,
+            /// <summary>Generic variable channel.</summary>
             Var = 5,
         }
 
+        /// <summary>
+        /// Flags indicating whether a Csound channel is readable (input), writable (output), or both.
+        /// </summary>
         [Flags]
         public enum ChannelDirection
         {
+            /// <summary>The channel is written by the host and read by Csound.</summary>
             Input = 1,
+            /// <summary>The channel is written by Csound and read by the host.</summary>
             Output = 2
         }
 

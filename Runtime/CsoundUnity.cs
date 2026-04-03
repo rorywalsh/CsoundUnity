@@ -53,15 +53,25 @@ namespace Csound.Unity
     /// </summary>
     public class CsoundChannelController
     {
+        /// <summary>Widget type string parsed from the CSD (e.g. <c>"slider"</c>, <c>"button"</c>, <c>"combobox"</c>, <c>"xypad"</c>).</summary>
         [SerializeField] public string type;
+        /// <summary>The Csound channel name used with <c>chnget</c>/<c>chnset</c>.</summary>
         [SerializeField] public string channel;
+        /// <summary>Display label text for this widget.</summary>
         [SerializeField] public string text;
+        /// <summary>Caption (tooltip) text for this widget.</summary>
         [SerializeField] public string caption;
+        /// <summary>Minimum value of the channel range.</summary>
         [SerializeField] public float min;
+        /// <summary>Maximum value of the channel range.</summary>
         [SerializeField] public float max;
+        /// <summary>Current or initial value of the channel.</summary>
         [SerializeField] public float value;
+        /// <summary>Skew factor for non-linear mapping (1 = linear).</summary>
         [SerializeField] public float skew;
+        /// <summary>Discrete step size for sliders with snap increments.</summary>
         [SerializeField] public float increment;
+        /// <summary>Option labels for combobox widgets, one entry per item.</summary>
         [SerializeField] public string[] options;
         /// <summary>Second channel name. Used by xypad for the Y axis channel.</summary>
         [SerializeField] public string channelY;
@@ -72,6 +82,14 @@ namespace Csound.Unity
         /// <summary>Initial Y value. Used by xypad (rangeY third token).</summary>
         [SerializeField] public float value2;
 
+        /// <summary>
+        /// Sets the numeric range and default value for this channel controller.
+        /// </summary>
+        /// <param name="uMin">Minimum value.</param>
+        /// <param name="uMax">Maximum value.</param>
+        /// <param name="uValue">Initial/default value.</param>
+        /// <param name="uSkew">Skew factor for non-linear mapping (1 = linear).</param>
+        /// <param name="uIncrement">Step size for discrete increments.</param>
         public void SetRange(float uMin, float uMax, float uValue = 0f, float uSkew = 1f, float uIncrement = 0.001f)
         {
             min = uMin;
@@ -81,6 +99,9 @@ namespace Csound.Unity
             increment = uIncrement;
         }
 
+        /// <summary>
+        /// Returns a shallow copy of this <see cref="CsoundChannelController"/>.
+        /// </summary>
         public CsoundChannelController Clone()
         {
             return this.MemberwiseClone() as CsoundChannelController;
@@ -147,20 +168,32 @@ namespace Csound.Unity
     [Serializable]
     public class EnvironmentSettings
     {
+        /// <summary>The target platform this environment setting applies to.</summary>
         [SerializeField] public SupportedPlatform platform;
+        /// <summary>The Csound environment variable to set (e.g. <see cref="CsoundUnity.EnvType.SFDIR"/>).</summary>
         [SerializeField] public CsoundUnity.EnvType type;
+        /// <summary>The base folder origin used to build the full path.</summary>
         [SerializeField] public EnvironmentPathOrigin baseFolder;
+        /// <summary>Path suffix appended to the base folder to form the final path.</summary>
         [SerializeField] public string suffix;
         [Tooltip("Utility bool to store if the drawn property is foldout or not")]
         [SerializeField] public bool foldout;
 
+        /// <summary>
+        /// List of asset paths that should be loaded into the virtual file system for this environment setting.
+        /// </summary>
         public List<string> AssetsToLoadList;
 
         /// <summary>
-        /// Set the runtime bool true on Editor for debug purposes only, let Unity detect the correct path with Application.persistentDataPath
+        /// Returns the resolved file-system path for this environment setting, combining
+        /// the <see cref="baseFolder"/> origin with the <see cref="suffix"/>.
         /// </summary>
-        /// <param name="runtime"></param>
-        /// <returns></returns>
+        /// <param name="runtime">
+        /// When <c>true</c>, returns the expected runtime path for the target platform (useful
+        /// for Editor preview).  When <c>false</c> (default), returns the current Editor path
+        /// via <c>Application.persistentDataPath</c> / <c>streamingAssetsPath</c>.
+        /// </param>
+        /// <returns>The fully combined path string.</returns>
         public string GetPath(bool runtime = false)
         {
             var path = string.Empty;
@@ -299,22 +332,35 @@ namespace Csound.Unity
     }
 #endif
 
+        /// <summary>
+        /// Returns the string representation of the <see cref="CsoundUnity.EnvType"/> for this setting.
+        /// </summary>
         public string GetTypeString()
         {
             return type.ToString();
         }
 
+        /// <summary>
+        /// Returns the string representation of the <see cref="SupportedPlatform"/> for this setting.
+        /// </summary>
         public string GetPlatformString()
         {
             return platform.ToString();
         }
 
+        /// <summary>
+        /// Returns a human-readable descriptor combining platform, type and resolved path.
+        /// </summary>
+        /// <param name="runtime">When true, returns the expected runtime path; otherwise returns the Editor path.</param>
         public string GetPathDescriptor(bool runtime)
         {
             return $"[{GetPlatformString()}]:[{GetTypeString()}]: {GetPath(runtime)}";
         }
     }
 
+    /// <summary>
+    /// Enumerates the build platforms supported by <see cref="EnvironmentSettings"/>.
+    /// </summary>
     [Serializable]
     public enum SupportedPlatform { MacOS, Windows, Android, iOS, WebGL }
 
@@ -416,7 +462,15 @@ namespace Csound.Unity
         /// </summary>
         [HideInInspector] public bool overrideSamplingRate = false;
 
+        /// <summary>
+        /// The audio sample rate (sr) passed to Csound on initialization.
+        /// Defaults to <c>AudioSettings.outputSampleRate</c> unless <see cref="overrideSamplingRate"/> is true.
+        /// </summary>
         [HideInInspector] public int audioRate = 44100;
+        /// <summary>
+        /// The Csound control rate (kr) computed as <c>audioRate / ksmps</c>.
+        /// Updated automatically whenever <see cref="audioRate"/> or <see cref="ksmps"/> changes.
+        /// </summary>
         [HideInInspector] public int controlRate = 44100;
         /// <summary>
         /// Intended ksmps value. Stored so that when the audio device changes
@@ -424,6 +478,11 @@ namespace Csound.Unity
         /// rather than being rounded from the old kr, which would yield a different ksmps.
         /// </summary>
         [HideInInspector] public int ksmps = 32;
+        /// <summary>
+        /// When true, the full Csound output buffer (all <c>nchnls</c> channels) is copied
+        /// into <see cref="OutputBuffer"/> each DSP block, making it available to visualisers
+        /// and external audio routing.  Off by default to avoid the per-block copy overhead.
+        /// </summary>
         [HideInInspector] public bool updateOutputBuffer = false;
 
         /// <summary>
@@ -435,6 +494,10 @@ namespace Csound.Unity
         /// <summary>When true, all Audio Input Routes are silenced without removing them.</summary>
         [HideInInspector] public bool muteAudioInputRoutes = false;
 
+        /// <summary>
+        /// Returns a human-readable summary of the current sampling-rate settings
+        /// in the form <c>"sr: X, kr: Y, ksmps: Z"</c>.  Used by the inspector.
+        /// </summary>
         public string samplingRateSettingsInfo
         {
             get
@@ -521,7 +584,14 @@ namespace Csound.Unity
         /// </summary>
         public event CsoundStopped OnCsoundStopped;
 
+        /// <summary>
+        /// The delegate of the event <see cref="OnCsoundPerformKsmps"/>.
+        /// </summary>
         public delegate void CsoundPerformKsmps();
+        /// <summary>
+        /// An event fired on the audio thread after every <c>PerformKsmps</c> call.
+        /// Keep the handler extremely lightweight to avoid audio dropouts.
+        /// </summary>
         public event CsoundPerformKsmps OnCsoundPerformKsmps;
 
         /// <summary>
@@ -534,6 +604,10 @@ namespace Csound.Unity
         /// </summary>
         public event CsoundPerformanceFinishedDelegate OnCsoundPerformanceFinished;
 
+        /// <summary>
+        /// True when Csound's score has ended naturally (all score events have been performed).
+        /// This is set on the audio thread; for main-thread notification subscribe to <see cref="OnCsoundPerformanceFinished"/>.
+        /// </summary>
         public bool PerformanceFinished { get => performanceFinished; }
         /// <summary>
         /// the score to send via editor
@@ -554,8 +628,17 @@ namespace Csound.Unity
         /// </summary>
         public string CurrentPreset => _currentPreset;
 
+        /// <summary>
+        /// The most recently completed DSP output buffer, double-buffered for thread safety.
+        /// Contains interleaved samples for all Csound output channels when <see cref="updateOutputBuffer"/> is true;
+        /// otherwise the array holds the single-channel Unity output.
+        /// </summary>
         public float[] OutputBuffer => outputBuffer;
 
+        /// <summary>
+        /// Number of audio channels in <see cref="OutputBuffer"/> (equals Csound's <c>nchnls</c>
+        /// when <see cref="updateOutputBuffer"/> is true).
+        /// </summary>
         public int OutputChannels { get; private set; }
 
         #endregion PUBLIC_FIELDS
@@ -877,6 +960,10 @@ namespace Csound.Unity
 
 #if UNITY_WEBGL && !UNITY_EDITOR
 
+    /// <summary>
+    /// The per-instance identifier assigned by the WebGL Csound bridge.
+    /// Used to route asynchronous initialization callbacks to the correct <see cref="CsoundUnity"/> instance.
+    /// </summary>
     public int InstanceId => _instanceId;
     private int _instanceId = -1;
     
@@ -1030,7 +1117,7 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the Csound version number times 1000 (5.00.0 = 5000).
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The Csound version as an integer (e.g. 6070 for version 6.07.0).</returns>
         public int GetVersion()
         {
             if (!IsInitialized || csound == null) return 0;
@@ -1039,10 +1126,10 @@ namespace Csound.Unity
 
 #if !UNITY_IOS || UNITY_VISIONOS
         /// <summary>
-        /// Loads all plugins from a given directory
+        /// Loads all plugins from a given directory.
         /// </summary>
-        /// <param name="dir"></param>
-        /// <returns></returns>
+        /// <param name="dir">Path to the directory containing Csound plugin libraries.</param>
+        /// <returns>Zero on success, or a non-zero error code.</returns>
         public int LoadPlugins(string dir)
         {
             if (!IsInitialized || csound == null) return -1;
@@ -1053,7 +1140,7 @@ namespace Csound.Unity
         /// <summary>
         /// Returns true if the csd file was compiled without errors.
         /// </summary>
-        /// <returns></returns>
+        /// <returns><c>true</c> when Csound compilation succeeded; otherwise <c>false</c>.</returns>
         public bool CompiledWithoutError()
         {
             return compiledOk;
@@ -1145,8 +1232,8 @@ namespace Csound.Unity
         /// </code>
         /// </example>
         /// </summary>
-        /// <param name="orcStr"></param>
-        /// <returns></returns>
+        /// <param name="orcStr">The orchestra string to compile.</param>
+        /// <returns>Zero on success, or a non-zero Csound error code.</returns>
         public int CompileOrc(string orcStr)
         {
             if (!IsInitialized || csound == null) return -1;
@@ -1179,7 +1266,7 @@ namespace Csound.Unity
         /// Can be used by external software, such as a VST host, to begin score performance midway through a Csound score,
         /// for example to repeat a loop in a sequencer, or to synchronize other events with the Csound score.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Time offset in seconds from the start of the score.</param>
         public void SetScoreOffsetSeconds(MYFLT value)
         {
             if (!IsInitialized || csound == null) return;
@@ -1189,7 +1276,7 @@ namespace Csound.Unity
         /// <summary>
         /// Get the current sample rate
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The Csound sample rate (sr) in Hz.</returns>
         public MYFLT GetSr()
         {
             if (!IsInitialized || csound == null) return 0;
@@ -1199,7 +1286,7 @@ namespace Csound.Unity
         /// <summary>
         /// Get the current control rate
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The Csound control rate (kr) in Hz.</returns>
         public MYFLT GetKr()
         {
             if (!IsInitialized || csound == null) return 0;
@@ -1209,7 +1296,7 @@ namespace Csound.Unity
         /// <summary>
         /// Process a ksmps-sized block of samples
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Zero while performance continues; non-zero when performance has ended.</returns>
         public int PerformKsmps()
         {
             if (!IsInitialized || csound == null) return 0;
@@ -1219,7 +1306,7 @@ namespace Csound.Unity
         /// <summary>
         /// Get the number of audio sample frames per control sample.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The ksmps value currently used by Csound.</returns>
         public uint GetKsmps()
         {
             if (csound == null)
@@ -1323,20 +1410,13 @@ namespace Csound.Unity
         #region CSD_PARSE
 
         /// <summary>
-        /// Parse the csd and returns available audio channels (set in csd via: <code>chnset avar, "audio channel name") </code>
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        /// <summary>
-        /// Reads the CSD file and returns the value of <c>nchnls</c> declared in the
-        /// orchestra header.  Returns 2 as a safe default when the line is not found.
-        /// </summary>
-        /// <summary>
         /// Reads the CSD file and returns the value of <c>nchnls</c> (output channels)
         /// declared in the orchestra header.  Correctly ignores <c>nchnls_i</c> (input
         /// channels).  Returns 0 when the directive is absent — in that case Csound
         /// defaults to 1, but callers should treat 0 as "unknown / not specified".
         /// </summary>
+        /// <param name="filename">Full path to the CSD file.</param>
+        /// <returns>The declared <c>nchnls</c> value, or 0 if not found.</returns>
         public static int ParseCsdFileForNchnls(string filename)
         {
             if (!File.Exists(filename)) return 0;
@@ -1365,6 +1445,8 @@ namespace Csound.Unity
         /// <c>round(sr / kr)</c> if both are present; otherwise returns 0 (not specified).
         /// Only scans lines before the first <c>instr</c> declaration.
         /// </summary>
+        /// <param name="filename">Full path to the CSD file.</param>
+        /// <returns>The resolved ksmps value, or 0 if it cannot be determined.</returns>
         public static int ParseCsdFileForKsmps(string filename)
         {
             if (!File.Exists(filename)) return 0;
@@ -1414,6 +1496,12 @@ namespace Csound.Unity
             return 0;
         }
 
+        /// <summary>
+        /// Parses the CSD file and returns the names of all audio-rate channels declared via
+        /// <c>chnset avar, "channel name"</c> (channels driven by <c>a</c>- or <c>ga</c>-rate variables with literal string names).
+        /// </summary>
+        /// <param name="filename">Full path to the CSD file.</param>
+        /// <returns>A list of audio channel name strings, or <c>null</c> if the file does not exist or is empty.</returns>
         public static List<string> ParseCsdFileForAudioChannels(string filename)
         {
             if (!File.Exists(filename)) return null;
@@ -1450,10 +1538,11 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Parse the csd file
+        /// Parses the CSD file's Cabbage widget section and returns a list of <see cref="CsoundChannelController"/>
+        /// objects describing every slider, button, checkbox, combobox, xypad, and similar widget found.
         /// </summary>
-        /// <param name="filename">the csd file to parse</param>
-        /// <returns></returns>
+        /// <param name="filename">Full path to the CSD file.</param>
+        /// <returns>A list of parsed channel controllers, or <c>null</c> if the file does not exist or is empty.</returns>
         public static List<CsoundChannelController> ParseCsdFile(string filename)
         {
             if (!File.Exists(filename)) return null;
@@ -1655,11 +1744,11 @@ namespace Csound.Unity
         #region IO_BUFFERS
 
         /// <summary>
-        /// Set a sample in Csound's input buffer
+        /// Set a sample in Csound's input buffer, overwriting any existing value.
         /// </summary>
-        /// <param name="frame"></param>
-        /// <param name="channel"></param>
-        /// <param name="sample"></param>
+        /// <param name="frame">Frame index within the current ksmps block (0-based).</param>
+        /// <param name="channel">Input channel index (0-based).</param>
+        /// <param name="sample">The sample value to write.</param>
         public void SetInputSample(int frame, int channel, MYFLT sample)
         {
             if (!IsInitialized || csound == null) return;
@@ -1672,9 +1761,9 @@ namespace Csound.Unity
         /// The frame and channel must be in bounds relative to ksmps and nchnls.
         /// NB: the spin buffer needs to be cleared at every k-cycle by calling ClearSpin().
         /// </summary>
-        /// <param name="frame"></param>
-        /// <param name="channel"></param>
-        /// <param name="sample"></param>
+        /// <param name="frame">Frame index within the current ksmps block (0-based).</param>
+        /// <param name="channel">Input channel index (0-based).</param>
+        /// <param name="sample">The sample value to add.</param>
         public void AddInputSample(int frame, int channel, MYFLT sample)
         {
             if (!IsInitialized || csound == null) return;
@@ -1692,9 +1781,9 @@ namespace Csound.Unity
         /// <summary>
         /// Get a sample from Csound's audio output buffer
         /// </summary>
-        /// <param name="frame"></param>
-        /// <param name="channel"></param>
-        /// <returns></returns>
+        /// <param name="frame">Frame index within the current ksmps block (0-based).</param>
+        /// <param name="channel">Output channel index (0-based).</param>
+        /// <returns>The sample value at the given frame and channel.</returns>
         public MYFLT GetOutputSample(int frame, int channel)
         {
             if (!IsInitialized || csound == null) return 0;
@@ -1704,7 +1793,7 @@ namespace Csound.Unity
         /// <summary>
         /// Get Csound's audio input buffer
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The raw spin (input) buffer array, or <c>null</c> if not initialized.</returns>
         public MYFLT[] GetSpin()
         {
             if (!IsInitialized || csound == null) return null;
@@ -1714,7 +1803,7 @@ namespace Csound.Unity
         /// <summary>
         /// Get Csound's audio output buffer
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The raw spout (output) buffer array, or <c>null</c> if not initialized.</returns>
         public MYFLT[] GetSpout()
         {
             if (!IsInitialized || csound == null) return null;
@@ -1727,8 +1816,8 @@ namespace Csound.Unity
         /// <summary>
         /// Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
         /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="val"></param>
+        /// <param name="channel">Name of the Csound channel.</param>
+        /// <param name="val">Value to assign to the channel.</param>
         public void SetChannel(string channel, MYFLT val)
         {
             if (!IsInitialized || csound == null) return;
@@ -1751,7 +1840,7 @@ namespace Csound.Unity
         /// <summary>
         /// Sets a Csound channel. Useful for setting presets at runtime. Used in connection with a chnget opcode in your Csound instrument.
         /// </summary>
-        /// <param name="channelController"></param>
+        /// <param name="channelController">The channel controller whose name and value will be applied.</param>
         public void SetChannel(CsoundChannelController channelController)
         {
             if (_channelsIndexDict.ContainsKey(channelController.channel))
@@ -1761,10 +1850,10 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Sets a list of Csound channels. 
+        /// Sets a list of Csound channels.
         /// </summary>
-        /// <param name="channelControllers"></param>
-        /// <param name="excludeButtons"></param>
+        /// <param name="channelControllers">The list of channel controllers to apply.</param>
+        /// <param name="excludeButtons">When <c>true</c> (default), button-type channels are skipped.</param>
         public void SetChannels(List<CsoundChannelController> channelControllers, bool excludeButtons = true)
         {
             for (var i = 0; i < channelControllers.Count; i++)
@@ -1777,8 +1866,8 @@ namespace Csound.Unity
         /// <summary>
         /// Sets a string channel in Csound. Used in connection with a chnget opcode in your Csound instrument.
         /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="val"></param>
+        /// <param name="channel">Name of the Csound string channel.</param>
+        /// <param name="val">String value to assign.</param>
         public void SetStringChannel(string channel, string val)
         {
             if (!IsInitialized || csound == null) return;
@@ -1788,8 +1877,8 @@ namespace Csound.Unity
         /// <summary>
         /// Gets a Csound channel. Used in connection with a chnset opcode in your Csound instrument, or set with SetChannel
         /// </summary>
-        /// <param name="channel"></param>
-        /// <returns></returns>
+        /// <param name="channel">Name of the Csound channel to read.</param>
+        /// <returns>The current numeric value of the channel, or 0 if not initialized.</returns>
         public MYFLT GetChannel(string channel)
         {
             if (!IsInitialized || csound == null) return 0;
@@ -1797,10 +1886,11 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Get a serialized CsoundChannelController
+        /// Returns the serialized <see cref="CsoundChannelController"/> for the named channel,
+        /// as parsed from the CSD file by <see cref="ParseCsdFile"/>.
         /// </summary>
-        /// <param name="channel">the Channel name</param>
-        /// <returns></returns>
+        /// <param name="channel">The channel name to look up.</param>
+        /// <returns>The matching controller, or <c>null</c> if not found.</returns>
         public CsoundChannelController GetChannelController(string channel)
         {
             if (!_channelsIndexDict.ContainsKey(channel)) return null;
@@ -1811,8 +1901,8 @@ namespace Csound.Unity
         /// <summary>
         /// Get a Csound string channel. Used in connection with a chnset opcode in your Csound instrument, or set with SetStringChannel
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="name">Name of the Csound string channel to read.</param>
+        /// <returns>The current string value of the channel, or <c>null</c> if not initialized.</returns>
         public string GetStringChannel(string name)
         {
             if (!IsInitialized || csound == null) return null;
@@ -1824,9 +1914,8 @@ namespace Csound.Unity
         /// Provides a dictionary of all currently defined channels resulting from compilation of an orchestra
         /// containing channel definitions.
         /// Entries, keyed by name, are polymorphically assigned to their correct data type: control, audio, string, pvc.
-        /// <returns>A dictionary of all currently defined channels keyed by their name to its ChannelInfo</returns>
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A dictionary of all currently defined channels keyed by their name to its <c>ChannelInfo</c>, or <c>null</c> if not initialized.</returns>
         public IDictionary<string, CsoundUnityBridge.ChannelInfo> GetChannelList()
         {
             if (!IsInitialized || csound == null) return null;
@@ -1840,8 +1929,8 @@ namespace Csound.Unity
         /// <summary>
         /// Gets a Csound Audio channel. Used in connection with a chnset opcode in your Csound instrument.
         /// </summary>
-        /// <param name="channel"></param>
-        /// <returns></returns>
+        /// <param name="channel">Name of the Csound audio channel to read.</param>
+        /// <returns>An array of ksmps audio samples, or <c>null</c> if not initialized.</returns>
         public MYFLT[] GetAudioChannel(string channel)
         {
             if (!IsInitialized || csound == null) return null;
@@ -1951,8 +2040,8 @@ namespace Csound.Unity
         /// See the "Trapped in Convert" sample under "Miscellaneous" for a demonstration on how to use this.
         /// </summary>
         /// <param name="channel">An existing audio channel buffer</param>
-        /// <param name="sample">The sample to retrieve from the buffer</param>
-        /// <returns></returns>
+        /// <param name="sample">Zero-based sample index within the channel buffer.</param>
+        /// <returns>The sample value at <paramref name="sample"/>, or 0 if the channel or index is invalid.</returns>
         public double GetAudioChannelSample(string channel, int sample)
         {
             if (!namedAudioChannelDataDict.ContainsKey(channel))
@@ -2130,9 +2219,9 @@ namespace Csound.Unity
         /// Creates a table with the supplied float samples.
         /// Can be called during performance.
         /// </summary>
-        /// <param name="tableNumber">The table number</param>
-        /// <param name="samples"></param>
-        /// <returns></returns>
+        /// <param name="tableNumber">The Csound function table number to create.</param>
+        /// <param name="samples">Float array of samples to populate the table with.</param>
+        /// <returns>Zero on success, or -1 on failure.</returns>
         public int CreateFloatTable(int tableNumber, float[] samples)
         {
             var myFlts = ASU.ConvertToMYFLT(samples);
@@ -2143,9 +2232,9 @@ namespace Csound.Unity
         /// Creates a table with the supplied samples.
         /// Can be called during performance.
         /// </summary>
-        /// <param name="tableNumber">The table number</param>
-        /// <param name="samples"></param>
-        /// <returns></returns>
+        /// <param name="tableNumber">The Csound function table number to create.</param>
+        /// <param name="samples">MYFLT array of samples to populate the table with.</param>
+        /// <returns>Zero on success, or -1 on failure.</returns>
         public int CreateTable(int tableNumber, MYFLT[] samples)
         {
             if (samples.Length < 1) return -1;
@@ -2175,8 +2264,8 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the length of a function table (not including the guard point), or -1 if the table does not exist.
         /// </summary>
-        /// <param name="table"></param>
-        /// <returns></returns>
+        /// <param name="table">The function table number to query.</param>
+        /// <returns>The table length (excluding guard point), or -1 if the table does not exist.</returns>
         public int GetTableLength(int table)
         {
             if (!IsInitialized || csound == null) return 0;
@@ -2186,9 +2275,9 @@ namespace Csound.Unity
         /// <summary>
         /// Retrieves a single sample from a Csound function table.
         /// </summary>
-        /// <param name="tableNumber"></param>
-        /// <param name="index"></param>
-        /// <returns></returns>
+        /// <param name="tableNumber">The function table number.</param>
+        /// <param name="index">Zero-based sample index within the table.</param>
+        /// <returns>The sample value at the given index, or 0 if not initialized.</returns>
         public MYFLT GetTableSample(int tableNumber, int index)
         {
             if (!IsInitialized || csound == null) return 0;
@@ -2199,9 +2288,9 @@ namespace Csound.Unity
         /// Stores values to function table 'numTable' in tableValues, and returns the table length (not including the guard point).
         /// If the table does not exist, tableValues is set to NULL and -1 is returned.
         /// </summary>
-        /// <param name="tableValues"></param>
-        /// <param name="numTable"></param>
-        /// <returns></returns>
+        /// <param name="tableValues">Output array filled with the table contents.</param>
+        /// <param name="numTable">The function table number to read.</param>
+        /// <returns>The table length, or -1 if the table does not exist.</returns>
         public int GetTable(out MYFLT[] tableValues, int numTable)
         {
             if (!IsInitialized || csound == null) { tableValues = null; return -1; }
@@ -2214,9 +2303,9 @@ namespace Csound.Unity
         /// NB: the argument list starts with the GEN number and is followed by its parameters.
         /// eg. f 1 0 1024 10 1 0.5 yields the list {10.0,1.0,0.5}
         /// </summary>
-        /// <param name="args"></param>
-        /// <param name="index"></param>
-        /// <returns></returns>
+        /// <param name="args">Output array filled with the GEN number followed by its parameters.</param>
+        /// <param name="index">The function table number to query.</param>
+        /// <returns>The number of generation arguments, or -1 if the table does not exist.</returns>
         public int GetTableArgs(out MYFLT[] args, int index)
         {
             if (!IsInitialized || csound == null) { args = null; return -1; }
@@ -2226,9 +2315,9 @@ namespace Csound.Unity
         /// <summary>
         /// Sets the value of a slot in a function table. The table number and index are assumed to be valid.
         /// </summary>
-        /// <param name="table"></param>
-        /// <param name="index"></param>
-        /// <param name="value"></param>
+        /// <param name="table">The function table number.</param>
+        /// <param name="index">Zero-based slot index to write.</param>
+        /// <param name="value">The value to write into the slot.</param>
         public void SetTable(int table, int index, MYFLT value)
         {
             if (!IsInitialized || csound == null) return;
@@ -2239,8 +2328,8 @@ namespace Csound.Unity
         /// Copy the contents of a function table into a supplied array dest
         /// The table number is assumed to be valid, and the destination needs to have sufficient space to receive all the function table contents.
         /// </summary>
-        /// <param name="table"></param>
-        /// <param name="dest"></param>
+        /// <param name="table">The function table number to read from.</param>
+        /// <param name="dest">Output array that receives the table contents.</param>
         public void CopyTableOut(int table, out MYFLT[] dest)
         {
             if (!IsInitialized || csound == null) { dest = null; return; }
@@ -2250,8 +2339,8 @@ namespace Csound.Unity
         /// <summary>
         /// Same as <see cref="CopyTableIn(int, MYFLT[])">CopyTableIn</see> but passing a float array.
         /// </summary>
-        /// <param name="table"></param>
-        /// <param name="source"></param>
+        /// <param name="table">The function table number to write to.</param>
+        /// <param name="source">Float array whose values will be copied into the table.</param>
         public void CopyFloatTableIn(int table, float[] source)
         {
             var myFlts = ASU.ConvertToMYFLT(source);
@@ -2276,9 +2365,10 @@ namespace Csound.Unity
 
 #if UNITY_EDITOR
         /// <summary>
-        /// A method that retrieves the current csd file path from its GUID
+        /// Retrieves the absolute file-system path of the CSD asset assigned to this instance,
+        /// resolved from <see cref="csoundFileGUID"/> via the AssetDatabase.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The full absolute path to the CSD file.</returns>
         public string GetFilePath()
         {
             return Path.Combine(Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length), AssetDatabase.GUIDToAssetPath(csoundFileGUID));
@@ -2313,7 +2403,7 @@ namespace Csound.Unity
         /// <summary>
         /// Get the number of input channels
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The value of Csound's <c>nchnls_i</c>, or 0 if not initialized.</returns>
         public uint GetNchnlsInputs()
         {
             if (!IsInitialized || csound == null) return 0;
@@ -2323,7 +2413,7 @@ namespace Csound.Unity
         /// <summary>
         /// Get the number of output channels
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The value of Csound's <c>nchnls</c>, or 0 if not initialized.</returns>
         public uint GetNchnls()
         {
             if (!IsInitialized || csound == null) return 0;
@@ -2331,9 +2421,9 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Get 0 dbfs
+        /// Get the 0 dBFS amplitude reference value as set by the <c>0dbfs</c> statement in the orchestra.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The 0 dBFS reference amplitude, or 0 if not initialized.</returns>
         public MYFLT Get0dbfs()
         {
             if (!IsInitialized || csound == null) return 0;
@@ -2343,7 +2433,7 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the current performance time in samples
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Total number of audio samples rendered since performance began.</returns>
         public long GetCurrentTimeSamples()
         {
             if (!IsInitialized || csound == null) return 0;
@@ -2363,6 +2453,10 @@ namespace Csound.Unity
 
 
 #if UNITY_EDITOR
+        /// <summary>
+        /// Editor menu helper that creates a new GameObject with a <see cref="CsoundUnity"/> component
+        /// via the <em>GameObject &gt; Audio &gt; CsoundUnity</em> menu entry.
+        /// </summary>
         [MenuItem("GameObject/Audio/CsoundUnity", false)]
         static public void CreateCsoundUnityObject(MenuCommand menuCommand)
         {
@@ -2378,10 +2472,10 @@ namespace Csound.Unity
         /// <summary>
         /// Create a CsoundUnityPreset from a presetName, csoundFileName and a list of CsoundChannelControllers
         /// </summary>
-        /// <param name="presetName"></param>
-        /// <param name="csoundFileName"></param>
-        /// <param name="channels"></param>
-        /// <returns></returns>
+        /// <param name="presetName">Name of the preset (defaults to "CsoundUnityPreset" if empty).</param>
+        /// <param name="csoundFileName">Name of the CSD file this preset is associated with.</param>
+        /// <param name="channels">Channel controllers whose values will be deep-copied into the preset.</param>
+        /// <returns>A new <see cref="CsoundUnityPreset"/> ScriptableObject instance.</returns>
         public static CsoundUnityPreset CreatePreset(string presetName, string csoundFileName, List<CsoundChannelController> channels)
         {
             var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
@@ -2404,9 +2498,9 @@ namespace Csound.Unity
         /// if also preset.presetName is empty it will use "CsoundUnityPreset" as a default name.
         /// </para>
         /// </summary>
-        /// <param name="presetName"></param>
-        /// <param name="presetData"></param>
-        /// <returns></returns>
+        /// <param name="presetName">Name override; if empty the name embedded in <paramref name="presetData"/> is used.</param>
+        /// <param name="presetData">JSON string representing a <see cref="CsoundUnityPreset"/>.</param>
+        /// <returns>The deserialized preset, or <c>null</c> if the JSON could not be parsed.</returns>
         public static CsoundUnityPreset CreatePreset(string presetName, string presetData)
         {
             var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
@@ -2432,8 +2526,8 @@ namespace Csound.Unity
         /// Write a CsoundUnityPreset at the specified path inside the Assets folder.
         /// You can pass a full path, the Assets folder path will be extracted.
         /// </summary>
-        /// <param name="preset"></param>
-        /// <param name="path"></param>
+        /// <param name="preset">The preset ScriptableObject to write.</param>
+        /// <param name="path">Target directory path; the Assets sub-path will be extracted automatically.</param>
         public static void WritePreset(CsoundUnityPreset preset, string path)
         {
 #if UNITY_EDITOR
@@ -2518,8 +2612,8 @@ namespace Csound.Unity
         /// The current csoundFileName and list of CsoundChannelControllers will be saved in the preset.
         /// If no presetName is given, a default one will be used.
         /// </summary>
-        /// <param name="presetName"></param>
-        /// <param name="path"></param>
+        /// <param name="presetName">Name for the preset (defaults to "CsoundUnityPreset" if empty).</param>
+        /// <param name="path">Target directory path inside the Assets folder; defaults to Assets root if null.</param>
         public void SavePresetAsScriptableObject(string presetName, string path = null)
         {
 #if UNITY_EDITOR
@@ -2532,9 +2626,9 @@ namespace Csound.Unity
         /// Save the specified CsoundUnityPreset as JSON, at the specified path.
         /// If a file exists at the specified path, it will be overwritten if overwriteIfExisting is true.
         /// </summary>
-        /// <param name="preset"></param>
-        /// <param name="path"></param>
-        /// <param name="overwriteIfExisting"></param>
+        /// <param name="preset">The preset to serialize to JSON.</param>
+        /// <param name="path">Target directory path; defaults to <c>Application.persistentDataPath</c> if null.</param>
+        /// <param name="overwriteIfExisting">When false, a counter suffix is appended to avoid overwriting existing files.</param>
         public static void SavePresetAsJSON(CsoundUnityPreset preset, string path = null, bool overwriteIfExisting = false)
         {
             var fullPath = CheckPathForExistence(path, preset.presetName, overwriteIfExisting);
@@ -2557,11 +2651,11 @@ namespace Csound.Unity
         /// Save a preset as JSON from a list of CsoundChannelController, specifying the related CsoundFileName and the presetName.
         /// See <see cref="SavePresetAsJSON(CsoundUnityPreset, string, bool)">SavePresetAsJSON(CsoundUnityPreset, string, bool)</see>
         /// </summary>
-        /// <param name="channels"></param>
-        /// <param name="csoundFileName"></param>
-        /// <param name="presetName"></param>
-        /// <param name="path"></param>
-        /// <param name="overwriteIfExisting"></param>
+        /// <param name="channels">Channel controllers to store in the preset.</param>
+        /// <param name="csoundFileName">Name of the CSD file this preset is associated with.</param>
+        /// <param name="presetName">Name for the preset.</param>
+        /// <param name="path">Target directory; defaults to <c>Application.persistentDataPath</c> if null.</param>
+        /// <param name="overwriteIfExisting">When false, a counter suffix is appended to avoid overwriting existing files.</param>
         public static void SavePresetAsJSON(List<CsoundChannelController> channels, string csoundFileName, string presetName, string path = null, bool overwriteIfExisting = false)
         {
             var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
@@ -2576,9 +2670,9 @@ namespace Csound.Unity
         /// Save a preset as JSON using CsoundChannelControllers and CsoundFileName from this CsoundUnity instance.
         /// See <see cref="SavePresetAsJSON(CsoundUnityPreset, string, bool)">SavePresetAsJSON(CsoundUnityPreset, string, bool)</see>
         /// </summary>
-        /// <param name="presetName"></param>
-        /// <param name="path"></param>
-        /// <param name="overwriteIfExisting"></param>
+        /// <param name="presetName">Name for the preset.</param>
+        /// <param name="path">Target directory; defaults to <c>Application.persistentDataPath</c> if null.</param>
+        /// <param name="overwriteIfExisting">When false, a counter suffix is appended to avoid overwriting existing files.</param>
         public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
         {
             var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
@@ -2593,7 +2687,9 @@ namespace Csound.Unity
         /// Save a serialized copy of this CsoundUnity instance.
         /// Similar behaviour as saving a Unity Preset from the inspector of the CsoundUnity component, but this can be used at runtime.
         /// </summary>
-        /// <param name="presetName"></param>
+        /// <param name="presetName">Name for the global preset file.</param>
+        /// <param name="path">Target directory; defaults to <c>Application.persistentDataPath</c> if null.</param>
+        /// <param name="overwriteIfExisting">When false, a counter suffix is appended to avoid overwriting existing files.</param>
         public void SaveGlobalPreset(string presetName, string path = null, bool overwriteIfExisting = false)
         {
             var presetData = JsonUtility.ToJson(this, true);
@@ -2618,7 +2714,8 @@ namespace Csound.Unity
         /// Convert a JSON preset into a Scriptable Object preset to be written at the specified path.
         /// If path is empty the converted preset will be saved inside the Assets folder.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">Path to the source JSON preset file.</param>
+        /// <param name="destination">Target directory inside the Assets folder where the ScriptableObject will be written.</param>
         public void ConvertPresetToScriptableObject(string path, string destination)
         {
 #if UNITY_EDITOR
@@ -2637,9 +2734,9 @@ namespace Csound.Unity
         /// If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
         /// the preset will not be set and an error will be logged.
         /// </summary>
-        /// <param name="presetName"></param>
-        /// <param name="presetData"></param>
-        /// <returns></returns>
+        /// <param name="presetName">Name to assign to the preset (overrides the name in the JSON).</param>
+        /// <param name="presetData">JSON string representing a <see cref="CsoundUnityPreset"/>.</param>
+        /// <returns>The applied <see cref="CsoundUnityPreset"/>, or <c>null</c> if creation failed.</returns>
         public CsoundUnityPreset SetPreset(string presetName, string presetData)
         {
             var preset = CreatePreset(presetName, presetData);
@@ -2656,8 +2753,8 @@ namespace Csound.Unity
         /// If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
         /// the preset will not be set and an error will be logged.
         /// </summary>
-        /// <param name="presetData"></param>
-        /// <returns></returns>
+        /// <param name="presetData">JSON string representing a <see cref="CsoundUnityPreset"/>.</param>
+        /// <returns>The applied <see cref="CsoundUnityPreset"/>, or <c>null</c> if creation failed.</returns>
         public CsoundUnityPreset SetPreset(string presetData)
         {
             return SetPreset("", presetData);
@@ -2668,7 +2765,7 @@ namespace Csound.Unity
         /// <para>If the preset csoundFileName is different from this CsoundUnity instance csoundFileName 
         /// the preset will not be set and an error will be logged.</para>
         /// </summary>
-        /// <param name="preset"></param>
+        /// <param name="preset">The preset to apply to this instance.</param>
         public void SetPreset(CsoundUnityPreset preset)
         {
             if (this.csoundFileName != preset.csoundFileName)
@@ -2694,9 +2791,9 @@ namespace Csound.Unity
         /// You could need to disable this CsoundUnity GameObject and enable it again to restore the Csound internal state.
         /// <para>This updated CsoundUnity instance will be returned.</para>
         /// </summary>
-        /// <param name="presetName"></param>
-        /// <param name="presetData"></param>
-        /// <returns></returns>
+        /// <param name="presetName">Name to assign (overrides the name embedded in the JSON).</param>
+        /// <param name="presetData">JSON string of a full CsoundUnity instance serialization.</param>
+        /// <returns>This <see cref="CsoundUnity"/> instance (for method chaining).</returns>
         public CsoundUnity SetGlobalPreset(string presetName, string presetData)
         {
             JsonUtility.FromJsonOverwrite(presetData, this);
@@ -2787,11 +2884,12 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Parse a Cabbage Snap and return a list of CsoundUnityPresets. 
+        /// Parses a Cabbage <c>.snaps</c> file and returns a list of <see cref="CsoundUnityPreset"/> objects,
+        /// one per snapshot entry, with channel metadata filled in from the companion CSD.
         /// </summary>
-        /// <param name="csdPath"></param>
-        /// <param name="snapPath"></param>
-        /// <returns></returns>
+        /// <param name="csdPath">Full path to the CSD file used as the reference for channel types and ranges.</param>
+        /// <param name="snapPath">Full path to the Cabbage <c>.snaps</c> file to parse.</param>
+        /// <returns>A list of presets parsed from the snap file.</returns>
         public static List<CsoundUnityPreset> ParseSnap(string csdPath, string snapPath)
         {
             var snap = File.ReadAllText(snapPath);
@@ -2984,6 +3082,12 @@ namespace Csound.Unity
         /// The returned <see cref="Coroutine"/> can be passed to <see cref="StopMorph"/> to cancel mid-way.
         /// If duration is zero or negative, the preset is applied immediately.
         /// </summary>
+        /// <param name="preset">The target preset to morph towards.</param>
+        /// <param name="duration">Duration of the morph in seconds.  Zero or negative applies the preset instantly.</param>
+        /// <param name="curve">Optional easing curve evaluated over [0,1]; <c>null</c> = linear.</param>
+        /// <param name="onComplete">Optional callback invoked when the morph finishes.</param>
+        /// <param name="discreteMode">Controls when button/checkbox/combobox channels are snapped to their target values.</param>
+        /// <returns>The running <see cref="Coroutine"/>, or <c>null</c> when the preset was applied instantly.</returns>
         public Coroutine MorphToPreset(CsoundUnityPreset preset, float duration,
             AnimationCurve curve = null, Action onComplete = null,
             DiscreteChannelMode discreteMode = DiscreteChannelMode.SnapAtEnd)
@@ -3065,6 +3169,12 @@ namespace Csound.Unity
         /// follow <paramref name="discreteMode"/>.</para>
         /// Call this every frame (e.g. from <see cref="CsoundUnityVectorMorph"/>) to drive real-time vector synthesis.
         /// </summary>
+        /// <param name="a">Preset at corner (0,0).</param>
+        /// <param name="b">Preset at corner (1,0).</param>
+        /// <param name="c">Preset at corner (0,1).</param>
+        /// <param name="d">Preset at corner (1,1).</param>
+        /// <param name="position">Normalised 2-D blend position, clamped to [0,1] on each axis.</param>
+        /// <param name="discreteMode">How button/checkbox/combobox channels are resolved during the blend.</param>
         public void BlendPresets(CsoundUnityPreset a, CsoundUnityPreset b,
             CsoundUnityPreset c, CsoundUnityPreset d, Vector2 position,
             DiscreteBlendMode discreteMode = DiscreteBlendMode.Ignore)
@@ -3670,9 +3780,17 @@ namespace Csound.Unity
 
         #region WEBGL
 
+        /// <summary>
+        /// List of asset paths that will be loaded asynchronously by the WebGL Csound bridge
+        /// before performance begins (e.g. sample files that must be available in the virtual file system).
+        /// </summary>
         [HideInInspector] public List<string> webGLAssetsList;
 #if UNITY_WEBGL && !UNITY_EDITOR
     private static AudioListener _activeAudioListener;
+    /// <summary>
+    /// Returns the currently active and enabled <see cref="AudioListener"/> in the scene.
+    /// Used on WebGL to compute spatialization parameters (azimuth, elevation, rolloff) each frame.
+    /// </summary>
     public static AudioListener ActiveAudioListener
     {
         get

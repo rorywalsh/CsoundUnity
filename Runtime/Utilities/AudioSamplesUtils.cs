@@ -33,8 +33,8 @@ namespace Csound.Unity.Utilities
         /// <summary>
         /// Creates an array of MYFLTs (doubles) from an array of floats
         /// </summary>
-        /// <param name="samples"></param>
-        /// <returns></returns>
+        /// <param name="samples">The float array to convert.</param>
+        /// <returns>A new MYFLT array with the same values cast to the platform's floating-point type. Returns an empty array if <paramref name="samples"/> is null or empty.</returns>
         public static MYFLT[] ConvertToMYFLT(float[] samples)
         {
             if (samples == null || samples.Length == 0) return new MYFLT[0];
@@ -49,8 +49,8 @@ namespace Csound.Unity.Utilities
         /// <summary>
         /// Creates an array of floats from an array of MYFLTs (doubles)
         /// </summary>
-        /// <param name="samples"></param>
-        /// <returns></returns>
+        /// <param name="samples">The MYFLT array to convert.</param>
+        /// <returns>A new float array with the same values cast to <see cref="float"/>. Returns an empty array if <paramref name="samples"/> is null or empty.</returns>
         public static float[] ConvertToFloat(MYFLT[] samples)
         {
             if (samples == null || samples.Length == 0) return new float[0];
@@ -324,12 +324,12 @@ namespace Csound.Unity.Utilities
         }
 
         /// <summary>
-        /// Get mono samples from an AudioClip as a MYFLT (double) array
-        /// You can specify the channel to load, by default the first (LEFT) channel will be used.
+        /// Get mono samples from an AudioClip as a MYFLT (double) array.
+        /// You can specify the channel to load; by default the first (LEFT) channel will be used.
         /// </summary>
-        /// <param name="audioClip">The AudioClip to load</param>
-        /// <param name="channel">The channel to retrieve</param>
-        /// <returns></returns>
+        /// <param name="audioClip">The AudioClip to load.</param>
+        /// <param name="channel">The zero-based channel index to retrieve. Defaults to 0 (left/mono).</param>
+        /// <returns>A MYFLT array of samples for the specified channel, or an empty array if the channel index is out of range.</returns>
         public static MYFLT[] GetMonoSamples(AudioClip audioClip, int channel = 0)
         {
             if (channel >= audioClip.channels || channel < 0)
@@ -345,6 +345,8 @@ namespace Csound.Unity.Utilities
         /// Computes the Root Mean Square (RMS) amplitude of a float sample buffer.
         /// Returns 0 if the buffer is null or empty.
         /// </summary>
+        /// <param name="buffer">The float sample buffer to analyse.</param>
+        /// <returns>The RMS amplitude as a non-negative float, or 0 if the buffer is null or empty.</returns>
         public static float Rms(float[] buffer)
         {
             if (buffer == null || buffer.Length == 0) return 0f;
@@ -357,6 +359,8 @@ namespace Csound.Unity.Utilities
         /// Computes the Root Mean Square (RMS) amplitude of a MYFLT sample buffer.
         /// Returns 0 if the buffer is null or empty.
         /// </summary>
+        /// <param name="buffer">The MYFLT sample buffer to analyse.</param>
+        /// <returns>The RMS amplitude as a non-negative float, or 0 if the buffer is null or empty.</returns>
         public static float Rms(MYFLT[] buffer)
         {
             if (buffer == null || buffer.Length == 0) return 0f;
@@ -369,6 +373,8 @@ namespace Csound.Unity.Utilities
         /// Returns the peak (maximum absolute value) of a float sample buffer.
         /// Returns 0 if the buffer is null or empty.
         /// </summary>
+        /// <param name="buffer">The float sample buffer to analyse.</param>
+        /// <returns>The maximum absolute sample value, or 0 if the buffer is null or empty.</returns>
         public static float Peak(float[] buffer)
         {
             if (buffer == null || buffer.Length == 0) return 0f;
@@ -385,6 +391,8 @@ namespace Csound.Unity.Utilities
         /// Returns the peak (maximum absolute value) of a MYFLT sample buffer.
         /// Returns 0 if the buffer is null or empty.
         /// </summary>
+        /// <param name="buffer">The MYFLT sample buffer to analyse.</param>
+        /// <returns>The maximum absolute sample value, or 0 if the buffer is null or empty.</returns>
         public static float Peak(MYFLT[] buffer)
         {
             if (buffer == null || buffer.Length == 0) return 0f;
