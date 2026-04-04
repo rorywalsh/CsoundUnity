@@ -224,6 +224,15 @@ namespace Csound.Unity
                         }
                         else
                         {
+                            // The file may have been deleted or is mid-write (e.g. converter
+                            // overwriting it). Skip silently — the next change event will retry.
+                            var path = AssetDatabase.GUIDToAssetPath(csound.csoundFileGUID);
+                            if (!string.IsNullOrEmpty(path) && !File.Exists(Path.GetFullPath(path)))
+                            {
+                                Debug.LogWarning($"[CsoundFileWatcher] File not found, skipping reload: {path}");
+                                return;
+                            }
+
                             Debug.Log($"<color=green>[CsoundFileWatcher] Updating csd: {csound.csoundFileName} in GameObject: {csound.gameObject.name}</color>");
                             // file changed but guid stays the same
                             csound.SetCsd(csound.csoundFileGUID);

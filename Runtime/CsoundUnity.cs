@@ -1189,6 +1189,15 @@ namespace Csound.Unity
             this._csoundFileName = Path.GetFileName(fileName);
             var csoundFilePath = Path.GetFullPath(fileName);
             this._csoundAsset = (DefaultAsset)(AssetDatabase.LoadAssetAtPath(fileName, typeof(DefaultAsset)));
+
+            // Guard: the file may have been deleted or is being overwritten by an external
+            // tool (e.g. BsbConverter) at the exact moment the FileWatcher triggers this call.
+            if (!File.Exists(csoundFilePath))
+            {
+                Debug.LogWarning($"[CsoundUnity] SetCsd: file not found — {csoundFilePath}");
+                return;
+            }
+
             this._csoundString = File.ReadAllText(csoundFilePath);
             this._channels = ParseCsdFile(fileName);
             var count = 0;
