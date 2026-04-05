@@ -486,6 +486,7 @@ namespace Csound.Unity
         /// rather than being rounded from the old kr, which would yield a different ksmps.
         /// </summary>
         [HideInInspector] public int ksmps = 32;
+
         /// <summary>
         /// When true, the full Csound output buffer (all <c>nchnls</c> channels) is copied
         /// into <see cref="OutputBuffer"/> each DSP block, making it available to visualisers
@@ -510,8 +511,7 @@ namespace Csound.Unity
         {
             get
             {
-                var k = audioRate == 0 ? 0 : controlRate == 0 ? 0 : audioRate / (float)controlRate;
-                return $"sr: {audioRate}, kr: {controlRate}, ksmps: {k:F00}";
+                return $"sr: {audioRate}, kr: {controlRate}, ksmps: {ksmps}";
             }
         }
         /// <summary>
@@ -724,6 +724,7 @@ namespace Csound.Unity
         private bool _initializing = false;
         private uint _ksmps = 32;
         private uint ksmpsIndex = 0;
+        private bool _ksmpsBlockSizeWarned = false;
 
         /// <summary>
         /// Counts output frames produced since the last <c>Init()</c>.
@@ -3436,6 +3437,23 @@ namespace Csound.Unity
                 var ksmpsLen = GetKsmps();
                 var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
 
+                // Warn once if ksmps is larger than the actual DSP callback block.
+                // When ksmps > frames, PerformKsmps fires less than once per callback:
+                // the same spout block is replayed across multiple callbacks, causing
+                // audible artefacts (pitch/timing errors).
+                // For values ksmps ≤ frames, audio quality depends on the platform audio
+                // driver — on some systems (e.g. macOS CoreAudio) the callback size varies
+                // slightly between invocations, making artefacts hard to predict analytically.
+                // The safest choice is a small power-of-2 ksmps (32, 64, 128) that is well
+                // below the callback block size reported here.
+                if (!_ksmpsBlockSizeWarned && ksmpsLen > (uint)frames)
+                {
+                    _ksmpsBlockSizeWarned = true;
+                    Debug.LogWarning($"[CsoundUnity] ksmps ({ksmpsLen}) exceeds the DSP callback block size ({frames} frames). " +
+                                     $"PerformKsmps will fire less than once per callback — audio output will be incorrect. " +
+                                     $"Use a ksmps value well below {frames} (ideally a power of 2, e.g. {frames / 4} or {frames / 8}).");
+                }
+
                 // Ensure the clip staging buffer is sized before any per-sample write.
                 // The ksmps-boundary resize alone is not enough: ksmpsIndex starts at 0
                 // so the boundary fires only after the first ksmps samples, but writes
@@ -3495,7 +3513,9 @@ namespace Csound.Unity
                                     ApplyAudioInputRoutes(frame, numChannels);
                                 }
 
+                                System.Threading.Interlocked.Increment(ref _performKsmpsDepth);
                                 var res = PerformKsmps();
+                                System.Threading.Interlocked.Decrement(ref _performKsmpsDepth);
                                 performanceFinished = res != 0;
                                 ksmpsIndex = 0;
 
@@ -3573,8 +3593,10 @@ namespace Csound.Unity
                         {
                             if (!namedAudioChannelDataDict.ContainsKey(chanName) || !namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
                             var tempBuf = namedAudioChannelTempBufferDict[chanName];
-                            if (ksmpsIndex < (uint)tempBuf.Length)
-                                namedAudioChannelDataDict[chanName][i / numChannels] = tempBuf[ksmpsIndex];
+                            var dataBuf = namedAudioChannelDataDict[chanName];
+                            var dataIdx = i / numChannels;
+                            if (ksmpsIndex < (uint)tempBuf.Length && dataIdx < dataBuf.Length)
+                                dataBuf[dataIdx] = tempBuf[ksmpsIndex];
                         }
                     }
                 }
@@ -3797,6 +3819,11 @@ namespace Csound.Unity
 
         private bool _quitting = false;
 
+        // Tracks whether the audio thread is currently inside PerformKsmps.
+        // Used by OnDisable to ensure csoundDestroy is not called while PerformKsmps
+        // is still running on the audio thread — calling them concurrently is unsafe.
+        private volatile int _performKsmpsDepth = 0;
+
 #if UNITY_6000_0_OR_NEWER
         /// <summary>
         /// Implemented in <c>CsoundUnity.Generator.cs</c>.
@@ -3819,13 +3846,46 @@ namespace Csound.Unity
             OnApplicationQuitGenerator();
 #endif
             _quitting = true;
+            // Signal the audio thread to stop entering ProcessBlock.
+            // The actual csoundDestroy is deferred to OnDisable.
+            // Setting initialized = false here stops ProcessBlock from entering PerformKsmps
+            // on subsequent audio callbacks; OnDisable then spin-waits for any already
+            // in-flight PerformKsmps to finish before calling csoundDestroy.
+            initialized = false;
             if (LoggingCoroutine != null)
                 StopCoroutine(LoggingCoroutine);
+            if (_monitorPerformanceCoroutine != null)
+                StopCoroutine(_monitorPerformanceCoroutine);
+        }
 
-            if (csound != null)
-            {
-                csound.OnApplicationQuit();
-            }
+        /// <summary>
+        /// Called when the component is disabled. Destroys the native Csound instance
+        /// when quitting, after waiting for any in-flight <c>PerformKsmps</c> on the
+        /// audio thread to complete. Calling <c>csoundDestroy</c> concurrently with
+        /// <c>csoundPerformKsmps</c> is unsafe; the spin-wait on
+        /// <see cref="_performKsmpsDepth"/> (max 200 ms) guarantees the audio thread
+        /// has exited before the native instance is freed.
+        /// </summary>
+        void OnDisable()
+        {
+            if (!_quitting) return;  // only destroy on quit, not on normal disable
+            if (csound == null) return;
+
+            // Spin-wait for any in-flight PerformKsmps to complete.
+            // _performKsmpsDepth is decremented by the audio thread immediately after
+            // csoundPerformKsmps returns, so this loop exits as soon as the call finishes.
+            // We cap the wait at 200 ms (≈10× the worst-case ksmps block) as a safety net.
+            var deadline = System.Diagnostics.Stopwatch.StartNew();
+            while (System.Threading.Volatile.Read(ref _performKsmpsDepth) > 0
+                   && deadline.ElapsedMilliseconds < 200)
+            { /* spin */ }
+
+            if (deadline.ElapsedMilliseconds >= 200)
+                Debug.LogWarning("[CsoundUnity] OnDisable: PerformKsmps did not drain within 200 ms — proceeding with csoundDestroy anyway.");
+
+            var bridge = csound;
+            csound = null;
+            bridge.OnApplicationQuit();
         }
 
         #endregion PRIVATE_METHODS

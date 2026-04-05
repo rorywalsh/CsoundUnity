@@ -419,6 +419,12 @@ namespace Csound.Unity
         /// <summary>
         /// Cleans up native Csound resources when the application quits.
         /// Destroys the message buffer and the Csound instance.
+        /// <para>
+        /// This must only be called after the audio callback (OnAudioFilterRead) has
+        /// been stopped — either by Unity during OnDisable, or after joining any
+        /// background performance thread. Calling csoundDestroy while
+        /// csoundPerformKsmps is running on another thread causes a deadlock.
+        /// </para>
         /// </summary>
         public virtual void OnApplicationQuit()
         {
@@ -1079,6 +1085,42 @@ namespace Csound.Unity
                     channels.Add(chanName, info);
                 }
                 Csound6.NativeMethods.csoundDeleteChannelList(csound, ppChannels);
+            }
+#endif
+            return channels;
+        }
+
+        /// <summary>
+        /// Static variant of <see cref="GetChannelList()"/> — queries a raw Csound handle for all allocated channels.
+        /// Used by <see cref="CsoundWorker.ScanCsdForChannels"/> which manages its own temporary Csound instance.
+        /// </summary>
+        /// <param name="csoundHandle">The raw Csound instance pointer.</param>
+        /// <returns>A sorted dictionary of all currently defined channels keyed by name.</returns>
+        internal static IDictionary<string, ChannelInfo> GetChannelList(IntPtr csoundHandle)
+        {
+            var channels = new SortedDictionary<string, ChannelInfo>();
+#if !UNITY_WEBGL || UNITY_EDITOR
+            var size = Csound6.NativeMethods.csoundListChannels(csoundHandle, out IntPtr ppChannels);
+            if (size > 0 && ppChannels != IntPtr.Zero)
+            {
+                var proxySize = Marshal.SizeOf(typeof(ChannelInfoProxy));
+                for (int i = 0; i < size; i++)
+                {
+                    var proxy    = Marshal.PtrToStructure(ppChannels + (i * proxySize), typeof(ChannelInfoProxy)) as ChannelInfoProxy;
+                    var chanName = CharPtr2String(proxy.name);
+                    var info     = new ChannelInfo(chanName, (ChannelType)(proxy.type & 15), (ChannelDirection)(proxy.type >> 4));
+                    var hintProxy = proxy.hints;
+                    info.Hints = new ChannelHints((ChannelBehavior)hintProxy.behav, hintProxy.dflt, hintProxy.min, hintProxy.max)
+                    {
+                        x          = hintProxy.x,
+                        y          = hintProxy.y,
+                        height     = hintProxy.height,
+                        width      = hintProxy.width,
+                        attributes = CharPtr2String(proxy.name)
+                    };
+                    channels.Add(chanName, info);
+                }
+                Csound6.NativeMethods.csoundDeleteChannelList(csoundHandle, ppChannels);
             }
 #endif
             return channels;

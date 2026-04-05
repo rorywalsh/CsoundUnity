@@ -113,6 +113,11 @@ namespace Csound.Unity
 
         private const string CsdTemplatePath = "Packages/com.csound.csoundunity/Editor/Templates/CsoundTemplate.csd";
 
+        // Set by the background CsoundWorker scan; consumed on the main thread via EditorApplication.update.
+        private volatile List<string> _pendingAudioChannels = null;
+        // Full channel dictionary from the last scan — used for cross-checking against the Cabbage parser.
+        private volatile IDictionary<string, CsoundUnityBridge.ChannelInfo> _pendingAllChannels = null;
+
         #endregion
 
         private static string LoadCsdTemplate()
@@ -129,6 +134,11 @@ namespace Csound.Unity
         {
             csoundUnity = (CsoundUnity)target;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            // Poll for background-scan results every editor frame.
+            // This is the ONLY safe way to react to background-thread work:
+            // modifying EditorApplication.update from a non-main thread is not
+            // thread-safe and causes the editor freeze the user reported.
+            EditorApplication.update += CheckForPendingScan;
 
             m_csoundFileName = this.serializedObject.FindProperty("_csoundFileName");
             m_currentPreset = this.serializedObject.FindProperty("_currentPreset");
@@ -204,13 +214,22 @@ namespace Csound.Unity
             _assignablePresets = new List<CsoundUnityPreset>();
             _presetsInitialized = false;
             EditorApplication.projectChanged += OnProjectChanged;
+            // React to file-watcher CSD reloads so the channel scan and preset
+            // refresh also run when the CSD is saved from an external editor.
+            CsoundFileWatcher.OnCsdChanged += OnWatcherCsdChanged;
         }
 
         void OnDisable()
         {
+            CsoundFileWatcher.OnCsdChanged -= OnWatcherCsdChanged;
             _audioMonitor.Dispose();
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
             EditorApplication.projectChanged -= OnProjectChanged;
+            EditorApplication.update -= CheckForPendingScan;
+            // Discard any in-flight scan results so ApplyPendingChannelScan
+            // is not called on a destroyed editor instance.
+            _pendingAudioChannels = null;
+            _pendingAllChannels   = null;
         }
 
         #endregion
@@ -1367,8 +1386,154 @@ namespace Csound.Unity
         {
             csoundUnity.SetCsd(guid);
             EditorUtility.SetDirty(csoundUnity.gameObject);
+            PostSetCsdEditorUpdate();
+        }
+
+        /// <summary>
+        /// Runs the editor-only post-processing after a CSD has been loaded or reloaded:
+        /// repaints the inspector, schedules a deferred preset refresh, and (outside play
+        /// mode) kicks off a background <see cref="CsoundWorker.ScanCsdForChannels"/> so
+        /// that audio channel information is updated from a real Csound compilation.
+        /// <para>
+        /// Called both by <see cref="SetCsd"/> (user-assigned CSD or refresh button) and
+        /// by <see cref="OnWatcherCsdChanged"/> (file-system watcher detected a save),
+        /// ensuring both code paths stay in sync.
+        /// </para>
+        /// </summary>
+        private void PostSetCsdEditorUpdate()
+        {
             Repaint();
             EditorApplication.update += WaitOneFrameToUpdatePresets;
+
+            // Do not scan during play mode: the live CsoundUnity instance is already
+            // compiling the same CSD and two simultaneous Csound compilations compete
+            // for CPU / file I/O, causing the editor to hang.
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+
+            // Replace the static regex-based parser with a real Csound scan:
+            // spin up a temporary Csound instance on a background thread, compile the
+            // CSD, run one ksmps, and retrieve the actual channel list.
+            var csdString = csoundUnity.csoundString;
+            if (!string.IsNullOrEmpty(csdString))
+            {
+                CsoundWorker.ScanCsdForChannels(csdString, channels =>
+                {
+                    // *** BACKGROUND THREAD — do NOT touch EditorApplication or any Unity API ***
+                    // Modifying EditorApplication.update from a non-main thread is NOT thread-safe
+                    // and causes the editor freeze bug we fixed here.  Only write to the volatile
+                    // fields; CheckForPendingScan() polls them on the main thread every editor frame.
+                    var audioOuts = new List<string>();
+                    foreach (var kv in channels)
+                    {
+                        if (kv.Value.Type      == CsoundUnityBridge.ChannelType.Audio &&
+                            kv.Value.Direction.HasFlag(CsoundUnityBridge.ChannelDirection.Output))
+                        {
+                            audioOuts.Add(kv.Key);
+                        }
+                    }
+                    // Write the full dict FIRST so that when _pendingAudioChannels becomes
+                    // non-null (the signal CheckForPendingScan reads), _pendingAllChannels
+                    // is already visible (both fields are volatile).
+                    _pendingAllChannels   = channels;
+                    _pendingAudioChannels = audioOuts;
+                });
+            }
+        }
+
+        /// <summary>
+        /// Called when <see cref="CsoundFileWatcher"/> detects that the CSD file assigned
+        /// to a <see cref="CsoundUnity"/> instance has changed on disk.
+        /// The watcher has already called <c>csound.SetCsd()</c> (runtime update); this
+        /// handler runs the editor-only follow-up: repaint, deferred preset refresh, and
+        /// the background Csound channel scan.
+        /// </summary>
+        private void OnWatcherCsdChanged(CsoundUnity changed)
+        {
+            if (changed != csoundUnity) return;
+            EditorUtility.SetDirty(csoundUnity.gameObject);
+            PostSetCsdEditorUpdate();
+        }
+
+        /// <summary>
+        /// Registered with <c>EditorApplication.update</c> in <see cref="OnEnable"/> (and removed in
+        /// <see cref="OnDisable"/>).  Polls the volatile <see cref="_pendingAudioChannels"/> field and
+        /// calls <see cref="ApplyPendingChannelScan"/> as soon as a scan result is available.
+        /// <para>
+        /// This is the ONLY correct way to react to a background-thread result: the background callback
+        /// itself must never touch <c>EditorApplication.update</c> because that event is not thread-safe.
+        /// </para>
+        /// </summary>
+        private void CheckForPendingScan()
+        {
+            if (_pendingAudioChannels == null) return; // fast path — nothing ready yet
+            ApplyPendingChannelScan();
+        }
+
+        /// <summary>
+        /// Called on the main thread once the background
+        /// <see cref="CsoundWorker.ScanCsdForChannels"/> has finished.
+        /// Overwrites <c>_availableAudioChannels</c> with the results of the real Csound scan.
+        /// </summary>
+        private void ApplyPendingChannelScan()
+        {
+            // Do NOT unregister from EditorApplication.update here — CheckForPendingScan
+            // manages the lifetime of the polling; this method just processes one result.
+
+            var audioChannels = _pendingAudioChannels;
+            var allChannels   = _pendingAllChannels;
+            _pendingAudioChannels = null;
+            _pendingAllChannels   = null;
+            if (audioChannels == null) return;
+
+            serializedObject.Update();
+            m_availableAudioChannels.ClearArray();
+            for (int i = 0; i < audioChannels.Count; i++)
+            {
+                m_availableAudioChannels.InsertArrayElementAtIndex(i);
+                m_availableAudioChannels.GetArrayElementAtIndex(i).stringValue = audioChannels[i];
+            }
+            serializedObject.ApplyModifiedProperties();
+            EditorUtility.SetDirty(csoundUnity.gameObject);
+            Repaint();
+
+            Debug.Log($"[CsoundUnityEditor] Available audio channels updated from scan: [{string.Join(", ", audioChannels)}]");
+
+            // Cross-check: compare channels parsed from the Cabbage block with the real
+            // channel list returned by Csound.  Any mismatch is a sign that the static
+            // Cabbage parser is out of sync with the orchestra (renamed channel, typo, etc.).
+            if (allChannels == null) return;
+            var parsedChannels = csoundUnity.channels;
+            if (parsedChannels == null || parsedChannels.Count == 0) return;
+
+            var missingInCsound  = new List<string>(); // parsed by Cabbage but not seen by Csound
+            var missingInCabbage = new List<string>(); // seen by Csound (Control) but not in Cabbage
+
+            var cabbageNames = new HashSet<string>();
+            foreach (var ch in parsedChannels)
+            {
+                if (string.IsNullOrWhiteSpace(ch.channel)) continue;
+                cabbageNames.Add(ch.channel);
+                if (!allChannels.ContainsKey(ch.channel))
+                    missingInCsound.Add(ch.channel);
+            }
+
+            foreach (var kv in allChannels)
+            {
+                if (kv.Value.Type == CsoundUnityBridge.ChannelType.Control &&
+                    !cabbageNames.Contains(kv.Key))
+                    missingInCabbage.Add(kv.Key);
+            }
+
+            if (missingInCsound.Count > 0)
+                Debug.LogWarning($"[CsoundUnityEditor] Channel cross-check — in Cabbage but NOT allocated by Csound " +
+                                 $"(possible typo or dead widget): [{string.Join(", ", missingInCsound)}]");
+
+            if (missingInCabbage.Count > 0)
+                Debug.Log($"[CsoundUnityEditor] Channel cross-check — allocated by Csound but NOT in Cabbage " +
+                          $"(internal / non-widget channels): [{string.Join(", ", missingInCabbage)}]");
+
+            if (missingInCsound.Count == 0 && missingInCabbage.Count == 0)
+                Debug.Log("[CsoundUnityEditor] Channel cross-check — all Cabbage channels match Csound ✓");
         }
 
         // Two editor frames must pass before the serialized object reflects the updated data

@@ -101,8 +101,13 @@ namespace Csound.Unity
         {
             _running = false;
             Debug.Log("Worker OnApplicationQuit");
-            base.OnApplicationQuit();
+            // Join the performance thread BEFORE destroying the native Csound instance.
+            // Calling base.OnApplicationQuit() (csoundDestroy) while the thread is still
+            // inside csoundPerformKsmps causes a deadlock: csoundDestroy tries to acquire
+            // an internal Csound lock that csoundPerformKsmps is holding.
+            // Disposing first guarantees the thread has fully exited before we free the instance.
             Dispose();
+            base.OnApplicationQuit();
         }
 
         public void Destroy()
@@ -124,7 +129,8 @@ namespace Csound.Unity
             }
 
             Debug.Log("Joining CsoundWorker thread");
-            performance.Join();
+            if (!performance.Join(millisecondsTimeout: 3000))
+                Debug.LogWarning("[CsoundWorker] Performance thread did not exit within 3 s — proceeding with destroy anyway.");
             performance = null;
 
             m_disposed = true;
@@ -138,6 +144,95 @@ namespace Csound.Unity
         public static CsoundWorker Create()
         {
             return new CsoundWorker();
+        }
+
+        /// <summary>
+        /// Scans a CSD string in a temporary, isolated Csound instance (−n −d, no audio I/O).
+        /// After compiling the CSD and running one <c>PerformKsmps</c>, all channels allocated
+        /// by the orchestra are queried and returned via <paramref name="onComplete"/>.
+        /// <para>
+        /// The callback is invoked on the background scan thread.  To update Unity or Editor
+        /// state, marshal back to the main thread (e.g. via <c>EditorApplication.update</c>).
+        /// </para>
+        /// </summary>
+        /// <param name="csdString">Full CSD content as a string.</param>
+        /// <param name="onComplete">
+        /// Invoked with a dictionary mapping channel name → <see cref="CsoundUnityBridge.ChannelInfo"/>.
+        /// </param>
+        public static void ScanCsdForChannels(
+            string csdString,
+            Action<IDictionary<string, CsoundUnityBridge.ChannelInfo>> onComplete)
+        {
+            // AudioSettings.outputSampleRate may only be read on the main thread —
+            // capture it here, before the background thread is spawned.
+            var sampleRate = AudioSettings.outputSampleRate;
+
+            var thread = new Thread(() =>
+            {
+#if !UNITY_WEBGL || UNITY_EDITOR
+                Debug.Log("[CsoundWorker Scan] Starting channel scan …");
+
+                var cs = IntPtr.Zero;
+                try
+                {
+                    cs = NativeMethods.csoundCreate(IntPtr.Zero, null);
+                    if (cs == IntPtr.Zero)
+                    {
+                        Debug.LogError("[CsoundWorker Scan] Failed to create Csound instance.");
+                        onComplete?.Invoke(new SortedDictionary<string, CsoundUnityBridge.ChannelInfo>());
+                        return;
+                    }
+
+                    NativeMethods.csoundCreateMessageBuffer(cs, 0);
+                    NativeMethods.csoundSetOption(cs, "-n");
+                    NativeMethods.csoundSetOption(cs, "-d");
+                    NativeMethods.csoundSetOption(cs, $"--sample-rate={sampleRate}");
+
+                    var ret = NativeMethods.csoundCompileCSD(cs, csdString, 1, 0, null);
+
+                    // Drain compile-time messages regardless of success/failure
+                    FlushScanMessageBuffer(cs);
+
+                    if (ret == 0)
+                    {
+                        NativeMethods.csoundStart(cs);
+                        NativeMethods.csoundPerformKsmps(cs);
+                        FlushScanMessageBuffer(cs);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[CsoundWorker Scan] CSD compile returned {ret}. Channel list may be incomplete.");
+                    }
+
+                    var channels = CsoundUnityBridge.GetChannelList(cs);
+                    Debug.Log($"[CsoundWorker Scan] Done. Found {channels.Count} channel(s).");
+                    foreach (var kv in channels)
+                        Debug.Log($"[CsoundWorker Scan]   {kv.Key}  type={kv.Value.Type}  dir={kv.Value.Direction}");
+
+                    onComplete?.Invoke(channels);
+                }
+                catch (Exception ex)
+                {
+                    // Catches managed exceptions (marshalling errors, threading issues, etc.).
+                    // Native crashes inside the Csound library cannot be caught here and will
+                    // still terminate the process — that would require an out-of-process scan.
+                    Debug.LogError($"[CsoundWorker Scan] Exception during channel scan — the CSD may contain code that crashes Csound.\n{ex}");
+                    onComplete?.Invoke(new SortedDictionary<string, CsoundUnityBridge.ChannelInfo>());
+                }
+                finally
+                {
+                    // Always clean up the temporary Csound instance, even after an exception.
+                    if (cs != IntPtr.Zero)
+                    {
+                        try { NativeMethods.csoundDestroyMessageBuffer(cs); } catch { }
+                        try { NativeMethods.csoundDestroy(cs); } catch { }
+                    }
+                }
+#endif
+            });
+            thread.IsBackground = true;
+            thread.Name = "CsoundWorkerScan";
+            thread.Start();
         }
 
         /// <summary>
@@ -243,6 +338,22 @@ namespace Csound.Unity
         #endregion Public API
 
         #region Private Helpers
+
+        /// <summary>
+        /// Drains the message buffer of a raw Csound handle and logs each message to the console.
+        /// Used exclusively by <see cref="ScanCsdForChannels"/>.
+        /// </summary>
+        private static void FlushScanMessageBuffer(IntPtr cs)
+        {
+            while (NativeMethods.csoundGetMessageCnt(cs) > 0)
+            {
+                var msgPtr = NativeMethods.csoundGetFirstMessage(cs);
+                var msg = CsoundUnityBridge.CharPtr2String(msgPtr);
+                if (!string.IsNullOrEmpty(msg))
+                    Debug.Log($"[CsoundWorker Scan] {msg.TrimEnd()}");
+                NativeMethods.csoundPopFirstMessage(cs);
+            }
+        }
 
         public void PerformanceThread()
         {

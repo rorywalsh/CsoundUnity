@@ -57,6 +57,15 @@ namespace Csound.Unity
         static bool _executeActions = true;
         static bool _quitting = false;
 
+        /// <summary>
+        /// Fired on the main thread after a CSD file has been reloaded due to an
+        /// external save detected by the file-system watcher.
+        /// The runtime <see cref="CsoundUnity.SetCsd"/> has already been called before
+        /// this event fires; subscribers should run editor-only follow-up work such as
+        /// repainting the inspector and triggering the background channel scan.
+        /// </summary>
+        public static event Action<CsoundUnity> OnCsdChanged;
+
         #endregion
 
         #region Constructor / Init / Clear
@@ -239,6 +248,9 @@ namespace Csound.Unity
                             // Mark the object and scene dirty so Unity knows the
                             // serialized data changed and will save it with the scene.
                             EditorUtility.SetDirty(csound);
+                            // Notify any open CsoundUnityEditor inspector so it can
+                            // run its editor-only post-processing (channel scan, repaint).
+                            OnCsdChanged?.Invoke(csound);
                         }
                     });
             }
@@ -283,6 +295,8 @@ namespace Csound.Unity
                         csd.SetCsd(csd.csoundFileGUID);
                         // Mark dirty after the on-startup catch-up sync too.
                         EditorUtility.SetDirty(csd);
+                        // Notify any open inspector for the same editor-only follow-up.
+                        OnCsdChanged?.Invoke(csd);
                     }
                 }
 
