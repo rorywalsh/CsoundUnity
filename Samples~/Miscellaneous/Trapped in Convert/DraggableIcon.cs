@@ -42,7 +42,7 @@ namespace Csound.Unity.Samples.Miscellaneous.Trapped
 
         public void OnDrag(PointerEventData data)
         {
-            this.transform.position = Input.mousePosition;
+            this.transform.position = data.position;
         }
 
         public void OnDragEnded(PointerEventData data)
