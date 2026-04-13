@@ -8,6 +8,10 @@ namespace Csound.Unity.Samples.TestWebGL
         #region Fields
         public Camera lookCamera;
 
+#if !ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
+        private static bool _inputWarningShown = false;
+#endif
+
         public float speed = 3.0F;
         public float jumpSpeed = 15;
         public int gravity = 20;
@@ -20,7 +24,17 @@ namespace Csound.Unity.Samples.TestWebGL
 
         public Button mobileButton;
 
-        public bool IsMobile { get { return Application.isMobilePlatform && Input.touchSupported; } }
+        public bool IsMobile
+        {
+            get
+            {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
+                return Application.isMobilePlatform && Input.touchSupported;
+#else
+                return Application.isMobilePlatform;
+#endif
+            }
+        }
 
         private Vector2 currentRotation;
 
@@ -33,12 +47,26 @@ namespace Csound.Unity.Samples.TestWebGL
         #region Properties
         private float VerticalAxis
         {
-            get { return IsMobile ? movementJoystickDirection.y : Input.GetAxis("Vertical"); }
+            get
+            {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
+                return IsMobile ? movementJoystickDirection.y : Input.GetAxis("Vertical");
+#else
+                return IsMobile ? movementJoystickDirection.y : 0f;
+#endif
+            }
         }
 
         private float HorizontalAxis
         {
-            get { return IsMobile ? movementJoystickDirection.x : Input.GetAxis("Horizontal"); }
+            get
+            {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
+                return IsMobile ? movementJoystickDirection.x : Input.GetAxis("Horizontal");
+#else
+                return IsMobile ? movementJoystickDirection.x : 0f;
+#endif
+            }
         }
 
         private Quaternion LookRotation
@@ -52,8 +80,10 @@ namespace Csound.Unity.Samples.TestWebGL
                 }
                 else
                 {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
                     currentRotation.x += Input.GetAxis("Mouse X") * rotationSensitivity;
                     currentRotation.y -= Input.GetAxis("Mouse Y") * rotationSensitivity;
+#endif
                 }
                 currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
                 currentRotation.y = Mathf.Clamp(currentRotation.y, -maxYAngle, maxYAngle);
@@ -92,6 +122,13 @@ namespace Csound.Unity.Samples.TestWebGL
 
         void Update()
         {
+#if !ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
+            if (!_inputWarningShown)
+            {
+                _inputWarningShown = true;
+                Debug.LogWarning("[CsoundUnity Samples] PlayerController requires the Legacy Input Manager. Disable Input System Package (New) in Project Settings > Player to enable interaction.");
+            }
+#endif
             // Handle rotation
             var lookRotation = LookRotation;
             transform.eulerAngles = new Vector2(0, lookRotation.eulerAngles.y);
@@ -102,10 +139,12 @@ namespace Csound.Unity.Samples.TestWebGL
                 moveDirection = new Vector3(HorizontalAxis, 0, VerticalAxis);
                 moveDirection = transform.TransformDirection(moveDirection) * speed;
 
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
                 if (Input.GetButtonDown("Jump"))
                 {
                     moveDirection.y = jumpSpeed;
                 }
+#endif
             }
             else
             {

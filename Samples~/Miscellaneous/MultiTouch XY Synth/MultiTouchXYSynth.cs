@@ -10,20 +10,26 @@ namespace Csound.Unity.Samples.Miscellaneous
         #region Fields
         CsoundUnity _csound;
         private Dictionary<int, Vector2> inputPositions = new Dictionary<int, Vector2>();
+#if !ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
+        private static bool _inputWarningShown = false;
+#endif
         #endregion
 
         #region Unity Messages
         void Start()
         {
             _csound = GetComponent<CsoundUnity>();
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             if (Input.touchSupported)
             {
                 Input.simulateMouseWithTouches = false;
             }
+#endif
         }
 
         private void Update()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             if (Input.mousePresent)
             {
                 if (Input.GetMouseButtonDown(0))
@@ -90,6 +96,13 @@ namespace Csound.Unity.Samples.Miscellaneous
                     inputPositions.Clear();
                 }
             }
+#else
+            if (!_inputWarningShown)
+            {
+                _inputWarningShown = true;
+                Debug.LogWarning("[CsoundUnity Samples] MultiTouchXYSynth requires the Legacy Input Manager. Disable Input System Package (New) in Project Settings > Player to enable interaction.");
+            }
+#endif
 
             if (inputPositions == null || inputPositions.Count == 0) return;
 

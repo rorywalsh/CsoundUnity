@@ -98,6 +98,7 @@ namespace Csound.Unity.Samples.Sequencer
         {
             if (!isInitialized || !csoundUnity.IsInitialized) return;
 
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             if (Input.GetKeyDown("1"))
             {
                 ClearSequencer();
@@ -107,6 +108,7 @@ namespace Csound.Unity.Samples.Sequencer
             {
                 RandomSequencer();
             }
+#endif
 
             if (csoundUnity)
                 csoundUnity.SetChannel("BPM", BPM);

@@ -19,6 +19,7 @@ namespace Csound.Unity.Samples.BasicPresetUsage
         #region Unity Messages
         void Update()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             #region Save Presets
             if (Input.GetKeyUp(KeyCode.G))
             {
@@ -113,6 +114,7 @@ namespace Csound.Unity.Samples.BasicPresetUsage
                 csound.SetPreset("test", data);
             }
             #endregion
+#endif
 
             presetText.text = $"Current Preset: {csound.CurrentPreset}";
         }

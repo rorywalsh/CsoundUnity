@@ -30,6 +30,7 @@ namespace Csound.Unity.Samples.Collisions
 
         void Update()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             if (!Input.GetMouseButtonDown(0)) return;
 
             this.transform.position = new Vector3(0, _startingBallHeight, 0);
@@ -39,6 +40,7 @@ namespace Csound.Unity.Samples.Collisions
             _rigidBody.angularVelocity = Vector3.zero;
 
             _rigidBody.AddForce(_horizontalForce * normPos, 0, 0, ForceMode.Force);
+#endif
         }
 
         private void OnCollisionEnter(Collision other)

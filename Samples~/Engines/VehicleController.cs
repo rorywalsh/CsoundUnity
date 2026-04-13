@@ -18,6 +18,9 @@ namespace Csound.Unity.Samples.Engines
 
         float _currentSpeed;
         Camera _cam;
+#if !ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
+        private static bool _inputWarningShown = false;
+#endif
         #endregion
 
         #region Properties
@@ -36,8 +39,16 @@ namespace Csound.Unity.Samples.Engines
 
         void Update()
         {
+#if !ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
+            if (!_inputWarningShown)
+            {
+                _inputWarningShown = true;
+                Debug.LogWarning("[CsoundUnity Samples] VehicleController requires the Legacy Input Manager. Disable Input System Package (New) in Project Settings > Player to enable interaction.");
+            }
+#else
             SteerTowardCursor();
             Drive();
+#endif
         }
         #endregion
 
@@ -48,6 +59,7 @@ namespace Csound.Unity.Samples.Engines
         /// </summary>
         void SteerTowardCursor()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             var ray = _cam.ScreenPointToRay(Input.mousePosition);
 
             // The camera looks straight down, so ray.direction.y should be strongly negative.
@@ -66,6 +78,7 @@ namespace Csound.Unity.Samples.Engines
             var targetRotation = Quaternion.LookRotation(toTarget, Vector3.up);
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+#endif
         }
 
         /// <summary>
@@ -73,10 +86,14 @@ namespace Csound.Unity.Samples.Engines
         /// </summary>
         void Drive()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             bool pressing = Input.GetMouseButton(0);
             _currentSpeed = pressing
                 ? Mathf.MoveTowards(_currentSpeed, _maxSpeed, _acceleration * Time.deltaTime)
                 : Mathf.MoveTowards(_currentSpeed, 0f, _deceleration * Time.deltaTime);
+#else
+            _currentSpeed = Mathf.MoveTowards(_currentSpeed, 0f, _deceleration * Time.deltaTime);
+#endif
 
             var pos = transform.position + transform.forward * _currentSpeed * Time.deltaTime;
 

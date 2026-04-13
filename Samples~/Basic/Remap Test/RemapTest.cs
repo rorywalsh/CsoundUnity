@@ -45,9 +45,11 @@ namespace Csound.Unity.Samples.Basic
 
         void Update()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             // control the skew moving the mouse L/R in a linear fashion, using the normalized mode
             // only change the maximum value depending on the selected RemapMode
             _skew = RU.Remap(Input.mousePosition.x, 0f, Screen.width, 0f, _mode == RU.SkewMode.Cabbage ? 10f : 1f, true, 0.5f, RU.SkewMode.Normalized);
+#endif
 
             CalculatePoints();
 
@@ -59,7 +61,9 @@ namespace Csound.Unity.Samples.Basic
             _lineRenderer.SetPositions(_points);
 
             _infoText.text = $"SKEW\n{_skew:F3}";
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             _infoText.transform.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y + 50f);
+#endif
         }
         #endregion
 

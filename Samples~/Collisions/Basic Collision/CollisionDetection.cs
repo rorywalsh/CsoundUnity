@@ -10,6 +10,9 @@ namespace Csound.Unity.Samples.Collisions.BasicCollision
         [SerializeField] GameObject _testObject;
         [SerializeField] Vector2 RangeX = new Vector2(-2.5f, 2.5f);
         [SerializeField] Vector2 RangeY = new Vector2(-2.5f, 2.5f);
+#if !ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
+        private static bool _inputWarningShown = false;
+#endif
         #endregion
 
         #region Unity Messages
@@ -17,7 +20,15 @@ namespace Csound.Unity.Samples.Collisions.BasicCollision
         {
             if (!_csound || !_csound.IsInitialized) return;
 
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             _testObject.transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
+#else
+            if (!_inputWarningShown)
+            {
+                _inputWarningShown = true;
+                Debug.LogWarning("[CsoundUnity Samples] CollisionDetection requires the Legacy Input Manager. Disable Input System Package (New) in Project Settings > Player to enable interaction.");
+            }
+#endif
         }
 
         private void OnCollisionEnter(Collision collision)

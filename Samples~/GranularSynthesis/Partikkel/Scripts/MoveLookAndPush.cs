@@ -13,6 +13,9 @@ namespace Csound.Unity.GranularSynthesis.Partikkel
         private CharacterController _controller;
         private float _startY;
         private Vector2 _rotation = Vector2.zero;
+#if !ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
+        private static bool _inputWarningShown = false;
+#endif
         #endregion
 
         #region Unity Messages
@@ -24,6 +27,7 @@ namespace Csound.Unity.GranularSynthesis.Partikkel
 
         void Update()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             _rotation.y += Input.GetAxis("Mouse X");
             _rotation.x += -Input.GetAxis("Mouse Y");
 
@@ -36,6 +40,13 @@ namespace Csound.Unity.GranularSynthesis.Partikkel
             _controller.Move(move * _speed * Time.deltaTime);
             // clamp the movement on the y axis
             transform.position = new Vector3(transform.position.x, _startY, transform.position.z);
+#else
+            if (!_inputWarningShown)
+            {
+                _inputWarningShown = true;
+                Debug.LogWarning("[CsoundUnity Samples] MoveLookAndPush requires the Legacy Input Manager. Disable Input System Package (New) in Project Settings > Player to enable interaction.");
+            }
+#endif
         }
 
         private void OnControllerColliderHit(ControllerColliderHit hit)

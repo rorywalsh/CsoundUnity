@@ -10,6 +10,9 @@ namespace Csound.Unity.TableMorph.Theremin
         [SerializeField] Vector2 _freqRange = new Vector2(220, 1100);
 
         CsoundUnity _csound;
+#if !ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
+        private static bool _inputWarningShown = false;
+#endif
 
         IEnumerator Start()
         {
@@ -25,6 +28,7 @@ namespace Csound.Unity.TableMorph.Theremin
         {
             if (!_csound.IsInitialized) return;
 
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             if (Input.GetKey(KeyCode.LeftShift) || Input.touchCount > 1)
             {
                 _csound.SetChannel("Lfo", RU.Remap(Input.mousePosition.x, 0f, Screen.width, 0, 100f, true));
@@ -35,6 +39,13 @@ namespace Csound.Unity.TableMorph.Theremin
                 _csound.SetChannel("Frequency", RU.Remap(Input.mousePosition.x, 0f, Screen.width, _freqRange.x, _freqRange.y, true));
                 _csound.SetChannel("Amplitude", RU.Remap(Input.mousePosition.y, 0f, Screen.height, 0f, 1f, true));
             }
+#else
+            if (!_inputWarningShown)
+            {
+                _inputWarningShown = true;
+                Debug.LogWarning("[CsoundUnity Samples] Theremin requires the Legacy Input Manager. Disable Input System Package (New) in Project Settings > Player to enable interaction.");
+            }
+#endif
         }
     }
 }

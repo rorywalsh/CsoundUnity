@@ -22,6 +22,9 @@ namespace Csound.Unity.Samples.Miscellaneous
         private CharacterController charController;
         private Vector3 moveDirection;
         private Vector2 mobileJoysticDirection;
+#if !ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
+        private static bool _inputWarningShown = false;
+#endif
         #endregion
 
         #region Properties
@@ -31,7 +34,11 @@ namespace Csound.Unity.Samples.Miscellaneous
             {
                 if (Application.isMobilePlatform)
                     return mobileJoysticDirection.y;
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
                 else return Input.GetAxis("Vertical");
+#else
+                else return 0f;
+#endif
             }
         }
 
@@ -41,7 +48,11 @@ namespace Csound.Unity.Samples.Miscellaneous
             {
                 if (Application.isMobilePlatform)
                     return mobileJoysticDirection.x;
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
                 else return Input.GetAxis("Horizontal");
+#else
+                else return 0f;
+#endif
             }
         }
         #endregion
@@ -67,6 +78,13 @@ namespace Csound.Unity.Samples.Miscellaneous
 
         void Update()
         {
+#if !ENABLE_LEGACY_INPUT_MANAGER && ENABLE_INPUT_SYSTEM
+            if (!_inputWarningShown)
+            {
+                _inputWarningShown = true;
+                Debug.LogWarning("[CsoundUnity Samples] PlayerController requires the Legacy Input Manager. Disable Input System Package (New) in Project Settings > Player to enable interaction.");
+            }
+#endif
             if (charController.isGrounded)
             {
                 moveDirection = new Vector3(0, 0, VerticalAxis);
@@ -74,10 +92,12 @@ namespace Csound.Unity.Samples.Miscellaneous
 
                 moveDirection *= speed;
 
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
                 if (Input.GetButtonDown("Jump"))
                 {
                     Jump();
                 }
+#endif
 
                 // turn on and off animations if player is moving or not
                 MoveFeet(charController.velocity.magnitude > 0);

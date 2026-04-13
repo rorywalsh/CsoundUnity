@@ -58,11 +58,13 @@ namespace Csound.Unity.Samples.Collisions.Dripwater
         {
             if (!_csound || !_csound.IsInitialized) return;
 
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             if (Input.GetMouseButtonUp(0))
             {
                 this.transform.localPosition = _startingPos;
                 this.GetComponent<Rigidbody>().velocity = Vector3.zero;
             }
+#endif
         }
 
         private void OnCollisionEnter(Collision collision)

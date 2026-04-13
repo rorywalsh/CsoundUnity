@@ -32,7 +32,11 @@ namespace Csound.Unity.Samples.TestWebGL
 
         private void Update()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             if (!Input.GetMouseButtonDown(0)) return;
+#else
+            return;
+#endif
             if (_audioContextUnlocked) return;
 
             _audioContextUnlocked = true;

@@ -14,6 +14,7 @@ namespace Csound.Unity.EnvironmentVars
 
         void Update()
         {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             if (!Input.GetMouseButtonDown(0)) return;
 
             var freqCtrl = csound.GetChannelController("freq");
@@ -22,6 +23,7 @@ namespace Csound.Unity.EnvironmentVars
             csound.SetChannel("freq", RU.Remap(Input.mousePosition.x, 0, Screen.width, freqCtrl.min, freqCtrl.max));
             csound.SetChannel("amp", RU.Remap(Input.mousePosition.y, 0, Screen.height, ampCtrl.min, ampCtrl.max));
             csound.SetChannel("trigger", csound.GetChannel("trigger") == 1 ? 0 : 1);
+#endif
         }
     }
 }

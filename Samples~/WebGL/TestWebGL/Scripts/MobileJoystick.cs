@@ -36,11 +36,13 @@ namespace Csound.Unity.Samples.TestWebGL
         {
             if (this._pressed)
             {
+#if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
 #if !UNITY_EDITOR
                 if (this._touchId < 0 || this._touchId >= Input.touches.Length) return;
                 this._rt.position = Input.touches[this._touchId].position;
 #else
                 this._rt.position = Input.mousePosition;
+#endif
 #endif
 
                 var dir = new Vector2(Mathf.Clamp((this._rt.position.x - this._defaultPos.x) / speedMul, -1.0f, 1.0f),
