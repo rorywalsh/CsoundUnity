@@ -5,7 +5,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Csound.Unity.Editor
+namespace Csound.Unity
 {
     /// <summary>
     /// Fixes imported CsoundUnity sample scenes when the project uses Unity's new
