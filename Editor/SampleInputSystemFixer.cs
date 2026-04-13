@@ -91,7 +91,7 @@ namespace Csound.Unity
                         // Skip if already using the new module.
                         if (es.GetComponent(inputModuleType) != null) continue;
 
-                        var standalone = es.GetComponent<UnityEngine.UI.StandaloneInputModule>();
+                        var standalone = es.GetComponent<UnityEngine.EventSystems.StandaloneInputModule>();
                         if (standalone == null) continue;
 
                         Object.DestroyImmediate(standalone, true);
