@@ -743,7 +743,103 @@ namespace Csound.Unity
                         string label = text.Length > 3 ? text : channel;
                         var type = cc.FindPropertyRelative("type").stringValue;
 
-                        if (type.Contains("slider"))
+                        if (type == "nslider")
+                        {
+                            var min = cc.FindPropertyRelative("min").floatValue;
+                            var max = cc.FindPropertyRelative("max").floatValue;
+                            var increment = cc.FindPropertyRelative("increment").floatValue;
+
+                            // FloatField (not Delayed) so that dragging the label gives real-time
+                            // feedback, matching the UI component behaviour.
+                            EditorGUI.BeginChangeCheck();
+                            var newValue = EditorGUILayout.FloatField(new GUIContent(label, channel), chanValue.floatValue);
+                            if (EditorGUI.EndChangeCheck())
+                            {
+                                if (increment > 1e-5f)
+                                    newValue = min + Mathf.Round((newValue - min) / increment) * increment;
+                                newValue = Mathf.Clamp(newValue, min, max);
+                                chanValue.floatValue = newValue;
+                                if (Application.isPlaying && csoundUnity != null)
+                                    csoundUnity.SetChannel(channel, chanValue.floatValue);
+                            }
+                        }
+                        else if (type == "hrange" || type == "vrange")
+                        {
+                            var minChan   = channel;
+                            var maxChan   = cc.FindPropertyRelative("channelY").stringValue;
+                            var absMin    = cc.FindPropertyRelative("min").floatValue;
+                            var absMax    = cc.FindPropertyRelative("max").floatValue;
+                            var value2    = cc.FindPropertyRelative("value2");
+                            var increment = cc.FindPropertyRelative("increment").floatValue;
+
+                            EditorGUILayout.LabelField(
+                                label.Length > 3 ? label : $"{minChan} / {maxChan}",
+                                EditorStyles.boldLabel);
+
+                            // In play mode read the live channel values from Csound so the
+                            // inspector reflects what the UI component is actually sending,
+                            // not the potentially-stale serialized defaults.
+                            float minV = Application.isPlaying && csoundUnity != null
+                                ? (float)csoundUnity.GetChannel(minChan)
+                                : chanValue.floatValue;
+                            float maxV = Application.isPlaying && csoundUnity != null
+                                ? (float)csoundUnity.GetChannel(maxChan)
+                                : value2.floatValue;
+
+                            // Defensive clamp/snap BEFORE BeginChangeCheck so these
+                            // normalisation steps never trigger a spurious change detection.
+                            if (increment > 1e-5f)
+                            {
+                                minV = absMin + Mathf.Round((minV - absMin) / increment) * increment;
+                                maxV = absMin + Mathf.Round((maxV - absMin) / increment) * increment;
+                            }
+                            // Guard: ensure max >= min before passing to MinMaxSlider
+                            // (inverted values cause MinMaxSlider to mutate the refs → GUI.changed loop)
+                            minV = Mathf.Clamp(minV, absMin, absMax);
+                            maxV = Mathf.Clamp(maxV, minV, absMax);
+
+                            EditorGUI.BeginChangeCheck();
+                            EditorGUILayout.MinMaxSlider(ref minV, ref maxV, absMin, absMax);
+
+                            // Read-only float displays — disabled so they cannot trigger GUI.changed.
+                            // Explicit rect split guarantees right edge is always flush with the
+                            // MinMaxSlider above (BeginHorizontal auto-layout can overflow at small widths).
+                            var valRect   = EditorGUILayout.GetControlRect();
+                            float gap     = 4f;
+                            float halfW   = (valRect.width - gap) * 0.5f;
+                            float savedLW = EditorGUIUtility.labelWidth;
+                            EditorGUIUtility.labelWidth = Mathf.Min(55f, halfW * 0.45f);
+                            EditorGUI.BeginDisabledGroup(true);
+                            EditorGUI.FloatField(
+                                new Rect(valRect.x, valRect.y, halfW, valRect.height),
+                                new GUIContent(minChan), minV);
+                            EditorGUI.FloatField(
+                                new Rect(valRect.x + halfW + gap, valRect.y, halfW, valRect.height),
+                                new GUIContent(maxChan), maxV);
+                            EditorGUI.EndDisabledGroup();
+                            EditorGUIUtility.labelWidth = savedLW;
+
+                            if (EditorGUI.EndChangeCheck())
+                            {
+                                // Snap/clamp after genuine user interaction with the slider
+                                if (increment > 1e-5f)
+                                {
+                                    minV = absMin + Mathf.Round((minV - absMin) / increment) * increment;
+                                    maxV = absMin + Mathf.Round((maxV - absMin) / increment) * increment;
+                                }
+                                minV = Mathf.Clamp(minV, absMin, maxV);
+                                maxV = Mathf.Clamp(maxV, minV, absMax);
+
+                                chanValue.floatValue = minV;
+                                value2.floatValue    = maxV;
+                                if (Application.isPlaying && csoundUnity != null)
+                                {
+                                    csoundUnity.SetChannel(minChan, minV);
+                                    csoundUnity.SetChannel(maxChan, maxV);
+                                }
+                            }
+                        }
+                        else if (type.Contains("slider"))
                         {
                             var min = cc.FindPropertyRelative("min").floatValue;
                             var max = cc.FindPropertyRelative("max").floatValue;
@@ -1513,8 +1609,15 @@ namespace Csound.Unity
             {
                 if (string.IsNullOrWhiteSpace(ch.channel)) continue;
                 cabbageNames.Add(ch.channel);
+                // hrange / vrange / xypad store a second channel in channelY — include it too
+                // so the cross-check doesn't falsely flag it as "not in Cabbage".
+                if (!string.IsNullOrWhiteSpace(ch.channelY))
+                    cabbageNames.Add(ch.channelY);
+
                 if (!allChannels.ContainsKey(ch.channel))
                     missingInCsound.Add(ch.channel);
+                if (!string.IsNullOrWhiteSpace(ch.channelY) && !allChannels.ContainsKey(ch.channelY))
+                    missingInCsound.Add(ch.channelY);
             }
 
             foreach (var kv in allChannels)

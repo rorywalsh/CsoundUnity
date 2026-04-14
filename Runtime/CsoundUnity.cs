@@ -885,6 +885,12 @@ namespace Csound.Unity
                 /// channels are created when a csd file is selected in the inspector
                 if (channels != null)
                 {
+                    // Rebuild the index dictionary from scratch every time Csound initialises so
+                    // that stale entries (e.g. from a previous play session when Domain Reload is
+                    // disabled, or from a different CSD loaded via SetCsd) never shadow the
+                    // correct indices for the current _channels list.
+                    _channelsIndexDict.Clear();
+
                     // initialise channels if found in xml descriptor..
                     for (int i = 0; i < channels.Count; i++)
                     {
@@ -893,8 +899,9 @@ namespace Csound.Unity
                         { csound.SetChannel(channels[i].channel, channels[i].value + 1); }
                         else
                         { csound.SetChannel(channels[i].channel, channels[i].value); }
-                        // xypad has a second channel (Y)
-                        if (channels[i].type == "xypad" && !string.IsNullOrEmpty(channels[i].channelY))
+                        // xypad / hrange / vrange have a second channel
+                        if ((channels[i].type == "xypad" || channels[i].type == "hrange" || channels[i].type == "vrange")
+                            && !string.IsNullOrEmpty(channels[i].channelY))
                         { csound.SetChannel(channels[i].channelY, channels[i].value2); }
                         // update channels index dictionary
                         if (!_channelsIndexDict.ContainsKey(channels[i].channel))
@@ -1008,8 +1015,9 @@ namespace Csound.Unity
                     csound.SetChannel(channels[i].channel, channels[i].value + 1);
                 else
                     csound.SetChannel(channels[i].channel, channels[i].value);
-                // xypad has a second channel (Y)
-                if (channels[i].type == "xypad" && !string.IsNullOrEmpty(channels[i].channelY))
+                // xypad / hrange / vrange have a second channel
+                if ((channels[i].type == "xypad" || channels[i].type == "hrange" || channels[i].type == "vrange")
+                    && !string.IsNullOrEmpty(channels[i].channelY))
                     csound.SetChannel(channels[i].channelY, channels[i].value2);
                 // update channels index dictionary
                 _channelsIndexDict.TryAdd(channels[i].channel, i);
@@ -1201,19 +1209,20 @@ namespace Csound.Unity
 
             this._csoundString = File.ReadAllText(csoundFilePath);
             this._channels = ParseCsdFile(fileName);
-            var count = 0;
             // updating the channelsIndexDict here is only needed if updating the Csd when app is playing
             // not yet important since updating the Csd at runtime is not supported yet
             // but it will be possible at some point in the future
             if (_channelsIndexDict != null)
             {
-                foreach (var chan in this._channels)
+                // Always rebuild from scratch so that stale entries from a previous CSD are removed,
+                // and so that the stored index matches the actual position in _channels (not a
+                // separate count that skips empty-channel controllers and therefore gets out of sync).
+                _channelsIndexDict.Clear();
+                for (int ci = 0; ci < this._channels.Count; ci++)
                 {
+                    var chan = this._channels[ci];
                     if (string.IsNullOrWhiteSpace(chan.channel)) continue;
-                    if (!_channelsIndexDict.ContainsKey(chan.channel))
-                    {
-                        _channelsIndexDict.Add(chan.channel, count++);
-                    }
+                    _channelsIndexDict[chan.channel] = ci;
                 }
             }
             this._availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
@@ -1580,6 +1589,8 @@ namespace Csound.Unity
                 //discard csound comments in cabbage widgets
                 if (trimmd.StartsWith(";"))
                     continue;
+                // Normalise optional spaces before "(" so that e.g. "caption (" == "caption("
+                trimmd = System.Text.RegularExpressions.Regex.Replace(trimmd, @"\s+\(", "(");
                 var control = trimmd.Substring(0, trimmd.IndexOf(" ") > -1 ? trimmd.IndexOf(" ") : 0);
                 if (control == "xypad")
                 {
@@ -1591,7 +1602,13 @@ namespace Csound.Unity
                     if (trimmd.IndexOf("text(") > -1)
                     {
                         var text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
-                        text = text.Substring(0, text.IndexOf(")") - 1);
+                        // IndexOf(""") finds the first closing quote: correct even when
+                        // the value contains ")" (e.g. "Filter range (Hz)") and when
+                        // other quoted attributes follow on the same line.
+                        var closeQ = text.IndexOf("\"");
+                        text = closeQ > -1
+                            ? text.Substring(0, closeQ)
+                            : text.Substring(0, text.IndexOf(")"));
                         controller.text = text.Replace("\"", "").Trim();
                     }
 
@@ -1640,8 +1657,89 @@ namespace Csound.Unity
 
                     locaChannelControllers.Add(controller);
                 }
+                else if (control == "hrange" || control == "vrange")
+                {
+                    // Cabbage hrange / vrange: two handles on a shared axis → two Csound channels.
+                    // Syntax: hrange bounds(x,y,w,h) channel("minChan","maxChan")
+                    //         range(absMin, absMax, defMin:defMax[, skew[, increment]])
+                    //         text("Label")
+                    // The third range() argument uses a colon to separate the two default values.
+                    var controller = new CsoundChannelController();
+                    controller.type = control;
+
+                    ParseBounds(trimmd, controller);
+
+                    if (trimmd.IndexOf("text(") > -1)
+                    {
+                        var text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
+                        var closeQ = text.IndexOf("\"");
+                        text = closeQ > -1
+                            ? text.Substring(0, closeQ)
+                            : text.Substring(0, text.IndexOf(")"));
+                        controller.text = text.Replace("\"", "").Trim();
+                    }
+
+                    // channel("minChan", "maxChan")
+                    if (trimmd.IndexOf("channel(") > -1)
+                    {
+                        var chanStr = trimmd.Substring(trimmd.IndexOf("channel(") + 8);
+                        chanStr = chanStr.Substring(0, chanStr.IndexOf(")")).Replace("\"", "");
+                        var parts = chanStr.Split(',');
+                        controller.channel  = parts[0].Trim();
+                        if (parts.Length > 1)
+                            controller.channelY = parts[1].Trim();
+                    }
+
+                    // range(absMin, absMax, defMin:defMax[, skew[, increment]])
+                    controller.SetRange(0, 1, 0);
+                    controller.value2 = 1f;
+                    int rsIdx = trimmd.IndexOf("range(", StringComparison.OrdinalIgnoreCase);
+                    if (rsIdx > -1)
+                    {
+                        var range = trimmd.Substring(rsIdx + 6);
+                        range = range.Substring(0, range.IndexOf(")"));
+                        var tokens = range.Split(',');
+                        for (var ti = 0; ti < tokens.Length; ti++)
+                        {
+                            tokens[ti] = string.Join("", tokens[ti].Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
+                            if (tokens[ti].StartsWith("."))  tokens[ti] = "0"  + tokens[ti];
+                            if (tokens[ti].StartsWith("-.")) tokens[ti] = "-0" + tokens[ti].Substring(2);
+                        }
+                        float absMin = tokens.Length > 0 ? float.Parse(tokens[0], CultureInfo.InvariantCulture) : 0f;
+                        float absMax = tokens.Length > 1 ? float.Parse(tokens[1], CultureInfo.InvariantCulture) : 1f;
+                        float defMin, defMax, rsSkew;
+
+                        if (tokens.Length > 2 && tokens[2].Contains(":"))
+                        {
+                            // Cabbage colon format: "defMin:defMax"
+                            var halves = tokens[2].Split(':');
+                            defMin = float.Parse(halves[0], CultureInfo.InvariantCulture);
+                            defMax = halves.Length > 1 ? float.Parse(halves[1], CultureInfo.InvariantCulture) : absMax;
+                            rsSkew = tokens.Length > 3 ? float.Parse(tokens[3], CultureInfo.InvariantCulture) : 1f;
+                            if (tokens.Length > 4)
+                                controller.SetRange(absMin, absMax, defMin, rsSkew, float.Parse(tokens[4], CultureInfo.InvariantCulture));
+                            else
+                                controller.SetRange(absMin, absMax, defMin, rsSkew);
+                        }
+                        else
+                        {
+                            // Four-value format: defMin and defMax as separate tokens
+                            defMin = tokens.Length > 2 ? float.Parse(tokens[2], CultureInfo.InvariantCulture) : absMin;
+                            defMax = tokens.Length > 3 ? float.Parse(tokens[3], CultureInfo.InvariantCulture) : absMax;
+                            rsSkew = tokens.Length > 4 ? float.Parse(tokens[4], CultureInfo.InvariantCulture) : 1f;
+                            if (tokens.Length > 5)
+                                controller.SetRange(absMin, absMax, defMin, rsSkew, float.Parse(tokens[5], CultureInfo.InvariantCulture));
+                            else
+                                controller.SetRange(absMin, absMax, defMin, rsSkew);
+                        }
+                        controller.value2 = defMax;
+                    }
+
+                    locaChannelControllers.Add(controller);
+                }
                 else if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox")
-                    || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox") || control.Contains("label"))
+                    || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox")
+                    || control.Contains("label") || control == "meter")
                 {
                     var controller = new CsoundChannelController();
                     controller.type = control;
@@ -1651,14 +1749,20 @@ namespace Csound.Unity
                     if (trimmd.IndexOf("caption(") > -1)
                     {
                         var infoText = trimmd.Substring(trimmd.IndexOf("caption(") + 9);
-                        infoText = infoText.Substring(0, infoText.IndexOf(")") - 1);
-                        controller.caption = infoText;
+                        var closeQC  = infoText.IndexOf("\"");
+                        infoText = closeQC > -1
+                            ? infoText.Substring(0, closeQC)
+                            : infoText.Substring(0, infoText.IndexOf(")"));
+                        controller.caption = infoText.Replace("\"", "").Trim();
                     }
 
                     if (trimmd.IndexOf("text(") > -1)
                     {
-                        var text = trimmd.Substring(trimmd.IndexOf("text(") + 6);
-                        text = text.Substring(0, text.IndexOf(")") - 1);
+                        var text   = trimmd.Substring(trimmd.IndexOf("text(") + 6);
+                        var closeQ = text.IndexOf("\"");
+                        text = closeQ > -1
+                            ? text.Substring(0, closeQ)
+                            : text.Substring(0, text.IndexOf(")"));
                         text = text.Replace("\"", "");
                         text = text.Replace('"', new char());
                         if (controller.type == "combobox") //if combobox, text() contains options not a label
@@ -1680,8 +1784,11 @@ namespace Csound.Unity
 
                     if (trimmd.IndexOf("items(") > -1)
                     {
-                        var text = trimmd.Substring(trimmd.IndexOf("items(") + 7);
-                        text = text.Substring(0, text.IndexOf(")") - 1);
+                        var text   = trimmd.Substring(trimmd.IndexOf("items(") + 7);
+                        var closeQI = text.LastIndexOf("\"");
+                        text = closeQI > -1
+                            ? text.Substring(0, closeQI)
+                            : text.Substring(0, text.LastIndexOf(")"));
                         //TODO THIS OVERRIDES TEXT!
                         text = text.Replace("\"", "");
                         text = text.Replace('"', new char());
@@ -1890,6 +1997,10 @@ namespace Csound.Unity
                 channels[_channelsIndexDict[channelController.channel]] = channelController;
             if (!IsInitialized || csound == null) return;
             csound.SetChannel(channelController.channel, channelController.value);
+            // xypad / hrange / vrange carry a second channel in channelY / value2
+            if ((channelController.type == "xypad" || channelController.type == "hrange" || channelController.type == "vrange")
+                && !string.IsNullOrEmpty(channelController.channelY))
+                csound.SetChannel(channelController.channelY, channelController.value2);
         }
 
         /// <summary>
@@ -3500,7 +3611,8 @@ namespace Csound.Unity
                                 // Only paid when spin is actually in use (routes, clip audio, or recently cleared).
                                 var spinInUse = processClipAudio
                                                 || (audioInputRoutes != null && audioInputRoutes.Count > 0)
-                                                || _spinNeedsClearing;
+                                                || _spinNeedsClearing
+                                                || nativeAudioInputProvider != null;
                                 if (spinInUse)
                                 {
                                     ClearSpin();
@@ -3511,6 +3623,10 @@ namespace Csound.Unity
 
                                     // Add audio from input routes (uses AddInputSample — additive).
                                     ApplyAudioInputRoutes(frame, numChannels);
+
+                                    // Feed native microphone samples into spin (CoreAudio / AAudio).
+                                    nativeAudioInputProvider?.FillSpinBuffer(
+                                        (int)ksmpsLen, csound.GetNchnlsInput());
                                 }
 
                                 System.Threading.Interlocked.Increment(ref _performKsmpsDepth);
@@ -3782,9 +3898,15 @@ namespace Csound.Unity
             {
                 while (this.logCsoundOutput)
                 {
+                    // Guard: exit if Csound has been destroyed or is no longer initialized.
+                    // Without this, a coroutine that outlives csoundDestroy (e.g. due to a
+                    // race in the quit sequence) would call into a freed native handle → segfault.
+                    if (csound == null || !initialized) yield break;
+
                     for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
                     {
-                        if (this.logCsoundOutput)    // exiting when csound messages are very high in number 
+                        if (csound == null || !initialized) yield break;
+                        if (this.logCsoundOutput)    // exiting when csound messages are very high in number
                         {
                             print(csound.GetCsoundMessage());
                             yield return null;          //avoids Unity stuck on performance end
