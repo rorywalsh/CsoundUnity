@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 638174090}
   - component: {fileID: 638174092}
   - component: {fileID: 638174091}
+  - component: {fileID: 638174093}
   m_Layer: 0
   m_Name: CsoundUnity
   m_TagString: Untagged
@@ -172,41 +173,29 @@ MonoBehaviour:
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
-  controlRate: 1500
-  ksmps: 32
+  controlRate: 750
+  ksmps: 64
   updateOutputBuffer: 0
   audioInputRoutes: []
   muteAudioInputRoutes: 0
   _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
-  _csoundFileGUID: 0e44b6580cd3347e6b86a56bda0a7c0f
-  _csoundString: "<Cabbage>\r\nform caption(\"XYPad Example\") size(400, 350), guiMode(\"queue\"),
-    colour(2, 145, 209) pluginId(\"def1\")\r\nxypad bounds(26, 20, 260, 250) channel(\"x\",
-    \"y\") rangeX(20, 800, 105) rangeY(20, 800, 200)\r\nrslider bounds(300, 190,
-    73, 71) channel(\"gain\") textColour(255, 255, 255, 255), text(\"Gain\") range(0,
-    2, 1.158, 1, 0.001)\r\nrslider bounds(300, 32, 73, 71) channel(\"wetDry\") textColour(255,
-    255, 255, 255), text(\"Wet/Dry\") range(0, 1, 0, 1, 0.001)\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
-    -d\r\n</CsOptions>e\r\n<CsInstruments>\r\n; Initialize the global variables.
-    \r\nksmps = 16\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\n; Rory Walsh 2021 \r\n; ported
-    to CsoundUnity by gb 2026\r\n;\r\n; License: CC0 1.0 Universal\r\n; You can copy,
-    modify, and distribute this work, \r\n; even for commercial purposes, all without
-    asking permission. \r\n\r\ninstr 1\r\n\r\n    kX = chnget:k(\"x\")\r\n    kY
-    = chnget:k(\"y\")\r\n    kSpeed = chnget:k(\"speed\")\r\n\r\n    aMod oscili
-    1, kX\r\n    aCar oscili aMod, kY\r\n\r\n    aDryL vco2 0.6, kX\r\n    aDryR
-    vco2 0.6, kY \r\n    aDelL comb aDryL, 5, 0.25\r\n    aDelR comb aDryR, 5, 0.75\r\n\r\n   
-    aPan jspline 1, .1, .5\r\n\r\n    aWetL, aWetR reverbsc (aDelL*aCar)*aPan, (aDelR*aCar)*(1-aPan),
-    .7, 1000\r\n\r\n    aL ntrpol aWetL, aDryL, chnget:k(\"wetDry\")\r\n    aR ntrpol
-    aWetR, aDryR, chnget:k(\"wetDry\")\r\n\r\n    outs aL*chnget:k(\"gain\"), aR*chnget:k(\"gain\")\r\n\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
-    Csound to run for about 7000 years...\r\nf0 z\r\n;starts instrument 1 and runs
-    it for a week\r\ni1 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>"
-  _csoundFileName: XYPad.csd
-  _csoundAsset: {fileID: 102900000, guid: 0e44b6580cd3347e6b86a56bda0a7c0f, type: 3}
+  _csoundFileGUID: 3ed84778cf19c4c0fa8ab62efc29eea5
+  _csoundString: "<Cabbage>\r\nform caption(\"Slider Test\"), size(300, 100)\r\n\r\nhslider
+    bounds(0, 0, 300, 50) range(20, 16000, 440, .5, 100) valuetextbox(1) text(\"Frequency\")
+    channel(\"freqSlider\") value(440) velocity(50)\r\n</Cabbage>\r\n\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
+    -d\r\n</CsOptions>\r\n<CsInstruments> \r\nsr \t= \t48000 \r\nksmps \t= \t64\r\nnchnls
+    \t= \t2\r\n0dbfs\t=\t1 \r\n\r\ninstr 1\r\na1 oscil .2, chnget:k(\"freqSlider\"),
+    1\r\nouts a1, a1\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf0 3600\r\nf1
+    0 4096 10 1\r\ni1 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+  _csoundFileName: SliderTest.csd
+  _csoundAsset: {fileID: 102900000, guid: 3ed84778cf19c4c0fa8ab62efc29eea5, type: 3}
   _channels:
   - type: form
     channel: 
     text: 
-    caption: XYPad Example
+    caption: Slider Test
     min: 0
     max: 0
     value: 0
@@ -221,33 +210,15 @@ MonoBehaviour:
     y: 0
     width: 0
     height: 0
-  - type: xypad
-    channel: x
-    text: 
+  - type: hslider
+    channel: freqSlider
+    text: Frequency
     caption: 
     min: 20
-    max: 800
-    value: 105
-    skew: 1
-    increment: 0.01
-    options: []
-    channelY: y
-    minY: 20
-    maxY: 800
-    value2: 200
-    x: 0
-    y: 0
-    width: 0
-    height: 0
-  - type: rslider
-    channel: gain
-    text: Gain
-    caption: 
-    min: 0
-    max: 2
-    value: 1.158
-    skew: 1
-    increment: 0.001
+    max: 16000
+    value: 440
+    skew: 0.5
+    increment: 100
     options: []
     channelY: 
     minY: 0
@@ -255,28 +226,10 @@ MonoBehaviour:
     value2: 0
     x: 0
     y: 0
-    width: 0
-    height: 0
-  - type: rslider
-    channel: wetDry
-    text: Wet/Dry
-    caption: 
-    min: 0
-    max: 1
-    value: 0
-    skew: 1
-    increment: 0.001
-    options: []
-    channelY: 
-    minY: 0
-    maxY: 0
-    value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    width: 300
+    height: 50
   _availableAudioChannels: []
-  _nchnls: 0
+  _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
   _drawCsoundString: 0
@@ -295,7 +248,7 @@ MonoBehaviour:
   _currentPresetLoadFolder: 
   _audioRoutingBufferSize: 512
   webGLAssetsList: []
-  _audioPath: 0
+  _audioPath: 1
   _generatorStartupDelay: 0
 --- !u!82 &638174092
 AudioSource:
@@ -394,85 +347,144 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1 &1322350654
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1322350655}
-  - component: {fileID: 1322350657}
-  - component: {fileID: 1322350656}
-  m_Layer: 5
-  m_Name: Info
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1322350655
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1322350654}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1326225469}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -30, y: -30}
-  m_SizeDelta: {x: 800, y: 60}
-  m_Pivot: {x: 1, y: 1}
---- !u!114 &1322350656
+--- !u!114 &638174093
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1322350654}
+  m_GameObject: {fileID: 638174089}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Script: {fileID: 11500000, guid: 8d46afbfd196d4d80a6a883a5395fbb3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 30
-    m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 3
-    m_MaxSize: 40
-    m_Alignment: 2
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: Drag the white rectangle to change x and y
---- !u!222 &1322350657
-CanvasRenderer:
+  m_EditorClassIdentifier: Assembly-CSharp::Csound.Unity.Samples.CsoundUnityLifecycleDemo
+  _csound: {fileID: 638174091}
+  _initDelay: 2
+  _stopDelay: 5
+  _restartDelay: 3
+--- !u!1001 &1322236591
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1326225469}
+    m_Modifications:
+    - target: {fileID: 340613808103570488, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: _csound
+      value: 
+      objectReference: {fileID: 638174091}
+    - target: {fileID: 340613808103570488, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: _channel
+      value: freqSlider
+      objectReference: {fileID: 0}
+    - target: {fileID: 340613808103570488, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: _smoothingTime
+      value: 0.612
+      objectReference: {fileID: 0}
+    - target: {fileID: 2489463585353550562, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_Name
+      value: CsoundUnity_Slider
+      objectReference: {fileID: 0}
+    - target: {fileID: 4676746219005275525, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 742.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 729.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5880424674339677485, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+--- !u!224 &1322236592 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5063146475622467317, guid: 53ba2b4f30b0b4d02a97f31850d8181e, type: 3}
+  m_PrefabInstance: {fileID: 1322236591}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1322350654}
-  m_CullTransparentMesh: 1
 --- !u!1 &1326225465
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,8 +579,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1322350655}
-  - {fileID: 1530710256}
+  - {fileID: 1322236592}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -644,11 +655,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!224 &1530710256 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-  m_PrefabInstance: {fileID: 394914694503669445}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1766599623
 GameObject:
   m_ObjectHideFlags: 0
@@ -741,115 +747,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &394914694503669445
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1326225469}
-    m_Modifications:
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1824613507310022280, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4556770237264149666, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: _csound
-      value: 
-      objectReference: {fileID: 638174091}
-    - target: {fileID: 4556770237264149666, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: _smoothingTime
-      value: 0.143
-      objectReference: {fileID: 0}
-    - target: {fileID: 8897290009851364749, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_Name
-      value: XYPad
-      objectReference: {fileID: 0}
-    - target: {fileID: 8897290009851364749, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: fb56b7e3659d1422a8613a8230c56e29, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
