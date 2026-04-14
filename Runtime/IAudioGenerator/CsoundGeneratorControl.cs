@@ -19,6 +19,11 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using Unity.IntegerTime;
 using UnityEngine.Audio;
+#if UNITY_EDITOR || UNITY_STANDALONE
+using MYFLT = System.Double;
+#else
+using MYFLT = System.Single;
+#endif
 
 namespace Csound.Unity
 {
@@ -80,7 +85,7 @@ namespace Csound.Unity
                 switch (cmd.Type)
                 {
                     case CsoundCommandType.SetControlChannel:
-                        bridge?.SetChannel(cmd.ChannelName, cmd.Value);
+                        bridge?.SetChannel(cmd.ChannelName, (MYFLT)cmd.Value);
                         break;
 
                     case CsoundCommandType.MidiMessage:

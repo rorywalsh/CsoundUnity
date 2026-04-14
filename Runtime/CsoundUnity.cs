@@ -47,6 +47,19 @@ namespace Csound.Unity
 {
     #region PUBLIC_CLASSES
 
+    /// <summary>
+    /// Implemented by <see cref="Csound.Unity.NativeAudioInput.NativeAudioInputManager"/>.
+    /// When assigned to <see cref="CsoundUnity.nativeAudioInputProvider"/>, this method
+    /// is called once per ksmps boundary (before <c>PerformKsmps</c>) on the Unity audio
+    /// thread to write captured microphone samples into the Csound spin buffer.
+    /// </summary>
+    public interface INativeAudioInputProvider
+    {
+        /// <param name="ksmpsLen">Number of sample frames in the current ksmps block.</param>
+        /// <param name="nchnlsInput">Number of Csound input channels (<c>nchnls_i</c>).</param>
+        void FillSpinBuffer(int ksmpsLen, uint nchnlsInput);
+    }
+
     [Serializable]
     /// <summary>
     /// Utility class for controller and channels
@@ -500,6 +513,15 @@ namespace Csound.Unity
         /// before every <c>PerformKsmps</c> call.
         /// </summary>
         [HideInInspector] public List<AudioInputRoute> audioInputRoutes = new List<AudioInputRoute>();
+
+        /// <summary>
+        /// Optional native audio input provider (e.g. <c>NativeAudioInputManager</c>).
+        /// When set, <see cref="INativeAudioInputProvider.FillSpinBuffer"/> is called once
+        /// per ksmps boundary on the audio thread, before <c>PerformKsmps</c>.
+        /// Assign on the main thread; reads on the audio thread are safe due to
+        /// the <c>volatile</c> qualifier.
+        /// </summary>
+        public volatile INativeAudioInputProvider nativeAudioInputProvider;
         /// <summary>When true, all Audio Input Routes are silenced without removing them.</summary>
         [HideInInspector] public bool muteAudioInputRoutes = false;
 

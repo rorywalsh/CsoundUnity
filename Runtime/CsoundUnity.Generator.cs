@@ -266,11 +266,18 @@ namespace Csound.Unity
             }
             _lastSpinFillOffset = bufferFrameOffset;
 
-            var spinInUse = audioInputRoutes != null && audioInputRoutes.Count > 0 || _spinNeedsClearing;
+            var spinInUse = (audioInputRoutes != null && audioInputRoutes.Count > 0)
+                            || _spinNeedsClearing
+                            || nativeAudioInputProvider != null;
             if (spinInUse)
             {
                 ClearSpin();
                 ApplyAudioInputRoutes(bufferFrameOffset, 0);
+
+                // Feed native microphone samples into spin — IAudioGenerator equivalent of
+                // the nativeAudioInputProvider call in ProcessBlock.
+                nativeAudioInputProvider?.FillSpinBuffer(
+                    (int)csound.GetKsmps(), csound.GetNchnlsInput());
             }
 
             if (_measureDspLoad)

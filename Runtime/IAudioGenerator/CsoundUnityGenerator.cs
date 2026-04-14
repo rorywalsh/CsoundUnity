@@ -22,6 +22,11 @@ using System.Collections.Generic;
 using Unity.IntegerTime;
 using UnityEngine;
 using UnityEngine.Audio;
+#if UNITY_EDITOR || UNITY_STANDALONE
+using MYFLT = System.Double;
+#else
+using MYFLT = System.Single;
+#endif
 
 namespace Csound.Unity
 {
@@ -129,7 +134,7 @@ namespace Csound.Unity
         /// identical to how <c>CsoundUnity.SetChannel</c> works.
         /// </summary>
         public void SetChannel(string channel, double value)
-            => _bridge?.SetChannel(channel, value);
+            => _bridge?.SetChannel(channel, (MYFLT)value);
 
         /// <summary>
         /// Sends a raw MIDI message to Csound directly on the bridge.
