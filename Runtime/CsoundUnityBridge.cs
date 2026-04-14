@@ -429,6 +429,10 @@ namespace Csound.Unity
         public virtual void OnApplicationQuit()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
+            // Send "e" (end-score) before destroying so Csound stops all indefinitely-running
+            // instruments (i x 0 -1 pattern) before csoundDestroy is called.
+            // Without this, csoundDestroy can block waiting for score cleanup in Csound 7.
+            Csound6.NativeMethods.csoundEventString(csound, "e", 0);
             Csound6.NativeMethods.csoundDestroyMessageBuffer(csound);
             Csound6.NativeMethods.csoundDestroy(csound);
 #endif
@@ -577,6 +581,7 @@ namespace Csound.Unity
         CsoundWebGL.Csound6.NativeMethods.csoundSetChannel(_assignedInstanceId, channel, value);
 #endif
         }
+
 
         /// <summary>
         /// Sets the value of a named Csound string channel.
