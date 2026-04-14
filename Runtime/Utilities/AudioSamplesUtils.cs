@@ -356,20 +356,6 @@ namespace Csound.Unity.Utilities
         }
 
         /// <summary>
-        /// Computes the Root Mean Square (RMS) amplitude of a MYFLT sample buffer.
-        /// Returns 0 if the buffer is null or empty.
-        /// </summary>
-        /// <param name="buffer">The MYFLT sample buffer to analyse.</param>
-        /// <returns>The RMS amplitude as a non-negative float, or 0 if the buffer is null or empty.</returns>
-        public static float Rms(MYFLT[] buffer)
-        {
-            if (buffer == null || buffer.Length == 0) return 0f;
-            double sum = 0;
-            foreach (var s in buffer) sum += s * s;
-            return (float)Math.Sqrt(sum / buffer.Length);
-        }
-
-        /// <summary>
         /// Returns the peak (maximum absolute value) of a float sample buffer.
         /// Returns 0 if the buffer is null or empty.
         /// </summary>
@@ -387,8 +373,26 @@ namespace Csound.Unity.Utilities
             return peak;
         }
 
+#if UNITY_EDITOR || UNITY_STANDALONE
+        // On Android/iOS MYFLT == float, so these overloads would duplicate the float[] versions above.
+        // Only compile them on platforms where MYFLT is double.
+
         /// <summary>
-        /// Returns the peak (maximum absolute value) of a MYFLT sample buffer.
+        /// Computes the Root Mean Square (RMS) amplitude of a MYFLT (double) sample buffer.
+        /// Returns 0 if the buffer is null or empty.
+        /// </summary>
+        /// <param name="buffer">The MYFLT sample buffer to analyse.</param>
+        /// <returns>The RMS amplitude as a non-negative float, or 0 if the buffer is null or empty.</returns>
+        public static float Rms(MYFLT[] buffer)
+        {
+            if (buffer == null || buffer.Length == 0) return 0f;
+            double sum = 0;
+            foreach (var s in buffer) sum += s * s;
+            return (float)Math.Sqrt(sum / buffer.Length);
+        }
+
+        /// <summary>
+        /// Returns the peak (maximum absolute value) of a MYFLT (double) sample buffer.
         /// Returns 0 if the buffer is null or empty.
         /// </summary>
         /// <param name="buffer">The MYFLT sample buffer to analyse.</param>
@@ -404,6 +408,7 @@ namespace Csound.Unity.Utilities
             }
             return peak;
         }
+#endif
 
         #endregion Public API
 
