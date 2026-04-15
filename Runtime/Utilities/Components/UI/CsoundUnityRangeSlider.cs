@@ -10,12 +10,16 @@ namespace Csound.Unity.Utilities.Components.UI
     /// using two independent draggable handles on a shared track.
     /// <para>
     /// <b>Widget</b> mode: reads channel names, range, and default values automatically from a
-    /// Cabbage <c>rangeslider</c> widget in the CSD. Assign the <em>min</em> channel name
+    /// Cabbage <c>hrange</c> or <c>vrange</c> widget in the CSD. Assign the <em>min</em> channel name
     /// (first channel in <c>channel("minChan","maxChan")</c>) to <see cref="_channel"/>.
     /// </para>
     /// <para>
     /// <b>Manual</b> mode: specify both channel names, the absolute range, and default values
     /// directly in the inspector. Works with any two Csound channels — no CSD widget required.
+    /// </para>
+    /// <para>
+    /// <b>Orientation:</b> enable <see cref="_vertical"/> for a vertical track (bottom = min, top = max).
+    /// The <c>CsoundUnity_VRangeSlider</c> prefab has this enabled by default.
     /// </para>
     /// <para>
     /// <b>Prefab setup:</b> the RangeSlider GameObject needs a background track image.
@@ -66,10 +70,15 @@ namespace Csound.Unity.Utilities.Components.UI
         [Tooltip("Initial value for the max handle (Manual mode).")]
         [SerializeField] float _defaultMax = 1f;
 
+        [Header("Orientation")]
+        [Tooltip("When enabled the slider runs vertically: bottom = min, top = max. " +
+                 "Match this to the prefab layout (hrange → false, vrange → true).")]
+        [SerializeField] bool _vertical = false;
+
         [Header("UI References")]
-        [Tooltip("RectTransform that acts as the min (left) handle. Its anchorMin/Max are driven automatically.")]
+        [Tooltip("RectTransform that acts as the min (left/bottom) handle. Its anchorMin/Max are driven automatically.")]
         [SerializeField] RectTransform _handleMin;
-        [Tooltip("RectTransform that acts as the max (right) handle. Its anchorMin/Max are driven automatically.")]
+        [Tooltip("RectTransform that acts as the max (right/top) handle. Its anchorMin/Max are driven automatically.")]
         [SerializeField] RectTransform _handleMax;
         [Tooltip("Optional fill RectTransform that spans between the two handles. Its anchors are driven automatically.")]
         [SerializeField] RectTransform _fill;
@@ -155,7 +164,7 @@ namespace Csound.Unity.Utilities.Components.UI
         private float             _velocityMax;
         private float             _increment;
         private ActiveHandle      _activeHandle = ActiveHandle.None;
-        private float             _panStartLocalX;
+        private float             _panStartLocal;
         private float             _panStartMin;
         private float             _panStartMax;
         private bool              _isInitialized;
@@ -212,9 +221,9 @@ namespace Csound.Unity.Utilities.Components.UI
                 // Record anchor point for pan delta calculation
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(
                     _rect, eventData.position, eventData.pressEventCamera, out Vector2 startLocal);
-                _panStartLocalX = startLocal.x;
-                _panStartMin    = _minValue;
-                _panStartMax    = _maxValue;
+                _panStartLocal = _vertical ? startLocal.y : startLocal.x;
+                _panStartMin   = _minValue;
+                _panStartMax   = _maxValue;
             }
             else
             {
@@ -324,16 +333,31 @@ namespace Csound.Unity.Utilities.Components.UI
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 _rect, eventData.position, eventData.pressEventCamera, out Vector2 local);
 
-            float width = _rect.rect.width;
-            if (width <= 0f) return ActiveHandle.Min;
+            if (_vertical)
+            {
+                float height = _rect.rect.height;
+                if (height <= 0f) return ActiveHandle.Min;
 
-            float clickX = local.x - _rect.rect.xMin;
-            float minX   = Mathf.InverseLerp(_absMin, _absMax, _minValue) * width;
-            float maxX   = Mathf.InverseLerp(_absMin, _absMax, _maxValue) * width;
+                float clickY = local.y - _rect.rect.yMin;
+                float minY   = Mathf.InverseLerp(_absMin, _absMax, _minValue) * height;
+                float maxY   = Mathf.InverseLerp(_absMin, _absMax, _maxValue) * height;
 
-            // Within hit radius of either handle → move that handle
-            if (clickX <= minX + _handleHitRadius) return ActiveHandle.Min;
-            if (clickX >= maxX - _handleHitRadius) return ActiveHandle.Max;
+                if (clickY <= minY + _handleHitRadius) return ActiveHandle.Min;
+                if (clickY >= maxY - _handleHitRadius) return ActiveHandle.Max;
+            }
+            else
+            {
+                float width = _rect.rect.width;
+                if (width <= 0f) return ActiveHandle.Min;
+
+                float clickX = local.x - _rect.rect.xMin;
+                float minX   = Mathf.InverseLerp(_absMin, _absMax, _minValue) * width;
+                float maxX   = Mathf.InverseLerp(_absMin, _absMax, _maxValue) * width;
+
+                if (clickX <= minX + _handleHitRadius) return ActiveHandle.Min;
+                if (clickX >= maxX - _handleHitRadius) return ActiveHandle.Max;
+            }
+
             // Strictly between the two handles → pan the whole range
             return ActiveHandle.Both;
         }
@@ -347,10 +371,11 @@ namespace Csound.Unity.Utilities.Components.UI
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 _rect, eventData.position, eventData.pressEventCamera, out Vector2 local);
 
-            float width = _rect.rect.width;
-            if (width <= 0f) return;
+            float size = _vertical ? _rect.rect.height : _rect.rect.width;
+            if (size <= 0f) return;
 
-            float deltaNorm  = (local.x - _panStartLocalX) / width;
+            float localPos   = _vertical ? local.y : local.x;
+            float deltaNorm  = (localPos - _panStartLocal) / size;
             float deltaValue = deltaNorm * (_absMax - _absMin);
             float rangeWidth = _panStartMax - _panStartMin;
 
@@ -380,10 +405,12 @@ namespace Csound.Unity.Utilities.Components.UI
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 _rect, eventData.position, eventData.pressEventCamera, out Vector2 local);
 
-            float width = _rect.rect.width;
-            if (width <= 0f) return;
+            float size   = _vertical ? _rect.rect.height : _rect.rect.width;
+            float origin = _vertical ? _rect.rect.yMin   : _rect.rect.xMin;
+            float pos    = _vertical ? local.y            : local.x;
+            if (size <= 0f) return;
 
-            float norm  = Mathf.Clamp01((local.x - _rect.rect.xMin) / width);
+            float norm  = Mathf.Clamp01((pos - origin) / size);
             float value = Mathf.Lerp(_absMin, _absMax, norm);
 
             value = Quantize(value);
@@ -411,18 +438,32 @@ namespace Csound.Unity.Utilities.Components.UI
             float minNorm = Mathf.InverseLerp(_absMin, _absMax, _minValue);
             float maxNorm = Mathf.InverseLerp(_absMin, _absMax, _maxValue);
 
-            // Move handles by updating their horizontal anchors.
+            // Move handles by updating their anchors along the track axis.
             // Handles should have pivot = (0.5, 0.5) and anchoredPosition = zero;
             // the component drives anchorMin/Max to position them along the track.
-            if (_handleMin != null) _handleMin.anchorMin = _handleMin.anchorMax = new Vector2(minNorm, 0.5f);
-            if (_handleMax != null) _handleMax.anchorMin = _handleMax.anchorMax = new Vector2(maxNorm, 0.5f);
-
-            // Stretch fill between the two handle positions.
-            if (_fill != null)
+            if (_vertical)
             {
-                _fill.anchorMin = new Vector2(minNorm, 0f);
-                _fill.anchorMax = new Vector2(maxNorm, 1f);
-                _fill.offsetMin = _fill.offsetMax = Vector2.zero;
+                if (_handleMin != null) _handleMin.anchorMin = _handleMin.anchorMax = new Vector2(0.5f, minNorm);
+                if (_handleMax != null) _handleMax.anchorMin = _handleMax.anchorMax = new Vector2(0.5f, maxNorm);
+
+                if (_fill != null)
+                {
+                    _fill.anchorMin = new Vector2(0f, minNorm);
+                    _fill.anchorMax = new Vector2(1f, maxNorm);
+                    _fill.offsetMin = _fill.offsetMax = Vector2.zero;
+                }
+            }
+            else
+            {
+                if (_handleMin != null) _handleMin.anchorMin = _handleMin.anchorMax = new Vector2(minNorm, 0.5f);
+                if (_handleMax != null) _handleMax.anchorMin = _handleMax.anchorMax = new Vector2(maxNorm, 0.5f);
+
+                if (_fill != null)
+                {
+                    _fill.anchorMin = new Vector2(minNorm, 0f);
+                    _fill.anchorMax = new Vector2(maxNorm, 1f);
+                    _fill.offsetMin = _fill.offsetMax = Vector2.zero;
+                }
             }
 
             if (_valueMinText != null) _valueMinText.text = $"{_minValue:F2}";

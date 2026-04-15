@@ -163,7 +163,7 @@ GameObject:
   - component: {fileID: 1530105100325346788}
   - component: {fileID: 340613808103570488}
   m_Layer: 5
-  m_Name: CsoundUnity_Slider
+  m_Name: CsoundUnity_HSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

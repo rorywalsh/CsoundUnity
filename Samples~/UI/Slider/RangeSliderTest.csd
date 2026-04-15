@@ -1,9 +1,11 @@
 <Cabbage>
-form caption("Range Slider Test") size(460, 200)
+form caption("Range Slider Test") size(500, 230)
 
 hrange bounds(10, 10, 440, 40) channel("freqLo", "freqHi") range(80, 8000, 300:2400, 0.35, 1) text("Filter range (Hz)")
 hrange bounds(10, 70, 440, 40) channel("noteLo", "noteHi") range(36, 96, 48:72, 1, 1) text("Arp note range (MIDI)")
-hslider bounds(10, 130, 440, 40) channel("gain") range(0, 1, 0.6, 1, 0.01) text("Gain")
+vrange bounds(450, 10, 50, 200) channel("rateLo", "rateHi") range(0.05, 0.30, 0.1:0.25, 1, 0.001) text("Random Rate")
+hslider bounds(10, 130, 400, 40) channel("gain") range(0, 1, 0.6, 1, 0.01) text("Gain")
+
 </Cabbage>
 
 <CsoundSynthesizer>
@@ -26,6 +28,7 @@ instr 1
     kLo  chnget "freqLo"
     kHi  chnget "freqHi"
     kGain chnget "gain"
+    
 
     ; Guard: ensure Hi > Lo to avoid zero/negative bandwidth
     kHi  = (kHi > kLo + 1 ? kHi : kLo + 1)
@@ -52,12 +55,15 @@ instr 2
     kLo   chnget "noteLo"
     kHi   chnget "noteHi"
     kGain chnget "gain"
-
+    kRateLo chnget "rateLo"
+    kRateHi chnget "rateHi"
+    
+    kRate random kRateLo, kRateHi
+    
     ; Guard: ensure Hi >= Lo
     kHi = (kHi >= kLo ? kHi : kLo)
 
     ; Trigger a new grain every kRate seconds
-    kRate  = 0.18
     kTrig  metro 1 / kRate
 
     if kTrig == 1 then
