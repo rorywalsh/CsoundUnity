@@ -122,16 +122,6 @@ namespace Csound.Unity.NativeAudioInput
 
         private bool _isInitialized = false;
 
-        // Diagnostic counter: incremented (atomically) every time FillSpinBuffer is called.
-        // Stays at 0 if the spin-fill callback is never fired (IAG path not wired up).
-        private long _fillCount;
-
-        /// <summary>
-        /// Number of times <see cref="FillSpinBuffer"/> has been called since the last <see cref="Open"/>.
-        /// If <see cref="FramesCaptured"/> increments but this stays at 0, the IAG spin-fill
-        /// callback is not wired up correctly and native audio will never reach Csound.
-        /// </summary>
-        public long FillCount => System.Threading.Interlocked.Read(ref _fillCount);
 
 #if UNITY_ANDROID
         private AndroidAudioInputFallback _fallback;
@@ -257,7 +247,6 @@ namespace Csound.Unity.NativeAudioInput
             _sampleRate            = AudioSettings.outputSampleRate;
             _zerdbfs               = (float)_csound.Get0dbfs();
             _openedChannelCount    = _channelCount;
-            System.Threading.Interlocked.Exchange(ref _fillCount, 0);
 
             // Allocate the read buffer for the audio thread (ksmps × channelCount).
             // ksmps can change after Restart(); the buffer is reallocated if needed inside FillSpinBuffer.
@@ -347,7 +336,6 @@ namespace Csound.Unity.NativeAudioInput
         public void FillSpinBuffer(int ksmpsLen, uint nchnlsInput)
         {
             if (ksmpsLen <= 0) return;
-            System.Threading.Interlocked.Increment(ref _fillCount);
 
             // Resize the read buffer if ksmps changed (e.g. after CsoundUnity.Restart).
             // This allocation is intentionally allowed here because it only happens on
