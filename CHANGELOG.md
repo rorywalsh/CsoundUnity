@@ -6,13 +6,15 @@
 - [Add] IAudioGenerator audio path for Unity 6+: drives the AudioSource directly via CsoundUnity.Process, set as default on Unity 6 (OnAudioFilterRead remains available)
 - [Add] Lifecycle API: initializeOnAwake toggle, Initialize(), Stop(), Restart()
 - [Add] CsoundUnityMidiInput: platform-agnostic MIDI input component (macOS/iOS/visionOS via CoreMIDI, Android via android.media.midi API 23+)
-- [Add] Waveform, spectrum and Lissajous audio monitor in inspector (play mode, with zoom sliders)
+- [Add] Waveform, spectrum, oscilloscope and Lissajous audio monitor in inspector (play mode, with zoom sliders)
 - [Add] OutputBuffer and OnCsoundPerformKsmps callback
 - [Add] MusicUtils: music theory utilities (scales, chords, arpeggios, Euclidean rhythms)
 - [Add] Utility scripts: AudioDisplay, FFTUtils, TableLoader, WriteAudioFileUtils, CopyFilesToPersistentDataPath, RemapUtils
 - [Add] AudioSamplesUtils.Rms() and Peak() helpers
 - [Add] CsoundUnityVectorMorph: bilinear blending between four CsoundUnityPresets with interactive editor
-- [Add] UI components: CsoundUnitySlider, CsoundUnityButton, CsoundUnityToggle, CsoundUnityDropdown, CsoundUnityXYPad with prefabs
+- [Add] UI components: CsoundUnitySlider, CsoundUnityButton, CsoundUnityToggle, CsoundUnityDropdown, CsoundUnityXYPad, CsoundUnityKeyboard, CsoundUnityLabel, CsoundUnityMeter, CsoundUnityNSlider, CsoundUnityPianoKey, CsoundUnityRangeSlider with prefabs
+- [Add] NativeAudioInput: low-latency multichannel audio input for macOS (CoreAudio/AUHAL) and Android (AAudio exclusive mode, 4ms @ 48kHz)
+- [Add] SampleInputSystemFixer: editor script that automatically patches imported sample scenes for Unity's new Input System
 - [Add] xypad Cabbage widget support in parser and inspector
 - [Add] CSD refresh button and CREATE from template button in inspector
 - [Add] Many new samples across new and existing categories: Timelines, UI, Samplers, Collisions, Miscellaneous, Presets, Engines
@@ -24,6 +26,9 @@
 - [Update] CsoundUnitySlider now applies skew (logarithmic/exponential mapping) and increment (stepped values) from ChannelController
 - [Fix] CsoundFileWatcher: handle atomic saves from modern editors
 - [Fix] Presets: AssetDatabase.ImportAsset crash on JSON save, null checks in SetPreset/UpdateAssignablePresets, "To JSON" now saves alongside the SO asset by default, JSON list filtered to current CSD
+- [Fix] Cabbage parser: caption/text truncation with multiple quoted attributes on same line; whitespace before '(' not recognised
+- [Fix] _channelsIndexDict wrong index when form widget is at position 0; stale entries after Domain Reload
+- [Fix] Hang on exit: send end-score event before csoundDestroy to stop indefinitely-running instruments cleanly
 
 ## [3.5.2] - 2025-04-28
 
