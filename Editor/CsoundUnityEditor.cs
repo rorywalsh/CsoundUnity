@@ -763,6 +763,23 @@ namespace Csound.Unity
                                     csoundUnity.SetChannel(channel, chanValue.floatValue);
                             }
                         }
+                        else if (type == "encoder")
+                        {
+                            var increment = cc.FindPropertyRelative("increment").floatValue;
+
+                            // Encoder: unbounded FloatField — no min/max clamp.
+                            // Dragging the label increments/decrements by the encoder's step size.
+                            EditorGUI.BeginChangeCheck();
+                            var newValue = EditorGUILayout.FloatField(new GUIContent(label, channel), chanValue.floatValue);
+                            if (EditorGUI.EndChangeCheck())
+                            {
+                                if (increment > 1e-5f)
+                                    newValue = Mathf.Round(newValue / increment) * increment;
+                                chanValue.floatValue = newValue;
+                                if (Application.isPlaying && csoundUnity != null)
+                                    csoundUnity.SetChannel(channel, chanValue.floatValue);
+                            }
+                        }
                         else if (type == "hrange" || type == "vrange")
                         {
                             var minChan   = channel;

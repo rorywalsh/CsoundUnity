@@ -1759,8 +1759,107 @@ namespace Csound.Unity
 
                     locaChannelControllers.Add(controller);
                 }
+                else if (control == "encoder")
+                {
+                    // Cabbage encoder: endless rotary controller with no fixed min/max.
+                    // Syntax: encoder bounds(x,y,w,h) channel("name")
+                    //                 increment(step) repeatInterval(ms) popupPrefix("text")
+                    var controller = new CsoundChannelController();
+                    controller.type = control;
+
+                    ParseBounds(trimmd, controller);
+
+                    // channel("name")
+                    if (trimmd.IndexOf("channel(") > -1)
+                    {
+                        var chan = trimmd.Substring(trimmd.IndexOf("channel(") + 9);
+                        chan = chan.Substring(0, chan.IndexOf(")") - 1);
+                        controller.channel = chan;
+                    }
+
+                    // increment(step) — step size per encoder tick
+                    int incIdx = trimmd.IndexOf("increment(", StringComparison.OrdinalIgnoreCase);
+                    if (incIdx > -1)
+                    {
+                        var incStr = trimmd.Substring(incIdx + 10);
+                        incStr = incStr.Substring(0, incStr.IndexOf(")")).Trim();
+                        if (float.TryParse(incStr, NumberStyles.Float, CultureInfo.InvariantCulture, out float inc))
+                            controller.increment = inc;
+                    }
+
+                    // value(initial) — optional starting value
+                    if (trimmd.IndexOf("value(") > -1)
+                    {
+                        var valStr = trimmd.Substring(trimmd.IndexOf("value(") + 6);
+                        valStr = valStr.Substring(0, valStr.IndexOf(")")).Trim();
+                        if (float.TryParse(valStr, NumberStyles.Float, CultureInfo.InvariantCulture, out float val))
+                            controller.value = val;
+                    }
+
+                    // text("label") — display label, takes priority over popupPrefix
+                    if (trimmd.IndexOf("text(") > -1)
+                    {
+                        var txt = trimmd.Substring(trimmd.IndexOf("text(") + 6);
+                        var closeQ = txt.IndexOf("\"");
+                        txt = closeQ > -1
+                            ? txt.Substring(0, closeQ)
+                            : txt.Substring(0, txt.IndexOf(")"));
+                        controller.text = txt.Replace("\"", "").Trim();
+                    }
+
+                    // popupPrefix("text") — fallback label if text() is absent
+                    if (string.IsNullOrEmpty(controller.text))
+                    {
+                        int ppIdx = trimmd.IndexOf("popupPrefix(", StringComparison.OrdinalIgnoreCase);
+                        if (ppIdx > -1)
+                        {
+                            var pp = trimmd.Substring(ppIdx + 13);
+                            var closeQ = pp.IndexOf("\"");
+                            pp = closeQ > -1
+                                ? pp.Substring(0, closeQ)
+                                : pp.Substring(0, pp.IndexOf(")"));
+                            controller.text = pp.Replace("\"", "").Trim();
+                        }
+                    }
+
+                    locaChannelControllers.Add(controller);
+                }
+                else if (control == "form")
+                {
+                    // Cabbage form: defines the plugin window size and caption.
+                    // Syntax: form caption("Title") size(width, height) ...
+                    // size() is used instead of bounds() for the form widget.
+                    var controller = new CsoundChannelController();
+                    controller.type = control;
+
+                    if (trimmd.IndexOf("caption(") > -1)
+                    {
+                        var cap = trimmd.Substring(trimmd.IndexOf("caption(") + 9);
+                        var closeQ = cap.IndexOf("\"");
+                        cap = closeQ > -1
+                            ? cap.Substring(0, closeQ)
+                            : cap.Substring(0, cap.IndexOf(")"));
+                        controller.caption = cap.Replace("\"", "").Trim();
+                    }
+
+                    // size(width, height) — plugin window dimensions
+                    int sizeIdx = trimmd.IndexOf("size(", StringComparison.OrdinalIgnoreCase);
+                    if (sizeIdx > -1)
+                    {
+                        var inner = trimmd.Substring(sizeIdx + 5);
+                        inner = inner.Substring(0, inner.IndexOf(")"));
+                        var tokens = inner.Split(',');
+                        if (tokens.Length >= 2)
+                        {
+                            if (int.TryParse(tokens[0].Trim(), out var w)) controller.width  = w;
+                            if (int.TryParse(tokens[1].Trim(), out var h)) controller.height = h;
+                        }
+                    }
+
+                    locaChannelControllers.Add(controller);
+                }
                 else if (control.Contains("slider") || control.Contains("button") || control.Contains("checkbox")
-                    || control.Contains("groupbox") || control.Contains("form") || control.Contains("combobox")
+                    || control.Contains("groupbox") || control.Contains("combobox")
                     || control.Contains("label") || control == "meter")
                 {
                     var controller = new CsoundChannelController();
