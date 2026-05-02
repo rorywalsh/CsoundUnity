@@ -161,6 +161,22 @@ namespace Csound.Unity
         partial void OnInitializedGenerator()
         {
             if (_audioPath != AudioPath.IAudioGenerator) return;
+
+            // processClipAudio feeds an AudioSource clip into Csound's spin buffer via
+            // OnAudioFilterRead.  In IAudioGenerator mode Unity does not route clip audio
+            // through the generator, so the two features are mutually exclusive.
+            // Having both a clip and a generator on the same AudioSource causes Unity's
+            // internal audio engine to deadlock — fall back to OAFR silently with a warning.
+            if (processClipAudio && audioSource && audioSource.clip)
+            {
+                Debug.LogWarning("[CsoundUnity] processClipAudio with an AudioClip assigned is not " +
+                                 "supported in IAudioGenerator mode (Unity's audio engine does not " +
+                                 "route clip audio through a generator). " +
+                                 "Falling back to OnAudioFilterRead path so the clip is processed correctly. " +
+                                 "To use IAudioGenerator, either clear the AudioSource clip or disable processClipAudio.");
+                return; // Skip InitGenerator — OAFR path remains active and handles the clip.
+            }
+
             InitGenerator();
         }
 
@@ -222,7 +238,7 @@ namespace Csound.Unity
             yield return null;
             if (delay > 0f)
                 yield return new UnityEngine.WaitForSeconds(delay);
-            if (audioSource != null && _generatorInstanceId >= 0)
+            if (audioSource && _generatorInstanceId >= 0)
                 audioSource.Play();
         }
 
@@ -239,7 +255,7 @@ namespace Csound.Unity
             // connections triggers a null-pointer crash inside
             // FMOD::SystemI::flushDSPConnectionRequests.  Unity/FMOD will clean
             // up the generator naturally as part of their own shutdown sequence.
-            if (audioSource != null && !_quitting)
+            if (audioSource && !_quitting)
                 audioSource.generator = null;
         }
 
@@ -280,12 +296,10 @@ namespace Csound.Unity
                     (int)csound.GetKsmps(), csound.GetNchnlsInput());
             }
 
-            if (_measureDspLoad)
-            {
-                _dspSw.Stop();
-                _dspAccumTicks += _dspSw.ElapsedTicks;
-                _dspSw.Restart();
-            }
+            if (!_measureDspLoad) return;
+            _dspSw.Stop();
+            _dspAccumTicks += _dspSw.ElapsedTicks;
+            _dspSw.Restart();
         }
 
         /// <summary>
@@ -308,7 +322,7 @@ namespace Csound.Unity
                 _dspSw.Stop();
                 _dspAccumTicks += _dspSw.ElapsedTicks;
 
-                int ksmps = (int)GetKsmps();
+                var ksmps = (int)GetKsmps();
                 if (ksmps > 0 && bufferFrameOffset + ksmps >= bufferSize)
                 {
                     var elapsedSec = _dspAccumTicks / (double)System.Diagnostics.Stopwatch.Frequency;
@@ -319,7 +333,7 @@ namespace Csound.Unity
             // Keep channel lists in sync (adds/removes queued by AddAudioChannel / RemoveAudioChannel).
             UpdateAvailableAudioChannels();
 
-            int ksmpsLen = (int)GetKsmps();
+            var ksmpsLen = (int)GetKsmps();
 
             foreach (var chanName in availableAudioChannels)
             {
@@ -334,7 +348,7 @@ namespace Csound.Unity
                 // Write the ksmps samples into the correct frame range of the DSP buffer.
                 var tempBuf = namedAudioChannelTempBufferDict[chanName];
                 var dataArr = namedAudioChannelDataDict[chanName];
-                for (int j = 0; j < ksmpsLen && j < tempBuf.Length && (bufferFrameOffset + j) < dataArr.Length; j++)
+                for (var j = 0; j < ksmpsLen && j < tempBuf.Length && (bufferFrameOffset + j) < dataArr.Length; j++)
                     dataArr[bufferFrameOffset + j] = tempBuf[j];
             }
 
@@ -342,12 +356,12 @@ namespace Csound.Unity
             if (_spoutChannelNames.Length > 0)
             {
                 var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
-                for (int ch = 0; ch < _spoutChannelNames.Length; ch++)
+                for (var ch = 0; ch < _spoutChannelNames.Length; ch++)
                 {
                     if (!namedAudioChannelDataDict.TryGetValue(_spoutChannelNames[ch], out var spoutBuf)) continue;
-                    for (int k = 0; k < ksmpsLen; k++)
+                    for (var k = 0; k < ksmpsLen; k++)
                     {
-                        int frame = bufferFrameOffset + k;
+                        var frame = bufferFrameOffset + k;
                         if (frame >= spoutBuf.Length) break;
                         spoutBuf[frame] = GetOutputSample(k, ch) * inv0dbfs;
                     }

@@ -53,6 +53,26 @@ The IAudioGenerator path fires two additional callbacks per audio block, accessi
 
 These are internal hooks used by the routing system; most users will not need to interact with them directly.
 
+### Limitations ###
+
+#### processClipAudio not supported ####
+
+The **Process Clip Audio** option (which feeds an `AudioSource` clip into Csound's spin buffer) is **not compatible** with the IAudioGenerator path.
+
+In `OnAudioFilterRead` mode, Unity passes the clip's decoded samples in the `data` array of the filter callback, where CsoundUnity can stage them into the spin buffer before each `PerformKsmps`. In IAudioGenerator mode, Unity does not route clip audio through the generator — there is no equivalent data array available.
+
+If `processClipAudio` is enabled **and** the `AudioSource` has a clip assigned, CsoundUnity will automatically fall back to `OnAudioFilterRead` and log a warning:
+
+```
+[CsoundUnity] processClipAudio with an AudioClip assigned is not supported in
+IAudioGenerator mode. Falling back to OnAudioFilterRead path ...
+```
+
+To use IAudioGenerator and still process external audio, use **Audio Input Routing** instead: route audio from another `CsoundUnity` instance into the spin buffer via the Audio Input Routes list. See [Audio Input Routing](audio_input_routing.md) for details. 
+Otherwise you can load samples from an `AudioClip` using the `TableLoader` component (under Utilities/Components), and use the newly created table on the Csound side.
+The other option is to copy the audio files in the persistent data folder and set the SFDIR to point there. Csound will be able to load the files and process them using opcodes like `diskin`. 
+
+
 ### Compatibility ###
 
 `IAudioGenerator` features are compiled only on Unity 6 (`#if UNITY_6000_0_OR_NEWER`). On earlier Unity versions, CsoundUnity automatically falls back to `OnAudioFilterRead` regardless of the serialised `AudioPath` value.
