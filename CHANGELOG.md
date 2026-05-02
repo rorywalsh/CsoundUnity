@@ -12,8 +12,10 @@
 - [Add] Utility scripts: AudioDisplay, FFTUtils, TableLoader, WriteAudioFileUtils, CopyFilesToPersistentDataPath, RemapUtils
 - [Add] AudioSamplesUtils.Rms() and Peak() helpers
 - [Add] CsoundUnityVectorMorph: bilinear blending between four CsoundUnityPresets with interactive editor
-- [Add] UI components: CsoundUnitySlider, CsoundUnityButton, CsoundUnityToggle, CsoundUnityDropdown, CsoundUnityXYPad, CsoundUnityKeyboard, CsoundUnityLabel, CsoundUnityMeter, CsoundUnityNSlider, CsoundUnityPianoKey, CsoundUnityRangeSlider with prefabs
+- [Add] UI components: CsoundUnitySlider (hslider/vslider), CsoundUnityKnob (rslider — bounded rotary knob), CsoundUnityEncoder (encoder — endless rotary, unbounded), CsoundUnityButton, CsoundUnityToggle, CsoundUnityDropdown, CsoundUnityXYPad, CsoundUnityKeyboard, CsoundUnityLabel, CsoundUnityMeter, CsoundUnityNSlider, CsoundUnityPianoKey, CsoundUnityRangeSlider (horizontal and vertical) with prefabs
+- [Add] UI auto-layout: **Create UI** and **Update UI** buttons in the CsoundUnity inspector generate a Unity Canvas from Cabbage bounds data; `CsoundUnityUISettings` ScriptableObject maps widget types to prefabs and controls font scale
 - [Add] NativeAudioInput: low-latency multichannel audio input for macOS (CoreAudio/AUHAL) and Android (AAudio exclusive mode, 4ms @ 48kHz)
+- [Add] Cabbage parser: encoder widget (channel, increment, value, text/popupPrefix); form widget (size → canvas dimensions)
 - [Add] SampleInputSystemFixer: editor script that automatically patches imported sample scenes for Unity's new Input System
 - [Add] xypad Cabbage widget support in parser and inspector
 - [Add] CSD refresh button and CREATE from template button in inspector
