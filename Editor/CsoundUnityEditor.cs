@@ -113,6 +113,12 @@ namespace Csound.Unity
 
         private const string CsdTemplatePath = "Packages/com.csound.csoundunity/Editor/Templates/CsoundTemplate.csd";
 
+        // UI Layout section
+        private bool _drawUILayout = false;
+        private CsoundUnityUISettings _uiSettings;
+        private const string UISettingsDefaultPath = "Assets/CsoundUnityUISettings.asset";
+        private const string PrefabsFolder = "Packages/com.csound.csoundunity/Runtime/Utilities/Components/Prefabs";
+
         // Set by the background CsoundWorker scan; consumed on the main thread via EditorApplication.update.
         private volatile List<string> _pendingAudioChannels = null;
         // Full channel dictionary from the last scan — used for cross-checking against the Cabbage parser.
@@ -177,6 +183,14 @@ namespace Csound.Unity
             m_muteAudioInputRoutes  = this.serializedObject.FindProperty("muteAudioInputRoutes");
             m_webGLAssetsList      = this.serializedObject.FindProperty("webGLAssetsList");
             m_measureDspLoad       = this.serializedObject.FindProperty("_measureDspLoad");
+
+            // Restore UI settings reference across domain reloads / inspector rebuilds.
+            if (_uiSettings == null)
+            {
+                var savedPath = SessionState.GetString("CsoundUnityEditor.UISettingsPath", "");
+                if (!string.IsNullOrEmpty(savedPath))
+                    _uiSettings = AssetDatabase.LoadAssetAtPath<CsoundUnityUISettings>(savedPath);
+            }
 
             // displayHeader = false: the foldout in DrawAudioInputRoutes acts as the header.
             audioInputRoutesList = new ReorderableList(serializedObject, m_audioInputRoutes,
@@ -329,6 +343,10 @@ namespace Csound.Unity
             EditorGUILayout.Space();
             EditorGUILayout.Space();
             DrawWebGLAssets();
+
+            EditorGUILayout.Space();
+            EditorGUILayout.Space();
+            DrawUILayout();
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -1893,5 +1911,297 @@ namespace Csound.Unity
         }
 
         #endregion
+
+        #region UI Layout
+
+        private void DrawUILayout()
+        {
+            _drawUILayout = EditorGUILayout.Foldout(_drawUILayout, "UI Layout", true);
+            if (!_drawUILayout) return;
+
+            EditorGUI.indentLevel++;
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUI.BeginChangeCheck();
+            _uiSettings = (CsoundUnityUISettings)EditorGUILayout.ObjectField(
+                "Settings Asset", _uiSettings, typeof(CsoundUnityUISettings), false);
+            if (EditorGUI.EndChangeCheck() && _uiSettings != null)
+                SessionState.SetString("CsoundUnityEditor.UISettingsPath",
+                    AssetDatabase.GetAssetPath(_uiSettings));
+
+            if (!_uiSettings && GUILayout.Button("Create", GUILayout.Width(60)))
+            {
+                _uiSettings = CreateInstance<CsoundUnityUISettings>();
+                AutoPopulateSettings(_uiSettings);
+                AssetDatabase.CreateAsset(_uiSettings, UISettingsDefaultPath);
+                AssetDatabase.SaveAssets();
+                SessionState.SetString("CsoundUnityEditor.UISettingsPath", UISettingsDefaultPath);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            if (!_uiSettings)
+            {
+                EditorGUILayout.HelpBox(
+                    "Create or assign a UI Layout Settings asset to configure prefab mappings.",
+                    MessageType.Info);
+                EditorGUI.indentLevel--;
+                return;
+            }
+
+            if (GUILayout.Button("Auto-populate prefabs from package"))
+                AutoPopulateSettings(_uiSettings);
+
+            EditorGUILayout.Space(4);
+
+            var so = new SerializedObject(_uiSettings);
+            so.Update();
+            var mapProp = so.FindProperty("typePrefabMap");
+
+            // Ensure the list has an entry for every supported type
+            foreach (var t in CsoundUnityUISettings.SupportedTypes)
+            {
+                var found = false;
+                for (var i = 0; i < mapProp.arraySize; i++)
+                {
+                    if (mapProp.GetArrayElementAtIndex(i)
+                            .FindPropertyRelative("type").stringValue != t) continue;
+                    found = true; break;
+                }
+
+                if (found) continue;
+                mapProp.arraySize++;
+                var elem = mapProp.GetArrayElementAtIndex(mapProp.arraySize - 1);
+                elem.FindPropertyRelative("type").stringValue    = t;
+                elem.FindPropertyRelative("prefab").objectReferenceValue = null;
+            }
+
+            for (var i = 0; i < mapProp.arraySize; i++)
+            {
+                var elem   = mapProp.GetArrayElementAtIndex(i);
+                var label  = elem.FindPropertyRelative("type").stringValue;
+                var prefab = elem.FindPropertyRelative("prefab");
+                prefab.objectReferenceValue = EditorGUILayout.ObjectField(
+                    label, prefab.objectReferenceValue, typeof(GameObject), false);
+            }
+
+            EditorGUILayout.Space(4);
+            so.FindProperty("fontScale").floatValue = EditorGUILayout.FloatField(
+                new GUIContent("Font Scale",
+                    "Multiplier applied to the font size of all Text components in the generated UI."),
+                _uiSettings.fontScale);
+
+            so.ApplyModifiedProperties();
+            EditorUtility.SetDirty(_uiSettings);
+
+            EditorGUILayout.Space(6);
+            var hasCsd  = m_channelControllers != null && m_channelControllers.arraySize > 0;
+            EditorGUI.BeginDisabledGroup(!hasCsd);
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Create UI", GUILayout.Width(100)))
+                CreateUI(replace: true);
+            if (GUILayout.Button("Update UI", GUILayout.Width(100)))
+                CreateUI(replace: false);
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
+            EditorGUI.EndDisabledGroup();
+
+            EditorGUI.indentLevel--;
+        }
+
+        /// <summary>
+        /// Scans the package Prefabs folder and fills <paramref name="settings"/> with
+        /// any prefab whose name matches a supported type.
+        /// </summary>
+        private void AutoPopulateSettings(CsoundUnityUISettings settings)
+        {
+            // type → expected prefab name
+            var nameMap = new Dictionary<string, string>
+            {
+                { "hslider",  "CsoundUnity_HSlider"      },
+                { "vslider",  "CsoundUnity_VSlider"       },
+                { "rslider",  "CsoundUnity_Knob"          },
+                { "encoder",  "CsoundUnity_Encoder"       },
+                { "hrange",   "CsoundUnity_HRangeSlider"  },
+                { "vrange",   "CsoundUnity_VRangeSlider"  },
+                { "button",   "CsoundUnity_Button"        },
+                { "checkbox", "CsoundUnity_Button"        },
+                { "combobox", "CsoundUnity_Dropdown"      },
+                { "xypad",    "CsoundUnity_XYPad"         },
+                { "nslider",  "CsoundUnity_NSlider"       },
+                { "label",    "CsoundUnity_Label"         },
+                { "meter",    "CsoundUnity_Meter"         },
+            };
+
+            var guids = AssetDatabase.FindAssets("t:Prefab", new[] { PrefabsFolder });
+            var prefabLookup = new Dictionary<string, GameObject>();
+            foreach (var guid in guids)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                var go   = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                if (go) prefabLookup[go.name] = go;
+            }
+
+            // Ensure list contains an entry for every supported type, then fill prefab refs
+            foreach (var t in CsoundUnityUISettings.SupportedTypes)
+            {
+                var entry = settings.typePrefabMap.Find(e => e.type == t);
+                if (entry == null)
+                {
+                    entry = new CsoundUnityUISettings.TypePrefabEntry { type = t };
+                    settings.typePrefabMap.Add(entry);
+                }
+
+                if (nameMap.TryGetValue(t, out var prefabName) &&
+                    prefabLookup.TryGetValue(prefabName, out var prefab))
+                    entry.prefab = prefab;
+            }
+
+            EditorUtility.SetDirty(settings);
+        }
+
+        /// <summary>
+        /// Generates (or updates) the Unity Canvas UI from the CSD's Cabbage widget data.
+        /// </summary>
+        /// <param name="replace">If true, destroys any existing UI Panel before regenerating.</param>
+        private void CreateUI(bool replace)
+        {
+            if (!csoundUnity || !_uiSettings) return;
+
+            var channels = csoundUnity.channels;
+            if (channels == null || channels.Count == 0) return;
+
+            var form = channels.Find(c => c.type == "form");
+            var formW = form is { width: > 0 } ? form.width  : 400;
+            var formH = form is { height: > 0 } ? form.height : 300;
+
+            var canvas = csoundUnity.GetComponentInChildren<Canvas>();
+            if (!canvas)
+            {
+                var canvasGO = new GameObject("Canvas");
+                canvasGO.transform.SetParent(csoundUnity.transform, false);
+                canvas = canvasGO.AddComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvasGO.AddComponent<UnityEngine.UI.CanvasScaler>();
+                canvasGO.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+                Undo.RegisterCreatedObjectUndo(canvasGO, "Create CsoundUnity UI Canvas");
+            }
+
+            // Find or replace the Panel
+            const string panelName = "CabbageUI";
+            var existingPanel = canvas.transform.Find(panelName);
+            if (existingPanel)
+            {
+                if (replace)
+                    Undo.DestroyObjectImmediate(existingPanel.gameObject);
+                else
+                {
+                    // Reposition existing widgets and reapply font scale
+                    UpdateUIPositions(existingPanel.gameObject, channels, csoundUnity, _uiSettings.fontScale);
+                    return;
+                }
+            }
+
+            var panelGO = new GameObject(panelName);
+            panelGO.transform.SetParent(canvas.transform, false);
+            Undo.RegisterCreatedObjectUndo(panelGO, "Create CsoundUnity UI Panel");
+
+            var panelRect = panelGO.AddComponent<RectTransform>();
+            // Anchor to top-left of canvas, pivot top-left
+            panelRect.anchorMin  = new Vector2(0f, 1f);
+            panelRect.anchorMax  = new Vector2(0f, 1f);
+            panelRect.pivot      = new Vector2(0f, 1f);
+            panelRect.anchoredPosition = Vector2.zero;
+            panelRect.sizeDelta  = new Vector2(formW, formH);
+
+            // Optional background image
+            var bg = panelGO.AddComponent<UnityEngine.UI.Image>();
+            bg.color = new Color(0.15f, 0.15f, 0.15f, 1f);
+
+            // Instantiate a widget for each channel that has valid bounds
+            foreach (var ch in channels)
+            {
+                if (ch.type == "form" || string.IsNullOrEmpty(ch.channel)) continue;
+                if (ch.width <= 0 && ch.height <= 0) continue;
+
+                var prefab = _uiSettings.GetPrefab(ch.type);
+                if (!prefab) continue;
+
+                var widgetGO = (GameObject)PrefabUtility.InstantiatePrefab(prefab, panelGO.transform);
+                Undo.RegisterCreatedObjectUndo(widgetGO, "Create CsoundUnity Widget");
+                widgetGO.name = string.IsNullOrEmpty(ch.channel) ? ch.type : ch.channel;
+
+                PositionWidget(widgetGO, ch);
+                LinkWidget(widgetGO, ch, csoundUnity, _uiSettings.fontScale);
+            }
+
+            Selection.activeGameObject = panelGO;
+            Debug.Log($"[CsoundUnity] UI generated: {panelGO.transform.childCount} widgets in '{panelName}' ({formW}×{formH} px).");
+        }
+
+        private void UpdateUIPositions(GameObject panel, List<CsoundChannelController> channels,
+            CsoundUnity csound, float fontScale)
+        {
+            foreach (var ch in channels)
+            {
+                if (ch.type == "form" || string.IsNullOrEmpty(ch.channel)) continue;
+                if (ch.width <= 0 && ch.height <= 0) continue;
+
+                var child = panel.transform.Find(ch.channel);
+                if (!child) continue;
+                PositionWidget(child.gameObject, ch);
+                LinkWidget(child.gameObject, ch, csound, fontScale);
+            }
+            Debug.Log("[CsoundUnity] UI positions updated.");
+        }
+
+        /// <summary>
+        /// Sets the RectTransform of <paramref name="widgetGO"/> from the Cabbage bounds.
+        /// Cabbage origin is top-left with Y going down; Unity Canvas (anchor top-left) uses (x, -y).
+        /// </summary>
+        private static void PositionWidget(GameObject widgetGO, CsoundChannelController ch)
+        {
+            var rt = widgetGO.GetComponent<RectTransform>();
+            if (!rt) return;
+            rt.anchorMin        = new Vector2(0f, 1f);
+            rt.anchorMax        = new Vector2(0f, 1f);
+            rt.pivot            = new Vector2(0f, 1f);
+            rt.anchoredPosition = new Vector2(ch.x, -ch.y);
+            rt.sizeDelta        = new Vector2(ch.width, ch.height);
+        }
+
+        /// <summary>
+        /// Wires the <see cref="CsoundUnity"/> reference and channel name on the widget,
+        /// and applies the font scale to any <see cref="UnityEngine.UI.Text"/> components.
+        /// </summary>
+        private static void LinkWidget(
+            GameObject widgetGO,
+            CsoundChannelController ch,
+            CsoundUnity csound,
+            float fontScale)
+        {
+            // Set _csound and _channel via reflection so we don't need hard casts to each type.
+            // Iterate all MonoBehaviours on the root to find the one that owns _channel.
+            foreach (var mono in widgetGO.GetComponents<MonoBehaviour>())
+            {
+                if (mono == null) continue;
+                var so     = new SerializedObject(mono);
+                var chProp = so.FindProperty("_channel");
+                if (chProp == null) continue;          // not a Csound widget component
+
+                var csProp = so.FindProperty("_csound");
+                if (csProp != null) csProp.objectReferenceValue = csound;
+                chProp.stringValue = ch.channel;
+                so.ApplyModifiedProperties();
+                break;
+            }
+
+            // Apply font scale
+            if (Mathf.Approximately(fontScale, 1f)) return;
+            foreach (var txt in widgetGO.GetComponentsInChildren<UnityEngine.UI.Text>(true))
+                txt.fontSize = Mathf.Max(1, Mathf.RoundToInt(txt.fontSize * fontScale));
+        }
+
+        #endregion UI Layout
     }
 }
