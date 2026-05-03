@@ -132,16 +132,29 @@ namespace Csound.Unity
                 audioSource.Play();
             }
 
-            if (namedAudioChannelData.Count == 0)
-                for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
-                    namedAudioChannelData.Add(new MYFLT[bufferSize]);
+            // Always reinitialise: serialised entries may have a stale size (saved from a
+            // previous session with a different DSP buffer) or be null/empty after a fresh
+            // package import, causing IndexOutOfRangeException on the first play.
+            namedAudioChannelData.Clear();
+            for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
+                namedAudioChannelData.Add(new MYFLT[bufferSize]);
 
             if (selectedAudioChannelIndexByChannel == null) selectedAudioChannelIndexByChannel = new int[2];
         }
 
         void Start()
         {
-            if (csoundUnity) zerodbfs = csoundUnity.Get0dbfs();
+            if (csoundUnity)
+            {
+                zerodbfs = csoundUnity.Get0dbfs();
+
+                // Sync availableAudioChannels from the parent at runtime.
+                // The serialised copy may be stale or empty after a fresh package import
+                // (the CsoundUnityChildEditor only syncs it when the inspector is open).
+                // We always overwrite here so the runtime source of truth is the parent.
+                if (csoundUnity.availableAudioChannels != null)
+                    availableAudioChannels = csoundUnity.availableAudioChannels;
+            }
 #if UNITY_6000_0_OR_NEWER
             OnStartGenerator();
 #endif
@@ -245,6 +258,7 @@ namespace Csound.Unity
         {
             if (availableAudioChannels == null || availableAudioChannels.Count < 1 || !csoundUnity.IsInitialized)
                 return;
+            if (zerodbfs <= 0) return; // 0dbfs not yet known — wait for OnParentCsoundInitialized
 
             for (int i = 0; i < (int)AudioChannelsSetting; i++)
             {
@@ -262,10 +276,10 @@ namespace Csound.Unity
                     {
                         case AudioChannels.MONO:
                             // 0.5f compensates for the mono channel being duplicated to both output channels
-                            samples[i + channel] = samples[i + channel] * (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs * 0.5f);
+                            samples[i + channel] *= (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs * 0.5f);
                             break;
                         case AudioChannels.STEREO:
-                            samples[i + channel] = samples[i + channel] * (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
+                            samples[i + channel] *= (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
                             break;
                     }
                 }

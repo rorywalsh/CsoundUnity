@@ -883,6 +883,13 @@ namespace Csound.Unity
         /// </summary>
         private void Init()
         {
+            // Clear audio-channel dictionaries so that stale entries from editor-time
+            // SetCsd() calls (which run when the audio system is not active and therefore
+            // allocate zero-length MYFLT[] buffers) can never survive into play mode.
+            // Stop() also clears them, but Init() can be the first call on a fresh play.
+            namedAudioChannelDataDict.Clear();
+            namedAudioChannelTempBufferDict.Clear();
+
             audioSource.spatializePostEffects = true;
 
             // FIX SPATIALIZATION ISSUES
@@ -930,6 +937,20 @@ namespace Csound.Unity
                         { _channelsIndexDict.Add(channels[i].channel, i); }
                     }
                 }
+                // If the serialised channel list is empty (scene saved without the
+                // inspector open, or fresh sample import that never triggered SetCsd),
+                // parse the CSD string directly so named audio channels are available
+                // at runtime without requiring the inspector to be opened first.
+                if (_availableAudioChannels.Count == 0 && !string.IsNullOrWhiteSpace(_csoundString))
+                {
+                    var parsed = ParseCsdStringForAudioChannels(_csoundString);
+                    if (parsed != null && parsed.Count > 0)
+                    {
+                        _availableAudioChannels.AddRange(parsed);
+                        Debug.Log($"[CsoundUnity] availableAudioChannels was empty — parsed {parsed.Count} channel(s) from CSD string at runtime: [{string.Join(", ", parsed)}]");
+                    }
+                }
+
                 foreach (var audioChannel in availableAudioChannels)
                 {
                     if (string.IsNullOrWhiteSpace(audioChannel)) continue;
@@ -1578,36 +1599,49 @@ namespace Csound.Unity
         public static List<string> ParseCsdFileForAudioChannels(string filename)
         {
             if (!File.Exists(filename)) return null;
+            var content = File.ReadAllText(filename);
+            if (string.IsNullOrEmpty(content)) return null;
+            return ParseCsdStringForAudioChannels(content);
+        }
 
-            var fullCsdText = File.ReadAllLines(filename);
-            if (fullCsdText.Length < 1) return null;
+        /// <summary>
+        /// Parses a CSD string (already in memory) for named audio channels written with <c>chnset</c>.
+        /// Runtime equivalent of <see cref="ParseCsdFileForAudioChannels"/> used when only the CSD
+        /// content is available (no file path), e.g. during <see cref="Init"/> on first play after a
+        /// fresh package import where the inspector was never opened to trigger <c>SetCsd</c>.
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>A list of unique audio channel names found, never null.</returns>
+        public static List<string> ParseCsdStringForAudioChannels(string csdContent)
+        {
+            var result = new List<string>();
+            if (string.IsNullOrEmpty(csdContent)) return result;
 
-            var locaAudioChannels = new List<string>();
-
-            foreach (string line in fullCsdText)
+            foreach (var rawLine in csdContent.Split('\n'))
             {
-                var trimmd = line.TrimStart();
+                var trimmd = rawLine.TrimStart();
                 if (!trimmd.Contains("chnset")) continue;
                 if (trimmd.StartsWith(";")) continue;
+
                 var lndx = trimmd.IndexOf("chnset");
                 var chnsetEnd = lndx + "chnset".Length + 1;
+                if (chnsetEnd >= trimmd.Length) continue;
+
                 var prms = trimmd.Substring(chnsetEnd, trimmd.Length - chnsetEnd);
                 var split = prms.Split(',');
-                if (!split[0].StartsWith("a") && !split[0].StartsWith("ga"))
-                    continue; //discard non audio variables
+                if (split.Length < 2) continue;
+                if (!split[0].TrimStart().StartsWith("a") && !split[0].TrimStart().StartsWith("ga"))
+                    continue; // discard non-audio variables
 
-                // discard channels that are not plain strings, since they cannot be interpreted afterwards
-                // "validChan" vs SinvalidChan
                 if (!split[1].TrimStart().StartsWith("\"") ||
                     !split[1].TrimEnd().EndsWith("\""))
-                    continue;
+                    continue; // discard non-literal channel names
 
                 var ach = split[1].Replace('\\', ' ').Replace('\"', ' ').Trim();
-
-                if (!locaAudioChannels.Contains(ach))
-                    locaAudioChannels.Add(ach);
+                if (!string.IsNullOrEmpty(ach) && !result.Contains(ach))
+                    result.Add(ach);
             }
-            return locaAudioChannels;
+            return result;
         }
 
         /// <summary>
