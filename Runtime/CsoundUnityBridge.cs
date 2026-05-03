@@ -177,11 +177,11 @@ namespace Csound.Unity
         /// <param name="environmentSettings">A list of the Csound Environments settings defined by the user</param>
         public CsoundUnityBridge(string csdFile, List<EnvironmentSettings> environmentSettings, float audioRate, float controlRate, int ksmps = 0)
         {
-            if (string.IsNullOrWhiteSpace(csdFile))
-            {
-                Debug.Log("CsoundUnityBridge not created, passed csdFile is empty, returning");
-                return;
-            }
+            // Ensure we never pass a null pointer to the native csoundCompileCSD —
+            // MarshalAs(LPStr) turns C# null into a native NULL which crashes Csound 7.
+            // An empty string is safe: Csound returns an error code without crashing,
+            // and the bridge is still valid for API calls (GetEnv, GetKsmps, etc.).
+            if (csdFile == null) csdFile = string.Empty;
 
             SetEnvironmentSettings(environmentSettings);
 

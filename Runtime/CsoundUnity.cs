@@ -898,13 +898,13 @@ namespace Csound.Unity
                 audioSource.Play();
             }
 
-            /// the CsoundUnityBridge constructor the string with the csound code and a list of the Global Environment Variables Settings.
-            /// It then calls createCsound() to create an instance of Csound and compile the csd string.
-            /// After this we start the performance of Csound.
-            csound = new CsoundUnityBridge(_csoundString, environmentSettings, audioRate, controlRate, ksmps);
-            if (csound != null && csound.CompiledOk)
+            // Create the Csound bridge. If no CSD is assigned, an empty string is passed so
+            // the native instance is valid for API calls (GetEnv, etc.) even without a score.
+            var noCsd = string.IsNullOrWhiteSpace(_csoundString);
+            csound = new CsoundUnityBridge(_csoundString ?? string.Empty, environmentSettings, audioRate, controlRate, ksmps);
+            if (csound is { CompiledOk: true })
             {
-                /// channels are created when a csd file is selected in the inspector
+                // channels are created when a csd file is selected in the inspector
                 if (channels != null)
                 {
                     // Rebuild the index dictionary from scratch every time Csound initialises so
@@ -914,7 +914,7 @@ namespace Csound.Unity
                     _channelsIndexDict.Clear();
 
                     // initialise channels if found in xml descriptor..
-                    for (int i = 0; i < channels.Count; i++)
+                    for (var i = 0; i < channels.Count; i++)
                     {
                         if (channels[i] == null || string.IsNullOrWhiteSpace(channels[i].channel)) continue;
                         if (channels[i].type.Contains("combobox"))
@@ -955,7 +955,7 @@ namespace Csound.Unity
                     // Sync _ksmps with the actual value Csound compiled with,
                     // then resize any temp buffers that were allocated with a stale size.
                     _ksmps = GetKsmps();
-                    foreach (var key in new System.Collections.Generic.List<string>(namedAudioChannelTempBufferDict.Keys))
+                    foreach (var key in new List<string>(namedAudioChannelTempBufferDict.Keys))
                     {
                         if (namedAudioChannelTempBufferDict[key].Length != (int)_ksmps)
                             namedAudioChannelTempBufferDict[key] = new MYFLT[(int)_ksmps];
@@ -972,6 +972,20 @@ namespace Csound.Unity
                     OnCsoundInitialized?.Invoke();
                 }
             }
+            else if (noCsd && csound != null)
+            {
+                // No CSD assigned: the bridge is valid but nothing was compiled.
+                // Mark as initialized so that API calls (GetEnv, GetKsmps, etc.)
+                // work correctly. HasCompiled / CompiledWithoutError() will return false.
+                compiledOk = false;
+                initialized = true;
+                _initializing = false;
+                Debug.LogWarning("[CsoundUnity] No CSD assigned — initialized without a score. Assign a .csd file in the inspector.");
+#if UNITY_6000_0_OR_NEWER
+                OnInitializedGenerator();
+#endif
+                OnCsoundInitialized?.Invoke();
+            }
             else
             {
                 compiledOk = false;
@@ -980,8 +994,8 @@ namespace Csound.Unity
                     // Dump the Csound message queue so the error is visible in the Unity console
                     var sb = new System.Text.StringBuilder();
                     sb.AppendLine("CsoundUnity: compilation failed. Csound messages:");
-                    int msgCount = csound.GetCsoundMessageCount();
-                    for (int i = 0; i < msgCount; i++)
+                    var msgCount = csound.GetCsoundMessageCount();
+                    for (var i = 0; i < msgCount; i++)
                         sb.AppendLine(csound.GetCsoundMessage());
                     Debug.LogError(sb.ToString());
                 }
@@ -1184,6 +1198,16 @@ namespace Csound.Unity
         {
             return compiledOk;
         }
+
+        /// <summary>
+        /// <c>true</c> when a CSD was assigned and compiled successfully.
+        /// <para>
+        /// Unlike <see cref="IsInitialized"/>, which is <c>true</c> even when no CSD is
+        /// assigned, <c>HasCompiled</c> is <c>false</c> when CsoundUnity was started
+        /// without a CSD or when compilation failed.
+        /// </para>
+        /// </summary>
+        public bool HasCompiled => compiledOk;
 
         #endregion INSTANTIATION
 
