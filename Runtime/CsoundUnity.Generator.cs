@@ -212,6 +212,12 @@ namespace Csound.Unity
             // This lets CsoundUnityChild and waveform analysers work even in IAudioGenerator mode.
             CsoundBridgeRegistry.RegisterKsmpsCallback(_generatorInstanceId, OnKsmpsCallback);
 
+            // Register the performance-finished callback so that when CsoundRealtime.Process
+            // detects a natural score end it can set performanceFinished = true on this instance,
+            // letting MonitorPerformanceEnd fire OnCsoundPerformanceFinished and call Stop().
+            CsoundBridgeRegistry.RegisterPerformanceFinishedCallback(_generatorInstanceId,
+                () => performanceFinished = true);
+
             // Assigning generator = this causes Unity to call CreateInstance immediately.
             // Bridge is ready at this point (called after initialized = true).
             audioSource.generator = this;

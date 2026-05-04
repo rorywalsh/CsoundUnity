@@ -69,6 +69,13 @@ namespace Csound.Unity
         private int _startupFadeIndex;
 
         /// <summary>
+        /// Set to true the first time <c>PerformKsmps</c> returns non-zero (score ended).
+        /// Once true, <see cref="Process"/> outputs silence for every subsequent call
+        /// instead of reading stale spout data.
+        /// </summary>
+        private bool _performanceFinished;
+
+        /// <summary>
         /// Number of frames over which the startup fade ramps from 0 to 1.
         /// 2048 frames ≈ 43 ms at 48 kHz — imperceptible as a fade-in but long
         /// enough to cover any initialization latency between chained instances.
@@ -104,9 +111,9 @@ namespace Csound.Unity
             var totalFrames = buffer.frameCount;
 
             var bridge = CsoundBridgeRegistry.GetBridge(InstanceId);
-            if (bridge == null)
+            if (bridge == null || _performanceFinished)
             {
-                // Bridge not ready yet — write explicit silence.
+                // Bridge not ready / score already ended — write explicit silence.
                 for (var f = 0; f < totalFrames; f++)
                     for (var ch = 0; ch < buffer.channelCount; ch++)
                         buffer[ch, f] = 0f;
@@ -143,7 +150,11 @@ namespace Csound.Unity
 
                     if (result != 0)
                     {
-                        // Score ended — silence the rest of the buffer.
+                        // Score ended naturally — set flag so future Process() calls
+                        // output silence immediately, then notify the main thread so
+                        // MonitorPerformanceEnd fires and Stop() is called.
+                        _performanceFinished = true;
+                        CsoundBridgeRegistry.InvokePerformanceFinishedCallback(InstanceId);
                         for (var ff = f; ff < totalFrames; ff++)
                             for (var ch = 0; ch < buffer.channelCount; ch++)
                                 buffer[ch, ff] = 0f;

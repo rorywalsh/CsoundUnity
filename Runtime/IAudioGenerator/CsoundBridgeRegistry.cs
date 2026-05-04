@@ -78,6 +78,8 @@ namespace Csound.Unity
                 _spinFillCallbacks[id] = null;
             if (id >= 0 && id < _ksmpsCallbacks.Count)
                 _ksmpsCallbacks[id] = null;
+            if (id >= 0 && id < _performanceFinishedCallbacks.Count)
+                _performanceFinishedCallbacks[id] = null;
         }
 
         #endregion
@@ -145,6 +147,29 @@ namespace Csound.Unity
         {
             if (id >= 0 && id < _ksmpsCallbacks.Count)
                 _ksmpsCallbacks[id]?.Invoke(bufferFrameOffset);
+        }
+
+        #endregion
+        #region Performance-finished callbacks (called on the audio thread once)
+
+        /// <summary>
+        /// One entry per registered bridge. Invoked on the audio thread the first time
+        /// <c>PerformKsmps</c> returns non-zero (score ended naturally).
+        /// Used by <see cref="CsoundUnity"/> to set <c>performanceFinished = true</c>
+        /// so that <c>MonitorPerformanceEnd</c> fires and calls <c>Stop()</c>.
+        /// </summary>
+        private static readonly List<System.Action> _performanceFinishedCallbacks = new List<System.Action>();
+
+        internal static void RegisterPerformanceFinishedCallback(int id, System.Action callback)
+        {
+            while (_performanceFinishedCallbacks.Count <= id) _performanceFinishedCallbacks.Add(null);
+            _performanceFinishedCallbacks[id] = callback;
+        }
+
+        internal static void InvokePerformanceFinishedCallback(int id)
+        {
+            if (id >= 0 && id < _performanceFinishedCallbacks.Count)
+                _performanceFinishedCallbacks[id]?.Invoke();
         }
 
         #endregion
