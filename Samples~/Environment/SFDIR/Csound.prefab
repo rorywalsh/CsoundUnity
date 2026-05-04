@@ -25,12 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3655006456468214349}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &3655006456468214347
 AudioSource:
@@ -43,6 +44,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -141,24 +143,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 48000
+  controlRate: 1500
+  ksmps: 32
+  updateOutputBuffer: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings:
   - platform: 0
     type: 0
     baseFolder: 0
     suffix: CsoundFiles
+    foldout: 0
+    AssetsToLoadList: []
   - platform: 1
     type: 0
     baseFolder: 0
     suffix: CsoundFiles
+    foldout: 0
+    AssetsToLoadList: []
   - platform: 2
     type: 0
     baseFolder: 0
     suffix: CsoundFiles
+    foldout: 0
+    AssetsToLoadList: []
   _csoundFileGUID: 5a709faad364585448f780bdb9069960
   _csoundString: "<CsoundSynthesizer>\r\n<CsOptions>\r\n-n -d \r\n</CsOptions>\r\n<CsInstruments>\r\n\r\n;
     By  Menno Knevel - 2020\r\n\r\nsr = 48000\r\nksmps = 64\r\nnchnls = 2\r\n0dbfs 
@@ -178,11 +195,27 @@ MonoBehaviour:
     0 1 60 100\r\ni1 + 1 62 <\r\ni1 + 1 65 <\r\ni1 + 1 69 10\r\n\r\ni2 5 1 60 100\r\ni2
     + 1 62 <\r\ni2 7 1 65 <\r\ni2 7 1 69 10\r\n\r\ne\r\n</CsScore>\r\n</CsoundSynthesizer>"
   _csoundFileName: sfload.csd
-  _csoundAsset: {fileID: 102900000, guid: 5a709faad364585448f780bdb9069960, type: 3}
+  _csoundAsset: {fileID: 0}
   _channels: []
   _availableAudioChannels: []
+  _nchnls: 0
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 0
   _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  webGLAssetsList: []
+  _audioPath: 1
+  _generatorStartupDelay: 0
