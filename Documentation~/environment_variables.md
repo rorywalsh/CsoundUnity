@@ -24,6 +24,29 @@ You can preview the paths that will be used at runtime for each platform selecti
 When this toggle is not selected you will be able to open the folder related to your development platform just by clicking the shown path.  
 The environment settings have copy-paste support.
 
+### CopyFilesToPersistentDataPath
+
+The `CopyFilesToPersistentDataPath` component automates copying files into `Application.persistentDataPath` before CsoundUnity starts — the most reliable way to make files available to Csound via Environment Variables on any platform, including Android.
+
+**Supported file types:**
+
+| Type | Source | Notes |
+|---|---|---|
+| Audio files | `Resources` folder as `AudioClip` | wav, aif and any format supported by Csound |
+| Sound fonts | `Resources` folder as `TextAsset` | Rename `.sf2` → `.bytes` so Unity imports it |
+| Csound plugins | `Resources` folder as `TextAsset` | Desktop only (dylib / dll renamed to `.bytes`). On Android / iOS plugins must be bundled at build time |
+| Additional binary files | `Resources` folder as `TextAsset` | Wavetables, IRs, or any data Csound reads from disk (`.bytes` / `.txt`) |
+| StreamingAssets files | `StreamingAssets` folder | On Android read via `UnityWebRequest`; on other platforms copied directly |
+
+**Setup:**
+
+1. Keep the CsoundUnity GameObjects **inactive** when entering Play Mode
+2. Add `CopyFilesToPersistentDataPath` to a GameObject that is **active** on startup
+3. Assign the files to copy and the CsoundUnity instances to activate when done
+4. Set the matching Environment Variable (e.g. `SFDIR`) on each CsoundUnity instance to `Application.persistentDataPath`
+
+See the `Environment/SFDIR` and `Environment/Load Plugins` samples for complete working examples.
+
 ### Loading Csound plugins
 
 For desktop applications you can safely use the *OPCODE6DIR64* folder setting to load plugins, placing **Csound** plugins basically anywhere the editor/built application can find them.

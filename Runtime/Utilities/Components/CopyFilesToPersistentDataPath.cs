@@ -8,11 +8,33 @@ using WAFU = Csound.Unity.Utilities.WriteAudioFileUtils;
 namespace Csound.Unity.Utilities.MonoBehaviours
 {
     /// <summary>
-    /// Utility class that copies different kind of files into the Persistent Data Path so that they can be found by Csound using Environment Variables.
-    /// <para>For this to work the CsoundUnity GameObjects have to be disabled when entering PlayMode.
-    /// When the copy is done it will enable all the CsoundUnity instances set.</para>
-    /// It could be extended to use CsoundUnity prefabs too (see Samples/EnvironmentVars/SFDIR), but for now this is left to the user.
-    /// Note: Plugins are not copied for Android and iOS since there's no way of loading them from a path at runtime, unlike desktop platforms
+    /// Copies files from <c>Resources</c> or <c>StreamingAssets</c> into
+    /// <c>Application.persistentDataPath</c> so that Csound can find them via
+    /// Environment Variables (e.g. <c>SFDIR</c>, <c>SSDIR</c>, <c>SADIR</c>).
+    ///
+    /// <para>
+    /// Supported file types:
+    /// <list type="bullet">
+    ///   <item><description><b>Audio files</b> — any format supported by Csound (wav, aif, …). Place them in a <c>Resources</c> folder as <c>AudioClip</c> assets.</description></item>
+    ///   <item><description><b>Sound fonts</b> — sf2 files. Rename the extension to <c>.bytes</c> or <c>.txt</c> so Unity imports them as <c>TextAsset</c>, then place them in <c>Resources</c>.</description></item>
+    ///   <item><description><b>Csound plugins</b> — desktop only (dylib / dll). Rename to <c>.bytes</c>, place in <c>Resources</c>. On Android / iOS there is no way to load plugins from a runtime path, so they must be bundled at build time instead.</description></item>
+    ///   <item><description><b>Additional binary files</b> — any file importable as <c>TextAsset</c> (<c>.bytes</c> / <c>.txt</c> extension). Useful for wavetables, IRs, or any other data Csound needs to read from disk.</description></item>
+    ///   <item><description><b>StreamingAssets files</b> — files placed in the <c>StreamingAssets</c> folder. On Android these are read via <c>UnityWebRequest</c>; on other platforms they are copied directly.</description></item>
+    /// </list>
+    /// </para>
+    ///
+    /// <para>
+    /// <b>Setup:</b> keep the CsoundUnity GameObjects <b>inactive</b> when entering Play Mode.
+    /// This component copies the files first, then activates the listed CsoundUnity instances,
+    /// ensuring the Environment Variables point to valid files before Csound starts.
+    /// Set <c>autoStart</c> to <c>false</c> if you need to trigger the copy manually via <see cref="Copy"/>.
+    /// It could be extended to support CsoundUnity prefabs too, but for now activation of existing instances is left to the user.
+    /// </para>
+    ///
+    /// <para>
+    /// See the <c>Environment/SFDIR</c> and <c>Environment/Load Plugins</c> samples for
+    /// complete working examples.
+    /// </para>
     /// </summary>
     public class CopyFilesToPersistentDataPath : MonoBehaviour
     {
@@ -26,9 +48,13 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         [SerializeField] private string[] _pluginsNames;
         [Tooltip("Those files will be read from the StreamingAssets folder. Please specify also the extension of the file.")]
         [SerializeField] private string[] _streamingAssetsFiles;
-        [Tooltip("Those files will be read from Resources folders. Only specify the file name, no need to specify the extension too." +
-            "Be sure though to rename these additional files extensions to .txt or .bytes. " +
-            "See https://docs.unity3d.com/Manual/class-TextAsset.html")]
+        [Tooltip("Binary files to copy from Resources to persistentDataPath. " +
+            "Use this for any file Csound reads from disk that is not an AudioClip or a plugin: " +
+            "e.g. soundfonts (.sf2), wavetables, impulse responses, MIDI files, or custom data files.\n\n" +
+            "In Unity's Resources folder the file must have a .bytes or .txt extension so it is imported as a TextAsset " +
+            "(see https://docs.unity3d.com/Manual/class-TextAsset.html). " +
+            "Specify the actual destination extension in the Extension field — " +
+            "the file will be copied with that extension so Csound can find it.")]
         [SerializeField] private AdditionalFileInfo[] _additionalFiles;
         [Tooltip("Ensure these CsoundUnity GameObjects are inactive when hitting play, " +
             "otherwise their initialization will run. " +
@@ -83,6 +109,14 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         public void Copy()
         {
             copyCompleted = false;
+
+            // Null-guard: with Domain Reload disabled, serialized arrays may not be
+            // re-initialized before the first Awake(), leaving them null instead of empty.
+            _audioFiles ??= Array.Empty<AudioFileInfo>();
+            _pluginsNames ??= Array.Empty<string>();
+            _streamingAssetsFiles ??= Array.Empty<string>();
+            _additionalFiles ??= Array.Empty<AdditionalFileInfo>();
+
 #if UNITY_ANDROID || UNITY_IOS
             _filesToCopy = _audioFiles.Length + _streamingAssetsFiles.Length + _additionalFiles.Length;
 #else
@@ -259,7 +293,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         {
             var pathWithoutExtension = Path.ChangeExtension(origin, null);
             var audioClip = Resources.Load<AudioClip>(pathWithoutExtension);
-            if (audioClip == null)
+            if (!audioClip)
             {
                 Debug.LogError($"Csound.Unity.CopyFilesToPersistentDataPath Error: AudioClip at {origin} couldn't be loaded.");
                 return;
@@ -288,10 +322,9 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             {
                 Directory.CreateDirectory(dir);
             }
-            using (var bw = new BinaryWriter(File.Open(destination, FileMode.OpenOrCreate)))
-            {
-                bw.Write(br.ReadBytes(bytes.Length));
-            }
+
+            using var bw = new BinaryWriter(File.Open(destination, FileMode.OpenOrCreate));
+            bw.Write(br.ReadBytes(bytes.Length));
         }
 
         #endregion Private helpers
