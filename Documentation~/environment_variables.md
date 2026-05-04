@@ -26,7 +26,7 @@ The environment settings have copy-paste support.
 
 ### CopyFilesToPersistentDataPath
 
-The `CopyFilesToPersistentDataPath` component automates copying files into `Application.persistentDataPath` before CsoundUnity starts — the most reliable way to make files available to Csound via Environment Variables on any platform, including Android.
+The `CopyFilesToPersistentDataPath` component (found in the package under `Runtime/Utilities/Components/`) automates copying files into `Application.persistentDataPath` before CsoundUnity starts — the most reliable way to make files available to Csound via Environment Variables on any platform, including Android.
 
 **Supported file types:**
 
