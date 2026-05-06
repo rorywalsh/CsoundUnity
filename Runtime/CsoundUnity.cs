@@ -4077,14 +4077,19 @@ namespace Csound.Unity
             {
                 while (this.logCsoundOutput)
                 {
-                    // Guard: exit if Csound has been destroyed or is no longer initialized.
-                    // Without this, a coroutine that outlives csoundDestroy (e.g. due to a
-                    // race in the quit sequence) would call into a freed native handle → segfault.
-                    if (csound == null || !initialized) yield break;
+                    // Guard against use-after-free: if Csound has been destroyed,
+                    // calling into the freed native handle would segfault.
+                    // We only check `csound == null` here — `!initialized` was previously
+                    // also checked but it killed the coroutine permanently when started
+                    // from Init() before `initialized = true` is set.  Stop() and
+                    // OnApplicationQuit both call StopCoroutine(LoggingCoroutine)
+                    // before nulling csound, so the StopCoroutine handles the
+                    // shutdown case cleanly without needing this extra guard.
+                    if (csound == null) yield break;
 
                     for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
                     {
-                        if (csound == null || !initialized) yield break;
+                        if (csound == null) yield break;
                         if (this.logCsoundOutput)    // exiting when csound messages are very high in number
                         {
                             print(csound.GetCsoundMessage());
