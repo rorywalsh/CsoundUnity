@@ -155,7 +155,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.2627451, g: 0.2627451, b: 0.2627451, a: 0}
+  m_BackGroundColor: {r: 0.2, g: 0.2, b: 0.2, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -250,8 +250,12 @@ MonoBehaviour:
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 48000
-  controlRate: 44100
+  controlRate: 1500
+  ksmps: 32
   updateOutputBuffer: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: afaa156295c84479fbfb7f4dc07e87ab
@@ -279,6 +283,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freqSlider
     text: 
@@ -293,13 +301,18 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   _availableAudioChannels: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -310,7 +323,10 @@ MonoBehaviour:
   _currentPreset: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
   webGLAssetsList: []
+  _audioPath: 1
+  _generatorStartupDelay: 0
 --- !u!82 &128889234
 AudioSource:
   m_ObjectHideFlags: 0
@@ -684,10 +700,10 @@ MonoBehaviour:
     Manually stopped after 3s, restarted after
     2s pause.
 
-    Runs to natural end, restarts after 2s pause.
+    Runs to natural end (5s), restarts after 2s pause.
 
-    Runs to natural
-    end. Done.'
+    Runs to
+    natural end (5s). Done.'
 --- !u!222 &1274383762
 CanvasRenderer:
   m_ObjectHideFlags: 0

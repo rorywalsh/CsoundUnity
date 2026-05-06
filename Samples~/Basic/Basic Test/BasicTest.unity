@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -98,13 +94,13 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 4890085278179872738, guid: a7398a02dfba74a02b8eafb2d4eb7ba7, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +113,9 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -157,13 +155,21 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.2627451, g: 0.2627451, b: 0.2627451, a: 0}
+  m_BackGroundColor: {r: 0.2, g: 0.2, b: 0.2, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -197,12 +203,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 24545310}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &128889232
 GameObject:
@@ -235,33 +242,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 0
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 44100
+  controlRate: 44100
+  ksmps: 64
+  updateOutputBuffer: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 305abd9f8c6e040e29534c9762169d2c
   _csoundString: "<Cabbage>\r\nform caption (\"Basic Test\"), size(300, 100)\r\n\r\nhslider
-    bounds(0, 0, 300, 50) range(20, 16000, 440, 1, 0.001) valuetextbox(1) channel(\"freqSlider\")
-    value(440) velocity(50)\r\n</Cabbage>\r\n\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n;-n
+    bounds(0, 0, 300, 50) valuetextbox(1) channel(\"freqSlider\") value(440) velocity(50)
+    range(20, 16000, 440, 0.5, 100) ;range(20, 16000, 440, 1, 0.001)\r\n</Cabbage>\r\n\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n;-n
     -d -m0d \r\n;-odac\r\n-n ; -m0d\r\n</CsOptions>\r\n<CsInstruments> \r\nsr \t=
     \t48000 \r\nksmps \t= \t64\r\nnchnls \t= \t2\r\n0dbfs\t=\t1 \r\n\r\ninstr 1\r\na1
     oscil .2, chnget:k(\"freqSlider\"), 1\r\nouts a1, a1\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf0
-    3600\r\nf1 0 4096 10 1\r\ni1 0 5\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+    3600\r\nf1 0 4096 10 1\r\ni1 0 z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: BasicTest.csd
   _csoundAsset: {fileID: 102900000, guid: 305abd9f8c6e040e29534c9762169d2c, type: 3}
   _channels:
   - type: form
     channel: 
     text: 
-    caption: 
+    caption: Basic Test
     min: 0
     max: 0
     value: 0
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 300
+    height: 100
   - type: hslider
     channel: freqSlider
     text: 
@@ -269,13 +293,25 @@ MonoBehaviour:
     min: 20
     max: 16000
     value: 440
-    skew: 1
-    increment: 0.001
+    skew: 0.5
+    increment: 100
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 300
+    height: 50
   _availableAudioChannels: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 0
+  _drawAudioInputRoutes: 1
   _drawChannels: 0
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -286,6 +322,10 @@ MonoBehaviour:
   _currentPreset: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  webGLAssetsList: []
+  _audioPath: 1
+  _generatorStartupDelay: 0
 --- !u!82 &128889234
 AudioSource:
   m_ObjectHideFlags: 0
@@ -297,6 +337,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -389,10 +430,17 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 128889232}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 24545313}
+  - {fileID: 128889235}

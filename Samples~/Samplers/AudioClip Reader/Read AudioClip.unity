@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -98,13 +94,13 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 496786933}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +113,9 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -161,9 +159,17 @@ Camera:
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -197,12 +203,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1002719}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &28696802
 GameObject:
@@ -262,6 +269,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &28696805
 Canvas:
   m_ObjectHideFlags: 0
@@ -279,7 +287,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -293,10 +303,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 911358238}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -333,6 +343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -362,105 +373,81 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 179048321}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &626304555
-GameObject:
+--- !u!850595691 &496786933
+LightingSettings:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 626304557}
-  - component: {fileID: 626304556}
-  m_Layer: 0
-  m_Name: Directional Light
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!108 &626304556
-Light:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 626304555}
-  m_Enabled: 1
+  m_Name: Settings.lighting
   serializedVersion: 10
-  m_Type: 1
-  m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
-  m_Range: 10
-  m_SpotAngle: 30
-  m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
-  m_Shadows:
-    m_Type: 2
-    m_Resolution: -1
-    m_CustomResolution: -1
-    m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
-    m_NearPlane: 0.2
-    m_CullingMatrixOverride:
-      e00: 1
-      e01: 0
-      e02: 0
-      e03: 0
-      e10: 0
-      e11: 1
-      e12: 0
-      e13: 0
-      e20: 0
-      e21: 0
-      e22: 1
-      e23: 0
-      e30: 0
-      e31: 0
-      e32: 0
-      e33: 1
-    m_UseCullingMatrixOverride: 0
-  m_Cookie: {fileID: 0}
-  m_DrawHalo: 0
-  m_Flare: {fileID: 0}
-  m_RenderMode: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingLayerMask: 1
-  m_Lightmapping: 4
-  m_LightShadowCasterMode: 0
-  m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_UseBoundingSphereOverride: 0
-  m_ShadowRadius: 0
-  m_ShadowAngle: 0
---- !u!4 &626304557
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 626304555}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_EnableBakedLightmaps: 1
+  m_EnableRealtimeLightmaps: 0
+  m_RealtimeEnvironmentLighting: 1
+  m_BounceScale: 1
+  m_AlbedoBoost: 1
+  m_IndirectOutputScale: 1
+  m_UsingShadowmask: 1
+  m_BakeBackend: 1
+  m_LightmapMaxSize: 1024
+  m_LightmapSizeFixed: 0
+  m_UseMipmapLimits: 1
+  m_BakeResolution: 40
+  m_Padding: 2
+  m_LightmapCompression: 3
+  m_LightmapPackingMode: 1
+  m_LightmapPackingMethod: 0
+  m_XAtlasPackingAttempts: 16384
+  m_XAtlasBruteForce: 0
+  m_XAtlasBlockAlign: 0
+  m_XAtlasRepackUnderutilizedLightmaps: 1
+  m_AO: 0
+  m_AOMaxDistance: 1
+  m_CompAOExponent: 1
+  m_CompAOExponentDirect: 0
+  m_ExtractAO: 0
+  m_MixedBakeMode: 2
+  m_LightmapsBakeMode: 1
+  m_FilterMode: 1
+  m_LightmapParameters: {fileID: 15204, guid: 0000000000000000f000000000000000, type: 0}
+  m_ExportTrainingData: 0
+  m_EnableWorkerProcessBaking: 1
+  m_TrainingDataDestination: TrainingData
+  m_RealtimeResolution: 2
+  m_ForceWhiteAlbedo: 0
+  m_ForceUpdates: 0
+  m_PVRCulling: 1
+  m_PVRSampling: 1
+  m_PVRDirectSampleCount: 32
+  m_PVRSampleCount: 512
+  m_PVREnvironmentSampleCount: 256
+  m_PVREnvironmentReferencePointCount: 2048
+  m_LightProbeSampleCountMultiplier: 4
+  m_PVRBounces: 2
+  m_PVRMinBounces: 2
+  m_PVREnvironmentImportanceSampling: 1
+  m_PVRFilteringMode: 1
+  m_PVRDenoiserTypeDirect: 1
+  m_PVRDenoiserTypeIndirect: 1
+  m_PVRDenoiserTypeAO: 1
+  m_PVRFilterTypeDirect: 0
+  m_PVRFilterTypeIndirect: 0
+  m_PVRFilterTypeAO: 0
+  m_PVRFilteringGaussRadiusDirect: 1
+  m_PVRFilteringGaussRadiusIndirect: 5
+  m_PVRFilteringGaussRadiusAO: 2
+  m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+  m_PVRFilteringAtrousPositionSigmaIndirect: 2
+  m_PVRFilteringAtrousPositionSigmaAO: 1
+  m_RespectSceneVisibilityWhenBakingGI: 0
 --- !u!1 &911358237
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,9 +476,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 28696806}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -513,6 +500,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -571,40 +559,58 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 48000
+  controlRate: 1500
+  ksmps: 32
+  updateOutputBuffer: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: fd584176b66790649998e36801d2c6ba
   _csoundString: "<Cabbage>\r\nform caption(\"AudioClipRead\") size(400, 300), colour(58,
     110, 182)\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n -d\r\n</CsOptions>\r\n<CsInstruments>\r\n;
     Initialize the global variables. \r\nksmps = 32\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\n/*
-    This UDO will read function tables created using the \r\n CsoundUnity.CreateTable().
-    If the AudioClip is stereo, the table will \r\n contain interleaved audio samples.
-    */\r\nopcode AudioClipRead, a[],i\r\nsetksmps 1\r\niTable xin\r\nkCount init
-    0\r\niNumChannels tab_i 0, iTable\r\nprint iNumChannels\r\naOutArr[]  init iNumChannels\r\niNumSamples
-    = ftlen(iTable)\r\nif iNumChannels == 1 then\r\n    aOutArr[0] tab 1+kCount,
-    iTable\r\n    kCount = (kCount<iNumSamples ? kCount+1 : 0)\r\nelseif iNumChannels
-    == 2 then\r\n    aOutArr[0] tab 1+kCount, iTable\r\n    aOutArr[1] tab 1+kCount+1,
-    iTable\r\n    kCount = (kCount<iNumSamples ? kCount+2 : 0)\r\nendif\r\n\r\nxout
-    aOutArr\r\n \r\nendop\r\n\r\n/* This instrument, which uses the above UDO,\r\n
-    will test AudioClip playback, stereo or mono */\r\ninstr 1\r\n    iTableNumber
-    = p4\r\n    prints \"Instr 1, Reading from (stereo or mono) table %d\", iTableNumber\r\n   
-    iLen = ftlen(iTableNumber)\r\n    prints \"Instr 1, Printing table size: %d\\n\",
-    iLen  \r\n    print tab_i(0, iTableNumber)\r\n    aSig[] AudioClipRead iTableNumber\r\n   
-    print lenarray:i(aSig)\r\n    k1 downsamp aSig[0]\r\n\r\n    if lenarray:i(aSig)
-    == 1 then\r\n        outs aSig[0], aSig[0] \r\n    else\r\n        outs aSig[0],
-    aSig[1]\r\n    endif\r\nendin\r\n\r\n/* This instrument does simple playback
-    of an AudioClip, but \r\n only reads a single channel. This is the the default
-    behaviour of\r\n CsoundUnity.CreateTable(), i.e, it will only write a single
-    channel to \r\n a function table. This is because Csound doesn't handle stereo
-    function\r\n tables, without the use of a custom UDO as shown above */\r\ninstr
-    2\r\n    iTableNumber = p4\r\n    prints \"Instr 2, Reading from mono table %d\\n\",
-    iTableNumber\r\n    iLen = ftlen(iTableNumber)\r\n    prints \"Instr 2, Printing
-    table size: %d\\n\", iLen  \r\n    aPhs phasor (sr/iLen)\r\n    aFile table aPhs,
-    iTableNumber, 1\r\n    outs aFile, aFile\r\nendin\r\n\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf0
+    This UDO reads multichannel function tables created by\r\n CsoundUnity.CreateTable()
+    with interleaved samples. The table layout is:\r\n   index 0           : channel
+    count\r\n   index 1..ftlen-1  : interleaved audio samples (L0,R0,L1,R1,... for
+    stereo) */\r\nopcode AudioClipRead, a[],i\r\niTable xin\r\niNumChannels tab_i
+    0, iTable\r\naOutArr[]  init iNumChannels\r\niNumSamples = ftlen(iTable)\r\niFrames
+    = (iNumSamples - 1) / iNumChannels\r\n\r\n; Audio-rate frame index via phasor
+    \u2014 advances by 1 per audio sample,\r\n; wraps to 0 at end of file.  We use
+    phasor (not setksmps 1) because\r\n; combining `setksmps 1` with an audio-array
+    `xout` corrupts the Csound 7\r\n; heap and crashes csoundDestroy after a few
+    play/stop cycles.\r\naPhs phasor sr/iFrames                       ; 0 <= aPhs
+    < 1 over iFrames samples\r\naFrame = int(aPhs * iFrames)                 ; integer
+    frame in [0, iFrames-1]\r\n\r\n; Loop generalised over iNumChannels \u2014 works
+    for mono, stereo, 5.1, 7.1, etc.\r\n; `tab` is unchecked but aFrame is bounded
+    so the read index\r\n; 1 + aFrame*iNumChannels + kc stays within [1, iNumSamples-1].\r\nkc
+    = 0\r\nwhile kc < iNumChannels do\r\n    aOutArr[kc] tab 1 + aFrame*iNumChannels
+    + kc, iTable\r\n    kc += 1\r\nod\r\n\r\nxout aOutArr\r\nendop\r\n\r\n/* This
+    instrument, which uses the above UDO,\r\n will test AudioClip playback, stereo
+    or mono */\r\ninstr 1\r\n    iTableNumber = p4\r\n    prints \"\\n>>> instr 1
+    INIT at p2=%f, dur=%f, table=%d\\n\", p2, p3, iTableNumber\r\n    iLen = ftlen(iTableNumber)\r\n   
+    prints \"    table size = %d, channel count = %d\\n\", iLen, tab_i(0, iTableNumber)\r\n   
+    aSig[] AudioClipRead iTableNumber\r\n    prints \"    aSig length after UDO call
+    = %d\\n\", lenarray:i(aSig)\r\n\r\n    ; per-second progress marker so we can
+    see the instrument is producing samples\r\n    printks \"    instr 1 producing
+    audio... t=%f\\\\n\", 1, times:k()\r\n\r\n    if lenarray:i(aSig) == 1 then\r\n       
+    outs aSig[0], aSig[0]\r\n    else\r\n        outs aSig[0], aSig[1]\r\n    endif\r\nendin\r\n\r\n/*
+    This instrument does simple playback of an AudioClip, but \r\n only reads a single
+    channel. This is the the default behaviour of\r\n CsoundUnity.CreateTable(),
+    i.e, it will only write a single channel to \r\n a function table. This is because
+    Csound doesn't handle multichannelxs function\r\n tables, without the use of
+    a custom UDO as shown above */\r\ninstr 2\r\n    iTableNumber = p4\r\n    prints
+    \"Instr 2, Reading from mono table %d\\n\", iTableNumber\r\n    iLen = ftlen(iTableNumber)\r\n   
+    prints \"Instr 2, Printing table size: %d\\n\", iLen  \r\n    aPhs phasor (sr/iLen)\r\n   
+    aFile table aPhs, iTableNumber, 1\r\n    outs aFile, aFile\r\nendin\r\n\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf0
     z\r\ni1 1 2 9000\r\ni2 3 4 9001\r\ni1 7 2 9002\r\ni2 9 4 9003\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: AudioClipRead.csd
   _csoundAsset: {fileID: 102900000, guid: fd584176b66790649998e36801d2c6ba, type: 3}
@@ -619,10 +625,22 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 400
+    height: 300
   _availableAudioChannels: []
-  _drawCsoundString: 0
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
+  _drawCsoundString: 1
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 0
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -633,6 +651,10 @@ MonoBehaviour:
   _currentPreset: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  webGLAssetsList: []
+  _audioPath: 0
+  _generatorStartupDelay: 0
 --- !u!82 &1498695640
 AudioSource:
   m_ObjectHideFlags: 0
@@ -644,6 +666,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -736,12 +759,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1498695638}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.098593, y: 5.422086, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1498695642
 MonoBehaviour:
@@ -756,3 +780,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioClip: {fileID: 8300000, guid: 151e5d7e59ec9f64a9ba58184c97e89e, type: 3}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 1002722}
+  - {fileID: 1498695641}
+  - {fileID: 28696806}
+  - {fileID: 179048324}
