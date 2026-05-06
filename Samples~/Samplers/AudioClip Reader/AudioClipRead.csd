@@ -11,44 +11,45 @@ ksmps = 32
 nchnls = 2
 0dbfs = 1
 
-/* This UDO will read function tables created using the 
- CsoundUnity.CreateTable(). If the AudioClip is stereo, the table will 
- contain interleaved audio samples. */
+/* This UDO reads multichannel function tables created by
+ CsoundUnity.CreateTable() with interleaved samples. The table layout is:
+   index 0           : channel count
+   index 1..ftlen-1  : interleaved audio samples (L0,R0,L1,R1,... for stereo) */
 opcode AudioClipRead, a[],i
-setksmps 1
 iTable xin
-kCount init 0
 iNumChannels tab_i 0, iTable
-print iNumChannels
 aOutArr[]  init iNumChannels
 iNumSamples = ftlen(iTable)
-if iNumChannels == 1 then
-    aOutArr[0] tab 1+kCount, iTable
-    kCount = (kCount<iNumSamples ? kCount+1 : 0)
-elseif iNumChannels == 2 then
-    aOutArr[0] tab 1+kCount, iTable
-    aOutArr[1] tab 1+kCount+1, iTable
-    kCount = (kCount<iNumSamples ? kCount+2 : 0)
-endif
+iFrames = (iNumSamples - 1) / iNumChannels
+
+; Audio-rate frame index via phasor — advances by 1 per audio sample,
+; wraps to 0 at end of file.
+aPhs phasor sr/iFrames                       ; 0 <= aPhs < 1 over iFrames samples
+aFrame = int(aPhs * iFrames)                 ; integer frame in [0, iFrames-1]
+
+; Loop generalised over iNumChannels — works for mono, stereo, 5.1, 7.1, etc.
+; `tab` is unchecked but aFrame is bounded so the read index
+; 1 + aFrame*iNumChannels + kc stays within [1, iNumSamples-1].
+kc = 0
+while kc < iNumChannels do
+    aOutArr[kc] tab 1 + aFrame*iNumChannels + kc, iTable
+    kc += 1
+od
 
 xout aOutArr
- 
 endop
 
 /* This instrument, which uses the above UDO,
  will test AudioClip playback, stereo or mono */
 instr 1
     iTableNumber = p4
-    prints "Instr 1, Reading from (stereo or mono) table %d", iTableNumber
+    prints "Instr 1, Reading from (stereo or mono) table %d\n", iTableNumber
     iLen = ftlen(iTableNumber)
-    prints "Instr 1, Printing table size: %d\n", iLen  
-    print tab_i(0, iTableNumber)
+    prints "Instr 1, Printing table size: %d\n", iLen
     aSig[] AudioClipRead iTableNumber
-    print lenarray:i(aSig)
-    k1 downsamp aSig[0]
 
     if lenarray:i(aSig) == 1 then
-        outs aSig[0], aSig[0] 
+        outs aSig[0], aSig[0]
     else
         outs aSig[0], aSig[1]
     endif
@@ -57,7 +58,7 @@ endin
 /* This instrument does simple playback of an AudioClip, but 
  only reads a single channel. This is the the default behaviour of
  CsoundUnity.CreateTable(), i.e, it will only write a single channel to 
- a function table. This is because Csound doesn't handle stereo function
+ a function table. This is because Csound doesn't handle multichannel function
  tables, without the use of a custom UDO as shown above */
 instr 2
     iTableNumber = p4
