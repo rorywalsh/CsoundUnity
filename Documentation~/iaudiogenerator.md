@@ -68,9 +68,21 @@ If `processClipAudio` is enabled **and** the `AudioSource` has a clip assigned, 
 IAudioGenerator mode. Falling back to OnAudioFilterRead path ...
 ```
 
-To use IAudioGenerator and still process external audio, use **Audio Input Routing** instead: route audio from another `CsoundUnity` instance into the spin buffer via the Audio Input Routes list. See [Audio Input Routing](audio_input_routing.md) for details. 
-Otherwise you can load samples from an `AudioClip` using the `TableLoader` component (under Utilities/Components), and use the newly created table on the Csound side.
-The other option is to copy the audio files in the persistent data folder and set the SFDIR to point there. Csound will be able to load the files and process them using opcodes like `diskin`. 
+Given the above, some `processClipAudio` workflows are not available — for example,
+swapping an `AudioClip` at runtime while Csound processes the samples in real
+time has no IAudioGenerator equivalent.
+
+If you only need *some* way to bring external audio into Csound, two workflows
+cover most use cases:
+
+- load samples from an `AudioClip` into a Csound ftable via the `TableLoader`
+  component (under `Utilities/Components/`), then read it from the orchestra
+- copy audio files to `Application.persistentDataPath` (using the
+  `CopyFilesToPersistentDataPath` component) and read them with `diskin2`,
+  pointing `SFDIR` at that folder
+
+See [Loading external files](loading_external_files.md) for the full set of
+approaches and their trade-offs. 
 
 
 ### Compatibility ###

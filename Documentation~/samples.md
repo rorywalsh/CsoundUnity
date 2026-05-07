@@ -44,6 +44,7 @@ Saving and recalling CsoundUnity presets at runtime.
 
 **Samplers**  
 Audio clip playback, processing, and external audio file handling through Csound.
+See [Loading external files](loading_external_files.md) for the loading mechanisms these samples illustrate.
 
 **Sequencers**  
 Step sequencers built with CsoundUnity channels.
@@ -57,6 +58,9 @@ Microphone input analysis using Csound opcodes.
 
 **Environment**  
 Loading external Csound plugins and soundfont directories.
+Demonstrates `CopyFilesToPersistentDataPath` and Environment Variables —
+see [Loading external files](loading_external_files.md) and
+[Environment Variables](environment_variables.md).
 
 **WebGL**  
 WebGL-specific setup and considerations.
