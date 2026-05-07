@@ -216,7 +216,7 @@ GameObject:
   - component: {fileID: 247984524}
   - component: {fileID: 247984525}
   - component: {fileID: 247984526}
-  - component: {fileID: 247984527}
+  - component: {fileID: 247984529}
   - component: {fileID: 247984528}
   m_Layer: 0
   m_Name: Partikkel-2
@@ -246,10 +246,14 @@ MonoBehaviour:
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 1500
+  ksmps: 32
   updateOutputBuffer: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
-  _csoundFileGUID: bcb7aeda3b47b864198e0573ab325ff4
+  _csoundFileGUID: b7076cb71f7a04ced8118310ffdf38b3
   _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\r\nform caption(\"Partikkel-2, by
     J. Heintz and O. Brandtsegg\") size(600, 300) pluginId(\"GRNS\")\r\nrslider bounds(10,
     10, 100, 100) range(0, 2.0, 1, 1, 0.001) text(\"Gain\") channel(\"gain\")\r\nrslider
@@ -356,7 +360,7 @@ MonoBehaviour:
     wait a little before starting, to let Unity load the samples and fill the table
     #100\r\ni1\t\t.5\tz\t\r\n;i1 \t0\t2.757\t1\t\t200\t\t15\t\t0\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t200\t\t15\t\t400\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t15\t\t450\t\t400\t\t0\t\t0\t\t0\t\t0\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t15\t\t450\t\t400\t\t0\t\t0\t\t0\t\t0.4\r\n;s\r\n;i1\t\t0\t2.757\t1\t\t200\t\t15\t\t0\t\t400\t\t0\t\t0\t\t1\r\n;s\r\n;i1\t\t0\t5.514\t.5\t\t200\t\t20\t\t0\t\t0\t\t600\t\t.5\t\t1\r\n;s\r\n;i1\t\t0\t11.028\t.25\t\t200\t\t15\t\t0\t\t1000\t400\t\t1\t\t1\r\n\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
   _csoundFileName: partikkel-2.csd
-  _csoundAsset: {fileID: 102900000, guid: bcb7aeda3b47b864198e0573ab325ff4, type: 3}
+  _csoundAsset: {fileID: 102900000, guid: b7076cb71f7a04ced8118310ffdf38b3, type: 3}
   _channels:
   - type: form
     channel: 
@@ -372,6 +376,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 600
+    height: 300
   - type: rslider
     channel: gain
     text: Gain
@@ -386,6 +394,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 10
+    y: 10
+    width: 100
+    height: 100
   - type: rslider
     channel: speed
     text: Speed
@@ -400,6 +412,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 110
+    y: 10
+    width: 100
+    height: 100
   - type: rslider
     channel: density
     text: Density
@@ -414,6 +430,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 210
+    y: 10
+    width: 100
+    height: 100
   - type: rslider
     channel: grainSize
     text: GrainSize ms
@@ -428,6 +448,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 310
+    y: 10
+    width: 100
+    height: 100
   - type: rslider
     channel: grainPitch
     text: Grain Pitch
@@ -442,6 +466,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 410
+    y: 10
+    width: 100
+    height: 100
   - type: rslider
     channel: randPitch
     text: Random Pitch
@@ -456,6 +484,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 10
+    y: 110
+    width: 100
+    height: 100
   - type: rslider
     channel: jitter
     text: Jitter
@@ -470,6 +502,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 110
+    y: 110
+    width: 100
+    height: 100
   - type: rslider
     channel: distribution
     text: Distribution
@@ -484,6 +520,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 210
+    y: 110
+    width: 100
+    height: 100
   - type: rslider
     channel: spread
     text: Spread
@@ -498,6 +538,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
+    x: 310
+    y: 110
+    width: 100
+    height: 100
   - type: rslider
     channel: panDur
     text: Panning Duration
@@ -512,22 +556,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-  _availableAudioChannels:
-  - a1
-  - a2
-  - a3
-  - a4
-  - a5
-  - a6
-  - a7
-  - a8
+    x: 410
+    y: 110
+    width: 100
+    height: 100
+  _availableAudioChannels: []
+  _nchnls: 8
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 8192
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
-  _drawChannels: 0
+  _drawAudioInputRoutes: 1
+  _drawChannels: 1
   _drawAudioChannels: 1
   _drawPresets: 0
   _drawPresetsLoad: 0
@@ -537,7 +578,10 @@ MonoBehaviour:
   _currentPreset: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
   webGLAssetsList: []
+  _audioPath: 1
+  _generatorStartupDelay: 0
 --- !u!82 &247984522
 AudioSource:
   m_ObjectHideFlags: 0
@@ -662,7 +706,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd3f0a6302f66b84f8e249141296d3b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _source: {fileID: 8300000, guid: d498122b0fbc11449a28a477d04a2a28, type: 3}
+  _source: {fileID: 8300000, guid: 27923d103eb4945458b147b666f82184, type: 3}
   _tableNumber: 200
   _forceToMono: 0
   _channel: 0
@@ -700,26 +744,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 247984520}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af456456f3d2ba54f9883fdb8fa7e768, type: 3}
+  m_Script: {fileID: 11500000, guid: 205ad473be94b4428aaa4d8de040d8b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _radius: 200
   _rollofTolerance: 100
-  _childMeterPrefab: {fileID: 6825065067897352831, guid: fbf2aa1c9c2567d42824a3524e571e70, type: 3}
---- !u!114 &247984527
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 247984520}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a13a41dc341d7464e8ba22d6ff1bb620, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _VUMeterUIPrefab: {fileID: 5544309492770846865, guid: 446ec315b912e704b9878bedf30b19ab, type: 3}
-  _VUMetersContainer: {fileID: 1965946644}
+  _childMeterPrefab: {fileID: 6825065067897352831, guid: dd833034982924ed4b6a80e2b3b424ab, type: 3}
 --- !u!114 &247984528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -729,12 +759,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 247984520}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 841f0a1b12daf8c47a386c6a920ac1e7, type: 3}
+  m_Script: {fileID: 11500000, guid: 67050a30340b64a078506c92f69d02a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _parameterCubePrefab: {fileID: 4371178850701135038, guid: 442f25e7e177d62428b4d1b1e4a04a86, type: 3}
+  _parameterCubePrefab: {fileID: 4371178850701135038, guid: a845cab44dc604530b0fed580f4bb594, type: 3}
   _parametersAreaSizes: {x: 100, y: 100}
   _player: {fileID: 725293438}
+--- !u!114 &247984529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 247984520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 209de4fdef62d4120b03517ac1fac219, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Csound.Unity.Samples.GranularSynthesis.Partikkel.VUMeters
+  _VUMeterUIPrefab: {fileID: 5544309492770846865, guid: 98357c0b29a2f4da3af86e2bac1647a5, type: 3}
+  _VUMetersContainer: {fileID: 1965946644}
 --- !u!1 &416652494
 GameObject:
   m_ObjectHideFlags: 0
@@ -1058,11 +1102,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 725293438}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a395a63b97f6084380b642a894663ec, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e756a00a0a5142ea8dcf56625a232b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mouseSpeed: 1
-  _speed: 10
+  _mouseSpeed: 3
+  _speed: 50
   _pushPower: 2
 --- !u!1 &964008221
 GameObject:
@@ -1278,7 +1322,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 908640896daa53a43b671691fd32b79d, type: 2}
+  - {fileID: 2100000, guid: d7b74b2cce2e045e0b1c7dab7e860591, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
