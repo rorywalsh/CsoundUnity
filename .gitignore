@@ -69,5 +69,6 @@ Thumbs.db
 *.backup
 
 # Internal maintenance scripts — not part of the public package
-scripts/
-scripts.meta
+# (anchored at the repo root only; do not match nested Scripts/ folders inside Samples)
+/scripts/
+/scripts.meta
