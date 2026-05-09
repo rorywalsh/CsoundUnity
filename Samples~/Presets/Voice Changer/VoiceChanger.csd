@@ -79,6 +79,14 @@ endop
 ; from CSOUND MULTI FX
 ;http://iainmccurdy.org/CsoundRealtimeExamples/Miscellaneous/MultiFX.csd
 ; Written by Iain McCurdy, 2010
+
+; Anti-click envelope shape, generated once at orchestra init.
+; Previously this table was created with ftgentmp inside the Reverse UDO's
+; reinit block, which leaked one table per ktime change — when driven by a
+; vector morph that updates channels every frame, this produced thousands of
+; ftables and eventually a heap corruption crash on csoundDestroy.
+giAntiClickEnv	ftgen	0, 0, 1024, 7, 0, (1024*0.01), 1, (1024*0.98), 1, (0.01*1024), 0
+
 opcode	Reverse, a, aK				;nb. CAPITAL K CREATE A K-RATE VARIABLE THAT HAS A USEFUL VALUE ALSO AT I-TIME
 	ain,ktime	xin			;READ IN INPUT ARGUMENTS
 	ktrig	changed2	ktime			;IF ktime CONTROL IS MOVED GENERATE A MOMENTARY '1' IMPULSE
@@ -90,8 +98,7 @@ opcode	Reverse, a, aK				;nb. CAPITAL K CREATE A K-RATE VARIABLE THAT HAS A USEF
 	;prints "itime: %f, %f\n", itime, ktime
 	aptr	phasor	2/itime			;CREATE A MOVING PHASOR THAT WITH BE USED TO TAP THE DELAY BUFFER
 	aptr	=	aptr*itime		;SCALE PHASOR ACCORDING TO THE LENGTH OF THE DELAY TIME CHOSEN BY THE USER
-	ienv	ftgentmp	0,0,1024,7,0,(1024*0.01),1,(1024*0.98),1,(0.01*1024),0	;ANTI-CLICK ENVELOPE SHAPE
- 	aenv	poscil	1, 2/itime, ienv	;CREATE A CYCLING AMPLITUDE ENVELOPE THAT WILL SYNC TO THE TAP DELAY TIME PHASOR 
+ 	aenv	poscil	1, 2/itime, giAntiClickEnv	;CREATE A CYCLING AMPLITUDE ENVELOPE THAT WILL SYNC TO THE TAP DELAY TIME PHASOR
  	abuffer	delayr	itime			;CREATE A DELAY BUFFER
 	atap	deltap3	aptr			;READ AUDIO FROM A TAP WITHIN THE DELAY BUFFER
 		delayw	ain			;WRITE AUDIO INTO DELAY BUFFER
