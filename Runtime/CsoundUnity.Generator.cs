@@ -174,7 +174,13 @@ namespace Csound.Unity
                                  "route clip audio through a generator). " +
                                  "Falling back to OnAudioFilterRead path so the clip is processed correctly. " +
                                  "To use IAudioGenerator, either clear the AudioSource clip or disable processClipAudio.");
-                return; // Skip InitGenerator — OAFR path remains active and handles the clip.
+                // Switch the runtime audio path so OnAudioFilterRead actually runs ProcessBlock.
+                // Without this, _audioPath stays IAudioGenerator and OnAudioFilterRead returns
+                // early on its `_audioPath == IAudioGenerator` guard — but IAG was never started
+                // either (we skipped InitGenerator below), so Csound would produce no audio at
+                // all and only the raw AudioClip would be heard.
+                _audioPath = AudioPath.OnAudioFilterRead;
+                return; // Skip InitGenerator — OAFR path now active and handles the clip.
             }
 
             InitGenerator();
