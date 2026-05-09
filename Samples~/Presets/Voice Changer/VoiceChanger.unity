@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -98,13 +94,13 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 92bab0fb2fa5a4879a3706a9cc6c7ed2, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +113,9 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -149,9 +147,9 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 981634363}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -173,6 +171,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -257,6 +256,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &48065810
 Canvas:
   m_ObjectHideFlags: 0
@@ -274,7 +274,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -288,10 +290,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2032721840}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -326,9 +328,9 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1288764939}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -350,6 +352,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -406,11 +409,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb451614cd7063f4b9657c94fe4d5a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _mode: 0
+  _source: {fileID: 0}
+  _csoundUnity: {fileID: 0}
+  _csoundAudioChannel: 
   _sizeMult: {x: 0.019, y: 0.03}
   _offset: {x: -9.78, y: -4.59, z: 0}
   _maxHeight: 1000
+  _fftUpdateRate: 4
 --- !u!120 &257819377
 LineRenderer:
+  serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -420,10 +429,17 @@ LineRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -445,9 +461,11 @@ LineRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 1}
@@ -496,16 +514,19 @@ LineRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
+      m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
     textureMode: 0
+    textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+  m_ApplyActiveColorSpace: 0
 --- !u!4 &257819378
 Transform:
   m_ObjectHideFlags: 0
@@ -513,12 +534,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 257819375}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -10.1, y: -3.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &359022858
 GameObject:
@@ -550,6 +572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -579,12 +602,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 359022858}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &612949489
 GameObject:
@@ -626,9 +650,17 @@ Camera:
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -662,12 +694,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 612949489}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &873115132
 GameObject:
@@ -698,10 +731,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1775146839}
   m_Father: {fileID: 2032721840}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -722,6 +755,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -752,11 +786,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2045804336}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SetPreset
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: 9fb23c85fd7fc3746928c5201b8b8612,
-            type: 2}
+          m_ObjectArgument: {fileID: 11400000, guid: 9fb23c85fd7fc3746928c5201b8b8612, type: 2}
           m_ObjectArgumentAssemblyTypeName: Csound.Unity.CsoundUnityPreset, com.csound.unity
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -778,6 +812,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -829,10 +864,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1144006}
   m_Father: {fileID: 2032721840}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -853,6 +888,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -883,11 +919,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2045804336}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SetPreset
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: 87e29760cb7cca0438c396d4264cb637,
-            type: 2}
+          m_ObjectArgument: {fileID: 11400000, guid: 87e29760cb7cca0438c396d4264cb637, type: 2}
           m_ObjectArgumentAssemblyTypeName: Csound.Unity.CsoundUnityPreset, com.csound.unity
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -909,6 +945,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -960,10 +997,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 208347753}
   m_Father: {fileID: 2032721840}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -984,6 +1021,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1014,11 +1052,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2045804336}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SetPreset
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: fa787b3e5e4913f48a045d006b902e97,
-            type: 2}
+          m_ObjectArgument: {fileID: 11400000, guid: fa787b3e5e4913f48a045d006b902e97, type: 2}
           m_ObjectArgumentAssemblyTypeName: Csound.Unity.CsoundUnityPreset, com.csound.unity
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -1040,6 +1078,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1091,10 +1130,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2033953519}
   m_Father: {fileID: 2032721840}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1115,6 +1154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1145,11 +1185,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2045804336}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SetPreset
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: 4b9cadfb701a24a4da5dccfb1db90bd0,
-            type: 2}
+          m_ObjectArgument: {fileID: 11400000, guid: 4b9cadfb701a24a4da5dccfb1db90bd0, type: 2}
           m_ObjectArgumentAssemblyTypeName: Csound.Unity.CsoundUnityPreset, com.csound.unity
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -1171,6 +1211,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1221,9 +1262,9 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1535888243}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1245,6 +1286,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1300,10 +1342,10 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1491398213}
   m_Father: {fileID: 2032721840}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1324,6 +1366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1354,11 +1397,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2045804336}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SetPreset
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: 262d1bfb620fecc4b8feeb551dc55fee,
-            type: 2}
+          m_ObjectArgument: {fileID: 11400000, guid: 262d1bfb620fecc4b8feeb551dc55fee, type: 2}
           m_ObjectArgumentAssemblyTypeName: Csound.Unity.CsoundUnityPreset, com.csound.unity
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -1380,6 +1423,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1430,9 +1474,9 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 873115133}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1454,6 +1498,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1509,6 +1554,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1356278254}
   - {fileID: 1288764939}
@@ -1516,7 +1562,6 @@ RectTransform:
   - {fileID: 873115133}
   - {fileID: 981634363}
   m_Father: {fileID: 48065811}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -1538,6 +1583,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1585,6 +1631,7 @@ MonoBehaviour:
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &2033953518
 GameObject:
   m_ObjectHideFlags: 0
@@ -1613,9 +1660,9 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1356278254}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1637,6 +1684,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1694,149 +1742,157 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 1
   loudVolumeWarning: 1
   loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 48000
+  controlRate: 750
+  ksmps: 64
+  updateOutputBuffer: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: ae2e6a8b6d56a43439a63aa2ef37887a
-  _csoundString: "<Cabbage>\r\nform caption(\"Voice Changer\") size(800, 800)\r\nlabel  
+  _csoundString: "<Cabbage>\nform caption(\"Voice Changer\") size(800, 800)\nlabel  
     bounds  (10, 0, 1000, 100), channel (\"main\"), text(\"Main\"), fontColour(255,
-    255, 255, 255), fontSize(30), align(left)\r\nrslider bounds(00, 100, 100, 100),
-    channel(\"gain\"), range(0, 10, 1.0), text(\"Gain\")\r\nrslider bounds(100, 100,
-    100, 100), channel(\"cutoff\"), range(0, 4000, 600.0), text(\"Cutoff\")\r\nrslider
-    bounds(200, 100, 100, 100), channel(\"dry\"), range(0, 2, 0), text(\"Dry\")\r\nrslider
+    255, 255, 255), fontSize(30), align(left)\nrslider bounds(00, 100, 100, 100),
+    channel(\"gain\"), range(0, 10, 1.0), text(\"Gain\")\nrslider bounds(100, 100,
+    100, 100), channel(\"cutoff\"), range(0, 4000, 600.0), text(\"Cutoff\")\nrslider
+    bounds(200, 100, 100, 100), channel(\"dry\"), range(0, 2, 0), text(\"Dry\")\nrslider
     bounds(300, 100, 100, 100), channel(\"dryReverbSend\"), range(0, 2, 0.0), text(\"Dry
-    Reverb Send\")\r\nrslider bounds(400, 100, 100, 100), channel(\"dryDelaySend\"),
-    range(0, 2, 0.0), text(\"Dry Delay Send\")\r\n\r\nlabel bounds  (10, 200, 1000,
-    100), channel (\"Reverb&Delay\"), text(\"Reverb and Delay\"), fontColour(255,
-    255, 255, 255), fontSize(30), align(left)\r\nrslider bounds(0, 300, 100, 100),
-    channel(\"reverb\"), range(0, 5, 0), text(\"Reverb\")\r\nrslider bounds(100,
-    300, 100, 100), channel(\"reverbTime\"), range(0, 0.95, 0.6), text(\"Reverb Time\")\r\nrslider
-    bounds(200, 300, 100, 100), channel(\"delay\"), range(0, 5, 0), text(\"Delay\")\r\nrslider
-    bounds(300, 300, 100, 100), channel(\"delayMix\"), range(0, 0.996, 0.3), text(\"Delay
-    Mix\")\r\nrslider bounds(400, 300, 100, 100), channel(\"delayTimeL\"), range(0,
-    0.95, 0.55), text(\"Delay Time Left\")\r\nrslider bounds(500, 300, 100, 100),
-    channel(\"delayTimeR\"), range(0, 0.95, 0.65), text(\"Delay Time Right\")\r\nrslider
-    bounds(600, 300, 100, 100), channel(\"delayFeedback\"), range(0, 0.995, 0.1),
-    text(\"Delay Feedback\")\r\nrslider bounds(700, 300, 100, 100), channel(\"delayCutoff\"),
-    range(0, 0.995, 0.6), text(\"Delay Cutoff\")\r\n\r\nlabel bounds  (10, 400, 1000,
-    100), channel (\"Pitcher\"), text(\"Pitcher\"), fontColour(255, 255, 255, 255),
-    fontSize(30), align(left)\r\nrslider bounds(0, 500, 100, 100), channel(\"pitcherLev\"),
-    range(0, 5, 0), text(\"Pitcher Level\")\r\nrslider bounds(100, 500, 100, 100),
-    channel(\"pitcherScale\"), range(0, 4, 0.40), text(\"Pitcher Scale\")\r\nrslider
-    bounds(200, 500, 100, 100), channel(\"pitcherRevSend\"), range(0, 2, 0), text(\"Pitcher
-    Reverb Send\")\r\nrslider bounds(300, 500, 100, 100), channel(\"pitcherDelaySend\"),
-    range(0, 2, 0), text(\"Pitcher Delay Send\")\r\n\r\n\r\nlabel bounds  (10, 600,
-    1000, 100),  channel (\"Reverse\"), text(\"Reverse\"), fontColour(255, 255, 255,
-    255), fontSize(30), align(left)\r\nrslider bounds(0, 700, 100, 100), channel(\"reverseLev\"),
-    range(0, 5, 0), text(\"Reverse Level\")\r\nrslider bounds(100, 700, 100, 100),
-    channel(\"reverseTime\"), range(0.3, 2, 0.3), text(\"Reverse Time\")\r\nrslider
+    Reverb Send\")\nrslider bounds(400, 100, 100, 100), channel(\"dryDelaySend\"),
+    range(0, 2, 0.0), text(\"Dry Delay Send\")\n\nlabel bounds  (10, 200, 1000, 100),
+    channel (\"Reverb&Delay\"), text(\"Reverb and Delay\"), fontColour(255, 255,
+    255, 255), fontSize(30), align(left)\nrslider bounds(0, 300, 100, 100), channel(\"reverb\"),
+    range(0, 5, 0), text(\"Reverb\")\nrslider bounds(100, 300, 100, 100), channel(\"reverbTime\"),
+    range(0, 0.95, 0.6), text(\"Reverb Time\")\nrslider bounds(200, 300, 100, 100),
+    channel(\"delay\"), range(0, 5, 0), text(\"Delay\")\nrslider bounds(300, 300,
+    100, 100), channel(\"delayMix\"), range(0, 0.996, 0.3), text(\"Delay Mix\")\nrslider
+    bounds(400, 300, 100, 100), channel(\"delayTimeL\"), range(0, 0.95, 0.55), text(\"Delay
+    Time Left\")\nrslider bounds(500, 300, 100, 100), channel(\"delayTimeR\"), range(0,
+    0.95, 0.65), text(\"Delay Time Right\")\nrslider bounds(600, 300, 100, 100),
+    channel(\"delayFeedback\"), range(0, 0.995, 0.1), text(\"Delay Feedback\")\nrslider
+    bounds(700, 300, 100, 100), channel(\"delayCutoff\"), range(0, 0.995, 0.6), text(\"Delay
+    Cutoff\")\n\nlabel bounds  (10, 400, 1000, 100), channel (\"Pitcher\"), text(\"Pitcher\"),
+    fontColour(255, 255, 255, 255), fontSize(30), align(left)\nrslider bounds(0,
+    500, 100, 100), channel(\"pitcherLev\"), range(0, 5, 0), text(\"Pitcher Level\")\nrslider
+    bounds(100, 500, 100, 100), channel(\"pitcherScale\"), range(0, 4, 0.40), text(\"Pitcher
+    Scale\")\nrslider bounds(200, 500, 100, 100), channel(\"pitcherRevSend\"), range(0,
+    2, 0), text(\"Pitcher Reverb Send\")\nrslider bounds(300, 500, 100, 100), channel(\"pitcherDelaySend\"),
+    range(0, 2, 0), text(\"Pitcher Delay Send\")\n\n\nlabel bounds  (10, 600, 1000,
+    100),  channel (\"Reverse\"), text(\"Reverse\"), fontColour(255, 255, 255, 255),
+    fontSize(30), align(left)\nrslider bounds(0, 700, 100, 100), channel(\"reverseLev\"),
+    range(0, 5, 0), text(\"Reverse Level\")\nrslider bounds(100, 700, 100, 100),
+    channel(\"reverseTime\"), range(0.3, 2, 0.3), text(\"Reverse Time\")\nrslider
     bounds(200, 700, 100, 100), channel(\"reverseRevSend\"), range(0, 2, 0), text(\"Reverse
-    Reverb Send\")\r\nrslider bounds(300, 700, 100, 100), channel(\"reverseDelaySend\"),
-    range(0, 2, 0), text(\"Reverse Delay Send\")\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
-    -d\r\n</CsOptions>\r\n<CsInstruments>\r\n\r\n; Initialize the global variables.
-    \r\nsr = 48000\r\nksmps = 64\r\nnchnls_i = 1\r\nnchnls = 2\r\n0dbfs = 1\r\n\r\ngiBuffer
-    ftgen  0, 0, 480000, 7, 0; table for audio data storage, 10 seconds buffer\r\n;giCosine\tftgen\t0,
-    0, 8193, 9, 1, 1, 90\r\n;giWin\t\t\t\tftgen\t0, 0, 4096, 20, 9, 1\t\t\t\t\t\t\t\t\t;
-    grain envelope\r\n;giTest ftgen 0, 0, 4096, 10, .1, 0.3, 0.1, 0.1\r\n\r\nga1
-    init 0      ; audio input\r\ngarev init 0    ;reverb output\r\ngaPitcher init
-    0     ;pitch scaler output\r\ngaReverse init 0   ;reverse output\r\ngaReverbAux
-    init 0   ; an aux that will be used for reverb \r\ngaDelayAux init 0   ; an aux
-    that will be used for delay\r\n\r\n;\r\n;OPCODES \r\n;\r\n\r\n;courtesy Iain
-    McCurdy\r\nopcode    lineto2,k,kk\r\n kinput,ktime    xin\r\n ktrig    changed   
-    kinput,ktime    ; reset trigger\r\n if ktrig==1 then                    ; if
-    new note has been received or if portamento time has been changed...\r\n  reinit
-    RESTART\r\n endif\r\n RESTART:                            ; restart 'linseg'
-    envelope\r\n if i(ktime)==0 then                 ; 'linseg' fails if duration
-    is zero...\r\n  koutput    =    i(kinput)          ; ...in which case output
-    simply equals input\r\n else\r\n  koutput    linseg    i(koutput),i(ktime),i(kinput)   
-    ; linseg envelope from old value to new value\r\n endif\r\n rireturn\r\n        
-    xout    koutput\r\nendop\r\n\r\n; from CSOUND MULTI FX\r\n;http://iainmccurdy.org/CsoundRealtimeExamples/Miscellaneous/MultiFX.csd\r\n;
-    Written by Iain McCurdy, 2010\r\nopcode\tReverse, a, aK\t\t\t\t;nb. CAPITAL K
-    CREATE A K-RATE VARIABLE THAT HAS A USEFUL VALUE ALSO AT I-TIME\r\n\tain,ktime\txin\t\t\t;READ
-    IN INPUT ARGUMENTS\r\n\tktrig\tchanged2\tktime\t\t\t;IF ktime CONTROL IS MOVED
-    GENERATE A MOMENTARY '1' IMPULSE\r\n\tif ktrig=1 then\t\t\t\t;IF A TRIGGER HAS
-    BEEN GENERATED IN THE LINE ABOVE...\r\n\t\treinit\tUPDATE\t\t\t;...BEGIN A REINITILISATION
-    PASS FROM LABEL 'UPDATE'\r\n\tendif\t\t\t\t\t;END OF CONDITIONAL BRANCH\r\n\tUPDATE:\t\t\t\t\t;LABEL
-    CALLED 'UPDATE'\r\n\titime\t=\ti(ktime)\t\t;CREATE AN I-TIME VERSION OF ktime\r\n\t;prints
-    \"itime: %f, %f\\n\", itime, ktime\r\n\taptr\tphasor\t2/itime\t\t\t;CREATE A
-    MOVING PHASOR THAT WITH BE USED TO TAP THE DELAY BUFFER\r\n\taptr\t=\taptr*itime\t\t;SCALE
-    PHASOR ACCORDING TO THE LENGTH OF THE DELAY TIME CHOSEN BY THE USER\r\n\tienv\tftgentmp\t0,0,1024,7,0,(1024*0.01),1,(1024*0.98),1,(0.01*1024),0\t;ANTI-CLICK
-    ENVELOPE SHAPE\r\n \taenv\tposcil\t1, 2/itime, ienv\t;CREATE A CYCLING AMPLITUDE
-    ENVELOPE THAT WILL SYNC TO THE TAP DELAY TIME PHASOR \r\n \tabuffer\tdelayr\titime\t\t\t;CREATE
-    A DELAY BUFFER\r\n\tatap\tdeltap3\taptr\t\t\t;READ AUDIO FROM A TAP WITHIN THE
-    DELAY BUFFER\r\n\t\tdelayw\tain\t\t\t;WRITE AUDIO INTO DELAY BUFFER\r\n\trireturn\t\t\t\t;RETURN
-    FROM REINITIALISATION PASS\r\n\txout\tatap*aenv\t\t\t;SEND AUDIO BACK TO CALLER
-    INSTRUMENT. APPLY AMPLITUDE ENVELOPE TO PREVENT CLICKS.\r\nendop\r\n\r\nopcode\tAnalogDelay,
-    a, akkkk\r\n\tain,kmix,ktime,kfback,ktone\txin\t\t\t;READ IN INPUT ARGUMENTS\r\n\tktone\texpcurve\tktone,4\t\t\t\t;CREATE
-    AN EXPONENTIAL REMAPPING OF ktone\r\n\tktone\tscale\tktone,12000,100\t\t\t\t;RESCALE
-    0 - 1 VALUE\r\n\tiWet\tftgentmp\t0,0,1024,-7,0,512,1,512,1\t;RESCALING FUNCTION
-    FOR WET LEVEL CONTROL\r\n\tiDry\tftgentmp\t0,0,1024,-7,1,512,1,512,0\t;RESCALING
-    FUNCTION FOR DRY LEVEL CONTROL\r\n\tkWet\ttable\tkmix, iWet, 1\t\t\t\t;RESCALE
-    WET LEVEL CONTROL ACCORDING TO FUNCTION TABLE iWet\r\n\tkDry\ttable\tkmix, iDry,
+    Reverb Send\")\nrslider bounds(300, 700, 100, 100), channel(\"reverseDelaySend\"),
+    range(0, 2, 0), text(\"Reverse Delay Send\")\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\n\n; Initialize the global variables. \nsr
+    = 48000\nksmps = 64\nnchnls_i = 1\nnchnls = 2\n0dbfs = 1\n\ngiBuffer ftgen  0,
+    0, 480000, 7, 0; table for audio data storage, 10 seconds buffer\n;giCosine\tftgen\t0,
+    0, 8193, 9, 1, 1, 90\n;giWin\t\t\t\tftgen\t0, 0, 4096, 20, 9, 1\t\t\t\t\t\t\t\t\t;
+    grain envelope\n;giTest ftgen 0, 0, 4096, 10, .1, 0.3, 0.1, 0.1\n\nga1 init 0     
+    ; audio input\ngarev init 0    ;reverb output\ngaPitcher init 0     ;pitch scaler
+    output\ngaReverse init 0   ;reverse output\ngaReverbAux init 0   ; an aux that
+    will be used for reverb \ngaDelayAux init 0   ; an aux that will be used for
+    delay\n\n;\n;OPCODES \n;\n\n;courtesy Iain McCurdy\nopcode    lineto2,k,kk\n
+    kinput,ktime    xin\n ktrig    changed    kinput,ktime    ; reset trigger\n if
+    ktrig==1 then                    ; if new note has been received or if portamento
+    time has been changed...\n  reinit RESTART\n endif\n RESTART:                           
+    ; restart 'linseg' envelope\n if i(ktime)==0 then                 ; 'linseg'
+    fails if duration is zero...\n  koutput    =    i(kinput)          ; ...in which
+    case output simply equals input\n else\n  koutput    linseg    i(koutput),i(ktime),i(kinput)   
+    ; linseg envelope from old value to new value\n endif\n rireturn\n         xout   
+    koutput\nendop\n\n; from CSOUND MULTI FX\n;http://iainmccurdy.org/CsoundRealtimeExamples/Miscellaneous/MultiFX.csd\n;
+    Written by Iain McCurdy, 2010\n\n; Anti-click envelope shape, generated once
+    at orchestra init.\n; Previously this table was created with ftgentmp inside
+    the Reverse UDO's\n; reinit block, which leaked one table per ktime change \u2014
+    when driven by a\n; vector morph that updates channels every frame, this produced
+    thousands of\n; ftables and eventually a heap corruption crash on csoundDestroy.\ngiAntiClickEnv\tftgen\t0,
+    0, 1024, 7, 0, (1024*0.01), 1, (1024*0.98), 1, (0.01*1024), 0\n\nopcode\tReverse,
+    a, aK\t\t\t\t;nb. CAPITAL K CREATE A K-RATE VARIABLE THAT HAS A USEFUL VALUE
+    ALSO AT I-TIME\n\tain,ktime\txin\t\t\t;READ IN INPUT ARGUMENTS\n\tktrig\tchanged2\tktime\t\t\t;IF
+    ktime CONTROL IS MOVED GENERATE A MOMENTARY '1' IMPULSE\n\tif ktrig=1 then\t\t\t\t;IF
+    A TRIGGER HAS BEEN GENERATED IN THE LINE ABOVE...\n\t\treinit\tUPDATE\t\t\t;...BEGIN
+    A REINITILISATION PASS FROM LABEL 'UPDATE'\n\tendif\t\t\t\t\t;END OF CONDITIONAL
+    BRANCH\n\tUPDATE:\t\t\t\t\t;LABEL CALLED 'UPDATE'\n\titime\t=\ti(ktime)\t\t;CREATE
+    AN I-TIME VERSION OF ktime\n\t;prints \"itime: %f, %f\\n\", itime, ktime\n\taptr\tphasor\t2/itime\t\t\t;CREATE
+    A MOVING PHASOR THAT WITH BE USED TO TAP THE DELAY BUFFER\n\taptr\t=\taptr*itime\t\t;SCALE
+    PHASOR ACCORDING TO THE LENGTH OF THE DELAY TIME CHOSEN BY THE USER\n \taenv\tposcil\t1,
+    2/itime, giAntiClickEnv\t;CREATE A CYCLING AMPLITUDE ENVELOPE THAT WILL SYNC
+    TO THE TAP DELAY TIME PHASOR\n \tabuffer\tdelayr\titime\t\t\t;CREATE A DELAY
+    BUFFER\n\tatap\tdeltap3\taptr\t\t\t;READ AUDIO FROM A TAP WITHIN THE DELAY BUFFER\n\t\tdelayw\tain\t\t\t;WRITE
+    AUDIO INTO DELAY BUFFER\n\trireturn\t\t\t\t;RETURN FROM REINITIALISATION PASS\n\txout\tatap*aenv\t\t\t;SEND
+    AUDIO BACK TO CALLER INSTRUMENT. APPLY AMPLITUDE ENVELOPE TO PREVENT CLICKS.\nendop\n\nopcode\tAnalogDelay,
+    a, akkkk\n\tain,kmix,ktime,kfback,ktone\txin\t\t\t;READ IN INPUT ARGUMENTS\n\tktone\texpcurve\tktone,4\t\t\t\t;CREATE
+    AN EXPONENTIAL REMAPPING OF ktone\n\tktone\tscale\tktone,12000,100\t\t\t\t;RESCALE
+    0 - 1 VALUE\n\tiWet\tftgentmp\t0,0,1024,-7,0,512,1,512,1\t;RESCALING FUNCTION
+    FOR WET LEVEL CONTROL\n\tiDry\tftgentmp\t0,0,1024,-7,1,512,1,512,0\t;RESCALING
+    FUNCTION FOR DRY LEVEL CONTROL\n\tkWet\ttable\tkmix, iWet, 1\t\t\t\t;RESCALE
+    WET LEVEL CONTROL ACCORDING TO FUNCTION TABLE iWet\n\tkDry\ttable\tkmix, iDry,
     1                 \t\t;RESCALE DRY LEVEL CONTROL ACCORDING TO FUNCTION TABLE
-    iWet\r\n\tkporttime\tlinseg\t0,0.001,0.1\t\t\t;RAMPING UP PORTAMENTO TIME\r\n\tkTime\tportk\tktime,
-    kporttime*3\t\t\t;APPLY PORTAMENTO SMOOTHING TO DELAY TIME PARAMETER\r\n\tkTone\tportk\tktone,
-    kporttime\t\t\t;APPLY PORTAMENTO SMOOTHING TO TONE PARAMETER\r\n\taTime\tinterp\tkTime\t\t\t\t\t;INTERPOLATE
-    AND CREAT A-RATE VERSION OF DELAY TIME PARAMETER\r\n\taBuffer\tdelayr\t5\t\t\t\t\t;READ
-    FROM (AND INITIALIZE) BUFFER\r\n\tatap\tdeltap3\taTime\t\t\t\t\t;TAP DELAY BUFFER\r\n\tatap\tclip\tatap,
-    0, 0dbfs\t\t\t\t;SIGNAL IS CLIPPED AT MAXIMUM AMPLITUDE USING BRAM DE JONG METHOD\r\n\tatap\ttone\tatap,
-    kTone\t\t\t\t;LOW-PASS FILTER DELAY TAP WITHIN DELAY BUFFER \r\n\t\tdelayw\tain+(atap*kfback)\t\t\t;WRITE
-    INPUT AUDIO AND FEEDBACK SIGNAL INTO DELAY BUFFER\r\n\taout\tsum\tain*kDry, atap*kWet\t\t\t;MIX
-    DRY AND WET SIGNALS \r\n\t\txout\taout\t\t\t\t\t;SEND AUDIO BACK TO CALLER INSTRUMENT\r\nendop\r\n\r\n;\r\n;
-    MAIN INSTR\r\n;\r\ninstr 1\r\n\r\n; get current gain\r\nkGain chnget \"gain\"\r\nkCutoff
-    chnget \"cutoff\"\r\nkDry chnget \"dry\"\r\nkRev chnget \"reverb\"\r\nkRevTime
-    chnget \"reverbTime\"\r\nkDel chnget \"delay\"\r\nkDelMix chnget \"delayMix\"\r\nkDelTimeL
-    chnget \"delayTimeL\"\r\nkDelTimeR chnget \"delayTimeR\"\r\nkDelFbk chnget \"delayFeedback\"\r\nkDelCutoff
-    chnget \"delayCutoff\"\r\n\r\nkDryRevSend chnget \"dryReverbSend\"\r\nkDryDelaySend
-    chnget \"dryDelaySend\"\r\n\r\nkGain lineto2 kGain, 0.01\r\nkCutoff lineto2 kCutoff,
-    0.01\r\nkDry lineto2 kDry, 0.01\r\nkRev lineto2 kRev, 0.01\r\nkRevTime lineto2
-    kRevTime, 0.01\r\nkDel lineto2 kDel, 0.01\r\nkDelMix lineto2 kDelMix, 0.01\r\nkDelTimeL
-    lineto2 kDelTimeL, 0.01\r\nkDelTimeR lineto2 kDelTimeR, 0.01\r\nkDelFbk lineto2
-    kDelFbk, 0.01\r\nkDelCutoff lineto2 kDelCutoff, 0.01\r\n\r\nkDryRevSend lineto2
-    kDryRevSend, 0.01\r\nkDryDelaySend lineto2 kDryDelaySend, 0.01\r\n\r\n\r\ngiTableLen 
-    =       ftlen(giBuffer)  ; derive buffer function table length\r\ngidur      
-    =       giTableLen / sr   ; derive storage time in seconds\r\n\r\n; get input
-    channel\r\nga1 in \r\n;ga1 oscili 0.4, 440, 1 ; test signal\r\n\r\n; filter the
-    input \r\nga1 tone ga1, kCutoff\r\n\r\nvincr gaReverbAux, ga1 * kDryRevSend\r\nvincr
-    gaDelayAux, ga1 * kDryDelaySend\r\n\r\n;printks \"dry delay send: %f\", 0.1,
-    kDryDelaySend\r\n;write to a table to be used by partikkel in instr 3\r\n;andx
-    phasor (sr / giTableLen)\r\n;tablew   ga1, andx, giBuffer, 1 ; write audio to
-    function table\r\n;printks \"ilen: %d, aindx: %f\\n\", 0.1, giTableLen, k(andx)\r\n;abuf
-    table andx, giBuffer, 1\r\n\r\ndenorm gaReverbAux  \r\n;aRevL, aRevR freeverb
-    gaccum, gaccum, kRevTime, 0.5\r\naRevL, aRevR reverbsc gaReverbAux, gaReverbAux,
-    kRevTime, 8000, sr, 0.5, 1\r\n\r\n;aDelTimeL upsamp kDelTimeL\r\n;aDelTimeR upsamp
-    kDelTimeR\r\n\r\n;aDelL vdelay gaDelayAux, aDelTimeL * 1000, 5000\r\n;aDelR vdelay
-    gaDelayAux, aDelTimeR * 1000, 5000\r\n\r\naDelL AnalogDelay gaDelayAux, kDelMix,
-    kDelTimeL, kDelFbk, kDelCutoff\r\naDelR AnalogDelay gaDelayAux, kDelMix, kDelTimeR,
-    kDelFbk, kDelCutoff\r\n\r\naoutL sum ga1 * kDry, gaPitcher, gaReverse, aRevL
-    * kRev, aDelL * kDel;, abuf\r\naoutR sum ga1 * kDry, gaPitcher, gaReverse, aRevR
-    * kRev, aDelR * kDel\r\n\r\nclear\tgaReverbAux\r\nclear   gaDelayAux\r\n\r\nouts
-    aoutL, aoutR\r\n\r\nendin\r\n\r\n;\r\n; PITCH SCALER\r\n;\r\ninstr 2\r\n\r\nkpitcherScale
-    chnget \"pitcherScale\"\r\nklev chnget \"pitcherLev\"\r\nkRevSend chnget \"pitcherRevSend\"\r\nkDelaySend
-    chnget \"pitcherDelaySend\"\r\n\r\nkpitcherScale lineto2 kpitcherScale, 0.01\r\nklev
-    lineto2 klev, 0.01\r\nkRevSend lineto2 kRevSend, 0.01\r\nkDelaySend lineto2 kDelaySend,
-    0.01\r\n\r\ngifftsize =         1024\r\ngioverlap =         gifftsize / 4\r\ngiwinsize
-    =         gifftsize\r\ngiwinshape =        1; von-Hann window\r\n\r\nprints \"pitch:
-    %d\", kpitcherScale\r\nfftin     pvsanal  ga1, gifftsize, gioverlap, giwinsize,
-    giwinshape\r\nfftscal   pvscale  fftin, kpitcherScale\r\ngaPitcher      pvsynth 
-    fftscal\r\n\r\nvincr gaReverbAux, gaPitcher * kRevSend\r\nvincr gaDelayAux, gaPitcher
-    * kDelaySend\r\n\r\ngaPitcher *= klev\r\n\r\nendin\r\n\r\n;\r\n; REVERSER\r\n;\r\ninstr
-    3 \r\nkRvrsTime init 1\r\n \r\nkRvrsLev chnget \"reverseLev\"\r\nkRvrsTime chnget
-    \"reverseTime\"\r\nkRvrsRevSend chnget \"reverseRevSend\"\r\nkRvrsDelSend chnget
-    \"reverseDelaySend\"\r\n\r\nkRvrsLev lineto2 kRvrsLev, 0.01\r\nkRvrsRevSend lineto2
-    kRvrsRevSend, 0.01\r\nkRvrsDelSend lineto2 kRvrsDelSend, 0.01\r\n\r\ngaReverse
-    Reverse ga1, kRvrsTime\r\n\r\nvincr gaReverbAux, gaReverse * kRvrsRevSend\r\nvincr
-    gaDelayAux, gaReverse * kRvrsDelSend\r\n\r\ngaReverse *= kRvrsLev\r\n    \r\n;printks
-    \"kRvrsTime: %f\\n\", 0.1, kRvrsTime\r\n;ktest = (kRvrsTime > 0) ? 1 : 0\r\n;prints
-    \"kTest: %d\\n\\n\", ktest \r\n;if (ktest == 1) then\r\n;    gaReverse Reverse
-    ga1, kRvrsTime\r\n;    vincr gaReverbAux, gaReverse * kRvrsLev\r\n;    gaReverse
-    *= kRvrsLev\r\n;else\r\n;    prints \"reverse time cannot be 0: %f\\n\", kRvrsTime\r\n;endif\r\n\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes
-    Csound to run for about 7000 years...\r\nf0 z\r\nf1 0 [4096^2] 10 .1 0.3 0.1
-    0.1\r\n;starts instruments and runs them for 7000 years too!\r\ni1 0.1 z \r\ni2
-    0.1 z\r\ni3 0.2 z\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+    iWet\n\tkporttime\tlinseg\t0,0.001,0.1\t\t\t;RAMPING UP PORTAMENTO TIME\n\tkTime\tportk\tktime,
+    kporttime*3\t\t\t;APPLY PORTAMENTO SMOOTHING TO DELAY TIME PARAMETER\n\tkTone\tportk\tktone,
+    kporttime\t\t\t;APPLY PORTAMENTO SMOOTHING TO TONE PARAMETER\n\taTime\tinterp\tkTime\t\t\t\t\t;INTERPOLATE
+    AND CREAT A-RATE VERSION OF DELAY TIME PARAMETER\n\taBuffer\tdelayr\t5\t\t\t\t\t;READ
+    FROM (AND INITIALIZE) BUFFER\n\tatap\tdeltap3\taTime\t\t\t\t\t;TAP DELAY BUFFER\n\tatap\tclip\tatap,
+    0, 0dbfs\t\t\t\t;SIGNAL IS CLIPPED AT MAXIMUM AMPLITUDE USING BRAM DE JONG METHOD\n\tatap\ttone\tatap,
+    kTone\t\t\t\t;LOW-PASS FILTER DELAY TAP WITHIN DELAY BUFFER \n\t\tdelayw\tain+(atap*kfback)\t\t\t;WRITE
+    INPUT AUDIO AND FEEDBACK SIGNAL INTO DELAY BUFFER\n\taout\tsum\tain*kDry, atap*kWet\t\t\t;MIX
+    DRY AND WET SIGNALS \n\t\txout\taout\t\t\t\t\t;SEND AUDIO BACK TO CALLER INSTRUMENT\nendop\n\n;\n;
+    MAIN INSTR\n;\ninstr 1\n\n; get current gain\nkGain chnget \"gain\"\nkCutoff
+    chnget \"cutoff\"\nkDry chnget \"dry\"\nkRev chnget \"reverb\"\nkRevTime chnget
+    \"reverbTime\"\nkDel chnget \"delay\"\nkDelMix chnget \"delayMix\"\nkDelTimeL
+    chnget \"delayTimeL\"\nkDelTimeR chnget \"delayTimeR\"\nkDelFbk chnget \"delayFeedback\"\nkDelCutoff
+    chnget \"delayCutoff\"\n\nkDryRevSend chnget \"dryReverbSend\"\nkDryDelaySend
+    chnget \"dryDelaySend\"\n\nkGain lineto2 kGain, 0.01\nkCutoff lineto2 kCutoff,
+    0.01\nkDry lineto2 kDry, 0.01\nkRev lineto2 kRev, 0.01\nkRevTime lineto2 kRevTime,
+    0.01\nkDel lineto2 kDel, 0.01\nkDelMix lineto2 kDelMix, 0.01\nkDelTimeL lineto2
+    kDelTimeL, 0.01\nkDelTimeR lineto2 kDelTimeR, 0.01\nkDelFbk lineto2 kDelFbk,
+    0.01\nkDelCutoff lineto2 kDelCutoff, 0.01\n\nkDryRevSend lineto2 kDryRevSend,
+    0.01\nkDryDelaySend lineto2 kDryDelaySend, 0.01\n\n\ngiTableLen  =       ftlen(giBuffer) 
+    ; derive buffer function table length\ngidur       =       giTableLen / sr  
+    ; derive storage time in seconds\n\n; get input channel\nga1 in \n;ga1 oscili
+    0.4, 440, 1 ; test signal\n\n; filter the input \nga1 tone ga1, kCutoff\n\nvincr
+    gaReverbAux, ga1 * kDryRevSend\nvincr gaDelayAux, ga1 * kDryDelaySend\n\n;printks
+    \"dry delay send: %f\", 0.1, kDryDelaySend\n;write to a table to be used by partikkel
+    in instr 3\n;andx phasor (sr / giTableLen)\n;tablew   ga1, andx, giBuffer, 1
+    ; write audio to function table\n;printks \"ilen: %d, aindx: %f\\n\", 0.1, giTableLen,
+    k(andx)\n;abuf table andx, giBuffer, 1\n\ndenorm gaReverbAux  \n;aRevL, aRevR
+    freeverb gaccum, gaccum, kRevTime, 0.5\naRevL, aRevR reverbsc gaReverbAux, gaReverbAux,
+    kRevTime, 8000, sr, 0.5, 1\n\n;aDelTimeL upsamp kDelTimeL\n;aDelTimeR upsamp
+    kDelTimeR\n\n;aDelL vdelay gaDelayAux, aDelTimeL * 1000, 5000\n;aDelR vdelay
+    gaDelayAux, aDelTimeR * 1000, 5000\n\naDelL AnalogDelay gaDelayAux, kDelMix,
+    kDelTimeL, kDelFbk, kDelCutoff\naDelR AnalogDelay gaDelayAux, kDelMix, kDelTimeR,
+    kDelFbk, kDelCutoff\n\naoutL sum ga1 * kDry, gaPitcher, gaReverse, aRevL * kRev,
+    aDelL * kDel;, abuf\naoutR sum ga1 * kDry, gaPitcher, gaReverse, aRevR * kRev,
+    aDelR * kDel\n\nclear\tgaReverbAux\nclear   gaDelayAux\n\nouts aoutL, aoutR\n\nendin\n\n;\n;
+    PITCH SCALER\n;\ninstr 2\n\nkpitcherScale chnget \"pitcherScale\"\nklev chnget
+    \"pitcherLev\"\nkRevSend chnget \"pitcherRevSend\"\nkDelaySend chnget \"pitcherDelaySend\"\n\nkpitcherScale
+    lineto2 kpitcherScale, 0.01\nklev lineto2 klev, 0.01\nkRevSend lineto2 kRevSend,
+    0.01\nkDelaySend lineto2 kDelaySend, 0.01\n\ngifftsize =         1024\ngioverlap
+    =         gifftsize / 4\ngiwinsize =         gifftsize\ngiwinshape =        1;
+    von-Hann window\n\nprints \"pitch: %d\", kpitcherScale\nfftin     pvsanal  ga1,
+    gifftsize, gioverlap, giwinsize, giwinshape\nfftscal   pvscale  fftin, kpitcherScale\ngaPitcher     
+    pvsynth  fftscal\n\nvincr gaReverbAux, gaPitcher * kRevSend\nvincr gaDelayAux,
+    gaPitcher * kDelaySend\n\ngaPitcher *= klev\n\nendin\n\n;\n; REVERSER\n;\ninstr
+    3 \nkRvrsTime init 1\n \nkRvrsLev chnget \"reverseLev\"\nkRvrsTime chnget \"reverseTime\"\nkRvrsRevSend
+    chnget \"reverseRevSend\"\nkRvrsDelSend chnget \"reverseDelaySend\"\n\nkRvrsLev
+    lineto2 kRvrsLev, 0.01\nkRvrsRevSend lineto2 kRvrsRevSend, 0.01\nkRvrsDelSend
+    lineto2 kRvrsDelSend, 0.01\n\ngaReverse Reverse ga1, kRvrsTime\n\nvincr gaReverbAux,
+    gaReverse * kRvrsRevSend\nvincr gaDelayAux, gaReverse * kRvrsDelSend\n\ngaReverse
+    *= kRvrsLev\n    \n;printks \"kRvrsTime: %f\\n\", 0.1, kRvrsTime\n;ktest = (kRvrsTime
+    > 0) ? 1 : 0\n;prints \"kTest: %d\\n\\n\", ktest \n;if (ktest == 1) then\n;   
+    gaReverse Reverse ga1, kRvrsTime\n;    vincr gaReverbAux, gaReverse * kRvrsLev\n;   
+    gaReverse *= kRvrsLev\n;else\n;    prints \"reverse time cannot be 0: %f\\n\",
+    kRvrsTime\n;endif\n\n\nendin\n\n</CsInstruments>\n<CsScore>\n;causes Csound to
+    run for about 7000 years...\nf0 z\nf1 0 [4096^2] 10 .1 0.3 0.1 0.1\n;starts instruments
+    and runs them for 7000 years too!\ni1 0.1 z \ni2 0.1 z\ni3 0.2 z\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: VoiceChanger.csd
   _csoundAsset: {fileID: 102900000, guid: ae2e6a8b6d56a43439a63aa2ef37887a, type: 3}
   _channels:
@@ -1850,16 +1906,50 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 800
+    height: 800
+  - type: label
+    channel: main
+    text: Main
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 0
+    width: 1000
+    height: 100
   - type: rslider
     channel: gain
     text: Gain
     caption: 
     min: 0
     max: 10
-    value: 1
+    value: 0.79
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 100
+    width: 100
+    height: 100
   - type: rslider
     channel: cutoff
     text: Cutoff
@@ -1868,18 +1958,34 @@ MonoBehaviour:
     max: 4000
     value: 4000
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 100
+    y: 100
+    width: 100
+    height: 100
   - type: rslider
     channel: dry
     text: Dry
     caption: 
     min: 0
     max: 2
-    value: 0.8
+    value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 200
+    y: 100
+    width: 100
+    height: 100
   - type: rslider
     channel: dryReverbSend
     text: Dry Reverb Send
@@ -1888,8 +1994,16 @@ MonoBehaviour:
     max: 2
     value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 300
+    y: 100
+    width: 100
+    height: 100
   - type: rslider
     channel: dryDelaySend
     text: Dry Delay Send
@@ -1898,8 +2012,34 @@ MonoBehaviour:
     max: 2
     value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 400
+    y: 100
+    width: 100
+    height: 100
+  - type: label
+    channel: Reverb&Delay
+    text: Reverb and Delay
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 200
+    width: 1000
+    height: 100
   - type: rslider
     channel: reverb
     text: Reverb
@@ -1908,18 +2048,34 @@ MonoBehaviour:
     max: 5
     value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 300
+    width: 100
+    height: 100
   - type: rslider
     channel: reverbTime
     text: Reverb Time
     caption: 
     min: 0
     max: 0.95
-    value: 0.6
+    value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 100
+    y: 300
+    width: 100
+    height: 100
   - type: rslider
     channel: delay
     text: Delay
@@ -1928,38 +2084,70 @@ MonoBehaviour:
     max: 5
     value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 200
+    y: 300
+    width: 100
+    height: 100
   - type: rslider
     channel: delayMix
     text: Delay Mix
     caption: 
     min: 0
     max: 0.996
-    value: 0.3
+    value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 300
+    y: 300
+    width: 100
+    height: 100
   - type: rslider
     channel: delayTimeL
     text: Delay Time Left
     caption: 
     min: 0
     max: 0.95
-    value: 0.55
+    value: 0.787
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 400
+    y: 300
+    width: 100
+    height: 100
   - type: rslider
     channel: delayTimeR
     text: Delay Time Right
     caption: 
     min: 0
     max: 0.95
-    value: 0.65
+    value: 0.826
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 500
+    y: 300
+    width: 100
+    height: 100
   - type: rslider
     channel: delayFeedback
     text: Delay Feedback
@@ -1968,38 +2156,88 @@ MonoBehaviour:
     max: 0.995
     value: 0.1
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 600
+    y: 300
+    width: 100
+    height: 100
   - type: rslider
     channel: delayCutoff
     text: Delay Cutoff
     caption: 
     min: 0
     max: 0.995
-    value: 0.6
+    value: 0.416
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 700
+    y: 300
+    width: 100
+    height: 100
+  - type: label
+    channel: Pitcher
+    text: Pitcher
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 400
+    width: 1000
+    height: 100
   - type: rslider
     channel: pitcherLev
     text: Pitcher Level
     caption: 
     min: 0
     max: 5
-    value: 0
+    value: 2.19
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 500
+    width: 100
+    height: 100
   - type: rslider
     channel: pitcherScale
     text: Pitcher Scale
     caption: 
     min: 0
     max: 4
-    value: 0.4
+    value: 1.33
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 100
+    y: 500
+    width: 100
+    height: 100
   - type: rslider
     channel: pitcherRevSend
     text: Pitcher Reverb Send
@@ -2008,8 +2246,16 @@ MonoBehaviour:
     max: 2
     value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 200
+    y: 500
+    width: 100
+    height: 100
   - type: rslider
     channel: pitcherDelaySend
     text: Pitcher Delay Send
@@ -2018,8 +2264,34 @@ MonoBehaviour:
     max: 2
     value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 300
+    y: 500
+    width: 100
+    height: 100
+  - type: label
+    channel: Reverse
+    text: Reverse
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 10
+    y: 600
+    width: 1000
+    height: 100
   - type: rslider
     channel: reverseLev
     text: Reverse Level
@@ -2028,8 +2300,16 @@ MonoBehaviour:
     max: 5
     value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 700
+    width: 100
+    height: 100
   - type: rslider
     channel: reverseTime
     text: Reverse Time
@@ -2038,8 +2318,16 @@ MonoBehaviour:
     max: 2
     value: 0.3
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 100
+    y: 700
+    width: 100
+    height: 100
   - type: rslider
     channel: reverseRevSend
     text: Reverse Reverb Send
@@ -2048,8 +2336,16 @@ MonoBehaviour:
     max: 2
     value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 200
+    y: 700
+    width: 100
+    height: 100
   - type: rslider
     channel: reverseDelaySend
     text: Reverse Delay Send
@@ -2058,22 +2354,38 @@ MonoBehaviour:
     max: 2
     value: 0
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 300
+    y: 700
+    width: 100
+    height: 100
   _availableAudioChannels: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 1
   _drawPresets: 1
-  _drawPresetsLoad: 0
+  _drawPresetsLoad: 1
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
+  _currentPreset: Kid_1
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  webGLAssetsList: []
+  _audioPath: 0
+  _generatorStartupDelay: 0
 --- !u!82 &2045804337
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2084,7 +2396,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: d498122b0fbc11449a28a477d04a2a28, type: 3}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 8eaee814749e241ba94ec78710dbec18, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -2177,10 +2490,20 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2045804335}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 612949492}
+  - {fileID: 2045804338}
+  - {fileID: 257819378}
+  - {fileID: 48065811}
+  - {fileID: 359022861}
