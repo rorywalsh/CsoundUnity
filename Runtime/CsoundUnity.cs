@@ -3917,12 +3917,22 @@ namespace Csound.Unity
         /// spin buffer via <see cref="AddInputSample"/>, so it mixes additively with any routes.
         /// Called once per ksmps boundary, before <see cref="PerformKsmps"/>, when
         /// <see cref="processClipAudio"/> is enabled.
+        /// <para>
+        /// Channel mapping: only the first <c>min(numChannels, nchnls_i)</c> channels of each
+        /// frame are copied. Without this clamp, when Unity outputs more channels than Csound
+        /// declares as <c>nchnls_i</c> (e.g. Unity stereo into a CSD with <c>nchnls_i = 1</c>),
+        /// <c>AddSpinSample</c> indexes <c>spin[frame * nchnls_i + ch]</c> with <c>ch &gt;= nchnls_i</c>
+        /// and writes into the next frame's slot — corrupting input data and ultimately
+        /// performing an out-of-bounds write past the end of the spin buffer.
+        /// </para>
         /// </summary>
         private void FlushClipSpinBuffer(int numChannels)
         {
+            if (csound == null) return;
             int k = (int)GetKsmps();
+            int chToCopy = Mathf.Min(numChannels, (int)csound.GetNchnlsInput());
             for (int frame = 0; frame < k; frame++)
-                for (int ch = 0; ch < numChannels; ch++)
+                for (int ch = 0; ch < chToCopy; ch++)
                 {
                     int idx = frame * numChannels + ch;
                     if (idx >= _clipSpinBuffer.Length) return;
@@ -4033,15 +4043,20 @@ namespace Csound.Unity
         private void ApplyPreMixToSpin(int blockFrameOffset)
         {
             if (_routePreMixBuffer.Length == 0 || _routePreMixMaxSpinCh <= 0) return;
+            if (csound == null) return;
             int ksmps       = (int)GetKsmps();
             int routingSize = Mathf.Max(_audioRoutingBufferSize, ksmps);
             int localOffset = blockFrameOffset - _routingBlockStart;
+            // Clamp ch loop to nchnls_i so AddSpinSample never writes past the end of
+            // a spin frame (and into the next frame's data) when a user-configured
+            // route targets a channel that does not exist in this CSD's nchnls_i.
+            int chMax = Mathf.Min(_routePreMixMaxSpinCh, (int)csound.GetNchnlsInput());
 
             for (int k = 0; k < ksmps; k++)
             {
                 int localIdx = localOffset + k;
                 if (localIdx < 0 || localIdx >= routingSize) break;
-                for (int ch = 0; ch < _routePreMixMaxSpinCh; ch++)
+                for (int ch = 0; ch < chMax; ch++)
                     AddInputSample(k, ch, _routePreMixBuffer[localIdx * _routePreMixMaxSpinCh + ch]);
             }
         }
