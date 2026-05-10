@@ -1,7 +1,8 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Csound.AudioAnalysis
+namespace Csound.Unity.AudioAnalysis
 {
     [RequireComponent(typeof(CsoundUnity))]
     public class BasicMicrophoneAnalyzer : MonoBehaviour
@@ -18,7 +19,7 @@ namespace Csound.AudioAnalysis
         #endregion
 
         #region Unity Messages
-        void Start()
+        IEnumerator Start()
         {
             _csound = GetComponent<CsoundUnity>();
 
@@ -31,12 +32,39 @@ namespace Csound.AudioAnalysis
                 count++;
             }
 
-            Microphone.GetDeviceCaps(_names[0], out int minFreq, out int maxFreq);
-            var dur = 999;
+            if (_names.Length == 0)
+            {
+                Debug.LogWarning("[BasicMicrophoneAnalyzer] No microphone devices available.");
+                yield break;
+            }
+
+            var device = _names[0];
+            Microphone.GetDeviceCaps(device, out int minFreq, out int maxFreq);
+            // Use the project's audio rate so no resampling happens between the mic clip,
+            // the AudioSource and Csound. GetDeviceCaps may report 0/0 when the device
+            // supports any rate; Microphone.Start(..., 0) yields a silent clip on some
+            // platforms, so we fall back to outputSampleRate explicitly.
+            var freq = AudioSettings.outputSampleRate;
+            // Short ring-buffer (1 s) so the AudioSource catches up quickly instead of
+            // sitting on hundreds of pre-recorded silent samples.
+            var dur = 1;
+
+            Debug.Log($"[BasicMicrophoneAnalyzer] device='{device}', minFreq={minFreq}, " +
+                      $"maxFreq={maxFreq}, using freq={freq}");
 
             _audioSource = GetComponent<AudioSource>();
-            _audioSource.clip = Microphone.Start(_names[0], true, dur, minFreq);
+            _audioSource.clip = Microphone.Start(device, true, dur, freq);
+
+            // Wait until the microphone has actually written some samples into the clip
+            // before starting playback. Without this wait the AudioSource starts reading
+            // from sample 0 of an empty clip and outputs only zeros to OnAudioFilterRead.
+            while (Microphone.GetPosition(device) <= 0)
+                yield return null;
+
             _audioSource.Play();
+
+            Debug.Log($"[BasicMicrophoneAnalyzer] clip={(_audioSource.clip != null ? _audioSource.clip.name : "null")}, " +
+                      $"recording={Microphone.IsRecording(device)}, position={Microphone.GetPosition(device)}");
         }
 
         void Update()
