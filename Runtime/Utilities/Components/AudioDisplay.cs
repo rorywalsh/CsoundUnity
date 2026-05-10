@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Csound.Unity.Utilities.MonoBehaviours
 {
@@ -62,6 +61,18 @@ namespace Csound.Unity.Utilities.MonoBehaviours
     }
 
     /// <summary>
+    /// Per-bin weighting curve applied in spectrum modes only.
+    /// </summary>
+    public enum SpectrumWeighting
+    {
+        /// <summary>No per-bin weighting — the FFT magnitude is used as-is.</summary>
+        Flat,
+        /// <summary>Multiply each bin by <c>(1 + i²)</c> — emphasises high-frequency bins
+        /// to compensate for their naturally lower energy in FFT spectra.</summary>
+        Quadratic,
+    }
+
+    /// <summary>
     /// Visualises audio data as a waveform or frequency spectrum using a <see cref="LineRenderer"/>.
     /// <para>
     /// Set <see cref="AudioDisplayMode"/> in the inspector to choose both the audio source and
@@ -108,14 +119,32 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             "Must match the channel name used with chnseta in your .csd file.")]
         [SerializeField] string _csoundAudioChannel;
 
-        [Tooltip("Scales the display: x = horizontal spacing between samples, y = vertical scale.")]
-        [SerializeField] Vector2 _sizeMult = new Vector2(0.04f, 0.1f);
+        [Tooltip("Display area in local units (width × height). The line fits inside this box. " +
+            "Waveform modes use the full height bipolarly (centred on Y=0); spectrum modes use it unipolarly (Y >= 0).")]
+        [SerializeField] Vector2 _displaySize = new Vector2(10f, 5f);
 
         [Tooltip("World-space offset applied to every point of the line.")]
         [SerializeField] Vector3 _offset = Vector3.zero;
 
-        [Tooltip("Maximum display height in local units before clamping.")]
-        [SerializeField] float _maxHeight = 50f;
+        [Tooltip("Pre-clamp signal multiplier. Increase to make small signals more visible. " +
+            "Sample values above 1/amplification are clamped to the display edges.")]
+        [SerializeField] float _amplification = 1f;
+
+        [Tooltip("Per-bin weighting for spectrum modes. " +
+            "Flat = FFT magnitude as-is. " +
+            "Quadratic = (1 + i²) emphasis on high bins (matches the legacy spectrum look). " +
+            "Ignored for waveform modes.")]
+        [SerializeField] SpectrumWeighting _spectrumWeighting = SpectrumWeighting.Flat;
+
+        [Tooltip("Response curve exponent (gamma). 1 = linear (default). " +
+            "Lower values (e.g. 0.3) compress the dynamic range — useful when low " +
+            "frequencies dominate and you need to amplify high bins without the lows " +
+            "clamping at the top. Higher values expand the range. Applied to spectrum modes only.")]
+        [Range(0.1f, 4f)]
+        [SerializeField] float _responseExponent = 1f;
+
+        [Tooltip("LineRenderer width applied to the entire line.")]
+        [SerializeField] float _lineWidth = 0.05f;
 
         [Tooltip("FFT update interval in frames (RawSamplesSpectrum mode only). " +
             "1 = recompute every frame. 4 = recompute every 4 frames (~15 Hz at 60 fps). " +
@@ -131,6 +160,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         float[] _fftInputCache;
         float[] _fftResultCache;  // per-instance copy of the spectrum — avoids sharing FFTUtils' static buffer
         int _fftFrameCounter;
+        float _lastAppliedLineWidth = -1f;
 
         #endregion Private fields
 
@@ -179,15 +209,22 @@ namespace Csound.Unity.Utilities.MonoBehaviours
         {
             _lr = GetComponent<LineRenderer>();
             _lr.positionCount = _samples.Length;
+            ApplyLineWidth();
 
-            if (_source == null && _mode == AudioDisplayMode.AudioSource)
-            {
-                _source = GetComponent<AudioSource>();
-                if (_source == null)
-                    Debug.LogError($"[AudioDisplay] '{name}': no AudioSource found. " +
-                        $"Assign one in the inspector or add an AudioSource component to this GameObject. " +
-                        $"Alternatively, switch mode to AudioListener.");
-            }
+            if (_source || _mode != AudioDisplayMode.AudioSource) return;
+            _source = GetComponent<AudioSource>();
+            if (!_source)
+                Debug.LogError($"[AudioDisplay] '{name}': no AudioSource found. " +
+                               $"Assign one in the inspector or add an AudioSource component to this GameObject. " +
+                               $"Alternatively, switch mode to AudioListener.");
+        }
+
+        void ApplyLineWidth()
+        {
+            if (_lr == null) return;
+            _lr.startWidth = _lineWidth;
+            _lr.endWidth   = _lineWidth;
+            _lastAppliedLineWidth = _lineWidth;
         }
 
         void Update()
@@ -199,17 +236,17 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     break;
 
                 case AudioDisplayMode.AudioSource:
-                    if (_source == null) return;
+                    if (!_source) return;
                     _source.GetSpectrumData(_samples, 0, FFTWindow.BlackmanHarris);
                     break;
 
                 case AudioDisplayMode.CsoundUnityOutput:
-                    if (_csoundUnity == null) return;
+                    if (!_csoundUnity) return;
                     _samples = _csoundUnity.OutputBuffer;
                     break;
 
                 case AudioDisplayMode.CsoundUnityAudioChannel:
-                    if (_csoundUnity == null || string.IsNullOrEmpty(_csoundAudioChannel)) return;
+                    if (!_csoundUnity || string.IsNullOrEmpty(_csoundAudioChannel)) return;
                     _samples = Utilities.AudioSamplesUtils.ConvertToFloat(_csoundUnity.GetAudioChannel(_csoundAudioChannel));
                     break;
 
@@ -223,7 +260,7 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                     if (_fftFrameCounter >= _fftUpdateRate)
                     {
                         _fftFrameCounter = 0;
-                        var spectrum = Utilities.FFTUtils.CalculateSpectrum(_fftInputCache);
+                        var spectrum = FFTUtils.CalculateSpectrum(_fftInputCache);
                         if (spectrum != null && spectrum.Length > 0)
                         {
                             if (_fftResultCache == null || _fftResultCache.Length != spectrum.Length)
@@ -237,21 +274,32 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
             if (_samples == null || _samples.Length == 0) return;
 
+            // Allow live edit of line width from the inspector.
+            if (_lastAppliedLineWidth != _lineWidth) ApplyLineWidth();
+
             var count = _samples.Length;
             if (_lr.positionCount != count)
                 _lr.positionCount = count;
 
-            // X: evenly spaced along the horizontal axis.
-            // Y: sample value boosted by (maxHeight + i²) — the quadratic term progressively
-            //    emphasises higher-frequency bins, which naturally have lower energy in most
-            //    signals. The result is clamped to [0, maxHeight] then scaled by sizeMult.y.
-            for (int i = 0; i < count; i++)
+            // Spectrum modes: Y in [0, displaySize.y]. Waveform modes: Y in [-displaySize.y/2, +displaySize.y/2].
+            bool isSpectrum = _mode == AudioDisplayMode.AudioListener
+                           || _mode == AudioDisplayMode.AudioSource
+                           || _mode == AudioDisplayMode.RawSamplesSpectrum;
+            bool quadraticTilt = isSpectrum && _spectrumWeighting == SpectrumWeighting.Quadratic;
+            // Apply gamma compression only to spectrum modes (would distort waveform shape).
+            bool applyGamma = isSpectrum && Mathf.Abs(_responseExponent - 1f) > 1e-4f;
+
+            float xStep   = count > 1 ? _displaySize.x / (count - 1) : 0f;
+            float halfH   = isSpectrum ? _displaySize.y : _displaySize.y * 0.5f;
+            float clampLo = isSpectrum ? 0f : -1f;
+
+            for (var i = 0; i < count; i++)
             {
-                var pos = new Vector3(
-                    i * _sizeMult.x,
-                    Mathf.Clamp(_samples[i] * (_maxHeight + i * i), 0, _maxHeight) * _sizeMult.y,
-                    0);
-                _lr.SetPosition(i, pos + _offset);
+                float boost = quadraticTilt ? 1f + i * i : 1f;
+                float v     = _samples[i] * _amplification * boost;
+                if (applyGamma) v = Mathf.Pow(Mathf.Max(0f, v), _responseExponent);
+                float y     = Mathf.Clamp(v, clampLo, 1f) * halfH;
+                _lr.SetPosition(i, new Vector3(i * xStep, y, 0) + _offset);
             }
 
             OnDataUpdated?.Invoke(_samples);

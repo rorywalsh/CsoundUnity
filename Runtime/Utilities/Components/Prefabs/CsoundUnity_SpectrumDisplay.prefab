@@ -141,6 +141,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb451614cd7063f4b9657c94fe4d5a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sizeMult: {x: 0.08, y: 0.4}
+  _displaySize: {x: 82, y: 32}
   _offset: {x: 0, y: 0, z: 0}
-  _maxHeight: 80
+  _amplification: 1
+  _spectrumWeighting: 1
+  _responseExponent: 1
+  _lineWidth: 0.05
+  _fftUpdateRate: 4
