@@ -542,7 +542,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -601,12 +601,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mode: 0
-  _source: {fileID: 0}
-  _csoundUnity: {fileID: 0}
+  _source: {fileID: 1213912737}
+  _csoundUnity: {fileID: 1213912736}
   _csoundAudioChannel: 
-  _sizeMult: {x: 0.08, y: 0.2}
-  _offset: {x: 0, y: 0, z: 0}
-  _maxHeight: 300
+  _displaySize: {x: 76, y: 45}
+  _offset: {x: 10, y: 0, z: 0}
+  _amplification: 130
+  _spectrumWeighting: 0
+  _responseExponent: 1
+  _lineWidth: 0.05
   _fftUpdateRate: 4
 --- !u!120 &749705611
 LineRenderer:
@@ -1043,7 +1046,11 @@ MonoBehaviour:
   overrideSamplingRate: 0
   audioRate: 48000
   controlRate: 1500
+  ksmps: 32
   updateOutputBuffer: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 85a00ad24bee5bd419bef7afd9a27f81
@@ -1481,12 +1488,13 @@ MonoBehaviour:
   _csoundAsset: {fileID: 102900000, guid: 85a00ad24bee5bd419bef7afd9a27f81, type: 3}
   _channels: []
   _availableAudioChannels: []
+  _nchnls: 0
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 444
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 1
   _drawPresets: 0
@@ -1497,7 +1505,10 @@ MonoBehaviour:
   _currentPreset: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
   webGLAssetsList: []
+  _audioPath: 1
+  _generatorStartupDelay: 0
 --- !u!82 &1213912737
 AudioSource:
   m_ObjectHideFlags: 0

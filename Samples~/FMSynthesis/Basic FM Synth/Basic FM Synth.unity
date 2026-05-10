@@ -808,12 +808,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mode: 0
-  _source: {fileID: 0}
-  _csoundUnity: {fileID: 0}
+  _source: {fileID: 988761398}
+  _csoundUnity: {fileID: 988761397}
   _csoundAudioChannel: 
-  _sizeMult: {x: 0.08, y: 0.4}
-  _offset: {x: 0, y: 0, z: 0}
-  _maxHeight: 80
+  _displaySize: {x: 20.3, y: 8.08}
+  _offset: {x: 1.53, y: 0, z: 0}
+  _amplification: 0.002
+  _spectrumWeighting: 1
+  _responseExponent: 1
+  _lineWidth: 0.02
   _fftUpdateRate: 4
 --- !u!120 &1270168716
 LineRenderer:

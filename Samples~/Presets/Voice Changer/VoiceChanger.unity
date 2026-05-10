@@ -413,9 +413,12 @@ MonoBehaviour:
   _source: {fileID: 0}
   _csoundUnity: {fileID: 0}
   _csoundAudioChannel: 
-  _sizeMult: {x: 0.019, y: 0.03}
-  _offset: {x: -9.78, y: -4.59, z: 0}
-  _maxHeight: 1000
+  _displaySize: {x: 20, y: 45}
+  _offset: {x: -9.83, y: -4.59, z: 0}
+  _amplification: 1
+  _spectrumWeighting: 0
+  _responseExponent: 0.5
+  _lineWidth: 0.025
   _fftUpdateRate: 4
 --- !u!120 &257819377
 LineRenderer:

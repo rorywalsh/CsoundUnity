@@ -1488,7 +1488,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
---- !u!1 &1694585184
+--- !u!1 &1724274704
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1496,9 +1496,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1694585187}
-  - component: {fileID: 1694585186}
-  - component: {fileID: 1694585185}
+  - component: {fileID: 1724274707}
+  - component: {fileID: 1724274706}
+  - component: {fileID: 1724274705}
   m_Layer: 0
   m_Name: SpectrumDisplay
   m_TagString: Untagged
@@ -1506,13 +1506,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1694585185
+--- !u!114 &1724274705
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1694585184}
+  m_GameObject: {fileID: 1724274704}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb451614cd7063f4b9657c94fe4d5a97, type: 3}
@@ -1522,21 +1522,24 @@ MonoBehaviour:
   _source: {fileID: 0}
   _csoundUnity: {fileID: 0}
   _csoundAudioChannel: 
-  _sizeMult: {x: 0.065, y: 0.38}
-  _offset: {x: 0, y: 0, z: 0}
-  _maxHeight: 100
+  _displaySize: {x: 20, y: 45}
+  _offset: {x: -9.83, y: -4.59, z: 0}
+  _amplification: 1
+  _spectrumWeighting: 0
+  _responseExponent: 0.5
+  _lineWidth: 0.025
   _fftUpdateRate: 4
---- !u!120 &1694585186
+--- !u!120 &1724274706
 LineRenderer:
   serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1694585184}
+  m_GameObject: {fileID: 1724274704}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 0
@@ -1580,7 +1583,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 0.025
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -1633,19 +1636,19 @@ LineRenderer:
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
-  m_UseWorldSpace: 0
+  m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 0
---- !u!4 &1694585187
+--- !u!4 &1724274707
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1694585184}
+  m_GameObject: {fileID: 1724274704}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -33.55, y: -17.3, z: 24.3}
+  m_LocalPosition: {x: -10.1, y: -3.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1917,5 +1920,5 @@ SceneRoots:
   - {fileID: 1833742426}
   - {fileID: 1198284837}
   - {fileID: 2092187107}
-  - {fileID: 1694585187}
   - {fileID: 2116030152}
+  - {fileID: 1724274707}
