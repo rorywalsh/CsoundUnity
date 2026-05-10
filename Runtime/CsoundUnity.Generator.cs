@@ -163,21 +163,26 @@ namespace Csound.Unity
             if (_audioPath != AudioPath.IAudioGenerator) return;
 
             // processClipAudio feeds an AudioSource clip into Csound's spin buffer via
-            // OnAudioFilterRead.  In IAudioGenerator mode Unity does not route clip audio
+            // OnAudioFilterRead. In IAudioGenerator mode Unity does not route clip audio
             // through the generator, so the two features are mutually exclusive.
-            // Having both a clip and a generator on the same AudioSource causes Unity's
-            // internal audio engine to deadlock — fall back to OAFR silently with a warning.
-            if (processClipAudio && audioSource && audioSource.clip)
+            //
+            // We do NOT require audioSource.clip to be assigned at Init time: scripts
+            // commonly assign the clip later (e.g. Microphone.Start in Start()).  If
+            // we waited for an assigned clip, IAG would stay active and the raw clip
+            // audio would bypass Csound entirely — typically resulting in feedback
+            // when the clip is a microphone capture.  Treat processClipAudio = true
+            // as the user's explicit intent to use the OAFR clip-processing path.
+            if (processClipAudio && audioSource)
             {
-                Debug.LogWarning("[CsoundUnity] processClipAudio with an AudioClip assigned is not " +
-                                 "supported in IAudioGenerator mode (Unity's audio engine does not " +
-                                 "route clip audio through a generator). " +
-                                 "Falling back to OnAudioFilterRead path so the clip is processed correctly. " +
-                                 "To use IAudioGenerator, either clear the AudioSource clip or disable processClipAudio.");
+                Debug.LogWarning("[CsoundUnity] processClipAudio is not supported in IAudioGenerator " +
+                                 "mode (Unity's audio engine does not route clip audio through a " +
+                                 "generator). Falling back to OnAudioFilterRead path so any AudioClip " +
+                                 "assigned on the AudioSource (now or later) is processed correctly. " +
+                                 "To use IAudioGenerator, disable processClipAudio.");
                 // Switch the runtime audio path so OnAudioFilterRead actually runs ProcessBlock.
                 // Without this, _audioPath stays IAudioGenerator and OnAudioFilterRead returns
                 // early on its `_audioPath == IAudioGenerator` guard — but IAG was never started
-                // either (we skipped InitGenerator below), so Csound would produce no audio at
+                // either (we skip InitGenerator below), so Csound would produce no audio at
                 // all and only the raw AudioClip would be heard.
                 _audioPath = AudioPath.OnAudioFilterRead;
                 return; // Skip InitGenerator — OAFR path now active and handles the clip.
