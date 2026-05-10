@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -38,13 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -67,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -98,13 +94,13 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_LightingSettings: {fileID: 1531384096}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_BuildSettings:
-    serializedVersion: 2
+    serializedVersion: 3
     agentTypeID: 0
     agentRadius: 0.5
     agentHeight: 2
@@ -117,7 +113,9 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualTileSize: 0
     tileSize: 256
-    accuratePlacement: 0
+    buildHeightMesh: 0
+    maxJobWorkers: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -161,9 +159,17 @@ Camera:
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -197,12 +203,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 445705579}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &505719939
 GameObject:
@@ -262,6 +269,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &505719942
 Canvas:
   m_ObjectHideFlags: 0
@@ -279,7 +287,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -293,13 +303,13 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2143875532}
   - {fileID: 1708312826}
   - {fileID: 1235589068}
   - {fileID: 775872618}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -334,9 +344,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 505719943}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -358,6 +368,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -416,45 +427,53 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logCsoundOutput: 0
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 1
   loudVolumeWarning: 1
   loudWarningThreshold: 10
+  overrideSamplingRate: 0
+  audioRate: 48000
+  controlRate: 750
+  ksmps: 64
+  updateOutputBuffer: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
+  environmentSettings: []
   _csoundFileGUID: a98db2c8369ab1e4abd514032f5005b2
-  _csoundString: "<Cabbage>\r\nform caption(\"Input Analyzer\") size(400, 300)\r\nrslider
-    bounds(0, 0, 100, 100), channel(\"gain\"), range(0, 10, 1.0, 1, .01), text(\"Gain\")\r\nrslider
+  _csoundString: "<Cabbage>\nform caption(\"Input Analyzer\") size(400, 300)\nrslider
+    bounds(0, 0, 100, 100), channel(\"gain\"), range(0, 10, 1.0, 1, .01), text(\"Gain\")\nrslider
     bounds(100, 0, 100, 100), channel(\"update\"), range(0.001, 0.5, 0.01, 1, 0.001),
-    text(\"Update\")\r\nrslider bounds(0, 100, 100, 100), channel(\"threshold\"),
-    range(0.0005, 10, 0.1, 1, 0.0005), text(\"Threshold\")\r\nrslider bounds(100,
-    100, 100, 100), channel(\"minFreq\"), range(0, 127, 30, 1, 0.0005), text(\"Min
-    Freq\")\r\nrslider bounds(200, 100, 100, 100), channel(\"maxFreq\"), range(0,
-    127, 80, 1, 0.0005), text(\"Max Freq\")\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
-    -d\r\n</CsOptions>\r\n<CsInstruments>\r\n; Initialize the global variables. \r\nksmps
-    = 32\r\nnchnls = 2\r\nnchnls_i = 1\r\n0dbfs = 1\r\n\r\nopcode vuMeter, k, a\r\nain
-    xin\r\nametera1\tfollow \t\tain, .01\t\t;CREATE AN AMPLITUDE FOLLOWING UNIPOLAR
-    SIGNAL (NEEDED FOR THE AMPLITUDE METERS)\r\nkmetera1\tdownsamp\tametera1\t\t;CONVERT
-    AMPLITUDE FOLLOWING SIGNAL TO K-RATE\r\nkmetera1\tportk\t\tkmetera1, .1\t;SMOOTH
-    THE MOVEMENT OF THE AMPLITUDE FOLLOWING SIGNAL - THIS WILL MAKE THE METERS EASIER
-    TO VIEW\r\nxout kmetera1\r\nendop\r\n\r\ninstr 1\r\n\r\n; get current gain\r\nkGain
-    chnget \"gain\"\r\n\r\n; get input channel\r\na1 inch 1\r\n; scale the input
-    with the gain\r\na1 *= kGain\r\n\r\n;printks \"a1: %d\\n\", 0.1, a1\r\niupdte
-    chnget \"update\" ; init 0.01 ;\r\n\r\n; these values can be tuned to achieve
-    better tracking\r\n; range in which pitch is detected, expressed in octave point
-    decimal\r\nilo = octmidinn(chnget(\"minFreq\"))\r\nihi = octmidinn(chnget(\"maxFreq\"))\r\n;
-    amplitude, expressed in decibels, necessary for the pitch to be detected. Once
-    started it continues until it is 6 dB down.\r\nidbthresh = 40\r\n; number of
-    divisons of an octave. Default is 12 and is limited to 120.\r\nifrqs = 12\r\n;
-    the number of conformations needed for an octave jump. Default is 10.\r\niconf
-    = 20\r\n; starting pitch for tracker. Default value is (ilo + ihi)/2.\r\nistrt
-    = 7.5\r\n\r\n;lowpass input to achieve better tracking\r\na1 tone a1, 11000\r\n\r\n;pitch
-    and amp estimation\r\nkoct, kamp pitch a1, iupdte, ilo, ihi, idbthresh, ifrqs,
-    iconf, istrt\r\n\r\n;also estimate the rms value \r\nkrms rms a1\r\n\r\nkhertz
-    = cpspch(koct)\r\n;printks \"freq: %f %f\\n\", 0.1, khertz, koct \r\n\r\nchnset
-    koct, \"oct\" \r\nchnset khertz, \"hertz\"\r\nchnset kamp, \"amp\" \r\nchnset
-    krms, \"rms\"\r\n\r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\n;causes Csound
-    to run for about 7000 years...\r\nf0 z\r\n;starts instrument 1 and runs it for
-    7000 years too!\r\ni1 0.1 z \r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+    text(\"Update\")\nrslider bounds(0, 100, 100, 100), channel(\"threshold\"), range(0,
+    130, 40, 1, 0.0005), text(\"Threshold\")\nrslider bounds(100, 100, 100, 100),
+    channel(\"minFreq\"), range(0, 127, 30, 1, 0.0005), text(\"Min Freq\")\nrslider
+    bounds(200, 100, 100, 100), channel(\"maxFreq\"), range(0, 127, 80, 1, 0.0005),
+    text(\"Max Freq\")\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n -d\n</CsOptions>\n<CsInstruments>\n;
+    Initialize the global variables. \nsr = 48000\nksmps = 64\nksmps = 32\nnchnls
+    = 2\nnchnls_i = 1\n0dbfs = 1\n\nopcode vuMeter, k, a\nain xin\nametera1\tfollow
+    \t\tain, .01\t\t;CREATE AN AMPLITUDE FOLLOWING UNIPOLAR SIGNAL (NEEDED FOR THE
+    AMPLITUDE METERS)\nkmetera1\tdownsamp\tametera1\t\t;CONVERT AMPLITUDE FOLLOWING
+    SIGNAL TO K-RATE\nkmetera1\tportk\t\tkmetera1, .1\t;SMOOTH THE MOVEMENT OF THE
+    AMPLITUDE FOLLOWING SIGNAL - THIS WILL MAKE THE METERS EASIER TO VIEW\nxout kmetera1\nendop\n\ninstr
+    1\n\n; get current gain\nkGain chnget \"gain\"\n\n; get input channel\na1 in\n;
+    scale the input with the gain\na1 *= kGain\n\n;printks \"a1: %d\\n\", 0.1, a1\niupdte
+    chnget \"update\" ; init 0.01 ;\n\n; these values can be tuned to achieve better
+    tracking\n; range in which pitch is detected, expressed in octave point decimal\nilo
+    = octmidinn(chnget(\"minFreq\"))\nihi = octmidinn(chnget(\"maxFreq\"))\n; amplitude,
+    expressed in decibels, necessary for the pitch to be detected. Once started it
+    continues until it is 6 dB down.\nidbthresh = chnget(\"threshold\")\n; number
+    of divisons of an octave. Default is 12 and is limited to 120.\nifrqs = 12\n;
+    the number of conformations needed for an octave jump. Default is 10.\niconf
+    = 20\n; starting pitch for tracker. Default value is (ilo + ihi)/2.\nistrt =
+    7.5\n\n;lowpass input to achieve better tracking\na1 tone a1, 11000\n\n;pitch
+    and amp estimation\nkoct, kamp pitch a1, iupdte, ilo, ihi, idbthresh, ifrqs,
+    iconf, istrt\n\n;also estimate the rms value \nkrms rms a1\n\nkhertz = cpsoct(koct)\n;printks
+    \"freq: %f %f\\n\", 0.1, khertz, koct \n\nchnset koct, \"oct\" \nchnset khertz,
+    \"hertz\"\nchnset kamp, \"amp\" \nchnset krms, \"rms\"\n\nendin\n\n</CsInstruments>\n<CsScore>\n;causes
+    Csound to run for about 7000 years...\nf0 z\n;starts instrument 1 and runs it
+    for 7000 years too!\ni1 0.1 z \n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: InputAnalyzer.csd
   _csoundAsset: {fileID: 102900000, guid: a98db2c8369ab1e4abd514032f5005b2, type: 3}
   _channels:
@@ -468,62 +487,126 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 400
+    height: 300
   - type: rslider
     channel: gain
-    text: 
+    text: Gain
     caption: 
     min: 0
     max: 10
     value: 1
-    skew: 0
-    increment: 0
+    skew: 1
+    increment: 0.01
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 100
+    height: 100
   - type: rslider
     channel: update
-    text: 
+    text: Update
     caption: 
     min: 0.001
     max: 0.5
     value: 0.01
-    skew: 0
-    increment: 0
+    skew: 1
+    increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 100
+    y: 0
+    width: 100
+    height: 100
   - type: rslider
     channel: threshold
-    text: 
+    text: Threshold
     caption: 
-    min: 0.0005
-    max: 10
-    value: 0.1
-    skew: 0
-    increment: 0
+    min: 0
+    max: 130
+    value: 40
+    skew: 1
+    increment: 0.0005
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 100
+    width: 100
+    height: 100
   - type: rslider
     channel: minFreq
-    text: 
+    text: Min Freq
     caption: 
     min: 0
     max: 127
     value: 30
-    skew: 0
-    increment: 0
+    skew: 1
+    increment: 0.0005
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 100
+    y: 100
+    width: 100
+    height: 100
   - type: rslider
     channel: maxFreq
-    text: 
+    text: Max Freq
     caption: 
     min: 0
     max: 127
     value: 80
-    skew: 0
-    increment: 0
+    skew: 1
+    increment: 0.0005
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 200
+    y: 100
+    width: 100
+    height: 100
   _availableAudioChannels: []
+  _nchnls: 2
+  _audioChannelsToAdd: []
+  _audioChannelsToRemove: []
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
+  _drawPresets: 0
+  _drawPresetsLoad: 0
+  _drawPresetsSave: 0
+  _drawPresetsImport: 0
+  _showRuntimeEnvironmentPath: 0
+  _currentPreset: 
+  _currentPresetSaveFolder: 
+  _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
+  webGLAssetsList: []
+  _audioPath: 1
+  _generatorStartupDelay: 0
 --- !u!82 &1162792257
 AudioSource:
   m_ObjectHideFlags: 0
@@ -535,6 +618,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -627,12 +711,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1162792255}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1162792259
 MonoBehaviour:
@@ -678,9 +763,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 505719943}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -702,6 +787,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -728,6 +814,73 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1235589067}
   m_CullTransparentMesh: 0
+--- !u!850595691 &1531384096
+LightingSettings:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Settings.lighting
+  serializedVersion: 10
+  m_EnableBakedLightmaps: 1
+  m_EnableRealtimeLightmaps: 0
+  m_RealtimeEnvironmentLighting: 1
+  m_BounceScale: 1
+  m_AlbedoBoost: 1
+  m_IndirectOutputScale: 1
+  m_UsingShadowmask: 1
+  m_BakeBackend: 1
+  m_LightmapMaxSize: 1024
+  m_LightmapSizeFixed: 0
+  m_UseMipmapLimits: 1
+  m_BakeResolution: 40
+  m_Padding: 2
+  m_LightmapCompression: 3
+  m_LightmapPackingMode: 1
+  m_LightmapPackingMethod: 0
+  m_XAtlasPackingAttempts: 16384
+  m_XAtlasBruteForce: 0
+  m_XAtlasBlockAlign: 0
+  m_XAtlasRepackUnderutilizedLightmaps: 1
+  m_AO: 0
+  m_AOMaxDistance: 1
+  m_CompAOExponent: 1
+  m_CompAOExponentDirect: 0
+  m_ExtractAO: 0
+  m_MixedBakeMode: 2
+  m_LightmapsBakeMode: 1
+  m_FilterMode: 1
+  m_LightmapParameters: {fileID: 15204, guid: 0000000000000000f000000000000000, type: 0}
+  m_ExportTrainingData: 0
+  m_EnableWorkerProcessBaking: 1
+  m_TrainingDataDestination: TrainingData
+  m_RealtimeResolution: 2
+  m_ForceWhiteAlbedo: 0
+  m_ForceUpdates: 0
+  m_PVRCulling: 1
+  m_PVRSampling: 1
+  m_PVRDirectSampleCount: 32
+  m_PVRSampleCount: 512
+  m_PVREnvironmentSampleCount: 256
+  m_PVREnvironmentReferencePointCount: 2048
+  m_LightProbeSampleCountMultiplier: 4
+  m_PVRBounces: 2
+  m_PVRMinBounces: 2
+  m_PVREnvironmentImportanceSampling: 1
+  m_PVRFilteringMode: 1
+  m_PVRDenoiserTypeDirect: 1
+  m_PVRDenoiserTypeIndirect: 1
+  m_PVRDenoiserTypeAO: 1
+  m_PVRFilterTypeDirect: 0
+  m_PVRFilterTypeIndirect: 0
+  m_PVRFilterTypeAO: 0
+  m_PVRFilteringGaussRadiusDirect: 1
+  m_PVRFilteringGaussRadiusIndirect: 5
+  m_PVRFilteringGaussRadiusAO: 2
+  m_PVRFilteringAtrousPositionSigmaDirect: 0.5
+  m_PVRFilteringAtrousPositionSigmaIndirect: 2
+  m_PVRFilteringAtrousPositionSigmaAO: 1
+  m_RespectSceneVisibilityWhenBakingGI: 0
 --- !u!1 &1708312825
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,9 +909,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 505719943}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -780,6 +933,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -834,9 +988,9 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 505719943}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -858,6 +1012,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -884,3 +1039,10 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2143875531}
   m_CullTransparentMesh: 0
+--- !u!1660057539 &9223372036854775807
+SceneRoots:
+  m_ObjectHideFlags: 0
+  m_Roots:
+  - {fileID: 445705582}
+  - {fileID: 505719943}
+  - {fileID: 1162792258}

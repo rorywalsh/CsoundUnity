@@ -25,10 +25,10 @@ namespace Csound.Unity.AudioAnalysis
 
             _names = new string[Microphone.devices.Length];
             var count = 0;
-            foreach (var device in Microphone.devices)
+            foreach (var d in Microphone.devices)
             {
-                _names[count] = device;
-                Debug.Log($"Name[{count}]: {device}");
+                _names[count] = d;
+                Debug.Log($"Name[{count}]: {d}");
                 count++;
             }
 
