@@ -79,6 +79,11 @@ namespace Csound.Unity.Samples.Miscellaneous.Haiku
 
             _currentPage = -1;
 
+            // give Csound a moment to run k-cycles with the channel at 0 so the
+            // trigger:k opcode in the CSD sees the 0 → 1 rising edge from GoToPage
+            _allHaikus.SetChannel(PageToChannelDict[1], 0);
+            yield return new WaitForSeconds(0.2f);
+
             GoToPage(1);
         }
         #endregion
