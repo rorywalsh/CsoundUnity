@@ -344,14 +344,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: com.csound.unity::Csound.Unity.CsoundUnity
   logCsoundOutput: 1
+  initializeOnAwake: 1
   mute: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 44100
-  controlRate: 4410
+  audioRate: 48000
+  controlRate: 3000
+  ksmps: 16
   updateOutputBuffer: 0
+  audioInputRoutes: []
+  muteAudioInputRoutes: 0
+  _measureDspLoad: 0
   csoundScore: 
   environmentSettings: []
   _csoundFileGUID: 0c98aff8dea2949a68ad252d6d1a842d
@@ -387,18 +392,32 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
     value2: 0
+    x: 0
+    y: 0
+    width: 400
+    height: 350
   - type: xypad
     channel: x
     text: 
-    caption: y
+    caption: 
     min: 20
     max: 800
     value: 105
-    skew: 20
-    increment: 800
+    skew: 1
+    increment: 0.001
     options: []
+    channelY: y
+    minY: 20
+    maxY: 800
     value2: 200
+    x: 26
+    y: 20
+    width: 260
+    height: 250
   - type: rslider
     channel: gain
     text: Gain
@@ -409,7 +428,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
     value2: 0
+    x: 300
+    y: 190
+    width: 73
+    height: 71
   - type: rslider
     channel: wetDry
     text: Wet/Dry
@@ -420,14 +446,22 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
     value2: 0
+    x: 300
+    y: 32
+    width: 73
+    height: 71
   _availableAudioChannels: []
+  _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _audioChannelsBufferSize: 32
   _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
+  _drawAudioInputRoutes: 1
   _drawChannels: 1
   _drawAudioChannels: 0
   _drawPresets: 0
@@ -438,7 +472,10 @@ MonoBehaviour:
   _currentPreset: 
   _currentPresetSaveFolder: 
   _currentPresetLoadFolder: 
+  _audioRoutingBufferSize: 512
   webGLAssetsList: []
+  _audioPath: 1
+  _generatorStartupDelay: 0
 --- !u!82 &1395525325
 AudioSource:
   m_ObjectHideFlags: 0
