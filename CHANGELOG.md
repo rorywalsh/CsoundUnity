@@ -5,7 +5,7 @@
 - [Add] AudioRouteGraphWindow: interactive node/edge editor to visualise and edit the audio route graph across all scene instances
 - [Add] IAudioGenerator audio path for Unity 6+: drives the AudioSource directly via CsoundUnity.Process, set as default on Unity 6 (OnAudioFilterRead remains available)
 - [Add] Lifecycle API: initializeOnAwake toggle, Initialize(), Stop(), Restart()
-- [Add] CsoundUnityMidiInput: platform-agnostic MIDI input component (macOS/iOS/visionOS via CoreMIDI, Android via android.media.midi API 23+)
+- [Add] CsoundUnityMidiInput: platform-agnostic MIDI input component (macOS/iOS/visionOS via CoreMIDI, Android via android.media.midi API 23+, Windows via WinMM — short messages only, no SysEx)
 - [Add] Waveform, spectrum, oscilloscope and Lissajous audio monitor in inspector (play mode, with zoom sliders)
 - [Add] OutputBuffer and OnCsoundPerformKsmps callback
 - [Add] MusicUtils: music theory utilities (scales, chords, arpeggios, Euclidean rhythms)
@@ -31,6 +31,7 @@
 - [Fix] Cabbage parser: caption/text truncation with multiple quoted attributes on same line; whitespace before '(' not recognised
 - [Fix] _channelsIndexDict wrong index when form widget is at position 0; stale entries after Domain Reload
 - [Fix] Hang on exit: send end-score event before csoundDestroy to stop indefinitely-running instruments cleanly
+- [Fix] BasicMicrophoneAnalyzer sample: now waits for `Microphone.GetPosition > 0` before `AudioSource.Play()`, uses `AudioSettings.outputSampleRate` for the capture rate; corrects an issue where the mic clip produced zeros for the lifetime of the scene
 
 ## [3.5.2] - 2025-04-28
 
