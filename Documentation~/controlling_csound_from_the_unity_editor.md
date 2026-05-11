@@ -34,6 +34,24 @@ The block above is an example of a Cabbage GUI section that will create graphica
 
 See [**Cabbage Widgets**](https://cabbageaudio.com/docs/cabbage_syntax/) for more information about the syntax to use.
 
+### Cabbage-specific opcodes are not supported
+
+`cabbageSet`, `cabbageGetValue` and other `cabbage*` opcodes belong to the
+**Cabbage** framework, not to standard Csound, and do not compile under
+CsoundUnity. Any `.csd` imported from a Cabbage project must be adapted by
+replacing those calls with the standard channel opcodes:
+
+| Cabbage           | CsoundUnity equivalent |
+|---|---|
+| `cabbageSet ...`        | `chnset` (write to a control or string channel)         |
+| `cabbageGetValue ...`   | `chnget` (read from a control or string channel)        |
+
+Note that the **semantics differ**: in Cabbage these opcodes can also
+manipulate widget properties (visibility, range, colours, …), which has
+no direct equivalent on the CsoundUnity side — those parts of the original
+patch typically need to be driven from C# (e.g. by enabling/disabling
+GameObjects, calling `SetChannel`, etc.) rather than from Csound.
+
 ___
 
 ## Audio Rates: sr, kr, and ksmps
