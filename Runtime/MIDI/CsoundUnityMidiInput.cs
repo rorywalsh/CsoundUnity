@@ -31,7 +31,8 @@ namespace Csound.Unity
     /// Platform support:
     /// macOS / iOS / visionOS — CoreMIDI (USB, BLE, Network MIDI);
     /// Android — android.media.midi (USB + BLE, API 23+);
-    /// Windows and WebGL — not yet implemented.
+    /// Windows — WinMM (short MIDI messages; SysEx not supported);
+    /// WebGL — not yet implemented.
     /// </para>
     /// <para>
     /// In addition to forwarding messages to Csound, this component fires C# events
@@ -45,15 +46,15 @@ namespace Csound.Unity
                  "If not assigned, the component on this GameObject is used.")]
         public CsoundUnity csoundUnity;
 
-        [Tooltip("(macOS / iOS / visionOS) If non-empty, ONLY sources whose name contains " +
-                 "at least one of these strings (case-insensitive) will be connected. " +
+        [Tooltip("(macOS / iOS / visionOS / Windows) If non-empty, ONLY sources whose name " +
+                 "contains at least one of these strings (case-insensitive) will be connected. " +
                  "Takes priority over Exclude Sources. Leave empty to use all sources. " +
                  "Example: \"SL MkII Port 1\" to connect only to the first port of a " +
                  "keyboard that exposes multiple ports.")]
         [SerializeField] private string[] _includeOnlySourcesContaining = { };
 
-        [Tooltip("(macOS / iOS / visionOS) MIDI sources whose name contains any of " +
-                 "these strings will be ignored (case-insensitive). " +
+        [Tooltip("(macOS / iOS / visionOS / Windows) MIDI sources whose name contains any " +
+                 "of these strings will be ignored (case-insensitive). " +
                  "Useful to exclude virtual/loopback ports such as the IAC Driver. " +
                  "Leave empty to connect to all available sources. " +
                  "Example entries: \"IAC\", \"Bus\", \"Loopback\".")]
@@ -77,8 +78,8 @@ namespace Csound.Unity
         #region Source filter API
 
         /// <summary>
-        /// (macOS / iOS / visionOS) If non-empty, ONLY MIDI sources whose name contains
-        /// at least one of these substrings (case-insensitive) will be connected.
+        /// (macOS / iOS / visionOS / Windows) If non-empty, ONLY MIDI sources whose name
+        /// contains at least one of these substrings (case-insensitive) will be connected.
         /// Takes priority over <see cref="ExcludeSourcesContaining"/>.
         /// Call before the component is enabled, or restart MIDI input after changing.
         /// Example: set to <c>new[]{"Port 1"}</c> to use only the first port of a
@@ -91,8 +92,8 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// (macOS / iOS / visionOS) MIDI sources whose name contains any of these
-        /// substrings (case-insensitive) will be ignored.
+        /// (macOS / iOS / visionOS / Windows) MIDI sources whose name contains any of
+        /// these substrings (case-insensitive) will be ignored.
         /// Ignored when <see cref="IncludeOnlySourcesContaining"/> is non-empty.
         /// Call before the component is enabled, or restart MIDI input after changing.
         /// </summary>
@@ -133,7 +134,7 @@ namespace Csound.Unity
 #elif UNITY_ANDROID
             _receiver = new AndroidMidiReceiver(gameObject.name);
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-            Debug.LogWarning("[CsoundUnityMidiInput] Windows MIDI input is not yet implemented.");
+            _receiver = new WindowsMidiReceiver(HandleMidiMessage, _includeOnlySourcesContaining, _excludeSourcesContaining);
 #elif UNITY_WEBGL
             Debug.LogWarning("[CsoundUnityMidiInput] WebGL MIDI input is not yet implemented.");
 #else

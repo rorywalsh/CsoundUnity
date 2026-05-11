@@ -11,7 +11,7 @@ CsoundUnity provides platform-agnostic MIDI input via the `CsoundUnityMidiInput`
 | macOS | CoreMIDI |
 | iOS / visionOS | CoreMIDI |
 | Android (API 23+) | android.media.midi |
-| Windows | 🔜 Planned for a future release |
+| Windows | WinMM (short MIDI messages; SysEx not currently supported) |
 | WebGL | Not supported |
 
 ### Setup ###
