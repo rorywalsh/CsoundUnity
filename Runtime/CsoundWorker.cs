@@ -175,7 +175,7 @@ namespace Csound.Unity
                 var cs = IntPtr.Zero;
                 try
                 {
-                    cs = NativeMethods.csoundCreate(IntPtr.Zero, null);
+                    cs = NativeMethods.csoundCreate(IntPtr.Zero, ".");
                     if (cs == IntPtr.Zero)
                     {
                         Debug.LogError("[CsoundWorker Scan] Failed to create Csound instance.");
