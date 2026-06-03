@@ -251,7 +251,9 @@ namespace Csound.Unity
         /// </summary>
         private void SetupMidiCallbacks()
         {
-            Csound6.NativeMethods.csoundSetHostMIDIIO(csound);
+            // csoundSetHostMIDIIO was removed in Csound 7 (Windows) but still exists on macOS.
+            try { Csound6.NativeMethods.csoundSetHostMIDIIO(csound); }
+            catch (EntryPointNotFoundException) { }
 
             // Point the static reference to this instance's queue so the
             // IL2CPP-compatible static callbacks below can drain it.

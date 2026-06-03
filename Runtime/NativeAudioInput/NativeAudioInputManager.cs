@@ -88,7 +88,7 @@ namespace Csound.Unity.NativeAudioInput
         {
             get
             {
-#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS || UNITY_VISIONOS) && !UNITY_WEBGL
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS) && !UNITY_WEBGL
                 return NativeAudioInputBridge.cni_get_frames_captured();
 #else
                 return 0;
@@ -170,7 +170,13 @@ namespace Csound.Unity.NativeAudioInput
 #endif
 
             yield return new WaitUntil(() => _csound.IsInitialized);
-            OnCsoundInitialized();
+            // Call only if the event did not already fire (e.g. CsoundUnity was not yet
+            // initialized when we subscribed, so the event will never fire for this session).
+            // If the event already fired, _isInitialized is already true and Open() was
+            // already called — a second call would Close()+Open() while the audio thread
+            // may be inside FillSpinBuffer.
+            if (!_isInitialized)
+                OnCsoundInitialized();
         }
 
         private void OnDestroy()
@@ -248,6 +254,9 @@ namespace Csound.Unity.NativeAudioInput
             _zerdbfs               = (float)_csound.Get0dbfs();
             _openedChannelCount    = _channelCount;
 
+            Debug.Log($"[NativeAudioInputManager] Open: 0dbfs={_zerdbfs}, ksmps={_csound.GetKsmps()}, " +
+                      $"nchnls_i={_csound.GetNchnlsInputs()}, sampleRate={_sampleRate}, ch={_channelCount}");
+
             // Allocate the read buffer for the audio thread (ksmps × channelCount).
             // ksmps can change after Restart(); the buffer is reallocated if needed inside FillSpinBuffer.
             var ksmps        = (int)_csound.GetKsmps();
@@ -258,7 +267,8 @@ namespace Csound.Unity.NativeAudioInput
 
 #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && !UNITY_WEBGL
             var result = NativeAudioInputBridge.cni_open(
-                _deviceIndex, _channelCount, _requestedBufferFrames, _sampleRate);
+                _deviceIndex, _channelCount, _requestedBufferFrames, _sampleRate,
+                ksmps > 0 ? ksmps : 128);
 
             if (result == 0)
             {
@@ -329,8 +339,8 @@ namespace Csound.Unity.NativeAudioInput
 
         /// <summary>
         /// Called by <see cref="CsoundUnity.ProcessBlock"/> once per ksmps boundary,
-        /// before <c>PerformKsmps</c>. Reads from the native ring buffer and writes
-        /// interleaved samples into the Csound spin buffer.
+        /// before <c>PerformKsmps</c>. Reads captured samples from the native ring buffer
+        /// and writes interleaved samples into the Csound spin buffer.
         /// Must not allocate; must not block.
         /// </summary>
         public void FillSpinBuffer(int ksmpsLen, uint nchnlsInput)
@@ -383,6 +393,7 @@ namespace Csound.Unity.NativeAudioInput
 
         private void OnCsoundInitialized()
         {
+            if (_isInitialized) return;   // guard against double-call from event + coroutine
             _isInitialized = true;
             if (_openOnInitialized)
                 Open(_deviceIndex, _channelCount, _requestedBufferFrames);
@@ -390,6 +401,7 @@ namespace Csound.Unity.NativeAudioInput
 
         private void OnCsoundStopped()
         {
+            Debug.LogWarning("[NativeAudioInputManager] OnCsoundStopped event received — closing device.");
             Close();
             _isInitialized = false;
         }

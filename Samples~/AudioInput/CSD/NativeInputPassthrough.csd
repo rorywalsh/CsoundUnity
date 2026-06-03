@@ -12,7 +12,7 @@
 
 <CsoundSynthesizer>
 <CsOptions>
--n -d -+rtaudio=null
+-n -d
 </CsOptions>
 <CsInstruments>
 
@@ -22,24 +22,23 @@ nchnls  = 2
 nchnls_i = 1
 0dbfs   = 1
 
-; Gain control channel.
-chn_k "gain", 3   ; 3 = read/write
-
 instr 1
     kGain   chnget "gain"
-    kGain   = (kGain == 0 ? 1 : kGain)   ; default 1 if not set
+    if kGain == 0 then
+        kGain = 1
+    endif
 
     aIn     inch 1               ; read from spin channel 1
 
     ; For stereo output, spread the mono input to both channels.
     aOut    = aIn * kGain
-    outs    aOut, aOut
+    out     aOut, aOut
 endin
 
 </CsInstruments>
 <CsScore>
 ; Start instrument 1 indefinitely.
-i 1 0 -1
-e
+f0 z
+i 1 0 z
 </CsScore>
 </CsoundSynthesizer>

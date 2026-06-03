@@ -49,12 +49,13 @@ namespace Csound.Unity.NativeAudioInput
         /// </summary>
         /// <param name="deviceIndex">Index from the last <see cref="cni_get_device_count"/> call.</param>
         /// <param name="channelCount">Number of input channels to capture.</param>
-        /// <param name="bufferSizeFrames">Requested I/O buffer size in frames (latency hint).</param>
+        /// <param name="bufferSizeFrames">Requested I/O buffer size in frames (latency hint for classic fallback).</param>
         /// <param name="sampleRate">Expected sample rate — must match Unity's output rate.</param>
+        /// <param name="ksmps">Csound ksmps — used as the IAudioClient3 engine period target.</param>
         /// <returns>0 on success, negative error code on failure.</returns>
         [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int cni_open(int deviceIndex, int channelCount,
-                                            int bufferSizeFrames, float sampleRate);
+                                            int bufferSizeFrames, float sampleRate, int ksmps);
 
         /// <summary>Stops capturing and releases all native resources.</summary>
         [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
