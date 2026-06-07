@@ -254,9 +254,6 @@ namespace Csound.Unity.NativeAudioInput
             _zerdbfs               = (float)_csound.Get0dbfs();
             _openedChannelCount    = _channelCount;
 
-            Debug.Log($"[NativeAudioInputManager] Open: 0dbfs={_zerdbfs}, ksmps={_csound.GetKsmps()}, " +
-                      $"nchnls_i={_csound.GetNchnlsInputs()}, sampleRate={_sampleRate}, ch={_channelCount}");
-
             // Allocate the read buffer for the audio thread (ksmps × channelCount).
             // ksmps can change after Restart(); the buffer is reallocated if needed inside FillSpinBuffer.
             var ksmps        = (int)_csound.GetKsmps();
@@ -401,7 +398,6 @@ namespace Csound.Unity.NativeAudioInput
 
         private void OnCsoundStopped()
         {
-            Debug.LogWarning("[NativeAudioInputManager] OnCsoundStopped event received — closing device.");
             Close();
             _isInitialized = false;
         }
