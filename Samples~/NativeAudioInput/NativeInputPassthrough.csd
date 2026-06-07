@@ -19,7 +19,7 @@
 sr      = 48000
 ksmps   = 128
 nchnls  = 2
-nchnls_i = 1
+nchnls_i = 2
 0dbfs   = 1
 
 instr 1
@@ -28,16 +28,19 @@ instr 1
         kGain = 1
     endif
 
-    aIn     inch 1               ; read from spin channel 1
-
+    aInL     inch 1               ; read from spin channel 1
+    aInR     inch 2
     ; For stereo output, spread the mono input to both channels.
-    aOut    = aIn * kGain
-    out     aOut, aOut
+    aOutL    = aInL * kGain
+    aOutR    = aInR * kGain
+    out     aOutL, aOutR
 endin
 
 </CsInstruments>
 <CsScore>
-; Start instrument 1 indefinitely.
+; f0 z extends the score to an astronomically large time so Csound never
+; stops on its own. i 1 0 z starts the instrument for the same duration.
+; (Csound 7 terminates on "e" even with -1-duration instruments — use z instead.)
 f0 z
 i 1 0 z
 </CsScore>

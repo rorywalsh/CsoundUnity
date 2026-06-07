@@ -45,6 +45,11 @@
       "description": "Using Presets",
       "path": "Samples~/Presets"
     },
+    {
+      "displayName": "Native Audio Input",
+      "description": "Native low-latency audio input (WASAPI on Windows, CoreAudio on macOS, AAudio on Android) routed into Csound's input bus. Multi-channel passthrough example.",
+      "path": "Samples~/NativeAudioInput"
+    },
 	{
       "displayName": "Miscellaneous",
       "description": "Several Csound treasures lie in this folder",
