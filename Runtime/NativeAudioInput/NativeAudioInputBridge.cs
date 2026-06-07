@@ -52,10 +52,14 @@ namespace Csound.Unity.NativeAudioInput
         /// <param name="bufferSizeFrames">Requested I/O buffer size in frames (latency hint for classic fallback).</param>
         /// <param name="sampleRate">Expected sample rate — must match Unity's output rate.</param>
         /// <param name="ksmps">Csound ksmps — used as the IAudioClient3 engine period target.</param>
+        /// <param name="exclusiveMode">1 = try WASAPI exclusive mode first (lowest latency,
+        /// locks the device); 0 = shared mode (coexists with other apps). Windows only;
+        /// ignored by the CoreAudio/AAudio backends.</param>
         /// <returns>0 on success, negative error code on failure.</returns>
         [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int cni_open(int deviceIndex, int channelCount,
-                                            int bufferSizeFrames, float sampleRate, int ksmps);
+                                            int bufferSizeFrames, float sampleRate, int ksmps,
+                                            int exclusiveMode);
 
         /// <summary>Stops capturing and releases all native resources.</summary>
         [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]

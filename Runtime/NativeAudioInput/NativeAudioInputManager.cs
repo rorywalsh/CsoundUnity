@@ -66,6 +66,12 @@ namespace Csound.Unity.NativeAudioInput
         [Tooltip("If true, Open() is called automatically when CsoundUnity finishes initialising.")]
         [SerializeField] private bool _openOnInitialized = false;
 
+        [Tooltip("Windows only. ON = WASAPI exclusive mode: reaches the LOWEST latency, " +
+                 "but takes exclusive control of the device (no other app can use it while open). " +
+                 "OFF = shared mode: coexists with other apps but at higher latency. " +
+                 "Ignored on macOS/Android. Falls back to shared mode if exclusive is unavailable.")]
+        [SerializeField] private bool _exclusiveMode = false;
+
         #endregion
 
         #region Properties
@@ -265,7 +271,7 @@ namespace Csound.Unity.NativeAudioInput
 #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && !UNITY_WEBGL
             var result = NativeAudioInputBridge.cni_open(
                 _deviceIndex, _channelCount, _requestedBufferFrames, _sampleRate,
-                ksmps > 0 ? ksmps : 128);
+                ksmps > 0 ? ksmps : 128, _exclusiveMode ? 1 : 0);
 
             if (result == 0)
             {
