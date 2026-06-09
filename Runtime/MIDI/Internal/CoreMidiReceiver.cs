@@ -35,6 +35,11 @@ namespace Csound.Unity.MIDI.Internal
     /// uses a <see cref="System.Collections.Concurrent.ConcurrentQueue{T}"/> so no additional locking is needed).
     /// </para>
     /// <para>
+    /// Start() must be called when Unity's main run loop is fully active (i.e. not
+    /// during OnEnable initialisation). CsoundUnityMidiInput defers the call by one
+    /// frame via a coroutine, which is sufficient on macOS 14+ Sonoma.
+    /// </para>
+    /// <para>
     /// Note (iOS / visionOS): CoreMIDI and CoreFoundation must be linked in the Xcode
     /// project. Add them under Build Phases → Link Binary With Libraries, or via a
     /// Unity post-build script.
@@ -62,9 +67,6 @@ namespace Csound.Unity.MIDI.Internal
 
         #endregion
         #region CoreMIDI
-
-        [DllImport(CM)]
-        private static extern int MIDIClientCreate(IntPtr name, IntPtr notifyProc, IntPtr notifyRefCon, out IntPtr client);
 
         [DllImport(CM)]
         private static extern int MIDIClientDispose(IntPtr client);
@@ -101,19 +103,32 @@ namespace Csound.Unity.MIDI.Internal
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate void MIDIReadProc(IntPtr pktList, IntPtr readProcRefCon, IntPtr srcConnRefCon);
 
+        /// <summary>
+        /// Notification callback for MIDIClientCreate (device added/removed, setup changed).
+        /// Must be non-null: passing NULL causes CoreMIDI to attempt run-loop source
+        /// registration even for a null proc, which can fail with paramErr (-50).
+        /// We use a no-op static; actual hotplug handling is not yet implemented.
+        /// </summary>
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void MIDINotifyProc(IntPtr message, IntPtr refCon);
+
+        [DllImport(CM)]
+        private static extern int MIDIClientCreate(IntPtr name, MIDINotifyProc notifyProc, IntPtr notifyRefCon, out IntPtr client);
+
         #endregion
         #region State
 
         private IntPtr _midiClient = IntPtr.Zero;
         private IntPtr _inputPort  = IntPtr.Zero;
-        private MIDIReadProc _readProc; // field keeps delegate alive (prevents GC)
+        private MIDIReadProc   _readProc;   // field keeps delegate alive (prevents GC)
+        private MIDINotifyProc _notifyProc; // field keeps delegate alive (prevents GC)
 
         /// <summary>Static ref so the static callback can reach the active instance.</summary>
         private static CoreMidiReceiver _current;
 
         private readonly Action<byte[]> _onMessage;
-        private readonly string[] _includeOnly;
-        private readonly string[] _excludeContaining;
+        private readonly string[]       _includeOnly;
+        private readonly string[]       _excludeContaining;
 
         #endregion
         #region Public API
@@ -135,17 +150,30 @@ namespace Csound.Unity.MIDI.Internal
         /// </param>
         public CoreMidiReceiver(Action<byte[]> onMessage, string[] includeOnly = null, string[] excludeContaining = null)
         {
-            _onMessage = onMessage;
-            _includeOnly = includeOnly;
+            _onMessage         = onMessage;
+            _includeOnly       = includeOnly;
             _excludeContaining = excludeContaining;
         }
 
+        /// <summary>
+        /// Initialises the CoreMIDI client, creates an input port, and connects to all
+        /// matching MIDI sources. Must be called from Unity's main thread when the run
+        /// loop is fully active — use the one-frame coroutine delay in
+        /// <see cref="Csound.Unity.CsoundUnityMidiInput"/> rather than calling from OnEnable directly.
+        /// </summary>
         public void Start()
         {
-            _current = this;
+            _current    = this;
+            _notifyProc = OnMidiNotifyStatic;
+            _readProc   = OnMidiReadStatic;
+
+            // Pre-warm: querying MIDIGetNumberOfSources() before MIDIClientCreate
+            // contacts the CoreMIDI server, ensuring it is running and ready.
+            var prewarm = MIDIGetNumberOfSources();
+            Debug.Log($"[CoreMIDI] Pre-warm source count: {prewarm}");
 
             var clientName = CFStringCreateWithCString(IntPtr.Zero, "CsoundUnity", 0x08000100);
-            var err = MIDIClientCreate(clientName, IntPtr.Zero, IntPtr.Zero, out _midiClient);
+            var err = MIDIClientCreate(clientName, _notifyProc, IntPtr.Zero, out _midiClient);
             CFRelease(clientName);
 
             if (err != 0)
@@ -153,8 +181,6 @@ namespace Csound.Unity.MIDI.Internal
                 Debug.LogError($"[CoreMIDI] MIDIClientCreate failed: {err}");
                 return;
             }
-
-            _readProc = OnMidiReadStatic;
 
             var portName = CFStringCreateWithCString(IntPtr.Zero, "CsoundUnity Input", 0x08000100);
             err = MIDIInputPortCreate(_midiClient, portName, _readProc, IntPtr.Zero, out _inputPort);
@@ -238,11 +264,6 @@ namespace Csound.Unity.MIDI.Internal
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Returns true if the source passes the allowlist check.
-        /// When _includeOnly is empty/null → all sources pass.
-        /// When _includeOnly has entries → source must match at least one.
-        /// </summary>
         private bool ShouldInclude(string name)
         {
             if (_includeOnly == null || _includeOnly.Length == 0)
@@ -266,13 +287,21 @@ namespace Csound.Unity.MIDI.Internal
         }
 
         #endregion
-        #region Packet parsing
+        #region Callbacks
 
         /// <summary>Static — required for AOT safety on iOS.</summary>
+        [AOT.MonoPInvokeCallback(typeof(MIDIReadProc))]
         private static void OnMidiReadStatic(IntPtr pktList, IntPtr readProcRefCon, IntPtr srcConnRefCon)
         {
             _current?.ParsePacketList(pktList);
         }
+
+        /// <summary>No-op notification callback — see MIDINotifyProc doc above.</summary>
+        [AOT.MonoPInvokeCallback(typeof(MIDINotifyProc))]
+        private static void OnMidiNotifyStatic(IntPtr message, IntPtr refCon) { }
+
+        #endregion
+        #region Packet parsing
 
         /// <summary>
         /// MIDIPacketList layout (pragma pack 4):
