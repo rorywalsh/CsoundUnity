@@ -93,6 +93,11 @@ namespace Csound.Unity
         private Csound6.NativeMethods.MidiInCloseCallbackProxy _midiInCloseCallback;
 #endif
 
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+        [DllImport("winmm.dll")] private static extern uint timeBeginPeriod(uint uPeriod);
+        [DllImport("winmm.dll")] private static extern uint timeEndPeriod(uint uPeriod);
+#endif
+
         #endregion Fields
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -215,6 +220,10 @@ namespace Csound.Unity
 
             SetupMidiCallbacks();
 
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            timeBeginPeriod(1);
+#endif
+
             int ret = Csound6.NativeMethods.csoundCompileCSD(csound, csdFile, 1, 0, null);
             Csound6.NativeMethods.csoundStart(csound);
             compiledOk = ret == 0;
@@ -276,7 +285,7 @@ namespace Csound.Unity
         [AOT.MonoPInvokeCallback(typeof(Csound6.NativeMethods.MidiInOpenCallbackProxy))]
         private static int MidiInOpenCallback(IntPtr cs, ref IntPtr userData, string devName)
         {
-            Debug.Log($"[CsoundUnity] MIDI in open: {devName}");
+            Debug.Log($"[CsoundUnity] MIDI subsystem ready (CsOptions device specifier: '{devName}'). Actual device routing is handled by CsoundUnityMidiInput.");
             return 0;
         }
 
@@ -284,7 +293,7 @@ namespace Csound.Unity
         private static int MidiReadCallback(IntPtr csound, IntPtr userData, IntPtr buf, int nBytes)
         {
             var written = 0;
-            var queue = _staticMidiQueue;
+            var queue   = _staticMidiQueue;
             while (written + 3 <= nBytes && queue != null && queue.TryDequeue(out byte[] msg))
             {
                 for (int i = 0; i < msg.Length && written < nBytes; i++, written++)
@@ -430,6 +439,9 @@ namespace Csound.Unity
         /// </summary>
         public virtual void OnApplicationQuit()
         {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+            timeEndPeriod(1);
+#endif
 #if !UNITY_WEBGL || UNITY_EDITOR
             // Send "e" (end-score) before destroying so Csound stops all indefinitely-running
             // instruments (i x 0 -1 pattern) before csoundDestroy is called.

@@ -130,6 +130,21 @@ namespace Csound.Unity.MIDI.Internal
             var deviceCount = midiInGetNumDevs();
             var capsSize    = (uint)Marshal.SizeOf<MIDIINCAPS>();
 
+            if (deviceCount == 0)
+            {
+                Debug.LogWarning("[CsoundUnityMidiInput Win] No MIDI input devices found on this system.");
+                return;
+            }
+
+            var allNames = new System.Text.StringBuilder();
+            for (uint i = 0; i < deviceCount; i++)
+            {
+                MIDIINCAPS c = default;
+                if (midiInGetDevCaps((UIntPtr)i, ref c, capsSize) == MMSYSERR_NOERROR)
+                    allNames.Append(i == 0 ? "" : ", ").Append('\'').Append(c.szPname).Append('\'');
+            }
+            Debug.Log($"[CsoundUnityMidiInput Win] Available MIDI input devices ({deviceCount}): {allNames}");
+
             for (uint i = 0; i < deviceCount; i++)
             {
                 MIDIINCAPS caps = default;
