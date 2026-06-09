@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using System.Threading;
 
@@ -188,7 +189,17 @@ namespace Csound.Unity
                     NativeMethods.csoundSetOption(cs, "-d");
                     NativeMethods.csoundSetOption(cs, $"--sample-rate={sampleRate}");
 
-                    var ret = NativeMethods.csoundCompileCSD(cs, csdString, 1, 0, null);
+                    // Strip <CsOptions> so Csound doesn't try to open MIDI or audio devices
+                    // during the scan. All needed options are already set via csoundSetOption.
+                    // Without this, a CSD with -M0 causes a SIGSEGV because Csound attempts
+                    // to load the rtmidi module (absent in CsoundUnity builds).
+                    var scanCsd = Regex.Replace(
+                        csdString,
+                        @"<CsOptions>.*?</CsOptions>",
+                        "<CsOptions>\n</CsOptions>",
+                        RegexOptions.Singleline);
+
+                    var ret = NativeMethods.csoundCompileCSD(cs, scanCsd, 1, 0, null);
 
                     // Drain compile-time messages regardless of success/failure
                     FlushScanMessageBuffer(cs);

@@ -79,6 +79,11 @@
       "displayName": "Engines",
       "description": "Simulating various vehicle engines",
       "path": "Samples~/Engines"
+    },
+    {
+      "displayName": "MIDI",
+      "description": "MIDI input via CsoundUnityMidiInput: cross-platform (CoreMIDI on macOS/iOS, WinMM on Windows, android.media.midi on Android)",
+      "path": "Samples~/MIDI"
     }
   ],
   "type": "tool"
