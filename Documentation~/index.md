@@ -13,6 +13,7 @@
   * [Audio Input Routing](audio_input_routing.md)
   * [CsoundUnityChild](csoundunity_child.md)
   * [MIDI Input](midi.md)
+  * [Native Audio Input](native_audio_input.md)
   * [UI Components](ui_components.md)
   * [Presets](presets.md)
   * [Loading external files](loading_external_files.md)

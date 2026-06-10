@@ -27,12 +27,22 @@ The block above is an example of a Cabbage GUI section that will create graphica
 
 **CsoundUnity** supports these widgets from **Cabbage**:
 
-* rslider|hslider|vslider: horizontal sliders
-* button: button with text
-* checkbox: toggle box
-* combobox: dropdown menu 
+| Widget | Inspector / UI control |
+|---|---|
+| `rslider` / `hslider` / `vslider` | CsoundUnitySlider |
+| `button` / `checkbox` | CsoundUnityButton / CsoundUnityToggle |
+| `combobox` | CsoundUnityDropdown |
+| `xypad` | CsoundUnityXYPad |
+| `keyboard` | CsoundUnityKeyboard |
+| `label` | CsoundUnityLabel |
+| `meter` | CsoundUnityMeter |
+| `nslider` | CsoundUnityNSlider |
+| `hrange` / `vrange` | CsoundUnityRangeSlider |
+| `encoder` | CsoundUnityEncoder |
 
-See [**Cabbage Widgets**](https://cabbageaudio.com/docs/cabbage_syntax/) for more information about the syntax to use.
+See [UI Components](ui_components.md) for detailed documentation on each component and its prefab.
+
+See [**Cabbage Widgets**](https://cabbageaudio.com/docs/cabbage_syntax/) for the full Cabbage syntax reference.
 
 ### Cabbage-specific opcodes are not supported
 

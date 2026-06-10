@@ -1,27 +1,31 @@
 ## Controlling Csound from Unity Scripts ##
 
-Once you have attached a Csound file to a CsoundUnity component, you may wish to control its parameters realtime.  
+Once you have attached a Csound file to a CsoundUnity component, you may wish to control its parameters in real time.
 
-Before calling any of CsoundUnit's methods, as with many components in Unity, you will need to use the **GetComponent()** method to ensure your CsoundUnity type variable contains your instance of the CsoundUnity script.
+All CsoundUnity types are in the `Csound.Unity` namespace. Add `using Csound.Unity;` to the top of every script that references CsoundUnity.
 
-It is standard to use Unity's GetComponent() method in Unity's **Awake()** or **Start()** methods that are called by Unity when a script is enabled or the engine is put into playmode.
+Before calling any of CsoundUnity's methods, use the **GetComponent()** method to obtain a reference to the CsoundUnity instance on the same (or a parent) GameObject.
 
-You should wait for Csound to be initialised before executing your code. Once the CsoundUnity component has been accessed, any of its member methods can be called. 
+It is standard to call `GetComponent()` in Unity's **Start()** or **Awake()** method, and to check `IsInitialized` before calling any Csound API.
 
-For example:
+```csharp
+using Csound.Unity;
+using UnityEngine;
 
-```cs
-CsoundUnity csound;
-
-void Start()
+public class MyScript : MonoBehaviour
 {
-	csound = GetComponent<CsoundUnity>();        
-}
+    private CsoundUnity csound;
 
-void Update()
-{
-	if (!csound.IsInitialized) return;
-	// your code
+    void Start()
+    {
+        csound = GetComponent<CsoundUnity>();
+    }
+
+    void Update()
+    {
+        if (!csound.IsInitialized) return;
+        // your code
+    }
 }
 ```
 <!--
@@ -172,9 +176,9 @@ csoundUnity.SendScoreEvent("i-1 0 -1");
 <a name="keeping-csound-performance-running"></a>
 ### Keeping Csound performance running ###
 
-Be aware that Csound will stop if all the instruments (the ones listed in the score and the ones started from Unity) have stopped playing.   
-You won't be able to restart the Csound performance with the current implementation of CsoundUnity.  
-To keep the performance active for all the time your application is running, be sure to add one of those lines to the Csound score section in your .csd file:
+Be aware that Csound will stop if all the instruments (the ones listed in the score and the ones started from Unity) have stopped playing. To restart a stopped performance, call `csound.Restart()` — see [Lifecycle API](lifecycle.md).
+
+To keep the performance active for the entire duration of your application, add one of these lines to the Csound score section in your `.csd` file:
 
 ```csound
 <CsScore>
