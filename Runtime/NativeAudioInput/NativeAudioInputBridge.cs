@@ -87,11 +87,24 @@ namespace Csound.Unity.NativeAudioInput
 
         /// <summary>
         /// Returns the total number of audio frames successfully captured by the native callback
-        /// since the last <see cref="cni_open"/>. If this stays at 0 while running, the AudioUnit
-        /// is not receiving data (wrong device, permission denied, or hardware error).
+        /// since the last <see cref="cni_open"/>. If this stays at 0 while running, call
+        /// <see cref="cni_get_last_render_error"/> to get the AudioUnit render error code.
         /// </summary>
         [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
         internal static extern ulong cni_get_frames_captured();
+
+        /// <summary>
+        /// Returns the last OSStatus error returned by <c>AudioUnitRender</c> inside the capture callback.
+        /// 0 = no error (render succeeding). Common non-zero values:
+        /// <list type="bullet">
+        ///   <item><description>-10863 (kAudioUnitErr_NoConnection): device not bound before stream format was set, or microphone permission denied.</description></item>
+        ///   <item><description>-10877 (kAudioComponentErr_InstanceInvalidated): device disconnected.</description></item>
+        /// </list>
+        /// Reset to 0 on <see cref="cni_open"/> / <see cref="cni_close"/>.
+        /// macOS / iOS / visionOS only; always returns 0 on other platforms.
+        /// </summary>
+        [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int cni_get_last_render_error();
 
 #endif // (macOS || Windows || Android) && !WebGL
 

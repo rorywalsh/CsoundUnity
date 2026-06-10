@@ -328,6 +328,7 @@ namespace Csound.Unity.NativeAudioInput
                 _csound.nativeAudioInputProvider = this;
                 Debug.Log($"[NativeAudioInputManager] Native input opened: device {_deviceIndex}, " +
                           $"{_channelCount}ch, latency {InputLatencyMs:F1} ms.");
+                StartCoroutine(CheckCaptureStarted());
                 return;
             }
 
@@ -439,6 +440,39 @@ namespace Csound.Unity.NativeAudioInput
                 for (var ch = 0; ch < channelsToWrite; ch++)
                     _csound.AddInputSample(frame, ch,
                         (MYFLT)(_readBuffer[frame * _openedChannelCount + ch] * _zerdbfs));
+        }
+
+        /// <summary>
+        /// Waits 2 seconds after <see cref="Open"/> and checks whether the native callback
+        /// has actually captured any audio. If <see cref="FramesCaptured"/> is still 0,
+        /// logs a warning with the last AudioUnit render error code (Apple platforms only).
+        /// </summary>
+        private IEnumerator CheckCaptureStarted()
+        {
+            yield return new WaitForSeconds(2f);
+            if (State != NativeInputState.Running) yield break;
+            if (FramesCaptured > 0) yield break;
+
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS || UNITY_VISIONOS) && !UNITY_WEBGL
+            int renderErr = NativeAudioInputBridge.cni_get_last_render_error();
+            if (renderErr != 0)
+            {
+                string hint = renderErr == -10863
+                    ? "Check System Settings → Privacy & Security → Microphone — the Unity Editor (or your app) may not have access."
+                    : $"The audio device may be disconnected or incompatible (OSStatus {renderErr}).";
+                Debug.LogWarning($"[NativeAudioInputManager] Native input is Running but FramesCaptured=0 after 2 s. " +
+                                 $"AudioUnitRender error: {renderErr}. {hint}");
+            }
+            else
+            {
+                Debug.LogWarning("[NativeAudioInputManager] Native input is Running but FramesCaptured=0 after 2 s " +
+                                 "and no AudioUnitRender error was recorded. The capture callback may not be firing — " +
+                                 "check the selected device and ensure it is not in use by another app.");
+            }
+#else
+            Debug.LogWarning("[NativeAudioInputManager] Native input is Running but FramesCaptured=0 after 2 s. " +
+                             "Check device permissions and device selection.");
+#endif
         }
 
         private void OnCsoundInitialized()
