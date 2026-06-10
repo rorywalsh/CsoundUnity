@@ -45,7 +45,7 @@ namespace Csound.Unity.CsoundCSharp
     // http://csound6net.codeplex.com  // this site is not reachable anymore
 
     // This lightweight wrapper was created to provide an interface to the Unity game engine
-    public partial class Csound6
+    public partial class Csound
     {
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN

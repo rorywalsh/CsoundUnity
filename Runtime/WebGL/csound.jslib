@@ -2,7 +2,7 @@
 
 C S O U N D WebGL module (csound.jslib)
 
-Javascript wrapper for Csound 6 via the Csound API
+Javascript wrapper for Csound 7 via the Csound API
 and is licensed under the same terms and disclaimers as Csound described below.
 
 Copyright (C) 2024 Rory Walsh, Giovanni Bedetti
@@ -10,16 +10,17 @@ Copyright (C) 2024 Rory Walsh, Giovanni Bedetti
 This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
 
 Written by Giovanni Bedetti, July 2024
+Updated for Csound 7 (@csound/browser 7.0.0), June 2026
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
 THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
@@ -31,114 +32,65 @@ var csoundModule = {
     },
 
     csoundInitialize: async function (id, flags, csdTextPtr, filesToLoadTextPtr, callback) {
-        //window.alert("csoundInitialize");
 
-        // this is called by the open button
-        // async function openf(sf) {
-        //     // create an anchor element
-        //     let a = document.createElement('a');
-        //     // append it to html body
-        //     document.body.appendChild(a);
-        //     // set the anchor URL
-        //     a.href = sf;
-        //     // open in a different tab
-        //     a.target = "_blank";
-        //     // click on the element
-        //     a.click();
-        // }
-        //
-        // async function download(sf) {
-        //     // create an anchor element
-        //     let a = document.createElement('a');
-        //     // append it to html body
-        //     document.body.appendChild(a);
-        //     // set the anchor URL
-        //     a.href = sf;
-        //     // set the download name
-        //     a.download = "test.dat";
-        //     // click on the element
-        //     a.click();
-        // }
-
-        // copy file from local and return a URL for it
-        async function copyUrlFromLocal(cs, src,t) {
-            // get the file as a Uint8Array
-            let data = await cs.fs.readFile(src);
-            // create a data blob
-            let destfile = new Blob([data.buffer], { type: t});
-            // create a URL for it
-            return window.URL.createObjectURL(destfile);
-        }
-
-        // copy URL to local file
+        // copy URL to local file in Csound's virtual filesystem
         async function copyUrlToLocal(csound, src, dest) {
-            console.log("[CsoundUnity] fetching " + src)
-            // fetch the file
-            let srcfile = await fetch(src, {cache: "no-store"}); //, mode: "no-cors", crossorigin: "anonymous"})
-
-            // get the file data as an array
+            console.log("[CsoundUnity] fetching " + src);
+            let srcfile = await fetch(src, {cache: "no-store"});
             let dat = await srcfile.arrayBuffer();
-            console.log("[CsoundUnity] fetched src: " + src + " dat length: " + dat.byteLength)
-            // write the data as a new file in the filesystem
+            console.log("[CsoundUnity] fetched src: " + src + " dat length: " + dat.byteLength);
             await csound.fs.writeFile(dest, new Uint8Array(dat));
             console.log("[CsoundUnity] finished writing file to " + dest);
         };
 
+        // Csound 7 variation options (useSPN removed — ScriptProcessorNode dropped in Csound 7)
         const csoundVariations = [
-            { useWorker: false, useSPN: false, name: "SINGLE THREAD, AW" },
-            { useWorker: false, useSPN: true, name: "SINGLE THREAD, SPN" },
-            { useWorker: true, useSAB: true, name: "WORKER, AW, SAB" },
-            { useWorker: true, useSAB: false, name: "WORKER, AW, Messageport" },
-            { useWorker: true, useSAB: false, useSPN: true, name: "WORKER, SPN, MessagePort" },
+            { useWorker: false,               name: "SINGLE THREAD, AudioWorklet" },
+            { useWorker: true,  useSAB: true,  name: "WORKER, AudioWorklet, SAB" },
+            { useWorker: true,  useSAB: false, name: "WORKER, AudioWorklet, MessagePort" },
         ];
 
-        if (CsoundRef.instances[id] !== undefined)
-        {
-            // in case the id exists already, we could kill the existing instance and replace it with a new one
-            // for now let's reject the operation
+        if (CsoundRef.instances[id] !== undefined) {
             console.log("[CsoundUnity] id already exists! aborting Csound creation with id " + id);
-            reject("existing id");
             return;
         }
-        variation = csoundVariations[flags]
-        csdText = UTF8ToString(csdTextPtr)
-        //options = UTF8ToString(optionsPtr);
-        var filesToLoad = UTF8ToString(filesToLoadTextPtr);
-        //var filesToLoad = "./StreamingAssets/samples/hrtf-44100-left.dat:./StreamingAssets/samples/hrtf-44100-right.dat"
-        var filesArray = filesToLoad.split(":");
 
-        console.log(`[CsoundUnity] starting to await for Csound id ${id} with flag: ${flags}`);// + " options: " + options)
+        const variation = csoundVariations[Math.min(flags, csoundVariations.length - 1)];
+        const csdText = UTF8ToString(csdTextPtr);
+        const filesToLoad = UTF8ToString(filesToLoadTextPtr);
+        const filesArray = filesToLoad.split(":");
+
+        console.log(`[CsoundUnity] starting Csound 7 id=${id} variation="${variation.name}"`);
         const cs = await Csound(variation);
 
         for (const element of filesArray) {
-            var name = element.substring(element.lastIndexOf('/') + 1);
+            if (!element) continue;
+            const name = element.substring(element.lastIndexOf('/') + 1);
             await copyUrlToLocal(cs, element, "./" + name);
         }
 
         console.log(`[CsoundUnity] Csound version: ${cs.name}`);
-        const compileReturn = await cs.compileCsdText(csdText);
-        const startReturn = await cs.start();
-        
+        await cs.compileCSD(csdText);
+        await cs.start();
+
         CsoundRef.instances[CsoundRef.uniqueIdCounter] = cs;
-        var uniqueId = CsoundRef.uniqueIdCounter;
+        const uniqueId = CsoundRef.uniqueIdCounter;
         CsoundRef.uniqueIdCounter++;
-        console.log(`[CsoundUnity] created Csound with uniqueId: ${uniqueId}, CsoundRef.instances : ${JSON.stringify(CsoundRef.instances)} CsoundRef.uniqueIdCounter: ${CsoundRef.uniqueIdCounter}`);
+        console.log(`[CsoundUnity] created Csound with uniqueId: ${uniqueId}`);
         Module['dynCall_vi'](callback, uniqueId);
-        //cs.terminateInstance && (await cs.terminateInstance());
     },
-    
+
     csoundGetChannel: async function (uniqueId, channelPtr, callback) {
         var channel = UTF8ToString(channelPtr);
         if (CsoundRef.instances[uniqueId] === undefined) return;
         try {
             var value = await CsoundRef.instances[uniqueId].getControlChannel(channel);
-            // console.log(`[CsoundUnity] [id: ${+uniqueId}] csoundGetChannel(${channel}) -> value: ${value}`);
             var strBufferSize = lengthBytesUTF8(channel) + 1;
             var strBuffer = _malloc(strBufferSize);
             stringToUTF8(channel, strBuffer, strBufferSize);
             Module['dynCall_viif'](callback, uniqueId, [strBuffer], value);
         } catch (error) {
-            console.error(`[CsoundUnity] [id: ${+uniqueId}] Error retrieving\ channel ${channel}, error: ${error}`);
+            console.error(`[CsoundUnity] [id: ${+uniqueId}] Error retrieving channel ${channel}, error: ${error}`);
         }
     },
 
@@ -147,19 +99,22 @@ var csoundModule = {
     },
 
     csoundStop: async function(uniqueId, callback) {
-
-        //await CsoundRef.instances[uniqueId].stop();
-        await CsoundRef.instances[uniqueId].cleanup();
+        const cs = CsoundRef.instances[uniqueId];
+        if (!cs) return;
+        await cs.cleanup();
+        // Csound 7: destroy frees WASM memory; cleanup alone stops the performance
+        cs.destroy && (await cs.destroy());
+        delete CsoundRef.instances[uniqueId];
         Module['dynCall_vi'](callback, uniqueId);
     },
 
     csoundReset: async function(uniqueId) {
-        CsoundRef.instances[uniqueId].reset();
+        CsoundRef.instances[uniqueId] && CsoundRef.instances[uniqueId].reset();
     },
 
     csoundGetTable: async function(uniqueId, tableId, callback) {
         var table = await CsoundRef.instances[uniqueId].getTable(tableId);
-        console.log("table len: "+ table.length + ": " + table + "\nBYTES_PER_ELEMENT: " + table.BYTES_PER_ELEMENT)
+        console.log("table len: "+ table.length + ": " + table + "\nBYTES_PER_ELEMENT: " + table.BYTES_PER_ELEMENT);
         var buf = _malloc(table.length * table.BYTES_PER_ELEMENT);
         Module.HEAPF64.set(table, buf >> 3);
         Module['dynCall_viii'](callback, uniqueId, table.length, buf);
@@ -167,21 +122,15 @@ var csoundModule = {
 
     csoundSetOption: async function(uniqueId, option, callback) {
         var opt = UTF8ToString(option);
-        console.log("csoundSetOption for id: " + uniqueId + " option: " + opt)
         var res = await CsoundRef.instances[uniqueId].setOption(opt);
-        console.log("csoundSetOption res: " + res + " option: " + opt);
         Module['dynCall_vii'](callback, uniqueId, res);
-        //return res;
     },
-    
-    csoundInputMessage: async function(uniqueId, scoreEvent) {
 
+    csoundInputMessage: async function(uniqueId, scoreEvent) {
         var event = UTF8ToString(scoreEvent);
-        console.log("csoundInputMessage for id: " + uniqueId + " scoreEvent: " + event + " Csound: " + CsoundRef.instances[uniqueId])
         var res = await CsoundRef.instances[uniqueId].inputMessage(event);
-        console.log("csoundInputMessage res: " + res + " scoreEvent: " + event)
         return res;
-    }    
+    }
 }
 
 autoAddDeps(csoundModule, '$CsoundRef');
