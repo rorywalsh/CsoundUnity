@@ -1,3 +1,5 @@
+#if !UNITY_WEBGL || UNITY_EDITOR
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -5,12 +7,12 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using System.Threading;
 
-using static Csound.Unity.CsoundCSharp.Csound6;
+using static Csound.Unity.CsoundCSharp.Csound;
 using System.IO;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL || UNITY_VISIONOS
 using MYFLT = System.Single;
 #endif
 
@@ -424,3 +426,5 @@ namespace Csound.Unity
         #endregion Private Helpers
     }
 }
+
+#endif // !UNITY_WEBGL || UNITY_EDITOR

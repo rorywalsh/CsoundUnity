@@ -3,7 +3,7 @@ using UnityEngine;
 using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL || UNITY_VISIONOS
 using MYFLT = System.Single;
 #endif
 

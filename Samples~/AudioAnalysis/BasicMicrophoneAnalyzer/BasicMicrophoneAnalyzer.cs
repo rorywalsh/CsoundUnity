@@ -1,3 +1,5 @@
+#if !UNITY_WEBGL || UNITY_EDITOR
+
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -88,3 +90,5 @@ namespace Csound.Unity.AudioAnalysis
         #endregion
     }
 }
+
+#endif // !UNITY_WEBGL || UNITY_EDITOR

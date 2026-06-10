@@ -1,3 +1,5 @@
+#if !UNITY_WEBGL || UNITY_EDITOR
+
 using System;
 using UnityEngine;
 
@@ -13,7 +15,6 @@ namespace Csound.Unity.NativeAudioInput
         private AudioClip _clip;
         private int       _readPosition;
         private int       _sampleRate;
-        private int       _channelCount;
         private float[]   _stagingBuffer;
         private string    _deviceName;
 
@@ -37,9 +38,8 @@ namespace Csound.Unity.NativeAudioInput
         {
             Close();
 
-            _deviceName   = deviceName;
-            _sampleRate   = sampleRate;
-            _channelCount = 1; // Unity Microphone is always mono on Android
+            _deviceName = deviceName;
+            _sampleRate = sampleRate;
 
             _clip = Microphone.Start(deviceName, true, ClipDurationSeconds, sampleRate);
             if (_clip == null)
@@ -119,3 +119,5 @@ namespace Csound.Unity.NativeAudioInput
         public void Dispose() => Close();
     }
 }
+
+#endif // !UNITY_WEBGL || UNITY_EDITOR

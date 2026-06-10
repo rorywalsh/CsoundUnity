@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 using MYFLT = System.Double;
-#elif UNITY_ANDROID || UNITY_IOS
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL || UNITY_VISIONOS
 using MYFLT = System.Single;
 #endif
 

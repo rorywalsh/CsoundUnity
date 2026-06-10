@@ -1137,7 +1137,7 @@ namespace Csound.Unity
             // the native Csound object, avoiding a SIGSEGV use-after-free.
             initialized = false;
             _initializing = false;
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
             OnStoppedGenerator();
 #endif
             performanceFinished = false;
@@ -3677,7 +3677,7 @@ namespace Csound.Unity
 
         void OnAudioFilterRead(float[] data, int channels)
         {
-#if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
             // When IAudioGenerator path is active, CsoundRealtime.Process() already produced the
             // audio — do NOT run ProcessBlock (that would call PerformKsmps a second time on the
             // same bridge). However, Unity still calls OnAudioFilterRead with the generator output
@@ -3908,8 +3908,10 @@ namespace Csound.Unity
         void LogCsoundMessages()
         {
             //print Csound message to Unity console....
+#if !UNITY_WEBGL || UNITY_EDITOR
             for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
                 print(csound.GetCsoundMessage());
+#endif
         }
 
         /// <summary>
@@ -4102,6 +4104,7 @@ namespace Csound.Unity
                     // shutdown case cleanly without needing this extra guard.
                     if (csound == null) yield break;
 
+#if !UNITY_WEBGL || UNITY_EDITOR
                     for (int i = 0; i < csound.GetCsoundMessageCount(); i++)
                     {
                         if (csound == null) yield break;
@@ -4111,6 +4114,7 @@ namespace Csound.Unity
                             yield return null;          //avoids Unity stuck on performance end
                         }
                     }
+#endif
                     yield return new WaitForSeconds(interval);
                 }
                 yield return null; //wait one frame
@@ -4143,7 +4147,7 @@ namespace Csound.Unity
         // Tracks whether the audio thread is currently inside PerformKsmps.
         // Used by OnDisable to ensure csoundDestroy is not called while PerformKsmps
         // is still running on the audio thread — calling them concurrently is unsafe.
-        private volatile int _performKsmpsDepth = 0;
+        private int _performKsmpsDepth = 0;
 
 #if UNITY_6000_0_OR_NEWER
         /// <summary>

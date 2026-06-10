@@ -184,7 +184,9 @@ namespace Csound.Unity
                     break;
             }
 
+#if !UNITY_WEBGL || UNITY_EDITOR
             csoundUnity?.SendMidiMessage(msg);
+#endif
         }
 
 #if UNITY_ANDROID && !UNITY_EDITOR

@@ -187,7 +187,9 @@ namespace Csound.Unity.Utilities.Components.UI
             if (!_isInitialized) return;
             midiNote = Mathf.Clamp(midiNote, 0, 127);
             _activeNotes.Add(midiNote);
+#if !UNITY_WEBGL || UNITY_EDITOR
             _csound.SendMidiNoteOn(_midiChannel, midiNote, _velocity);
+#endif
         }
 
         /// <summary>
@@ -200,7 +202,9 @@ namespace Csound.Unity.Utilities.Components.UI
             if (!_isInitialized) return;
             midiNote = Mathf.Clamp(midiNote, 0, 127);
             _activeNotes.Remove(midiNote);
+#if !UNITY_WEBGL || UNITY_EDITOR
             _csound.SendMidiNoteOff(_midiChannel, midiNote);
+#endif
         }
 
         /// <summary>
@@ -217,7 +221,11 @@ namespace Csound.Unity.Utilities.Components.UI
         {
             if (_csound == null || !_isInitialized) return;
             foreach (var note in _activeNotes)
+#if !UNITY_WEBGL || UNITY_EDITOR
                 _csound.SendMidiNoteOff(_midiChannel, note);
+#else
+                _ = note; // suppress unused variable warning on WebGL
+#endif
             _activeNotes.Clear();
             _heldKeys.Clear();
         }
