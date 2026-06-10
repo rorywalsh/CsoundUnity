@@ -94,8 +94,46 @@ namespace Csound.Unity.NativeAudioInput
         {
             get
             {
-#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS) && !UNITY_WEBGL
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && !UNITY_WEBGL
                 return NativeAudioInputBridge.cni_get_frames_captured();
+#else
+                return 0;
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Number of times <c>cni_read_frames</c> returned fewer frames than ksmps
+        /// (ring buffer underrun → zero-filled gap → audible click). Android only; 0 on other platforms.
+        /// Reset to 0 on each <see cref="Open"/> / <see cref="Close"/>.
+        /// </summary>
+        public uint UnderrunCount
+        {
+            get
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_WEBGL
+                return (!_usingFallback && State == NativeInputState.Running)
+                    ? NativeAudioInputBridge.cni_get_underrun_count()
+                    : 0;
+#else
+                return 0;
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Number of times the AAudio callback found the ring buffer full and dropped incoming audio
+        /// (overrun → missing segment → audible dropout). Android only; 0 on other platforms.
+        /// Reset to 0 on each <see cref="Open"/> / <see cref="Close"/>.
+        /// </summary>
+        public uint OverrunCount
+        {
+            get
+            {
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_WEBGL
+                return (!_usingFallback && State == NativeInputState.Running)
+                    ? NativeAudioInputBridge.cni_get_overrun_count()
+                    : 0;
 #else
                 return 0;
 #endif
@@ -127,7 +165,6 @@ namespace Csound.Unity.NativeAudioInput
         private float _sampleRate;
 
         private bool _isInitialized = false;
-
 
 #if UNITY_ANDROID
         private AndroidAudioInputFallback _fallback;
@@ -269,8 +306,18 @@ namespace Csound.Unity.NativeAudioInput
             State = NativeInputState.Opening;
 
 #if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && !UNITY_WEBGL
+            // On Android the native ring buffer must cover at least one full Unity DSP block
+            // to avoid systematic underruns. On other platforms bufferSizeFrames is a hardware
+            // latency hint passed directly to the driver — inflating it to dspBufferSize would
+            // force a larger (higher-latency) hardware buffer than the user requested.
+            AudioSettings.GetDSPBufferSize(out var dspBufferSize, out _);
+#if UNITY_ANDROID && !UNITY_EDITOR
+            var bufferFramesForNative = Mathf.Max(_requestedBufferFrames, dspBufferSize);
+#else
+            var bufferFramesForNative = _requestedBufferFrames;
+#endif
             var result = NativeAudioInputBridge.cni_open(
-                _deviceIndex, _channelCount, _requestedBufferFrames, _sampleRate,
+                _deviceIndex, _channelCount, bufferFramesForNative, _sampleRate,
                 ksmps > 0 ? ksmps : 128, _exclusiveMode ? 1 : 0);
 
             if (result == 0)

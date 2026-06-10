@@ -94,5 +94,27 @@ namespace Csound.Unity.NativeAudioInput
         internal static extern ulong cni_get_frames_captured();
 
 #endif // (macOS || Windows || Android) && !WebGL
+
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_WEBGL
+        /// <summary>
+        /// Returns the number of times <see cref="cni_read_frames"/> could not supply a full
+        /// ksmps block of audio (ring buffer underrun → zero-filled gap → audible click).
+        /// Reset to 0 on <see cref="cni_open"/> and <see cref="cni_close"/>.
+        /// </summary>
+        [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern uint cni_get_underrun_count();
+
+        /// <summary>
+        /// Returns the number of times the AAudio callback found the ring buffer full and
+        /// had to drop incoming audio (overrun → missing audio segment → audible dropout).
+        /// Reset to 0 on <see cref="cni_open"/> and <see cref="cni_close"/>.
+        /// </summary>
+        [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern uint cni_get_overrun_count();
+
+        /// <summary>Resets both underrun and overrun counters to zero.</summary>
+        [DllImport(LibName, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void cni_reset_xrun_counts();
+#endif // UNITY_ANDROID && !UNITY_EDITOR
     }
 }
