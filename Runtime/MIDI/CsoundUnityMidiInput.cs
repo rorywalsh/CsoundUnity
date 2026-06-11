@@ -135,8 +135,16 @@ namespace Csound.Unity
             _receiver = new AndroidMidiReceiver(gameObject.name);
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             _receiver = new WindowsMidiReceiver(HandleMidiMessage, _includeOnlySourcesContaining, _excludeSourcesContaining);
-#elif UNITY_WEBGL
-            Debug.LogWarning("[CsoundUnityMidiInput] WebGL MIDI input is not yet implemented.");
+#elif UNITY_WEBGL && !UNITY_EDITOR
+            if (csoundUnity == null || csoundUnity.InstanceId < 0)
+            {
+                Debug.LogWarning("[CsoundUnityMidiInput] WebGL MIDI: CsoundUnity not initialized yet. " +
+                                 "Enable this component after CsoundUnity has started (e.g. from OnCsoundInitialized).");
+            }
+            else
+            {
+                _receiver = new WebGLMidiReceiver(csoundUnity.InstanceId, gameObject.name, HandleMidiMessage);
+            }
 #else
             Debug.LogWarning("[CsoundUnityMidiInput] MIDI input is not supported on this platform.");
 #endif
@@ -184,10 +192,20 @@ namespace Csound.Unity
                     break;
             }
 
-#if !UNITY_WEBGL || UNITY_EDITOR
             csoundUnity?.SendMidiMessage(msg);
-#endif
         }
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        /// <summary>
+        /// Called by Unity's SendMessage from the JavaScript side when a Web MIDI message arrives.
+        /// Format: "b0,b1,b2" (decimal byte values).
+        /// </summary>
+        private void OnWebGLMidiMessageReceived(string data)
+        {
+            if (_receiver is WebGLMidiReceiver webglReceiver)
+                webglReceiver.HandleMessage(data);
+        }
+#endif
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         /// <summary>

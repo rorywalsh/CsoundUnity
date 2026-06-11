@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2015 Rory Walsh.
+
+This file is part of CsoundUnity: https://github.com/rorywalsh/CsoundUnity
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +46,12 @@ namespace Csound.Unity.NativeAudioInput
         /// <summary>AAudio unavailable; using Unity Microphone API fallback.</summary>
         Fallback,
         /// <summary>Open failed on all paths.</summary>
-        Error
+        Error,
+        /// <summary>
+        /// Platform does not support <see cref="NativeAudioInputManager"/>.
+        /// On WebGL, use <c>WebGLAudioInput</c> instead.
+        /// </summary>
+        NotSupported
     }
 
     /// <summary>
@@ -70,7 +92,9 @@ namespace Csound.Unity.NativeAudioInput
                  "but takes exclusive control of the device (no other app can use it while open). " +
                  "OFF = shared mode: coexists with other apps but at higher latency. " +
                  "Ignored on macOS/Android. Falls back to shared mode if exclusive is unavailable.")]
+#pragma warning disable CS0414 // used inside #if native-platform block, not visible on WebGL
         [SerializeField] private bool _exclusiveMode = false;
+#pragma warning restore CS0414
 
         #endregion
 
@@ -94,7 +118,7 @@ namespace Csound.Unity.NativeAudioInput
         {
             get
             {
-#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && !UNITY_WEBGL
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
                 return NativeAudioInputBridge.cni_get_frames_captured();
 #else
                 return 0;
@@ -210,6 +234,12 @@ namespace Csound.Unity.NativeAudioInput
                     yield break;
                 }
             }
+            // Pre-populate the device list now that microphone permission is available.
+            // On macOS 14+ Sonoma, input channel counts are hidden until permission is granted;
+            // the native layer falls back to the system default input device when enumeration
+            // yields 0 channels, ensuring Open() can still proceed and trigger the system
+            // permission dialog via AudioOutputUnitStart() if needed.
+            EnumerateDevices();
 #endif
 
             yield return new WaitUntil(() => _csound.IsInitialized);
@@ -239,12 +269,18 @@ namespace Csound.Unity.NativeAudioInput
         /// <summary>
         /// Enumerates available audio input devices and populates <see cref="Devices"/>.
         /// Call this before presenting device choices in the UI.
+        /// Not supported on WebGL (<see cref="State"/> will be <see cref="NativeInputState.NotSupported"/>).
         /// </summary>
         public void EnumerateDevices()
         {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            Debug.LogWarning("[NativeAudioInputManager] EnumerateDevices: not supported on WebGL. " +
+                             "Add a WebGLAudioInput component to your scene for browser microphone access.");
+            State = NativeInputState.NotSupported;
+#else
             _devices.Clear();
 
-#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && !UNITY_WEBGL
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
             int count = NativeAudioInputBridge.cni_get_device_count();
             var sb    = new StringBuilder(256);
             for (int i = 0; i < count; i++)
@@ -266,6 +302,7 @@ namespace Csound.Unity.NativeAudioInput
 
             if (_devices.Count == 0)
                 Debug.LogWarning("[NativeAudioInputManager] No input devices found on this platform.");
+#endif // !UNITY_WEBGL
         }
 
         /// <summary>
@@ -277,6 +314,13 @@ namespace Csound.Unity.NativeAudioInput
         /// <param name="bufferFrames">Requested buffer size in frames (latency hint).</param>
         public void Open(int deviceIndex, int channelCount, int bufferFrames)
         {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            State = NativeInputState.NotSupported;
+            Debug.LogWarning("[NativeAudioInputManager] Native audio input is not supported on WebGL. " +
+                             "Add a WebGLAudioInput component to your scene for browser microphone access " +
+                             "(limited to mono/stereo via getUserMedia). " +
+                             "The CSD's adc opcode can still receive audio if WebGLAudioInput.Open() is called.");
+#else
             Close();
 
             if (!_isInitialized)
@@ -305,7 +349,7 @@ namespace Csound.Unity.NativeAudioInput
 
             State = NativeInputState.Opening;
 
-#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && !UNITY_WEBGL
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
             // On Android the native ring buffer must cover at least one full Unity DSP block
             // to avoid systematic underruns. On other platforms bufferSizeFrames is a hardware
             // latency hint passed directly to the driver — inflating it to dspBufferSize would
@@ -332,6 +376,15 @@ namespace Csound.Unity.NativeAudioInput
                 return;
             }
 
+            if (result == -40)
+            {
+                // -40: microphone permission denied or restricted (returned by PlatformOpen on Apple platforms).
+                Debug.LogError("[NativeAudioInputManager] cni_open failed: microphone access denied. " +
+                               "Check System Settings → Privacy & Security → Microphone and ensure " +
+                               "Unity (or your app) is listed and enabled, then restart.");
+                State = NativeInputState.Error;
+                return;
+            }
             Debug.LogWarning($"[NativeAudioInputManager] cni_open failed (code {result}). " +
                              $"Trying fallback.");
 #endif
@@ -355,17 +408,20 @@ namespace Csound.Unity.NativeAudioInput
 
             State = NativeInputState.Error;
             Debug.LogError("[NativeAudioInputManager] Could not open any audio input path.");
+#endif // !UNITY_WEBGL
         }
 
-        /// <summary>Stops capturing and disconnects from the Csound spin buffer.</summary>
+        /// <summary>Stops capturing and disconnects from the Csound spin buffer.
+        /// No-op on WebGL (not supported).</summary>
         public void Close()
         {
+#if !UNITY_WEBGL || UNITY_EDITOR
             // Unregister from ProcessBlock first so no more FillSpinBuffer calls arrive.
             if (_csound)
                 _csound.nativeAudioInputProvider = null;
 
-#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && !UNITY_WEBGL
-#if UNITY_ANDROID
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
+#if UNITY_ANDROID && !UNITY_EDITOR
             if (!_usingFallback)
 #endif
                 NativeAudioInputBridge.cni_close();
@@ -382,6 +438,7 @@ namespace Csound.Unity.NativeAudioInput
 
             InputLatencyFrames = 0;
             State              = NativeInputState.Stopped;
+#endif // !UNITY_WEBGL
         }
 
         #endregion
@@ -419,7 +476,7 @@ namespace Csound.Unity.NativeAudioInput
             }
 #endif
 
-#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && !UNITY_WEBGL
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_IOS || UNITY_VISIONOS || UNITY_ANDROID) && (!UNITY_WEBGL || UNITY_EDITOR)
             unsafe
             {
                 fixed (float* ptr = _readBuffer)
@@ -453,7 +510,7 @@ namespace Csound.Unity.NativeAudioInput
             if (State != NativeInputState.Running) yield break;
             if (FramesCaptured > 0) yield break;
 
-#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS || UNITY_VISIONOS) && !UNITY_WEBGL
+#if (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS || UNITY_VISIONOS) && (!UNITY_WEBGL || UNITY_EDITOR)
             int renderErr = NativeAudioInputBridge.cni_get_last_render_error();
             if (renderErr != 0)
             {

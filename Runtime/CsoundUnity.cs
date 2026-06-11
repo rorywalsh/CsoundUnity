@@ -584,8 +584,7 @@ namespace Csound.Unity
         public float DspLoad { get; private set; } = 0f;
 
         private readonly System.Diagnostics.Stopwatch _dspSw = new System.Diagnostics.Stopwatch();
-        // Accumulated elapsed ticks for IAudioGenerator path (reset each DSP buffer).
-        private long   _dspAccumTicks  = 0;
+        private long _dspAccumTicks; // accumulated stopwatch ticks per DSP buffer; used by Generator.cs partial
         private const float DspLoadAlpha = 0.05f;
 
         private void UpdateDspLoad(double elapsedSec, double budgetSec)
@@ -703,7 +702,9 @@ namespace Csound.Unity
         /// show the auto-generated spout channel entries (<c>main_out_0</c>, <c>main_out_1</c>, …)
         /// without requiring Play mode.
         /// </summary>
+#pragma warning disable CS0414 // read by AudioInputRouteDrawer via SerializedProperty, not in C# code
         [HideInInspector][SerializeField] private int _nchnls = 0;
+#pragma warning restore CS0414
 
         /// <summary>
         /// Pre-computed names of the auto-generated spout channels
@@ -1412,7 +1413,6 @@ namespace Csound.Unity
 
         #endregion PERFORMANCE
 
-#if !UNITY_WEBGL || UNITY_EDITOR
         #region MIDI
 
         /// <summary>
@@ -1425,14 +1425,15 @@ namespace Csound.Unity
         /// <param name="velocity">Velocity, 0–127. Velocity 0 is treated as Note Off by convention.</param>
         public void SendMidiNoteOn(int channel, int note, int velocity)
         {
-            if (!IsInitialized || csound == null) return;
+            if (!IsInitialized) return;
             byte status = (byte)(0x90 | Mathf.Clamp(channel - 1, 0, 15));
-            csound.EnqueueMidiMessage(new byte[]
-            {
-                status,
-                (byte)Mathf.Clamp(note,     0, 127),
-                (byte)Mathf.Clamp(velocity, 0, 127)
-            });
+            byte b1     = (byte)Mathf.Clamp(note,     0, 127);
+            byte b2     = (byte)Mathf.Clamp(velocity, 0, 127);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            csound?.EnqueueMidiMessage(new byte[] { status, b1, b2 });
+#elif UNITY_WEBGL
+            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, b2);
+#endif
         }
 
         /// <summary>
@@ -1443,14 +1444,15 @@ namespace Csound.Unity
         /// <param name="velocity">Release velocity, 0–127 (usually 0)</param>
         public void SendMidiNoteOff(int channel, int note, int velocity = 0)
         {
-            if (!IsInitialized || csound == null) return;
+            if (!IsInitialized) return;
             byte status = (byte)(0x80 | Mathf.Clamp(channel - 1, 0, 15));
-            csound.EnqueueMidiMessage(new byte[]
-            {
-                status,
-                (byte)Mathf.Clamp(note,     0, 127),
-                (byte)Mathf.Clamp(velocity, 0, 127)
-            });
+            byte b1     = (byte)Mathf.Clamp(note,     0, 127);
+            byte b2     = (byte)Mathf.Clamp(velocity, 0, 127);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            csound?.EnqueueMidiMessage(new byte[] { status, b1, b2 });
+#elif UNITY_WEBGL
+            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, b2);
+#endif
         }
 
         /// <summary>
@@ -1461,14 +1463,15 @@ namespace Csound.Unity
         /// <param name="value">Controller value, 0–127</param>
         public void SendMidiControlChange(int channel, int controller, int value)
         {
-            if (!IsInitialized || csound == null) return;
+            if (!IsInitialized) return;
             byte status = (byte)(0xB0 | Mathf.Clamp(channel - 1, 0, 15));
-            csound.EnqueueMidiMessage(new byte[]
-            {
-                status,
-                (byte)Mathf.Clamp(controller, 0, 127),
-                (byte)Mathf.Clamp(value,       0, 127)
-            });
+            byte b1     = (byte)Mathf.Clamp(controller, 0, 127);
+            byte b2     = (byte)Mathf.Clamp(value,       0, 127);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            csound?.EnqueueMidiMessage(new byte[] { status, b1, b2 });
+#elif UNITY_WEBGL
+            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, b2);
+#endif
         }
 
         /// <summary>
@@ -1478,28 +1481,35 @@ namespace Csound.Unity
         /// <param name="program">Program number, 0–127</param>
         public void SendMidiProgramChange(int channel, int program)
         {
-            if (!IsInitialized || csound == null) return;
+            if (!IsInitialized) return;
             byte status = (byte)(0xC0 | Mathf.Clamp(channel - 1, 0, 15));
-            csound.EnqueueMidiMessage(new byte[]
-            {
-                status,
-                (byte)Mathf.Clamp(program, 0, 127)
-            });
+            byte b1     = (byte)Mathf.Clamp(program, 0, 127);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            csound?.EnqueueMidiMessage(new byte[] { status, b1 });
+#elif UNITY_WEBGL
+            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, status, b1, 0);
+#endif
         }
 
         /// <summary>
         /// Sends a raw MIDI message (1–3 bytes) directly to Csound.
         /// Use this for any MIDI message type not covered by the helper methods above.
         /// </summary>
-        /// <param name="data">Raw MIDI bytes</param>
+        /// <param name="data">Raw MIDI bytes (1–3)</param>
         public void SendMidiMessage(byte[] data)
         {
-            if (!IsInitialized || csound == null) return;
-            csound.EnqueueMidiMessage(data);
+            if (!IsInitialized || data == null || data.Length == 0) return;
+#if !UNITY_WEBGL || UNITY_EDITOR
+            csound?.EnqueueMidiMessage(data);
+#elif UNITY_WEBGL
+            byte b0 = data[0];
+            byte b1 = data.Length > 1 ? data[1] : (byte)0;
+            byte b2 = data.Length > 2 ? data[2] : (byte)0;
+            CsoundWebGL.NativeMethods.csoundSendMidiMessage(_instanceId, b0, b1, b2);
+#endif
         }
 
         #endregion MIDI
-#endif
 
         #region CSD_PARSE
 
@@ -4234,7 +4244,7 @@ namespace Csound.Unity
         {
             if (_activeAudioListener
                 && _activeAudioListener.isActiveAndEnabled) return _activeAudioListener;
-            var audioListeners = FindObjectsOfType<AudioListener>(false);
+            var audioListeners = FindObjectsByType<AudioListener>(FindObjectsSortMode.None);
             _activeAudioListener = Array.Find(audioListeners, audioListener => audioListener.enabled);
 
             return _activeAudioListener;
