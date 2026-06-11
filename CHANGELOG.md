@@ -14,7 +14,10 @@
 - [Add] CsoundUnityVectorMorph: bilinear blending between four CsoundUnityPresets with interactive editor
 - [Add] UI components: CsoundUnitySlider (hslider/vslider), CsoundUnityKnob (rslider — bounded rotary knob), CsoundUnityEncoder (encoder — endless rotary, unbounded), CsoundUnityButton, CsoundUnityToggle, CsoundUnityDropdown, CsoundUnityXYPad, CsoundUnityKeyboard, CsoundUnityLabel, CsoundUnityMeter, CsoundUnityNSlider, CsoundUnityPianoKey, CsoundUnityRangeSlider (horizontal and vertical) with prefabs
 - [Add] UI auto-layout: **Create UI** and **Update UI** buttons in the CsoundUnity inspector generate a Unity Canvas from Cabbage bounds data; `CsoundUnityUISettings` ScriptableObject maps widget types to prefabs and controls font scale
-- [Add] NativeAudioInput: low-latency multichannel audio input for macOS (CoreAudio/AUHAL) and Android (AAudio exclusive mode, 4ms @ 48kHz)
+- [Add] NativeAudioInput: low-latency multichannel audio input for macOS (CoreAudio/AUHAL), Android (AAudio exclusive mode, 4ms @ 48kHz) and Windows (WASAPI shared/exclusive)
+- [Add] WebGLAudioInput: optional component to route browser microphone (`getUserMedia`) into Csound on WebGL; wraps the built-in Csound WASM audio-input path behind the same Open/Close API as NativeAudioInputManager (max 2 channels — browser limitation)
+- [Add] WebGLMidiReceiver / CsoundUnityMidiInput on WebGL: MIDI input via Web MIDI API (`navigator.requestMIDIAccess`); requires HTTPS, Chrome/Edge only
+- [Add] CsoundUnityAudioInputRouter: component that enables NativeAudioInputManager in Editor/standalone and WebGLAudioInput in WebGL builds automatically; use it to share one scene across all targets
 - [Add] Cabbage parser: encoder widget (channel, increment, value, text/popupPrefix); form widget (size → canvas dimensions)
 - [Add] SampleInputSystemFixer: editor script that automatically patches imported sample scenes for Unity's new Input System
 - [Add] xypad Cabbage widget support in parser and inspector
