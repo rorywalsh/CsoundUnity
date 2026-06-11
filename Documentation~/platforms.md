@@ -1,6 +1,6 @@
 ## Supported Platforms ##
 
-CsoundUnity v4.0.0 ships **Csound 7** native libraries for all platforms except WebGL.
+CsoundUnity v4.0.0 ships **Csound 7** across all supported platforms: native libraries on desktop/mobile and a WASM bundle (`@csound/browser`) on WebGL.
 
 | Platform | Csound | NativeAudioInput | MIDI |
 |---|---|---|---|
@@ -8,7 +8,7 @@ CsoundUnity v4.0.0 ships **Csound 7** native libraries for all platforms except 
 | **Windows** | Csound 7 | WASAPI | WinMM |
 | **iOS / visionOS** | Csound 7 | AudioUnit RemoteIO | CoreMIDI |
 | **Android** | Csound 7 | AAudio (API ≥ 26) / Microphone fallback | android.media.midi |
-| **WebGL** | Csound 7 (beta) | Not supported | Not supported |
+| **WebGL** | Csound 7 (beta) | `getUserMedia` (stereo max, HTTPS) | Web MIDI API (Chrome/Edge, HTTPS) |
 | **Linux** | Not available | Not available | Not available |
 
 ---
