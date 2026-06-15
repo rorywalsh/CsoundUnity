@@ -980,7 +980,8 @@ namespace Csound.Unity
 
         /// <summary>
         /// Returns the current value of the named Csound control channel.
-        /// On WebGL, use the callback-based overload instead.
+        /// On WebGL returns the last-known cached value (0 until the first async read completes)
+        /// and automatically schedules a non-blocking refresh via the callback-based overload.
         /// </summary>
         /// <param name="channel">The name of the control channel.</param>
         /// <returns>The channel's current floating-point value.</returns>
@@ -989,8 +990,15 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             return CsoundLib.NativeMethods.csoundGetControlChannel(csound, channel, out _);
 #else
-        Debug.LogError("use GetChannel(channel, callback) on the WebGL platform");
-        return 0;
+            // Return the last-known cached value and trigger an async refresh if one is not already
+            // in flight. This avoids the per-frame error log and keeps the value up-to-date.
+            if (!_pendingChannelFetches.Contains(channel))
+            {
+                _pendingChannelFetches.Add(channel);
+                GetChannel(channel, _ => _pendingChannelFetches.Remove(channel));
+            }
+            _webglChannelCache.TryGetValue(channel, out var v);
+            return v;
 #endif
         }
 
@@ -1379,6 +1387,8 @@ namespace Csound.Unity
 
     private Dictionary<CallbackId, Action<MYFLT>> _userCallbacksByChannel = new Dictionary<CallbackId, Action<MYFLT>>();
     private static Dictionary<CallbackId, Action<int, string, MYFLT>> _getChannelCallbacks = new Dictionary<CallbackId, Action<int, string, MYFLT>>();
+    private Dictionary<string, MYFLT> _webglChannelCache = new Dictionary<string, MYFLT>();
+    private HashSet<string> _pendingChannelFetches = new HashSet<string>();
 
     internal void GetChannel(string channel, Action<MYFLT> callback)
     {
@@ -1403,6 +1413,7 @@ namespace Csound.Unity
         var callbackId = new CallbackId(channel, this._assignedInstanceId);
         _getChannelCallbacks[callbackId] = null;
         _getChannelCallbacks.Remove(callbackId);
+        _webglChannelCache[channel] = value;
         _userCallbacksByChannel[callbackId]?.Invoke(value);
     }
 
