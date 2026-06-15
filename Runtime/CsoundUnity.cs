@@ -1060,7 +1060,7 @@ namespace Csound.Unity
     {
         Debug.Log($"[CsoundUnity] OnWebGLBridgeInitialized for instance #{instanceId} received by CsoundUnity instance {this._instanceId}");
         if (instanceId != this._instanceId) return;
-        if (!IsInitialized || csound == null) return;
+        if (IsInitialized || csound == null) return;
         
         CsoundUnityBridge.OnCsoundWebGLInitialized -= OnWebGLBridgeInitialized;
         // channels are created when a csd file is selected in the inspector
@@ -2226,6 +2226,22 @@ namespace Csound.Unity
         {
             if (!IsInitialized || csound == null) return 0;
             return csound.GetChannel(channel);
+        }
+
+        /// <summary>
+        /// Reads a Csound control channel and delivers the result via <paramref name="callback"/>.
+        /// On non-WebGL platforms the callback is invoked synchronously before this method returns.
+        /// On WebGL the read is dispatched to the AudioWorklet thread; the callback fires on the
+        /// main thread once the value is available (typically within the same or the next frame).
+        /// </summary>
+        public void GetChannel(string channel, Action<MYFLT> callback)
+        {
+            if (!IsInitialized || csound == null) { callback?.Invoke(0); return; }
+#if UNITY_WEBGL && !UNITY_EDITOR
+            csound.GetChannel(channel, callback);
+#else
+            callback?.Invoke(csound.GetChannel(channel));
+#endif
         }
 
         /// <summary>
