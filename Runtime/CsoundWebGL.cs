@@ -102,6 +102,22 @@ namespace Csound.Unity
             /// </summary>
             [DllImport(DLLVersion)]
             internal static extern void csoundAudioInputDisable(int instanceId);
+
+            /// <summary>
+            /// Returns 1 when cs.start() has completed (Csound is running) <b>and</b> the
+            /// AudioContext is in the 'running' state; 0 otherwise.
+            /// <para>
+            /// "cs.start() completed" is signalled by either the AudioWorklet node being
+            /// non-null OR the internal <c>started</c> flag being set. The latter handles
+            /// @csound/browser v7 Worker+MessagePort mode where <c>cs.start()</c> returns
+            /// <c>null</c> even on success.
+            /// </para>
+            /// Safe to call every frame — queries cached JS state, no async overhead.
+            /// Poll this before calling <see cref="csoundAudioInputEnable"/> to ensure
+            /// cs.start() has completed.
+            /// </summary>
+            [DllImport(DLLVersion)]
+            internal static extern int csoundIsAudioContextRunning(int instanceId);
         }
     }
 }
