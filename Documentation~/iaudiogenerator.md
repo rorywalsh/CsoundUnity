@@ -15,12 +15,9 @@ From v4.0.0, CsoundUnity supports the **IAudioGenerator** interface introduced i
 
 ### Selecting the audio path ###
 
-In the CsoundUnity inspector, the **Audio Path** field (Unity 6 only) lets you switch between:
+The **Audio Output Path** section of the Inspector (below Audio Input Routes) lets you choose between `OnAudioFilterRead`, `IAudioGenerator`, and `RootOutput`. For a full comparison see [Audio Output Path](audio_output_path.md).
 
-- **IAudioGenerator** — default on Unity 6+
-- **OnAudioFilterRead** — classic path, available on all Unity versions
-
-The field is hidden during Play mode; changes take effect on the next initialisation.
+The field is disabled during Play mode; changes take effect on the next initialisation.
 
 ### CsoundUnityGenerator ###
 
