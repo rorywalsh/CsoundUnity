@@ -894,7 +894,15 @@ namespace Csound.Unity
             audioSource.spatializePostEffects = true;
 
             // FIX SPATIALIZATION ISSUES
-            if (audioSource.clip == null && !processClipAudio)
+            // Only needed on the OnAudioFilterRead path: Unity must have a playing AudioSource
+            // to invoke OnAudioFilterRead and route audio through the 3D spatialization pipeline.
+            // IAudioGenerator and RootOutput manage the AudioSource (or bypass it) themselves.
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
+            var needsSpatializerClip = _audioPath == AudioPath.OnAudioFilterRead;
+#else
+            var needsSpatializerClip = true;
+#endif
+            if (needsSpatializerClip && audioSource.clip == null && !processClipAudio)
             {
                 var ac = AudioClip.Create("CsoundUnitySpatializerClip", 32, 1, AudioSettings.outputSampleRate, false);
                 var data = new float[32];
@@ -3714,6 +3722,9 @@ namespace Csound.Unity
                 UpdateOutputBuffer(data, channels);
                 return;
             }
+            // RootOutput drives PerformKsmps via EndProcessing — skip OnAudioFilterRead entirely.
+            if (_audioPath == AudioPath.RootOutput)
+                return;
 #endif
             if (csound != null && initialized)
             {

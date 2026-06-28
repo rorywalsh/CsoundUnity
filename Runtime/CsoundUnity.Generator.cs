@@ -24,40 +24,52 @@ using UnityEngine.Audio;
 namespace Csound.Unity
 {
     /// <summary>
-    /// Selects which audio path <see cref="CsoundUnity"/> uses.
+    /// Selects which audio path <see cref="CsoundUnity"/> uses to deliver audio.
     /// </summary>
     public enum AudioPath
     {
         /// <summary>
         /// Classic Unity audio path via <c>OnAudioFilterRead</c>.
-        /// Works on all supported Unity versions.
+        /// Works on all supported Unity versions. Audio is routed through the
+        /// AudioSource and AudioMixer graph.
         /// </summary>
         OnAudioFilterRead = 0,
 
         /// <summary>
         /// Unity 6+ <c>IAudioGenerator</c> path.
         /// Drives the <c>AudioSource</c> directly — avoids the resampling step and
-        /// integrates cleanly with the new Unity Audio system.
+        /// integrates cleanly with the new Unity Audio system. Audio passes through
+        /// the AudioMixer graph. Requires an <c>AudioSource</c> component.
         /// </summary>
         IAudioGenerator = 1,
+
+        /// <summary>
+        /// Unity 6+ <c>RootOutput</c> path.
+        /// Bypasses the AudioMixer entirely — audio is mixed additively into Unity's
+        /// main output. No <c>AudioSource</c> required; 3D spatialization and mixer
+        /// effects are not applied. Ideal when the mixer is not needed or for
+        /// multi-channel output beyond the AudioSource's channel count.
+        /// </summary>
+        RootOutput = 2,
     }
 
     /// <summary>
-    /// IAudioGenerator implementation for <see cref="CsoundUnity"/> (Unity 6+).
+    /// IAudioGenerator and RootOutput implementations for <see cref="CsoundUnity"/> (Unity 6+).
     ///
     /// <para>
     /// This file is a <c>partial</c> extension of <c>CsoundUnity</c>.
-    /// When <see cref="CsoundUnity._audioPath"/> is set to
-    /// <see cref="AudioPath.IAudioGenerator"/>, <c>OnAudioFilterRead</c> is
-    /// skipped and audio is produced by the <see cref="CsoundRealtime"/> struct
-    /// on the audio thread via Unity's <c>GeneratorInstance</c> pipeline instead.
-    /// </para>
-    ///
-    /// <para>
-    /// The bridge registered in <see cref="CsoundBridgeRegistry"/> is the same
-    /// <c>CsoundUnityBridge</c> created by <c>CsoundUnity.Init()</c>, so all
-    /// existing CsoundUnity API calls (SetChannel, SendScoreEvent, etc.) continue
-    /// to work exactly as before — only the audio delivery mechanism changes.
+    /// Depending on <see cref="CsoundUnity._audioPath"/>:
+    /// <list type="bullet">
+    ///   <item><see cref="AudioPath.IAudioGenerator"/> — audio is produced by
+    ///     <see cref="CsoundRealtime"/> via Unity's <c>GeneratorInstance</c> pipeline
+    ///     and routed through an <c>AudioSource</c> and the AudioMixer.</item>
+    ///   <item><see cref="AudioPath.RootOutput"/> — audio is produced by
+    ///     <see cref="CsoundRootRealtime"/> via Unity's <c>RootOutputInstance</c> pipeline
+    ///     and mixed additively into the main output, bypassing the AudioMixer entirely.
+    ///     No <c>AudioSource</c> is required.</item>
+    /// </list>
+    /// In both cases the same <c>CsoundUnityBridge</c> is reused, so all existing
+    /// CsoundUnity API calls continue to work unchanged.
     /// </para>
     /// </summary>
     public partial class CsoundUnity : IAudioGenerator
@@ -96,22 +108,26 @@ namespace Csound.Unity
         [HideInInspector][SerializeField] [Range(0f, 2f)] private float _generatorStartupDelay = 0f;
 
         #endregion
-        #region Runtime state (IAudioGenerator)
+        #region Runtime state (IAudioGenerator + RootOutput)
 
         /// <summary>
-        /// Index into <see cref="CsoundBridgeRegistry"/> assigned at <see cref="InitGenerator"/> time.
-        /// Passed to <see cref="CsoundRealtime.InstanceId"/> and <see cref="CsoundControl.InstanceId"/>.
+        /// Index into <see cref="CsoundBridgeRegistry"/> assigned at <see cref="InitGenerator"/>
+        /// or <see cref="InitRootOutput"/> time. Shared between both paths.
         /// </summary>
         private int _generatorInstanceId = -1;
 
         /// <summary>
         /// bufferFrameOffset of the previous <see cref="OnSpinFillCallback"/> call.
-        /// Used to detect the start of a new DSP buffer: when the current offset is less
-        /// than the previous one, the audio system has wrapped to a new buffer.
-        /// Handles non-power-of-2 ksmps values (e.g. ksmps=129 with buffer=512) where
-        /// bufferFrameOffset==0 never fires after the first buffer.
+        /// Used to detect the start of a new DSP buffer.
         /// </summary>
         private int _lastSpinFillOffset = -1;
+
+        /// <summary>
+        /// Handle to the active <c>RootOutputInstance</c> allocated on
+        /// <see cref="ControlContext.builtIn"/>. Valid only when
+        /// <see cref="_audioPath"/> is <see cref="AudioPath.RootOutput"/>.
+        /// </summary>
+        private RootOutputInstance _rootOutputInstance;
 
         #endregion
         #region GeneratorInstance.ICapabilities
@@ -160,6 +176,12 @@ namespace Csound.Unity
 
         partial void OnInitializedGenerator()
         {
+            if (_audioPath == AudioPath.RootOutput)
+            {
+                InitRootOutput();
+                return;
+            }
+
             if (_audioPath != AudioPath.IAudioGenerator) return;
 
             // processClipAudio feeds an AudioSource clip into Csound's spin buffer via
@@ -193,11 +215,20 @@ namespace Csound.Unity
 
         partial void OnStoppedGenerator()
         {
-            TeardownGenerator();
+            if (_audioPath == AudioPath.RootOutput)
+                TeardownRootOutput();
+            else
+                TeardownGenerator();
         }
 
         partial void OnApplicationQuitGenerator()
         {
+            if (_audioPath == AudioPath.RootOutput)
+            {
+                TeardownRootOutput();
+                return;
+            }
+
             if (_audioPath != AudioPath.IAudioGenerator) return;
 
             // Clear the generator connection NOW, while FMOD is still alive.
@@ -274,6 +305,37 @@ namespace Csound.Unity
             // up the generator naturally as part of their own shutdown sequence.
             if (audioSource && !_quitting)
                 audioSource.generator = null;
+        }
+
+        private void InitRootOutput()
+        {
+            _generatorInstanceId = CsoundBridgeRegistry.Register(csound);
+
+            CsoundBridgeRegistry.RegisterSpinFillCallback(_generatorInstanceId, OnSpinFillCallback);
+            CsoundBridgeRegistry.RegisterKsmpsCallback(_generatorInstanceId, OnKsmpsCallback);
+            CsoundBridgeRegistry.RegisterPerformanceFinishedCallback(_generatorInstanceId,
+                () => performanceFinished = true);
+
+            var realtime = new CsoundRootRealtime { InstanceId = _generatorInstanceId };
+            var control  = new CsoundRootControl  { InstanceId = _generatorInstanceId };
+            _rootOutputInstance = ControlContext.builtIn.AllocateRootOutput(in realtime, in control);
+
+            Debug.Log($"[CsoundUnity] RootOutput path active — instanceId={_generatorInstanceId}");
+        }
+
+        private void TeardownRootOutput()
+        {
+            if (_rootOutputInstance != default)
+            {
+                ControlContext.builtIn.Destroy(_rootOutputInstance);
+                _rootOutputInstance = default;
+            }
+
+            if (_generatorInstanceId >= 0)
+            {
+                CsoundBridgeRegistry.Unregister(_generatorInstanceId);
+                _generatorInstanceId = -1;
+            }
         }
 
         /// <summary>

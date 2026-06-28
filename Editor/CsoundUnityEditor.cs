@@ -332,6 +332,9 @@ namespace Csound.Unity
             DrawAudioInputRoutes();
 
             EditorGUILayout.Space();
+            DrawAudioOutputPath();
+
+            EditorGUILayout.Space();
             DrawAvailableChannelsList();
 
             EditorGUILayout.Space();
@@ -448,32 +451,6 @@ namespace Csound.Unity
                 m_updateOutputBuffer.boolValue = EditorGUILayout.Toggle("Update Output Buffer", m_updateOutputBuffer.boolValue);
 
                 EditorGUILayout.Space();
-#if UNITY_6000_0_OR_NEWER
-                if (m_audioPath != null)
-                {
-                    EditorGUILayout.Space();
-                    EditorGUILayout.LabelField("IAudioGenerator (Unity 6+)", EditorStyles.boldLabel);
-
-                    EditorGUI.BeginDisabledGroup(Application.isPlaying);
-                    EditorGUILayout.PropertyField(m_audioPath, new GUIContent("Audio Path",
-                        "OnAudioFilterRead: classic path, works on all Unity versions.\n" +
-                        "IAudioGenerator: Unity 6+ path, drives the AudioSource directly."));
-
-                    if (m_audioPath.enumValueIndex == (int)Csound.Unity.AudioPath.IAudioGenerator)
-                    {
-                        EditorGUI.indentLevel++;
-                        EditorGUILayout.Slider(m_generatorStartupDelay, 0f, 2f,
-                            new GUIContent("Startup Delay (s)",
-                                "Seconds to wait after Csound initialises before AudioSource.Play() is called.\n" +
-                                "Useful when this instance receives audio via Audio Input Routes: a small delay\n" +
-                                "(e.g. 0.1 s) lets all chained sources finish initialising before playback starts."));
-                        EditorGUI.indentLevel--;
-                    }
-                    EditorGUI.EndDisabledGroup();
-                }
-#endif
-
-                EditorGUILayout.Space();
                 DrawDspLoad();
 
                 EditorGUILayout.Space();
@@ -488,6 +465,46 @@ namespace Csound.Unity
 
                 EditorGUI.indentLevel--;
             }
+        }
+
+        private void DrawAudioOutputPath()
+        {
+#if UNITY_6000_0_OR_NEWER
+            if (m_audioPath == null) return;
+
+            EditorGUILayout.LabelField("Audio Output Path", EditorStyles.boldLabel);
+
+            EditorGUI.BeginDisabledGroup(Application.isPlaying);
+            EditorGUILayout.PropertyField(m_audioPath, new GUIContent("Audio Path",
+                "OnAudioFilterRead: classic path, works on all Unity versions. Audio flows through AudioSource → AudioMixer.\n\n" +
+                "IAudioGenerator: Unity 6+ path. Drives the AudioSource directly — integrates with the AudioMixer graph. Requires an AudioSource component.\n\n" +
+                "RootOutput: Unity 6+ path. Bypasses the AudioMixer entirely. Audio is mixed additively into the main hardware output. No AudioSource required; 3D spatialization and mixer effects are not applied."));
+
+            var path = (Csound.Unity.AudioPath)m_audioPath.enumValueIndex;
+
+            if (path == Csound.Unity.AudioPath.IAudioGenerator)
+            {
+                EditorGUI.indentLevel++;
+                EditorGUILayout.Slider(m_generatorStartupDelay, 0f, 2f,
+                    new GUIContent("Startup Delay (s)",
+                        "Seconds to wait after Csound initialises before AudioSource.Play() is called.\n" +
+                        "Useful when this instance receives audio via Audio Input Routes: a small delay\n" +
+                        "(e.g. 0.1 s) lets all chained sources finish initialising before playback starts."));
+                EditorGUI.indentLevel--;
+            }
+            else if (path == Csound.Unity.AudioPath.RootOutput)
+            {
+                EditorGUILayout.HelpBox(
+                    "RootOutput bypasses the AudioMixer. Audio is written directly to hardware output.\n" +
+                    "3D spatialization and mixer effects are not applied.\n" +
+                    "No AudioSource component is required.",
+                    MessageType.Info);
+            }
+            EditorGUI.EndDisabledGroup();
+#else
+            EditorGUILayout.LabelField("Audio Output Path", EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox("IAudioGenerator and RootOutput require Unity 6+. Using OnAudioFilterRead.", MessageType.None);
+#endif
         }
 
         private void DrawAudioInputRoutes()
