@@ -30,6 +30,7 @@
     + [Importing samples](samples.md#importing-samples)
     + [Sample categories](samples.md#sample-categories)
     + [Input System compatibility](samples.md#input-system-compatibility)
+  * [Migration guide: 3.x → 4.0](migration_3_to_4.md)
   * [Supported Platforms](platforms.md)
     + [WebGL](webgl_support.md)
   * [API Docs](http://rorywalsh.github.io/CsoundUnity/html/index.html)
