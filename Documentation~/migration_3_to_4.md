@@ -4,7 +4,7 @@ This page covers all breaking changes introduced in CsoundUnity 4.0.0. New featu
 
 ---
 
-### Namespaces (most common breaking change)
+### Namespaces
 
 In v3, all CsoundUnity types were in the global namespace. In v4 they have been moved into explicit namespaces. Add the appropriate `using` directives to your scripts:
 
