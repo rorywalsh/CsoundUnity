@@ -1,6 +1,7 @@
 ## [4.0.0]
 
 - [Add] Unity Timelines integration: Channel (Fixed/Random/RandomSmooth) and Score (Score/Swarm/Arpeggio/Euclidean/Stochastic/Chord/Pattern/Step) clips, CsoundTimelineStarter
+- [Add] Timeline Sequencer UI: runtime UGUI builders for Step and Pattern sequencer modes (StepUIBuilder, PatternUIBuilder, SequencerUIBase); chip navigation, per-step popup (note/vel/dur), randomize, named presets (SequencerPreset ScriptableObject); CsoundTimelineController for PlayableGraph traversal and runtime BPM/step/pattern API
 - [Add] Audio Input Routing: connect CsoundUnity instances to feed audio into another instance's spin buffer, with cycle detection, mute toggle and per-route level control
 - [Add] AudioRouteGraphWindow: interactive node/edge editor to visualise and edit the audio route graph across all scene instances
 - [Add] IAudioGenerator audio path for Unity 6+: drives the AudioSource directly via CsoundUnity.Process, set as default on Unity 6 (OnAudioFilterRead remains available)
