@@ -48,10 +48,11 @@ namespace Csound.Unity.Timelines
         CsoundUnityScorePlayableBehaviour _behaviour;
         TimelineClip _timelineClip;
 
-        // Cached button rects for pixel-perfect step-number alignment.
-        // Recorded from the first lane's buttons during Repaint; used to draw
-        // the header labels at the exact x-position of each toggle column.
-        private Rect[] _cachedStepRects;
+        // Shared horizontal scroll position for all pattern lanes (all scroll together).
+        private Vector2 _patternScrollPos;
+
+        // Shared horizontal scroll position for all step sequencer lanes (all scroll together).
+        private Vector2 _stepScrollPos;
 
         #region Serialized properties
 
@@ -133,9 +134,19 @@ namespace Csound.Unity.Timelines
 
         #region Instance state
 
-        // Step editor state: (laneIndex, stepIndex) of the currently selected step for editing
-        private int _stepSelLane = -1;
-        private int _stepSelStep = -1;
+        // Selected step for the detail panel — shared concept between Pattern and Step modes.
+        private int _patternSelLane = -1;
+        private int _patternSelStep = -1;
+        private int _stepSelLane    = -1;
+        private int _stepSelStep    = -1;
+
+        // Active preset tracking: 0 = "— Preset —", >0 = preset at that index
+        private int _patternPresetIndex = 0;
+        private int _stepPresetIndex    = 0;
+
+        // SequencerPreset assets found in the project (refreshed in OnEnable).
+        private SequencerPreset[] _patternPresetAssets = new SequencerPreset[0];
+        private SequencerPreset[] _stepPresetAssets    = new SequencerPreset[0];
 
         // Step randomize settings (editor-only, not serialized)
         private int   _stepRndScale  = 0;
@@ -146,6 +157,9 @@ namespace Csound.Unity.Timelines
         private float _stepRndVelMin     = 0.6f;
         private float _stepRndVelMax     = 1.0f;
         private bool  _stepRndPitchOnly  = false;
+
+        // Pattern randomize settings (editor-only, not serialized)
+        private float _patRndFill = 0.25f;
 
         #endregion Instance state
 
@@ -226,9 +240,65 @@ namespace Csound.Unity.Timelines
             m_stepLanes      = m_scoreInfo.FindPropertyRelative("stepLanes");
 
             m_verboseLog     = m_template.FindPropertyRelative("verboseLog");
+
+            RefreshPresetAssets();
+        }
+
+        void RefreshPresetAssets()
+        {
+            var pattern = new System.Collections.Generic.List<SequencerPreset>();
+            var step    = new System.Collections.Generic.List<SequencerPreset>();
+            foreach (var guid in AssetDatabase.FindAssets("t:SequencerPreset"))
+            {
+                var asset = AssetDatabase.LoadAssetAtPath<SequencerPreset>(
+                    AssetDatabase.GUIDToAssetPath(guid));
+                if (asset == null) continue;
+                if (asset.mode == SequencerPresetMode.Pattern) pattern.Add(asset);
+                else                                           step.Add(asset);
+            }
+            _patternPresetAssets = pattern.ToArray();
+            _stepPresetAssets    = step.ToArray();
         }
 
         #endregion OnEnable
+
+        #region Shared lane-editor helpers
+        // VelocityColor, ParseNoteName, NoteNames, DrawStepNumberHeader, DrawStepBorder,
+        // StepButtonStyle → StepLaneEditorUtils (shared with SequencerPresetEditor).
+
+        // Draws the step detail panel (vel + dur sliders, optional pitch dropdowns for Step mode).
+        void DrawStepDetailPanel(string heading,
+                                 SerializedProperty velProp,
+                                 SerializedProperty durProp,
+                                 SerializedProperty pitchProp = null,
+                                 float defaultPitch = 261.63f,
+                                 SerializedProperty enabledProp = null)
+        {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            var prevLabelW = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 95f;
+            if (enabledProp != null)
+            {
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Enabled", GUILayout.Width(60));
+                enabledProp.boolValue = EditorGUILayout.Toggle(enabledProp.boolValue);
+                EditorGUILayout.EndHorizontal();
+            }
+            if (pitchProp != null)
+                StepLaneEditorUtils.DrawHzPitchRow(heading, pitchProp, defaultPitch);
+            else
+                EditorGUILayout.LabelField(heading, EditorStyles.boldLabel);
+            if (velProp != null)
+                velProp.floatValue = Mathf.Clamp01(
+                    EditorGUILayout.Slider("Vel (0=def)", velProp.floatValue, 0f, 1f));
+            if (durProp != null)
+                durProp.floatValue = Mathf.Max(0f,
+                    EditorGUILayout.Slider("Dur (s, 0=def)", durProp.floatValue, 0f, 4f));
+            EditorGUIUtility.labelWidth = prevLabelW;
+            EditorGUILayout.EndVertical();
+        }
+
+        #endregion Shared lane-editor helpers
 
         #region Animated-property helpers
 
@@ -303,6 +373,186 @@ namespace Csound.Unity.Timelines
         #endregion Animated-property helpers
 
         #region Step mode data
+
+        // ── Step preset data ──────────────────────────────────────────────────────
+        struct SStep  { public bool on; public int midi; public float vel, dur; }
+        struct SLane  { public string label, instrN; public float defVel, defDur; public SStep[] steps; }
+        struct SPreset{ public string name; public SLane[] lanes; }
+        static SStep S(int m, float v=0f, float d=0f) => new SStep{on=true,  midi=m, vel=v, dur=d};
+        static SStep R()                               => new SStep{on=false, midi=60};
+
+        static readonly SPreset[] s_stepPresets =
+        {
+            // 1 — Alberti Bass (C major, C3 octave)
+            new SPreset { name="Alberti Bass", lanes=new[]{
+                new SLane { label="Voice", instrN="11", defVel=0.70f, defDur=0.12f, steps=new[]{
+                    S(48),S(55),S(52),S(55), S(48),S(55),S(52),S(55),
+                    S(48),S(55),S(52),S(55), S(48),S(55),S(52),S(55),
+                }},
+            }},
+            // 2 — Walking Bass (C chromatic walk up then down, C2 octave)
+            new SPreset { name="Walking Bass", lanes=new[]{
+                new SLane { label="Bass", instrN="11", defVel=0.75f, defDur=0.12f, steps=new[]{
+                    S(36,0.85f),S(38),S(40),S(42),  S(43,0.85f),S(45),S(46),S(47),
+                    S(48,0.85f),S(47),S(46),S(45),  S(43,0.85f),S(41),S(39),S(36),
+                }},
+            }},
+            // 3 — Funk Bass (syncopated, C2, with rests)
+            new SPreset { name="Funk Bass", lanes=new[]{
+                new SLane { label="Bass", instrN="11", defVel=0.75f, defDur=0.10f, steps=new[]{
+                    S(36,0.9f),R(),     S(39,0.7f),R(),
+                    S(43,0.9f),S(46,0.65f),R(),     S(43,0.7f),
+                    S(36,0.9f),R(),     S(39,0.7f),S(43,0.8f),
+                    S(46,0.65f),R(),    S(43,0.85f),R(),
+                }},
+            }},
+            // 4 — Octave Riff (C2–C3 power bass)
+            new SPreset { name="Octave Riff", lanes=new[]{
+                new SLane { label="Bass", instrN="11", defVel=0.80f, defDur=0.12f, steps=new[]{
+                    S(36,0.95f),S(48,0.7f),S(43,0.8f),S(48,0.7f),
+                    S(41,0.85f),S(48,0.7f),S(43,0.8f),S(48,0.7f),
+                    S(36,0.95f),S(48,0.7f),S(46,0.8f),S(48,0.7f),
+                    S(43,0.85f),S(48,0.7f),S(45,0.75f),S(43,0.8f),
+                }},
+            }},
+            // 5 — Pentatonic Lick (C major pentatonic, descends C5→C3 then climbs back)
+            new SPreset { name="Pentatonic Lick", lanes=new[]{
+                new SLane { label="Lead", instrN="10", defVel=0.75f, defDur=0.12f, steps=new[]{
+                    S(72,0.85f),S(69),S(67),S(64),  S(62),S(60,0.85f),S(57),S(55),
+                    S(52),S(50),S(48,0.85f),S(50),  S(52),S(55),S(57),S(60),
+                }},
+            }},
+            // 6 — Lead + Bass (2 voices; Lead uses instrN 2)
+            new SPreset { name="Lead + Bass", lanes=new[]{
+                new SLane { label="Bass", instrN="11", defVel=0.85f, defDur=0.12f, steps=new[]{
+                    S(36),R(),   S(43),R(),    S(36),R(),   S(41),S(43),
+                    S(45),R(),   S(43),R(),    S(36),S(41), S(43),R(),
+                }},
+                new SLane { label="Lead", instrN="10", defVel=0.70f, defDur=0.15f, steps=new[]{
+                    S(64),S(67),S(69),S(72),  S(76),S(74),S(72),S(69),
+                    S(67),S(64),S(62),S(60),  S(62),S(64),S(67),S(69),
+                }},
+            }},
+            // 7 — Parallel Thirds (C major diatonic thirds, 2 voices)
+            new SPreset { name="Parallel Thirds", lanes=new[]{
+                new SLane { label="Upper", instrN="10", defVel=0.70f, defDur=0.15f, steps=new[]{
+                    S(60),S(62),S(64),S(65),  S(67),S(69),S(67),S(64),
+                    S(62),S(60),S(62),S(64),  S(67),S(64),S(62),S(60),
+                }},
+                new SLane { label="Lower", instrN="10", defVel=0.70f, defDur=0.15f, steps=new[]{
+                    S(57),S(59),S(60),S(62),  S(64),S(65),S(64),S(60),
+                    S(59),S(57),S(59),S(60),  S(64),S(60),S(59),S(57),
+                }},
+            }},
+        };
+
+        void ApplyPatternPresetAsset(SequencerPreset asset)
+        {
+            Undo.RecordObject(target, $"Apply Pattern Preset: {asset.presetName}");
+            m_patternSteps.intValue    = asset.stepCount;
+            m_patternLanes.arraySize   = asset.lanes.Count;
+            for (int li = 0; li < asset.lanes.Count; li++)
+            {
+                var al = asset.lanes[li];
+                var lp = m_patternLanes.GetArrayElementAtIndex(li);
+                lp.FindPropertyRelative("label").stringValue         = al.label;
+                lp.FindPropertyRelative("instrN").stringValue        = al.instrN;
+                lp.FindPropertyRelative("enabled").boolValue         = true;
+                lp.FindPropertyRelative("velocity").floatValue       = al.defaultVelocity;
+                lp.FindPropertyRelative("pan").floatValue            = al.pan;
+                int sc   = asset.stepCount;
+                var pPat = lp.FindPropertyRelative("pattern");
+                var pVel = lp.FindPropertyRelative("stepVelocities");
+                var pDur = lp.FindPropertyRelative("stepDurations");
+                pPat.arraySize = sc;
+                pVel.arraySize = sc;
+                pDur.arraySize = sc;
+                for (int s = 0; s < sc; s++)
+                {
+                    bool has = s < al.steps.Count;
+                    pPat.GetArrayElementAtIndex(s).boolValue   = has && al.steps[s].enabled;
+                    pVel.GetArrayElementAtIndex(s).floatValue  = has ? al.steps[s].velocity : 0f;
+                    pDur.GetArrayElementAtIndex(s).floatValue  = has ? al.steps[s].duration : 0f;
+                }
+            }
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        void ApplyStepPresetAsset(SequencerPreset asset)
+        {
+            Undo.RecordObject(target, $"Apply Step Preset: {asset.presetName}");
+            m_stepCount.intValue   = asset.stepCount;
+            m_stepLanes.arraySize  = asset.lanes.Count;
+            for (int li = 0; li < asset.lanes.Count; li++)
+            {
+                var al = asset.lanes[li];
+                var lp = m_stepLanes.GetArrayElementAtIndex(li);
+                lp.FindPropertyRelative("enabled").boolValue          = true;
+                lp.FindPropertyRelative("label").stringValue          = al.label;
+                lp.FindPropertyRelative("instrN").stringValue         = al.instrN;
+                lp.FindPropertyRelative("defaultVelocity").floatValue = al.defaultVelocity;
+                lp.FindPropertyRelative("defaultDuration").floatValue = al.defaultDuration;
+                lp.FindPropertyRelative("pan").floatValue             = al.pan;
+                if (al.defaultMidi > 0)
+                    lp.FindPropertyRelative("defaultPitch").floatValue = MidiToHz(al.defaultMidi);
+                int sc = asset.stepCount;
+                var sp = lp.FindPropertyRelative("steps");
+                sp.arraySize = sc;
+                for (int s = 0; s < sc; s++)
+                {
+                    var ep  = sp.GetArrayElementAtIndex(s);
+                    bool has = s < al.steps.Count;
+                    bool on  = has && al.steps[s].enabled;
+                    ep.FindPropertyRelative("enabled").boolValue   = on;
+                    ep.FindPropertyRelative("pitch").floatValue    = on && al.steps[s].midi > 0 ? MidiToHz(al.steps[s].midi) : 0f;
+                    ep.FindPropertyRelative("velocity").floatValue = on ? al.steps[s].velocity : 0f;
+                    ep.FindPropertyRelative("duration").floatValue = on ? al.steps[s].duration : 0f;
+                }
+            }
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        void ApplyStepPreset(int pi, SerializedProperty lanesP)
+        {
+            var p          = s_stepPresets[pi];
+            int clipSteps  = m_stepCount.intValue;
+            int presetSteps = p.lanes.Length > 0 ? p.lanes[0].steps.Length : 16;
+
+            lanesP.arraySize = p.lanes.Length;
+            for (int li = 0; li < p.lanes.Length; li++)
+            {
+                var pl = p.lanes[li];
+                var lp = lanesP.GetArrayElementAtIndex(li);
+                lp.FindPropertyRelative("enabled").boolValue          = true;
+                lp.FindPropertyRelative("label").stringValue           = pl.label;
+                lp.FindPropertyRelative("instrN").stringValue          = pl.instrN;
+                lp.FindPropertyRelative("defaultVelocity").floatValue  = pl.defVel;
+                lp.FindPropertyRelative("defaultDuration").floatValue  = pl.defDur;
+
+                var sp    = lp.FindPropertyRelative("steps");
+                int total = Mathf.Max(clipSteps, pl.steps.Length);
+                sp.arraySize = total;
+                for (int s = 0; s < total; s++)
+                {
+                    var ep = sp.GetArrayElementAtIndex(s);
+                    if (s < pl.steps.Length)
+                    {
+                        var st = pl.steps[s];
+                        ep.FindPropertyRelative("enabled").boolValue   = st.on;
+                        ep.FindPropertyRelative("pitch").floatValue    = MidiToHz(st.midi);
+                        ep.FindPropertyRelative("velocity").floatValue = st.vel;
+                        ep.FindPropertyRelative("duration").floatValue = st.dur;
+                    }
+                    else
+                    {
+                        ep.FindPropertyRelative("enabled").boolValue = false;
+                    }
+                }
+            }
+            m_stepCount.intValue = presetSteps;
+
+            serializedObject.ApplyModifiedProperties();
+        }
 
         static readonly string[] s_scaleNames = { "Major", "Minor", "Penta Maj", "Penta Min", "Dorian", "Mixolydian", "Chromatic" };
         static readonly int[][]  s_scales =
@@ -385,6 +635,9 @@ namespace Csound.Unity.Timelines
 
         public override void OnInspectorGUI()
         {
+            // Repaint on mouse move so hover borders update without clicks.
+            if (Event.current.type == EventType.MouseMove) Repaint();
+
             // Only update the cached TimelineClip when selectedClip actually belongs to
             // THIS inspector's clip asset — clicking a curve in Clip Properties changes
             // selectedClip to whichever clip owns that curve, which may not be ours.
@@ -393,11 +646,8 @@ namespace Csound.Unity.Timelines
                 _timelineClip = candidate;
 
             serializedObject.Update();
-
-            EditorGUI.BeginChangeCheck();
             DrawScoreComposer();
-            if (EditorGUI.EndChangeCheck())
-                serializedObject.ApplyModifiedProperties();
+            serializedObject.ApplyModifiedProperties();
         }
 
         #endregion OnInspectorGUI
@@ -1177,7 +1427,7 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.BeginVertical();
                     EditorGUILayout.LabelField("Steps");
-                    m_patternSteps.intValue = EditorGUILayout.IntSlider(m_patternSteps.intValue, 1, 32);
+                    m_patternSteps.intValue = Mathf.Clamp(EditorGUILayout.IntField(m_patternSteps.intValue), 1, 256);
                     EditorGUILayout.EndVertical();
 
                     EditorGUILayout.BeginVertical();
@@ -1245,83 +1495,206 @@ namespace Csound.Unity.Timelines
 
                     #region Presets + Randomize
 
-                    // Each preset: bool[][] indexed by lane (0=BD,1=SD,2=OHH,3=CHH)
-                    // Steps are 16-based; extra lanes untouched, missing lanes skipped.
-                    // Presets validated against drum-patterns.com, Native Instruments Blog, LANDR.
-                    // Lane order assumed: 0=BD(101), 1=SD(102), 2=OHH(103), 3=CHH(104).
-                    // Steps 1-indexed: beat 1=step1, beat 2=step5, beat 3=step9, beat 4=step13.
-                    var presetNames = new[] { "— Preset —", "Basic Rock", "Disco", "Hip-Hop", "Reggae (One Drop)", "Funk" };
-                    var presetPatterns_BD  = new bool[][]
+                    // Preset indices: 0=none, 1=Basic Rock, 2=Disco, 3=Hip-Hop, 4=Reggae, 5=Funk,
+                    //                 6=Half-Time, 7=Samba, 8=Bossa Nova, 9=House, 10=Breakbeat, 11=2-Step
+                    // Lane order: 0=BD, 1=SD, 2=OHH, 3=CHH
+                    var presetNames = new[]
                     {
-                        null,
-                        // Basic Rock: kick on beats 1 & 3 (steps 1,9)
-                        new[] { true,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },
-                        // Disco: four-on-the-floor (steps 1,5,9,13)
-                        new[] { true,false,false,false, true,false,false,false, true,false,false,false, true,false,false,false },
-                        // Hip-Hop boom-bap: steps 1, 8 (and-of-2), 9 (beat-3)
-                        new[] { true,false,false,false, false,false,false,true, true,false,false,false, false,false,false,false },
-                        // Reggae One Drop: kick ONLY on beat 3 (step 9) — beat 1 is empty
-                        new[] { false,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },
-                        // Funk: steps 1, 7 (and-of-3), 10 (e-of-3)
-                        new[] { true,false,false,false, false,false,true,false, false,true,false,false, false,false,false,false },
+                        "— Preset —",
+                        "Basic Rock", "Disco", "Hip-Hop", "Reggae (One Drop)", "Funk",
+                        "Half-Time",  "Samba", "Bossa Nova", "House", "Breakbeat", "2-Step",
                     };
-                    var presetPatterns_SD  = new bool[][]
+                    // bool[lane][preset]
+                    var presetPat = new bool[][][]
                     {
-                        null,
-                        // All patterns: snare on beats 2 & 4 (steps 5,13)
-                        new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-                        new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-                        new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-                        new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
-                        new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },
+                        // Lane 0 — BD
+                        new bool[][] { null,
+                            new[] { true,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },  // Basic Rock
+                            new[] { true,false,false,false, true,false,false,false,  true,false,false,false, true,false,false,false },   // Disco
+                            new[] { true,false,false,false, false,false,false,true,  true,false,false,false, false,false,false,false },  // Hip-Hop
+                            new[] { false,false,false,false,false,false,false,false, true,false,false,false, false,false,false,false },  // Reggae
+                            new[] { true,false,false,false, false,false,true,false,  false,true,false,false, false,false,false,false },  // Funk
+                            new[] { true,false,false,false, false,true,false,false,  true,false,false,false, false,true,false,false },  // Half-Time
+                            new[] { true,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false }, // Samba
+                            new[] { true,false,false,true,  false,false,true,false,  false,false,true,false, true,false,false,false },  // Bossa Nova (2-3 clave)
+                            new[] { true,false,false,false, true,false,false,false,  true,false,false,false, true,false,false,false },  // House (4-on-floor)
+                            new[] { true,false,false,true,  false,false,true,false,  false,true,false,false, true,false,false,false },  // Breakbeat
+                            new[] { true,false,false,false, false,true,false,false,  true,false,true,false,  false,true,false,false },  // 2-Step
+                        },
+                        // Lane 1 — SD
+                        new bool[][] { null,
+                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // Basic Rock
+                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // Disco
+                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // Hip-Hop
+                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // Reggae
+                            new[] { false,false,true,false,  true,false,false,true,  false,false,true,false,  true,false,false,false },         // Funk (ghost notes)
+                            new[] { false,false,false,false, false,false,false,false, true,false,false,false, false,false,false,false },         // Half-Time (snare on 3)
+                            new[] { false,false,false,false, true,false,false,true,  false,false,false,false, true,false,false,true },           // Samba (caixa)
+                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // Bossa Nova (light rim)
+                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,false,false },          // House
+                            new[] { false,false,false,false, true,false,false,true,  false,false,false,false, true,false,true,false },           // Breakbeat
+                            new[] { false,false,false,false, true,false,false,false, false,false,false,false, true,false,true,false },           // 2-Step
+                        },
+                        // Lane 2 — OHH
+                        new bool[][] { null,
+                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false }, // Basic Rock
+                            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },  // Disco
+                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false }, // Hip-Hop
+                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false }, // Reggae
+                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,true,false },  // Funk
+                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false }, // Half-Time
+                            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },  // Samba
+                            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },  // Bossa Nova (ride)
+                            new[] { false,false,true,false,  false,false,true,false,  false,false,true,false,  false,false,true,false },  // House
+                            new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false }, // Breakbeat
+                            new[] { false,false,true,false,  false,false,false,false, false,false,true,false,  false,false,false,false }, // 2-Step
+                        },
+                        // Lane 3 — CHH
+                        new bool[][] { null,
+                            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },    // Basic Rock
+                            new[] { true,true,true,true,    false,true,true,true,   true,true,true,true,    false,true,true,true },     // Disco
+                            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },   // Hip-Hop
+                            new[] { false,false,true,false, false,false,true,false, false,false,true,false, false,false,true,false },  // Reggae
+                            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },     // Funk
+                            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },     // Half-Time (trap 16ths)
+                            new[] { true,true,false,true,   true,true,false,true,   true,true,false,true,   true,true,false,true },   // Samba
+                            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },  // Bossa Nova (8ths)
+                            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },    // House (16ths)
+                            new[] { true,false,true,false,  true,false,true,false,  true,false,true,false,  true,false,true,false },  // Breakbeat (8ths)
+                            new[] { true,true,true,true,    true,true,true,true,    true,true,true,true,    true,true,true,true },    // 2-Step (16ths)
+                        },
                     };
-                    var presetPatterns_OHH = new bool[][]
+                    // float[lane][preset] — per-step velocity overrides (0 = lane default)
+                    var presetVel = new float[][][]
                     {
-                        null,
-                        // Basic Rock: no OHH
-                        new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-                        // Disco: OHH on 8th-note upbeats (steps 3,7,11,15 = "and" of each beat)
-                        new[] { false,false,true,false, false,false,true,false, false,false,true,false, false,false,true,false },
-                        // Hip-Hop: no OHH
-                        new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-                        // Reggae: no OHH
-                        new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,false,false },
-                        // Funk: OHH accent on step 15 ("and" of beat 4)
-                        new[] { false,false,false,false, false,false,false,false, false,false,false,false, false,false,true,false },
+                        // Lane 0 — BD
+                        new float[][] { null,
+                            null,  // Basic Rock
+                            null,  // Disco
+                            new[] { 0.9f,0f,0f,0f,  0f,0f,0f,0.7f,   0.85f,0f,0f,0f,   0f,0f,0f,0f },              // Hip-Hop
+                            null,  // Reggae
+                            new[] { 0.95f,0f,0f,0f, 0f,0f,0.75f,0f,  0f,0.65f,0f,0f,   0f,0f,0f,0f },              // Funk
+                            new[] { 0.9f,0f,0f,0f,  0f,0.65f,0f,0f,  0.85f,0f,0f,0f,   0f,0.7f,0f,0f },            // Half-Time
+                            null,  // Samba
+                            new[] { 0.85f,0f,0f,0.65f,0f,0f,0.7f,0f, 0f,0f,0.6f,0f,   0.75f,0f,0f,0f },           // Bossa Nova
+                            new[] { 0.9f,0f,0f,0f,  0.8f,0f,0f,0f,   0.9f,0f,0f,0f,    0.8f,0f,0f,0f },            // House
+                            new[] { 0.95f,0f,0f,0.7f,0f,0f,0.8f,0f,  0f,0.65f,0f,0f,  0.9f,0f,0f,0f },            // Breakbeat
+                            new[] { 0.9f,0f,0f,0f,  0f,0.65f,0f,0f,  0.85f,0f,0.6f,0f, 0f,0.7f,0f,0f },           // 2-Step
+                        },
+                        // Lane 1 — SD
+                        new float[][] { null,
+                            null, null, null, null,  // Basic Rock–Reggae
+                            new[] { 0f,0f,0.25f,0f, 0.9f,0f,0f,0.25f, 0f,0f,0.25f,0f, 0.9f,0f,0f,0f },            // Funk
+                            null,  // Half-Time
+                            new[] { 0f,0f,0f,0f, 0.8f,0f,0f,0.45f, 0f,0f,0f,0f, 0.8f,0f,0f,0.45f },               // Samba
+                            new[] { 0f,0f,0f,0f, 0.4f,0f,0f,0f,    0f,0f,0f,0f, 0.4f,0f,0f,0f },                  // Bossa Nova
+                            null,  // House
+                            new[] { 0f,0f,0f,0f, 0.9f,0f,0f,0.55f, 0f,0f,0f,0f, 0.85f,0f,0.6f,0f },              // Breakbeat
+                            new[] { 0f,0f,0f,0f, 0.9f,0f,0f,0f,    0f,0f,0f,0f, 0.85f,0f,0.6f,0f },              // 2-Step
+                        },
+                        // Lane 2 — OHH (velocity from lane default)
+                        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null },
+                        // Lane 3 — CHH
+                        new float[][] { null,
+                            new[] { 0.85f,0f,0.55f,0f,     0.85f,0f,0.55f,0f,    0.85f,0f,0.55f,0f,    0.85f,0f,0.55f,0f },           // Basic Rock
+                            new[] { 0.85f,0.5f,0.7f,0.5f,  0.85f,0.5f,0.7f,0.5f, 0.85f,0.5f,0.7f,0.5f, 0.85f,0.5f,0.7f,0.5f },      // Disco
+                            new[] { 0.8f,0f,0.4f,0f,       0.75f,0f,0.45f,0f,    0.8f,0f,0.4f,0f,      0.7f,0f,0.45f,0f },            // Hip-Hop
+                            null,  // Reggae
+                            new[] { 0.9f,0.35f,0.45f,0.35f, 0.75f,0.35f,0.45f,0.35f, 0.9f,0.35f,0.45f,0.35f, 0.75f,0.35f,0.45f,0.35f }, // Funk
+                            new[] { 0.8f,0.3f,0.45f,0.3f,   0.75f,0.3f,0.45f,0.3f,  0.8f,0.3f,0.45f,0.3f,   0.75f,0.3f,0.45f,0.3f }, // Half-Time
+                            new[] { 0.8f,0.5f,0f,0.6f,      0.8f,0.5f,0f,0.55f,     0.8f,0.5f,0f,0.6f,      0.8f,0.5f,0f,0.55f },    // Samba
+                            new[] { 0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f,       0.55f,0f,0.4f,0f },       // Bossa Nova
+                            new[] { 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f, 0.8f,0.35f,0.55f,0.35f }, // House
+                            new[] { 0.75f,0f,0.5f,0f,       0.75f,0f,0.45f,0f,      0.75f,0f,0.5f,0f,       0.75f,0f,0.45f,0f },      // Breakbeat
+                            new[] { 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f, 0.8f,0.35f,0.45f,0.35f }, // 2-Step
+                        },
                     };
-                    var presetPatterns_CHH = new bool[][]
+                    // float[lane][preset] — per-step duration overrides (0 = trigger)
+                    var presetDur = new float[][][]
                     {
-                        null,
-                        // Basic Rock: CHH on every 8th note (steps 1,3,5,7,9,11,13,15)
-                        new[] { true,false,true,false, true,false,true,false, true,false,true,false, true,false,true,false },
-                        // Disco: all 16ths except snare steps 5,13
-                        new[] { true,true,true,true, false,true,true,true, true,true,true,true, false,true,true,true },
-                        // Hip-Hop: CHH on 8th notes
-                        new[] { true,false,true,false, true,false,true,false, true,false,true,false, true,false,true,false },
-                        // Reggae: CHH on 8th-note upbeats (steps 3,7,11,15)
-                        new[] { false,false,true,false, false,false,true,false, false,false,true,false, false,false,true,false },
-                        // Funk: driving 16th notes throughout
-                        new[] { true,true,true,true, true,true,true,true, true,true,true,true, true,true,true,true },
+                        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null }, // BD
+                        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null }, // SD
+                        // OHH sustained durations
+                        new float[][] { null,
+                            null,  // Basic Rock
+                            new[] { 0f,0f,0.18f,0f, 0f,0f,0.18f,0f, 0f,0f,0.18f,0f, 0f,0f,0.18f,0f }, // Disco
+                            null,  // Hip-Hop
+                            null,  // Reggae
+                            new[] { 0f,0f,0f,0f, 0f,0f,0f,0f, 0f,0f,0f,0f, 0f,0f,0.35f,0f },          // Funk
+                            null,  // Half-Time
+                            new[] { 0f,0f,0.12f,0f, 0f,0f,0.12f,0f, 0f,0f,0.12f,0f, 0f,0f,0.12f,0f }, // Samba
+                            new[] { 0f,0f,0.20f,0f, 0f,0f,0.20f,0f, 0f,0f,0.20f,0f, 0f,0f,0.20f,0f }, // Bossa Nova
+                            new[] { 0f,0f,0.15f,0f, 0f,0f,0.15f,0f, 0f,0f,0.15f,0f, 0f,0f,0.15f,0f }, // House
+                            null,  // Breakbeat
+                            new[] { 0f,0f,0.20f,0f, 0f,0f,0f,0f, 0f,0f,0.20f,0f, 0f,0f,0f,0f },       // 2-Step
+                        },
+                        new float[][] { null, null, null, null, null, null, null, null, null, null, null, null }, // CHH
                     };
-                    var presetAll = new[] { presetPatterns_BD, presetPatterns_SD, presetPatterns_OHH, presetPatterns_CHH };
+
+                    // Extend preset list with SequencerPreset assets found in the project.
+                    int hardcodedPatternCount = presetNames.Length; // includes "— Preset —"
+                    var allPatternNames = new string[hardcodedPatternCount + _patternPresetAssets.Length];
+                    presetNames.CopyTo(allPatternNames, 0);
+                    for (int ai = 0; ai < _patternPresetAssets.Length; ai++)
+                        allPatternNames[hardcodedPatternCount + ai] = _patternPresetAssets[ai].presetName;
 
                     EditorGUILayout.BeginHorizontal();
-                    int selectedPreset = EditorGUILayout.Popup(0, presetNames, GUILayout.ExpandWidth(true));
-                    if (selectedPreset > 0)
+                    // Clamp in case list length changed (e.g. new asset added, recompile)
+                    if (_patternPresetIndex >= allPatternNames.Length) _patternPresetIndex = 0;
+                    int selectedPreset = EditorGUILayout.Popup(_patternPresetIndex, allPatternNames, GUILayout.ExpandWidth(true));
+                    if (selectedPreset != _patternPresetIndex)
                     {
-                        Undo.RecordObject(target, "Apply Pattern Preset");
-                        int laneCount2 = m_patternLanes.arraySize;
-                        for (int li = 0; li < laneCount2 && li < presetAll.Length; li++)
+                        _patternPresetIndex = selectedPreset;
+                        if (selectedPreset >= hardcodedPatternCount)
                         {
-                            var presetRow = presetAll[li][selectedPreset];
-                            if (presetRow == null) continue;
-                            var pPat = m_patternLanes.GetArrayElementAtIndex(li).FindPropertyRelative("pattern");
-                            int sz   = Mathf.Min(pPat.arraySize, presetRow.Length);
-                            for (int s = 0; s < sz; s++)
-                                pPat.GetArrayElementAtIndex(s).boolValue = presetRow[s];
+                            // SequencerPreset asset
+                            ApplyPatternPresetAsset(_patternPresetAssets[selectedPreset - hardcodedPatternCount]);
+                        }
+                        else if (selectedPreset > 0)
+                        {
+                            Undo.RecordObject(target, "Apply Pattern Preset");
+                            int laneCount2 = m_patternLanes.arraySize;
+                            for (int li = 0; li < laneCount2 && li < presetPat.Length; li++)
+                            {
+                                var lp = m_patternLanes.GetArrayElementAtIndex(li);
+
+                                // Pattern
+                                var patRow = presetPat[li][selectedPreset];
+                                if (patRow != null)
+                                {
+                                    var pPat = lp.FindPropertyRelative("pattern");
+                                    // Resize pattern array to match preset if needed
+                                    if (pPat.arraySize != patRow.Length) pPat.arraySize = patRow.Length;
+                                    for (int s = 0; s < patRow.Length; s++)
+                                        pPat.GetArrayElementAtIndex(s).boolValue = patRow[s];
+                                    // Update global step count to match preset length
+                                    m_patternSteps.intValue = patRow.Length;
+                                }
+
+                                // Per-step velocities: reset then apply preset
+                                var pVel = lp.FindPropertyRelative("stepVelocities");
+                                for (int s = 0; s < pVel.arraySize; s++) pVel.GetArrayElementAtIndex(s).floatValue = 0f;
+                                var velRow = li < presetVel.Length ? presetVel[li][selectedPreset] : null;
+                                if (velRow != null)
+                                    for (int s = 0; s < Mathf.Min(pVel.arraySize, velRow.Length); s++)
+                                        pVel.GetArrayElementAtIndex(s).floatValue = velRow[s];
+
+                                // Per-step durations: reset then apply preset
+                                var pDur = lp.FindPropertyRelative("stepDurations");
+                                for (int s = 0; s < pDur.arraySize; s++) pDur.GetArrayElementAtIndex(s).floatValue = 0f;
+                                var durRow = li < presetDur.Length ? presetDur[li][selectedPreset] : null;
+                                if (durRow != null)
+                                    for (int s = 0; s < Mathf.Min(pDur.arraySize, durRow.Length); s++)
+                                        pDur.GetArrayElementAtIndex(s).floatValue = durRow[s];
+                            }
                         }
                     }
-                    if (GUILayout.Button("Randomize", GUILayout.Width(70)))
+                    if (GUILayout.Button("↻", GUILayout.Width(22)))
+                        RefreshPresetAssets();
+                    EditorGUILayout.LabelField("Fill", GUILayout.Width(22));
+                    _patRndFill = EditorGUILayout.FloatField(_patRndFill, GUILayout.Width(32));
+                    _patRndFill = Mathf.Clamp01(_patRndFill);
+                    if (GUILayout.Button("Rnd", GUILayout.Width(36)))
                     {
                         Undo.RecordObject(target, "Randomize Pattern");
                         int lc = m_patternLanes.arraySize;
@@ -1329,7 +1702,7 @@ namespace Csound.Unity.Timelines
                         {
                             var pPat = m_patternLanes.GetArrayElementAtIndex(li).FindPropertyRelative("pattern");
                             for (int s = 0; s < pPat.arraySize; s++)
-                                pPat.GetArrayElementAtIndex(s).boolValue = UnityEngine.Random.value < 0.25f;
+                                pPat.GetArrayElementAtIndex(s).boolValue = UnityEngine.Random.value < _patRndFill;
                         }
                     }
                     if (GUILayout.Button("Save…", GUILayout.Width(48)))
@@ -1436,12 +1809,15 @@ namespace Csound.Unity.Timelines
                     const float kW_Acc     = 36f;
                     const float kW_Pan     = 36f;
                     const float kW_Step    = 20f;
-                    const float kW_Rand    = 20f;
+
                     const float kW_Remove  = 20f;
 
                     var colLabelStyle = new GUIStyle(EditorStyles.centeredGreyMiniLabel);
 
-                    // Column header labels row
+                    // Column header labels (fixed section, no foldout offset needed)
+                    var stepNumStyle  = new GUIStyle(colLabelStyle) { alignment = TextAnchor.MiddleCenter };
+                    var stepBeatStyle = new GUIStyle(stepNumStyle)  { fontStyle = FontStyle.Bold };
+
                     EditorGUILayout.BeginHorizontal();
                     GUILayout.Label("On",    colLabelStyle, GUILayout.Width(kW_Toggle));
                     GUILayout.Label("Name",  colLabelStyle, GUILayout.Width(kW_Label));
@@ -1450,119 +1826,116 @@ namespace Csound.Unity.Timelines
                     GUILayout.Label("Vel",   colLabelStyle, GUILayout.Width(kW_Vel));
                     GUILayout.Label("Acc",   colLabelStyle, GUILayout.Width(kW_Acc));
                     GUILayout.Label("Pan",   colLabelStyle, GUILayout.Width(kW_Pan));
-                    // Beat numbers follow (shown in the row below)
                     EditorGUILayout.EndHorizontal();
 
-                    // Step number header.
-                    // When _cachedStepRects is populated (from the previous Repaint of the
-                    // first lane's buttons), labels are drawn at the exact x-position of
-                    // each button via GUI.Label with an absolute Rect — pixel-perfect.
-                    // On the very first frame (before any button rects are recorded) we draw
-                    // an invisible placeholder row of the same height so the layout doesn't jump.
-                    var stepNumStyle  = new GUIStyle(EditorStyles.centeredGreyMiniLabel)
-                    {
-                        alignment = TextAnchor.MiddleCenter,
-                        padding   = new RectOffset(0, 0, 0, 0),
-                        margin    = new RectOffset(0, 0, 0, 0),
-                    };
-                    var stepBeatStyle = new GUIStyle(stepNumStyle) { fontStyle = FontStyle.Bold };
+                    // Step number header (read-only, synced to shared scroll)
+                    StepLaneEditorUtils.DrawStepNumberHeader(_patternScrollPos, steps, kW_Step, stepNumStyle, stepBeatStyle);
 
-                    // Reserve one line of height for the header, then draw labels absolutely.
-                    var headerRect = GUILayoutUtility.GetRect(
-                        0f, EditorGUIUtility.singleLineHeight + 2f,
-                        GUILayout.ExpandWidth(true));
-
-                    bool hasCached = _cachedStepRects != null && _cachedStepRects.Length == steps;
-                    if (hasCached && Event.current.type == EventType.Repaint)
-                    {
-                        for (int s = 0; s < steps; s++)
-                        {
-                            var btnR  = _cachedStepRects[s];
-                            var lblR  = new Rect(btnR.x, headerRect.y, btnR.width, headerRect.height);
-                            var style = (s % 4 == 0) ? stepBeatStyle : stepNumStyle;
-                            GUI.Label(lblR, (s + 1).ToString(), style);
-                        }
-                    }
+                    // Detect any lane edit and clear the active preset selection.
+                    EditorGUI.BeginChangeCheck();
 
                     for (int li = 0; li < laneCount; li++)
                     {
-                        var lane = m_patternLanes.GetArrayElementAtIndex(li);
-                        var pLabel       = lane.FindPropertyRelative("label");
-                        var pInstrN      = lane.FindPropertyRelative("instrN");
-                        var pEnabled     = lane.FindPropertyRelative("enabled");
-                        var pVelMode     = lane.FindPropertyRelative("velocityMode");
-                        var pVelocity    = lane.FindPropertyRelative("velocity");
-                        var pAccent      = lane.FindPropertyRelative("accentVelocity");
-                        var pPan         = lane.FindPropertyRelative("pan");
-                        var pPattern     = lane.FindPropertyRelative("pattern");
+                        var lane     = m_patternLanes.GetArrayElementAtIndex(li);
+                        var pLabel   = lane.FindPropertyRelative("label");
+                        var pInstrN  = lane.FindPropertyRelative("instrN");
+                        var pEnabled = lane.FindPropertyRelative("enabled");
+                        var pVelMode = lane.FindPropertyRelative("velocityMode");
+                        var pVelocity= lane.FindPropertyRelative("velocity");
+                        var pAccent  = lane.FindPropertyRelative("accentVelocity");
+                        var pPan     = lane.FindPropertyRelative("pan");
+                        var pPattern = lane.FindPropertyRelative("pattern");
+                        var pStepVel = lane.FindPropertyRelative("stepVelocities");
+                        var pStepDur = lane.FindPropertyRelative("stepDurations");
 
-                        // Ensure pattern array matches step count
-                        if (pPattern.arraySize != steps)
-                            pPattern.arraySize = steps;
+                        if (pPattern.arraySize != steps) pPattern.arraySize = steps;
+                        if (pStepVel.arraySize  != steps) pStepVel.arraySize = steps;
+                        if (pStepDur.arraySize  != steps) pStepDur.arraySize = steps;
 
+                        // ── Lane header (compact single row, no foldout) ──────────────
                         EditorGUILayout.BeginHorizontal();
-
-                        pEnabled.boolValue  = EditorGUILayout.Toggle(pEnabled.boolValue, GUILayout.Width(kW_Toggle));
-                        pLabel.stringValue  = EditorGUILayout.TextField(pLabel.stringValue, GUILayout.Width(kW_Label));
-                        pInstrN.stringValue = EditorGUILayout.TextField(pInstrN.stringValue, GUILayout.Width(kW_InstrN));
-                        pVelMode.intValue   = EditorGUILayout.Popup(pVelMode.intValue,
+                        pEnabled.boolValue   = EditorGUILayout.Toggle(pEnabled.boolValue, GUILayout.Width(kW_Toggle));
+                        pLabel.stringValue   = EditorGUILayout.TextField(pLabel.stringValue, GUILayout.Width(kW_Label));
+                        pInstrN.stringValue  = EditorGUILayout.TextField(pInstrN.stringValue, GUILayout.Width(kW_InstrN));
+                        pVelMode.intValue    = EditorGUILayout.Popup(pVelMode.intValue,
                             new[] { "Fix", "Ev2", "Ev3", "Ev4", "Obt" }, GUILayout.Width(kW_VelMode));
-
-                        // Compact float fields — cleaner than Slider in a tight column.
-                        pVelocity.floatValue = Mathf.Clamp01(
-                            EditorGUILayout.FloatField(pVelocity.floatValue, GUILayout.Width(kW_Vel)));
-                        pAccent.floatValue   = Mathf.Clamp01(
-                            EditorGUILayout.FloatField(pAccent.floatValue,   GUILayout.Width(kW_Acc)));
-                        pPan.floatValue      = Mathf.Clamp(
-                            EditorGUILayout.FloatField(pPan.floatValue,      GUILayout.Width(kW_Pan)), -1f, 1f);
-
-                        // Step toggle buttons
-                        GUI.enabled = pEnabled.boolValue;
-                        for (int s = 0; s < steps; s++)
-                        {
-                            var stepProp = pPattern.GetArrayElementAtIndex(s);
-                            bool on = stepProp.boolValue;
-
-                            var bgPrev = GUI.backgroundColor;
-                            GUI.backgroundColor = on
-                                ? (s % 8 < 4 ? new Color(0.3f, 0.8f, 0.3f) : new Color(0.2f, 0.6f, 0.2f))
-                                : (s % 8 < 4 ? new Color(0.25f, 0.25f, 0.25f) : new Color(0.20f, 0.20f, 0.20f));
-
-                            if (GUILayout.Button("", GUILayout.Width(kW_Step), GUILayout.Height(kW_Step)))
-                                stepProp.boolValue = !on;
-
-                            GUI.backgroundColor = bgPrev;
-
-                            // Record button rects from the first lane so the step-number header
-                            // can align labels pixel-perfectly with the actual toggle columns.
-                            if (li == 0 && Event.current.type == EventType.Repaint)
-                            {
-                                bool needsAlloc = _cachedStepRects == null || _cachedStepRects.Length != steps;
-                                if (needsAlloc) _cachedStepRects = new Rect[steps];
-                                _cachedStepRects[s] = GUILayoutUtility.GetLastRect();
-                                // First frame: request another repaint so the header labels appear immediately.
-                                if (needsAlloc && s == steps - 1) Repaint();
-                            }
-                        }
-                        GUI.enabled = true;
-
-                        // Per-lane randomize button
-                        if (GUILayout.Button("~", GUILayout.Width(kW_Rand), GUILayout.Height(kW_Step)))
-                        {
-                            Undo.RecordObject(target, "Randomize Lane Pattern");
-                            for (int s = 0; s < pPattern.arraySize; s++)
-                                pPattern.GetArrayElementAtIndex(s).boolValue = UnityEngine.Random.value < 0.25f;
-                        }
-
-                        // Remove lane button
+                        pVelocity.floatValue = Mathf.Clamp01(EditorGUILayout.FloatField(pVelocity.floatValue, GUILayout.Width(kW_Vel)));
+                        pAccent.floatValue   = Mathf.Clamp01(EditorGUILayout.FloatField(pAccent.floatValue,   GUILayout.Width(kW_Acc)));
+                        pPan.floatValue      = Mathf.Clamp(  EditorGUILayout.FloatField(pPan.floatValue,      GUILayout.Width(kW_Pan)), -1f, 1f);
+                        GUILayout.FlexibleSpace();
                         if (GUILayout.Button("✕", GUILayout.Width(kW_Remove)))
                         {
+                            if (_patternSelLane == li) { _patternSelLane = -1; _patternSelStep = -1; }
                             m_patternLanes.DeleteArrayElementAtIndex(li);
+                            EditorGUILayout.EndHorizontal();
                             break;
                         }
-
                         EditorGUILayout.EndHorizontal();
+
+                        // ── Scrollable step buttons ───────────────────────────────────
+                        {
+                            var newS = EditorGUILayout.BeginScrollView(_patternScrollPos,
+                                GUI.skin.horizontalScrollbar, GUIStyle.none,
+                                GUILayout.Height(kW_Step + 16f));
+                            if (newS != _patternScrollPos) _patternScrollPos = newS;
+
+                            EditorGUILayout.BeginHorizontal();
+                            GUILayout.Space(2f);
+                            GUI.enabled = pEnabled.boolValue;
+                            for (int s = 0; s < steps; s++)
+                            {
+                                var stepProp = pPattern.GetArrayElementAtIndex(s);
+                                bool on  = stepProp.boolValue;
+                                bool sel = _patternSelLane == li && _patternSelStep == s;
+                                float vel = on && pStepVel.arraySize > s
+                                    ? pStepVel.GetArrayElementAtIndex(s).floatValue
+                                    : 0f;
+                                Color stepColor = on
+                                    ? StepLaneEditorUtils.VelocityColor(vel > 0f ? vel : pVelocity.floatValue)
+                                    : StepLaneEditorUtils.OffColor(s % 4 == 0);
+                                bool clicked = StepLaneEditorUtils.DrawStepButton("", stepColor, sel, kW_Step, kW_Step);
+
+                                if (clicked)
+                                {
+                                    if (!on)
+                                    {
+                                        stepProp.boolValue = true;
+                                        _patternSelLane = li;
+                                        _patternSelStep = s;
+                                    }
+                                    else if (!sel)
+                                    {
+                                        _patternSelLane = li;
+                                        _patternSelStep = s;
+                                    }
+                                    else
+                                    {
+                                        stepProp.boolValue = false;
+                                        _patternSelLane = -1;
+                                        _patternSelStep = -1;
+                                    }
+                                }
+                            }
+                            GUI.enabled = true;
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.EndScrollView();
+                        }
+
+                        // ── Detail panel for selected step ────────────────────────────
+                        if (_patternSelLane == li && _patternSelStep >= 0 && _patternSelStep < steps)
+                        {
+                            DrawStepDetailPanel(
+                                $"Step {_patternSelStep + 1}",
+                                pStepVel.GetArrayElementAtIndex(_patternSelStep),
+                                pStepDur.GetArrayElementAtIndex(_patternSelStep),
+                                enabledProp: pPattern.GetArrayElementAtIndex(_patternSelStep));
+                        }
+
+                        EditorGUILayout.Space(2);
                     }
+
+                    if (EditorGUI.EndChangeCheck() && _patternPresetIndex > 0)
+                        _patternPresetIndex = 0;
 
                     // Add lane button
                     EditorGUILayout.Space(2);
@@ -1611,7 +1984,7 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.BeginVertical();
                     EditorGUILayout.LabelField("Steps");
-                    m_stepCount.intValue = EditorGUILayout.IntSlider(m_stepCount.intValue, 1, 32);
+                    m_stepCount.intValue = Mathf.Clamp(EditorGUILayout.IntField(m_stepCount.intValue), 1, 256);
                     EditorGUILayout.EndVertical();
 
                     EditorGUILayout.BeginVertical();
@@ -1676,18 +2049,25 @@ namespace Csound.Unity.Timelines
                     EditorGUILayout.EndHorizontal();
 
 
+                    // Row 2: PitchOnly + Fill (disabled when PitchOnly)
                     EditorGUILayout.BeginHorizontal();
                     _stepRndPitchOnly = EditorGUILayout.ToggleLeft("Pitches only", _stepRndPitchOnly, GUILayout.Width(92));
                     EditorGUI.BeginDisabledGroup(_stepRndPitchOnly);
                     EditorGUILayout.LabelField("Fill", GUILayout.Width(24));
-                    _stepRndFill = EditorGUILayout.Slider(_stepRndFill, 0f, 1f, GUILayout.Width(100));
+                    _stepRndFill = EditorGUILayout.Slider(_stepRndFill, 0f, 1f);
                     EditorGUI.EndDisabledGroup();
+                    EditorGUILayout.EndHorizontal();
+
+                    // Row 3: Vel range (disabled when PitchOnly) + Randomize button
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUI.BeginDisabledGroup(_stepRndPitchOnly);
                     EditorGUILayout.LabelField("Vel", GUILayout.Width(22));
-                    _stepRndVelMin = EditorGUILayout.FloatField(_stepRndVelMin, GUILayout.Width(32));
-                    EditorGUILayout.LabelField("–", GUILayout.Width(8));
-                    _stepRndVelMax = EditorGUILayout.FloatField(_stepRndVelMax, GUILayout.Width(32));
+                    _stepRndVelMin = EditorGUILayout.FloatField(_stepRndVelMin, GUILayout.Width(36));
+                    EditorGUILayout.LabelField("–", GUILayout.Width(10));
+                    _stepRndVelMax = EditorGUILayout.FloatField(_stepRndVelMax, GUILayout.Width(36));
                     _stepRndVelMin = Mathf.Clamp01(_stepRndVelMin);
                     _stepRndVelMax = Mathf.Clamp01(Mathf.Max(_stepRndVelMax, _stepRndVelMin));
+                    EditorGUI.EndDisabledGroup();
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button("Randomize!", GUILayout.Width(82)))
                     {
@@ -1708,7 +2088,6 @@ namespace Csound.Unity.Timelines
                                 bool shouldRandomize;
                                 if (_stepRndPitchOnly)
                                 {
-                                    // Only touch steps that are already active
                                     shouldRandomize = enabledProp.boolValue;
                                 }
                                 else
@@ -1722,9 +2101,12 @@ namespace Csound.Unity.Timelines
                                     int octave   = UnityEngine.Random.Range(_stepRndOctMin, _stepRndOctMax + 1);
                                     int degree   = scale[UnityEngine.Random.Range(0, scale.Length)];
                                     int midiNote = (_stepRndRoot + (octave + 1) * 12) + degree;
-                                    sp.FindPropertyRelative("pitch").floatValue    = MidiToHz(midiNote);
-                                    sp.FindPropertyRelative("velocity").floatValue = UnityEngine.Random.Range(_stepRndVelMin, _stepRndVelMax);
-                                    sp.FindPropertyRelative("duration").floatValue = 0f; // use lane default
+                                    sp.FindPropertyRelative("pitch").floatValue = MidiToHz(midiNote);
+                                    if (!_stepRndPitchOnly)
+                                    {
+                                        sp.FindPropertyRelative("velocity").floatValue = UnityEngine.Random.Range(_stepRndVelMin, _stepRndVelMax);
+                                        sp.FindPropertyRelative("duration").floatValue = 0f;
+                                    }
                                 }
                             }
                         }
@@ -1736,9 +2118,37 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.Space(6);
 
-                    #region Lane grid
+                    #region Presets + Lane grid
 
                     EditorGUILayout.LabelField("Lanes", EditorStyles.boldLabel);
+                    {
+                        EditorGUILayout.BeginHorizontal();
+                        int hardcodedStepCount = s_stepPresets.Length + 1;
+                        var allStepNames = new string[hardcodedStepCount + _stepPresetAssets.Length];
+                        allStepNames[0] = "— Preset —";
+                        for (int pi = 0; pi < s_stepPresets.Length; pi++)
+                            allStepNames[pi + 1] = s_stepPresets[pi].name;
+                        for (int ai = 0; ai < _stepPresetAssets.Length; ai++)
+                            allStepNames[hardcodedStepCount + ai] = _stepPresetAssets[ai].presetName;
+                        if (_stepPresetIndex >= allStepNames.Length) _stepPresetIndex = 0;
+                        int selPr = EditorGUILayout.Popup(_stepPresetIndex, allStepNames, GUILayout.ExpandWidth(true));
+                        if (selPr != _stepPresetIndex)
+                        {
+                            _stepPresetIndex = selPr;
+                            if (selPr >= hardcodedStepCount)
+                            {
+                                ApplyStepPresetAsset(_stepPresetAssets[selPr - hardcodedStepCount]);
+                            }
+                            else if (selPr > 0)
+                            {
+                                ApplyStepPreset(selPr - 1, m_stepLanes);
+                            }
+                        }
+                        if (GUILayout.Button("↻", GUILayout.Width(22)))
+                            RefreshPresetAssets();
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUILayout.Space(4);
+                    }
 
                     int steps     = m_stepCount.intValue;
                     int laneCount = m_stepLanes.arraySize;
@@ -1754,9 +2164,11 @@ namespace Csound.Unity.Timelines
                     const float kSW_StepH     = 30f;
                     const float kSW_Remove    = 20f;
 
-                    var colStyle = new GUIStyle(EditorStyles.centeredGreyMiniLabel);
+                    var colStyle      = new GUIStyle(EditorStyles.centeredGreyMiniLabel);
+                    var stepNumStyle  = new GUIStyle(colStyle) { alignment = TextAnchor.MiddleCenter };
+                    var stepBeatStyle = new GUIStyle(stepNumStyle) { fontStyle = FontStyle.Bold };
 
-                    // Column headers
+                    // Column headers (fixed section)
                     EditorGUILayout.BeginHorizontal();
                     GUILayout.Label("On",    colStyle, GUILayout.Width(kSW_Toggle));
                     GUILayout.Label("Name",  colStyle, GUILayout.Width(kSW_Label));
@@ -1766,6 +2178,12 @@ namespace Csound.Unity.Timelines
                     GUILayout.Label("Vel",   colStyle, GUILayout.Width(kSW_DefVel));
                     GUILayout.Label("Dur",   colStyle, GUILayout.Width(kSW_DefDur));
                     EditorGUILayout.EndHorizontal();
+
+                    // Step number header — shared helper
+                    StepLaneEditorUtils.DrawStepNumberHeader(_stepScrollPos, steps, kSW_Step, stepNumStyle, stepBeatStyle);
+
+                    // Detect any lane edit and clear the active preset selection.
+                    EditorGUI.BeginChangeCheck();
 
                     for (int li = 0; li < laneCount; li++)
                     {
@@ -1783,14 +2201,13 @@ namespace Csound.Unity.Timelines
                         if (pSteps.arraySize != steps)
                             pSteps.arraySize = steps;
 
-                        // Lane header row
+                        // ── Header row (fixed, not scrollable) ───────────────────────
                         EditorGUILayout.BeginHorizontal();
                         pEnabled.boolValue  = EditorGUILayout.Toggle(pEnabled.boolValue, GUILayout.Width(kSW_Toggle));
                         pLabel.stringValue  = EditorGUILayout.TextField(pLabel.stringValue,  GUILayout.Width(kSW_Label));
                         pInstrN.stringValue = EditorGUILayout.TextField(pInstrN.stringValue, GUILayout.Width(kSW_InstrN));
                         pPan.floatValue     = Mathf.Clamp(EditorGUILayout.FloatField(pPan.floatValue, GUILayout.Width(kSW_Pan)), -1f, 1f);
 
-                        // Default values
                         EditorGUI.BeginChangeCheck();
                         string pitchName = HzToNoteName(pDefPitch.floatValue);
                         string newPitchName = EditorGUILayout.TextField(pitchName, GUILayout.Width(kSW_DefPitch));
@@ -1802,8 +2219,25 @@ namespace Csound.Unity.Timelines
 
                         pDefVel.floatValue = Mathf.Clamp01(EditorGUILayout.FloatField(pDefVel.floatValue, GUILayout.Width(kSW_DefVel)));
                         pDefDur.floatValue = Mathf.Max(0.001f, EditorGUILayout.FloatField(pDefDur.floatValue, GUILayout.Width(kSW_DefDur)));
+                        GUILayout.FlexibleSpace();
+                        if (GUILayout.Button("✕", GUILayout.Width(kSW_Remove)))
+                        {
+                            m_stepLanes.DeleteArrayElementAtIndex(li);
+                            if (_stepSelLane == li) { _stepSelLane = -1; _stepSelStep = -1; }
+                            EditorGUILayout.EndHorizontal();
+                            break;
+                        }
+                        EditorGUILayout.EndHorizontal();
 
-                        // Step cells
+                        // ── Scrollable step buttons (shared scroll position) ──────────
+                        var newStepScroll = EditorGUILayout.BeginScrollView(
+                            _stepScrollPos,
+                            GUI.skin.horizontalScrollbar, GUIStyle.none,
+                            GUILayout.Height(kSW_StepH + 18f));
+                        if (newStepScroll != _stepScrollPos) _stepScrollPos = newStepScroll;
+
+                        EditorGUILayout.BeginHorizontal();
+                        GUILayout.Space(2f);
                         GUI.enabled = pEnabled.boolValue;
                         for (int s = 0; s < steps; s++)
                         {
@@ -1812,37 +2246,24 @@ namespace Csound.Unity.Timelines
                             var pSPitch   = stepProp.FindPropertyRelative("pitch");
                             var pSVel     = stepProp.FindPropertyRelative("velocity");
 
-                            bool on  = pSEnabled.boolValue;
+                            bool on   = pSEnabled.boolValue;
+                            bool sel  = _stepSelLane == li && _stepSelStep == s;
                             float vel = pSVel.floatValue > 0f ? pSVel.floatValue : pDefVel.floatValue;
-
-                            var bgPrev = GUI.backgroundColor;
-                            if (on)
-                            {
-                                float g = Mathf.Lerp(0.25f, 1.0f, vel);
-                                GUI.backgroundColor = s % 8 < 4
-                                    ? new Color(0.1f, g, 0.35f)
-                                    : new Color(0.08f, g * 0.8f, 0.25f);
-                            }
-                            else
-                            {
-                                GUI.backgroundColor = s % 8 < 4
-                                    ? new Color(0.25f, 0.25f, 0.25f)
-                                    : new Color(0.20f, 0.20f, 0.20f);
-                            }
 
                             string cellLabel = on
                                 ? (pSPitch.floatValue > 0f ? HzToNoteName(pSPitch.floatValue) : "•")
                                 : "";
 
-                            bool clicked = GUILayout.Button(cellLabel, GUILayout.Width(kSW_Step), GUILayout.Height(kSW_StepH));
-                            GUI.backgroundColor = bgPrev;
+                            Color stepColor = on
+                                ? StepLaneEditorUtils.VelocityColor(vel)
+                                : StepLaneEditorUtils.OffColor(s % 4 == 0);
+                            bool clicked = StepLaneEditorUtils.DrawStepButton(cellLabel, stepColor, sel, kSW_Step, kSW_StepH);
 
                             if (clicked)
                             {
                                 if (!on)
                                 {
                                     pSEnabled.boolValue = true;
-                                    // Pre-populate with lane defaults so each step starts with its own value
                                     var pP = stepProp.FindPropertyRelative("pitch");
                                     var pV = stepProp.FindPropertyRelative("velocity");
                                     var pD = stepProp.FindPropertyRelative("duration");
@@ -1852,64 +2273,41 @@ namespace Csound.Unity.Timelines
                                     _stepSelLane = li;
                                     _stepSelStep = s;
                                 }
-                                else if (_stepSelLane == li && _stepSelStep == s)
+                                else if (!sel)
                                 {
-                                    // Second click on selected step: toggle off
+                                    _stepSelLane = li;
+                                    _stepSelStep = s;
+                                }
+                                else
+                                {
                                     pSEnabled.boolValue = false;
                                     _stepSelLane = -1;
                                     _stepSelStep = -1;
                                 }
-                                else
-                                {
-                                    // Select for editing
-                                    _stepSelLane = li;
-                                    _stepSelStep = s;
-                                }
                             }
                         }
                         GUI.enabled = true;
-
-                        // Remove lane
-                        if (GUILayout.Button("✕", GUILayout.Width(kSW_Remove)))
-                        {
-                            m_stepLanes.DeleteArrayElementAtIndex(li);
-                            if (_stepSelLane == li) { _stepSelLane = -1; _stepSelStep = -1; }
-                            break;
-                        }
                         EditorGUILayout.EndHorizontal();
+                        EditorGUILayout.EndScrollView();
 
-                        #region Selected step editor
-
+                        // ── Selected step detail — shared helper ──────────────────────
                         if (_stepSelLane == li && _stepSelStep >= 0 && _stepSelStep < steps)
                         {
                             var selStepProp = pSteps.GetArrayElementAtIndex(_stepSelStep);
-                            var pSPitch2    = selStepProp.FindPropertyRelative("pitch");
-                            var pSVel2      = selStepProp.FindPropertyRelative("velocity");
-                            var pSDur2      = selStepProp.FindPropertyRelative("duration");
-
-                            EditorGUILayout.BeginHorizontal();
-                            GUILayout.Space(kSW_Toggle + kSW_Label + kSW_InstrN + kSW_Pan + kSW_DefPitch + kSW_DefVel + kSW_DefDur + _stepSelStep * (kSW_Step + 2f) + 4f);
-
-                            EditorGUILayout.BeginVertical(GUILayout.Width(kSW_Step * 4));
-
-                            EditorGUI.BeginChangeCheck();
-                            string curNoteName = HzToNoteName(pSPitch2.floatValue > 0f ? pSPitch2.floatValue : pDefPitch.floatValue);
-                            string newNoteName = EditorGUILayout.TextField("Pitch", curNoteName);
-                            if (EditorGUI.EndChangeCheck())
-                            {
-                                float hz = NoteNameToHz(newNoteName);
-                                if (hz > 0f) pSPitch2.floatValue = hz;
-                            }
-
-                            pSVel2.floatValue = Mathf.Clamp01(EditorGUILayout.FloatField("Vel (0=def)", pSVel2.floatValue));
-                            pSDur2.floatValue = Mathf.Max(0f, EditorGUILayout.FloatField("Dur (0=def)", pSDur2.floatValue));
-
-                            EditorGUILayout.EndVertical();
-                            EditorGUILayout.EndHorizontal();
+                            DrawStepDetailPanel(
+                                $"Step {_stepSelStep + 1} — Pitch",
+                                selStepProp.FindPropertyRelative("velocity"),
+                                selStepProp.FindPropertyRelative("duration"),
+                                selStepProp.FindPropertyRelative("pitch"),
+                                pDefPitch.floatValue,
+                                selStepProp.FindPropertyRelative("enabled"));
                         }
 
-                        #endregion Selected step editor
+                        EditorGUILayout.Space(2);
                     }
+
+                    if (EditorGUI.EndChangeCheck() && _stepPresetIndex > 0)
+                        _stepPresetIndex = 0;
 
                     // Add lane button
                     EditorGUILayout.Space(2);
@@ -1918,7 +2316,7 @@ namespace Csound.Unity.Timelines
                         m_stepLanes.arraySize++;
                         var newLane = m_stepLanes.GetArrayElementAtIndex(m_stepLanes.arraySize - 1);
                         newLane.FindPropertyRelative("label").stringValue          = "Voice";
-                        newLane.FindPropertyRelative("instrN").stringValue         = "1";
+                        newLane.FindPropertyRelative("instrN").stringValue         = "10";
                         newLane.FindPropertyRelative("enabled").boolValue          = true;
                         newLane.FindPropertyRelative("pan").floatValue             = 0f;
                         newLane.FindPropertyRelative("defaultPitch").floatValue    = 261.63f;

@@ -4,6 +4,7 @@
 - [Add] Audio Input Routing: connect CsoundUnity instances to feed audio into another instance's spin buffer, with cycle detection, mute toggle and per-route level control
 - [Add] AudioRouteGraphWindow: interactive node/edge editor to visualise and edit the audio route graph across all scene instances
 - [Add] IAudioGenerator audio path for Unity 6+: drives the AudioSource directly via CsoundUnity.Process, set as default on Unity 6 (OnAudioFilterRead remains available)
+- [Add] RootOutput audio path for Unity 6+: writes Csound output directly into Unity's main audio output via RootOutputInstance, bypassing the AudioMixer and requiring no AudioSource; Audio Output Path is now a dedicated inspector section
 - [Add] Lifecycle API: initializeOnAwake toggle, Initialize(), Stop(), Restart()
 - [Add] CsoundUnityMidiInput: platform-agnostic MIDI input component (macOS/iOS/visionOS via CoreMIDI, Android via android.media.midi API 23+, Windows via WinMM — short messages only, no SysEx)
 - [Add] Waveform, spectrum, oscilloscope and Lissajous audio monitor in inspector (play mode, with zoom sliders)

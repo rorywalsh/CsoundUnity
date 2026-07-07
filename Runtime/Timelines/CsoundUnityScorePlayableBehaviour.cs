@@ -112,6 +112,10 @@ namespace Csound.Unity.Timelines
             [Range(-1f, 1f)] [SerializeField] public float pan;
             /// <summary>Step pattern — length must equal <see cref="ScoreInfo.patternSteps"/>.</summary>
             [SerializeField] public bool[]              pattern;
+            /// <summary>Per-step velocity override (0 = use lane velocity / accent mode).</summary>
+            [SerializeField] public float[]             stepVelocities;
+            /// <summary>Per-step duration in seconds (0 = use 0.001 trigger pulse).</summary>
+            [SerializeField] public float[]             stepDurations;
         }
 
         /// <summary>
@@ -251,10 +255,10 @@ namespace Csound.Unity.Timelines
             patternLookahead = 0.1f,
             patternLanes    = new List<PatternLane>
             {
-                new() { label="BD",  instrN="101", enabled=true,  velocityMode=PatternVelocityMode.Fixed,   velocity=0.9f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16] },
-                new() { label="SD",  instrN="102", enabled=true,  velocityMode=PatternVelocityMode.Fixed,   velocity=0.8f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16] },
-                new() { label="HH",  instrN="103", enabled=true,  velocityMode=PatternVelocityMode.Offbeat, velocity=0.5f, accentVelocity=0.8f, pan=0f,  pattern=new bool[16] },
-                new() { label="OH",  instrN="104", enabled=false, velocityMode=PatternVelocityMode.Fixed,   velocity=0.7f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16] },
+                new() { label="BD",  instrN="101", enabled=true,  velocityMode=PatternVelocityMode.Fixed,   velocity=0.9f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
+                new() { label="SD",  instrN="102", enabled=true,  velocityMode=PatternVelocityMode.Fixed,   velocity=0.8f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
+                new() { label="HH",  instrN="103", enabled=true,  velocityMode=PatternVelocityMode.Offbeat, velocity=0.5f, accentVelocity=0.8f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
+                new() { label="OH",  instrN="104", enabled=false, velocityMode=PatternVelocityMode.Fixed,   velocity=0.7f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
             },
             stepCount     = 16,
             stepDivision  = RhythmicDivision.Sixteenth,
@@ -343,6 +347,15 @@ namespace Csound.Unity.Timelines
         #endregion Diagnostics
 
         #region Runtime state
+
+        /// <summary>True while this clip's ProcessFrame is being called (i.e. the clip is currently playing).</summary>
+        public bool IsCurrentlyActive { get; private set; }
+
+        /// <summary>
+        /// Actual playable duration in seconds as set by the Timeline (includes stretching).
+        /// Set by <see cref="CsoundTimelineController"/> at graph-collect time.
+        /// </summary>
+        [NonSerialized] public double clipDurationSeconds;
 
         private CsoundUnity _csound;
         private bool   _shouldPlay          = false;
@@ -476,6 +489,8 @@ namespace Csound.Unity.Timelines
 
         private float GetPatternVelocity(PatternLane lane, int step)
         {
+            if (lane.stepVelocities != null && step < lane.stepVelocities.Length && lane.stepVelocities[step] > 0f)
+                return lane.stepVelocities[step];
             var accent = lane.velocityMode switch
             {
                 PatternVelocityMode.Every2  => step % 2 == 0,
@@ -486,6 +501,11 @@ namespace Csound.Unity.Timelines
             };
             return accent ? lane.accentVelocity : lane.velocity;
         }
+
+        private static float GetPatternDuration(PatternLane lane, int step) =>
+            lane.stepDurations != null && step < lane.stepDurations.Length && lane.stepDurations[step] > 0f
+                ? lane.stepDurations[step]
+                : 0.001f;
 
         #endregion Timing helpers
 
@@ -660,6 +680,7 @@ namespace Csound.Unity.Timelines
 
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
+            IsCurrentlyActive = true;
             _csound = playerData as CsoundUnity;
             if (!_csound) return;
 
@@ -1073,10 +1094,12 @@ namespace Csound.Unity.Timelines
                                     if (!lane.pattern[s]) continue;
 
                                     var vel    = GetPatternVelocity(lane, s);
-                                    var   velStr = vel.ToString("F4").Replace(',', '.');
-                                    var   panStr = lane.pan.ToString("F4").Replace(',', '.');
+                                    var dur    = GetPatternDuration(lane, s);
+                                    var velStr = vel.ToString("F4").Replace(',', '.');
+                                    var durStr = dur.ToString("F4").Replace(',', '.');
+                                    var panStr = lane.pan.ToString("F4").Replace(',', '.');
                                     if (verboseLog) Debug.Log($"[CsoundScore] PATTERN-PRECISE  step={s}/{scoreInfo.patternSteps}  lane={lane.label}({lane.instrN})  onset={onsetStr}  vel={velStr}  pan={panStr}");
-                                    _csound.SendScoreEvent($"i{lane.instrN} {onsetStr} 0.001 {velStr} {panStr}");
+                                    _csound.SendScoreEvent($"i{lane.instrN} {onsetStr} {durStr} {velStr} {panStr}");
                                 }
                             }
 
@@ -1115,10 +1138,12 @@ namespace Csound.Unity.Timelines
                                 if (!lane.pattern[_patternStep]) continue;
 
                                 var vel    = GetPatternVelocity(lane, _patternStep);
-                                var   velStr = vel.ToString("F4").Replace(',', '.');
-                                var   panStr = lane.pan.ToString("F4").Replace(',', '.');
+                                var dur    = GetPatternDuration(lane, _patternStep);
+                                var velStr = vel.ToString("F4").Replace(',', '.');
+                                var durStr = dur.ToString("F4").Replace(',', '.');
+                                var panStr = lane.pan.ToString("F4").Replace(',', '.');
                                 if (verboseLog) Debug.Log($"[CsoundScore] PATTERN-BPM  step={_patternStep}/{scoreInfo.patternSteps}  lane={lane.label}({lane.instrN})  onset={onsetStr}  vel={velStr}  pan={panStr}");
-                                _csound.SendScoreEvent($"i{lane.instrN} {onsetStr} 0.001 {velStr} {panStr}");
+                                _csound.SendScoreEvent($"i{lane.instrN} {onsetStr} {durStr} {velStr} {panStr}");
                             }
 
                             _patternNextStepTime += stepDur;
@@ -1411,6 +1436,7 @@ namespace Csound.Unity.Timelines
 
         public override void OnBehaviourPause(Playable playable, FrameData info)
         {
+            IsCurrentlyActive = false;
             base.OnBehaviourPause(playable, info);
 
             var t   = playable.GetTime();
@@ -1538,7 +1564,28 @@ namespace Csound.Unity.Timelines
         {
             if (scoreInfo.patternLanes == null || lane < 0 || lane >= scoreInfo.patternLanes.Count) return;
             if (pattern == null || pattern.Length != scoreInfo.patternSteps) return;
-            scoreInfo.patternLanes[lane].pattern = (bool[])pattern.Clone();
+            var l = scoreInfo.patternLanes[lane];
+            l.pattern = (bool[])pattern.Clone();
+            if (l.stepVelocities == null || l.stepVelocities.Length != pattern.Length) l.stepVelocities = new float[pattern.Length];
+            if (l.stepDurations  == null || l.stepDurations.Length  != pattern.Length) l.stepDurations  = new float[pattern.Length];
+        }
+
+        /// <summary>Set per-step velocity override for the given lane (0 = use lane velocity / accent mode).</summary>
+        public void SetPatternStepVelocity(int lane, int step, float velocity)
+        {
+            if (scoreInfo.patternLanes == null || lane < 0 || lane >= scoreInfo.patternLanes.Count) return;
+            var l = scoreInfo.patternLanes[lane];
+            if (l.stepVelocities == null || step < 0 || step >= l.stepVelocities.Length) return;
+            l.stepVelocities[step] = Mathf.Clamp01(velocity);
+        }
+
+        /// <summary>Set per-step duration override in seconds for the given lane (0 = 0.001 trigger pulse).</summary>
+        public void SetPatternStepDuration(int lane, int step, float duration)
+        {
+            if (scoreInfo.patternLanes == null || lane < 0 || lane >= scoreInfo.patternLanes.Count) return;
+            var l = scoreInfo.patternLanes[lane];
+            if (l.stepDurations == null || step < 0 || step >= l.stepDurations.Length) return;
+            l.stepDurations[step] = Mathf.Max(0f, duration);
         }
 
         public void SetPatternBpm(float value)              => SetBpm(value);

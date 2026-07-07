@@ -439,6 +439,50 @@ namespace Csound.Unity.Utilities
             return Mathf.RoundToInt(69 + 12 * Mathf.Log(hz / 440f, 2f));
         }
 
+        static readonly string[] NoteNames = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+        /// <summary>
+        /// Returns the note name for a MIDI note number (e.g. 60 → "C4").
+        /// </summary>
+        public static string MidiToNoteName(int midi)
+        {
+            int octave = midi / 12 - 1;
+            int note   = ((midi % 12) + 12) % 12;
+            return $"{NoteNames[note]}{octave}";
+        }
+
+        /// <summary>
+        /// Returns the note name for a frequency in Hz (e.g. 261.63 → "C4").
+        /// </summary>
+        public static string HzToNoteName(float hz)
+        {
+            if (hz <= 0f) return "—";
+            return MidiToNoteName(HzToMidi(hz));
+        }
+
+        /// <summary>
+        /// Parses a note name (e.g. "C4", "C#3", "Db4") into a MIDI note number (0–127).
+        /// Returns -1 if the name cannot be parsed.
+        /// </summary>
+        public static int NoteNameToMidi(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) return -1;
+            name = name.Trim().ToUpper();
+            foreach (var kv in new (string n, int s)[] {
+                ("C#",1),("DB",1),("D#",3),("EB",3),("F#",6),("GB",6),
+                ("G#",8),("AB",8),("A#",10),("BB",10),
+                ("C",0),("D",2),("E",4),("F",5),("G",7),("A",9),("B",11)
+            })
+            {
+                if (name.StartsWith(kv.n))
+                {
+                    if (int.TryParse(name.Substring(kv.n.Length), out int oct))
+                        return Mathf.Clamp((oct + 1) * 12 + kv.s, 0, 127);
+                }
+            }
+            return -1;
+        }
+
         /// <summary>
         /// Picks a pitch from <paramref name="pitches"/> based on the current step index
         /// and the desired <paramref name="direction"/>.
