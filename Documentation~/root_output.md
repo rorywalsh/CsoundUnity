@@ -43,9 +43,9 @@ RootOutput hooks into Unity's mix frame via three stages:
 
 | Stage | What happens |
 |---|---|
-| `EarlyProcessing` | Fills Csound's spin buffer (NativeAudioInput routes) before any other processor runs |
+| `EarlyProcessing` | No-op — the real ksmps boundary within a buffer is not known until `EndProcessing` runs, so filling the spin buffer here would fire a second time and over-consume NativeAudioInput's ring buffer |
 | `Process` | No-op — `PerformKsmps` is a P/Invoke call and cannot run in a Burst job |
-| `EndProcessing` | Runs the `PerformKsmps` loop, reads spout, writes samples into the output `ChannelBuffer` |
+| `EndProcessing` | Fills Csound's spin buffer (NativeAudioInput routes) immediately before each `PerformKsmps` call, runs the `PerformKsmps` loop, reads spout, writes samples into the output `ChannelBuffer` |
 
 Samples written in `EndProcessing` are **additively mixed** into Unity's main output — they do not go through any AudioMixer bus or effect.
 

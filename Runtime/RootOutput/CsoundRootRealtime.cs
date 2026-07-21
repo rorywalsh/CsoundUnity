@@ -35,12 +35,15 @@ namespace Csound.Unity
     /// <para>
     /// Processing is split across three stages per mix frame:
     /// <list type="bullet">
-    ///   <item><b>EarlyProcessing</b> — fills Csound's spin buffer (NativeAudioInput,
-    ///     audio input routes) before any other processor runs.</item>
+    ///   <item><b>EarlyProcessing</b> — no-op; see remarks on
+    ///     <see cref="EarlyProcessing"/> for why the spin buffer is not
+    ///     filled here.</item>
     ///   <item><b>Process</b> — no-op; <c>PerformKsmps</c> cannot run inside a
     ///     Burst job because it is a P/Invoke call.</item>
-    ///   <item><b>EndProcessing</b> — runs the <c>PerformKsmps</c> loop and copies
-    ///     the spout into the <c>ChannelBuffer</c> that Unity mixes to hardware.</item>
+    ///   <item><b>EndProcessing</b> — fills Csound's spin buffer (NativeAudioInput,
+    ///     audio input routes) immediately before each <c>PerformKsmps</c> call,
+    ///     runs the <c>PerformKsmps</c> loop, and copies the spout into the
+    ///     <c>ChannelBuffer</c> that Unity mixes to hardware.</item>
     /// </list>
     /// </para>
     ///
@@ -75,15 +78,28 @@ namespace Csound.Unity
         #region RootOutputInstance.IRealtime — EarlyProcessing
 
         /// <summary>
-        /// Stage 1: fill Csound's spin buffer before any other processor runs.
-        /// Invokes the spin-fill callback registered in <see cref="CsoundBridgeRegistry"/>
-        /// (NativeAudioInput + audio input routes), mirroring what
-        /// <c>OnSpinFillCallback</c> does on the IAudioGenerator path.
+        /// Stage 1: intentionally empty.
+        ///
+        /// <para>
+        /// <c>_ksmpsIndex</c> always resets to 0 right after a <c>PerformKsmps</c>
+        /// call, so the first real ksmps boundary in a fresh buffer lands at
+        /// <c>f == ksmps</c>, never at <c>f == 0</c>. Calling the spin-fill
+        /// callback here with a hardcoded offset of 0 does not correspond to
+        /// where <see cref="EndProcessing"/> actually performs, and would fire
+        /// a second time when the real boundary is reached — double-invoking
+        /// <c>OnSpinFillCallback</c> per buffer. Since that callback drives
+        /// <c>NativeAudioInputManager.FillSpinBuffer</c>, which does a
+        /// consuming read from the native ring buffer, the duplicate call
+        /// drains one extra ksmps block of input per DSP buffer, starving the
+        /// ring buffer over time (audible as input drop-outs when combining
+        /// NativeAudioInput with RootOutput). The spin-fill is done once, at
+        /// the correct offset, inside <see cref="EndProcessing"/> — exactly
+        /// as <see cref="CsoundRealtime"/> does on the IAudioGenerator path,
+        /// which has no EarlyProcessing equivalent at all.
+        /// </para>
         /// </summary>
         public JobHandle EarlyProcessing(in RealtimeContext context, ProcessorInstance.Pipe pipe)
         {
-            // bufferFrameOffset 0 signals the start of a new DSP buffer.
-            CsoundBridgeRegistry.InvokeSpinFillCallback(InstanceId, 0);
             return default;
         }
 
@@ -135,8 +151,9 @@ namespace Csound.Unity
             {
                 if (_ksmpsIndex >= ksmps)
                 {
-                    // Spin-fill for frames beyond the first ksmps boundary within this buffer.
-                    // EarlyProcessing already handled frame 0; subsequent boundaries need it too.
+                    // Spin-fill immediately before PerformKsmps, at the real ksmps
+                    // boundary frame — the only place this callback fires (see
+                    // EarlyProcessing remarks for why it isn't duplicated there).
                     CsoundBridgeRegistry.InvokeSpinFillCallback(InstanceId, f);
 
                     var result = bridge.PerformKsmps();
