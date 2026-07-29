@@ -48,6 +48,50 @@ Stops and re-initialises Csound. Useful for hot-reloading a `.csd` file at runti
 csound.Restart();
 ```
 
+### LoadCsdFromString() ###
+
+Loads a CSD from a raw string at runtime, without requiring a `.csd` asset in the project. This is the runtime counterpart of `SetCsd()` (which is editor-only and works via an asset GUID). Use it for CSDs that are generated at runtime, downloaded, or otherwise held in memory — the Csound bridge compiles directly from the stored string, so no file is needed.
+
+Channel controllers, named audio channels, `nchnls` and `ksmps` are parsed from the string exactly as `SetCsd()` parses them from a file.
+
+```csharp
+string csd = @"<CsoundSynthesizer>
+<CsInstruments>
+sr = 48000
+ksmps = 32
+nchnls = 2
+0dbfs = 1
+instr 1
+    aout oscili 0.2, 440
+    outs aout, aout
+endin
+</CsInstruments>
+<CsScore>
+i 1 0 3600
+</CsScore>
+</CsoundSynthesizer>";
+
+csound.LoadCsdFromString(csd); // parses, then (re)initialises
+```
+
+**Startup behaviour** (when the default `startNow: true` is used):
+
+| State | Result |
+|---|---|
+| Already running | Reloaded via `Restart()` |
+| Not running, `initializeOnAwake == false` | Started now via `Initialize()` |
+| Not running, `initializeOnAwake == true` | Left for `Awake` to compile the stored string |
+
+Pass `startNow: false` to only store and parse the CSD without (re)initialising — then call `Initialize()` yourself when ready:
+
+```csharp
+csound.LoadCsdFromString(csd, startNow: false);
+// ... set up channels, routes, etc. ...
+csound.Initialize();
+```
+
+> **Note:** if called before `Awake` has run (e.g. immediately after `AddComponent`), only the fields are populated; initialisation is deferred to `Awake` or a later `Initialize()` call, because `Init` depends on Awake-time state (DSP buffer size, AudioSource).
+
 ### IsInitialized ###
 
 Read-only property. `true` once Csound has compiled successfully and the audio thread is running.

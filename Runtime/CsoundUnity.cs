@@ -1324,6 +1324,96 @@ namespace Csound.Unity
         }
 
         /// <summary>
+        /// Loads a CSD from a raw string at runtime, without requiring a <c>.csd</c> asset.
+        /// <para>
+        /// This is the runtime counterpart of <see cref="SetCsd"/> (which is editor-only and
+        /// works via an asset GUID). Use it for dynamically generated or downloaded CSDs.
+        /// The Csound bridge compiles directly from the stored string, so no file is needed.
+        /// </para>
+        /// <para>
+        /// Channel controllers, named audio channels, <c>nchnls</c> and <c>ksmps</c> are parsed
+        /// from the string exactly as <see cref="SetCsd"/> parses them from a file.
+        /// </para>
+        /// <para>
+        /// Startup behaviour when <paramref name="startNow"/> is <c>true</c>:
+        /// <list type="bullet">
+        ///   <item>Already running — the instance is reloaded via <see cref="Restart"/>.</item>
+        ///   <item>Not yet running, <see cref="initializeOnAwake"/> is <c>false</c> — started
+        ///     now via <see cref="Initialize"/>.</item>
+        ///   <item>Not yet running, <see cref="initializeOnAwake"/> is <c>true</c> — left for
+        ///     <c>Awake</c> to compile the string it just stored.</item>
+        /// </list>
+        /// If <c>Awake</c> has not run yet (<see cref="audioSource"/> not resolved), only the
+        /// fields are populated; initialization is deferred to <c>Awake</c> or a later
+        /// <see cref="Initialize"/> call, because <c>Init</c> depends on Awake-time state
+        /// (DSP buffer size, AudioSource).
+        /// </para>
+        /// </summary>
+        /// <param name="csdContent">The full CSD text to load.</param>
+        /// <param name="startNow">When <c>true</c>, (re)initialize Csound after loading; when
+        /// <c>false</c>, only store and parse the CSD (call <see cref="Initialize"/> yourself).</param>
+        public void LoadCsdFromString(string csdContent, bool startNow = true)
+        {
+            if (string.IsNullOrWhiteSpace(csdContent))
+            {
+                Debug.LogWarning("[CsoundUnity] LoadCsdFromString: CSD content is empty.");
+                return;
+            }
+
+            this._csoundString = csdContent;
+
+            // Detach from any asset backing: the CSD now comes from a string, not a file.
+            this._csoundFileGUID = string.Empty;
+            this._csoundFileName = string.Empty;
+#if UNITY_EDITOR
+            this._csoundAsset = null;
+#endif
+
+            this._channels = ParseCsdString(csdContent) ?? new List<CsoundChannelController>();
+            if (_channelsIndexDict != null)
+            {
+                // Rebuild from scratch so stale entries from a previous CSD are removed and the
+                // stored index matches the actual position in _channels (mirrors SetCsd).
+                _channelsIndexDict.Clear();
+                for (int ci = 0; ci < this._channels.Count; ci++)
+                {
+                    var chan = this._channels[ci];
+                    if (string.IsNullOrWhiteSpace(chan.channel)) continue;
+                    _channelsIndexDict[chan.channel] = ci;
+                }
+            }
+            this._availableAudioChannels = ParseCsdStringForAudioChannels(csdContent);
+            this._nchnls = ParseCsdStringForNchnls(csdContent);
+
+            int parsedKsmps = ParseCsdStringForKsmps(csdContent);
+            if (parsedKsmps > 0)
+                this.ksmps = parsedKsmps;
+
+            foreach (var name in availableAudioChannels)
+            {
+                if (string.IsNullOrWhiteSpace(name)) continue;
+
+                if (!namedAudioChannelDataDict.ContainsKey(name))
+                {
+                    namedAudioChannelDataDict.Add(name, new MYFLT[bufferSize]);
+                    namedAudioChannelTempBufferDict.Add(name, new MYFLT[_ksmps]);
+                }
+            }
+
+            if (!startNow) return;
+
+            // Awake resolves audioSource and the DSP buffer size that Init depends on.
+            // If it hasn't run yet, leave initialization to Awake / a later Initialize().
+            if (audioSource == null) return;
+
+            if (initialized || _initializing)
+                Restart();
+            else if (!initializeOnAwake)
+                Initialize();
+            // else: initializeOnAwake == true and not yet initialized — Awake will compile _csoundString.
+        }
+
+        /// <summary>
         /// Parse, and compile the given orchestra from an ASCII string,
         /// also evaluating any global space code (i-time only)
         /// this can be called during performance to compile a new orchestra.
@@ -1522,6 +1612,17 @@ namespace Csound.Unity
         #region CSD_PARSE
 
         /// <summary>
+        /// Splits CSD text into lines, matching <see cref="File.ReadAllLines(string)"/> semantics
+        /// (handles CRLF, CR and LF). Using a plain <c>Split('\n')</c> would leave a trailing
+        /// <c>\r</c> on each line on Windows-authored CSDs, which breaks the Cabbage widget parser's
+        /// string matching (e.g. attributes ending in a quote).
+        /// </summary>
+        private static string[] SplitCsdLines(string csdContent)
+        {
+            return csdContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+        }
+
+        /// <summary>
         /// Reads the CSD file and returns the value of <c>nchnls</c> (output channels)
         /// declared in the orchestra header.  Correctly ignores <c>nchnls_i</c> (input
         /// channels).  Returns 0 when the directive is absent — in that case Csound
@@ -1532,7 +1633,19 @@ namespace Csound.Unity
         public static int ParseCsdFileForNchnls(string filename)
         {
             if (!File.Exists(filename)) return 0;
-            foreach (var line in File.ReadAllLines(filename))
+            return ParseCsdStringForNchnls(File.ReadAllText(filename));
+        }
+
+        /// <summary>
+        /// String equivalent of <see cref="ParseCsdFileForNchnls"/>, used when only the CSD
+        /// content is available (no file path), e.g. from <see cref="LoadCsdFromString"/>.
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>The declared <c>nchnls</c> value, or 0 if not found.</returns>
+        public static int ParseCsdStringForNchnls(string csdContent)
+        {
+            if (string.IsNullOrEmpty(csdContent)) return 0;
+            foreach (var line in SplitCsdLines(csdContent))
             {
                 var t = line.TrimStart();
                 if (t.StartsWith(";")) continue;
@@ -1562,11 +1675,23 @@ namespace Csound.Unity
         public static int ParseCsdFileForKsmps(string filename)
         {
             if (!File.Exists(filename)) return 0;
+            return ParseCsdStringForKsmps(File.ReadAllText(filename));
+        }
+
+        /// <summary>
+        /// String equivalent of <see cref="ParseCsdFileForKsmps"/>, used when only the CSD
+        /// content is available (no file path), e.g. from <see cref="LoadCsdFromString"/>.
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>The resolved ksmps value, or 0 if it cannot be determined.</returns>
+        public static int ParseCsdStringForKsmps(string csdContent)
+        {
+            if (string.IsNullOrEmpty(csdContent)) return 0;
 
             var inInstruments = false;
             int parsedSr = 0, parsedKr = 0;
 
-            foreach (var line in File.ReadAllLines(filename))
+            foreach (var line in SplitCsdLines(csdContent))
             {
                 var t = line.TrimStart();
 
@@ -1671,8 +1796,20 @@ namespace Csound.Unity
         public static List<CsoundChannelController> ParseCsdFile(string filename)
         {
             if (!File.Exists(filename)) return null;
+            return ParseCsdString(File.ReadAllText(filename));
+        }
 
-            var fullCsdText = File.ReadAllLines(filename);
+        /// <summary>
+        /// String equivalent of <see cref="ParseCsdFile"/> — parses the Cabbage widget section
+        /// from CSD text already in memory (no file path), e.g. from <see cref="LoadCsdFromString"/>.
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>A list of parsed channel controllers, or <c>null</c> if the content is empty.</returns>
+        public static List<CsoundChannelController> ParseCsdString(string csdContent)
+        {
+            if (string.IsNullOrEmpty(csdContent)) return null;
+
+            var fullCsdText = SplitCsdLines(csdContent);
             if (fullCsdText.Length < 1) return null;
 
             var locaChannelControllers = new List<CsoundChannelController>();
