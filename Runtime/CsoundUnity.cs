@@ -2328,9 +2328,23 @@ namespace Csound.Unity
         public void SetChannel(CsoundChannelController channelController)
         {
             if (_channelsIndexDict.ContainsKey(channelController.channel))
+            {
+                var existingChannel = channels[_channelsIndexDict[channelController.channel]];
+                // A preset may carry combobox options that no longer match the CSD
+                // (e.g. the CSD was edited after the preset was saved). Keep the
+                // CSD-defined option set and apply only the preset's selected value.
+                if (existingChannel.type.Contains("combobox") && existingChannel.text != channelController.text)
+                {
+                    channelController.text = existingChannel.text;
+                    channelController.options = existingChannel.options;
+                }
                 channels[_channelsIndexDict[channelController.channel]] = channelController;
+            }
             if (!IsInitialized || csound == null) return;
-            csound.SetChannel(channelController.channel, channelController.value);
+            // Cabbage comboboxes are 1-based (0 means "no selection"), while the value
+            // stored on the serialized channel is 0-based — send value + 1 to Csound.
+            var value = channelController.type.Contains("combobox") ? channelController.value + 1 : channelController.value;
+            csound.SetChannel(channelController.channel, value);
             // xypad / hrange / vrange carry a second channel in channelY / value2
             if ((channelController.type == "xypad" || channelController.type == "hrange" || channelController.type == "vrange")
                 && !string.IsNullOrEmpty(channelController.channelY))

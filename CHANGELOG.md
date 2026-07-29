@@ -34,6 +34,7 @@
 - [Update] CsoundUnitySlider now applies skew (logarithmic/exponential mapping) and increment (stepped values) from ChannelController
 - [Fix] CsoundFileWatcher: handle atomic saves from modern editors
 - [Fix] Presets: AssetDatabase.ImportAsset crash on JSON save, null checks in SetPreset/UpdateAssignablePresets, "To JSON" now saves alongside the SO asset by default, JSON list filtered to current CSD
+- [Fix] Presets: combobox channels applied one option too low (Cabbage index is 1-based) and stale combobox options in a saved preset overwrote the current CSD's option set
 - [Fix] Cabbage parser: caption/text truncation with multiple quoted attributes on same line; whitespace before '(' not recognised
 - [Fix] _channelsIndexDict wrong index when form widget is at position 0; stale entries after Domain Reload
 - [Fix] Hang on exit: send end-score event before csoundDestroy to stop indefinitely-running instruments cleanly
