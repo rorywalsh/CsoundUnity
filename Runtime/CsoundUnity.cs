@@ -152,7 +152,9 @@ namespace Csound.Unity
     /// <para>
     /// Add one or more routes to <see cref="CsoundUnity.audioInputRoutes"/> to chain Csound
     /// instances together: the source's named audio channel data is injected into the destination's
-    /// spin channel before each <c>PerformKsmps</c> call, with at most one DSP-buffer of latency.
+    /// spin channel before each <c>PerformKsmps</c> call, with exactly one DSP buffer of latency —
+    /// constant, because what is injected is the last block the source finished and published,
+    /// never whatever it happens to have written so far.
     /// </para>
     /// </summary>
     [Serializable]
@@ -454,13 +456,67 @@ namespace Csound.Unity
         [HideInInspector] public bool initializeOnAwake = true;
 
         /// <summary>
-        /// If true no audio is sent to output
+        /// Silences this instance's audio output. Csound keeps performing: the score advances,
+        /// so unmuting drops back in on the beat rather than resuming where it left off, and
+        /// input (audio input routes, native audio input, clip audio) keeps flowing in.
+        /// <para>
+        /// Instances routed <b>from</b> this one receive silence while it is muted — they do not
+        /// keep hearing the last block it produced. To stop the DSP work as well, and pick up
+        /// exactly where it stopped, use <see cref="pauseProcessing"/> instead.
+        /// </para>
+        /// <para>
+        /// Not to be confused with <c>AudioSource.mute</c>, which silences this instance's own
+        /// monitoring but leaves it feeding its routed destinations at full level (and has no
+        /// effect at all on the RootOutput audio path, which bypasses the AudioSource).
+        /// </para>
         /// </summary>
         [HideInInspector] public bool mute = false;
 
         /// <summary>
-        /// If true Csound uses as an input the AudioClip attached to this AudioSource
-        /// If false, no processing occurs on the attached AudioClip
+        /// Suspends this instance: the output is silenced <b>and</b> Csound stops performing,
+        /// so no DSP work is done at all. The score is frozen, so clearing the flag resumes
+        /// from exactly where it stopped.
+        /// <para>
+        /// Unlike disabling the GameObject or calling <see cref="Stop"/>, nothing is torn down:
+        /// the Csound instance, its state and its channel values are all preserved, and resuming
+        /// is immediate. Instances routed from this one receive silence while it is paused.
+        /// </para>
+        /// <para>Use <see cref="mute"/> instead when the instance should stay in time.</para>
+        /// </summary>
+        [HideInInspector] public bool pauseProcessing = false;
+
+        /// <summary>
+        /// True when this instance must not emit audio, for any reason: muted, paused, or its
+        /// score has ended. Everything that produces or exposes output is gated on this — the
+        /// samples written to Unity, the published snapshots read by routed destinations, the
+        /// spout channels, and the monitor buffers — so that all of them agree.
+        /// <para>
+        /// Deliberately a single named concept rather than the condition spelled out at each
+        /// site: the bug this replaces was exactly one of those sites being forgotten.
+        /// </para>
+        /// </summary>
+        private bool IsSilenced => mute || pauseProcessing || performanceFinished;
+
+        /// <summary>
+        /// True when Csound should still be performed. Distinct from <see cref="IsSilenced"/>:
+        /// a muted instance keeps performing (it stays in time and its inputs keep flowing),
+        /// while a paused or finished one does not.
+        /// <para>
+        /// Anything indexed by <c>ksmpsIndex</c> must be guarded by this, not by
+        /// <see cref="IsSilenced"/>: only <c>PerformKsmps</c> resets that counter, so while it
+        /// is not running the index grows past the end of the ksmps-sized buffers.
+        /// </para>
+        /// </summary>
+        private bool ShouldPerform => !pauseProcessing && !performanceFinished;
+
+        /// <summary>
+        /// If true Csound uses as an input the AudioClip attached to this AudioSource.
+        /// If false, no processing occurs on the attached AudioClip.
+        /// <para>
+        /// Clip audio keeps reaching Csound while the instance is <see cref="mute"/>d — muting
+        /// silences the output, not the input, so effects fed by the clip stay warm. It stops
+        /// under <see cref="pauseProcessing"/>, where nothing would consume it.
+        /// </para>
         /// </summary>
         [HideInInspector] public bool processClipAudio;
 
@@ -547,7 +603,19 @@ namespace Csound.Unity
         public List<string> availableAudioChannels { get => _availableAudioChannels; }
 
         /// <summary>
-        /// public named audio Channels shown in CsoundUnityChild inspector
+        /// Named audio channels produced by this instance, shown in the CsoundUnityChild inspector.
+        /// <para>
+        /// <b>These are the live working arrays</b>, filled sample by sample by the audio thread
+        /// while a block is being produced. Reading them from another thread — the main thread, or
+        /// another instance's audio callback — can therefore observe a half-written block, and
+        /// carries no memory barrier, so on 32-bit ARM a <c>MYFLT</c> can be read torn. Both are
+        /// audible as intermittent clicks.
+        /// </para>
+        /// <para>
+        /// Audio input routing does not read this: it reads the completed snapshots published at
+        /// the end of each block (see <see cref="CsoundSharedBuffer"/>). Anything else that needs
+        /// this data across threads should do the same rather than reading here directly.
+        /// </para>
         /// </summary>
         public readonly Dictionary<string, MYFLT[]> namedAudioChannelDataDict = new Dictionary<string, MYFLT[]>();
 
@@ -620,6 +688,11 @@ namespace Csound.Unity
         /// <summary>
         /// An event fired on the audio thread after every <c>PerformKsmps</c> call.
         /// Keep the handler extremely lightweight to avoid audio dropouts.
+        /// <para>
+        /// Fires while the instance is muted, since muting silences the output but Csound keeps
+        /// performing; it does not fire while <see cref="pauseProcessing"/> is set, because then
+        /// there is no <c>PerformKsmps</c> to report.
+        /// </para>
         /// </summary>
         public event CsoundPerformKsmps OnCsoundPerformKsmps;
 
@@ -658,17 +731,45 @@ namespace Csound.Unity
         public string CurrentPreset => _currentPreset;
 
         /// <summary>
-        /// The most recently completed DSP output buffer, double-buffered for thread safety.
-        /// Contains interleaved samples for all Csound output channels when <see cref="updateOutputBuffer"/> is true;
-        /// otherwise the array holds the single-channel Unity output.
+        /// The most recently completed DSP output buffer. Contains interleaved samples for all
+        /// Csound output channels when <see cref="updateOutputBuffer"/> is true; otherwise the
+        /// array holds the single-channel Unity output.
+        /// <para>
+        /// Reading this property pulls the latest block published by the audio thread, so the
+        /// returned array is always a complete block and never one being rewritten underneath
+        /// the caller. When no new block has been produced since the last read the previous
+        /// contents are returned unchanged, so polling faster than the DSP rate is free. Read
+        /// it from the main thread.
+        /// </para>
         /// </summary>
-        public float[] OutputBuffer => outputBuffer;
+        public float[] OutputBuffer
+        {
+            get
+            {
+                var length = _outputBufferPublisher.Length;
+                if (length <= 0) return outputBuffer;
+
+                if (outputBuffer == null || outputBuffer.Length != length)
+                {
+                    outputBuffer = new float[length];
+                    _outputBufferCursor = 0;
+                }
+
+                _outputBufferPublisher.Read(outputBuffer, length, ref _outputBufferCursor);
+                return outputBuffer;
+            }
+        }
 
         /// <summary>
-        /// Number of audio channels in <see cref="OutputBuffer"/> (equals Csound's <c>nchnls</c>
-        /// when <see cref="updateOutputBuffer"/> is true).
+        /// Number of audio channels interleaved in <see cref="OutputBuffer"/> (equals Csound's
+        /// <c>nchnls</c> when <see cref="updateOutputBuffer"/> is true), or 1 before the first
+        /// block has been published.
+        /// <para>
+        /// Read straight from the published block rather than cached when the buffer is fetched,
+        /// so that reading this before <see cref="OutputBuffer"/> cannot hand back a stale count.
+        /// </para>
         /// </summary>
-        public int OutputChannels { get; private set; }
+        public int OutputChannels => _outputBufferPublisher.Channels;
 
         #endregion PUBLIC_FIELDS
 
@@ -805,6 +906,66 @@ namespace Csound.Unity
         private float[] _clipSpinBuffer = System.Array.Empty<float>();
 
         /// <summary>
+        /// Published snapshots of this instance's named audio channels, keyed by channel name.
+        /// <para>
+        /// <see cref="namedAudioChannelDataDict"/> is this instance's live working buffer: it is
+        /// written sample-by-sample while the DSP block is being produced, so any other thread
+        /// reading it can observe a half-written block. At the end of each block the finished
+        /// contents are published here, and it is these snapshots — never the live arrays — that
+        /// routed destinations and other observers read. See <see cref="CsoundSharedBuffer"/>.
+        /// </para>
+        /// </summary>
+        private readonly Dictionary<string, CsoundSharedBuffer> _publishedAudioChannels =
+            new Dictionary<string, CsoundSharedBuffer>();
+
+        /// <summary>
+        /// Per-route copies of the source snapshot consumed by <see cref="PrecomputeRouteMix"/>,
+        /// parallel to <see cref="audioInputRoutes"/>.
+        /// </summary>
+        private float[][] _routeSnapshots = System.Array.Empty<float[]>();
+
+        /// <summary>
+        /// Per-route read cursors into the source's <see cref="CsoundSharedBuffer"/>, parallel to
+        /// <see cref="audioInputRoutes"/>. Each route consumes each published block at most once;
+        /// when nothing new has arrived the previous snapshot is reused, which is what we want
+        /// when the routing block size is smaller than the DSP block.
+        /// </summary>
+        private int[] _routeCursors = System.Array.Empty<int>();
+
+        /// <summary>
+        /// Number of samples currently valid in each entry of <see cref="_routeSnapshots"/>.
+        /// </summary>
+        private int[] _routeSnapshotLengths = System.Array.Empty<int>();
+
+        /// <summary>
+        /// Consecutive routing blocks for which a route's source produced nothing new.
+        /// Reusing the held snapshot is correct for a few blocks — the source publishes once
+        /// per DSP buffer while routing blocks may be shorter, and each one reads a later
+        /// window of the same snapshot — but a source that has stopped publishing entirely
+        /// (disabled, destroyed, Csound no longer running) would otherwise have its last
+        /// block looped forever, which is audible as a buzz at the DSP block rate. Past
+        /// the tolerance the route is treated as silent instead.
+        /// </summary>
+        private int[] _routeStaleCounts = System.Array.Empty<int>();
+
+        /// <summary>
+        /// Publisher backing <see cref="OutputBuffer"/>. The audio thread publishes each finished
+        /// DSP block here and the main thread pulls it on access, so visualisers never observe a
+        /// block that is being recycled underneath them.
+        /// </summary>
+        private readonly CsoundSharedBuffer _outputBufferPublisher = new CsoundSharedBuffer();
+
+        /// <summary>Main-thread read cursor into <see cref="_outputBufferPublisher"/>.</summary>
+        private int _outputBufferCursor;
+
+        /// <summary>
+        /// Reusable block of silence published in place of the channel contents whenever this
+        /// instance <see cref="IsSilenced"/>. Nothing ever writes into it — that it stays all
+        /// zeroes is the whole point, so do not borrow it as scratch space.
+        /// </summary>
+        private float[] _silencePublishBuffer;
+
+        /// <summary>
         /// Duration of the per-route spin-injection fade-in.
         /// 4800 samples = 100 ms at 48 kHz — fast enough to be almost imperceptible
         /// but long enough to cover any jitter in when chained instances become ready.
@@ -817,9 +978,11 @@ namespace Csound.Unity
         private Coroutine LoggingCoroutine;
         private Coroutine _monitorPerformanceCoroutine;
         int bufferSize, numBuffers;
-        private float[] bufferA;
-        private float[] bufferB;
-        private int activeBufferIndex;
+
+        /// <summary>
+        /// Main-thread copy handed out by <see cref="OutputBuffer"/>. Refilled from
+        /// <see cref="_outputBufferPublisher"/> on access; never touched by the audio thread.
+        /// </summary>
         private float[] outputBuffer;
         // Full Csound output buffer: interleaved, sized frames * nchnls (all Csound channels, not just Unity's stereo).
         // Rebuilt in ProcessBlock when updateOutputBuffer is true.
@@ -847,9 +1010,7 @@ namespace Csound.Unity
 
             AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
             outputBuffer = new float[bufferSize];
-            bufferA = new float[bufferSize];
-            bufferB = new float[bufferSize];
-            
+
             Debug.Log($"CsoundUnity v{packageVersion} Awake, AudioSettings.bufferSize: {bufferSize} numBuffers: {numBuffers}");
 
 
@@ -890,6 +1051,7 @@ namespace Csound.Unity
             // Stop() also clears them, but Init() can be the first call on a fresh play.
             namedAudioChannelDataDict.Clear();
             namedAudioChannelTempBufferDict.Clear();
+            _publishedAudioChannels.Clear();
 
             audioSource.spatializePostEffects = true;
 
@@ -1156,7 +1318,19 @@ namespace Csound.Unity
             _routePreMixBuffer    = System.Array.Empty<float>();
             _routingBlockStart    = -1;
             _routePreMixMaxSpinCh = 0;
+            _routeSnapshots       = System.Array.Empty<float[]>();
+            _routeCursors         = System.Array.Empty<int>();
+            _routeSnapshotLengths = System.Array.Empty<int>();
+            _routeStaleCounts     = System.Array.Empty<int>();
             _channelsIndexDict.Clear();
+
+            // Drop the published snapshots before clearing the live buffers, so instances routed
+            // from this one stop reading the last block it produced instead of looping it.
+            foreach (var published in _publishedAudioChannels.Values) published.Clear();
+            _publishedAudioChannels.Clear();
+            _outputBufferPublisher.Clear();
+            _outputBufferCursor = 0;
+
             namedAudioChannelDataDict.Clear();
             namedAudioChannelTempBufferDict.Clear();
             if (csound != null)
@@ -2560,6 +2734,14 @@ namespace Csound.Unity
         /// <param name="channel">An existing audio channel buffer</param>
         /// <param name="sample">Zero-based sample index within the channel buffer.</param>
         /// <returns>The sample value at <paramref name="sample"/>, or 0 if the channel or index is invalid.</returns>
+        /// <remarks>
+        /// Reads the live working buffer, which the audio thread is writing into. Called from the
+        /// main thread it may therefore return a sample from a block that is only half produced,
+        /// and it will keep returning the last block written if the instance stops updating it
+        /// (muted, paused, or finished). Fine for metering and visualisation, where an occasional
+        /// wrong sample does not matter; not a safe way to move audio between instances — audio
+        /// input routing and <see cref="CsoundUnityChild"/> use published snapshots for that.
+        /// </remarks>
         public double GetAudioChannelSample(string channel, int sample)
         {
             if (!namedAudioChannelDataDict.ContainsKey(channel))
@@ -3965,88 +4147,86 @@ namespace Csound.Unity
                         // always remember OnAudioFilterRead runs on a different thread
                         if (_quitting || !initialized || csound == null) return;
 
-                        if (mute)
+                        // Note this is gated on ShouldPerform, not IsSilenced: muting silences the
+                        // output but Csound keeps running, so the score stays in time.
+                        if (ShouldPerform && ksmpsLen > 0 && ksmpsIndex >= ksmpsLen)
                         {
+                            // Clear spin once per ksmps block so all contributors start from zero
+                            // and mix additively without stale data from the previous block.
+                            // Only paid when spin is actually in use (routes, clip audio, or recently cleared).
+                            var spinInUse = processClipAudio
+                                            || (audioInputRoutes != null && audioInputRoutes.Count > 0)
+                                            || _spinNeedsClearing
+                                            || nativeAudioInputProvider != null;
+                            if (spinInUse)
+                            {
+                                ClearSpin();
+
+                                // Flush clip audio from the previous period's staging buffer.
+                                if (processClipAudio)
+                                    FlushClipSpinBuffer(numChannels);
+
+                                // Add audio from input routes (uses AddInputSample — additive).
+                                ApplyAudioInputRoutes(frame, numChannels);
+
+                                // Feed native microphone samples into spin (CoreAudio / AAudio).
+                                nativeAudioInputProvider?.FillSpinBuffer(
+                                    (int)ksmpsLen, csound.GetNchnlsInput());
+                            }
+
+                            System.Threading.Interlocked.Increment(ref _performKsmpsDepth);
+                            var res = PerformKsmps();
+                            System.Threading.Interlocked.Decrement(ref _performKsmpsDepth);
+                            performanceFinished = res != 0;
+                            ksmpsIndex = 0;
+
+                            foreach (var chanName in availableAudioChannels)
+                            {
+                                if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
+                                // Use the zero-allocation overload to avoid GC pressure on the audio thread.
+                                GetAudioChannel(chanName, namedAudioChannelTempBufferDict[chanName]);
+                            }
+
+                            OnCsoundPerformKsmps?.Invoke();
+                        }
+
+                        // Stage the incoming clip sample before the output write below overwrites
+                        // it. Muting silences the output, not the input, so this keeps running
+                        // while muted — hence ShouldPerform rather than IsSilenced.
+                        if (processClipAudio && ShouldPerform)
+                        {
+                            // Flushed into spin at the next ksmps boundary, so it mixes
+                            // additively with any Audio Input Routes.
+                            _clipSpinBuffer[(int)ksmpsIndex * numChannels + (int)channel] =
+                                samples[i + channel] * zerdbfs;
+                        }
+
+                        if (IsSilenced)
+                        {
+                            // Muted, paused, or the score ended naturally — in the last case
+                            // MonitorPerformanceEnd fires OnCsoundPerformanceFinished and
+                            // calls Stop() on the main thread.
                             samples[i + channel] = 0.0f;
                         }
                         else
                         {
-                            if (!performanceFinished && ksmpsLen > 0 && ksmpsIndex >= ksmpsLen)
+                            var outputSampleChannel = channel < (uint)nchnls ? channel : (uint)(nchnls - 1);
+                            var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) * inv0dbfs * startupFade;
+                            // multiply Csound output by the sample value to maintain spatialization set by Unity.
+                            // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
+                            samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
+
+                            if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
                             {
-                                // Clear spin once per ksmps block so all contributors start from zero
-                                // and mix additively without stale data from the previous block.
-                                // Only paid when spin is actually in use (routes, clip audio, or recently cleared).
-                                var spinInUse = processClipAudio
-                                                || (audioInputRoutes != null && audioInputRoutes.Count > 0)
-                                                || _spinNeedsClearing
-                                                || nativeAudioInputProvider != null;
-                                if (spinInUse)
-                                {
-                                    ClearSpin();
-
-                                    // Flush clip audio from the previous period's staging buffer.
-                                    if (processClipAudio)
-                                        FlushClipSpinBuffer(numChannels);
-
-                                    // Add audio from input routes (uses AddInputSample — additive).
-                                    ApplyAudioInputRoutes(frame, numChannels);
-
-                                    // Feed native microphone samples into spin (CoreAudio / AAudio).
-                                    nativeAudioInputProvider?.FillSpinBuffer(
-                                        (int)ksmpsLen, csound.GetNchnlsInput());
-                                }
-
-                                System.Threading.Interlocked.Increment(ref _performKsmpsDepth);
-                                var res = PerformKsmps();
-                                System.Threading.Interlocked.Decrement(ref _performKsmpsDepth);
-                                performanceFinished = res != 0;
-                                ksmpsIndex = 0;
-
-                                foreach (var chanName in availableAudioChannels)
-                                {
-                                    if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
-                                    // Use the zero-allocation overload to avoid GC pressure on the audio thread.
-                                    GetAudioChannel(chanName, namedAudioChannelTempBufferDict[chanName]);
-                                }
-
-                                OnCsoundPerformKsmps?.Invoke();
-                            }
-
-                            if (performanceFinished)
-                            {
-                                // Score ended naturally: output silence and let MonitorPerformanceEnd
-                                // fire OnCsoundPerformanceFinished and call Stop() on the main thread.
                                 samples[i + channel] = 0.0f;
-                            }
-                            else
-                            {
-                                if (processClipAudio)
-                                {
-                                    // Stage clip sample into the per-ksmps buffer.
-                                    // It will be flushed into spin at the next ksmps boundary,
-                                    // so it mixes additively with any Audio Input Routes.
-                                    _clipSpinBuffer[(int)ksmpsIndex * numChannels + (int)channel] =
-                                        samples[i + channel] * zerdbfs;
-                                }
-
-                                var outputSampleChannel = channel < (uint)nchnls ? channel : (uint)(nchnls - 1);
-                                var output = (float)GetOutputSample((int)ksmpsIndex, (int)outputSampleChannel) * inv0dbfs * startupFade;
-                                // multiply Csound output by the sample value to maintain spatialization set by Unity.
-                                // don't multiply if reading from a clip: this should maintain the spatialization of the clip anyway
-                                samples[i + channel] = processClipAudio ? output : samples[i + channel] * output;
-
-                                if (loudVolumeWarning && (samples[i + channel] > loudWarningThreshold))
-                                {
-                                    samples[i + channel] = 0.0f;
-                                    Debug.LogWarning("Volume is too high! Clearing output");
-                                }
+                                Debug.LogWarning("Volume is too high! Clearing output");
                             }
                         }
                     }
 
                     // Capture ALL Csound output channels (up to nchnls) into the full-channel buffer
                     // for visualisations and future audio routing. Only when needed and performance is running.
-                    if (updateOutputBuffer && !mute && !performanceFinished && _csoundOutBuffer != null)
+                    if (updateOutputBuffer && !IsSilenced && _csoundOutBuffer != null)
                     {
                         for (int ch = 0; ch < nchnls; ch++)
                             _csoundOutBuffer[frame * nchnls + ch] = (float)GetOutputSample((int)ksmpsIndex, ch) * inv0dbfs;
@@ -4055,7 +4235,7 @@ namespace Csound.Unity
                     // Auto-populate spout named channels (main_out_0, main_out_1, ...) so that any
                     // CsoundUnity instance can be used as an audio source in AudioInputRoutes
                     // without modifying the CSD to add chnset lines.
-                    if (!mute && !performanceFinished && _spoutChannelNames.Length > 0)
+                    if (!IsSilenced && _spoutChannelNames.Length > 0)
                     {
                         for (int ch = 0; ch < _spoutChannelNames.Length; ch++)
                         {
@@ -4065,12 +4245,13 @@ namespace Csound.Unity
                         }
                     }
 
-                    // update the audioChannels just when this instance is not muted and performance is still running
-                    // Note: when performanceFinished is true, ksmpsIndex is never reset (the PerformKsmps guard
-                    // includes !performanceFinished), so it would grow past the temp buffer bounds — skip here.
-                    // Also guard ksmpsIndex against the temp buffer length in case GetKsmps() is not yet
-                    // available or the buffer hasn't been refreshed yet after PerformKsmps.
-                    if (!mute && !performanceFinished)
+                    // Update the audioChannels only while this instance is actually producing audio.
+                    // Besides being pointless otherwise, IsSilenced covers the cases where ksmpsIndex
+                    // is never reset (only PerformKsmps resets it), which would grow past the temp
+                    // buffer bounds. Also guard ksmpsIndex against the temp buffer length in case
+                    // GetKsmps() is not yet available, or the buffer has not been refreshed after
+                    // PerformKsmps.
+                    if (!IsSilenced)
                     {
                         foreach (var chanName in availableAudioChannels)
                         {
@@ -4084,9 +4265,62 @@ namespace Csound.Unity
                     }
                 }
 
+                // Publish the finished block. Everything above wrote into live working arrays
+                // that other threads must not read directly; from here on the snapshot is what
+                // routed destinations and monitors see.
+                PublishAudioChannels(frames, silent: IsSilenced);
+
                 if (updateOutputBuffer && _csoundOutBuffer != null)
                     UpdateOutputBuffer(_csoundOutBuffer, nchnls);
             }
+        }
+
+        /// <summary>
+        /// Publishes the finished contents of <see cref="namedAudioChannelDataDict"/> into the
+        /// per-channel <see cref="CsoundSharedBuffer"/> snapshots read by routed destinations and
+        /// other observers.
+        /// </summary>
+        /// <param name="frames">Number of frames produced in this DSP block.</param>
+        /// <param name="silent">
+        /// When <c>true</c> a block of silence is published instead of the channel contents —
+        /// pass <see cref="IsSilenced"/>. While this instance is silenced the live buffers are
+        /// not being updated, so publishing them would leave destinations looping the last block
+        /// it produced.
+        /// </param>
+        private void PublishAudioChannels(int frames, bool silent)
+        {
+            if (frames <= 0 || namedAudioChannelDataDict.Count == 0) return;
+
+            // Grows only when the DSP block size changes, so in steady state this allocates
+            // nothing on the audio thread — the same bargain the rest of this file makes.
+            if (silent && (_silencePublishBuffer == null || _silencePublishBuffer.Length < frames))
+                _silencePublishBuffer = new float[frames];
+
+            foreach (var entry in namedAudioChannelDataDict)
+            {
+                if (string.IsNullOrEmpty(entry.Key) || entry.Value == null) continue;
+
+                if (!_publishedAudioChannels.TryGetValue(entry.Key, out var publisher))
+                {
+                    publisher = new CsoundSharedBuffer();
+                    _publishedAudioChannels[entry.Key] = publisher;
+                }
+
+                var length = System.Math.Min(frames, entry.Value.Length);
+                if (silent) publisher.Publish(_silencePublishBuffer, length);
+                else publisher.Publish(entry.Value, length);
+            }
+        }
+
+        /// <summary>
+        /// Returns the published snapshot buffer for <paramref name="channelName"/>, or
+        /// <c>null</c> if this instance has never published that channel.
+        /// </summary>
+        internal CsoundSharedBuffer GetPublishedAudioChannel(string channelName)
+        {
+            if (string.IsNullOrEmpty(channelName)) return null;
+            _publishedAudioChannels.TryGetValue(channelName, out var publisher);
+            return publisher;
         }
 
         /// <summary>
@@ -4177,6 +4411,16 @@ namespace Csound.Unity
                 _spinFadeIndices = next;
             }
 
+            // Keep the per-route snapshot arrays in sync. Cursors reset with the route list,
+            // which is correct: a rebuilt route should take the next published block.
+            if (_routeSnapshots.Length != count)
+            {
+                _routeSnapshots       = new float[count][];
+                _routeCursors         = new int[count];
+                _routeSnapshotLengths = new int[count];
+                _routeStaleCounts     = new int[count];
+            }
+
             // Find max destination spin channel.
             int maxSpinCh = 0;
             for (int r = 0; r < count; r++)
@@ -4202,7 +4446,46 @@ namespace Csound.Unity
                 var route = audioInputRoutes[r];
                 if (route == null || route.source == null || !route.source.IsInitialized) continue;
                 if (string.IsNullOrEmpty(route.sourceChannelName)) continue;
-                if (!route.source.namedAudioChannelDataDict.TryGetValue(route.sourceChannelName, out var srcData)) continue;
+
+                // Read the source's published snapshot rather than its live working array.
+                // The source fills that array sample-by-sample from its own audio callback, and
+                // Unity gives no ordering guarantee between the two callbacks, so reading it
+                // directly can pick up a half-written block (and, on 32-bit ARM, torn doubles).
+                var publisher = route.source.GetPublishedAudioChannel(route.sourceChannelName);
+                if (publisher == null) continue;
+
+                var wanted = publisher.Length;
+                if (wanted <= 0) continue;
+
+                var snapshot = _routeSnapshots[r];
+                if (snapshot == null || snapshot.Length < wanted)
+                {
+                    snapshot = new float[wanted];
+                    _routeSnapshots[r] = snapshot;
+                }
+
+                var copied = publisher.Read(snapshot, wanted, ref _routeCursors[r]);
+                if (copied > 0)
+                {
+                    _routeSnapshotLengths[r] = copied;
+                    _routeStaleCounts[r]     = 0;
+                }
+                else
+                {
+                    // No new block since the last read. Reusing the held snapshot is correct for
+                    // a bounded number of blocks: the source publishes once per DSP buffer while
+                    // routing blocks can be shorter, so each one reads a later window of the same
+                    // snapshot, and one spare miss rides out a rejected torn read. Beyond that the
+                    // source has stopped publishing (disabled, destroyed, Csound no longer
+                    // running) and repeating its last block would be an audible buzz, so drop it.
+                    var maxMisses = Mathf.Max(2, routingSize > 0 ? bufferSize / routingSize : 2);
+                    if (++_routeStaleCounts[r] > maxMisses)
+                        _routeSnapshotLengths[r] = 0;
+                }
+
+                var srcData = snapshot;
+                var srcLen  = _routeSnapshotLengths[r];
+                if (srcLen <= 0) continue;
 
                 if (_spinFadeIndices[r] < 0) _spinFadeIndices[r] = 0;
 
@@ -4212,14 +4495,14 @@ namespace Csound.Unity
                 for (int k = 0; k < routingSize; k++)
                 {
                     int srcFrame = blockStart + k;
-                    if (srcFrame >= srcData.Length) break;
+                    if (srcFrame >= srcLen) break;
 
                     float spinFade = _spinFadeIndices[r] < SpinFadeSamples
                         ? _spinFadeIndices[r]++ / (float)SpinFadeSamples
                         : 1f;
 
                     _routePreMixBuffer[k * maxSpinCh + spinCh] +=
-                        (float)srcData[srcFrame] * zerdbfs * spinFade * routeLevel;
+                        srcData[srcFrame] * zerdbfs * spinFade * routeLevel;
                 }
             }
         }
@@ -4252,23 +4535,15 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Copies <paramref name="samples"/> into the double-buffer exposed as <see cref="OutputBuffer"/>.
+        /// Publishes <paramref name="samples"/> to the snapshot buffer exposed as <see cref="OutputBuffer"/>.
         /// <paramref name="numChannels"/> should reflect the actual Csound <c>nchnls</c> so that all
         /// output channels (not just Unity's stereo pair) are available to visualisers and audio routing.
         /// No-op when <see cref="updateOutputBuffer"/> is false.
         /// </summary>
         private void UpdateOutputBuffer(float[] samples, int numChannels)
         {
-            if (!updateOutputBuffer) return;
-            if (bufferA.Length != samples.Length)
-            {
-                bufferA = new float[samples.Length];
-                bufferB = new float[samples.Length];
-            }
-            Array.Copy(samples, activeBufferIndex == 0 ? bufferA : bufferB, samples.Length);
-            outputBuffer = activeBufferIndex == 0 ? bufferA : bufferB;
-            activeBufferIndex = activeBufferIndex == 0 ? 1 : 0;
-            OutputChannels = numChannels;
+            if (!updateOutputBuffer || samples == null) return;
+            _outputBufferPublisher.Publish(samples, samples.Length, numChannels);
         }
 
         /// <summary>
@@ -4328,6 +4603,7 @@ namespace Csound.Unity
 
             this.namedAudioChannelDataDict.Clear();
             this.namedAudioChannelTempBufferDict.Clear();
+            this._publishedAudioChannels.Clear();
         }
 
         private bool _quitting = false;

@@ -2,7 +2,7 @@
 
 - [Add] Unity Timelines integration: Channel (Fixed/Random/RandomSmooth) and Score (Score/Swarm/Arpeggio/Euclidean/Stochastic/Chord/Pattern/Step) clips, CsoundTimelineStarter
 - [Add] Timeline Sequencer UI: runtime UGUI builders for Step and Pattern sequencer modes (StepUIBuilder, PatternUIBuilder, SequencerUIBase); chip navigation, per-step popup (note/vel/dur), randomize, named presets (SequencerPreset ScriptableObject); CsoundTimelineController for PlayableGraph traversal and runtime BPM/step/pattern API
-- [Add] Audio Input Routing: connect CsoundUnity instances to feed audio into another instance's spin buffer, with cycle detection, mute toggle and per-route level control
+- [Add] Audio Input Routing: connect CsoundUnity instances to feed audio into another instance's spin buffer, with cycle detection, mute toggle and per-route level control. Each hop carries one DSP buffer of latency; a muted source feeds silence to its destinations
 - [Add] AudioRouteGraphWindow: interactive node/edge editor to visualise and edit the audio route graph across all scene instances
 - [Add] IAudioGenerator audio path for Unity 6+: drives the AudioSource directly via CsoundUnity.Process, set as default on Unity 6 (OnAudioFilterRead remains available)
 - [Add] RootOutput audio path for Unity 6+: writes Csound output directly into Unity's main audio output via RootOutputInstance, bypassing the AudioMixer and requiring no AudioSource; Audio Output Path is now a dedicated inspector section
@@ -10,7 +10,7 @@
 - [Add] LoadCsdFromString: load a raw CSD from a string at runtime without a `.csd` asset (runtime counterpart of the editor-only SetCsd); string-based parsers ParseCsdString/ParseCsdStringForNchnls/ParseCsdStringForKsmps
 - [Add] CsoundUnityMidiInput: platform-agnostic MIDI input component (macOS/iOS/visionOS via CoreMIDI, Android via android.media.midi API 23+, Windows via WinMM — short messages only, no SysEx)
 - [Add] Waveform, spectrum, oscilloscope and Lissajous audio monitor in inspector (play mode, with zoom sliders)
-- [Add] OutputBuffer and OnCsoundPerformKsmps callback
+- [Add] OutputBuffer and OnCsoundPerformKsmps callback. OutputBuffer hands back a complete DSP block, safe to poll from the main thread at any rate; when no new block has been produced the previous contents are returned unchanged
 - [Add] MusicUtils: music theory utilities (scales, chords, arpeggios, Euclidean rhythms)
 - [Add] Utility scripts: AudioDisplay, FFTUtils, TableLoader, WriteAudioFileUtils, CopyFilesToPersistentDataPath, RemapUtils
 - [Add] AudioSamplesUtils.Rms() and Peak() helpers
@@ -32,6 +32,9 @@
 - [Update] CsoundCsharp.cs and CsoundUnityBridge.cs updated for the Csound 7 API (breaking changes: csoundCreate, csoundCompileOrc, csoundCompileCSD, csoundEventString, csoundGetChannels and others)
 - [Update] Inspector: sr/kr/ksmps redesign with single override toggle
 - [Update] CsoundUnitySlider now applies skew (logarithmic/exponential mapping) and increment (stepped values) from ChannelController
+- [Add] pauseProcessing: silences the output **and** stops Csound performing, with no DSP cost. The score freezes, so clearing the flag resumes from exactly where it stopped; unlike disabling the GameObject or calling Stop() nothing is torn down. This is the behaviour `mute` used to have
+- [Fix] CsoundUnityChild could click, and kept sounding after its parent was silenced: it read the parent's live working buffer from its own audio callback, and Unity defines no ordering between the two, so it could pick up a half-written block — and on 32-bit ARM a torn sample. A parent that stopped updating that buffer left the child looping its last block instead of falling silent. It now reads the completed blocks the parent publishes at the end of each DSP period
+- [Change] **mute now means silence, not freeze.** It silences the output while Csound keeps performing, so the score stays in time and unmuting drops back in on the beat instead of resuming where it left off; inputs (audio input routes, native audio input, clip audio) keep flowing in. Previously muting skipped PerformKsmps entirely and froze the score. Use the new pauseProcessing for the old behaviour
 - [Fix] CsoundFileWatcher: handle atomic saves from modern editors
 - [Fix] Presets: AssetDatabase.ImportAsset crash on JSON save, null checks in SetPreset/UpdateAssignablePresets, "To JSON" now saves alongside the SO asset by default, JSON list filtered to current CSD
 - [Fix] Presets: combobox channels applied one option too low (Cabbage index is 1-based) and stale combobox options in a saved preset overwrote the current CSD's option set

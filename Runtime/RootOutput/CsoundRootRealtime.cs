@@ -141,6 +141,12 @@ namespace Csound.Unity
             var ksmps    = (int)bridge.GetKsmps();
             var inv0dbfs = ksmps > 0 ? 1f / (float)bridge.Get0dbfs() : 1f;
 
+            // Honour mute and pause. Read once per call rather than per sample.
+            //   muted  — Csound still performs, only this output is silenced, so the score stays
+            //            in time and routed destinations receive published silence.
+            //   paused — PerformKsmps is skipped below: no DSP work at all, score frozen.
+            var outputGain = bridge.OutputGain;
+
             if (ksmps <= 0)
             {
                 output.Clear();
@@ -154,9 +160,12 @@ namespace Csound.Unity
                     // Spin-fill immediately before PerformKsmps, at the real ksmps
                     // boundary frame — the only place this callback fires (see
                     // EarlyProcessing remarks for why it isn't duplicated there).
+                    // Keep firing this even while paused: it is what refreshes Muted / Paused
+                    // from CsoundUnity, so skipping it would leave the pause impossible to lift.
                     CsoundBridgeRegistry.InvokeSpinFillCallback(InstanceId, f);
 
-                    var result = bridge.PerformKsmps();
+                    var result = 0;
+                    if (!bridge.Paused) result = bridge.PerformKsmps();
                     _ksmpsIndex = 0;
 
                     CsoundBridgeRegistry.InvokeKsmpsCallback(InstanceId, f);
@@ -180,7 +189,7 @@ namespace Csound.Unity
                 for (var ch = 0; ch < output.channelCount; ch++)
                 {
                     var csoundCh = ch < nchnls ? ch : nchnls - 1;
-                    output[ch, f] = (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade;
+                    output[ch, f] = (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade * outputGain;
                 }
             }
         }

@@ -73,6 +73,33 @@ namespace Csound.Unity
         // Resized only when ksmps*nchnlsInput changes (essentially never at runtime).
 
         /// <summary>
+        /// Mirrors the owning <c>CsoundUnity.mute</c> flag so that the audio paths which read
+        /// spout without going through <c>ProcessBlock</c> — IAudioGenerator and RootOutput —
+        /// can honour it. <c>ProcessBlock</c> checks <c>mute</c> directly and does not use this.
+        /// <para>Written from the audio thread once per ksmps and read on the same thread.</para>
+        /// </summary>
+        public volatile bool Muted;
+
+        /// <summary>
+        /// Mirrors the owning <c>CsoundUnity.pauseProcessing</c> flag, for the same reason as
+        /// <see cref="Muted"/>. When set, those paths skip <c>PerformKsmps</c> entirely and
+        /// output silence.
+        /// <para>
+        /// They must nonetheless keep invoking the spin-fill callback that refreshes this flag:
+        /// it is the only thing that can clear it again, so skipping it would make the pause
+        /// impossible to lift.
+        /// </para>
+        /// </summary>
+        public volatile bool Paused;
+
+        /// <summary>
+        /// Gain the audio paths that read spout directly should apply to their output: 0 while
+        /// muted or paused, 1 otherwise. Exists so the two of them — IAudioGenerator and
+        /// RootOutput — cannot drift apart on what "silent" means.
+        /// </summary>
+        public float OutputGain => (Muted || Paused) ? 0f : 1f;
+
+        /// <summary>
         /// MIDI: thread-safe queue of raw MIDI messages enqueued from any thread,
         /// drained on the audio thread by the MidiReadCallback every ksmps.
         /// </summary>

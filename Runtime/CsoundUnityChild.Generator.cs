@@ -53,8 +53,30 @@ namespace Csound.Unity
         #region Serialized
 
         [Tooltip("Choose between the classic OnAudioFilterRead path and the Unity 6+ IAudioGenerator path.\n" +
-                 "IAudioGenerator drives the AudioSource directly without a dummy clip.")]
+                 "IAudioGenerator drives the AudioSource directly without a dummy clip.\n" +
+                 "RootOutput is not implemented for children yet and falls back to OnAudioFilterRead.")]
         [SerializeField] private AudioPath _audioPath = AudioPath.IAudioGenerator;
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Keeps <see cref="_audioPath"/> to the values this component actually implements.
+        /// <para>
+        /// The enum is shared with <see cref="CsoundUnity"/>, so <c>RootOutput</c> shows up in the
+        /// inspector here too — but there is no child implementation of it, and selecting it would
+        /// silently fall back to <c>OnAudioFilterRead</c>. Rather than let the inspector claim
+        /// something that does not happen, snap it back and say so.
+        /// </para>
+        /// </summary>
+        private void OnValidate()
+        {
+            if (_audioPath != AudioPath.RootOutput) return;
+
+            _audioPath = AudioPath.OnAudioFilterRead;
+            Debug.LogWarning($"[CsoundUnityChild] RootOutput is not implemented for children — " +
+                             $"'{name}' has been set back to OnAudioFilterRead. A child needs its " +
+                             $"own AudioSource, which RootOutput bypasses.", this);
+        }
+#endif
 
         #endregion
         #region Runtime state (IAudioGenerator)
@@ -143,9 +165,9 @@ namespace Csound.Unity
 
             var entry = new CsoundChildEntry
             {
-                ChannelNames    = chanNames,
-                ChannelDataDict = csoundUnity.namedAudioChannelDataDict,
-                Zerodbfs        = csoundUnity.Get0dbfs(),
+                ChannelNames = chanNames,
+                Parent       = csoundUnity,
+                Zerodbfs     = csoundUnity.Get0dbfs(),
             };
 
             _childInstanceId        = CsoundChildRegistry.Register(entry);

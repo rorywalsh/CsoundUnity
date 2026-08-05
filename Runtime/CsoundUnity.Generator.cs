@@ -361,6 +361,25 @@ namespace Csound.Unity
             }
             _lastSpinFillOffset = bufferFrameOffset;
 
+            // Publish mute / pause to the bridge: unlike ProcessBlock, the IAudioGenerator and
+            // RootOutput output paths read spout without ever consulting CsoundUnity, so this is
+            // how they learn about them. Both call this callback once per ksmps — and they keep
+            // calling it while paused, which is what makes the pause liftable.
+            if (csound == null) return;
+            csound.Muted  = mute;
+            csound.Paused = pauseProcessing;
+
+            if (pauseProcessing)
+            {
+                // Csound will not perform this block, so clearing spin and mixing routes into it
+                // would be wasted work. The native input ring still has to be drained, though:
+                // left to fill up on its own it would overrun or drift for as long as the pause
+                // lasts, and resuming would play back a backlog.
+                nativeAudioInputProvider?.FillSpinBuffer(
+                    (int)csound.GetKsmps(), csound.GetNchnlsInput());
+                return;
+            }
+
             var spinInUse = (audioInputRoutes != null && audioInputRoutes.Count > 0)
                             || _spinNeedsClearing
                             || nativeAudioInputProvider != null;
@@ -414,41 +433,59 @@ namespace Csound.Unity
 
             var ksmpsLen = (int)GetKsmps();
 
-            foreach (var chanName in availableAudioChannels)
+            // Gated exactly as the equivalent blocks in ProcessBlock are. While paused there is
+            // nothing new to read out of Csound anyway, and while muted these live arrays must
+            // stay untouched: they are public, and CsoundUnityChild reads them directly, so
+            // filling them would let a muted instance keep sounding through its children.
+            // Publishing still happens below either way, as silence.
+            if (!IsSilenced)
             {
-                if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
-
-                // Use the zero-allocation overload: writes directly into the pre-allocated
-                // buffer, avoiding the managed MYFLT[] allocation that causes GC pauses.
-                GetAudioChannel(chanName, namedAudioChannelTempBufferDict[chanName]);
-
-                if (!namedAudioChannelDataDict.ContainsKey(chanName)) continue;
-
-                // Write the ksmps samples into the correct frame range of the DSP buffer.
-                var tempBuf = namedAudioChannelTempBufferDict[chanName];
-                var dataArr = namedAudioChannelDataDict[chanName];
-                for (var j = 0; j < ksmpsLen && j < tempBuf.Length && (bufferFrameOffset + j) < dataArr.Length; j++)
-                    dataArr[bufferFrameOffset + j] = tempBuf[j];
-            }
-
-            // Auto-populate spout named channels (main_out_0, main_out_1, ...) for audio routing.
-            if (_spoutChannelNames.Length > 0)
-            {
-                var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
-                for (var ch = 0; ch < _spoutChannelNames.Length; ch++)
+                foreach (var chanName in availableAudioChannels)
                 {
-                    if (!namedAudioChannelDataDict.TryGetValue(_spoutChannelNames[ch], out var spoutBuf)) continue;
-                    for (var k = 0; k < ksmpsLen; k++)
+                    if (!namedAudioChannelTempBufferDict.ContainsKey(chanName)) continue;
+
+                    // Use the zero-allocation overload: writes directly into the pre-allocated
+                    // buffer, avoiding the managed MYFLT[] allocation that causes GC pauses.
+                    GetAudioChannel(chanName, namedAudioChannelTempBufferDict[chanName]);
+
+                    if (!namedAudioChannelDataDict.ContainsKey(chanName)) continue;
+
+                    // Write the ksmps samples into the correct frame range of the DSP buffer.
+                    var tempBuf = namedAudioChannelTempBufferDict[chanName];
+                    var dataArr = namedAudioChannelDataDict[chanName];
+                    for (var j = 0; j < ksmpsLen && j < tempBuf.Length && (bufferFrameOffset + j) < dataArr.Length; j++)
+                        dataArr[bufferFrameOffset + j] = tempBuf[j];
+                }
+
+                // Auto-populate spout named channels (main_out_0, main_out_1, ...) for routing.
+                if (_spoutChannelNames.Length > 0)
+                {
+                    var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
+                    for (var ch = 0; ch < _spoutChannelNames.Length; ch++)
                     {
-                        var frame = bufferFrameOffset + k;
-                        if (frame >= spoutBuf.Length) break;
-                        spoutBuf[frame] = GetOutputSample(k, ch) * inv0dbfs;
+                        if (!namedAudioChannelDataDict.TryGetValue(_spoutChannelNames[ch], out var spoutBuf)) continue;
+                        for (var k = 0; k < ksmpsLen; k++)
+                        {
+                            var frame = bufferFrameOffset + k;
+                            if (frame >= spoutBuf.Length) break;
+                            spoutBuf[frame] = GetOutputSample(k, ch) * inv0dbfs;
+                        }
                     }
                 }
             }
 
-            // Fire the same event that ProcessBlock fires so existing listeners keep working.
-            OnCsoundPerformKsmps?.Invoke();
+            // On the last ksmps block of the DSP buffer the live arrays above are complete, so
+            // publish them for routed destinations and monitors. ProcessBlock does the same at
+            // the end of its own loop; this path never runs ProcessBlock, so without this an
+            // instance on the IAudioGenerator/RootOutput path would publish nothing and could
+            // not be used as a route source.
+            if (ksmpsLen > 0 && bufferFrameOffset + ksmpsLen >= bufferSize)
+                PublishAudioChannels(bufferSize, silent: IsSilenced);
+
+            // Fire the same event that ProcessBlock fires so existing listeners keep working,
+            // and gate it the same way: while paused no PerformKsmps ran, so there is nothing
+            // to report and the two paths would otherwise disagree.
+            if (ShouldPerform) OnCsoundPerformKsmps?.Invoke();
         }
 
         #endregion

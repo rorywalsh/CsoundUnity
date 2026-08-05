@@ -106,6 +106,29 @@ See [Audio Output Path](audio_output_path.md) for a full comparison.
 
 ---
 
+### `mute` now means silence, not freeze
+
+In 3.x, muting an instance also stopped Csound performing: `PerformKsmps` was skipped for as long as the mute lasted, so the score stood still and unmuting resumed from wherever it had stopped.
+
+In 4.0, **`mute` silences the output while Csound keeps performing**. The score advances while the instance is silent, so unmuting drops back in on the beat rather than replaying from the point it was muted. Inputs keep flowing in as well — audio input routes, native audio input and clip audio all still reach Csound, so effects fed by them stay warm.
+
+This matters most for anything time-based: with the old behaviour, muting a Timeline-driven or sequenced instance for a few seconds left it permanently behind, and the drift accumulated with every mute.
+
+The old behaviour is still available under its own name:
+
+```csharp
+csoundUnity.mute = true;             // silent, but still in time
+csoundUnity.pauseProcessing = true;  // silent, no DSP cost, score frozen (3.x mute)
+```
+
+`pauseProcessing` also gives back the CPU saving the old mute had, and unlike disabling the GameObject or calling `Stop()` it tears nothing down: the Csound instance, its state and its channel values are preserved, and resuming is immediate.
+
+Two related fixes come with this: `mute` previously had **no effect at all** on the IAudioGenerator and RootOutput paths (only `OnAudioFilterRead` honoured it), and a muted or paused instance now publishes silence to any instance routed from it instead of leaving it repeating the last block produced.
+
+Note that `AudioSource.mute` is a different switch and has not changed: it silences an instance's own monitoring but leaves it feeding its routed destinations at full level, and it has no effect on the RootOutput path, which does not use an AudioSource. See [Audio Input Routing](audio_input_routing.md#silencing-an-instance-which-switch-to-use).
+
+---
+
 ### Samples: Input System compatibility
 
 The v4 sample scenes use the **Legacy Input Manager** (`UnityEngine.Input`). If your project uses Unity's new Input System and the samples show input-related errors, the quickest fix is:

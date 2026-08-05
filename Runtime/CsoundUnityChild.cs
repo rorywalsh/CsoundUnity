@@ -79,7 +79,11 @@ namespace Csound.Unity
         public List<string> availableAudioChannels;
 
         /// <summary>
-        /// A list to hold the current audio buffer data for each channel
+        /// A list to hold the current audio buffer data for each channel.
+        /// <para>
+        /// These are this instance's own buffers, refilled from the parent's published snapshots
+        /// once per audio block — not references into the parent's live working arrays.
+        /// </para>
         /// </summary>
         [SerializeField]
         public List<MYFLT[]> namedAudioChannelData = new List<MYFLT[]>();
@@ -94,6 +98,30 @@ namespace Csound.Unity
         private MYFLT zerodbfs;
         private AudioSource audioSource;
         private CsoundUnity csoundUnity;
+
+        /// <summary>
+        /// Per-channel copies of the parent's published snapshots, and the read cursors into them.
+        /// <para>
+        /// This component runs on its own AudioSource, so its <c>OnAudioFilterRead</c> is a
+        /// different callback from the parent's, with no ordering defined between the two.
+        /// Reading the parent's live arrays directly therefore meant sometimes seeing a block
+        /// that was only half written — and, with no memory barrier, a torn <c>MYFLT</c> on
+        /// 32-bit ARM. Both are audible as clicks. It also meant that a parent which stopped
+        /// updating those arrays (muted, paused, or finished) left this component repeating its
+        /// last block for ever, rather than falling silent.
+        /// </para>
+        /// </summary>
+        private float[][] _channelSnapshots = System.Array.Empty<float[]>();
+        private int[] _channelCursors = System.Array.Empty<int>();
+        private int[] _channelStaleCounts = System.Array.Empty<int>();
+
+        /// <summary>
+        /// Consecutive blocks a channel may reuse its snapshot before being treated as silent.
+        /// One miss is normal — the parent publishes once per DSP buffer and the two callbacks
+        /// are not ordered — so the tolerance only has to catch a parent that has stopped
+        /// publishing altogether.
+        /// </summary>
+        private const int MaxStaleBlocks = 2;
 
         #endregion PRIVATE_FIELDS
 
@@ -260,28 +288,73 @@ namespace Csound.Unity
                 return;
             if (zerodbfs <= 0) return; // 0dbfs not yet known — wait for OnParentCsoundInitialized
 
-            for (int i = 0; i < (int)AudioChannelsSetting; i++)
+            var channelCount = (int)AudioChannelsSetting;
+            if (_channelSnapshots.Length != channelCount)
+            {
+                _channelSnapshots   = new float[channelCount][];
+                _channelCursors     = new int[channelCount];
+                _channelStaleCounts = new int[channelCount];
+            }
+
+            // Pull a complete published block per channel. Never read the parent's live arrays:
+            // they are written sample by sample on the parent's own audio callback, which is not
+            // ordered against this one.
+            for (int i = 0; i < channelCount; i++)
             {
                 var chanToUse = availableAudioChannels[selectedAudioChannelIndexByChannel[i]];
-                if (string.IsNullOrWhiteSpace(chanToUse)) continue;
-                if (!csoundUnity.namedAudioChannelDataDict.ContainsKey(chanToUse)) continue;
-                namedAudioChannelData[i] = csoundUnity.namedAudioChannelDataDict[chanToUse];
+                if (string.IsNullOrWhiteSpace(chanToUse)) { _channelStaleCounts[i] = MaxStaleBlocks + 1; continue; }
+
+                var publisher = csoundUnity.GetPublishedAudioChannel(chanToUse);
+                if (publisher == null) { _channelStaleCounts[i] = MaxStaleBlocks + 1; continue; }
+
+                var wanted = publisher.Length;
+                if (wanted <= 0) { _channelStaleCounts[i] = MaxStaleBlocks + 1; continue; }
+
+                var snapshot = _channelSnapshots[i];
+                if (snapshot == null || snapshot.Length < wanted)
+                {
+                    snapshot = new float[wanted];
+                    _channelSnapshots[i] = snapshot;
+                }
+
+                // Zero means nothing new since the last block: reuse what we hold, unless the
+                // parent has clearly stopped publishing, in which case go silent rather than
+                // loop its last block.
+                if (publisher.Read(snapshot, wanted, ref _channelCursors[i]) > 0) _channelStaleCounts[i] = 0;
+                else _channelStaleCounts[i]++;
+
+                // Keep the public buffer in step with what is actually being played: it is part
+                // of this component's API, so leaving it holding the old references would be a
+                // silent change for anything reading it.
+                if (i < namedAudioChannelData.Count && namedAudioChannelData[i] != null)
+                {
+                    var dst = namedAudioChannelData[i];
+                    var n = System.Math.Min(dst.Length, wanted);
+                    for (var s = 0; s < n; s++) dst[s] = snapshot[s];
+                }
             }
 
             for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
             {
                 for (uint channel = 0; channel < numChannels; channel++)
                 {
-                    switch (AudioChannelsSetting)
+                    // Clamp to the configured channel count: Unity's output can have more channels
+                    // than this component reads (5.1, 7.1), and the extra ones should repeat the
+                    // last available rather than index past the end.
+                    var source = AudioChannelsSetting == AudioChannels.MONO
+                        ? 0
+                        : Mathf.Min((int)channel, channelCount - 1);
+                    var snapshot = _channelSnapshots[source];
+
+                    if (snapshot == null || _channelStaleCounts[source] > MaxStaleBlocks || sampleIndex >= snapshot.Length)
                     {
-                        case AudioChannels.MONO:
-                            // 0.5f compensates for the mono channel being duplicated to both output channels
-                            samples[i + channel] *= (float)(namedAudioChannelData[0][sampleIndex] / zerodbfs * 0.5f);
-                            break;
-                        case AudioChannels.STEREO:
-                            samples[i + channel] *= (float)(namedAudioChannelData[(int)channel][sampleIndex] / zerodbfs);
-                            break;
+                        samples[i + channel] = 0f;
+                        continue;
                     }
+
+                    // 0.5f compensates for the mono channel being duplicated to both output channels
+                    var gain = AudioChannelsSetting == AudioChannels.MONO ? 0.5f : 1f;
+                    samples[i + channel] *= (float)(snapshot[sampleIndex] / zerodbfs) * gain;
                 }
             }
         }

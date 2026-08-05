@@ -54,6 +54,7 @@ namespace Csound.Unity
         SerializedProperty m_csoundScore;
         SerializedProperty m_processAudio;
         SerializedProperty m_mute;
+        SerializedProperty m_pauseProcessing;
         SerializedProperty m_initializeOnAwake;
         SerializedProperty m_logCsoundOutput;
         SerializedProperty m_loudVolumeWarning;
@@ -154,6 +155,7 @@ namespace Csound.Unity
             m_csoundScore = this.serializedObject.FindProperty("csoundScore");
             m_processAudio = this.serializedObject.FindProperty("processClipAudio");
             m_mute = this.serializedObject.FindProperty("mute");
+            m_pauseProcessing = this.serializedObject.FindProperty("pauseProcessing");
             m_initializeOnAwake = this.serializedObject.FindProperty("initializeOnAwake");
             m_logCsoundOutput = this.serializedObject.FindProperty("logCsoundOutput");
             m_loudVolumeWarning = this.serializedObject.FindProperty("loudVolumeWarning");
@@ -442,7 +444,14 @@ namespace Csound.Unity
                     csoundUnity.ClearSpin();
                 }
                 m_initializeOnAwake.boolValue = EditorGUILayout.Toggle(new GUIContent("Initialize On Awake", "If disabled, call Initialize() manually from an external script."), m_initializeOnAwake.boolValue);
-                m_mute.boolValue = EditorGUILayout.Toggle("Mute Csound", m_mute.boolValue);
+                m_mute.boolValue = EditorGUILayout.Toggle(new GUIContent("Mute Csound",
+                    "Silence the output. Csound keeps performing, so the score stays in time and " +
+                    "routed destinations receive silence."), m_mute.boolValue);
+                if (m_pauseProcessing != null)
+                    m_pauseProcessing.boolValue = EditorGUILayout.Toggle(new GUIContent("Pause Processing",
+                        "Silence the output AND stop Csound performing — no DSP work at all. The score " +
+                        "freezes, so unpausing resumes exactly where it stopped. Nothing is torn down, " +
+                        "unlike disabling the GameObject or calling Stop()."), m_pauseProcessing.boolValue);
                 m_logCsoundOutput.boolValue = EditorGUILayout.Toggle("Log Csound Output", m_logCsoundOutput.boolValue);
                 m_loudVolumeWarning.boolValue = EditorGUILayout.Toggle("Loud Volume Warning", m_loudVolumeWarning.boolValue);
                 if (m_loudVolumeWarning.boolValue)

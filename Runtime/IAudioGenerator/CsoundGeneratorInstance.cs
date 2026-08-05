@@ -124,6 +124,12 @@ namespace Csound.Unity
             var ksmps    = (int)bridge.GetKsmps();
             var inv0dbfs = ksmps > 0 ? 1f / (float)bridge.Get0dbfs() : 1f;
 
+            // Honour mute and pause. Read once per call rather than per sample.
+            //   muted  — Csound still performs, only this output is silenced, so the score stays
+            //            in time and routed destinations receive published silence.
+            //   paused — PerformKsmps is skipped below: no DSP work at all, score frozen.
+            var outputGain = bridge.OutputGain;
+
             if (ksmps <= 0)
             {
                 // Csound not yet fully started — silence.
@@ -139,9 +145,12 @@ namespace Csound.Unity
             {
                 if (_ksmpsIndex >= ksmps)
                 {
+                    // Keep firing this even while paused: it is what refreshes Muted / Paused
+                    // from CsoundUnity, so skipping it would leave the pause impossible to lift.
                     CsoundBridgeRegistry.InvokeSpinFillCallback(InstanceId, f);
 
-                    var result = bridge.PerformKsmps();
+                    var result = 0;
+                    if (!bridge.Paused) result = bridge.PerformKsmps();
                     _ksmpsIndex = 0;
 
                     // Notify CsoundUnity (when in IAudioGenerator mode) so it can fill
@@ -171,7 +180,7 @@ namespace Csound.Unity
                 for (var ch = 0; ch < buffer.channelCount; ch++)
                 {
                     var csoundCh = ch < nchnls ? ch : nchnls - 1;
-                    buffer[ch, f] = (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade;
+                    buffer[ch, f] = (float)bridge.GetSpoutSample(_ksmpsIndex, csoundCh) * inv0dbfs * fade * outputGain;
                 }
             }
 

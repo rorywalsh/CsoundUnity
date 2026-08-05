@@ -70,6 +70,14 @@ When in doubt, **IAudioGenerator** is the default on Unity 6+ and covers most us
 
 ---
 
+### Silencing an instance ###
+
+`mute` and `pauseProcessing` behave identically on all three paths: `mute` silences the output while Csound keeps performing, `pauseProcessing` silences it and stops the DSP work as well. See [Audio Input Routing](audio_input_routing.md#silencing-an-instance-which-switch-to-use) for the full comparison, including how each one affects instances routed from this one.
+
+`AudioSource.mute` is a different switch and is **not** path-independent: it silences the AudioSource, so it has no effect at all on **RootOutput**, which writes to Unity's main output and does not use one.
+
+---
+
 ### NativeAudioOutput ###
 
 > **TODO** — coming soon.
