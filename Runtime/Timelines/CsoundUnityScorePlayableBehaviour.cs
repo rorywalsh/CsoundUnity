@@ -652,27 +652,117 @@ namespace Csound.Unity.Timelines
 
         #region All-notes-off
 
+        /// <summary>Instrument numbers already turned off in the current call, to avoid duplicates.</summary>
+        private readonly HashSet<int> _turnedOff = new HashSet<int>();
+
         /// <summary>
-        /// Sends a Csound "turn-off" score event (i -N 0 0) for the current
-        /// instrument. Kills any running voices immediately.
+        /// Sends a Csound "turn-off" score event (i -N 0 0) for every instrument this clip
+        /// can have started. Kills any running voices immediately.
         /// Called on clip end, scrub, loop reset, and mid-clip pause.
+        /// <para>
+        /// Which instruments those are depends on the mode: most take the single
+        /// <see cref="ScoreInfo.instrN"/>, while Score is free text that need not mention
+        /// <c>instrN</c> at all, and Pattern and Step have nothing worth cancelling.
+        /// </para>
         /// </summary>
         private void SendAllNotesOff()
         {
             if (!_csound || !Application.isPlaying) return;
 
-            // Pattern hits have 0.001 s duration — no sustained voices to cancel.
-            if (scoreInfo.mode == ScoreMode.Pattern) return;
+            _turnedOff.Clear();
 
-            if (scoreInfo.mode != ScoreMode.Swarm &&
-                scoreInfo.mode != ScoreMode.Arpeggio &&
-                scoreInfo.mode != ScoreMode.Euclidean &&
-                scoreInfo.mode != ScoreMode.Stochastic &&
-                scoreInfo.mode != ScoreMode.Chord) return;
-            if (!int.TryParse(scoreInfo.instrN, out var instrNum)) return;
+            switch (scoreInfo.mode)
+            {
+                // Pattern hits have 0.001 s duration — no sustained voices to cancel.
+                case ScoreMode.Pattern:
+                    break;
+
+                // Free text: turn off what the score actually starts. A score holding
+                // an indefinite note (i1 0 -1) would otherwise hang past the scrub.
+                case ScoreMode.Score:
+                    TurnOffScoreInstruments();
+                    break;
+
+                // Step lanes carry their own instruments, so instrN would miss them — but their
+                // gates are always finite and nobody has reported them outlasting a clip. Adding
+                // a turn-off here would widen the blast radius for a problem we don't have.
+                case ScoreMode.Step:
+                    break;
+
+                case ScoreMode.Swarm:
+                case ScoreMode.Arpeggio:
+                case ScoreMode.Euclidean:
+                case ScoreMode.Stochastic:
+                case ScoreMode.Chord:
+                    TurnOff(scoreInfo.instrN);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Sends the turn-off for one instrument, skipping numbers already handled in this call.
+        /// </summary>
+        private void TurnOff(string instrN)
+        {
+            if (!int.TryParse(instrN, out var instrNum) || instrNum <= 0) return;
+            TurnOff(instrNum);
+        }
+
+        private void TurnOff(int instrNum)
+        {
+            if (instrNum <= 0 || !_turnedOff.Add(instrNum)) return;
             if (verboseLog) Debug.Log($"[CsoundScore] ALL_NOTES_OFF  i -{instrNum} 0 0");
             _csound.SendScoreEvent($"i -{instrNum} 0 0");
         }
+
+        /// <summary>
+        /// Turns off the instruments the score text starts with a <b>held</b> note (p3 &lt; 0).
+        /// <para>
+        /// Only held notes are turned off. A note with a finite p3 ends on its own, so cancelling
+        /// it buys nothing and costs a great deal: <c>i -N 0 0</c> kills every running instance of
+        /// instrument N, whoever started it. With clips laid back to back on a track — the usual
+        /// arrangement — the outgoing clip's turn-off lands on the very frame the next one starts,
+        /// and can silence a note it has nothing to do with. Restricting it to held notes keeps
+        /// every ordinary score clip behaving exactly as it did before.
+        /// </para>
+        /// <para>
+        /// The instrument comes from the p1 of each <c>i</c> statement rather than from
+        /// <see cref="ScoreInfo.instrN"/>: the score is written by hand and may drive any
+        /// instrument, or several. A fractional p1 turns off its whole instrument —
+        /// <c>i -1 0 0</c> also kills 1.1.
+        /// </para>
+        /// Two forms are not covered: a named instrument (<c>i "name"</c>), which a numeric
+        /// turn-off cannot address, and a carried p1 (<c>i . 0 -1</c>). Both are left running.
+        /// </summary>
+        private void TurnOffScoreInstruments()
+        {
+            if (string.IsNullOrEmpty(score)) return;
+
+            foreach (var rawLine in score.Split('\n'))
+            {
+                var line = rawLine;
+                var comment = line.IndexOf(';');
+                if (comment >= 0) line = line.Substring(0, comment);
+                line = line.Trim();
+
+                if (line.Length < 2 || line[0] != 'i') continue;
+
+                // "i1 0 -1 440" and "i 1 0 -1 440" both yield p1, p2, p3 as the first
+                // three fields once the leading 'i' is gone.
+                var fields = line.Substring(1).Split(new[] { ' ', '\t' },
+                    System.StringSplitOptions.RemoveEmptyEntries);
+                if (fields.Length < 3) continue;
+
+                if (!TryParseP(fields[0], out var instrNum) || instrNum <= 0f) continue;
+                if (!TryParseP(fields[2], out var dur)      || dur      >= 0f) continue;
+
+                TurnOff(Mathf.FloorToInt(instrNum));
+            }
+        }
+
+        private static bool TryParseP(string field, out float value) =>
+            float.TryParse(field, System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture, out value);
 
         #endregion All-notes-off
 
@@ -1450,8 +1540,16 @@ namespace Csound.Unity.Timelines
             // into the next playback position.
             SendAllNotesOff();
 
+            // Any pause closes the current trigger, mid-clip ones included. Keeping the flag
+            // set across a mid-clip pause assumed Unity would recreate this behaviour on the
+            // next graph rebuild and hand us a fresh one — it does not always: after clicking
+            // back in the timeline, OnGraphStart reports hasTriggered=True on the same
+            // instance. The stale flag then blocks the re-arm in OnBehaviourPlay and the clip
+            // never plays again. Resuming mid-clip is unaffected: it comes back through
+            // OnBehaviourPlay with localTime > 0.02, which sets the flag again on its own.
+            _hasTriggered = false;
+
             if (!atEnd) return;
-            _hasTriggered        = false;
             _shouldTrigger       = false;
             _shouldTriggerFrames = 0;
             _previousTime        = -1;
@@ -1466,8 +1564,6 @@ namespace Csound.Unity.Timelines
             _chordNextTriggerTime   = 0;
             _patternStep            = 0;
             _patternNextStepTime    = 0;
-            // Mid-clip pause: keep _hasTriggered = true so OnBehaviourPlay
-            // returns early (resume path) and does not re-trigger.
         }
 
         public void SendScore()

@@ -40,7 +40,13 @@ using Csound.Unity.Utilities;
 
 namespace Csound.Unity.Timelines
 {
-    [CanEditMultipleObjects]
+    // Deliberately NOT [CanEditMultipleObjects]. Every field here is drawn as
+    // `m_x.value = EditorGUILayout.Field(m_x.value)`, with no change check. Under
+    // multi-selection a SerializedProperty getter returns the FIRST target's value while
+    // the setter writes to ALL of them, so a single repaint silently copied the first
+    // clip's mode and score over every other selected clip — losing their content.
+    // Restoring the attribute means first wrapping every field in
+    // BeginChangeCheck/EndChangeCheck and handling EditorGUI.showMixedValue.
     [CustomEditor(typeof(CsoundUnityScorePlayableClip))]
     public class CsoundUnityScorePlayableClipEditor : UnityEditor.Editor
     {
@@ -1466,11 +1472,6 @@ namespace Csound.Unity.Timelines
                             : $"Step: {patternStepDur * 1000f:F1} ms  —  cycle: {patternCycleDur:F3}s  |  Precise: sample-accurate, BPM read at cycle boundary",
                         EditorStyles.miniLabel);
 
-                    // Verbose log
-                    EditorGUILayout.BeginHorizontal();
-                    m_verboseLog.boolValue = EditorGUILayout.ToggleLeft("Verbose Log", m_verboseLog.boolValue);
-                    EditorGUILayout.EndHorizontal();
-
                     EditorGUILayout.Space(6);
 
                     #region Snap buttons
@@ -2012,9 +2013,6 @@ namespace Csound.Unity.Timelines
 
                     EditorGUILayout.LabelField("p3=dur  p4=vel  p5=pan  p6=pitch(Hz)", EditorStyles.miniLabel);
 
-                    // Verbose log
-                    m_verboseLog.boolValue = EditorGUILayout.ToggleLeft("Verbose Log", m_verboseLog.boolValue);
-
                     EditorGUILayout.Space(4);
 
                     // Snap buttons
@@ -2339,6 +2337,14 @@ namespace Csound.Unity.Timelines
             m_score.stringValue = EditorGUILayout.TextArea(m_score.stringValue,
                 GUILayout.MinHeight(EditorGUIUtility.singleLineHeight * 4));
 #endif
+
+            // Every mode logs through the same behaviour, so the toggle belongs to the clip,
+            // not to Pattern and Step — which happened to be the only two drawing it.
+            EditorGUILayout.Space();
+            m_verboseLog.boolValue = EditorGUILayout.ToggleLeft(
+                new GUIContent("Verbose Log",
+                    "Logs this clip's triggers, note-offs and scheduling to the Console."),
+                m_verboseLog.boolValue);
         }
 
         private void SnapClipDuration(double duration)

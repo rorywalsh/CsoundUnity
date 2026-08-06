@@ -45,12 +45,21 @@ instr 1
     kCutoff  chnget "cutoff"
     kQ       chnget "resonance"
 
-    xtratim iRel * 2
+    ; A held note (p3 < 0) has no duration to fit the envelope into: the min()
+    ; clamps below would all go negative and linseg would sit at 0, so the note
+    ; would run silently until something turned it off. linsegr instead holds at
+    ; iAmp until the note-off arrives — from the Timeline clip end, a scrub, or
+    ; any i -1 0 0 — and releases over iRel.
+    if iDur < 0 then
+        aEnv    linsegr 0, iAtk, iAmp, iRel, 0
+    else
+        xtratim iRel * 2
 
-    iAtk    = min(iAtk, iDur * 0.5)
-    iRel    = min(iRel, iDur * 0.5)
-    iSusDur = max(iDur - iAtk - iRel, 0)
-    aEnv    linseg 0, iAtk, iAmp, iSusDur, iAmp, iRel, 0, iRel * 2, 0
+        iAtk    = min(iAtk, iDur * 0.5)
+        iRel    = min(iRel, iDur * 0.5)
+        iSusDur = max(iDur - iAtk - iRel, 0)
+        aEnv    linseg 0, iAtk, iAmp, iSusDur, iAmp, iRel, 0, iRel * 2, 0
+    endif
 
     iModFreq = iFreq * iFmRatio
     aModAmt  = aEnv * iFmAmt * iFreq * 2
