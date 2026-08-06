@@ -36,7 +36,16 @@ using UnityEngine;
 
 namespace Csound.Unity
 {
-    [CustomEditor(typeof(CsoundUnity)), CanEditMultipleObjects]
+    // Deliberately NOT [CanEditMultipleObjects]. Every field here is drawn as
+    // `m_x.value = EditorGUILayout.Field(m_x.value)`, with no change check. Under
+    // multi-selection a SerializedProperty getter returns the FIRST target's value while
+    // the setter writes to ALL of them, so a single repaint silently copied the first
+    // instance's csoundString, csoundScore, settings and control channel values over every
+    // other selected instance. Identical CSDs are the worse case, not the safer one: what
+    // gets overwritten is the channel values, which is the only thing telling the instances
+    // apart. Restoring the attribute means first wrapping every field in
+    // BeginChangeCheck/EndChangeCheck and handling EditorGUI.showMixedValue.
+    [CustomEditor(typeof(CsoundUnity))]
     [System.Serializable]
     public class CsoundUnityEditor : Editor
     {
