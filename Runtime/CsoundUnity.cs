@@ -847,6 +847,12 @@ namespace Csound.Unity
 
         private bool initialized = false;
         private bool _initializing = false;
+
+        /// <summary>
+        /// Set at the end of <c>Awake</c>. Guards the paths that need what Awake resolves —
+        /// the DSP buffer size and the AudioSource — against being run before it.
+        /// </summary>
+        private bool _awakeCompleted = false;
         private uint _ksmps = 32;
         private uint ksmpsIndex = 0;
         private bool _ksmpsBlockSizeWarned = false;
@@ -1032,6 +1038,8 @@ namespace Csound.Unity
             }
 
             audioSource = GetComponent<AudioSource>();
+
+            _awakeCompleted = true;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (initializeOnAwake) { _initializing = true; Init(); }
@@ -1592,9 +1600,11 @@ namespace Csound.Unity
 
             if (!startNow) return;
 
-            // Awake resolves audioSource and the DSP buffer size that Init depends on.
-            // If it hasn't run yet, leave initialization to Awake / a later Initialize().
-            if (audioSource == null) return;
+            // Awake resolves the DSP buffer size and the AudioSource that Init depends on.
+            // If it hasn't run yet, leave initialization to Awake / a later Initialize():
+            // a csd handed over this early would otherwise compile natively twice, and size
+            // its audio-channel buffers from a bufferSize still at 0.
+            if (!_awakeCompleted) return;
 
             if (initialized || _initializing)
                 Restart();
