@@ -38,6 +38,8 @@
 - [Fix] CsoundFileWatcher: handle atomic saves from modern editors
 - [Fix] Presets: AssetDatabase.ImportAsset crash on JSON save, null checks in SetPreset/UpdateAssignablePresets, "To JSON" now saves alongside the SO asset by default, JSON list filtered to current CSD
 - [Fix] Presets: combobox channels applied one option too low (Cabbage index is 1-based) and stale combobox options in a saved preset overwrote the current CSD's option set
+- [Fix] Presets: folder pickers could clear the folder on cancel, open at the wrong folder, or fail to keep the one picked
+- [Update] Presets: Load and Save folders default to a Presets folder beside the CSD; adds a "Next to Csd" shortcut, "All To JSON" bulk convert, tooltips, and a preset list that shrinks to fit
 - [Fix] Cabbage parser: caption/text truncation with multiple quoted attributes on same line; whitespace before '(' not recognised
 - [Fix] _channelsIndexDict wrong index when form widget is at position 0; stale entries after Domain Reload
 - [Fix] Hang on exit: send end-score event before csoundDestroy to stop indefinitely-running instruments cleanly

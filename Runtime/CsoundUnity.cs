@@ -1418,12 +1418,18 @@ namespace Csound.Unity
         #region PERFORMANCE
 
         /// <summary>
-        /// Sets the csd file 
+        /// Sets the CSD from a project asset, identified by its AssetDatabase GUID.
+        /// <para>
+        /// Editor only, and inherently so: a GUID is an AssetDatabase concept and there is no
+        /// AssetDatabase in a build. The runtime equivalent is
+        /// <see cref="LoadCsdFromString(string, bool)"/> — read the CSD text however suits the
+        /// platform (a <c>TextAsset</c>, StreamingAssets, the network) and hand it the string.
+        /// </para>
         /// </summary>
         /// <param name="guid">the guid of the csd file asset</param>
         public void SetCsd(string guid)
         {
-#if UNITY_EDITOR //for now setting csd is permitted from editor only, via asset guid
+#if UNITY_EDITOR
 
             if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out Guid guidResult))
             {
@@ -1459,9 +1465,18 @@ namespace Csound.Unity
 
             this._csoundString = File.ReadAllText(csoundFilePath);
             this._channels = ParseCsdFile(fileName);
-            // updating the channelsIndexDict here is only needed if updating the Csd when app is playing
-            // not yet important since updating the Csd at runtime is not supported yet
-            // but it will be possible at some point in the future
+
+            // Default the preset load/save folders to <csd>/Presets on first assignment.
+            // Only when empty, so a folder the user picked manually survives a file-watcher
+            // reload (which re-enters SetCsd with the same guid on every .csd save).
+            if (string.IsNullOrWhiteSpace(this._currentPresetLoadFolder))
+                this._currentPresetLoadFolder = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(fileName), "Presets"));
+            if (string.IsNullOrWhiteSpace(this._currentPresetSaveFolder))
+                this._currentPresetSaveFolder = this._currentPresetLoadFolder;
+
+            // Rebuilding channelsIndexDict matters when the CSD is swapped while playing, which
+            // LoadCsdFromString does at runtime — this method is the editor-side path to the
+            // same thing, and both have to leave the dictionary consistent.
             if (_channelsIndexDict != null)
             {
                 // Always rebuild from scratch so that stale entries from a previous CSD are removed,

@@ -1250,6 +1250,122 @@ namespace Csound.Unity
             }
         }
 
+        /// <summary>
+        /// Returns the absolute path of the folder that contains the assigned CSD asset,
+        /// or an empty string when no CSD asset is assigned (e.g. the CSD was loaded from a
+        /// string via LoadCsdFromString, so there is no asset to derive a folder from).
+        /// </summary>
+        private string GetCsdPath()
+        {
+            if (csoundUnity == null || csoundUnity.csoundAsset == null) return string.Empty;
+            var assetPath = AssetDatabase.GetAssetPath(csoundUnity.csoundAsset);
+            if (string.IsNullOrEmpty(assetPath)) return string.Empty;
+            var directoryPath = Path.GetDirectoryName(assetPath);
+            return string.IsNullOrEmpty(directoryPath) ? string.Empty : Path.GetFullPath(directoryPath);
+        }
+
+        /// <summary>
+        /// Returns the absolute path of the "Presets" folder next to the assigned CSD asset,
+        /// creating it if it does not exist. Empty string when no CSD asset is assigned.
+        /// </summary>
+        private string GetPresetsFolder()
+        {
+            var csdPath = GetCsdPath();
+            if (string.IsNullOrEmpty(csdPath)) return string.Empty;
+            var presetsFolder = Path.GetFullPath(Path.Combine(csdPath, "Presets"));
+            if (!Directory.Exists(presetsFolder)) Directory.CreateDirectory(presetsFolder);
+            return presetsFolder;
+        }
+
+        /// <summary>
+        /// Where a ScriptableObject preset's JSON copy should be written: the current Load folder
+        /// if one is set, otherwise alongside the asset itself.
+        /// <para>
+        /// Shared by the per-preset button and the bulk one so the two cannot disagree about
+        /// where a converted preset lands.
+        /// </para>
+        /// </summary>
+        private string PresetJsonDestination(CsoundUnityPreset preset)
+        {
+            if (!string.IsNullOrWhiteSpace(m_currentPresetLoadFolder.stringValue))
+                return m_currentPresetLoadFolder.stringValue;
+
+            var projectRoot = Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length);
+            return Path.GetDirectoryName(Path.Combine(projectRoot, AssetDatabase.GetAssetPath(preset)));
+        }
+
+        /// <summary>
+        /// Opens a folder picker for one of the preset folder properties, starting from wherever
+        /// that property currently points, or from the CSD's own folder when it is unset.
+        /// <para>
+        /// Cancelling leaves the property untouched: <c>OpenFolderPanel</c> returns an empty
+        /// string then, and assigning it straight through would silently wipe the folder the user
+        /// already had.
+        /// </para>
+        /// </summary>
+        /// <summary>
+        /// Folder picker for the plain-string import folders, which are editor-only and not
+        /// serialized. Same contract as the <see cref="SerializedProperty"/> overload: cancelling
+        /// leaves the value alone, and the dialog opens somewhere predictable.
+        /// </summary>
+        /// <returns><c>true</c> when the user picked a folder.</returns>
+        private static bool BrowseForFolder(ref string folder, string title, string fallbackStart)
+        {
+            var start = folder;
+            if (string.IsNullOrWhiteSpace(start)) start = fallbackStart;
+            if (string.IsNullOrWhiteSpace(start)) start = Application.dataPath;
+
+            var picked = EditorUtility.OpenFolderPanel(title, start, "");
+            if (string.IsNullOrEmpty(picked)) return false;
+
+            folder = picked;
+            return true;
+        }
+
+        /// <summary>
+        /// Label for the "next to the CSD" shortcut. The tooltip spells out the folder it will
+        /// actually select, so the button does not have to explain itself in its own name.
+        /// <para>
+        /// Builds the path by hand rather than calling <see cref="GetPresetsFolder"/>: that one
+        /// creates the folder, which is not something a tooltip should do.
+        /// </para>
+        /// </summary>
+        private GUIContent PresetsBesideCsdLabel()
+        {
+            var csd = GetCsdPath();
+            var tip = string.IsNullOrEmpty(csd)
+                ? "Unavailable: this instance has no CSD asset — the CSD was loaded from a string, " +
+                  "so there is no folder to sit next to."
+                : $"Use the Presets folder that sits next to the CSD, creating it if needed:\n" +
+                  $"{Path.Combine(csd, "Presets")}\n\n" +
+                  "This is where a newly assigned CSD points by default, so it is the way back " +
+                  "after browsing somewhere else.";
+            return new GUIContent("Next to Csd", tip);
+        }
+
+        private void BrowseForPresetFolder(SerializedProperty folder, string title)
+        {
+            // Start where the property already points; failing that next to the CSD, and failing
+            // that in the project. Passing an empty path leaves the dialog wherever the OS last
+            // was, which is unpredictable.
+            var start = folder.stringValue;
+            if (string.IsNullOrWhiteSpace(start)) start = GetCsdPath();
+            if (string.IsNullOrWhiteSpace(start)) start = Application.dataPath;
+
+            var picked = EditorUtility.OpenFolderPanel(title, start, "");
+            if (string.IsNullOrEmpty(picked)) return;   // cancelled — keep what we had
+
+            folder.stringValue = picked;
+
+            // Write the value through immediately rather than waiting for the
+            // ApplyModifiedProperties at the end of OnInspectorGUI. OpenFolderPanel is modal and
+            // was opened mid-layout, so Unity may abandon the rest of this GUI pass on return —
+            // and then the assignment above would be silently discarded.
+            folder.serializedObject.ApplyModifiedProperties();
+
+            RefreshPresets();
+        }
+
         private void DrawPresetLoad()
         {
             m_drawPresetsLoad.boolValue = EditorGUILayout.Foldout(m_drawPresetsLoad.boolValue, "LOAD", true);
@@ -1259,41 +1375,64 @@ namespace Csound.Unity
                 EditorGUI.indentLevel--;
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Load a Preset", EditorStyles.helpBox);
-                if (GUILayout.Button("Refresh List"))
+                if (GUILayout.Button(new GUIContent("Refresh List",
+                        "Rescan the folder for presets. Useful after adding or removing files " +
+                        "outside Unity.")))
                 {
                     UpdateAssignablePresets();
                 }
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
-                var inputBtnLabel = $"Select Presets folder";
-                if (GUILayout.Button(inputBtnLabel))
+                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick any folder to load presets from.")))
                 {
-                    m_currentPresetLoadFolder.stringValue = EditorUtility.OpenFolderPanel("Select Presets output folder", m_currentPresetSaveFolder.stringValue, "");
-                    RefreshPresets();
+                    BrowseForPresetFolder(m_currentPresetLoadFolder, "Select the folder to load presets from");
                 }
-                if (GUILayout.Button("DataPath"))
+                if (GUILayout.Button(new GUIContent("DataPath",
+                        $"The project's Assets folder:\n{Application.dataPath}\n\n" +
+                        "Editor-side storage. It does not exist as such in a build, so presets " +
+                        "kept here are for authoring rather than for shipping.")))
                 {
                     m_currentPresetLoadFolder.stringValue = Application.dataPath;
                     RefreshPresets();
                 }
                 EditorGUILayout.EndHorizontal();
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Persistent Data Path"))
+                if (GUILayout.Button(new GUIContent("Persistent Data Path",
+                        $"A writable folder that exists on every platform and survives app " +
+                        $"updates:\n{Application.persistentDataPath}\n\n" +
+                        "The right place for presets a build needs to read or write at runtime.")))
                 {
                     m_currentPresetLoadFolder.stringValue = Application.persistentDataPath;
                     RefreshPresets();
                 }
-                if (GUILayout.Button("StreamingAssets"))
+                if (GUILayout.Button(new GUIContent("StreamingAssets",
+                        $"Shipped with the build, read-only:\n{Application.streamingAssetsPath}\n\n" +
+                        "On Android this lives inside the compressed APK and cannot be read as a " +
+                        "plain file — see Documentation~/loading_external_files.md.")))
                 {
                     m_currentPresetLoadFolder.stringValue = Application.streamingAssetsPath;
                     RefreshPresets();
                 }
                 EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
+                if (GUILayout.Button(PresetsBesideCsdLabel()))
+                {
+                    var presets = GetPresetsFolder();
+                    if (!string.IsNullOrEmpty(presets))
+                    {
+                        m_currentPresetLoadFolder.stringValue = presets;
+                        m_currentPresetLoadFolder.serializedObject.ApplyModifiedProperties();
+                        RefreshPresets();
+                    }
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
                 var relativeToAssetsPath = ExtractAssetsFolderFromPath(m_currentPresetLoadFolder);
                 var fullPath = m_currentPresetLoadFolder.stringValue;
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {relativeToAssetsPath}", $"{fullPath}"), EditorStyles.helpBox);
-                if (GUILayout.Button("Show"))
+                if (GUILayout.Button(new GUIContent("Show", "Reveal this folder in the system file browser.")))
                 {
                     EditorUtility.RevealInFinder(fullPath);
                 }
@@ -1304,14 +1443,45 @@ namespace Csound.Unity
                 EditorGUILayout.LabelField("Assignable Presets:", EditorStyles.boldLabel);
                 _assignablePresetsSpace = EditorGUILayout.IntSlider(_assignablePresetsSpace, 3, 20);
                 var spaceSliderRect = GUILayoutUtility.GetLastRect();
-                GUI.Label(spaceSliderRect, new GUIContent("", "Show < Less | More > Presets"));
+                GUI.Label(spaceSliderRect, new GUIContent("",
+                    "Most rows to show before the list starts scrolling. The list shrinks to fit " +
+                    "when it holds fewer than this."));
 
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.Space();
 
-                presetsScrollPos = EditorGUILayout.BeginScrollView(presetsScrollPos, GUILayout.Height(Mathf.Min(Mathf.Max(21, 21 * _assignablePresetsSpace), 420f)));
+                // Grow with the content, up to the slider's value — which is a maximum, not a
+                // fixed size. Reserving the full height regardless left a large empty box
+                // whenever there were few presets, or none at all.
+                const float rowHeight = 21f;
+                var contentRows = 2 + _assignablePresets.Count + _jsonPresetsPaths.Length; // 2 headers
+                var visibleRows = Mathf.Clamp(contentRows, 1, Mathf.Max(1, _assignablePresetsSpace));
+                presetsScrollPos = EditorGUILayout.BeginScrollView(presetsScrollPos,
+                    GUILayout.Height(Mathf.Min(rowHeight * visibleRows, 420f)));
+
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField($"ScriptableObject Presets: ({_assignablePresets.Count})", EditorStyles.boldLabel);
+                EditorGUI.BeginDisabledGroup(_assignablePresets.Count == 0);
+                if (GUILayout.Button(new GUIContent("All To JSON",
+                        "Write every ScriptableObject preset above out as JSON, each to the same " +
+                        "place its own 'To JSON' button would use."), GUILayout.Width(90)))
+                {
+                    if (EditorUtility.DisplayDialog("Convert presets to JSON",
+                            $"Write {_assignablePresets.Count} preset(s) as JSON?\n\n" +
+                            "Existing files are not overwritten — a uniquely named copy is created " +
+                            "instead, so converting twice leaves duplicates behind.",
+                            "Convert", "Cancel"))
+                    {
+                        foreach (var preset in _assignablePresets)
+                            CsoundUnity.SavePresetAsJSON(preset, PresetJsonDestination(preset));
+                        Debug.Log($"[CsoundUnity] Converted {_assignablePresets.Count} preset(s) to JSON.");
+                        RefreshPresets();
+                    }
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
+
                 foreach (var preset in _assignablePresets)
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -1319,15 +1489,12 @@ namespace Csound.Unity
                     {
                         SetPreset(preset);
                     }
-                    if (GUILayout.Button("To JSON", GUILayout.Width(80)))
+                    if (GUILayout.Button(new GUIContent("To JSON",
+                            "Write this preset out as a .json file, portable and readable outside " +
+                            "Unity. Goes to the Load folder, or next to the asset if none is set."),
+                            GUILayout.Width(80)))
                     {
-                        // If no load folder is set, save alongside the ScriptableObject asset itself.
-                        var destFolder = string.IsNullOrWhiteSpace(m_currentPresetLoadFolder.stringValue)
-                            ? Path.GetDirectoryName(Path.Combine(
-                                Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length),
-                                AssetDatabase.GetAssetPath(preset)))
-                            : m_currentPresetLoadFolder.stringValue;
-                        CsoundUnity.SavePresetAsJSON(preset, destFolder);
+                        CsoundUnity.SavePresetAsJSON(preset, PresetJsonDestination(preset));
                         RefreshPresets();
                     }
                     EditorGUILayout.EndHorizontal();
@@ -1343,7 +1510,9 @@ namespace Csound.Unity
                     }
                     if (!path.ToLower().Contains("global"))
                     {
-                        if (GUILayout.Button("To SO", GUILayout.Width(80)))
+                        if (GUILayout.Button(new GUIContent("To SO",
+                                "Convert this .json into a ScriptableObject asset, so it can be " +
+                                "referenced directly from the inspector."), GUILayout.Width(80)))
                         {
                             csoundUnity.ConvertPresetToScriptableObject(path, Path.GetDirectoryName(path));
                         }
@@ -1366,13 +1535,14 @@ namespace Csound.Unity
 
                 EditorGUI.indentLevel--;
                 EditorGUILayout.BeginHorizontal();
-                var outputBtnLabel = $"Select Presets output folder";
-                if (GUILayout.Button(outputBtnLabel))
+                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick any folder to save presets into.")))
                 {
-                    m_currentPresetSaveFolder.stringValue = EditorUtility.OpenFolderPanel("Select Presets output folder", m_currentPresetSaveFolder.stringValue, "");
-                    RefreshPresets();
+                    BrowseForPresetFolder(m_currentPresetSaveFolder, "Select the folder to save presets into");
                 }
-                if (GUILayout.Button("DataPath"))
+                if (GUILayout.Button(new GUIContent("DataPath",
+                        $"The project's Assets folder:\n{Application.dataPath}\n\n" +
+                        "Editor-side storage. It does not exist as such in a build, so presets " +
+                        "kept here are for authoring rather than for shipping.")))
                 {
                     m_currentPresetSaveFolder.stringValue = Application.dataPath;
                     RefreshPresets();
@@ -1380,17 +1550,38 @@ namespace Csound.Unity
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Persistent Data Path"))
+                if (GUILayout.Button(new GUIContent("Persistent Data Path",
+                        $"A writable folder that exists on every platform and survives app " +
+                        $"updates:\n{Application.persistentDataPath}\n\n" +
+                        "The right place for presets a build needs to read or write at runtime.")))
                 {
                     m_currentPresetSaveFolder.stringValue = Application.persistentDataPath;
                     RefreshPresets();
                 }
-                if (GUILayout.Button("StreamingAssets"))
+                if (GUILayout.Button(new GUIContent("StreamingAssets",
+                        $"Shipped with the build, read-only:\n{Application.streamingAssetsPath}\n\n" +
+                        "On Android this lives inside the compressed APK and cannot be read as a " +
+                        "plain file — see Documentation~/loading_external_files.md.")))
                 {
                     m_currentPresetSaveFolder.stringValue = Application.streamingAssetsPath;
                     RefreshPresets();
                 }
                 EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
+                if (GUILayout.Button(PresetsBesideCsdLabel()))
+                {
+                    var presets = GetPresetsFolder();
+                    if (!string.IsNullOrEmpty(presets))
+                    {
+                        m_currentPresetSaveFolder.stringValue = presets;
+                        m_currentPresetSaveFolder.serializedObject.ApplyModifiedProperties();
+                        RefreshPresets();
+                    }
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
+
 
                 EditorGUILayout.Space();
 
@@ -1400,7 +1591,7 @@ namespace Csound.Unity
                 EditorGUI.indentLevel++;
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(new GUIContent($"Save Folder: {relativeToAssetsPath}", $"{fullPath}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
-                if (GUILayout.Button("Show"))
+                if (GUILayout.Button(new GUIContent("Show", "Reveal this folder in the system file browser.")))
                 {
                     EditorUtility.RevealInFinder(fullPath);
                 }
@@ -1411,17 +1602,23 @@ namespace Csound.Unity
                 EditorGUI.indentLevel--;
 
                 EditorGUILayout.Space();
-                if (GUILayout.Button("Save Preset as ScriptableObject"))
+                if (GUILayout.Button(new GUIContent("Save Preset as ScriptableObject",
+                        "Store the current channel values as a project asset, referenceable from " +
+                        "the inspector. Editor only.")))
                 {
                     csoundUnity.SavePresetAsScriptableObject(_presetName, fullPath);
                     RefreshPresets();
                 }
-                if (GUILayout.Button("Save Preset As JSON"))
+                if (GUILayout.Button(new GUIContent("Save Preset As JSON",
+                        "Store the current channel values as a .json file. Readable at runtime " +
+                        "and outside Unity.")))
                 {
                     csoundUnity.SavePresetAsJSON(_presetName, fullPath);
                     RefreshPresets();
                 }
-                if (GUILayout.Button("Save Global Preset as JSON"))
+                if (GUILayout.Button(new GUIContent("Save Global Preset as JSON",
+                        "Store the whole CsoundUnity component as .json, not just its channel " +
+                        "values. Applying one overwrites this instance's settings.")))
                 {
                     csoundUnity.SaveGlobalPreset(_presetName, fullPath);
                     RefreshPresets();
@@ -1439,23 +1636,51 @@ namespace Csound.Unity
             if (m_drawPresetsImport.boolValue)
             {
 
-                if (GUILayout.Button("Select Cabbage Snaps folder to import"))
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Cabbage .snaps to import", GUILayout.Width(170));
+                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick the folder holding the .snaps files.")))
                 {
-                    _currentPresetImportFolder = EditorUtility.OpenFolderPanel("Select Cabbage snaps folder", _currentPresetImportFolder, "");
-
+                    BrowseForFolder(ref _currentPresetImportFolder,
+                        "Select the folder holding the Cabbage .snaps files", GetCsdPath());
                 }
+                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
+                if (GUILayout.Button(new GUIContent("Csd Folder",
+                        string.IsNullOrEmpty(GetCsdPath())
+                            ? "Unavailable: this instance has no CSD asset."
+                            : $"The folder the CSD lives in, where Cabbage leaves its snaps:\n{GetCsdPath()}")))
+                {
+                    var csd = GetCsdPath();
+                    if (!string.IsNullOrEmpty(csd)) _currentPresetImportFolder = csd;
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
                 EditorGUI.indentLevel--;
                 EditorGUILayout.LabelField(new GUIContent($"Load from Folder: {_currentPresetImportFolder}", $"{_currentPresetImportFolder}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
                 EditorGUI.indentLevel++;
-                if (GUILayout.Button("Select parsed presets destination folder"))
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Write converted presets to", GUILayout.Width(170));
+                if (GUILayout.Button(new GUIContent("Browse\u2026", "Pick where the converted presets should be written.")))
                 {
-                    _currentPresetImportFolderSave = EditorUtility.OpenFolderPanel("Select parsed presets destination folder", _currentPresetImportFolder, "");
-
+                    // Starts from this folder, not from the snaps folder: they are two different
+                    // places, and defaulting the destination to the source was a copy-paste slip.
+                    BrowseForFolder(ref _currentPresetImportFolderSave,
+                        "Select where to write the converted presets", GetPresetsFolder());
                 }
+                EditorGUI.BeginDisabledGroup(csoundUnity == null || csoundUnity.csoundAsset == null);
+                if (GUILayout.Button(PresetsBesideCsdLabel()))
+                {
+                    var presets = GetPresetsFolder();
+                    if (!string.IsNullOrEmpty(presets)) _currentPresetImportFolderSave = presets;
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUILayout.EndHorizontal();
                 EditorGUI.indentLevel--;
                 EditorGUILayout.LabelField(new GUIContent($"Save into Folder: {_currentPresetImportFolderSave}", $"{_currentPresetImportFolderSave}"), EditorStyles.helpBox);// $"Save Folder: {m_currentPresetSaveFolder.stringValue}");
 
-                if (GUILayout.Button("IMPORT"))
+                if (GUILayout.Button(new GUIContent("IMPORT",
+                        "Scan the folder above for Cabbage .snaps files, convert every preset " +
+                        "found, and write the results into the destination folder. Each .snaps " +
+                        "needs a .csd of the same name beside it.")))
                 {
                     if (string.IsNullOrWhiteSpace(_currentPresetImportFolder))
                     {
