@@ -15,7 +15,7 @@ CsoundUnity supports three audio output paths. The active path is selected in th
 | AudioMixer routing | Yes | Yes | No |
 | 3D spatialization | Yes | Yes | No |
 | Mixer effects | Yes | Yes | No |
-| Output latency (C# paths) | Good | Higher | Lowest |
+| Processing stages before the hardware | AudioSource + Mixer | AudioSource + Mixer | none |
 
 ---
 
@@ -31,7 +31,7 @@ Use this path when:
 
 #### IAudioGenerator (Unity 6+) ####
 
-CsoundUnity implements Unity 6's `IAudioGenerator` interface to drive the `AudioSource` directly. Compared to `OnAudioFilterRead`, this reduces latency and improves synchronisation with the audio graph. Audio still flows through the `AudioMixer`.
+CsoundUnity implements Unity 6's `IAudioGenerator` interface to drive the `AudioSource` directly, rather than post-processing the buffer Unity hands it. Audio still flows through the `AudioMixer`.
 
 Use this path when:
 - You are on Unity 6+ and want AudioMixer integration (effects, snapshots, bus routing)
@@ -44,13 +44,15 @@ See [IAudioGenerator](iaudiogenerator.md) for setup details and limitations.
 
 #### RootOutput (Unity 6+) ####
 
-Uses Unity 6's `RootOutputInstance` API to write Csound's output directly into the main hardware mix, bypassing the AudioMixer entirely. No `AudioSource` is required. This is the lowest-latency C# path.
+Uses Unity 6's `RootOutputInstance` API to write Csound's output directly into the main hardware mix, bypassing the AudioMixer entirely. No `AudioSource` is required, and there are no mixer stages between Csound and the hardware.
+
+> **On latency:** RootOutput has the fewest stages between Csound and the output, which is a structural fact rather than a measured one — the three paths have not been compared with a loopback test. Treat any latency ranking between them as unverified.
 
 Use this path when:
 - You don't need the AudioMixer (no effects chain, no snapshots, no bus routing)
 - You don't need 3D spatialization
 - You want to avoid an `AudioSource` on the CsoundUnity GameObject
-- You want minimum latency from a C# audio path
+- You want the shortest path from Csound to the hardware
 
 See [RootOutput](root_output.md) for setup details and limitations.
 

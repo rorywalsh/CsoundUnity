@@ -13,7 +13,7 @@ For a full comparison of all audio paths see [Audio Output Path](audio_output_pa
 RootOutput is the right choice when:
 - You don't need the AudioMixer (no effects chain, no snapshots, no bus routing)
 - You don't need 3D spatialization on the Csound output
-- You want the lowest possible latency achievable from a C# audio path
+- You want the shortest path from Csound to the hardware, with no mixer stages in between
 - You want to avoid having an AudioSource on your CsoundUnity GameObject
 
 ---
@@ -66,6 +66,6 @@ Samples written in `EndProcessing` are **additively mixed** into Unity's main ou
 Both RootOutput and IAudioGenerator are Unity 6+ paths that avoid the overhead of `OnAudioFilterRead`. The key difference:
 
 - **IAudioGenerator** drives an `AudioSource` — audio goes through the AudioMixer graph. Useful when you need mixer routing, snapshots, or 3D audio on the Csound output.
-- **RootOutput** bypasses the mixer entirely — audio is additively mixed at the hardware output stage. Lower latency, no mixer integration.
+- **RootOutput** bypasses the mixer entirely — audio is additively mixed at the hardware output stage. Fewest processing stages, no mixer integration.
 
-If in doubt, use **IAudioGenerator** for full mixer compatibility, and switch to **RootOutput** when you specifically need to bypass the mixer or want minimum latency.
+If in doubt, use **IAudioGenerator** for full mixer compatibility, and switch to **RootOutput** when you specifically need to bypass the mixer. Note that the latency of the three paths has never been compared with a loopback measurement — RootOutput having the fewest stages is a structural fact, not a measured ranking.

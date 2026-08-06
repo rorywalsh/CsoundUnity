@@ -10,8 +10,6 @@ The choice of views is a preference of the editor, not of the instance: it is sh
 
 The monitors read [`OutputBuffer`](controlling_csound_from_unity.md), so **Update Output Buffer** must be enabled in the Settings section; the inspector says so if it is not.
 
-> **Not yet available on the RootOutput audio path.** `OutputBuffer` is filled from `OnAudioFilterRead`, which that path bypasses, so the views stay empty there however they are configured. Switch the instance to OnAudioFilterRead or IAudioGenerator to watch it.
-
 ---
 
 ### Waveform ###

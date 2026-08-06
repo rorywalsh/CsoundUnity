@@ -410,6 +410,34 @@ namespace Csound.Unity
         /// <param name="bufferFrameOffset">
         /// Index of the first frame (within the current DSP buffer) produced by this ksmps block.
         /// </param>
+        /// <summary>
+        /// Copies this ksmps block of Csound output into <c>_csoundOutBuffer</c>, the interleaved
+        /// all-channel buffer that <see cref="UpdateOutputBuffer"/> publishes as
+        /// <see cref="OutputBuffer"/>.
+        /// <para>
+        /// Mirrors what <c>ProcessBlock</c> does per sample, and exists for the RootOutput path,
+        /// which never reaches either of the other two places that fill this buffer.
+        /// </para>
+        /// </summary>
+        private void FillOutputBufferFromSpout(int bufferFrameOffset, int ksmpsLen)
+        {
+            var nchnls = (int)GetNchnls();
+            if (nchnls <= 0 || ksmpsLen <= 0) return;
+
+            var needed = bufferSize * nchnls;
+            if (_csoundOutBuffer == null || _csoundOutBuffer.Length != needed)
+                _csoundOutBuffer = new float[needed];
+
+            var inv0dbfs = zerdbfs > 0f ? 1f / zerdbfs : 1f;
+            for (var k = 0; k < ksmpsLen; k++)
+            {
+                var frame = bufferFrameOffset + k;
+                if (frame >= bufferSize) break;
+                for (var ch = 0; ch < nchnls; ch++)
+                    _csoundOutBuffer[frame * nchnls + ch] = (float)GetOutputSample(k, ch) * inv0dbfs;
+            }
+        }
+
         private void OnKsmpsCallback(int bufferFrameOffset)
         {
             // PerformKsmps just ran — stop timing and accumulate.
@@ -472,6 +500,13 @@ namespace Csound.Unity
                         }
                     }
                 }
+
+                // Fill the full-channel buffer behind OutputBuffer. Only RootOutput needs it done
+                // here: the IAudioGenerator path gets it from OnAudioFilterRead, which Unity still
+                // calls with the generator's output, while RootOutput bypasses that callback
+                // entirely and so had nothing feeding the inspector monitors at all.
+                if (_audioPath == AudioPath.RootOutput && updateOutputBuffer)
+                    FillOutputBufferFromSpout(bufferFrameOffset, ksmpsLen);
             }
 
             // On the last ksmps block of the DSP buffer the live arrays above are complete, so
@@ -480,7 +515,12 @@ namespace Csound.Unity
             // instance on the IAudioGenerator/RootOutput path would publish nothing and could
             // not be used as a route source.
             if (ksmpsLen > 0 && bufferFrameOffset + ksmpsLen >= bufferSize)
+            {
                 PublishAudioChannels(bufferSize, silent: IsSilenced);
+
+                if (_audioPath == AudioPath.RootOutput && updateOutputBuffer && _csoundOutBuffer != null)
+                    UpdateOutputBuffer(_csoundOutBuffer, (int)GetNchnls());
+            }
 
             // Fire the same event that ProcessBlock fires so existing listeners keep working,
             // and gate it the same way: while paused no PerformKsmps ran, so there is nothing
