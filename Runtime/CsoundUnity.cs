@@ -42,6 +42,7 @@ using MYFLT = System.Double;
 using MYFLT = System.Single;
 #endif
 using ASU = Csound.Unity.Utilities.AudioSamplesUtils;
+using RU = Csound.Unity.Utilities.RemapUtils;
 
 namespace Csound.Unity
 {
@@ -3861,7 +3862,19 @@ namespace Csound.Unity
                 {
                     if (!target.type.Contains("slider") && target.type != "nslider") continue;
                     var start = startValues.TryGetValue(target.channel, out float s) ? s : target.value;
-                    SetChannel(target.channel, Mathf.Lerp(start, target.value, t));
+
+                    if (UsesSkewedRange(target, out var min, out var max, out var skew))
+                    {
+                        // Sweep where the control is linear, so the morph moves at the rate the
+                        // skew describes instead of racing through one end of the range.
+                        var n = Mathf.Lerp(RU.RemapTo0to1(start, min, max, skew),
+                                           RU.RemapTo0to1(target.value, min, max, skew), t);
+                        SetChannel(target.channel, RU.RemapFrom0to1(n, min, max, skew));
+                    }
+                    else
+                    {
+                        SetChannel(target.channel, Mathf.Lerp(start, target.value, t));
+                    }
                 }
 
                 if (discreteMode == DiscreteChannelMode.SnapAtMidpoint && !midpointSnapped && rawT >= 0.5f)
@@ -3933,9 +3946,42 @@ namespace Csound.Unity
                     var vB = GetPresetChannelValue(b, channelName, vA);
                     var vC = GetPresetChannelValue(c, channelName, vA);
                     var vD = GetPresetChannelValue(d, channelName, vA);
-                    SetChannel(channelName, vA * wA + vB * wB + vC * wC + vD * wD);
+
+                    if (UsesSkewedRange(chA, out var min, out var max, out var skew))
+                    {
+                        // Blend where the control is linear, then map back into channel units.
+                        var n = RU.RemapTo0to1(vA, min, max, skew) * wA
+                              + RU.RemapTo0to1(vB, min, max, skew) * wB
+                              + RU.RemapTo0to1(vC, min, max, skew) * wC
+                              + RU.RemapTo0to1(vD, min, max, skew) * wD;
+                        SetChannel(channelName, RU.RemapFrom0to1(n, min, max, skew));
+                    }
+                    else
+                    {
+                        SetChannel(channelName, vA * wA + vB * wB + vC * wC + vD * wD);
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// Whether this channel's values should be interpolated along its own curve rather than
+        /// straight through the raw numbers, and the range to do it with.
+        /// <para>
+        /// A channel declared with a skew is not linear in its own units: on a frequency slider
+        /// skewed towards the low end, the halfway point of the control is nowhere near the
+        /// arithmetic mean of its endpoints. Interpolating the raw values therefore sweeps at the
+        /// wrong rate and lands off-centre — which is what the skew existed to prevent.
+        /// </para>
+        /// Returns <c>false</c> for channels with no usable range or no skew, where the raw
+        /// values are already the right thing to interpolate.
+        /// </summary>
+        private static bool UsesSkewedRange(CsoundChannelController channel, out float min, out float max, out float skew)
+        {
+            min  = channel?.min  ?? 0f;
+            max  = channel?.max  ?? 0f;
+            skew = channel?.skew ?? 1f;
+            return channel != null && max > min && skew > 0f && skew != 1f;
         }
 
         private static float GetPresetChannelValue(CsoundUnityPreset preset, string channel, float fallback)
