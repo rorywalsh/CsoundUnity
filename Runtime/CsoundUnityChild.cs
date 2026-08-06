@@ -127,6 +127,37 @@ namespace Csound.Unity
 
         #region Unity Messages
 
+        /// <summary>
+        /// Sets up the AudioSource the way a Child usually wants it, once, when the component
+        /// is first added. Unity calls this in the editor only.
+        /// <para>
+        /// These used to be forced in <c>Awake</c> on every play, which meant the inspector was
+        /// lying: whoever set the source to 2D watched it turn back to 3D with no explanation.
+        /// A Child exposes a named channel as a Unity output — spatialising it is one thing you
+        /// may want to do with it, not what it is.
+        /// </para>
+        /// </summary>
+        private void Reset() => ApplyDefaultAudioSourceSettings();
+
+        /// <summary>
+        /// Applies the 3D defaults. Called from <see cref="Reset"/> for a Child added in the
+        /// inspector and from <see cref="Init"/> for one created by script — <c>Reset</c> is an
+        /// editor-only message and never runs for <c>AddComponent</c>, which is how the
+        /// Partikkel sample and most runtime code build their children.
+        /// <para>
+        /// Set the AudioSource after these calls to override them; nothing overwrites it later.
+        /// </para>
+        /// </summary>
+        private void ApplyDefaultAudioSourceSettings()
+        {
+            var source = GetComponent<AudioSource>();
+            if (!source) return;
+
+            source.velocityUpdateMode    = AudioVelocityUpdateMode.Fixed;
+            source.spatialBlend          = 1.0f;
+            source.spatializePostEffects = true;
+        }
+
         private void Awake()
         {
             if (csoundUnityGameObject)
@@ -141,10 +172,6 @@ namespace Csound.Unity
             audioSource = GetComponent<AudioSource>();
             if (!audioSource)
                 Debug.LogError("AudioSource was not found?");
-
-            audioSource.velocityUpdateMode = AudioVelocityUpdateMode.Fixed;
-            audioSource.spatialBlend = 1.0f;
-            audioSource.spatializePostEffects = true;
 
             // FIX SPATIALIZATION ISSUES: requires a dummy clip so FMOD creates an audio DSP node
             if (audioSource.clip == null)
@@ -232,6 +259,8 @@ namespace Csound.Unity
         public void Init(CsoundUnity csound, AudioChannels audioChannels = AudioChannels.MONO)
         {
             AudioChannelsSetting = audioChannels;
+
+            ApplyDefaultAudioSourceSettings();
 
             for (var chan = 0; chan < (int)audioChannels; chan++)
             {

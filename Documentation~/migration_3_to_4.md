@@ -129,6 +129,32 @@ Note that `AudioSource.mute` is a different switch and has not changed: it silen
 
 ---
 
+### `CsoundUnityChild` no longer forces 3D audio
+
+In 3.x, `CsoundUnityChild.Awake` overwrote three AudioSource settings on every Play:
+
+```csharp
+audioSource.velocityUpdateMode    = AudioVelocityUpdateMode.Fixed;
+audioSource.spatialBlend          = 1.0f;   // always 3D, whatever you chose
+audioSource.spatializePostEffects = true;
+```
+
+The inspector was therefore lying: setting a Child to 2D appeared to work, then reverted the moment you pressed Play. In 4.0 these are **defaults applied once**, and the values you set afterwards are honoured — when the component is added in the inspector, or on `Init()` for a Child built by script:
+
+```csharp
+var child = go.AddComponent<CsoundUnityChild>();
+child.Init(csound, CsoundUnityChild.AudioChannels.MONO);  // applies the defaults
+child.GetComponent<AudioSource>().spatialBlend = 0f;      // override afterwards
+```
+
+**What to check when upgrading.** A Child made in 3.x has whatever `spatialBlend` was serialized, and that is usually **0** — nobody set it to 1, because doing so made no difference. Those children will now play in 2D: full level, no positioning, no distance attenuation.
+
+If a Child should be spatialised, set **Spatial Blend** to 1 on its AudioSource. Nothing else changes, and the dummy clip the component creates is unrelated to this — it is still needed so the audio engine builds a DSP node.
+
+The upside is that 2D is now possible at all: a Child exists to expose a named channel as a Unity output, and sending that straight out without a position is a perfectly ordinary thing to want.
+
+---
+
 ### Samples: Input System compatibility
 
 The v4 sample scenes use the **Legacy Input Manager** (`UnityEngine.Input`). If your project uses Unity's new Input System and the samples show input-related errors, the quickest fix is:
