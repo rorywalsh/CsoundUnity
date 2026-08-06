@@ -2,9 +2,15 @@
 
 > **New in v4.0.0**
 
-The Audio Monitor is a real-time visual display built into the CsoundUnity inspector. It is available during **Play mode** and supports multiple simultaneous views.
+The Audio Monitor is a real-time visual display built into the CsoundUnity inspector. The views draw during **Play mode** and several can be shown at once.
 
-Enable or disable each view independently using the toggles in the **Audio Monitor** section of the inspector.
+Enable or disable each view independently using the toggles in the **Audio Monitor** section of the inspector. The toggles can be set outside Play mode too, so a scene can be prepared before running it.
+
+The choice of views is a preference of the editor, not of the instance: it is shared by every CsoundUnity and kept across selection changes, domain reloads and Unity restarts. Turn the waveform on once and it stays on for whatever you select next — which is what comparing two instances needs. Nothing is written to the scene.
+
+The monitors read [`OutputBuffer`](controlling_csound_from_unity.md), so **Update Output Buffer** must be enabled in the Settings section; the inspector says so if it is not.
+
+> **Not yet available on the RootOutput audio path.** `OutputBuffer` is filled from `OnAudioFilterRead`, which that path bypasses, so the views stay empty there however they are configured. Switch the instance to OnAudioFilterRead or IAudioGenerator to watch it.
 
 ---
 

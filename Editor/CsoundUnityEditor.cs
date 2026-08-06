@@ -653,8 +653,6 @@ namespace Csound.Unity
                         // TODO DRAW A VU METER FOR EVERY CHANNEL?
                     }
 
-                    if (EditorApplication.isPlaying)
-                        Repaint();
                 }
             }
         }
@@ -698,11 +696,18 @@ namespace Csound.Unity
                 m_csoundAsset.objectReferenceValue = null;
 
             var obj = (DefaultAsset)m_csoundAsset.objectReferenceValue;
-            EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
+
+            // The change check covers the object field alone. Wrapping the refresh button in it
+            // too made a click on that button register as a change, so the branch below fired as
+            // well and the CSD was set — and rescanned — twice per click.
+            EditorGUI.BeginChangeCheck();
             obj = (DefaultAsset)EditorGUILayout.ObjectField("Csd Asset", obj, typeof(DefaultAsset), false);
+            var assetFieldChanged = EditorGUI.EndChangeCheck();
+
             EditorGUI.BeginDisabledGroup(obj == null);
-            if (GUILayout.Button("↺", GUILayout.Width(24)) && obj != null)
+            if (GUILayout.Button(new GUIContent("↺", "Reload the CSD from disk and rescan its channels."),
+                    GUILayout.Width(24)) && obj != null)
             {
                 if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out string refreshGuid, out long _))
                 {
@@ -713,7 +718,7 @@ namespace Csound.Unity
             EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndHorizontal();
 
-            if (EditorGUI.EndChangeCheck())
+            if (assetFieldChanged)
             {
                 Undo.RecordObject(target, "Set Csd");
                 if (obj == null ||
@@ -2093,34 +2098,55 @@ namespace Csound.Unity
             Repaint();
         }
 
+        /// <summary>
+        /// The monitor toggles on their own, for the cases where the graphs cannot be drawn:
+        /// outside play mode, or with Update Output Buffer off. Keeps one copy of the list, so
+        /// adding a monitor does not mean remembering to add it in three places.
+        /// </summary>
+        private void DrawAudioMonitorToggles()
+        {
+            EditorGUILayout.LabelField("Audio Monitor", EditorStyles.boldLabel);
+            _audioMonitor.ShowWaveform     = EditorGUILayout.Toggle("Waveform",     _audioMonitor.ShowWaveform);
+            _audioMonitor.ShowSpectrum     = EditorGUILayout.Toggle("Spectrum",     _audioMonitor.ShowSpectrum);
+            _audioMonitor.ShowSpectrogram  = EditorGUILayout.Toggle("Spectrogram",  _audioMonitor.ShowSpectrogram);
+            _audioMonitor.ShowLissajous    = EditorGUILayout.Toggle("Lissajous",    _audioMonitor.ShowLissajous);
+            _audioMonitor.ShowOscilloscope = EditorGUILayout.Toggle("Oscilloscope", _audioMonitor.ShowOscilloscope);
+        }
+
         private void DrawAudioMonitor()
         {
-            if (!Application.isPlaying) return;
-
-            if (_audioMonitor.ShowWaveform || _audioMonitor.ShowSpectrum ||
-                _audioMonitor.ShowLissajous || _audioMonitor.ShowSpectrogram)
+            // Outside play mode there is no audio to draw, but the toggles are still shown so the
+            // scene can be set up before pressing Play rather than while listening to it.
+            if (!Application.isPlaying)
             {
-                if (!csoundUnity.updateOutputBuffer)
-                {
-                    // Draw the toggles so the user can see/change them, then show the warning.
-                    EditorGUILayout.LabelField("Audio Monitor", EditorStyles.boldLabel);
-                    _audioMonitor.ShowWaveform    = EditorGUILayout.Toggle("Waveform",    _audioMonitor.ShowWaveform);
-                    _audioMonitor.ShowSpectrum    = EditorGUILayout.Toggle("Spectrum",    _audioMonitor.ShowSpectrum);
-                    _audioMonitor.ShowLissajous   = EditorGUILayout.Toggle("Lissajous",   _audioMonitor.ShowLissajous);
-                    _audioMonitor.ShowSpectrogram = EditorGUILayout.Toggle("Spectrogram", _audioMonitor.ShowSpectrogram);
-                    EditorGUILayout.HelpBox(
-                        "Enable 'Update Output Buffer' in Settings to use the audio monitor.",
-                        MessageType.Warning);
-                    return;
-                }
+                DrawAudioMonitorToggles();
+                if (_audioMonitor.RequiresConstantRepaint)
+                    EditorGUILayout.HelpBox("Enter Play mode to see the monitors.", MessageType.None);
+                return;
+            }
+
+            if (_audioMonitor.RequiresConstantRepaint && !csoundUnity.updateOutputBuffer)
+            {
+                DrawAudioMonitorToggles();
+                EditorGUILayout.HelpBox(
+                    "Enable 'Update Output Buffer' in Settings to use the audio monitor.",
+                    MessageType.Warning);
+                return;
             }
 
             var buffer = csoundUnity.OutputBuffer;
             _audioMonitor.Draw(buffer, Mathf.Max(1, csoundUnity.OutputChannels));
         }
 
-        public override bool RequiresConstantRepaint() =>
-            target != null && Application.isPlaying && _audioMonitor.RequiresConstantRepaint;
+        /// <summary>
+        /// Repaint every frame while playing, not only when a monitor is drawing.
+        /// <para>
+        /// Gating this on the monitors meant that with all of them off nothing repainted, so
+        /// every live value in the inspector — channel values included — sat frozen on screen
+        /// while changing underneath, and <c>SetChannel</c> looked like it did nothing.
+        /// </para>
+        /// </summary>
+        public override bool RequiresConstantRepaint() => target != null && Application.isPlaying;
 
         #endregion
 
