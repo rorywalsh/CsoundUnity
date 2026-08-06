@@ -3975,9 +3975,17 @@ namespace Csound.Unity
         /// </para>
         /// Returns <c>false</c> for channels with no usable range or no skew, where the raw
         /// values are already the right thing to interpolate.
+        /// <para>
+        /// The range is taken from the live channel rather than from the preset, which only holds
+        /// a copy made when it was saved: adding a skew to the csd would otherwise have no effect
+        /// until every preset was re-saved. The preset's own copy is the fallback for channels the
+        /// current csd no longer declares.
+        /// </para>
         /// </summary>
-        private static bool UsesSkewedRange(CsoundChannelController channel, out float min, out float max, out float skew)
+        private bool UsesSkewedRange(CsoundChannelController presetChannel, out float min, out float max, out float skew)
         {
+            var channel = (presetChannel != null ? GetChannelController(presetChannel.channel) : null) ?? presetChannel;
+
             min  = channel?.min  ?? 0f;
             max  = channel?.max  ?? 0f;
             skew = channel?.skew ?? 1f;

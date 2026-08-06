@@ -2,7 +2,7 @@
 form caption("Voice Changer") size(800, 800)
 label   bounds  (10, 0, 1000, 100), channel ("main"), text("Main"), fontColour(255, 255, 255, 255), fontSize(30), align(left)
 rslider bounds(00, 100, 100, 100), channel("gain"), range(0, 10, 1.0), text("Gain")
-rslider bounds(100, 100, 100, 100), channel("cutoff"), range(0, 4000, 600.0), text("Cutoff")
+rslider bounds(100, 100, 100, 100), channel("cutoff"), range(0, 4000, 600.0, 0.5), text("Cutoff")
 rslider bounds(200, 100, 100, 100), channel("dry"), range(0, 2, 0), text("Dry")
 rslider bounds(300, 100, 100, 100), channel("dryReverbSend"), range(0, 2, 0.0), text("Dry Reverb Send")
 rslider bounds(400, 100, 100, 100), channel("dryDelaySend"), range(0, 2, 0.0), text("Dry Delay Send")
