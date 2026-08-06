@@ -703,7 +703,11 @@ MonoBehaviour:
     Runs to natural end (5s), restarts after 2s pause.
 
     Runs to
-    natural end (5s). Done.'
+    natural end (5s). Done.
+
+    Then the csd asset is dropped and one written in code is compiled in its
+    place: LoadCsdFromString. Different instrument, different channels, no file
+    on disk.'
 --- !u!222 &1274383762
 CanvasRenderer:
   m_ObjectHideFlags: 0
