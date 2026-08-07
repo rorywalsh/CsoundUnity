@@ -604,6 +604,12 @@ namespace Csound.Unity
         public List<string> availableAudioChannels { get => _availableAudioChannels; }
 
         /// <summary>
+        /// Cabbage widgets present in the current csd that the parser does not build a channel
+        /// for. Empty when everything in the csd is supported.
+        /// </summary>
+        public List<string> unsupportedWidgets { get => _unsupportedWidgets; }
+
+        /// <summary>
         /// Named audio channels produced by this instance, shown in the CsoundUnityChild inspector.
         /// <para>
         /// <b>These are the live working arrays</b>, filled sample by sample by the audio thread
@@ -797,6 +803,7 @@ namespace Csound.Unity
         /// </summary>
         private Dictionary<string, int> _channelsIndexDict = new Dictionary<string, int>();
         [HideInInspector][SerializeField] private List<string> _availableAudioChannels = new List<string>();
+        [HideInInspector][SerializeField] private List<string> _unsupportedWidgets = new List<string>();
 
         /// <summary>
         /// Number of Csound output channels (<c>nchnls</c>) parsed from the CSD at import
@@ -1062,6 +1069,11 @@ namespace Csound.Unity
             namedAudioChannelTempBufferDict.Clear();
             _publishedAudioChannels.Clear();
 
+            // Not a preference, despite looking like one: this decides whether the
+            // spatializer runs before or after the AudioSource's effect chain, and on the
+            // OnAudioFilterRead path CsoundUnity *is* one of those effects. With false the
+            // spatializer would process what comes before it — the silent dummy clip — and
+            // Csound's output would reach the hardware unspatialised.
             audioSource.spatializePostEffects = true;
 
             // FIX SPATIALIZATION ISSUES
@@ -1500,6 +1512,7 @@ namespace Csound.Unity
                 }
             }
             this._availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
+            SetUnsupportedWidgets(this._csoundString, fileName);
             this._nchnls           = ParseCsdFileForNchnls(fileName);
 
             // Parse ksmps from the CSD and store it as the intended value.
@@ -1581,6 +1594,7 @@ namespace Csound.Unity
                 }
             }
             this._availableAudioChannels = ParseCsdStringForAudioChannels(csdContent);
+            SetUnsupportedWidgets(csdContent, "the csd loaded from a string");
             this._nchnls = ParseCsdStringForNchnls(csdContent);
 
             int parsedKsmps = ParseCsdStringForKsmps(csdContent);
@@ -1955,6 +1969,66 @@ namespace Csound.Unity
         /// </summary>
         /// <param name="csdContent">The full CSD text.</param>
         /// <returns>A list of unique audio channel names found, never null.</returns>
+        /// <summary>
+        /// Cabbage widget names that appear in a csd but that the parser does not build a channel
+        /// for, so the inspector and the UI generator can say so instead of silently showing less
+        /// than the csd declares.
+        /// <para>
+        /// A line counts as a widget when it carries a <c>bounds(</c> attribute. <c>keyboard</c> is
+        /// deliberately not reported: <see cref="Csound.Unity.CsoundUnityKeyboard"/> exists, it is
+        /// simply built in the scene rather than read from the csd.
+        /// </para>
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>The distinct unsupported widget names, in the order they appear.</returns>
+        /// <summary>
+        /// Stores the unsupported widgets found in <paramref name="csdContent"/> and warns once,
+        /// here rather than inside the parser: the parser also runs on selection changes and on
+        /// every file-watcher reload, and a warning repeated on every repaint is noise nobody
+        /// reads. The inspector shows the stored list for as long as it applies.
+        /// </summary>
+        private void SetUnsupportedWidgets(string csdContent, string source)
+        {
+            _unsupportedWidgets = ParseCsdStringForUnsupportedWidgets(csdContent);
+            if (_unsupportedWidgets.Count == 0) return;
+
+            Debug.LogWarning($"[CsoundUnity] {string.Join(", ", _unsupportedWidgets)} " +
+                             $"{(_unsupportedWidgets.Count == 1 ? "is a Cabbage widget" : "are Cabbage widgets")} " +
+                             $"CsoundUnity cannot build a control for, so {(_unsupportedWidgets.Count == 1 ? "it" : "they")} " +
+                             $"will not appear in the inspector or in a generated UI. " +
+                             $"The csd still runs: only the control is missing. Source: {source}");
+        }
+
+        public static List<string> ParseCsdStringForUnsupportedWidgets(string csdContent)
+        {
+            var result = new List<string>();
+            if (string.IsNullOrEmpty(csdContent)) return result;
+
+            foreach (var rawLine in SplitCsdLines(csdContent))
+            {
+                if (rawLine.Contains("</")) break;
+
+                var trimmd = rawLine.TrimStart();
+                if (trimmd.StartsWith(";") || trimmd.StartsWith("<")) continue;
+                if (trimmd.IndexOf("bounds(", StringComparison.OrdinalIgnoreCase) < 0) continue;
+
+                var space = trimmd.IndexOf(" ");
+                if (space < 1) continue;
+                var control = trimmd.Substring(0, space);
+
+                if (control == "xypad" || control == "hrange" || control == "vrange" ||
+                    control == "encoder" || control == "form" || control == "meter" ||
+                    control == "keyboard" ||
+                    control.Contains("slider") || control.Contains("button") ||
+                    control.Contains("checkbox") || control.Contains("groupbox") ||
+                    control.Contains("combobox") || control.Contains("label")) continue;
+
+                if (!result.Contains(control)) result.Add(control);
+            }
+
+            return result;
+        }
+
         public static List<string> ParseCsdStringForAudioChannels(string csdContent)
         {
             var result = new List<string>();

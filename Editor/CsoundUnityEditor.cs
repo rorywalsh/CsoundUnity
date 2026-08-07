@@ -781,6 +781,17 @@ namespace Csound.Unity
 
         public void DrawChannelControllers()
         {
+            // Outside the foldout: a widget the parser skipped is exactly what you are looking for
+            // when you fold this open wondering where a control went.
+            var unsupported = csoundUnity != null ? csoundUnity.unsupportedWidgets : null;
+            if (unsupported != null && unsupported.Count > 0)
+            {
+                EditorGUILayout.HelpBox(
+                    $"This csd uses {string.Join(", ", unsupported)}, which CsoundUnity does not build " +
+                    $"a control for. The csd runs as written — only the control is missing here and " +
+                    $"in a generated UI.", MessageType.Info);
+            }
+
             m_drawChannels.boolValue = EditorGUILayout.Foldout(m_drawChannels.boolValue, "Control Channels", true);
             if (m_drawChannels.boolValue)
             {
