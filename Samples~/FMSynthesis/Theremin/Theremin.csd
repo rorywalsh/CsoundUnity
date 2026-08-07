@@ -9,6 +9,16 @@ rslider    bounds(400, 40, 80, 80), valueTextBox(1), textBox(1), text("Filter Fr
 rslider    bounds(500, 40, 80, 80), valueTextBox(1), textBox(1), text("Filter Res"), channel("FiltRes"),  range(0,  0.95, .066)
 rslider    bounds(600, 40, 80, 80), valueTextBox(1), textBox(1), text("Table"), channel("Table"),  range(0,  3.99, 1.5)
 </Cabbage>
+
+/* Attribution-NonCommercial-ShareAlike 4.0 International
+Attribution - You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+NonCommercial - You may not use the material for commercial purposes.
+ShareAlike - If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode */
+
+; Theremin.csd
+; Contains the lineto2 opcode by Iain McCurdy
+; https://iainmccurdy.org
 <CsoundSynthesizer>
 <CsOptions>
 -n -d 
