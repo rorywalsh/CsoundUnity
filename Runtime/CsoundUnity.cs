@@ -4090,7 +4090,19 @@ namespace Csound.Unity
                 foreach (var target in preset.channels)
                 {
                     if (!target.type.Contains("slider") && target.type != "nslider") continue;
-                    var start = startValues.TryGetValue(target.channel, out float s) ? s : target.value;
+
+                    // No live channel by that name means no value to start from, so the morph
+                    // has nothing to interpolate and the channel jumps straight to its target.
+                    // That is the only sensible thing to do, but it is audible, and it used to
+                    // happen without a word — easy to hear as a broken interpolation.
+                    var hasStart = startValues.TryGetValue(target.channel, out float s);
+                    if (!hasStart && _warnedMissingPresetChannels.Add($"!live/{target.channel}"))
+                        Debug.LogWarning($"[CsoundUnity] Preset \"{preset?.presetName}\" morphs " +
+                                         $"channel \"{target.channel}\", which this csd does not " +
+                                         $"declare. With no starting value it jumps to the target " +
+                                         $"instead of sliding to it. Reported once per channel.");
+
+                    var start = hasStart ? s : target.value;
 
                     if (UsesSkewedRange(target, out var min, out var max, out var skew))
                     {
@@ -4152,6 +4164,8 @@ namespace Csound.Unity
             var wB = x       * (1 - y);
             var wC = (1 - x) * y;
             var wD = x       * y;
+
+            WarnChannelsMissingFromFirstPreset(a, b, c, d);
 
             foreach (var chA in a.channels)
             {
@@ -4219,6 +4233,58 @@ namespace Csound.Unity
             max  = channel?.max  ?? 0f;
             skew = channel?.skew ?? 1f;
             return channel != null && max > min && skew > 0f && skew != 1f;
+        }
+
+
+        /// <summary>Last four presets scanned, so the scan below runs on change and not per frame.</summary>
+        private CsoundUnityPreset _lastBlendA, _lastBlendB, _lastBlendC, _lastBlendD;
+
+        /// <summary>
+        /// Reports channels that the other three presets declare but the first one does not.
+        /// <para>
+        /// <see cref="BlendPresets"/> walks the first preset's channels, so anything missing from
+        /// it is not blended at all — not blended wrongly, simply absent, which is why it is easy
+        /// to miss. The behaviour is left alone: what the first corner should contribute for a
+        /// channel it has no opinion about is a design question, not something to settle inside a
+        /// warning.
+        /// </para>
+        /// <para>
+        /// The scan is O(channels) and BlendPresets runs every frame, so it only re-runs when the
+        /// set of four presets actually changes.
+        /// </para>
+        /// </summary>
+        private void WarnChannelsMissingFromFirstPreset(CsoundUnityPreset a, CsoundUnityPreset b,
+            CsoundUnityPreset c, CsoundUnityPreset d)
+        {
+            if (ReferenceEquals(a, _lastBlendA) && ReferenceEquals(b, _lastBlendB) &&
+                ReferenceEquals(c, _lastBlendC) && ReferenceEquals(d, _lastBlendD)) return;
+
+            _lastBlendA = a; _lastBlendB = b; _lastBlendC = c; _lastBlendD = d;
+
+            if (a?.channels == null) return;
+
+            foreach (var other in new[] { b, c, d })
+            {
+                if (other?.channels == null) continue;
+
+                foreach (var ch in other.channels)
+                {
+                    if (string.IsNullOrWhiteSpace(ch.channel)) continue;
+                    if (a.channels.Exists(x => x.channel == ch.channel)) continue;
+
+                    // Keyed by the first preset and the channel, not by which of the other three
+                    // happens to declare it: the problem is one — A is missing it — and all
+                    // three would otherwise report the same thing. Swapping A in play mode still
+                    // re-warns, which is the case the rescan exists for.
+                    if (!_warnedMissingPresetChannels.Add($"!first/{a.presetName}/{ch.channel}"))
+                        continue;
+
+                    Debug.LogWarning($"[CsoundUnity] Preset \"{other.presetName}\" declares channel " +
+                                     $"\"{ch.channel}\", but the first preset of the blend " +
+                                     $"(\"{a.presetName}\") does not, so that channel takes no part in " +
+                                     $"the blend at all. Reported once per first preset and channel.");
+                }
+            }
         }
 
         /// <summary>
