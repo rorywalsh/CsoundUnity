@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using UnityEngine;
 
 namespace Csound.Unity.Samples
@@ -17,6 +18,7 @@ namespace Csound.Unity.Samples
     /// 5. Wait 2s  → Restart()
     /// 6. OnCsoundPerformanceFinished → natural end detected, done
     /// 7. Wait 2s  → LoadCsdFromString(): swaps in a csd written in code, no asset involved
+    /// 8. Wait 2s  → LoadCsdFromPath(): writes a csd to persistentDataPath and loads it back
     ///
     /// Setup:
     /// 1. Attach this component to the same GameObject as CsoundUnity
@@ -78,6 +80,43 @@ i1 0.0 0.4 220
 i1 0.5 0.4 277
 i1 1.0 0.4 330
 i1 1.5 1.5 440
+e 4
+</CsScore>
+</CsoundSynthesizer>
+";
+
+        /// <summary>
+        /// A second csd, written to disk and read back so LoadCsdFromPath has a real file to open.
+        /// A bell rather than the saw pair of RuntimeCsd, so the swap is audible and not just
+        /// visible in the log.
+        /// </summary>
+        private const string FileCsd = @"
+<Cabbage>
+form caption(""Csd From File"") size(300, 100)
+hslider bounds(0, 0, 300, 50) range(0.5, 12, 3.5, 1, 0.01) channel(""ratio"") text(""Ratio"")
+</Cabbage>
+<CsoundSynthesizer>
+<CsOptions>
+-n -d
+</CsOptions>
+<CsInstruments>
+sr     = 48000
+ksmps  = 64
+nchnls = 2
+0dbfs  = 1
+
+instr 1
+    kratio chnget ""ratio""
+    aenv   expon 0.3, p3, 0.001
+    amod   oscili aenv * p4 * 2, p4 * kratio
+    abell  oscili aenv, p4 + amod
+    outs abell, abell
+endin
+</CsInstruments>
+<CsScore>
+i1 0.0 1.2 440
+i1 0.7 1.2 587
+i1 1.4 1.8 330
 e 4
 </CsScore>
 </CsoundSynthesizer>
@@ -148,9 +187,12 @@ e 4
 
             Debug.Log("[LifecycleDemo] Calling LoadCsdFromString()...");
             _performanceFinished = false;
-            _csound.LoadCsdFromString(RuntimeCsd);
-
-            yield return new WaitUntil(() => _csound.IsInitialized);
+            if (!_csound.LoadCsdFromString(RuntimeCsd))
+            {
+                Debug.LogError("[LifecycleDemo] LoadCsdFromString did not end up running — "
+                             + "look above for a Csound compilation error.");
+                yield break;
+            }
 
             // The channels come from the string, not from the csd asset: "cutoff" exists only
             // here, and "freqSlider" from BasicTest.csd is gone.
@@ -160,6 +202,36 @@ e 4
 
             _csound.SetChannel("cutoff", _runtimeCutoff);
             Debug.Log($"[LifecycleDemo] cutoff set to {_runtimeCutoff}");
+
+            // --- 8. Write a csd to disk and load it back by path, WHILE IT IS STILL PLAYING ---
+            // Deliberately not waiting for the natural end here. A performance that ends on its
+            // own is stopped by CsoundUnity, so every earlier step went through Initialize();
+            // cutting in mid-score is what exercises the other branch, where LoadCsd* finds the
+            // instance running and reloads it with Restart(). That is also the realistic case:
+            // swapping a patch rarely waits politely for the score to finish.
+            //
+            // persistentDataPath is a real, writable directory on every platform, so this step
+            // exercises the synchronous overload on device too. StreamingAssets is the case that
+            // needs the callback overload instead — see lifecycle.md.
+            yield return new WaitForSeconds(1.5f);
+
+            var path = Path.Combine(Application.persistentDataPath, "LifecycleDemoRuntime.csd");
+            File.WriteAllText(path, FileCsd);
+            Debug.Log($"[LifecycleDemo] Wrote csd to {path}");
+
+            Debug.Log($"[LifecycleDemo] Csound running? {_csound.IsInitialized} " +
+                      $"— so LoadCsdFromPath will go through {(_csound.IsInitialized ? "Restart()" : "Initialize()")}");
+
+            _performanceFinished = false;
+            if (!_csound.LoadCsdFromPath(path))
+            {
+                Debug.LogError("[LifecycleDemo] LoadCsdFromPath failed — see the error above.");
+                yield break;
+            }
+
+            var fileChannels = _csound.channels;
+            Debug.Log($"[LifecycleDemo] Csd from file running — {fileChannels.Count} channel(s): " +
+                      $"{string.Join(", ", fileChannels.ConvertAll(c => c.channel))}");
 
             yield return new WaitUntil(() => _performanceFinished);
             Debug.Log("[LifecycleDemo] Demo complete!");

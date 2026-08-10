@@ -1549,10 +1549,9 @@ namespace Csound.Unity
         /// Startup behaviour when <paramref name="startNow"/> is <c>true</c>:
         /// <list type="bullet">
         ///   <item>Already running — the instance is reloaded via <see cref="Restart"/>.</item>
-        ///   <item>Not yet running, <see cref="initializeOnAwake"/> is <c>false</c> — started
-        ///     now via <see cref="Initialize"/>.</item>
-        ///   <item>Not yet running, <see cref="initializeOnAwake"/> is <c>true</c> — left for
-        ///     <c>Awake</c> to compile the string it just stored.</item>
+        ///   <item>Not running — started now via <see cref="Initialize"/>, whatever
+        ///     <see cref="initializeOnAwake"/> says: once <c>Awake</c> has run it will not run
+        ///     again, so there is nobody else left to compile the string.</item>
         /// </list>
         /// If <c>Awake</c> has not run yet (<see cref="audioSource"/> not resolved), only the
         /// fields are populated; initialization is deferred to <c>Awake</c> or a later
@@ -1563,12 +1562,16 @@ namespace Csound.Unity
         /// <param name="csdContent">The full CSD text to load.</param>
         /// <param name="startNow">When <c>true</c>, (re)initialize Csound after loading; when
         /// <c>false</c>, only store and parse the CSD (call <see cref="Initialize"/> yourself).</param>
-        public void LoadCsdFromString(string csdContent, bool startNow = true)
+        /// <returns><c>true</c> when Csound is running the new CSD by the time this returns.
+        /// <c>false</c> otherwise, which is not always a failure: it is also what you get when
+        /// <paramref name="startNow"/> is <c>false</c>, or when <c>Awake</c> has not run yet and
+        /// the CSD was only stored. A compile error also lands here, and is logged.</returns>
+        public bool LoadCsdFromString(string csdContent, bool startNow = true)
         {
             if (string.IsNullOrWhiteSpace(csdContent))
             {
                 Debug.LogWarning("[CsoundUnity] LoadCsdFromString: CSD content is empty.");
-                return;
+                return false;
             }
 
             this._csoundString = csdContent;
@@ -1612,19 +1615,160 @@ namespace Csound.Unity
                 }
             }
 
-            if (!startNow) return;
+            if (!startNow) return false;
 
             // Awake resolves the DSP buffer size and the AudioSource that Init depends on.
             // If it hasn't run yet, leave initialization to Awake / a later Initialize():
             // a csd handed over this early would otherwise compile natively twice, and size
             // its audio-channel buffers from a bufferSize still at 0.
-            if (!_awakeCompleted) return;
+            if (!_awakeCompleted) return false;
 
+            // Awake has run by now, so nothing else is going to compile the stored string:
+            // this has to start it. Deferring to Awake when initializeOnAwake is set was the
+            // behaviour here, and it silently did nothing whenever the instance was not
+            // already running — a compile that failed, an assigned-nothing component, or a
+            // previous Stop(). Which is the default configuration, so it was the common case.
             if (initialized || _initializing)
                 Restart();
-            else if (!initializeOnAwake)
+            else
                 Initialize();
-            // else: initializeOnAwake == true and not yet initialized — Awake will compile _csoundString.
+
+            // Both are synchronous, so this already reflects whether the csd compiled.
+            return IsInitialized;
+        }
+
+        /// <summary>
+        /// Reads a CSD from a file and loads it, the runtime counterpart of assigning a csd asset.
+        /// Equivalent to reading the file yourself and calling <see cref="LoadCsdFromString"/>.
+        /// <para>
+        /// Use this for real filesystem paths — <c>Application.persistentDataPath</c>, an absolute
+        /// path, anything the user picked. For a URL, or for StreamingAssets on Android and WebGL
+        /// where the folder lives inside the compressed application package and cannot be read as
+        /// a file, use the overload that takes a callback: this one refuses with an explicit error
+        /// rather than failing quietly.
+        /// </para>
+        /// </summary>
+        /// <param name="path">Path to the .csd file.</param>
+        /// <param name="startNow">Passed through to <see cref="LoadCsdFromString"/>.</param>
+        /// <returns><c>true</c> when Csound is running the CSD from the file by the time this
+        /// returns. <c>false</c> when the file could not be read, when it did not compile, or
+        /// when <paramref name="startNow"/> is <c>false</c>. Every case logs its reason.</returns>
+        public bool LoadCsdFromPath(string path, bool startNow = true)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                Debug.LogWarning("[CsoundUnity] LoadCsdFromPath: path is empty.");
+                return false;
+            }
+
+            if (NeedsAsyncRead(path, out var reason))
+            {
+                Debug.LogError($"[CsoundUnity] LoadCsdFromPath cannot read \"{path}\" synchronously: {reason}. " +
+                               $"Use LoadCsdFromPath(path, onLoaded), which reads it with UnityWebRequest.");
+                return false;
+            }
+
+            if (!File.Exists(path))
+            {
+                Debug.LogError($"[CsoundUnity] LoadCsdFromPath: file not found — {path}");
+                return false;
+            }
+
+            string content;
+            try
+            {
+                content = File.ReadAllText(path);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[CsoundUnity] LoadCsdFromPath: could not read {path} — {e.Message}");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                Debug.LogError($"[CsoundUnity] LoadCsdFromPath: {path} is empty.");
+                return false;
+            }
+
+            return LoadCsdFromString(content, startNow);
+        }
+
+        /// <summary>
+        /// Reads a CSD with <c>UnityWebRequest</c> and loads it, then reports the outcome to
+        /// <paramref name="onLoaded"/>. Works for the cases the synchronous overload refuses:
+        /// StreamingAssets on any platform, and http/https URLs.
+        /// <para>
+        /// The component must be active and enabled, since the read runs as a coroutine.
+        /// </para>
+        /// </summary>
+        /// <param name="path">Path or URL to the .csd file.</param>
+        /// <param name="onLoaded">Called with <c>true</c> when Csound ends up running the CSD,
+        /// <c>false</c> when the read failed, the CSD did not compile, or
+        /// <paramref name="startNow"/> is <c>false</c>.</param>
+        /// <param name="startNow">Passed through to <see cref="LoadCsdFromString"/>.</param>
+        public void LoadCsdFromPath(string path, Action<bool> onLoaded, bool startNow = true)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                Debug.LogWarning("[CsoundUnity] LoadCsdFromPath: path is empty.");
+                onLoaded?.Invoke(false);
+                return;
+            }
+
+            if (!isActiveAndEnabled)
+            {
+                Debug.LogError("[CsoundUnity] LoadCsdFromPath needs an active, enabled component to run its coroutine.");
+                onLoaded?.Invoke(false);
+                return;
+            }
+
+            // UnityWebRequest wants a URI. A StreamingAssets path on Android already carries
+            // its own jar:file:// scheme, so only bare paths get one added.
+            var uri = path.Contains("://") ? path : "file://" + path;
+
+            StartCoroutine(LoadingData(uri, content =>
+            {
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    Debug.LogError($"[CsoundUnity] LoadCsdFromPath: nothing read from {path}");
+                    onLoaded?.Invoke(false);
+                    return;
+                }
+
+                onLoaded?.Invoke(LoadCsdFromString(content, startNow));
+            }));
+        }
+
+        /// <summary>
+        /// Whether the path is one that <c>File.ReadAllText</c> cannot serve, so the caller can be
+        /// told to use the callback overload instead of watching the load fail for no stated reason.
+        /// <para>
+        /// Only Android and WebGL are singled out: there StreamingAssets is inside the packaged
+        /// application. On iOS, visionOS, desktop and in the editor it is an ordinary directory.
+        /// </para>
+        /// </summary>
+        private static bool NeedsAsyncRead(string path, out string reason)
+        {
+            reason = null;
+
+            if (path.Contains("://"))
+            {
+                reason = "it is a URL, not a file path";
+                return true;
+            }
+
+#if (UNITY_ANDROID || UNITY_WEBGL) && !UNITY_EDITOR
+            var streaming = Application.streamingAssetsPath;
+            if (!string.IsNullOrEmpty(streaming) &&
+                path.Replace('\\', '/').StartsWith(streaming.Replace('\\', '/'), StringComparison.OrdinalIgnoreCase))
+            {
+                reason = "StreamingAssets is inside the compressed application package on this platform " +
+                         "and is not readable as a file";
+                return true;
+            }
+#endif
+            return false;
         }
 
         /// <summary>
@@ -3809,7 +3953,7 @@ namespace Csound.Unity
 
         static IEnumerator LoadingData(string path, Action<string> onDataLoaded)
         {
-            Debug.Log($"Loading JSON data from path: {path}");
+            Debug.Log($"Loading data from path: {path}");
             using (var request = UnityWebRequest.Get(path))
             {
                 request.downloadHandler = new DownloadHandlerBuffer();

@@ -71,16 +71,22 @@ i 1 0 3600
 </CsScore>
 </CsoundSynthesizer>";
 
-csound.LoadCsdFromString(csd); // parses, then (re)initialises
+if (csound.LoadCsdFromString(csd)) // parses, (re)initialises, and says whether it runs
+    Debug.Log("playing");
 ```
 
 **Startup behaviour** (when the default `startNow: true` is used):
 
-| State | Result |
-|---|---|
-| Already running | Reloaded via `Restart()` |
-| Not running, `initializeOnAwake == false` | Started now via `Initialize()` |
-| Not running, `initializeOnAwake == true` | Left for `Awake` to compile the stored string |
+| State | Result | Returns |
+|---|---|---|
+| Already running | Reloaded via `Restart()` | whether it compiled |
+| Not running | Started now via `Initialize()` | whether it compiled |
+| `Awake` has not run yet | Only stored and parsed; `Awake` compiles it | `false` |
+| `startNow: false` | Only stored and parsed | `false` |
+
+The return value answers **"is Csound running this CSD now"**, not "was the file readable" — a CSD that arrives intact but fails to compile returns `false`, with the Csound error in the console. `false` is therefore not always a failure: asking for `startNow: false`, or calling before `Awake`, also returns it because nothing is playing yet.
+
+`initializeOnAwake` does not change this. Once `Awake` has run it will not run again, so there is nobody else left to compile the string — including after a failed compile or a `Stop()`.
 
 Pass `startNow: false` to only store and parse the CSD without (re)initialising — then call `Initialize()` yourself when ready:
 
@@ -91,6 +97,38 @@ csound.Initialize();
 ```
 
 > **Note:** if called before `Awake` has run (e.g. immediately after `AddComponent`), only the fields are populated; initialisation is deferred to `Awake` or a later `Initialize()` call, because `Init` depends on Awake-time state (DSP buffer size, AudioSource).
+
+### LoadCsdFromPath() ###
+
+Reads a CSD from a file and hands it to `LoadCsdFromString()`. There are two overloads, and which one you need depends on where the file is.
+
+**Synchronous** — for real filesystem paths: `Application.persistentDataPath`, an absolute path, a file the user picked.
+
+```csharp
+var path = Path.Combine(Application.persistentDataPath, "patch.csd");
+if (csound.LoadCsdFromPath(path))
+    Debug.Log("loaded");
+```
+
+It returns whatever `LoadCsdFromString()` returns — **is Csound running this CSD now** — so a missing file, an unreadable one and a CSD that fails to compile all give `false`, each with its own message in the console.
+
+**With a callback** — for **StreamingAssets** and for http/https URLs. The read goes through `UnityWebRequest`, so it works on every platform:
+
+```csharp
+var path = Path.Combine(Application.streamingAssetsPath, "patch.csd");
+csound.LoadCsdFromPath(path, ok =>
+{
+    if (ok) Debug.Log("loaded");
+});
+```
+
+> **Why two of them.** On **Android** and **WebGL**, `StreamingAssets` lives inside the compressed application package and cannot be opened with `File.ReadAllText` — the call that works in the editor fails on device. Rather than let that fail quietly, the synchronous overload detects such a path and refuses with an explicit error telling you to use the callback overload. On iOS, visionOS and desktop, StreamingAssets is an ordinary directory and either overload works.
+
+The callback overload runs a coroutine, so the component must be active and enabled.
+
+> **You do not have to stop Csound first.** Both overloads hand the content to `LoadCsdFromString()`, which reloads a running instance with `Restart()` — the startup table above applies unchanged. With the callback overload the read takes a few frames, during which the current CSD keeps playing; the swap happens when the file arrives.
+
+A third option, if you would rather keep everything synchronous, is to copy the files out of StreamingAssets once at startup — see [CopyFilesToPersistentDataPath](loading_external_files.md) — and then read them from `persistentDataPath`.
 
 ### IsInitialized ###
 

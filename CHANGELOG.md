@@ -8,6 +8,8 @@
 - [Add] RootOutput audio path for Unity 6+: writes Csound output directly into Unity's main audio output via RootOutputInstance, bypassing the AudioMixer and requiring no AudioSource; Audio Output Path is now a dedicated inspector section
 - [Add] Lifecycle API: initializeOnAwake toggle, Initialize(), Stop(), Restart()
 - [Add] LoadCsdFromString: load a raw CSD from a string at runtime without a `.csd` asset (runtime counterpart of the editor-only SetCsd); string-based parsers ParseCsdString/ParseCsdStringForNchnls/ParseCsdStringForKsmps
+- [Add] LoadCsdFromPath: load a CSD from a file at runtime. The synchronous overload covers real filesystem paths and refuses a StreamingAssets path on Android and WebGL with an explicit error instead of failing quietly; the callback overload reads StreamingAssets and http/https URLs through UnityWebRequest
+- [Add] The Cabbage widgets CsoundUnity cannot build a control for (listbox, gentable, signaldisplay, …) are now reported: warned once when the csd is assigned, and listed above the Control Channels foldout. They used to be dropped in silence
 - [Add] CsoundUnityMidiInput: platform-agnostic MIDI input component (macOS/iOS/visionOS via CoreMIDI, Android via android.media.midi API 23+, Windows via WinMM — short messages only, no SysEx)
 - [Add] Waveform, spectrum, spectrogram, oscilloscope and Lissajous audio monitor in inspector, with zoom sliders. The views draw in play mode; which ones are shown can be set at any time and persists across selections and restarts
 - [Add] OutputBuffer and OnCsoundPerformKsmps callback. OutputBuffer hands back a complete DSP block, safe to poll from the main thread at any rate; when no new block has been produced the previous contents are returned unchanged
