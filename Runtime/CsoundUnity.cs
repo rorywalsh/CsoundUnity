@@ -1068,6 +1068,7 @@ namespace Csound.Unity
             namedAudioChannelDataDict.Clear();
             namedAudioChannelTempBufferDict.Clear();
             _publishedAudioChannels.Clear();
+            _warnedMissingPresetChannels.Clear();
 
             // Not a preference, despite looking like one: this decides whether the
             // spatializer runs before or after the AudioSource's effect chain, and on the
@@ -4220,10 +4221,32 @@ namespace Csound.Unity
             return channel != null && max > min && skew > 0f && skew != 1f;
         }
 
-        private static float GetPresetChannelValue(CsoundUnityPreset preset, string channel, float fallback)
+        /// <summary>
+        /// Channels already reported as missing from a preset. A vector morph calls
+        /// <see cref="BlendPresets"/> every Update, so the warning has to fire once and then
+        /// keep quiet. Cleared by <c>Init</c>, so a new csd gets a fresh hearing.
+        /// </summary>
+        private readonly HashSet<string> _warnedMissingPresetChannels = new HashSet<string>();
+
+        /// <summary>
+        /// The preset's value for the channel, or <paramref name="fallback"/> when the preset does
+        /// not have that channel — which happens when the presets were saved against a different
+        /// version of the csd. That used to be silent, and it does not look like a bug: the blend
+        /// still runs, that corner of it is just anchored to the wrong value.
+        /// </summary>
+        private float GetPresetChannelValue(CsoundUnityPreset preset, string channel, float fallback)
         {
-            foreach (var ch in preset.channels)
-                if (ch.channel == channel) return ch.value;
+            if (preset?.channels != null)
+                foreach (var ch in preset.channels)
+                    if (ch.channel == channel) return ch.value;
+
+            if (_warnedMissingPresetChannels.Add($"{preset?.presetName}/{channel}"))
+                Debug.LogWarning($"[CsoundUnity] Preset \"{preset?.presetName}\" has no channel " +
+                                 $"\"{channel}\", so it contributes the first preset's value to the " +
+                                 $"blend instead of its own. The presets were most likely saved " +
+                                 $"against a different version of the csd. Reported once per " +
+                                 $"channel and preset.");
+
             return fallback;
         }
 
