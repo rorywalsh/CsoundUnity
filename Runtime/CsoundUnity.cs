@@ -801,7 +801,42 @@ namespace Csound.Unity
         /// <summary>
         /// An utility dictionary to store the index of every channel in the _channels list
         /// </summary>
-        private Dictionary<string, int> _channelsIndexDict = new Dictionary<string, int>();
+        /// <summary>
+        /// Backing store for <see cref="ChannelsIndex"/>. Deliberately without an initialiser: it is
+        /// not serialized, so a domain reload has to leave it <c>null</c> and not an empty dictionary
+        /// that looks usable and answers "not found" to everything.
+        /// </summary>
+        private Dictionary<string, int> _channelsIndexDict;
+
+        /// <summary>
+        /// Channel name to index into <see cref="_channels"/>, built on first use.
+        /// <para>
+        /// Derived data, never serialized, so anything that replaces or reorders the channel list
+        /// only has to call <see cref="InvalidateChannelsIndex"/> — the next lookup rebuilds it. A
+        /// duplicate channel name resolves to the last one, matching what the csd parser produces.
+        /// </para>
+        /// </summary>
+        private Dictionary<string, int> ChannelsIndex
+        {
+            get
+            {
+                if (_channelsIndexDict != null) return _channelsIndexDict;
+
+                _channelsIndexDict = new Dictionary<string, int>();
+                if (_channels == null) return _channelsIndexDict;
+
+                for (var i = 0; i < _channels.Count; i++)
+                {
+                    var chan = _channels[i];
+                    if (chan == null || string.IsNullOrWhiteSpace(chan.channel)) continue;
+                    _channelsIndexDict[chan.channel] = i;
+                }
+                return _channelsIndexDict;
+            }
+        }
+
+        /// <summary>Drops the index. Call after replacing or reordering <see cref="_channels"/>.</summary>
+        private void InvalidateChannelsIndex() => _channelsIndexDict = null;
         [HideInInspector][SerializeField] private List<string> _availableAudioChannels = new List<string>();
         [HideInInspector][SerializeField] private List<string> _unsupportedWidgets = new List<string>();
 
@@ -1107,11 +1142,10 @@ namespace Csound.Unity
                 // channels are created when a csd file is selected in the inspector
                 if (channels != null)
                 {
-                    // Rebuild the index dictionary from scratch every time Csound initialises so
-                    // that stale entries (e.g. from a previous play session when Domain Reload is
-                    // disabled, or from a different CSD loaded via SetCsd) never shadow the
-                    // correct indices for the current _channels list.
-                    _channelsIndexDict.Clear();
+                    // Drop the index so stale entries — a previous play session with Domain
+                    // Reload off, or a different CSD loaded via SetCsd — cannot shadow the current
+                    // list. It is rebuilt on the next lookup.
+                    InvalidateChannelsIndex();
 
                     // initialise channels if found in xml descriptor..
                     for (var i = 0; i < channels.Count; i++)
@@ -1125,9 +1159,6 @@ namespace Csound.Unity
                         if ((channels[i].type == "xypad" || channels[i].type == "hrange" || channels[i].type == "vrange")
                             && !string.IsNullOrEmpty(channels[i].channelY))
                         { csound.SetChannel(channels[i].channelY, channels[i].value2); }
-                        // update channels index dictionary
-                        if (!_channelsIndexDict.ContainsKey(channels[i].channel))
-                        { _channelsIndexDict.Add(channels[i].channel, i); }
                     }
                 }
                 // If the serialised channel list is empty (scene saved without the
@@ -1269,8 +1300,6 @@ namespace Csound.Unity
                 if ((channels[i].type == "xypad" || channels[i].type == "hrange" || channels[i].type == "vrange")
                     && !string.IsNullOrEmpty(channels[i].channelY))
                     csound.SetChannel(channels[i].channelY, channels[i].value2);
-                // update channels index dictionary
-                _channelsIndexDict.TryAdd(channels[i].channel, i);
             }
         }
         initialized = true;
@@ -1344,7 +1373,7 @@ namespace Csound.Unity
             _routeCursors         = System.Array.Empty<int>();
             _routeSnapshotLengths = System.Array.Empty<int>();
             _routeStaleCounts     = System.Array.Empty<int>();
-            _channelsIndexDict.Clear();
+            InvalidateChannelsIndex();
 
             // Drop the published snapshots before clearing the live buffers, so instances routed
             // from this one stop reading the last block it produced instead of looping it.
@@ -1499,19 +1528,7 @@ namespace Csound.Unity
             // Rebuilding channelsIndexDict matters when the CSD is swapped while playing, which
             // LoadCsdFromString does at runtime — this method is the editor-side path to the
             // same thing, and both have to leave the dictionary consistent.
-            if (_channelsIndexDict != null)
-            {
-                // Always rebuild from scratch so that stale entries from a previous CSD are removed,
-                // and so that the stored index matches the actual position in _channels (not a
-                // separate count that skips empty-channel controllers and therefore gets out of sync).
-                _channelsIndexDict.Clear();
-                for (int ci = 0; ci < this._channels.Count; ci++)
-                {
-                    var chan = this._channels[ci];
-                    if (string.IsNullOrWhiteSpace(chan.channel)) continue;
-                    _channelsIndexDict[chan.channel] = ci;
-                }
-            }
+            InvalidateChannelsIndex();
             this._availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
             SetUnsupportedWidgets(this._csoundString, fileName);
             this._nchnls           = ParseCsdFileForNchnls(fileName);
@@ -1585,18 +1602,7 @@ namespace Csound.Unity
 #endif
 
             this._channels = ParseCsdString(csdContent) ?? new List<CsoundChannelController>();
-            if (_channelsIndexDict != null)
-            {
-                // Rebuild from scratch so stale entries from a previous CSD are removed and the
-                // stored index matches the actual position in _channels (mirrors SetCsd).
-                _channelsIndexDict.Clear();
-                for (int ci = 0; ci < this._channels.Count; ci++)
-                {
-                    var chan = this._channels[ci];
-                    if (string.IsNullOrWhiteSpace(chan.channel)) continue;
-                    _channelsIndexDict[chan.channel] = ci;
-                }
-            }
+            InvalidateChannelsIndex();
             this._availableAudioChannels = ParseCsdStringForAudioChannels(csdContent);
             SetUnsupportedWidgets(csdContent, "the csd loaded from a string");
             this._nchnls = ParseCsdStringForNchnls(csdContent);
@@ -2509,53 +2515,28 @@ namespace Csound.Unity
                         controller.caption = infoText.Replace("\"", "").Trim();
                     }
 
-                    if (trimmd.IndexOf("text(") > -1)
+                    if (TryGetAttribute(trimmd, "text(", out var textContent))
                     {
-                        var text   = trimmd.Substring(trimmd.IndexOf("text(") + 6);
-                        var closeQ = text.IndexOf("\"");
-                        text = closeQ > -1
-                            ? text.Substring(0, closeQ)
-                            : text.Substring(0, text.IndexOf(")"));
-                        text = text.Replace("\"", "");
-                        text = text.Replace('"', new char());
-                        if (controller.type == "combobox") //if combobox, text() contains options not a label
+                        if (controller.type == "combobox") // for a combobox text() holds the options, not a label
                         {
-                            var tokens = text.Split(',');
+                            var tokens = SplitAttributeValues(textContent);
                             controller.SetRange(1, tokens.Length, 0);
-
-                            for (var o = 0; o < tokens.Length; o++)
-                            {
-                                tokens[o] = string.Join("", tokens[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
-                            }
                             controller.options = tokens;
                         }
                         else
                         {
-                            controller.text = text;
+                            // A single label: take the quoted value, or the raw content if unquoted.
+                            var values = SplitAttributeValues(textContent);
+                            controller.text = values.Length > 0 ? values[0] : textContent.Trim();
                         }
                     }
 
-                    if (trimmd.IndexOf("items(") > -1)
+                    // items() is the other spelling of a combobox's option list, and overrides text().
+                    if (controller.type == "combobox" && TryGetAttribute(trimmd, "items(", out var itemsContent))
                     {
-                        var text   = trimmd.Substring(trimmd.IndexOf("items(") + 7);
-                        var closeQI = text.LastIndexOf("\"");
-                        text = closeQI > -1
-                            ? text.Substring(0, closeQI)
-                            : text.Substring(0, text.LastIndexOf(")"));
-                        //TODO THIS OVERRIDES TEXT!
-                        text = text.Replace("\"", "");
-                        text = text.Replace('"', new char());
-                        if (controller.type == "combobox")
-                        {
-                            var tokens = text.Split(',');
-                            controller.SetRange(1, tokens.Length, 0);
-
-                            for (var o = 0; o < tokens.Length; o++)
-                            {
-                                tokens[o] = string.Join("", tokens[o].Split(default(string[]), System.StringSplitOptions.RemoveEmptyEntries));
-                            }
-                            controller.options = tokens;
-                        }
+                        var tokens = SplitAttributeValues(itemsContent);
+                        controller.SetRange(1, tokens.Length, 0);
+                        controller.options = tokens;
                     }
 
                     if (trimmd.IndexOf("channel(") > -1)
@@ -2620,6 +2601,73 @@ namespace Csound.Unity
                 }
             }
             return locaChannelControllers;
+        }
+
+        /// <summary>
+        /// The text between the parentheses of a Cabbage attribute — the <c>"a", "b"</c> of
+        /// <c>text("a", "b")</c>.
+        /// <para>
+        /// Scans to the matching close parenthesis and ignores anything inside quotes, which is
+        /// what makes it safe for both shapes at once: another quoted attribute later on the same
+        /// line cannot cut it short, and a multi-value <c>text()</c> is not truncated to its first
+        /// entry. Reaching for the first or the last quote on the line can only ever get one of
+        /// those two right.
+        /// </para>
+        /// </summary>
+        /// <param name="line">The widget line.</param>
+        /// <param name="attribute">Attribute name including the opening parenthesis, e.g. <c>text(</c>.</param>
+        /// <param name="content">The text between the parentheses, on success.</param>
+        private static bool TryGetAttribute(string line, string attribute, out string content)
+        {
+            content = null;
+
+            var open = line.IndexOf(attribute, StringComparison.Ordinal);
+            if (open < 0) return false;
+
+            var start    = open + attribute.Length;
+            var depth    = 1;
+            var inQuotes = false;
+
+            for (var i = start; i < line.Length; i++)
+            {
+                var c = line[i];
+                if (c == '"') { inQuotes = !inQuotes; continue; }
+                if (inQuotes) continue;
+
+                if (c == '(') depth++;
+                else if (c == ')' && --depth == 0)
+                {
+                    content = line.Substring(start, i - start);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// The quoted strings inside an attribute's content, in order. Falls back to splitting on
+        /// commas when nothing is quoted, so <c>text(One, Two)</c> still yields two entries.
+        /// </summary>
+        private static string[] SplitAttributeValues(string content)
+        {
+            var values = new List<string>();
+
+            for (var i = 0; i < content.Length; )
+            {
+                var q1 = content.IndexOf('"', i);
+                if (q1 < 0) break;
+                var q2 = content.IndexOf('"', q1 + 1);
+                if (q2 < 0) break;
+
+                values.Add(content.Substring(q1 + 1, q2 - q1 - 1).Trim());
+                i = q2 + 1;
+            }
+
+            if (values.Count > 0) return values.ToArray();
+
+            var plain = content.Split(',');
+            for (var i = 0; i < plain.Length; i++) plain[i] = plain[i].Trim();
+            return plain;
         }
 
         /// <summary>
@@ -2730,13 +2778,13 @@ namespace Csound.Unity
             // Please note that on Cabbage comboboxes values go from 1-n, since 0 refers to no current selection,
             // instead on the Unity Editor their values start from 0
             // so the value on the serialized channel will be decreased by one 
-            if (_channelsIndexDict.ContainsKey(channel))
+            if (ChannelsIndex.TryGetValue(channel, out var idx))
             {
-                if (channels[_channelsIndexDict[channel]].type.Contains("combobox"))
+                if (channels[idx].type.Contains("combobox"))
                 {
                     val--;
                 }
-                channels[_channelsIndexDict[channel]].value = (float)val;
+                channels[idx].value = (float)val;
             }
         }
 
@@ -2746,9 +2794,9 @@ namespace Csound.Unity
         /// <param name="channelController">The channel controller whose name and value will be applied.</param>
         public void SetChannel(CsoundChannelController channelController)
         {
-            if (_channelsIndexDict.ContainsKey(channelController.channel))
+            if (ChannelsIndex.TryGetValue(channelController.channel, out var idx))
             {
-                var existingChannel = channels[_channelsIndexDict[channelController.channel]];
+                var existingChannel = channels[idx];
                 // A preset may carry combobox options that no longer match the CSD
                 // (e.g. the CSD was edited after the preset was saved). Keep the
                 // CSD-defined option set and apply only the preset's selected value.
@@ -2757,7 +2805,7 @@ namespace Csound.Unity
                     channelController.text = existingChannel.text;
                     channelController.options = existingChannel.options;
                 }
-                channels[_channelsIndexDict[channelController.channel]] = channelController;
+                channels[idx] = channelController;
             }
             if (!IsInitialized || csound == null) return;
             // Cabbage comboboxes are 1-based (0 means "no selection"), while the value
@@ -2830,9 +2878,7 @@ namespace Csound.Unity
         /// <returns>The matching controller, or <c>null</c> if not found.</returns>
         public CsoundChannelController GetChannelController(string channel)
         {
-            if (!_channelsIndexDict.ContainsKey(channel)) return null;
-            var indx = _channelsIndexDict[channel];
-            return this._channels[indx];
+            return ChannelsIndex.TryGetValue(channel, out var idx) ? _channels[idx] : null;
         }
 
         /// <summary>
@@ -4317,6 +4363,113 @@ namespace Csound.Unity
         }
 
         #endregion PRESETS
+
+        #region CLIPBOARD
+
+        /// <summary>
+        /// Whether the clipboard can carry and restore this channel. It needs a name — the csd's
+        /// <c>form</c>, and any widget without one, is in the list but is not a channel — and a
+        /// button is excluded because a momentary trigger has no value worth putting back.
+        /// <para>
+        /// Copy and paste share this so the two report the same number, instead of one counting
+        /// controllers and the other counting what it managed to apply.
+        /// </para>
+        /// </summary>
+        private static bool IsRestorable(CsoundChannelController ch) =>
+            ch != null && !string.IsNullOrWhiteSpace(ch.channel) &&
+            (ch.type == null || !ch.type.Contains("button"));
+
+        /// <summary>
+        /// Puts this instance's control channels on the system clipboard, as the same JSON a
+        /// <see cref="CsoundUnityPreset"/> is saved in — so a clipboard snapshot and a saved
+        /// <c>.json</c> preset are interchangeable, and channels can be pasted into a chat window
+        /// as readily as back into an inspector.
+        /// <para>
+        /// For the quick pass a preset asset is too heavy for: try a change, dislike it, paste the
+        /// old values back. Works in play mode.
+        /// </para>
+        /// </summary>
+        /// <returns><c>true</c> when something was copied.</returns>
+        public bool CopyChannelsToClipboard()
+        {
+            if (channels == null || channels.Count == 0)
+            {
+                Debug.LogWarning("[CsoundUnity] Nothing to copy: this instance has no control channels.");
+                return false;
+            }
+
+            // The whole list goes on the clipboard, form and all, so it stays interchangeable
+            // with a saved .json preset. Only the restorable ones are worth counting out loud.
+            GUIUtility.systemCopyBuffer =
+                JsonUtility.ToJson(CreatePreset($"{name} channels", csoundFileName, channels), true);
+
+            Debug.Log($"[CsoundUnity] Copied {channels.FindAll(IsRestorable).Count} "
+                    + $"channel(s) to the clipboard.");
+            return true;
+        }
+
+        /// <summary>
+        /// Applies channels held on the clipboard in the <see cref="CsoundUnityPreset"/> JSON format.
+        /// <para>
+        /// Unlike <see cref="SetPreset(CsoundUnityPreset)"/> this does not refuse when the clipboard
+        /// came from another csd. Refusing would defeat the purpose — the clipboard is for moving
+        /// values by hand, between instances and between csds that share channel names — so the
+        /// channels this csd declares are applied and the rest are reported.
+        /// </para>
+        /// </summary>
+        /// <returns><c>true</c> when at least one channel was applied.</returns>
+        public bool PasteChannelsFromClipboard()
+        {
+            var json = GUIUtility.systemCopyBuffer;
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                Debug.LogWarning("[CsoundUnity] Nothing to paste: the clipboard is empty.");
+                return false;
+            }
+
+            var preset = CreatePreset(string.Empty, json);
+
+            // CreatePreset only complains about malformed json. Valid json that is not a preset
+            // deserialises into an empty one, which would otherwise apply nothing in silence.
+            if (preset == null || preset.channels == null || preset.channels.Count == 0)
+            {
+                Debug.LogError("[CsoundUnity] The clipboard does not hold CsoundUnity channels. " +
+                               "Expected the JSON a preset is saved in.");
+                return false;
+            }
+
+            var unknown = new List<string>();
+            var applied = 0;
+
+            foreach (var ch in preset.channels)
+            {
+                if (!IsRestorable(ch)) continue;
+
+                // GetChannelController resolves against the live csd, and repairs the name index
+                // if a domain reload emptied it.
+                if (GetChannelController(ch.channel) == null) { unknown.Add(ch.channel); continue; }
+
+                SetChannel(ch);
+                applied++;
+            }
+
+            var from = preset.csoundFileName != csoundFileName && !string.IsNullOrEmpty(preset.csoundFileName)
+                ? $" (copied from \"{preset.csoundFileName}\")" : string.Empty;
+            var skipped = unknown.Count > 0
+                ? $" {unknown.Count} not in this csd: {string.Join(", ", unknown)}." : string.Empty;
+
+            if (applied == 0)
+                Debug.LogError($"[CsoundUnity] Nothing pasted{from}.{skipped}");
+            else if (unknown.Count > 0)
+                Debug.LogWarning($"[CsoundUnity] Pasted {applied} channel(s){from}.{skipped}");
+            else
+                Debug.Log($"[CsoundUnity] Pasted {applied} channel(s){from}.");
+
+            return applied > 0;
+        }
+
+        #endregion CLIPBOARD
+
 
         #endregion UTILITIES
 

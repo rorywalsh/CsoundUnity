@@ -779,6 +779,42 @@ namespace Csound.Unity
             }
         }
 
+        /// <summary>
+        /// Right-click on the Control Channels foldout to copy or paste the channel values through
+        /// the system clipboard.
+        /// <para>
+        /// A [ContextMenu] on the component would have been free, but it lives on the component
+        /// header — nowhere near the channels it acts on. This is where you are already looking
+        /// when you want to keep a set of values before trying something else.
+        /// </para>
+        /// </summary>
+        private void DrawChannelsContextMenu(Rect foldoutRect)
+        {
+            var e = Event.current;
+            if (e.type != EventType.ContextClick || !foldoutRect.Contains(e.mousePosition)) return;
+            if (csoundUnity == null) return;
+
+            var menu = new GenericMenu();
+
+            AddMenuItem(menu, "Copy Channels",
+                csoundUnity.channels != null && csoundUnity.channels.Count > 0,
+                () => csoundUnity.CopyChannelsToClipboard());
+
+            AddMenuItem(menu, "Paste Channels",
+                !string.IsNullOrWhiteSpace(GUIUtility.systemCopyBuffer),
+                () => { if (csoundUnity.PasteChannelsFromClipboard()) EditorUtility.SetDirty(csoundUnity); });
+
+            menu.ShowAsContext();
+            e.Use();
+        }
+
+        private static void AddMenuItem(GenericMenu menu, string label, bool enabled, GenericMenu.MenuFunction fn)
+        {
+            var content = new GUIContent(label);
+            if (enabled) menu.AddItem(content, false, fn);
+            else menu.AddDisabledItem(content);
+        }
+
         public void DrawChannelControllers()
         {
             // Outside the foldout: a widget the parser skipped is exactly what you are looking for
@@ -793,6 +829,8 @@ namespace Csound.Unity
             }
 
             m_drawChannels.boolValue = EditorGUILayout.Foldout(m_drawChannels.boolValue, "Control Channels", true);
+            DrawChannelsContextMenu(GUILayoutUtility.GetLastRect());
+
             if (m_drawChannels.boolValue)
             {
                 if (m_channelControllers.arraySize < 1)
