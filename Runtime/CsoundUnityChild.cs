@@ -158,6 +158,34 @@ namespace Csound.Unity
             source.spatializePostEffects = true;
         }
 
+        /// <summary>
+        /// Rebuilds <see cref="namedAudioChannelData"/> to hold exactly one buffer per channel of
+        /// the current <see cref="AudioChannelsSetting"/>.
+        /// <para>
+        /// Always a rebuild, never an append. Both entry points can run on the same instance:
+        /// <c>AddComponent</c> runs <see cref="Awake"/> before the caller has had a chance to
+        /// configure anything, so a script-created Child is always populated once as MONO and then
+        /// again by <see cref="Init"/>. Appending there left the list one or two entries too long —
+        /// harmless, since only the first <c>(int)AudioChannelsSetting</c> are ever read, but a
+        /// list whose length does not mean what it looks like it means.
+        /// </para>
+        /// <para>
+        /// It also re-allocates rather than reusing: a serialised entry may carry a stale size from
+        /// a session with a different DSP buffer, or be null/empty after a fresh package import.
+        /// </para>
+        /// </summary>
+        private void RebuildNamedAudioChannelData()
+        {
+            // Init can be reached before Awake — AddComponent on an inactive GameObject defers
+            // Awake until activation — so the size may not have been fetched yet.
+            if (bufferSize <= 0)
+                AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
+
+            namedAudioChannelData.Clear();
+            for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
+                namedAudioChannelData.Add(new MYFLT[bufferSize]);
+        }
+
         private void Awake()
         {
             if (csoundUnityGameObject)
@@ -187,12 +215,7 @@ namespace Csound.Unity
                 audioSource.Play();
             }
 
-            // Always reinitialise: serialised entries may have a stale size (saved from a
-            // previous session with a different DSP buffer) or be null/empty after a fresh
-            // package import, causing IndexOutOfRangeException on the first play.
-            namedAudioChannelData.Clear();
-            for (var chan = 0; chan < (int)AudioChannelsSetting; chan++)
-                namedAudioChannelData.Add(new MYFLT[bufferSize]);
+            RebuildNamedAudioChannelData();
 
             if (selectedAudioChannelIndexByChannel == null) selectedAudioChannelIndexByChannel = new int[2];
         }
@@ -262,10 +285,7 @@ namespace Csound.Unity
 
             ApplyDefaultAudioSourceSettings();
 
-            for (var chan = 0; chan < (int)audioChannels; chan++)
-            {
-                namedAudioChannelData.Add(new MYFLT[bufferSize]);
-            }
+            RebuildNamedAudioChannelData();
 
             this.csoundUnity = csound;
             this.csoundUnityGameObject = csound.gameObject;
