@@ -52,6 +52,13 @@ namespace Csound.Unity
         /// </summary>
         internal CsoundUnity Parent;
 
+        /// <summary>
+        /// The child itself, so <c>Process</c> can hand it each block it plays for
+        /// <c>namedAudioChannelData</c> and <c>OutputBuffer</c>. Without this the component's
+        /// observers only ever saw the OnAudioFilterRead path.
+        /// </summary>
+        internal CsoundUnityChild Child;
+
         /// <summary>Per-channel copies of the parent's published blocks, and the cursors into them.</summary>
         internal float[][] Snapshots;
         internal int[]     Cursors;

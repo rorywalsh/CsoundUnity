@@ -167,6 +167,7 @@ namespace Csound.Unity
             {
                 ChannelNames = chanNames,
                 Parent       = csoundUnity,
+                Child        = this,
                 Zerodbfs     = csoundUnity.Get0dbfs(),
             };
 

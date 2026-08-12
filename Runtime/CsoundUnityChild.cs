@@ -88,6 +88,53 @@ namespace Csound.Unity
         [SerializeField]
         public List<MYFLT[]> namedAudioChannelData = new List<MYFLT[]>();
 
+        /// <summary>
+        /// The most recently completed block this component put out, interleaved across the
+        /// AudioSource's output channels.
+        /// <para>
+        /// These are the samples as they leave, in Unity's ±1 range: the 0dbfs normalisation, the
+        /// mono gain and the IAudioGenerator startup fade are already applied, so a MONO component
+        /// hands back the same signal on every output channel. Reading this property pulls the
+        /// latest published block, so it is always complete; when nothing new has been produced
+        /// the previous contents are returned unchanged, making it free to poll faster than the
+        /// DSP rate. Read it from the main thread.
+        /// </para>
+        /// <para>
+        /// This is what a visualiser wants. <see cref="namedAudioChannelData"/> holds the other
+        /// end of the same block — the parent's channel data, per channel and still in Csound
+        /// units, so a csd that leaves 0dbfs at its 32768 default fills it with values three
+        /// orders of magnitude outside what a ±1 view can draw. It is also written on the audio
+        /// thread with no synchronisation, so a main-thread reader can catch it half rewritten.
+        /// Nothing audible depends on it — the audio path never reads it back.
+        /// </para>
+        /// </summary>
+        public float[] OutputBuffer
+        {
+            get
+            {
+                var length = _outputPublisher.Length;
+                if (length <= 0) return _outputBuffer;
+
+                if (_outputBuffer == null || _outputBuffer.Length != length)
+                {
+                    _outputBuffer = new float[length];
+                    _outputBufferCursor = 0;
+                }
+
+                _outputPublisher.Read(_outputBuffer, length, ref _outputBufferCursor);
+                return _outputBuffer;
+            }
+        }
+
+        /// <summary>
+        /// Number of channels interleaved in <see cref="OutputBuffer"/>, or 1 before the first
+        /// block has been published. This is the AudioSource's output channel count, which is not
+        /// <see cref="AudioChannelsSetting"/>: a MONO component still puts out stereo, the same
+        /// signal on both. Read from the published block rather than cached, so reading it before
+        /// <see cref="OutputBuffer"/> cannot hand back a stale count.
+        /// </summary>
+        public int OutputChannels => _outputPublisher.Channels;
+
         #endregion PUBLIC_FIELDS
 
         #region PRIVATE_FIELDS
@@ -122,6 +169,22 @@ namespace Csound.Unity
         /// publishing altogether.
         /// </summary>
         private const int MaxStaleBlocks = 2;
+
+        /// <summary>
+        /// Publisher backing <see cref="OutputBuffer"/>. Both audio paths hand it the block they
+        /// just played, so a monitor sees the same thing whichever path is driving the component.
+        /// </summary>
+        private readonly CsoundSharedBuffer _outputPublisher = new CsoundSharedBuffer();
+
+        /// <summary>
+        /// Interleaving scratch for <see cref="_outputPublisher"/>. Audio thread only. Grows on
+        /// the first block and whenever the block size changes, never in steady state.
+        /// </summary>
+        private float[] _publishScratch = System.Array.Empty<float>();
+
+        /// <summary>Main-thread copy handed out by <see cref="OutputBuffer"/>, and its cursor.</summary>
+        private float[] _outputBuffer;
+        private int _outputBufferCursor;
 
         #endregion PRIVATE_FIELDS
 
@@ -331,6 +394,73 @@ namespace Csound.Unity
         partial void OnDestroyGenerator();
 #endif
 
+        /// <summary>
+        /// Copies the blocks this component is about to play into
+        /// <see cref="namedAudioChannelData"/>, which is public API and keeps holding the parent's
+        /// channel data as it always has — Csound units, before this component normalises it.
+        /// <para>
+        /// Called from the audio thread by <b>both</b> paths — <see cref="ProcessBlock"/> and
+        /// <c>CsoundChildGeneratorInstance.Process</c>. Anything an observer is meant to see has
+        /// to go through here and through <see cref="PublishOutput"/>, or it works on one path and
+        /// silently does nothing on the other: the inspector monitor drew nothing at all under
+        /// IAudioGenerator for exactly that reason, because this lived inside
+        /// <c>ProcessBlock</c>, which that path never runs.
+        /// </para>
+        /// </summary>
+        /// <param name="snapshots">Per-channel blocks, indexed by output channel.</param>
+        /// <param name="channelCount">Channels to take from <paramref name="snapshots"/>.</param>
+        /// <param name="frames">
+        /// Samples per channel actually published this block. Passed in rather than taken from the
+        /// arrays: a snapshot array is grown to fit, never shrunk, so after the DSP buffer size
+        /// drops its tail still holds the previous block and <c>Length</c> would over-report.
+        /// </param>
+        internal void SyncNamedAudioChannelData(float[][] snapshots, int channelCount, int frames)
+        {
+            if (snapshots == null || frames <= 0) return;
+            if (channelCount <= 0 || channelCount > snapshots.Length) return;
+
+            for (var ch = 0; ch < channelCount; ch++)
+            {
+                var snap = snapshots[ch];
+                if (snap == null) continue;
+                if (ch >= namedAudioChannelData.Count || namedAudioChannelData[ch] == null) continue;
+
+                var dst = namedAudioChannelData[ch];
+                var n = System.Math.Min(System.Math.Min(frames, snap.Length), dst.Length);
+                for (var s = 0; s < n; s++) dst[s] = snap[s];
+            }
+        }
+
+        /// <summary>
+        /// Scratch buffer for a path that has to build its interleaved output before it can
+        /// publish it. Grows on demand and is reused, so it allocates on the first block and on a
+        /// block size change, never in steady state. Audio thread only.
+        /// </summary>
+        internal float[] GetOutputScratch(int samples)
+        {
+            if (_publishScratch.Length < samples) _publishScratch = new float[samples];
+            return _publishScratch;
+        }
+
+        /// <summary>
+        /// Publishes the finished output block for <see cref="OutputBuffer"/>.
+        /// <para>
+        /// Deliberately the samples the component actually emits, not the channel data it started
+        /// from: whatever the path applies on the way out — the 0dbfs normalisation, the mono
+        /// gain, the IAudioGenerator startup fade — is already in them. Publishing the source data
+        /// instead made the monitor useless on a csd that leaves 0dbfs at its 32768 default, since
+        /// the view is drawn in Unity's ±1 range and everything sat pinned at full scale.
+        /// </para>
+        /// </summary>
+        /// <param name="interleaved">Interleaved output samples.</param>
+        /// <param name="samples">Total samples to publish (frames × <paramref name="channels"/>).</param>
+        /// <param name="channels">Interleaved channel count.</param>
+        internal void PublishOutput(float[] interleaved, int samples, int channels)
+        {
+            if (interleaved == null || samples <= 0 || channels <= 0) return;
+            _outputPublisher.Publish(interleaved, samples, channels);
+        }
+
         void ProcessBlock(float[] samples, int numChannels)
         {
             if (availableAudioChannels == null || availableAudioChannels.Count < 1 || !csoundUnity.IsInitialized)
@@ -348,6 +478,7 @@ namespace Csound.Unity
             // Pull a complete published block per channel. Never read the parent's live arrays:
             // they are written sample by sample on the parent's own audio callback, which is not
             // ordered against this one.
+            var publishedFrames = 0;
             for (int i = 0; i < channelCount; i++)
             {
                 var chanToUse = availableAudioChannels[selectedAudioChannelIndexByChannel[i]];
@@ -358,6 +489,9 @@ namespace Csound.Unity
 
                 var wanted = publisher.Length;
                 if (wanted <= 0) { _channelStaleCounts[i] = MaxStaleBlocks + 1; continue; }
+
+                // Longest valid block across the channels — what gets handed to observers below.
+                if (wanted > publishedFrames) publishedFrames = wanted;
 
                 var snapshot = _channelSnapshots[i];
                 if (snapshot == null || snapshot.Length < wanted)
@@ -371,17 +505,9 @@ namespace Csound.Unity
                 // loop its last block.
                 if (publisher.Read(snapshot, wanted, ref _channelCursors[i]) > 0) _channelStaleCounts[i] = 0;
                 else _channelStaleCounts[i]++;
-
-                // Keep the public buffer in step with what is actually being played: it is part
-                // of this component's API, so leaving it holding the old references would be a
-                // silent change for anything reading it.
-                if (i < namedAudioChannelData.Count && namedAudioChannelData[i] != null)
-                {
-                    var dst = namedAudioChannelData[i];
-                    var n = System.Math.Min(dst.Length, wanted);
-                    for (var s = 0; s < n; s++) dst[s] = snapshot[s];
-                }
             }
+
+            SyncNamedAudioChannelData(_channelSnapshots, channelCount, publishedFrames);
 
             for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
             {
@@ -406,6 +532,10 @@ namespace Csound.Unity
                     samples[i + channel] *= (float)(snapshot[sampleIndex] / zerodbfs) * gain;
                 }
             }
+
+            // The finished block, straight from the buffer we just wrote — no second copy of the
+            // scaling to drift out of step with this one.
+            PublishOutput(samples, samples.Length, numChannels);
         }
 
         #endregion Private Helpers

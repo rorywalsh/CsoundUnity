@@ -44,8 +44,6 @@ namespace Csound.Unity
         SerializedProperty m_bufferSize;
 
         private readonly AudioMonitorGUI _audioMonitor = new AudioMonitorGUI();
-        // Interleaved float[] built every frame from the Child's per-channel MYFLT[] data.
-        private float[] _monitorBuffer;
 
         #endregion
 
@@ -165,28 +163,25 @@ namespace Csound.Unity
 
         #region Private helpers
 
+        /// <summary>
+        /// Draws the monitor from <see cref="CsoundUnityChild.OutputBuffer"/>, which hands back a
+        /// complete block already interleaved.
+        /// <para>
+        /// It used to build the interleaved buffer here from <c>namedAudioChannelData</c>. That
+        /// meant reading, on the main thread, arrays the audio thread rewrites in place — so the
+        /// view could show a block half new and half old — and it drew nothing at all on the
+        /// IAudioGenerator path, which never fills that list.
+        /// </para>
+        /// </summary>
         private void DrawAudioMonitor()
         {
             var child = (CsoundUnityChild)target;
-            var srcData = child.namedAudioChannelData;
-            if (srcData == null || srcData.Count == 0 || srcData[0] == null || srcData[0].Length == 0)
-                return;
 
-            // Build an interleaved float[] from the per-channel MYFLT[] buffers.
-            // CsoundUnityChild is always MONO (1 ch) or STEREO (2 ch).
-            var nCh    = (int)child.AudioChannelsSetting;
-            var frames = srcData[0].Length;
-            var needed = frames * nCh;
-
-            if (_monitorBuffer == null || _monitorBuffer.Length != needed)
-                _monitorBuffer = new float[needed];
-
-            for (int f = 0; f < frames; f++)
-                for (int c = 0; c < nCh; c++)
-                    _monitorBuffer[f * nCh + c] = c < srcData.Count ? (float)srcData[c][f] : 0f;
+            var block = child.OutputBuffer;
+            if (block == null || block.Length == 0) return;
 
             EditorGUILayout.Space();
-            _audioMonitor.Draw(_monitorBuffer, nCh);
+            _audioMonitor.Draw(block, child.OutputChannels);
         }
 
         // Assumes lists are ordered — only checks element-by-element equality.

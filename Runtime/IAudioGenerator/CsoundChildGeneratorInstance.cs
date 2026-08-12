@@ -110,6 +110,7 @@ namespace Csound.Unity
                 entry.StaleCounts = new int[channelNames.Length];
             }
 
+            var publishedFrames = 0;
             for (var i = 0; i < channelNames.Length; i++)
             {
                 var name = channelNames[i];
@@ -120,6 +121,9 @@ namespace Csound.Unity
                     entry.StaleCounts[i] = CsoundChildEntry.MaxStaleBlocks + 1;
                     continue;
                 }
+
+                // Longest valid block across the channels — what gets handed to observers below.
+                if (wanted > publishedFrames) publishedFrames = wanted;
 
                 var snap = entry.Snapshots[i];
                 if (snap == null || snap.Length < wanted)
@@ -134,6 +138,14 @@ namespace Csound.Unity
                 else entry.StaleCounts[i]++;
             }
 
+            // Same hand-off the OnAudioFilterRead path makes, so the component's observers see
+            // this path too instead of staying empty.
+            entry.Child?.SyncNamedAudioChannelData(entry.Snapshots, channelNames.Length, publishedFrames);
+
+            // Filled alongside the output below rather than from the snapshots: what an observer
+            // wants is the block as it leaves, with inv0dbfs and the fade already applied.
+            var scratch = entry.Child?.GetOutputScratch(totalFrames * buffer.channelCount);
+
             for (var f = 0; f < totalFrames; f++)
             {
                 // Startup fade-in: ramps 0→1 over StartupFadeSamples frames.
@@ -147,16 +159,18 @@ namespace Csound.Unity
                     var entryCh = ch < channelNames.Length ? ch : channelNames.Length - 1;
                     var snap    = entry.Snapshots[entryCh];
 
-                    if (snap == null || entry.StaleCounts[entryCh] > CsoundChildEntry.MaxStaleBlocks
-                        || f >= snap.Length)
-                    {
-                        buffer[ch, f] = 0f;
-                        continue;
-                    }
+                    var value = snap == null || entry.StaleCounts[entryCh] > CsoundChildEntry.MaxStaleBlocks
+                                || f >= snap.Length
+                        ? 0f
+                        : snap[f] * inv0dbfs * fade;
 
-                    buffer[ch, f] = snap[f] * inv0dbfs * fade;
+                    buffer[ch, f] = value;
+                    if (scratch != null) scratch[f * buffer.channelCount + ch] = value;
                 }
             }
+
+            if (scratch != null)
+                entry.Child.PublishOutput(scratch, totalFrames * buffer.channelCount, buffer.channelCount);
 
             return totalFrames;
         }

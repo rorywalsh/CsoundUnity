@@ -12,7 +12,7 @@
 - [Add] The Cabbage widgets CsoundUnity cannot build a control for (listbox, gentable, signaldisplay, …) are now reported: warned once when the csd is assigned, and listed above the Control Channels foldout. They used to be dropped in silence
 - [Add] CsoundUnityMidiInput: platform-agnostic MIDI input component (macOS/iOS/visionOS via CoreMIDI, Android via android.media.midi API 23+, Windows via WinMM — short messages only, no SysEx)
 - [Add] Waveform, spectrum, spectrogram, oscilloscope and Lissajous audio monitor in inspector, with zoom sliders. The views draw in play mode; which ones are shown can be set at any time and persists across selections and restarts
-- [Add] OutputBuffer and OnCsoundPerformKsmps callback. OutputBuffer hands back a complete DSP block, safe to poll from the main thread at any rate; when no new block has been produced the previous contents are returned unchanged
+- [Add] OutputBuffer and OnCsoundPerformKsmps callback. OutputBuffer hands back a complete DSP block, safe to poll from the main thread at any rate; when no new block has been produced the previous contents are returned unchanged. CsoundUnityChild has its own OutputBuffer / OutputChannels with the same contract, carrying the block it put out, in Unity's ±1 range and interleaved across its output channels — prefer it to namedAudioChannelData, which still holds the parent's channel data in Csound units and is written on the audio thread while you read it
 - [Add] MusicUtils: music theory utilities (scales, chords, arpeggios, Euclidean rhythms)
 - [Add] Utility scripts: AudioDisplay, FFTUtils, TableLoader, WriteAudioFileUtils, CopyFilesToPersistentDataPath, RemapUtils
 - [Add] AudioSamplesUtils.Rms() and Peak() helpers
