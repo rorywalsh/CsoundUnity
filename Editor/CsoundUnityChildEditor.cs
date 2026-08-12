@@ -72,7 +72,25 @@ namespace Csound.Unity
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            DrawDefaultInspector();
+
+            // DrawDefaultInspector also renders the VU meter and DSP time box that Unity draws
+            // for any MonoBehaviour with OnAudioFilterRead — we want those, so we keep calling it
+            // and swallow the exception it ends with, exactly as CsoundUnityEditor does.
+            //
+            // AudioFilterGUI.DrawAudioFilterGUI finishes with GUIView.current.Repaint(), which is
+            // its last statement and the one dereference in the method that can be null. It is
+            // null whenever the IMGUI callback runs outside a view, which on 6000.3 means the
+            // layout measure pass (IMGUIContainer.DoMeasure, reached from EditorElementUpdater
+            // while the inspector rebuilds its elements) — so this throws in bursts, not on the
+            // repaints that actually paint the meter.
+            //
+            // Catching is safe because by then the meter has been drawn in full: the VU bars, the
+            // ms box and the matching EndVertical/EndHorizontal all come before that call, and
+            // DoDrawDefaultInspector's LocalizationGroup is disposed by its own finally as the
+            // exception unwinds. The only casualty is the meter's request to repaint itself, and
+            // only on the measure pass, which paints nothing anyway.
+            try { DrawDefaultInspector(); }
+            catch { /* AudioFilterGUI: GUIView.current null on the measure pass — see above */ }
 
             if (m_csoundUnityGO.objectReferenceValue != null)
             {

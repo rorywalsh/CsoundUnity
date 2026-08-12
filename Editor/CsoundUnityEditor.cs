@@ -314,11 +314,21 @@ namespace Csound.Unity
             // DrawDefaultInspector renders the AudioFilterGUI bars (VU + DSP time) that
             // Unity draws for any MonoBehaviour with OnAudioFilterRead — we want those.
             // All public fields are [HideInInspector] so only the audio bars appear here.
-            // The try-catch is intentionally silent: AudioFilterGUI.DrawAudioFilterGUI
-            // throws a NullReferenceException on the frame Unity destroys a play-mode
-            // component (play→edit transition). That exception is harmless and expected.
+            //
+            // The try-catch is intentionally silent. AudioFilterGUI.DrawAudioFilterGUI ends with
+            // GUIView.current.Repaint(), the one dereference in that method that can be null, and
+            // it is null in more situations than the play→edit transition this comment used to
+            // blame: any IMGUI callback running outside a view hits it. On 6000.3 that is the
+            // layout measure pass (IMGUIContainer.DoMeasure, reached from EditorElementUpdater as
+            // the inspector rebuilds its elements), so it fires in bursts rather than once.
+            //
+            // Catching is safe because that call is the last statement in the method: the bars and
+            // the ms box have already been drawn, every layout group is balanced, and
+            // DoDrawDefaultInspector applied its serialized changes and disposes its
+            // LocalizationGroup in a finally as the exception unwinds. Only the meter's request to
+            // repaint itself is lost, and only on a pass that paints nothing.
             try { base.DrawDefaultInspector(); }
-            catch { /* AudioFilterGUI crash on destroyed object — safe to ignore */ }
+            catch { /* AudioFilterGUI: GUIView.current null — see above, safe to ignore */ }
 
             this.serializedObject.Update();
 
