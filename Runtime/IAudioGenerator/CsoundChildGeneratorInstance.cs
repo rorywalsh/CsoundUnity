@@ -49,11 +49,13 @@ namespace Csound.Unity
         /// <summary>
         /// Counts output frames since startup. Used for the linear fade-in that
         /// masks transients while the parent is still filling its channel buffers.
+        /// <para>
+        /// How long the ramp lasts — and whether it happens at all — comes from the component's
+        /// <c>fadeInOnStart</c> / <c>fadeInSeconds</c>, read once per block, so both audio paths
+        /// obey the same setting.
+        /// </para>
         /// </summary>
         private int _startupFadeIndex;
-
-        /// <summary>Number of frames over which the startup fade ramps 0→1 (~43 ms at 48 kHz).</summary>
-        private const int StartupFadeSamples = 2048;
 
         #endregion
         #region GeneratorInstance.ICapabilities
@@ -146,11 +148,15 @@ namespace Csound.Unity
             // wants is the block as it leaves, with inv0dbfs and the fade already applied.
             var scratch = entry.Child?.GetOutputScratch(totalFrames * buffer.channelCount);
 
+            // Read once per block rather than per frame: it is the component's setting, and it
+            // can change while playing.
+            var fadeFrames = entry.Child != null ? entry.Child.StartupFadeFrames : 0;
+
             for (var f = 0; f < totalFrames; f++)
             {
-                // Startup fade-in: ramps 0→1 over StartupFadeSamples frames.
-                var fade = _startupFadeIndex < StartupFadeSamples
-                    ? _startupFadeIndex++ / (float)StartupFadeSamples
+                // Startup fade-in: ramps 0→1 over fadeFrames frames, or is off when that is 0.
+                var fade = fadeFrames > 0 && _startupFadeIndex < fadeFrames
+                    ? _startupFadeIndex++ / (float)fadeFrames
                     : 1f;
 
                 for (var ch = 0; ch < buffer.channelCount; ch++)

@@ -94,6 +94,8 @@ namespace Csound.Unity
         ReorderableList audioInputRoutesList;
         SerializedProperty m_webGLAssetsList;
         SerializedProperty m_measureDspLoad;
+        // Outside the Unity 6 guard: OnAudioFilterRead honours the fade too.
+        SerializedProperty m_fadeInSeconds;
 #if UNITY_6000_0_OR_NEWER
         SerializedProperty m_audioPath;
         SerializedProperty m_generatorStartupDelay;
@@ -220,6 +222,7 @@ namespace Csound.Unity
                     EditorGUI.PropertyField(rect, elem, GUIContent.none, true);
                 }
             };
+            m_fadeInSeconds = serializedObject.FindProperty("fadeInSeconds");
 #if UNITY_6000_0_OR_NEWER
             m_audioPath              = serializedObject.FindProperty("_audioPath");
             m_generatorStartupDelay  = serializedObject.FindProperty("_generatorStartupDelay");
@@ -508,6 +511,12 @@ namespace Csound.Unity
                 "IAudioGenerator: Unity 6+ path. Drives the AudioSource directly — integrates with the AudioMixer graph. Requires an AudioSource component.\n\n" +
                 "RootOutput: Unity 6+ path. Bypasses the AudioMixer entirely. Audio is mixed additively into the main hardware output. No AudioSource required; 3D spatialization and mixer effects are not applied."));
 
+            // Outside the per-path branches: all three paths honour it.
+            EditorGUILayout.PropertyField(m_fadeInSeconds, new GUIContent("Fade In (s)",
+                "Seconds to ramp the output up from silence when Csound starts, masking the\n" +
+                "transient of chained sources that have not filled their buffers yet.\n" +
+                "0 (the default) starts at full level."));
+
             var path = (Csound.Unity.AudioPath)m_audioPath.enumValueIndex;
 
             if (path == Csound.Unity.AudioPath.IAudioGenerator)
@@ -532,6 +541,11 @@ namespace Csound.Unity
 #else
             EditorGUILayout.LabelField("Audio Output Path", EditorStyles.boldLabel);
             EditorGUILayout.HelpBox("IAudioGenerator and RootOutput require Unity 6+. Using OnAudioFilterRead.", MessageType.None);
+
+            EditorGUILayout.PropertyField(m_fadeInSeconds, new GUIContent("Fade In (s)",
+                "Seconds to ramp the output up from silence when Csound starts, masking the\n" +
+                "transient of chained sources that have not filled their buffers yet.\n" +
+                "0 (the default) starts at full level."));
 #endif
         }
 

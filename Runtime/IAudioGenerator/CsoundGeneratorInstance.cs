@@ -61,10 +61,12 @@ namespace Csound.Unity
 
         /// <summary>
         /// Counts output frames produced since the generator started.
-        /// Used to apply a short linear fade-in on startup that masks transients
-        /// caused by audio-route sources not yet having filled their buffers.
-        /// Once <see cref="StartupFadeSamples"/> is reached it stays there
-        /// (output multiplier becomes 1 permanently).
+        /// Used to apply the startup fade-in that masks transients caused by audio-route sources
+        /// not yet having filled their buffers. Once the ramp is over the multiplier stays at 1.
+        /// <para>
+        /// Its length comes from the component's <c>fadeInSeconds</c> through
+        /// <c>CsoundUnityBridge.StartupFadeFrames</c>, and is 0 — no fade — by default.
+        /// </para>
         /// </summary>
         private int _startupFadeIndex;
 
@@ -74,13 +76,6 @@ namespace Csound.Unity
         /// instead of reading stale spout data.
         /// </summary>
         private bool _performanceFinished;
-
-        /// <summary>
-        /// Number of frames over which the startup fade ramps from 0 to 1.
-        /// 2048 frames ≈ 43 ms at 48 kHz — imperceptible as a fade-in but long
-        /// enough to cover any initialization latency between chained instances.
-        /// </summary>
-        private const int StartupFadeSamples = 2048;
 
         #endregion
         #region GeneratorInstance.ICapabilities
@@ -129,6 +124,7 @@ namespace Csound.Unity
             //            in time and routed destinations receive published silence.
             //   paused — PerformKsmps is skipped below: no DSP work at all, score frozen.
             var outputGain = bridge.OutputGain;
+            var startupFadeFrames = bridge.StartupFadeFrames;
 
             if (ksmps <= 0)
             {
@@ -171,10 +167,10 @@ namespace Csound.Unity
                     }
                 }
 
-                // Startup fade-in: ramps 0→1 over StartupFadeSamples frames to mask
-                // transients that occur when chained sources are not yet initialised.
-                var fade = _startupFadeIndex < StartupFadeSamples
-                    ? _startupFadeIndex++ / (float)StartupFadeSamples
+                // Startup fade-in: ramps 0→1 over startupFadeFrames to mask transients that occur
+                // when chained sources are not yet initialised. Off when 0, which is the default.
+                var fade = startupFadeFrames > 0 && _startupFadeIndex < startupFadeFrames
+                    ? _startupFadeIndex++ / (float)startupFadeFrames
                     : 1f;
 
                 for (var ch = 0; ch < buffer.channelCount; ch++)

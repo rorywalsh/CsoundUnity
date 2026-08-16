@@ -64,14 +64,15 @@ namespace Csound.Unity
         /// <summary>Position within the current ksmps block, persists across calls.</summary>
         private int _ksmpsIndex;
 
-        /// <summary>Frames produced since startup; drives the fade-in ramp.</summary>
+        /// <summary>
+        /// Frames produced since startup; drives the fade-in ramp, whose length comes from the
+        /// component's <c>fadeInSeconds</c> through <c>CsoundUnityBridge.StartupFadeFrames</c>
+        /// and is 0 — no fade — by default.
+        /// </summary>
         private int _startupFadeIndex;
 
         /// <summary>Set when <c>PerformKsmps</c> returns non-zero (score ended).</summary>
         private bool _performanceFinished;
-
-        /// <summary>Number of frames for the startup linear fade-in (≈43 ms @ 48 kHz).</summary>
-        private const int StartupFadeSamples = 2048;
 
         #endregion
 
@@ -146,6 +147,7 @@ namespace Csound.Unity
             //            in time and routed destinations receive published silence.
             //   paused — PerformKsmps is skipped below: no DSP work at all, score frozen.
             var outputGain = bridge.OutputGain;
+            var startupFadeFrames = bridge.StartupFadeFrames;
 
             if (ksmps <= 0)
             {
@@ -182,8 +184,8 @@ namespace Csound.Unity
                     }
                 }
 
-                var fade = _startupFadeIndex < StartupFadeSamples
-                    ? _startupFadeIndex++ / (float)StartupFadeSamples
+                var fade = startupFadeFrames > 0 && _startupFadeIndex < startupFadeFrames
+                    ? _startupFadeIndex++ / (float)startupFadeFrames
                     : 1f;
 
                 for (var ch = 0; ch < output.channelCount; ch++)

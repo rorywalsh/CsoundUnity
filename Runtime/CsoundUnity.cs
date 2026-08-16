@@ -565,6 +565,18 @@ namespace Csound.Unity
         [HideInInspector] public bool updateOutputBuffer = false;
 
         /// <summary>
+        /// Ramps the output up from silence over this many seconds when Csound starts, masking
+        /// the transient of chained sources that have not filled their buffers yet.
+        /// <b>0 disables it</b>, which is the default: playback starts at full level, as it did
+        /// in 3.x.
+        /// <para>
+        /// In seconds rather than samples so it means the same thing at any output sample rate,
+        /// and honoured by all three audio paths. Applies from the next <c>Init()</c>.
+        /// </para>
+        /// </summary>
+        [HideInInspector] public float fadeInSeconds = 0f;
+
+        /// <summary>
         /// Audio-rate input routes: each entry reads a named audio channel from another
         /// <see cref="CsoundUnity"/> instance and injects it into this instance's spin buffer
         /// before every <c>PerformKsmps</c> call.
@@ -901,17 +913,25 @@ namespace Csound.Unity
 
         /// <summary>
         /// Counts output frames produced since the last <c>Init()</c>.
-        /// A short linear fade-in is applied until this reaches
-        /// <see cref="StartupFadeSamples"/>, masking transients from chained
+        /// A linear fade-in is applied until this reaches
+        /// <see cref="StartupFadeFrames"/>, masking transients from chained
         /// sources not yet having filled their buffers at startup.
         /// </summary>
         private int _startupFadeIndex = 0;
 
         /// <summary>
-        /// Number of frames over which the startup fade ramps 0→1.
-        /// 2048 frames ≈ 43 ms at 48 kHz.
+        /// Length of the startup fade in output frames, or 0 when <see cref="fadeInSeconds"/>
+        /// leaves it off. Plain arithmetic over a sample rate cached on the main thread, so the
+        /// audio paths can ask for it without calling into Unity.
         /// </summary>
-        private const int StartupFadeSamples = 2048;
+        internal int StartupFadeFrames =>
+            fadeInSeconds > 0f ? (int)(fadeInSeconds * _outputSampleRate) : 0;
+
+        /// <summary>
+        /// Output sample rate, read on the main thread in <see cref="Init"/>. Unity's, not
+        /// Csound's: the fade is counted in the frames this instance puts out.
+        /// </summary>
+        private int _outputSampleRate = 48000;
 
         /// <summary>
         /// Number of frames pre-mixed per routing batch. Pre-mixing at buffer granularity
@@ -1137,6 +1157,10 @@ namespace Csound.Unity
             // the native instance is valid for API calls (GetEnv, etc.) even without a score.
             var noCsd = string.IsNullOrWhiteSpace(_csoundString);
             csound = new CsoundUnityBridge(_csoundString ?? string.Empty, environmentSettings, audioRate, controlRate, ksmps);
+
+            // Main thread: the audio paths must not ask Unity for this themselves.
+            _outputSampleRate = AudioSettings.outputSampleRate;
+            csound.StartupFadeFrames = StartupFadeFrames;
             if (csound is { CompiledOk: true })
             {
                 // channels are created when a csd file is selected in the inspector
@@ -4653,6 +4677,9 @@ namespace Csound.Unity
                                      $"Use a ksmps value well below {frames} (ideally a power of 2, e.g. {frames / 4} or {frames / 8}).");
                 }
 
+                // Read once per block, not per frame: it only changes when the component does.
+                var startupFadeFrames = StartupFadeFrames;
+
                 // Ensure the clip staging buffer is sized before any per-sample write.
                 // The ksmps-boundary resize alone is not enough: ksmpsIndex starts at 0
                 // so the boundary fires only after the first ksmps samples, but writes
@@ -4674,10 +4701,10 @@ namespace Csound.Unity
 
                 for (int i = 0, frame = 0; i < samples.Length; i += numChannels, frame++, ksmpsIndex++)
                 {
-                    // Startup fade-in: ramps 0→1 over StartupFadeSamples frames to mask
-                    // transients caused by chained sources not yet having filled their buffers.
-                    var startupFade = _startupFadeIndex < StartupFadeSamples
-                        ? _startupFadeIndex++ / (float)StartupFadeSamples
+                    // Startup fade-in: ramps 0→1 over startupFadeFrames to mask transients caused
+                    // by chained sources not yet having filled their buffers. Off when 0.
+                    var startupFade = startupFadeFrames > 0 && _startupFadeIndex < startupFadeFrames
+                        ? _startupFadeIndex++ / (float)startupFadeFrames
                         : 1f;
 
                     for (uint channel = 0; channel < numChannels; channel++)
@@ -5247,6 +5274,10 @@ namespace Csound.Unity
     private void Update()
     {
         if (!IsInitialized) return;
+
+        // Cheap, and it keeps the spout-reading paths in step when the value is changed while
+        // playing — they read it from the bridge, not from this component.
+        if (csound != null) csound.StartupFadeFrames = StartupFadeFrames;
 
 
         // Calculate distance between the AudioListener and the AudioSource

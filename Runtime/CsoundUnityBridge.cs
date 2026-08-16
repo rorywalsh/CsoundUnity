@@ -100,6 +100,14 @@ namespace Csound.Unity
         public float OutputGain => (Muted || Paused) ? 0f : 1f;
 
         /// <summary>
+        /// Length of the startup fade in output frames, 0 when off. Pushed by CsoundUnity from
+        /// its <c>fadeInSeconds</c>; lives here for the same reason <see cref="OutputGain"/> does,
+        /// so the paths that read spout directly — IAudioGenerator and RootOutput — cannot end up
+        /// fading differently from each other or from OnAudioFilterRead.
+        /// </summary>
+        public volatile int StartupFadeFrames;
+
+        /// <summary>
         /// MIDI: thread-safe queue of raw MIDI messages enqueued from any thread,
         /// drained on the audio thread by the MidiReadCallback every ksmps.
         /// </summary>

@@ -67,6 +67,21 @@ namespace Csound.Unity
         public AudioChannels AudioChannelsSetting = AudioChannels.MONO;
 
         /// <summary>
+        /// Ramps the output up from silence over this many seconds when the component starts
+        /// producing, masking the transient of joining a parent that is already running.
+        /// <b>0 disables it</b>, which is the default: the component starts at full level, as it
+        /// did in 3.x.
+        /// <para>
+        /// In seconds rather than samples so it means the same thing at any output sample rate.
+        /// Applies from the next start.
+        /// </para>
+        /// </summary>
+        [Tooltip("Seconds to ramp the output up from silence on start, masking the transient of " +
+                 "joining a parent that is already running. 0 (the default) starts at full level.")]
+        [Min(0f)]
+        public float fadeInSeconds = 0f;
+
+        /// <summary>
         /// An array containing the selected audiochannel indexes by channel: MONO = 0, STEREO = 1
         /// </summary>
         [SerializeField, HideInInspector]
@@ -186,6 +201,19 @@ namespace Csound.Unity
         private float[] _outputBuffer;
         private int _outputBufferCursor;
 
+        /// <summary>
+        /// Output frames elapsed since this component started producing, counted by the
+        /// OnAudioFilterRead path. The IAudioGenerator path keeps its own inside its realtime
+        /// struct, which is created and thrown away with the generator.
+        /// </summary>
+        private int _startupFadeIndex;
+
+        /// <summary>
+        /// Output sample rate, read once on the main thread so <see cref="StartupFadeFrames"/>
+        /// stays plain arithmetic — the audio thread must not call into Unity for it.
+        /// </summary>
+        private int _outputSampleRate = 48000;
+
         #endregion PRIVATE_FIELDS
 
         #region Unity Messages
@@ -259,6 +287,7 @@ namespace Csound.Unity
             }
 
             AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
+            _outputSampleRate = AudioSettings.outputSampleRate;
 
             audioSource = GetComponent<AudioSource>();
             if (!audioSource)
@@ -282,6 +311,13 @@ namespace Csound.Unity
 
             if (selectedAudioChannelIndexByChannel == null) selectedAudioChannelIndexByChannel = new int[2];
         }
+
+        /// <summary>
+        /// Re-arms the start fade, so a component switched back on ramps in the way a fresh start
+        /// does. The IAudioGenerator path gets this for free: its counter lives in the realtime
+        /// struct, which is rebuilt with the generator.
+        /// </summary>
+        private void OnEnable() => _startupFadeIndex = 0;
 
         void Start()
         {
@@ -432,6 +468,26 @@ namespace Csound.Unity
         }
 
         /// <summary>
+        /// Length of the start fade in output frames, or 0 when it is off. Read by both audio
+        /// paths, so it is plain arithmetic over the cached sample rate rather than a Unity call,
+        /// and it is recomputed per block so toggling the fade takes effect on the next one.
+        /// </summary>
+        internal int StartupFadeFrames =>
+            fadeInSeconds > 0f ? (int)(fadeInSeconds * _outputSampleRate) : 0;
+
+        /// <summary>
+        /// The fade multiplier for the next output frame, advancing the ramp. OnAudioFilterRead
+        /// side only — the IAudioGenerator path runs the same ramp over its own counter.
+        /// </summary>
+        private float NextStartupFade()
+        {
+            var frames = StartupFadeFrames;
+            if (frames <= 0) return 1f;
+
+            return _startupFadeIndex < frames ? _startupFadeIndex++ / (float)frames : 1f;
+        }
+
+        /// <summary>
         /// Scratch buffer for a path that has to build its interleaved output before it can
         /// publish it. Grows on demand and is reused, so it allocates on the first block and on a
         /// block size change, never in steady state. Audio thread only.
@@ -511,6 +567,10 @@ namespace Csound.Unity
 
             for (int i = 0, sampleIndex = 0; i < samples.Length; i += numChannels, sampleIndex++)
             {
+                // Once per frame, not per sample: the ramp is in frames, and calling it per
+                // sample would run it numChannels times too fast.
+                var fade = NextStartupFade();
+
                 for (uint channel = 0; channel < numChannels; channel++)
                 {
                     // Clamp to the configured channel count: Unity's output can have more channels
@@ -529,7 +589,7 @@ namespace Csound.Unity
 
                     // 0.5f compensates for the mono channel being duplicated to both output channels
                     var gain = AudioChannelsSetting == AudioChannels.MONO ? 0.5f : 1f;
-                    samples[i + channel] *= (float)(snapshot[sampleIndex] / zerodbfs) * gain;
+                    samples[i + channel] *= (float)(snapshot[sampleIndex] / zerodbfs) * gain * fade;
                 }
             }
 
