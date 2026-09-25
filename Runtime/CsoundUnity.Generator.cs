@@ -176,6 +176,10 @@ namespace Csound.Unity
 
         partial void OnInitializedGenerator()
         {
+            // TODO processClipAudio is ignored here, without a word. RootOutput skips
+            //      OnAudioFilterRead entirely, and that is the only place clip audio is picked
+            //      up, so the clip never reaches Csound. IAudioGenerator deals with this a few
+            //      lines below by falling back to OnAudioFilterRead — do the same here, or warn.
             if (_audioPath == AudioPath.RootOutput)
             {
                 InitRootOutput();

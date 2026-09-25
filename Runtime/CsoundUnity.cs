@@ -934,6 +934,33 @@ namespace Csound.Unity
         private int _outputSampleRate = 48000;
 
         /// <summary>
+        /// How many channels Unity's audio output has. This is the width of the buffer that
+        /// arrives in OnAudioFilterRead, and the width the carrier clip has to match.
+        /// </summary>
+        private static int OutputChannelCount() => AudioSettings.speakerMode switch
+        {
+            AudioSpeakerMode.Mono        => 1,
+            AudioSpeakerMode.Stereo      => 2,
+            AudioSpeakerMode.Quad        => 4,
+            AudioSpeakerMode.Surround    => 5,
+            AudioSpeakerMode.Mode5point1 => 6,
+            AudioSpeakerMode.Mode7point1 => 8,
+            _                            => 2,
+        };
+
+        /// <summary>
+        /// Name of the carrier clip we create ourselves (see Init). We also use the name to
+        /// recognise it later, so we never mistake our own clip for one the user assigned.
+        /// </summary>
+        private const string SpatializerClipName = "CsoundUnitySpatializerClip";
+
+        /// <summary>
+        /// Goes in warnings next to the GameObject name. Two components in a scene often look
+        /// identical, and the csd is what tells them apart.
+        /// </summary>
+        private string CsdLabel => string.IsNullOrWhiteSpace(csoundFileName) ? "no csd" : csoundFileName;
+
+        /// <summary>
         /// Number of frames pre-mixed per routing batch. Pre-mixing at buffer granularity
         /// (rather than per ksmps) dramatically reduces overhead at small ksmps values
         /// (e.g. ksmps=1 → 44100 route calls/sec → 86 calls/sec with audioRoutingBufferSize=512).
@@ -1141,16 +1168,85 @@ namespace Csound.Unity
 #else
             var needsSpatializerClip = true;
 #endif
-            if (needsSpatializerClip && audioSource.clip == null && !processClipAudio)
-            {
-                var ac = AudioClip.Create("CsoundUnitySpatializerClip", 32, 1, AudioSettings.outputSampleRate, false);
-                var data = new float[32];
-                for (var i = 0; i < data.Length; i++) data[i] = 1;
-                ac.SetData(data, 0);
+            // AudioSource.clip means two completely different things here, depending on
+            // processClipAudio:
+            //
+            //   OFF - the clip is not audio you hear. On the OnAudioFilterRead path it is a carrier: we
+            //         multiply Csound's output by it, and that is how Unity's own per-source gain (3D
+            //         panning, distance rolloff, volume) ends up on Csound's audio, since Unity applies
+            //         that gain before this filter runs. We create the clip ourselves and it has to read 1
+            //         in every channel. The other two paths never multiply anything, so they need no
+            //         carrier at all — which is what needsSpatializerClip below is about.
+            //   ON  - the clip IS audio. It goes into Csound as input (spin), and Csound's output replaces
+            //         the buffer instead of multiplying it. The clip is the user's.
+            //
+            // So a clip assigned with processClipAudio OFF cannot work. We used to multiply Csound's output
+            // by that audio, which is a ring modulator, and said nothing. Now we warn and drop it.
 
-                audioSource.clip = ac;
+            // Outside the per-path branch on purpose: with processClipAudio OFF the clip is ignored
+            // whatever path is running. OnAudioFilterRead swaps in the carrier, IAudioGenerator hands
+            // the AudioSource to the generator, RootOutput uses no AudioSource at all. This used to
+            // sit inside the OnAudioFilterRead branch, so a scene left on the default path dropped
+            // the clip without a word.
+            if (!processClipAudio && audioSource != null && audioSource.clip != null
+                && audioSource.clip.name != SpatializerClipName)
+            {
+                Debug.LogWarning($"[CsoundUnity] '{name}' ({CsdLabel}): the AudioClip " +
+                                 $"'{audioSource.clip.name}' assigned to the AudioSource is ignored " +
+                                 $"because 'Process Audio Clip' is OFF on this component. Turn " +
+                                 $"'Process Audio Clip' ON to feed the clip into Csound instead.", this);
+                audioSource.clip = null;
+            }
+
+            if (needsSpatializerClip && !processClipAudio)
+            {
+                if (audioSource.clip == null)
+                {
+                    // The carrier has to read 1 in every channel of the buffer this filter gets, so it must
+                    // be as wide as Unity's output. Csound's nchnls is the wrong number here: a mono csd
+                    // already reaches every output channel through the outputSampleChannel mapping in
+                    // ProcessBlock.
+                    //
+                    // It used to be created mono, and Unity spreads a mono source over a stereo output at
+                    // 1/sqrt(2) per channel (constant-power pan law). That is where this path's missing 3 dB
+                    // came from: it had been playing quieter than the other two all along.
+                    //
+                    // TODO stereo is as wide as we go. Unity handles clips with more channels differently and
+                    //      may not spatialize them at all, which would break what the carrier is for. Surround
+                    //      outputs keep the old behaviour until someone can test one.
+                    // TODO never tried with a spatializer plugin (Oculus, Steam Audio...). Those expect mono
+                    //      sources, and this clip exists to drive them, so that pairing needs a listen.
+                    // TODO the clip is built once, in Init. If the audio config changes while playing (device
+                    //      or speaker mode) nothing rebuilds it: we never subscribe to
+                    //      AudioSettings.OnAudioConfigurationChanged.
+
+                    var clipChannels = Mathf.Min(OutputChannelCount(), 2);
+                    var ac = AudioClip.Create(SpatializerClipName, 32, clipChannels,
+                                              AudioSettings.outputSampleRate, false);
+                    var data = new float[32 * clipChannels];
+                    for (var i = 0; i < data.Length; i++) data[i] = 1;
+                    ac.SetData(data, 0);
+
+                    audioSource.clip = ac;
+                }
+
                 audioSource.loop = true;
                 audioSource.Play();
+            }
+            else if (processClipAudio)
+            {
+                // Worth knowing: processClipAudio only works on the OnAudioFilterRead path, because that is
+                // the only one Unity hands the clip's samples to. A component set to IAudioGenerator notices
+                // and switches itself back to OnAudioFilterRead (see OnInitializedGenerator).
+                //
+                // TODO RootOutput returns from OnInitializedGenerator before that check, so there processClipAudio
+                //      is ignored without a word: RootOutput skips OnAudioFilterRead entirely, so the clip never
+                //      reaches Csound. Either warn, or fall back the same way IAudioGenerator does.
+                //
+                // Not checked right here. Scripts usually assign the clip in Start(), which runs after Init —
+                // BasicMicrophoneAnalyzer does exactly that with Microphone.Start. Checking now would warn
+                // about the setups that work, so we wait a frame instead.
+                StartCoroutine(WarnIfNoClipAssigned());
             }
 
             // Create the Csound bridge. If no CSD is assigned, an empty string is passed so
@@ -1415,6 +1511,38 @@ namespace Csound.Unity
             }
             OnCsoundStopped?.Invoke();
         }
+
+        /// <summary>
+        /// Warns if processClipAudio is on but nobody assigned an AudioClip, so Csound gets no
+        /// input.
+        /// <para>
+        /// Waits one frame first: by then every Start() has run, and that is where scripts assign
+        /// the clip. We only check that a clip exists, not that the AudioSource is playing —
+        /// BasicMicrophoneAnalyzer assigns the clip and then waits for the microphone permission
+        /// prompt before calling Play(), which is fine.
+        /// </para>
+        /// <para>
+        /// It does not claim the instance is silent: that depends on the csd, which may generate
+        /// audio without ever reading its input.
+        /// </para>
+        /// <para>
+        /// TODO a script that assigns the clip later than the first frame still gets warned.
+        /// Nothing breaks, the message is just noise. Revisit if that turns out to be common.
+        /// </para>
+        /// </summary>
+        private IEnumerator WarnIfNoClipAssigned()
+        {
+            yield return null;
+
+            if (!processClipAudio || audioSource == null || audioSource.clip != null) yield break;
+
+            Debug.LogWarning($"[CsoundUnity] '{name}' ({CsdLabel}): 'Process Audio Clip' is ON on " +
+                             $"this component, but the AudioSource has no AudioClip assigned — so " +
+                             $"Csound is receiving no clip input. Assign one, or turn 'Process Audio " +
+                             $"Clip' OFF. If a script assigns the clip later than the first frame, " +
+                             $"this warning is expected and can be ignored.", this);
+        }
+
 
         private IEnumerator MonitorPerformanceEnd()
         {
