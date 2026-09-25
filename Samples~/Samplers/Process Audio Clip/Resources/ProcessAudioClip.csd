@@ -1,5 +1,5 @@
 <Cabbage> bounds(0, 0, 0, 0)
-form caption("Process Clip") size(400, 300)
+form caption("Process Audio Clip") size(400, 300)
 rslider bounds(0, 0, 77, 87) channel("gain") range(0, 2, 1, 1, 0.001)  valueTextBox(1) text("gain") 
 </Cabbage>
 <CsoundSynthesizer>

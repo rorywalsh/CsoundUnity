@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Csound.Samples.Samplers.ProcessClipAudio
+namespace Csound.Samples.Samplers.ProcessAudioClip
 {
     public class TestRotate : MonoBehaviour
     {
