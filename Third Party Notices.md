@@ -1,0 +1,86 @@
+# Third Party Notices
+
+CsoundUnity's own code is MIT licensed (see `LICENSE`). The native libraries redistributed with the
+package are not, and this file accounts for them.
+
+Some of these are not separate files: the Csound binaries have other libraries **linked inside
+them**, so they travel with the package even though you never see them in the folder listing. They
+are listed here for that reason.
+
+---
+
+## Csound
+
+- **Licence:** LGPL 2.1 — full text in `LICENSE-LGPL-2.1.txt`
+- **Copyright:** The Csound developers (Barry Vercoe, John ffitch, Victor Lazzarini, Steven Yi,
+  Michael Gogins, and many others)
+- **Source:** https://github.com/csound/csound
+- **Version:** 7.x
+
+| Platform | File | Linkage |
+|---|---|---|
+| Windows | `Runtime/Win64/csound64.dll` | dynamic |
+| macOS | `Runtime/macOS/CsoundLib64.bundle` | dynamic |
+| Android | `Runtime/Android/{arch}/libcsoundandroid.so` | dynamic |
+| iOS | `Runtime/iOS/CsoundiOS.xcframework` | **static** |
+| visionOS | `Runtime/visionOS/libcsound.a` | **static** |
+| WebGL | Csound WASM, fetched at runtime from `@csound/browser` | — |
+
+## Libraries linked inside the Csound binaries
+
+Present in the Windows and macOS builds; the Android build carries only libsndfile, and the visionOS
+build only PortMidi.
+
+| Library | Licence | Copyright / project |
+|---|---|---|
+| libsndfile | LGPL 2.1 | Erik de Castro Lopo — https://github.com/libsndfile/libsndfile |
+| libFLAC | BSD 3-Clause | Xiph.Org Foundation — https://xiph.org/flac/ |
+| libogg | BSD 3-Clause | Xiph.Org Foundation — https://xiph.org/ogg/ |
+| libvorbis | BSD 3-Clause | Xiph.Org Foundation — https://xiph.org/vorbis/ |
+| libopus | BSD 3-Clause | Xiph.Org Foundation — https://opus-codec.org/ |
+| libsamplerate 0.2.2 | BSD 2-Clause | Erik de Castro Lopo — https://github.com/libsndfile/libsamplerate |
+| LAME | LGPL 2.1 | The LAME project — https://lame.sourceforge.io/ |
+| mpg123 | LGPL 2.1 | The mpg123 project — https://www.mpg123.de/ |
+| PortMidi | MIT | Roger B. Dannenberg — https://github.com/PortMidi/portmidi |
+
+## libsndfile, shipped separately as well
+
+- **Licence:** LGPL 2.1 — **Version:** 1.0.25 on Android
+- `Runtime/Android/{arch}/libsndfile.so` (dynamic), `Runtime/iOS/libSndfileiOS.xcframework`
+  (**static**), `Runtime/visionOS/libsndfile.a` (**static**)
+
+## CsoundUnity native plugins
+
+`CsoundNativeInput` (`.dll`, `.bundle`, `libcsnativeinput.so`) and `CsoundUnityMidi.aar` are part of
+CsoundUnity, MIT licensed like the rest. Source in the `CsoundUnityNativeTools` repository.
+
+---
+
+## What the LGPL asks of you when you ship a game
+
+Worth reading, because it lands on you rather than on us. It concerns Csound, libsndfile, LAME and
+mpg123; the BSD and MIT libraries above only ask to be credited, which this file does.
+
+The LGPL lets you use these libraries from code under any licence, including closed-source and
+commercial. Nothing here forces your game to be open source. What it asks is that whoever receives
+your game can **replace the LGPL library with their own build of it**, and that you say the
+libraries are there and where their source lives.
+
+How hard that is depends on the linkage:
+
+**Dynamic — Windows, macOS, Android.** Already satisfied. The library is its own file in your build,
+and anyone who wants to swap it can. Keep this notice, and do not merge the library into your
+executable.
+
+**Static — iOS and visionOS.** Not satisfied by shipping the app alone. The library is welded into
+your binary, so the only way to let someone relink is to hand them what they would need: your object
+files, or your source. LGPL 2.1 §6 is explicit about it. Projects in this position generally either
+provide object files on request, or open their source, or move to a dynamic build.
+
+> **TODO** — the clean fix is to ship Csound and libsndfile as embedded **dynamic** frameworks on
+> iOS and visionOS, allowed since iOS 8. That settles it once for every user, instead of leaving
+> each of them to deal with it. Until then it belongs in the platform documentation too, not only
+> here.
+
+Nothing here is legal advice. If you are shipping commercially on iOS, the static linking question
+is worth ten minutes of someone qualified.
