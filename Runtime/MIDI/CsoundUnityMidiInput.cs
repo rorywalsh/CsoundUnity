@@ -131,7 +131,7 @@ namespace Csound.Unity
         {
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS || UNITY_VISIONOS
             _receiver = new CoreMidiReceiver(HandleMidiMessage, _includeOnlySourcesContaining, _excludeSourcesContaining);
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID && !UNITY_EDITOR
             _receiver = new AndroidMidiReceiver(gameObject.name);
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
             _receiver = new WindowsMidiReceiver(HandleMidiMessage, _includeOnlySourcesContaining, _excludeSourcesContaining);

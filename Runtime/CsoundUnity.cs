@@ -5403,9 +5403,10 @@ namespace Csound.Unity
     {
         if (!IsInitialized) return;
 
-        // Cheap, and it keeps the spout-reading paths in step when the value is changed while
-        // playing — they read it from the bridge, not from this component.
-        if (csound != null) csound.StartupFadeFrames = StartupFadeFrames;
+        // No fade push here, unlike the non-WebGL Update. The bridge field lives under
+        // !UNITY_WEBGL || UNITY_EDITOR, and the only readers of it — IAudioGenerator and
+        // RootOutput — do not exist in a WebGL player either. OnAudioFilterRead is the only
+        // path here and reads StartupFadeFrames off this component directly.
 
 
         // Calculate distance between the AudioListener and the AudioSource

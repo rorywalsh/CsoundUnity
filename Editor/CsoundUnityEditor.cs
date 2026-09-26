@@ -96,10 +96,13 @@ namespace Csound.Unity
         SerializedProperty m_measureDspLoad;
         // Outside the Unity 6 guard: OnAudioFilterRead honours the fade too.
         SerializedProperty m_fadeInSeconds;
+        // Not inside the Unity 6 guard below: audio routing exists on every version, the
+        // component's _audioRoutingBufferSize field is unguarded, and the drawer at the bottom of
+        // this file uses this property without a guard of its own.
+        SerializedProperty m_audioRoutingBufferSize;
 #if UNITY_6000_0_OR_NEWER
         SerializedProperty m_audioPath;
         SerializedProperty m_generatorStartupDelay;
-        SerializedProperty m_audioRoutingBufferSize;
 #endif
 
         private Vector2 scrollPos;
@@ -223,10 +226,10 @@ namespace Csound.Unity
                 }
             };
             m_fadeInSeconds = serializedObject.FindProperty("fadeInSeconds");
+            m_audioRoutingBufferSize = serializedObject.FindProperty("_audioRoutingBufferSize");
 #if UNITY_6000_0_OR_NEWER
             m_audioPath              = serializedObject.FindProperty("_audioPath");
             m_generatorStartupDelay  = serializedObject.FindProperty("_generatorStartupDelay");
-            m_audioRoutingBufferSize = serializedObject.FindProperty("_audioRoutingBufferSize");
 #endif
 
             envList = new ReorderableList(serializedObject, m_enviromentSettings, true, true, true, true)
