@@ -145,7 +145,9 @@ namespace Csound.Unity.Utilities
 
                     writer.Write(Encoding.ASCII.GetBytes("fmt "));
                     writer.Write(16); // Subchunk1Size
-                    writer.Write((short)1); // AudioFormat
+                    // 1 = PCM integer, 3 = IEEE float. The 32-bit branch below writes raw floats,
+                    // and declaring those as PCM made players read them as garbage integers.
+                    writer.Write((short)(bitsPerSample == 32 ? 3 : 1)); // AudioFormat
                     writer.Write((short)channels);
                     writer.Write((int)frequency);
                     writer.Write((int)(frequency * channels * (bitsPerSample / 8))); // ByteRate
@@ -333,24 +335,35 @@ namespace Csound.Unity.Utilities
 
         private static byte ConvertTo8Bit(float sample)
         {
-            return (byte)((sample + 1.0f) * 0.5f * byte.MaxValue);
+            return (byte)((Clamp(sample) + 1.0f) * 0.5f * byte.MaxValue);   // 8-bit WAV is unsigned
         }
 
         private static short ConvertTo16Bit(float sample)
         {
-            return (short)(sample * short.MaxValue);
+            return (short)(Clamp(sample) * short.MaxValue);
         }
 
         private static byte[] ConvertTo24Bit(float sample)
         {
-            var value = (int)(sample * int.MaxValue);
+            // Two things used to be wrong here: the sample was scaled to the 32-bit range and then
+            // only its low three bytes were kept, so anything past 1/256 of full scale wrapped
+            // around; and the bytes went out MSB first, while WAV is little-endian. The result was
+            // noise that happened to have the right length.
+            var value = (int)(Clamp(sample) * 8388607f);   // 2^23 - 1
             return new[]
             {
-                (byte)((value >> 16) & 0xFF),
+                (byte)(value & 0xFF),
                 (byte)((value >> 8) & 0xFF),
-                (byte)(value & 0xFF)
+                (byte)((value >> 16) & 0xFF)
             };
         }
+
+        /// <summary>
+        /// Keeps a sample inside [-1, 1] before it is scaled to an integer. Without this anything
+        /// hotter than full scale wraps to the opposite polarity, which sounds far worse than the
+        /// clipping it replaces.
+        /// </summary>
+        private static float Clamp(float sample) => sample > 1f ? 1f : sample < -1f ? -1f : sample;
 
         #endregion Private helpers
     }
