@@ -33,14 +33,38 @@ namespace Csound.Unity
     /// </para>
     ///
     /// <para>
-    /// Slots are never removed from the lists — they are nulled on unregister — so
-    /// IDs remain stable for the lifetime of the process.
+    /// Slots are never removed from the lists — they are nulled on unregister — so IDs stay stable
+    /// for as long as the lists do. That is one Play session: <see cref="ResetForNewPlaySession"/>
+    /// clears them at each start, because with domain reload disabled the statics outlive a session
+    /// and would otherwise carry dead slots into the next one.
     /// </para>
     /// </summary>
     internal static class CsoundBridgeRegistry
     {
         private static readonly List<CsoundUnityBridge>              _bridges = new List<CsoundUnityBridge>();
         private static readonly List<ConcurrentQueue<CsoundCommand>> _queues  = new List<ConcurrentQueue<CsoundCommand>>();
+
+        /// <summary>
+        /// Empties the registry when Play mode starts.
+        /// <para>
+        /// Needed because these lists are static and IDs only ever grow: with Domain Reload
+        /// disabled Unity keeps static state between Play mode sessions, so without this the lists
+        /// carry every slot from every previous session, each holding a bridge whose native Csound
+        /// instance has already been freed. They grow for as long as the Editor stays open.
+        /// Resetting on entering Play mode with <c>SubsystemRegistration</c> is what Unity's own
+        /// documentation prescribes for exactly this case.
+        /// </para>
+        /// </summary>
+        [UnityEngine.RuntimeInitializeOnLoadMethod(
+            UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetForNewPlaySession()
+        {
+            _bridges.Clear();
+            _queues.Clear();
+            _spinFillCallbacks.Clear();
+            _ksmpsCallbacks.Clear();
+            _performanceFinishedCallbacks.Clear();
+        }
 
         #region Registration
 

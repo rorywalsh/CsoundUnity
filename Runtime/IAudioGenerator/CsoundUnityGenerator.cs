@@ -246,7 +246,7 @@ namespace Csound.Unity
             // so the audio thread won't be in Process() at this point.
             if (_bridge != null)
             {
-                _bridge.OnApplicationQuit();
+                _bridge.Destroy();
                 _bridge = null;
             }
 

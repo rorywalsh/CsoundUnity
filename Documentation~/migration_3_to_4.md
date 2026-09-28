@@ -49,6 +49,29 @@ Several low-level API functions changed signatures in Csound 7. If you called `C
 
 **Most users are unaffected** — the public `CsoundUnity` API (SetChannel, GetChannel, etc.) is unchanged. Only projects that imported and called `CsoundUnityBridge` or `CsoundCsharp` directly need to review these.
 
+##### `OnApplicationQuit()` renamed to `Destroy()`
+
+`CsoundUnityBridge.OnApplicationQuit()` is now `CsoundUnityBridge.Destroy()`.
+
+The old name described one of the method's callers rather than what it does, and it reads like a
+Unity message — but `CsoundUnityBridge` is a plain C# class, not a MonoBehaviour, so Unity never
+called it. In v4 it is reached from `Stop()`, from `OnDisable` and from `OnDestroy` as well, so the
+name was actively misleading.
+
+```csharp
+// v3
+bridge.OnApplicationQuit();
+
+// v4
+bridge.Destroy();     // returns false if refused, see below
+```
+
+`Destroy()` now returns `bool`: `false` means the call was refused because it came from inside an
+audio callback on that same instance — freeing there would pull the instance out from under the
+callback that asked for it. If you own the reference, keep it and call again from the main thread.
+A subclass that overrides this must change its signature to `public override bool Destroy()` and
+return the result of `base.Destroy()`.
+
 ---
 
 ### `csoundEventString` removed from public API

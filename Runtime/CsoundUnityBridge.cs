@@ -219,7 +219,10 @@ namespace Csound.Unity
 
             CsoundLib.NativeMethods.csoundInitialize(1);
             csound = CsoundLib.NativeMethods.csoundCreate(System.IntPtr.Zero, null);
-            if (csound == null)
+            // IntPtr.Zero, not null. `csound == null` lifts to a nullable comparison against a
+            // non-nullable IntPtr, so it is ALWAYS false — this guard never fired and a failed
+            // csoundCreate walked straight into csoundCreateMessageBuffer with a null handle.
+            if (csound == IntPtr.Zero)
             {
                 Debug.LogError("Couldn't create Csound!");
                 return;
@@ -448,28 +451,202 @@ namespace Csound.Unity
 
         #endregion Instantiation
 
+        #region Audio-thread handshake
+
+        /// <summary>
+        /// Number of audio-thread callers currently inside this bridge. Entered through
+        /// <see cref="TryEnterAudio"/>, left through <see cref="ExitAudio"/>.
+        /// </summary>
+        private int _inAudio;
+
+        /// <summary>
+        /// Set by the destroy before it frees anything. Once true no new audio-thread caller is let
+        /// in, which is what makes waiting for <see cref="_inAudio"/> to reach zero terminate.
+        /// </summary>
+        private volatile bool _closing;
+
+        /// <summary>
+        /// Claims this bridge for the duration of one audio callback. Returns <c>false</c> when the
+        /// instance is being destroyed, and the caller must then produce silence and return without
+        /// touching the bridge at all.
+        /// <para>
+        /// Every audio-thread entry point pairs this with <see cref="ExitAudio"/> in a
+        /// <c>finally</c>: <c>CsoundUnity.OnAudioFilterRead</c>, <c>CsoundRealtime.Process</c>
+        /// and <c>CsoundRootRealtime.EndProcessing</c>. It is claimed once per DSP block, not per
+        /// sample, so the cost is one volatile read and two interlocked operations per block.
+        /// </para>
+        /// <para>
+        /// The flag is checked twice on purpose. The first check is the cheap common case. The second
+        /// closes the window where the destroy set <c>_closing</c> between that check and the
+        /// increment: without it the destroy could see a count of zero, start freeing, and only then
+        /// have this caller appear.
+        /// </para>
+        /// </summary>
+        internal bool TryEnterAudio()
+        {
+            if (_closing) return false;
+            System.Threading.Interlocked.Increment(ref _inAudio);
+            if (_closing)
+            {
+                System.Threading.Interlocked.Decrement(ref _inAudio);
+                return false;
+            }
+            _claimingThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            return true;
+        }
+
+        /// <summary>
+        /// Managed id of the thread currently holding the claim, or 0. Only ever one audio thread
+        /// claims a given bridge, so one slot is enough, and it exists for one reason: to tell a
+        /// destroy that it was asked for from inside the very callback it would have to wait for.
+        /// <para>
+        /// One slot, not a set: were two threads ever inside at once, the second id would overwrite the
+        /// first and the refusal would quietly stop working for that thread. NativeAudioOutput is
+        /// specified to drive <c>PerformKsmps</c> from a thread of its own, so it needs a set here.
+        /// </para>
+        /// </summary>
+        private volatile int _claimingThreadId;
+
+        /// <summary>
+        /// True when the calling thread is the one currently inside this bridge — i.e. a destroy
+        /// reached from within an audio callback on this same instance.
+        /// </summary>
+        private bool IsClaimedByCurrentThread
+            => _claimingThreadId != 0 &&
+               _claimingThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId;
+
+        /// <summary>
+        /// Releases the claim taken by <see cref="TryEnterAudio"/>. Clears the claim id only if it is
+        /// this thread's, so a second caller cannot erase the id of a thread that is still inside.
+        /// </summary>
+        internal void ExitAudio()
+        {
+            if (_claimingThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId)
+                _claimingThreadId = 0;
+            System.Threading.Interlocked.Decrement(ref _inAudio);
+        }
+
+        /// <summary>
+        /// Closes the bridge to new audio-thread callers and waits for the ones already inside to
+        /// leave, so that nothing is freed underneath them.
+        /// <para>
+        /// This is the whole reason the handshake exists. The audio thread was measured to be alive
+        /// throughout Unity's shutdown sequence — a DSP block arrives inside the shutdown window in
+        /// every run, and in a different sub-window each time, so there is no point at which freeing
+        /// is inherently safe.
+        /// </para>
+        /// <para>
+        /// Timed with <c>System.Diagnostics.Stopwatch</c>, not <c>Time.realtimeSinceStartup</c>:
+        /// during the destruction phase Unity's clocks are already rewound (measured — frameCount
+        /// reads 0 and realtimeSinceStartup goes backwards), so they cannot time anything.
+        /// </para>
+        /// <para>
+        /// Crossing the cap frees anyway, and the caller logs that it did. The realistic way to get a
+        /// stuck count is an audio thread stopped between <see cref="TryEnterAudio"/> and
+        /// <see cref="ExitAudio"/>: the count never returns to zero although nobody is inside, and
+        /// refusing to free there would leak the instance every time it happened. A callback genuinely
+        /// wedged inside Csound for 200 ms is a separate bug, and an audible one.
+        /// </para>
+        /// </summary>
+        /// <param name="timeoutMs">Upper bound on the wait. One DSP block is ~6 ms.</param>
+        /// <returns><c>true</c> if the bridge emptied, <c>false</c> if the cap was reached.</returns>
+        private bool CloseToAudioThread(int timeoutMs = 200)
+        {
+            _closing = true;
+            System.Threading.Thread.MemoryBarrier();
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            while (System.Threading.Volatile.Read(ref _inAudio) > 0 && sw.ElapsedMilliseconds < timeoutMs)
+            {
+                // Yield rather than spin bare. This is the main thread, so giving up the timeslice
+                // costs nothing here — while a bare spin burns a core for the whole wait, and on a
+                // two-core device (armeabi-v7a is in the test matrix) it can delay the very audio
+                // callback it is waiting for, turning a ~6 ms wait into the full timeout.
+                System.Threading.Thread.Yield();
+            }
+
+            return System.Threading.Volatile.Read(ref _inAudio) == 0;
+        }
+
+        #endregion Audio-thread handshake
+
         #region Lifecycle
 
         /// <summary>
-        /// Cleans up native Csound resources when the application quits.
-        /// Destroys the message buffer and the Csound instance.
+        /// Frees the native Csound instance and its message buffer. Idempotent.
         /// <para>
-        /// This must only be called after the audio callback (OnAudioFilterRead) has
-        /// been stopped — either by Unity during OnDisable, or after joining any
-        /// background performance thread. Calling csoundDestroy while
-        /// csoundPerformKsmps is running on another thread causes a deadlock.
+        /// Safe to call from any thread but the audio one, at any time: before anything is freed,
+        /// <see cref="CloseToAudioThread"/> shuts the bridge to new audio-thread callers and waits for
+        /// the ones already inside. That wait is capped — see its doc for what crossing the cap means.
+        /// A call from the audio thread itself is refused below, with an error. A subclass that drives Csound from a thread of its own has to join it
+        /// before calling this — see <c>CsoundWorker</c>.
+        /// </para>
+        /// <para>
+        /// The handle and the cached pointers are cleared before anything is freed, so that a caller
+        /// that got in anyway hits the <c>== IntPtr.Zero</c> checks in the hot path rather than reading
+        /// released memory. Keep both: the handshake stops new callers, the nulls cover the one already
+        /// inside.
         /// </para>
         /// </summary>
-        public virtual void OnApplicationQuit()
+        /// <returns>
+        /// <c>true</c> when the instance is gone — freed here, or already freed by an earlier call.
+        /// <c>false</c> only when the destroy was refused because it came from inside an audio
+        /// callback on this same instance. A caller that owns the reference must keep it on
+        /// <c>false</c> and try again from the main thread, or the bridge becomes unreachable and its
+        /// native instance is never freed.
+        /// </returns>
+        public virtual bool Destroy()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
+            var handle = csound;
+            if (handle == IntPtr.Zero) return true;   // already destroyed — freeing twice is a crash
+
+            // Refuse a destroy asked for from inside an audio callback on this same instance. The
+            // wait below could never succeed — the only occupant is the thread doing the waiting — so
+            // it would burn the full timeout inside the audio callback and then free the instance
+            // while that callback is still unwinding through it. OnCsoundPerformKsmps is a public
+            // event that fires on the audio thread, so a handler calling Stop/Restart reaches here.
+            if (IsClaimedByCurrentThread)
+            {
+                Debug.LogError("[CsoundUnity] Csound destroy was requested from inside an audio " +
+                               "callback on this same instance, and has been refused: freeing now " +
+                               "would pull the instance out from under the callback that asked. " +
+                               "OnCsoundPerformKsmps fires on the audio thread — marshal Stop, " +
+                               "Restart and Destroy to the main thread.");
+                return false;
+            }
+
+            // Shut the door and wait for whoever is inside to leave.
+            if (!CloseToAudioThread())
+                Debug.LogWarning("[CsoundUnity] Csound destroy: an audio callback did not leave the " +
+                                 "bridge within 200 ms — freeing anyway.");
+
+            // For the caller that got in against expectation: it reads a null pointer and produces
+            // silence rather than freed memory. MemoryBarrier keeps the compiler and the CPU from
+            // moving these stores after the calls below.
+            csound    = IntPtr.Zero;
+            _spoutPtr = IntPtr.Zero;
+            _spinPtr  = IntPtr.Zero;
+
+            // The cached scalars go too, and they are the highest-leverage line here. Both
+            // CsoundRealtime.Process and CsoundRootRealtime.EndProcessing already bail on
+            // `ksmps <= 0` before touching anything else — but GetKsmps returns _ksmpsCache when it
+            // is non-zero, so leaving it set meant that bail could never fire and execution walked
+            // on into Get0dbfs with a null handle. Clearing it turns the guard those two paths
+            // already have into a working one.
+            _ksmpsCache        = 0;
+            _nchnlsCached      = 0;
+            _nchnlsInputCached = 0;
+            System.Threading.Thread.MemoryBarrier();
+
             // Send "e" (end-score) before destroying so Csound stops all indefinitely-running
             // instruments (i x 0 -1 pattern) before csoundDestroy is called.
             // Without this, csoundDestroy can block waiting for score cleanup in Csound 7.
-            CsoundLib.NativeMethods.csoundEventString(csound, "e", 0);
-            CsoundLib.NativeMethods.csoundDestroyMessageBuffer(csound);
-            CsoundLib.NativeMethods.csoundDestroy(csound);
+            CsoundLib.NativeMethods.csoundEventString(handle, "e", 0);
+            CsoundLib.NativeMethods.csoundDestroyMessageBuffer(handle);
+            CsoundLib.NativeMethods.csoundDestroy(handle);
 #endif
+            return true;
         }
 
         /// <summary>
@@ -510,22 +687,55 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Processes one ksmps-worth of audio, advancing the score and filling the spout buffer.
-        /// Also caches the spout/spin pointers on the first successful call.
+        /// Returned by <see cref="PerformKsmps"/> when the instance has already been destroyed.
+        /// Distinct from 0 (running) and from every positive value (score ended), so that a caller
+        /// testing <c>&gt; 0</c> cannot mistake a freed instance for a finished score.
         /// </summary>
-        /// <returns>Zero while the performance is ongoing, or a positive value when the score has ended.</returns>
+        public const int DestroyedSentinel = int.MinValue;
+
+        /// <summary>
+        /// Advances Csound by one ksmps block, filling the spout buffer, and caches the spout/spin
+        /// pointers on the first successful call.
+        /// </summary>
+        /// <returns>
+        /// Zero while the performance is ongoing, a positive value when the score has ended, or
+        /// <see cref="DestroyedSentinel"/> when this bridge has already been freed. Test for score end
+        /// with <c>&gt; 0</c>, never <c>!= 0</c> — the latter reads a freed instance as a finished
+        /// score, which latches <c>performanceFinished</c> and, with domain reload disabled, carries
+        /// into the next Play session.
+        /// <para>
+        /// <c>&gt; 0</c> loses nothing: csound.h documents <c>csoundPerformKsmps</c> as returning
+        /// "false during performance, and true when performance is finished" and defines no negative
+        /// error return, so there is no error code for this to swallow. <c>CsoundWorker</c> tests the
+        /// same value with <c>!= 0</c> and is equally correct, because it calls the native function
+        /// directly and never sees the sentinel.
+        /// </para>
+        /// </returns>
         public int PerformKsmps()
         {
-            if (csound == IntPtr.Zero) return -1;
+            // Every native call in this method goes through this one read, so a destroy landing
+            // mid-method cannot swap the handle out from under them. The pointer refetch below
+            // deliberately re-reads the field instead — it needs current liveness, not this snapshot.
+            var handle = csound;
+            if (handle == IntPtr.Zero) return DestroyedSentinel;
 #if !UNITY_WEBGL || UNITY_EDITOR
-            int result = CsoundLib.NativeMethods.csoundPerformKsmps(csound);
+            int result = CsoundLib.NativeMethods.csoundPerformKsmps(handle);
             // csoundGetSpout/csoundGetSpin return NULL before the first PerformKsmps.
             // Cache the pointers here (once, on the first call) so GetSpoutSample/SetSpinSample
             // never need to call P/Invoke in the per-sample hot path.
-            if (_spoutPtr == IntPtr.Zero)
-                _spoutPtr = CsoundLib.NativeMethods.csoundGetSpout(csound);
-            if (_spinPtr == IntPtr.Zero)
-                _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(csound);
+            //
+            // Only while the instance is still alive. The destroy nulls both pointers on purpose, so
+            // that the `== IntPtr.Zero` checks in the per-sample getters catch an in-flight reader —
+            // and these two lines are the one place that could undo that by writing a pointer back
+            // in after the free. Re-checking the live handle keeps them from doing so, and from
+            // calling csoundGetSpout with a null handle.
+            if (csound != IntPtr.Zero)
+            {
+                if (_spoutPtr == IntPtr.Zero)
+                    _spoutPtr = CsoundLib.NativeMethods.csoundGetSpout(handle);
+                if (_spinPtr == IntPtr.Zero)
+                    _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(handle);
+            }
             return result;
 #else
         return 0;
@@ -539,10 +749,16 @@ namespace Csound.Unity
         /// <summary>
         /// Returns the 0 dBFS value (full-scale amplitude) for this Csound instance, as set by the <c>0dbfs</c> header statement.
         /// </summary>
-        /// <returns>The 0 dBFS amplitude value.</returns>
+        /// <returns>
+        /// The 0 dBFS amplitude value, or <c>0</c> if this bridge has already been freed. Callers
+        /// divide by this, so guard the divisor: <c>1 / 0</c> is Infinity, not silence.
+        /// </returns>
         public MYFLT Get0dbfs()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
+            // Both Unity 6 paths call this once per DSP block right after resolving the bridge, so
+            // without the guard a destroy that has nulled the handle hands Csound NULL to dereference.
+            if (csound == IntPtr.Zero) return 0;
             return CsoundLib.NativeMethods.csoundGet0dBFS(csound);
 #else
         return 0;
@@ -857,6 +1073,9 @@ namespace Csound.Unity
 
         #endregion Tables
 
+        // Every accessor in this region re-checks `csound` before it refetches a cached pointer:
+        // Destroy nulls the handle and both pointers, and that check is how an audio-thread caller
+        // already inside finds out, instead of handing Csound a null handle.
         #region Audio I/O
 
         /// <summary>
@@ -893,8 +1112,12 @@ namespace Csound.Unity
         public uint GetKsmps()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            // Return cached value when available (set after csoundStart)
-            return _ksmpsCache != 0 ? _ksmpsCache : CsoundLib.NativeMethods.csoundGetKsmps(csound);
+            // Return cached value when available (set after csoundStart). The cache is cleared by
+            // the destroy, so falling through here after it means the handle is gone — answer 0
+            // rather than hand a null handle to Csound.
+            if (_ksmpsCache != 0) return _ksmpsCache;
+            if (csound == IntPtr.Zero) return 0;
+            return CsoundLib.NativeMethods.csoundGetKsmps(csound);
 #else
         return 0;
 #endif
@@ -911,6 +1134,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spoutPtr == IntPtr.Zero)
             {
+                if (csound == IntPtr.Zero) return 0;
                 _spoutPtr = CsoundLib.NativeMethods.csoundGetSpout(csound);
                 if (_spoutPtr == IntPtr.Zero) return 0;
             }
@@ -929,6 +1153,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spinPtr == IntPtr.Zero)
             {
+                if (csound == IntPtr.Zero) return;
                 _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(csound);
                 if (_spinPtr == IntPtr.Zero) return;
             }
@@ -945,6 +1170,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spinPtr == IntPtr.Zero)
             {
+                if (csound == IntPtr.Zero) return;
                 _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(csound);
                 if (_spinPtr == IntPtr.Zero) return;
             }
@@ -960,6 +1186,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spinPtr == IntPtr.Zero)
             {
+                if (csound == IntPtr.Zero) return;
                 _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(csound);
                 if (_spinPtr == IntPtr.Zero) return;
             }
@@ -979,6 +1206,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spinPtr == IntPtr.Zero)
             {
+                if (csound == IntPtr.Zero) return null;
                 _spinPtr = CsoundLib.NativeMethods.csoundGetSpin(csound);
                 if (_spinPtr == IntPtr.Zero) return null;
             }
@@ -1001,6 +1229,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (_spoutPtr == IntPtr.Zero)
             {
+                if (csound == IntPtr.Zero) return null;
                 _spoutPtr = CsoundLib.NativeMethods.csoundGetSpout(csound);
                 if (_spoutPtr == IntPtr.Zero) return null;
             }
@@ -1043,8 +1272,12 @@ namespace Csound.Unity
         public uint GetNchnlsInput()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            // Return cached value when available (set after csoundStart)
-            return _nchnlsInputCached != 0 ? _nchnlsInputCached : CsoundLib.NativeMethods.csoundGetChannels(csound, 1);
+            // Return cached value when available (set after csoundStart). The cache is cleared by
+            // the destroy, so falling through here after it means the handle is gone — answer 0
+            // rather than hand a null handle to Csound.
+            if (_nchnlsInputCached != 0) return _nchnlsInputCached;
+            if (csound == IntPtr.Zero) return 0;
+            return CsoundLib.NativeMethods.csoundGetChannels(csound, 1);
 #else
         return 0;
 #endif
@@ -1056,8 +1289,12 @@ namespace Csound.Unity
         public uint GetNchnls()
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
-            // Return cached value when available (set after csoundStart)
-            return _nchnlsCached != 0 ? _nchnlsCached : CsoundLib.NativeMethods.csoundGetChannels(csound, 0);
+            // Return cached value when available (set after csoundStart). The cache is cleared by
+            // the destroy, so falling through here after it means the handle is gone — answer 0
+            // rather than hand a null handle to Csound.
+            if (_nchnlsCached != 0) return _nchnlsCached;
+            if (csound == IntPtr.Zero) return 0;
+            return CsoundLib.NativeMethods.csoundGetChannels(csound, 0);
 #else
         return 0;
 #endif

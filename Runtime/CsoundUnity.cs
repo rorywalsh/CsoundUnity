@@ -955,6 +955,22 @@ namespace Csound.Unity
         private const string SpatializerClipName = "CsoundUnitySpatializerClip";
 
         /// <summary>
+        /// True when the AudioSource is playing the carrier clip this component created, rather than a
+        /// clip belonging to the user.
+        /// <para>
+        /// It exists so the audio thread can answer "is this buffer mine to silence?" without a string
+        /// compare, which is what a clip-name check would cost per block. Set where the carrier is
+        /// created, in <c>Init</c>.
+        /// </para>
+        /// <para>
+        /// The distinction matters because the carrier is not audio, it is a multiplicand of all ones:
+        /// handing the buffer back untouched hands back full-scale DC. With <c>processClipAudio</c> ON
+        /// there is no carrier and the clip is the user's, so the buffer is not ours to clear.
+        /// </para>
+        /// </summary>
+        private volatile bool _usingCarrierClip;
+
+        /// <summary>
         /// Goes in warnings next to the GameObject name. Two components in a scene often look
         /// identical, and the csd is what tells them apart.
         /// </summary>
@@ -1104,6 +1120,11 @@ namespace Csound.Unity
         {
             initialized = false;
 
+            // Not in ResetRunState: that is shared with Stop(), and a Stop() reached during shutdown
+            // would then un-declare the quit. Clearing it belongs to the start of a run, only.
+            _quitting = false;
+            ResetRunState();
+
             AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
             outputBuffer = new float[bufferSize];
 
@@ -1128,6 +1149,11 @@ namespace Csound.Unity
 
             audioSource = GetComponent<AudioSource>();
 
+            // Seeded here, not left at its initialiser: Unity sends Awake to a component that is
+            // disabled from the start (its GameObject being active is enough) but never sends it
+            // OnEnable, so without this a component that begins disabled would read as enabled.
+            _activeAndEnabled = isActiveAndEnabled;
+
             _awakeCompleted = true;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -1151,6 +1177,11 @@ namespace Csound.Unity
             namedAudioChannelTempBufferDict.Clear();
             _publishedAudioChannels.Clear();
             _warnedMissingPresetChannels.Clear();
+
+            // Re-decided below, never carried over: whether the AudioSource is playing our carrier
+            // depends on processClipAudio and on the path, and both can change between two Init calls.
+            // Left stale it would have the audio thread clearing a buffer that belongs to the user.
+            _usingCarrierClip = false;
 
             // Not a preference, despite looking like one: this decides whether the
             // spatializer runs before or after the AudioSource's effect chain, and on the
@@ -1232,6 +1263,7 @@ namespace Csound.Unity
 
                 audioSource.loop = true;
                 audioSource.Play();
+                _usingCarrierClip = true;
             }
             else if (processClipAudio)
             {
@@ -1474,17 +1506,14 @@ namespace Csound.Unity
             // Set initialized = false FIRST. The audio thread checks this in both the outer
             // ProcessBlock guard and the inner per-sample guard, so it will exit before
             // reaching any direct csound.* native calls.
-            // Then defer csoundDestroy to a coroutine (one frame later) to guarantee the
-            // audio thread has fully exited any in-progress ProcessBlock before we free
-            // the native Csound object, avoiding a SIGSEGV use-after-free.
+            // The destroy itself is synchronous, at the end of this method: the bridge closes itself
+            // to the audio thread and waits for any in-flight callback before freeing.
             initialized = false;
             _initializing = false;
 #if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
             OnStoppedGenerator();
 #endif
-            performanceFinished = false;
-            ksmpsIndex = 0;
-            _startupFadeIndex = 0;
+            ResetRunState();
             _spinFadeIndices      = System.Array.Empty<int>(); // reset so next Init re-arms all route fades
             _routePreMixBuffer    = System.Array.Empty<float>();
             _routingBlockStart    = -1;
@@ -1504,11 +1533,7 @@ namespace Csound.Unity
 
             namedAudioChannelDataDict.Clear();
             namedAudioChannelTempBufferDict.Clear();
-            if (csound != null)
-            {
-                StartCoroutine(DeferredCsoundDestroy(csound));
-                csound = null;
-            }
+            DestroyCsoundInstance();
             OnCsoundStopped?.Invoke();
         }
 
@@ -1550,15 +1575,6 @@ namespace Csound.Unity
             if (!IsInitialized) yield break;
             OnCsoundPerformanceFinished?.Invoke();
             Stop();
-        }
-
-        private IEnumerator DeferredCsoundDestroy(CsoundUnityBridge bridge)
-        {
-            // Wait one frame: initialized=false causes the audio thread to exit ProcessBlock
-            // at the inner guard before any native call, so after one frame it is safe to
-            // call csoundDestroy without a SIGSEGV race condition.
-            yield return null;
-            bridge.OnApplicationQuit();
         }
 
         /// <summary>
@@ -2006,7 +2022,11 @@ namespace Csound.Unity
         /// <summary>
         /// Process a ksmps-sized block of samples
         /// </summary>
-        /// <returns>Zero while performance continues; non-zero when performance has ended.</returns>
+        /// <returns>
+        /// Zero while the performance continues, a positive value when the score has ended, or
+        /// <see cref="CsoundUnityBridge.DestroyedSentinel"/> if the instance has been freed. Test for
+        /// score end with <c>&gt; 0</c>, not <c>!= 0</c>.
+        /// </returns>
         public int PerformKsmps()
         {
             if (!IsInitialized || csound == null) return 0;
@@ -4750,7 +4770,25 @@ namespace Csound.Unity
             if (_audioPath == AudioPath.RootOutput)
                 return;
 #endif
-            if (csound != null && initialized)
+            // From here down we are on the OnAudioFilterRead path, and every early return has to
+            // silence the buffer rather than hand it back. `data` arrives holding the carrier clip,
+            // which is 1.0 in every sample — it is a multiplicand, not audio — so returning it
+            // untouched emits full-scale DC, not silence. That is what made Stop() leave DC on the
+            // output for the rest of the session, and what put a click at the end of every teardown.
+            // It must not be done above this point: the IAudioGenerator branch returns `data` because
+            // `data` IS the generator's finished audio, and RootOutput does not use the buffer at all.
+
+            // One read of the field into a local, because the main thread can null it at any moment:
+            // the local's job is to give TryEnterAudio a non-null receiver and to keep ExitAudio
+            // paired with it. The calls below re-read the field on purpose, guarded at each use.
+            var bridge = csound;
+            if (bridge == null || !initialized) { SilenceIfCarrier(data); return; }
+
+            // Claim it for the whole block. Without this the teardown could free the instance
+            // part-way through and the rest of the block would read released memory — the audio
+            // thread was measured to be alive throughout Unity's shutdown, so this is not theory.
+            if (!bridge.TryEnterAudio()) { SilenceIfCarrier(data); return; }
+            try
             {
                 if (_measureDspLoad)
                 {
@@ -4765,6 +4803,24 @@ namespace Csound.Unity
                     ProcessBlock(data, channels);
                 }
             }
+            finally
+            {
+                bridge.ExitAudio();
+            }
+        }
+
+        /// <summary>
+        /// Zeroes a block that is ours to zero, for the early returns on the OnAudioFilterRead path.
+        /// <para>
+        /// Gated on <see cref="_usingCarrierClip"/> and not on the clip's name: with
+        /// <c>processClipAudio</c> ON there is no carrier, <c>Init</c> never calls <c>Play</c>, and any
+        /// block arriving before this component is running belongs to the user's own AudioSource —
+        /// clearing that unconditionally would silence a source that has nothing to do with us.
+        /// </para>
+        /// </summary>
+        private void SilenceIfCarrier(float[] data)
+        {
+            if (_usingCarrierClip) System.Array.Clear(data, 0, data.Length);
         }
 
         /// <summary>
@@ -4839,7 +4895,18 @@ namespace Csound.Unity
                     {
                         // necessary to avoid calling csound functions when quitting or stopping while reading this block of samples
                         // always remember OnAudioFilterRead runs on a different thread
-                        if (_quitting || !initialized || csound == null) return;
+                        if (_quitting || !initialized || csound == null)
+                        {
+                            // Silence the tail, do not abandon it. Everything before this index is real
+                            // Csound output and must be kept; everything after still holds the carrier
+                            // clip, i.e. 1.0, so returning here left the rest of the block at full
+                            // scale. That step is the click heard at every teardown. Allocation-free,
+                            // which is the only kind of call allowed here.
+                            var written = i + (int)channel;
+                            if (_usingCarrierClip && written < samples.Length)
+                                System.Array.Clear(samples, written, samples.Length - written);
+                            return;
+                        }
 
                         // Note this is gated on ShouldPerform, not IsSilenced: muting silences the
                         // output but Csound keeps running, so the score stays in time.
@@ -4868,10 +4935,11 @@ namespace Csound.Unity
                                     (int)ksmpsLen, csound.GetNchnlsInput());
                             }
 
-                            System.Threading.Interlocked.Increment(ref _performKsmpsDepth);
                             var res = PerformKsmps();
-                            System.Threading.Interlocked.Decrement(ref _performKsmpsDepth);
-                            performanceFinished = res != 0;
+                            // > 0, not != 0: a freed bridge answers DestroyedSentinel, and reading
+                            // that as a score end latches performanceFinished. See
+                            // CsoundUnityBridge.PerformKsmps's <returns>.
+                            performanceFinished = res > 0;
                             ksmpsIndex = 0;
 
                             foreach (var chanName in availableAudioChannels)
@@ -5302,10 +5370,42 @@ namespace Csound.Unity
 
         private bool _quitting = false;
 
-        // Tracks whether the audio thread is currently inside PerformKsmps.
-        // Used by OnDisable to ensure csoundDestroy is not called while PerformKsmps
-        // is still running on the audio thread — calling them concurrently is unsafe.
-        private int _performKsmpsDepth = 0;
+        /// <summary>
+        /// True once the application has begun shutting down, for every instance at once. Read by
+        /// <c>TeardownGenerator</c>, which cannot rely on the per-instance <c>_quitting</c> alone:
+        /// that comes from <c>OnApplicationQuit</c>, and Unity does not send that message to a
+        /// component on an inactive GameObject.
+        /// <para>
+        /// Measured order at quit, with a probe rather than from the manual (which states it only
+        /// in a diagram): <c>wantsToQuit</c> → <c>OnApplicationQuit</c> on every active GameObject →
+        /// <c>Application.quitting</c> → then, per object, <c>OnDisable</c> if it is enabled, then
+        /// <c>OnDestroy</c>. So this flag is set before any <c>OnDestroy</c> can run, including for
+        /// the objects <c>OnApplicationQuit</c> never reached.
+        /// </para>
+        /// </summary>
+        private static bool s_applicationQuitting;
+
+        /// <summary>
+        /// True while the application is shutting down, whether or not this particular component was
+        /// sent <c>OnApplicationQuit</c>. It gates the two main-thread Unity calls that FMOD teardown
+        /// makes unsafe: clearing <c>AudioSource.generator</c> in <c>TeardownGenerator</c>, and
+        /// <c>AudioSource.Stop()</c> in <see cref="DestroyCsoundInstance"/>.
+        /// </summary>
+        private bool IsShuttingDown => _quitting || s_applicationQuitting;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void HookApplicationQuitting()
+        {
+            // Runs before the first scene loads. The flag is cleared here rather than at its
+            // declaration because with Domain Reload turned off a static keeps the value it had
+            // when the previous play session ended — which would make every later session behave
+            // as though it were already quitting. Unsubscribe first for the same reason.
+            s_applicationQuitting = false;
+            Application.quitting -= MarkApplicationQuitting;
+            Application.quitting += MarkApplicationQuitting;
+        }
+
+        private static void MarkApplicationQuitting() => s_applicationQuitting = true;
 
 #if UNITY_6000_0_OR_NEWER
         /// <summary>
@@ -5329,11 +5429,9 @@ namespace Csound.Unity
             OnApplicationQuitGenerator();
 #endif
             _quitting = true;
-            // Signal the audio thread to stop entering ProcessBlock.
-            // The actual csoundDestroy is deferred to OnDisable.
-            // Setting initialized = false here stops ProcessBlock from entering PerformKsmps
-            // on subsequent audio callbacks; OnDisable then spin-waits for any already
-            // in-flight PerformKsmps to finish before calling csoundDestroy.
+            // Shut the audio thread out of ProcessBlock now; the free happens later, in OnDisable or
+            // OnDestroy, whichever Unity delivers. Both go through TeardownCsound, and the bridge
+            // waits there for any in-flight audio callback before anything is freed.
             initialized = false;
             if (LoggingCoroutine != null)
                 StopCoroutine(LoggingCoroutine);
@@ -5342,33 +5440,160 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Called when the component is disabled. Destroys the native Csound instance
-        /// when quitting, after waiting for any in-flight <c>PerformKsmps</c> on the
-        /// audio thread to complete. Calling <c>csoundDestroy</c> concurrently with
-        /// <c>csoundPerformKsmps</c> is unsafe; the spin-wait on
-        /// <see cref="_performKsmpsDepth"/> (max 200 ms) guarantees the audio thread
-        /// has exited before the native instance is freed.
+        /// Tracks whether this component is currently active and enabled, for the audio thread to read
+        /// without calling into Unity.
+        /// <para>
+        /// It exists because <see cref="AudioPath.RootOutput"/> is the one path nothing else switches
+        /// off. On <c>OnAudioFilterRead</c>, disabling the component stops Unity calling the filter,
+        /// so <c>ProcessBlock</c> never runs; on <c>IAudioGenerator</c>, deactivating the GameObject
+        /// deactivates the AudioSource and the generator stops being pulled. Both therefore freeze
+        /// Csound and fall silent for free. RootOutput's node hangs off <c>ControlContext.builtIn</c>
+        /// and is tied to neither the GameObject nor the AudioSource, so it just kept playing —
+        /// measured: deactivating the GameObject of a RootOutput instance did not silence it.
+        /// </para>
+        /// </summary>
+        private volatile bool _activeAndEnabled = true;
+
+        /// <summary>
+        /// Only refreshes <see cref="_activeAndEnabled"/>. CsoundUnity had no OnEnable at all, which is
+        /// why a disable had no way to be undone on the RootOutput path.
+        /// </summary>
+        void OnEnable() => _activeAndEnabled = true;
+
+        /// <summary>
+        /// Destroys the native Csound instance on quit, through <see cref="TeardownCsound"/>.
+        /// <para>
+        /// Unity sends this only to something currently enabled, so it does not arrive at quit for a
+        /// component that was already disabled or whose GameObject was deactivated — measured. Those
+        /// reach the teardown through <see cref="OnDestroy"/> instead, which is why that one must not
+        /// be given a shutdown early return.
+        /// </para>
         /// </summary>
         void OnDisable()
         {
+            _activeAndEnabled = false;   // before the early return: it applies whether or not we quit
             if (!_quitting) return;  // only destroy on quit, not on normal disable
-            if (csound == null) return;
+            TeardownCsound();
+        }
 
-            // Spin-wait for any in-flight PerformKsmps to complete.
-            // _performKsmpsDepth is decremented by the audio thread immediately after
-            // csoundPerformKsmps returns, so this loop exits as soon as the call finishes.
-            // We cap the wait at 200 ms (≈10× the worst-case ksmps block) as a safety net.
-            var deadline = System.Diagnostics.Stopwatch.StartNew();
-            while (System.Threading.Volatile.Read(ref _performKsmpsDepth) > 0
-                   && deadline.ElapsedMilliseconds < 200)
-            { /* spin */ }
+        /// <summary>
+        /// Destroys the native Csound instance when this component or its GameObject goes away —
+        /// destroyed directly, taken down with the scene, or reached at quit by a route that
+        /// <see cref="OnDisable"/> does not cover.
+        /// <para>
+        /// Without this, those cases freed nothing: <see cref="OnDisable"/> only acts while quitting,
+        /// so changing scene left the native instance alive, the IAudioGenerator/RootOutput
+        /// registrations dangling, and RootOutput still calling PerformKsmps and making sound.
+        /// </para>
+        /// <para>
+        /// It runs unconditionally, shutdown included, and must stay that way: Unity does not deliver
+        /// <c>OnDisable</c> at quit to a component that was already disabled or whose GameObject was
+        /// deactivated, so a shutdown early return here leaks one native instance for each of those.
+        /// What shutdown does make unsafe is the two main-thread AudioSource calls, and both are
+        /// guarded where they happen — see <see cref="IsShuttingDown"/>.
+        /// </para>
+        /// </summary>
+        void OnDestroy() => TeardownCsound();
 
-            if (deadline.ElapsedMilliseconds >= 200)
-                Debug.LogWarning("[CsoundUnity] OnDisable: PerformKsmps did not drain within 200 ms — proceeding with csoundDestroy anyway.");
+        /// <summary>
+        /// Clears the per-run state that must not survive from one run to the next, and is called from
+        /// both <see cref="Awake"/> and <see cref="Stop"/> so those two cannot drift apart.
+        /// <para>
+        /// <c>_quitting</c> is deliberately <b>not</b> here, although it is per-run: <c>Stop</c> calls
+        /// this, and a <c>Stop</c> reached during shutdown — a user script calling it from its own
+        /// <c>OnApplicationQuit</c>, or <c>MonitorPerformanceEnd</c> firing on the quitting frame —
+        /// would clear the flag and un-declare the quit. <c>Application.quitting</c> has not fired yet
+        /// at that point, so <see cref="IsShuttingDown"/> would go back to false for the rest of
+        /// shutdown and let the guarded AudioSource calls through into FMOD teardown. <c>Awake</c>
+        /// clears it on its own line instead.
+        /// </para>
+        /// <para>
+        /// <b>Why Awake needs it at all.</b> These are non-serialized instance fields, and with scene
+        /// reload disabled — which is this project's setting — Unity warns that they "keep the values
+        /// assigned to them during Play mode": the same C# objects are reused for the next session with
+        /// Awake merely re-invoked on them. Each of these left set is a silent, total failure with
+        /// nothing in the log to explain it: a stale <c>performanceFinished</c> makes ProcessBlock
+        /// return on its first guard, and <c>MonitorPerformanceEnd</c> cannot rescue it because its
+        /// <c>WaitUntil</c> returns immediately on the stale flag.
+        /// </para>
+        /// </summary>
+        private void ResetRunState()
+        {
+            performanceFinished  = false;
+            ksmpsIndex           = 0;
+            _startupFadeIndex    = 0;
+            _ksmpsBlockSizeWarned = false;
+        }
+
+        /// <summary>
+        /// The teardown for the lifecycle routes: <see cref="OnDisable"/> and <see cref="OnDestroy"/>
+        /// both end here. <see cref="Stop"/> does the same three steps itself, because it has more
+        /// managed state to clear in between, and then reaches the same
+        /// <see cref="DestroyCsoundInstance"/> — which is the single place the native instance is freed.
+        /// <para>
+        /// Synchronous rather than deferred by a frame, because at quit there is no next frame: Unity
+        /// delivers the shutdown messages with the player loop already stopped — measured — so a
+        /// coroutine parked on <c>yield return null</c> would never resume. The wait for the audio
+        /// thread lives in the bridge instead (<see cref="CsoundUnityBridge.TryEnterAudio"/>), which is
+        /// what lets one call serve all three audio paths.
+        /// </para>
+        /// </summary>
+        private void TeardownCsound()
+        {
+            // Order matters and is load-bearing. initialized = false first, because routed
+            // destinations and CsoundUnityChild read it to decide whether to keep pulling from this
+            // instance, and the per-object destruction order is not stable. Then the generator
+            // teardown, which unregisters this bridge so no new audio callback can even resolve it.
+            // The free comes last.
+            initialized = false;
+            _initializing = false;
+#if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
+            OnStoppedGenerator();
+#endif
+            DestroyCsoundInstance();
+        }
+
+        /// <summary>
+        /// Frees the native Csound instance, if there is one, and clears the reference first so no
+        /// other caller can reach it. Idempotent: a second call finds nothing to do.
+        /// </summary>
+        private void DestroyCsoundInstance()
+        {
+            // Stop the carrier, or it keeps playing after the instance is gone: nothing else in the
+            // package ever called AudioSource.Stop, so a finished score or a destroyed component left
+            // a looping all-ones clip on the output — full-scale DC, inaudible on many monitors while
+            // it holds the speaker cone off-centre and eats the whole headroom.
+            //
+            // Here rather than in Stop() and OnDestroy separately: this is the one site all three
+            // routes reach (Stop calls it directly, OnDisable and OnDestroy through TeardownCsound).
+            // `audioSource &&` uses Unity's implicit bool on purpose — in OnDestroy the AudioSource on
+            // this same GameObject may already be destroyed, which a plain null check would miss.
+            // !IsShuttingDown keeps the call away from FMOD teardown, and costs nothing: at quit the
+            // block has already gone out before this runs, so only the buffer zeroing helps there.
+            // The clip-name test is the ownership test, and it is safe here because this is the main
+            // thread; the audio thread uses the cached _usingCarrierClip instead.
+            if (audioSource && !IsShuttingDown &&
+                audioSource.clip != null && audioSource.clip.name == SpatializerClipName)
+            {
+                audioSource.Stop();
+
+                // Ownership ends with the Stop. Left set, SilenceIfCarrier would go on zeroing this
+                // AudioSource's buffer, so a clip the user assigns and plays through it after a Stop
+                // would come out silent. Deliberately not cleared on the shutdown branch above: there
+                // the carrier is still playing, so the silencing is still what keeps its DC off the
+                // output.
+                _usingCarrierClip = false;
+            }
 
             var bridge = csound;
+            if (bridge == null) return;
+
+            // Closes itself to the audio thread and waits for any in-flight callback before freeing.
+            // Drop the reference only if it accepted: a destroy asked for from inside an audio
+            // callback is refused, and nulling first would strand that bridge — unreachable from here,
+            // never freed. Refused means this runs again later from the main thread and succeeds.
+            if (!bridge.Destroy()) return;
             csound = null;
-            bridge.OnApplicationQuit();
         }
 
         #endregion PRIVATE_METHODS

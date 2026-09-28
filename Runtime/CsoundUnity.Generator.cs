@@ -307,7 +307,15 @@ namespace Csound.Unity
             // connections triggers a null-pointer crash inside
             // FMOD::SystemI::flushDSPConnectionRequests.  Unity/FMOD will clean
             // up the generator naturally as part of their own shutdown sequence.
-            if (audioSource && !_quitting)
+            //
+            // IsShuttingDown rather than _quitting: Unity does not send OnApplicationQuit to a
+            // component on an inactive GameObject, so an instance whose GameObject was deactivated
+            // before the quit arrives here with _quitting still false.
+            //
+            // This is one of the two main-thread AudioSource calls shutdown makes unsafe; the other is
+            // AudioSource.Stop in CsoundUnity.DestroyCsoundInstance. Freeing the Csound instance is
+            // not a Unity call and needs no such guard.
+            if (audioSource && !IsShuttingDown)
                 audioSource.generator = null;
         }
 
@@ -370,10 +378,17 @@ namespace Csound.Unity
             // how they learn about them. Both call this callback once per ksmps — and they keep
             // calling it while paused, which is what makes the pause liftable.
             if (csound == null) return;
-            csound.Muted  = mute;
-            csound.Paused = pauseProcessing;
 
-            if (pauseProcessing)
+            // A disabled component counts as paused. That is what the other two paths already do —
+            // there Unity simply stops driving them — and this is the only way to say it here, since
+            // RootOutput's node is tied to neither the GameObject nor the AudioSource. The callback
+            // keeps firing while disabled, so re-enabling lifts it.
+            var paused = pauseProcessing || !_activeAndEnabled;
+
+            csound.Muted  = mute;
+            csound.Paused = paused;
+
+            if (paused)
             {
                 // Csound will not perform this block, so clearing spin and mixing routes into it
                 // would be wasted work. The native input ring still has to be drained, though:

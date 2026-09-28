@@ -117,22 +117,20 @@ namespace Csound.Unity
 
         #region Lifecycle
 
-        public override void OnApplicationQuit()
+        /// <summary>
+        /// Joins the performance thread, then frees the instance.
+        /// <para>
+        /// The order is the point: <c>csoundDestroy</c> takes an internal Csound lock that
+        /// <c>csoundPerformKsmps</c> holds, so freeing while the thread is still inside it deadlocks.
+        /// <see cref="Dispose"/> does not return until the thread has exited.
+        /// </para>
+        /// </summary>
+        public override bool Destroy()
         {
             _running = false;
-            Debug.Log("Worker OnApplicationQuit");
-            // Join the performance thread BEFORE destroying the native Csound instance.
-            // Calling base.OnApplicationQuit() (csoundDestroy) while the thread is still
-            // inside csoundPerformKsmps causes a deadlock: csoundDestroy tries to acquire
-            // an internal Csound lock that csoundPerformKsmps is holding.
-            // Disposing first guarantees the thread has fully exited before we free the instance.
+            Debug.Log("CsoundWorker: joining the performance thread, then destroying");
             Dispose();
-            base.OnApplicationQuit();
-        }
-
-        public void Destroy()
-        {
-            OnApplicationQuit();
+            return base.Destroy();
         }
 
         protected virtual void Dispose()
