@@ -305,6 +305,10 @@ namespace Csound.Unity
                 audioSource.clip = ac;
                 audioSource.loop = true;
                 audioSource.Play();
+
+                // Ours, so ours to silence. A clip the user assigned is left alone — see
+                // SilenceIfDummy.
+                _usingDummyClip = true;
             }
 
             RebuildNamedAudioChannelData();
@@ -344,8 +348,15 @@ namespace Csound.Unity
             // Skip the classic multiplication loop so we don't double-process.
             if (_childUsingIAudioGenerator) return;
 #endif
-            if (csoundUnity != null)
-                ProcessBlock(data, channels);
+            if (csoundUnity == null)
+            {
+                // The parent is gone — destroyed, or never wired up. Nothing will write this block,
+                // so the carrier underneath it must not be passed through.
+                SilenceIfDummy(data);
+                return;
+            }
+
+            ProcessBlock(data, channels);
         }
 
 #if UNITY_6000_0_OR_NEWER
@@ -517,11 +528,50 @@ namespace Csound.Unity
             _outputPublisher.Publish(interleaved, samples, channels);
         }
 
+        /// <summary>
+        /// True when the all-ones <c>DummyClip</c> playing on this AudioSource is the one this
+        /// component created in <c>Awake</c>, rather than one the user assigned.
+        /// <para>
+        /// Written on the main thread in <c>Awake</c>, read on the audio thread, hence volatile.
+        /// </para>
+        /// </summary>
+        private volatile bool _usingDummyClip;
+
+        /// <summary>
+        /// Zeroes the block when the clip underneath it is our own carrier.
+        /// <para>
+        /// <c>ProcessBlock</c> <b>multiplies</b> into the buffer Unity hands it, so the buffer arrives
+        /// holding whatever the AudioSource is playing — and that is a 32-sample clip whose every
+        /// sample is 1.0, created in <c>Awake</c> so FMOD builds a DSP node. Returning early therefore
+        /// does not mean "write nothing", it means "pass the carrier straight through as full-scale
+        /// DC". Measured: stopping the parent left a pure DC offset on the output — <c>|dc|/rms</c>
+        /// exactly 1.00 — that fell to zero only when both children's AudioSources were stopped.
+        /// </para>
+        /// <para>
+        /// DC is the worst shape for this to take: it is inaudible at a low level while it holds the
+        /// speaker cone off centre and eats the headroom every other source then clips against. The
+        /// parent has <c>SilenceIfCarrier</c> for the same reason; this is its counterpart.
+        /// </para>
+        /// </summary>
+        private void SilenceIfDummy(float[] data)
+        {
+            if (_usingDummyClip) System.Array.Clear(data, 0, data.Length);
+        }
+
         void ProcessBlock(float[] samples, int numChannels)
         {
             if (availableAudioChannels == null || availableAudioChannels.Count < 1 || !csoundUnity.IsInitialized)
+            {
+                SilenceIfDummy(samples);
                 return;
-            if (zerodbfs <= 0) return; // 0dbfs not yet known — wait for OnParentCsoundInitialized
+            }
+
+            // 0dbfs not yet known — wait for OnParentCsoundInitialized.
+            if (zerodbfs <= 0)
+            {
+                SilenceIfDummy(samples);
+                return;
+            }
 
             var channelCount = (int)AudioChannelsSetting;
             if (_channelSnapshots.Length != channelCount)
