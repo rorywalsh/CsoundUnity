@@ -17,7 +17,6 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #if UNITY_6000_0_OR_NEWER && (!UNITY_WEBGL || UNITY_EDITOR)
 
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Unity.IntegerTime;
 using UnityEngine;
@@ -105,7 +104,6 @@ namespace Csound.Unity
         #region Runtime state
 
         private CsoundUnityBridge              _bridge;
-        private ConcurrentQueue<CsoundCommand> _commandQueue;
         private bool _isInitialized;
         private int  _instanceId = -1;
 
@@ -189,8 +187,6 @@ namespace Csound.Unity
             // CreateInstance before Awake() runs. Initialize lazily to handle this case.
             if (!_isInitialized)
             {
-                if (_commandQueue == null)
-                    _commandQueue = new ConcurrentQueue<CsoundCommand>();
                 Initialize();
             }
 
@@ -211,8 +207,6 @@ namespace Csound.Unity
 
         private void Awake()
         {
-            if (_commandQueue == null)
-                _commandQueue = new ConcurrentQueue<CsoundCommand>();
             Initialize(); // idempotent — skips if already initialized from CreateInstance
         }
 
@@ -281,7 +275,7 @@ namespace Csound.Unity
                 return;
             }
 
-            _instanceId = CsoundBridgeRegistry.Register(_bridge, _commandQueue);
+            _instanceId = CsoundBridgeRegistry.Register(_bridge);
 
             _isInitialized = true;
             Debug.Log($"[CsoundUnityGenerator] Initialized — sr={sr} kr={kr} " +

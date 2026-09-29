@@ -53,28 +53,10 @@ namespace Csound.Unity
 
         /// <summary>
         /// Called by Unity before the first mix frame and on audio-system reconfiguration.
-        /// Drains the per-instance command queue (channel sets, MIDI messages) and
-        /// keeps <see cref="CsoundRootRealtime.InstanceId"/> in sync.
+        /// Keeps <see cref="CsoundRootRealtime.InstanceId"/> in sync.
         /// </summary>
         public JobHandle Configure(ControlContext context, ref CsoundRootRealtime realtime, in AudioFormat format)
         {
-            var bridge = CsoundBridgeRegistry.GetBridge(InstanceId);
-            var queue  = CsoundBridgeRegistry.GetCommandQueue(InstanceId);
-
-            while (queue != null && queue.TryDequeue(out var cmd))
-            {
-                switch (cmd.Type)
-                {
-                    case CsoundCommandType.SetControlChannel:
-                        bridge?.SetChannel(cmd.ChannelName, (MYFLT)cmd.Value);
-                        break;
-
-                    case CsoundCommandType.MidiMessage:
-                        bridge?.EnqueueMidiMessage(new byte[] { cmd.Byte0, cmd.Byte1, cmd.Byte2 });
-                        break;
-                }
-            }
-
             realtime.InstanceId = InstanceId;
             return default;
         }

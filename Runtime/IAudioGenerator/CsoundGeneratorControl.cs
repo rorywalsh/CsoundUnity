@@ -44,7 +44,8 @@ namespace Csound.Unity
     /// Unity calls <see cref="Configure"/> on the control thread when the generator is first used
     /// and again whenever the audio system reconfigures — <b>not</b> once per audio block. Unity's
     /// own documentation is explicit about this, and adds that during a reconfiguration the instance
-    /// is suspended from processing, so its properties can be modified safely from there.
+    /// is suspended from processing, so its properties can be modified safely from there. Nothing
+    /// reacts to a reconfiguration yet; see the audio-path documentation.
     /// </para>
     /// </summary>
     public struct CsoundControl :
@@ -68,14 +69,7 @@ namespace Csound.Unity
 
         /// <summary>
         /// Called on the control thread at first use and on every audio-system reconfiguration.
-        /// Synchronises the realtime struct's InstanceId and drains the command queue.
-        /// <para>
-        /// The queue drain is currently inert: nothing in the package enqueues a
-        /// <c>CsoundCommand</c> — <c>SetChannel</c> and MIDI reach the bridge directly — and this is
-        /// the wrong callback for it anyway, since it does not run per block. If a queue is ever
-        /// needed, the per-block control hook is <c>Update</c>, which requires
-        /// <c>CreationParameters.controlUpdateSetting = UpdateAlways</c>.
-        /// </para>
+        /// Synchronises the realtime struct's InstanceId.
         /// </summary>
         public void Configure(
             ControlContext                    context,
@@ -84,23 +78,6 @@ namespace Csound.Unity
             out GeneratorInstance.Setup      setup,
             ref GeneratorInstance.Properties properties)
         {
-            var bridge = CsoundBridgeRegistry.GetBridge(InstanceId);
-            var queue  = CsoundBridgeRegistry.GetCommandQueue(InstanceId);
-
-            while (queue != null && queue.TryDequeue(out var cmd))
-            {
-                switch (cmd.Type)
-                {
-                    case CsoundCommandType.SetControlChannel:
-                        bridge?.SetChannel(cmd.ChannelName, (MYFLT)cmd.Value);
-                        break;
-
-                    case CsoundCommandType.MidiMessage:
-                        bridge?.EnqueueMidiMessage(new byte[] { cmd.Byte0, cmd.Byte1, cmd.Byte2 });
-                        break;
-                }
-            }
-
             // Sync instance id so the audio thread can resolve the bridge.
             realtime.InstanceId = InstanceId;
 
