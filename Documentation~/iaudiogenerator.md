@@ -14,8 +14,11 @@ From v4.0.0, CsoundUnity supports the **IAudioGenerator** interface introduced i
   *earlier*: it performs Csound inside the callback for the block being produced, while a generator
   fills a block Unity consumes on the next pass. So IAudioGenerator is the *predictable* path, not
   the low-latency one — see the measurements in [Audio Output Path](audio_output_path.md)
-- `Configure()` runs on the control thread before every audio block, which gives a control-rate hook
-  tied to the audio graph rather than to `Update()`
+- `Configure()` runs on the control thread when the generator is first used and whenever the audio
+  system reconfigures — a device change, a sample-rate change. Unity suspends the instance for the
+  duration, so it is the safe place to react to a new `AudioFormat`. It is *not* a per-block hook:
+  that one is `Update()`, and it has to be asked for with
+  `CreationParameters.controlUpdateSetting = UpdateAlways`
 - `RealtimeContext.dspTime` hands you a sample-accurate DSP clock on the audio thread.
   `OnAudioFilterRead` has no equivalent: you have to read `AudioSettings.dspTime` instead
 

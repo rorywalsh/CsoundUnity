@@ -41,9 +41,10 @@ namespace Csound.Unity
     /// </para>
     ///
     /// <para>
-    /// Unity calls <see cref="Configure"/> on the control thread before every
-    /// audio block, giving us the chance to drain the command queue and sync
-    /// state with the realtime struct.
+    /// Unity calls <see cref="Configure"/> on the control thread when the generator is first used
+    /// and again whenever the audio system reconfigures — <b>not</b> once per audio block. Unity's
+    /// own documentation is explicit about this, and adds that during a reconfiguration the instance
+    /// is suspended from processing, so its properties can be modified safely from there.
     /// </para>
     /// </summary>
     public struct CsoundControl :
@@ -66,9 +67,15 @@ namespace Csound.Unity
         #region GeneratorInstance.IControl<CsoundRealtime>.Configure
 
         /// <summary>
-        /// Called by Unity before each audio block (control thread).
-        /// Drains the command queue (SetChannel, MIDI inject) via the static
-        /// registry, and synchronises the realtime struct's InstanceId.
+        /// Called on the control thread at first use and on every audio-system reconfiguration.
+        /// Synchronises the realtime struct's InstanceId and drains the command queue.
+        /// <para>
+        /// The queue drain is currently inert: nothing in the package enqueues a
+        /// <c>CsoundCommand</c> — <c>SetChannel</c> and MIDI reach the bridge directly — and this is
+        /// the wrong callback for it anyway, since it does not run per block. If a queue is ever
+        /// needed, the per-block control hook is <c>Update</c>, which requires
+        /// <c>CreationParameters.controlUpdateSetting = UpdateAlways</c>.
+        /// </para>
         /// </summary>
         public void Configure(
             ControlContext                    context,
