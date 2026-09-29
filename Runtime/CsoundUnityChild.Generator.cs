@@ -52,10 +52,12 @@ namespace Csound.Unity
     {
         #region Serialized
 
-        [Tooltip("Choose between the classic OnAudioFilterRead path and the Unity 6+ IAudioGenerator path.\n" +
-                 "IAudioGenerator drives the AudioSource directly without a dummy clip.\n" +
+        [Tooltip("OnAudioFilterRead is the default: the lowest-latency path, and the only one " +
+                 "available on every supported Unity version.\n" +
+                 "IAudioGenerator (Unity 6+) drives the AudioSource directly without a dummy clip, at " +
+                 "the cost of one extra audio block of latency.\n" +
                  "RootOutput is not implemented for children yet and falls back to OnAudioFilterRead.")]
-        [SerializeField] private AudioPath _audioPath = AudioPath.IAudioGenerator;
+        [SerializeField] private AudioPath _audioPath = AudioPath.OnAudioFilterRead;
 
 #if UNITY_EDITOR
         /// <summary>

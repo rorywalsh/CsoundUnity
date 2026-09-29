@@ -1215,7 +1215,7 @@ MonoBehaviour:
   _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets
   _audioRoutingBufferSize: 512
   webGLAssetsList: []
-  _audioPath: 1
+  _audioPath: 0
   _generatorStartupDelay: 0
 --- !u!82 &1923268640
 AudioSource:

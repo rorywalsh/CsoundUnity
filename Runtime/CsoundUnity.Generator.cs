@@ -76,9 +76,18 @@ namespace Csound.Unity
     {
         #region Serialized
 
-        [Tooltip("Choose between the classic OnAudioFilterRead path and the Unity 6+ IAudioGenerator path.\n" +
-                 "IAudioGenerator drives the AudioSource directly and avoids the resampling step.")]
-        [HideInInspector][SerializeField] private AudioPath _audioPath = AudioPath.IAudioGenerator;
+        [Tooltip("OnAudioFilterRead is the default: the lowest-latency path, and the only one " +
+                 "available on every supported Unity version.\n" +
+                 "IAudioGenerator (Unity 6+) drives the AudioSource directly, so it needs no carrier " +
+                 "clip, and its latency is constant — but one audio block LATER than OnAudioFilterRead. " +
+                 "Choose it when steady timing matters more than the extra block.\n" +
+                 "RootOutput (Unity 6+) writes to Unity's main output, bypassing the AudioMixer, and " +
+                 "needs no AudioSource.\n" +
+                 "Process Audio Clip needs OnAudioFilterRead: on both Unity 6 paths this component " +
+                 "IS the source, so an AudioClip on the AudioSource never reaches Csound. " +
+                 "IAudioGenerator falls back to OnAudioFilterRead by itself when Process Audio " +
+                 "Clip is on; RootOutput does not.")]
+        [HideInInspector][SerializeField] private AudioPath _audioPath = AudioPath.OnAudioFilterRead;
 
         /// <summary>
         /// Seconds to wait after Csound initialises before calling <c>AudioSource.Play()</c>

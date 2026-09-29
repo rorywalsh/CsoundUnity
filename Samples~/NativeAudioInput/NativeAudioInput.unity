@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d20258c641c94f0ea3dc32cfe3de904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioPath: 1
+  _audioPath: 0
   _generatorStartupDelay: 0
   logCsoundOutput: 1
   initializeOnAwake: 1

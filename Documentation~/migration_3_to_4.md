@@ -119,6 +119,24 @@ The synchronous overload still works on non-WebGL platforms.
 
 ---
 
+### Audio path defaults
+
+Nothing to do: a component carried over from 3.x runs on `OnAudioFilterRead`, which is the default
+and the only path available below Unity 6.
+
+4.0 adds two more audio paths for Unity 6 — `IAudioGenerator` and `RootOutput` — but neither is the
+default. The **Audio Output Path** section of the inspector selects them per component. This matters
+for anything built by script: a `CsoundUnity` or `CsoundUnityChild` added with `AddComponent` has no
+serialized value and takes the default, so it too runs on `OnAudioFilterRead` unless you set the
+path yourself.
+
+Latency is the reason. `OnAudioFilterRead` performs Csound inside the callback for the block being
+produced, while a generator fills a block Unity consumes on the next pass: `IAudioGenerator` is one
+audio block **later**, in exchange for having no jitter. See
+[IAudioGenerator](iaudiogenerator.md) and [Audio Output Path](audio_output_path.md).
+
+---
+
 ### `OnAudioFilterRead` path and IAudioGenerator (Unity 6+)
 
 On Unity 6+, the default audio path is now **IAudioGenerator** (not `OnAudioFilterRead`). Existing projects upgraded to Unity 6 will have their serialised `AudioPath` value respected — if it was previously `OnAudioFilterRead` it will remain so.
