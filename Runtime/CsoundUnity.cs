@@ -971,6 +971,144 @@ namespace Csound.Unity
         private volatile bool _usingCarrierClip;
 
         /// <summary>
+        /// Builds the carrier clip and hands it to the AudioSource, at the output width and sample rate
+        /// in force right now. Called from <see cref="Init"/>, and again after every audio
+        /// reconfiguration — see <see cref="OnAudioConfigurationChanged"/>.
+        /// </summary>
+        private void CreateCarrierClip()
+        {
+            // The carrier has to read 1 in every channel of the buffer this filter gets, so it must
+            // be as wide as Unity's output. Csound's nchnls is the wrong number here: a mono csd
+            // already reaches every output channel through the outputSampleChannel mapping in
+            // ProcessBlock.
+            //
+            // It used to be created mono, and Unity spreads a mono source over a stereo output at
+            // 1/sqrt(2) per channel (constant-power pan law). That is where this path's missing 3 dB
+            // came from: it had been playing quieter than the other two all along.
+            //
+            // TODO stereo is as wide as we go. Unity handles clips with more channels differently and
+            //      may not spatialize them at all, which would break what the carrier is for. Surround
+            //      outputs keep the old behaviour until someone can test one.
+            // TODO never tried with a spatializer plugin (Oculus, Steam Audio...). Those expect mono
+            //      sources, and this clip exists to drive them, so that pairing needs a listen.
+            var clipChannels = Mathf.Min(OutputChannelCount(), 2);
+            var ac = AudioClip.Create(SpatializerClipName, 32, clipChannels,
+                                      AudioSettings.outputSampleRate, false);
+            var data = new float[32 * clipChannels];
+            for (var i = 0; i < data.Length; i++) data[i] = 1;
+            ac.SetData(data, 0);
+
+            audioSource.clip = ac;
+        }
+
+        /// <summary>
+        /// Rebuilds the carrier clip after the audio configuration changed: a device swapped, the
+        /// speaker mode or the DSP buffer size changed, or anything else that goes through
+        /// <c>AudioSettings.Reset</c>.
+        /// <para>
+        /// A reset invalidates every clip built with <c>AudioClip.Create</c> — <c>Play()</c> on one is
+        /// refused from then on. Measured with a control pair, an imported .wav on one AudioSource and
+        /// a procedural clip on another, both re-played for 120 frames after the reset: the imported
+        /// one comes back every time, the procedural one never does. So the carrier cannot be
+        /// re-played, it has to be built again. On the OnAudioFilterRead path it is also the only
+        /// reason Unity calls the filter chain at all, which is why losing it silences the instance
+        /// for good — the same silence you get by unplugging the headphones.
+        /// </para>
+        /// <para>
+        /// Deferred by a frame rather than done here: this handler runs synchronously from inside
+        /// <c>AudioSettings.Reset</c>, as the call stack shows, with the audio system still
+        /// mid-reconfiguration, and nothing started at that instant takes.
+        /// </para>
+        /// <para>
+        /// What this does not cover: the arrays sized from the DSP buffer length read in
+        /// <see cref="Awake"/>, and Csound's <c>sr</c>, which is fixed when the CSD is compiled. A
+        /// device that comes back at a different rate plays the score transposed until the instance is
+        /// re-created, hence the warning.
+        /// </para>
+        /// </summary>
+        private void OnAudioConfigurationChanged(bool deviceWasChanged)
+        {
+            if (_quitting) return;
+
+            // Not warned when the rate was overridden on purpose: there the mismatch is the setting.
+            if (initialized && !overrideSamplingRate && AudioSettings.outputSampleRate != audioRate)
+                Debug.LogWarning($"[CsoundUnity] '{name}' ({CsdLabel}): the audio output is now at " +
+                                 $"{AudioSettings.outputSampleRate} Hz while Csound was compiled at " +
+                                 $"{audioRate} Hz, so this instance plays transposed. Csound's sr is " +
+                                 $"fixed when the CSD is compiled — call Restart() to pick the new " +
+                                 $"rate up, and re-create any table or channel you built from script " +
+                                 $"in OnCsoundInitialized.", this);
+
+            // Not gated on the carrier: the block length changed for every path, and the two Unity 6
+            // ones have no carrier at all while still reading arrays sized from it.
+            if (isActiveAndEnabled) StartCoroutine(ReconfigureAudio());
+        }
+
+        /// <summary>
+        /// The work the reconfiguration needs, done a frame later on the main thread: pick up the new
+        /// block length, resize what was sized from the old one, then rebuild the carrier.
+        /// </summary>
+        private System.Collections.IEnumerator ReconfigureAudio()
+        {
+            yield return null;
+
+            // Re-checked: a frame is long enough for the component to be stopped, disabled or destroyed.
+            if (_quitting || !_awakeCompleted) yield break;
+
+            // First, because everything below and every channel a csd adds later is sized from it.
+            AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
+            _outputSampleRate = AudioSettings.outputSampleRate;
+            ResizeAudioChannelBuffers();
+
+            // The carrier only if it is ours. A clip the user assigned is theirs to restart.
+            if (!_usingCarrierClip || audioSource == null) yield break;
+
+            CreateCarrierClip();
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+
+        /// <summary>
+        /// Re-allocates the per-channel buffers to the current DSP block length.
+        /// <para>
+        /// They were sized in <see cref="Init"/> from the length read in <see cref="Awake"/>, and the
+        /// per-frame writes in <c>ProcessBlock</c> are bounded by <c>Length</c> — so after the block
+        /// grows, everything past the old length is silently dropped, and
+        /// <see cref="PublishAudioChannels"/> hands destinations a block shorter than the one they are
+        /// filling. A CsoundUnityChild zeroes the frames it has no data for, which is a gate at the
+        /// block rate: at 1024 frames against arrays of 256, three quarters of every block comes out
+        /// silent. That is what the distortion after a buffer-size change was.
+        /// </para>
+        /// <para>
+        /// Values are replaced, the dictionary is never added to or removed from: it is public and
+        /// <c>readonly</c>, and the audio thread enumerates it. Replacing the value of a key that
+        /// already exists is allowed during enumeration, and the array the audio thread is holding
+        /// stays valid to the end of its block — at worst that block is written into an array nobody
+        /// reads again, on the frame the device changed.
+        /// </para>
+        /// </summary>
+        private void ResizeAudioChannelBuffers()
+        {
+            if (bufferSize <= 0 || namedAudioChannelDataDict.Count == 0) return;
+
+            // Keys copied first: assigning through the indexer while enumerating Keys is not safe.
+            if (_channelResizeKeys == null) _channelResizeKeys = new List<string>();
+            _channelResizeKeys.Clear();
+            _channelResizeKeys.AddRange(namedAudioChannelDataDict.Keys);
+
+            foreach (var key in _channelResizeKeys)
+            {
+                if (!namedAudioChannelDataDict.TryGetValue(key, out var buf)) continue;
+                if (buf != null && buf.Length == bufferSize) continue;
+                namedAudioChannelDataDict[key] = new MYFLT[bufferSize];
+            }
+        }
+
+        /// <summary>Scratch list for <see cref="ResizeAudioChannelBuffers"/>, so a device change does
+        /// not allocate one per event.</summary>
+        private List<string> _channelResizeKeys;
+
+        /// <summary>
         /// Goes in warnings next to the GameObject name. Two components in a scene often look
         /// identical, and the csd is what tells them apart.
         /// </summary>
@@ -1154,6 +1292,12 @@ namespace Csound.Unity
             // OnEnable, so without this a component that begins disabled would read as enabled.
             _activeAndEnabled = isActiveAndEnabled;
 
+            // An audio reconfiguration invalidates the carrier clip and leaves this instance silent
+            // for good, so we have to hear about it. -= first, so a second Awake on the same instance
+            // cannot subscribe twice.
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
+            AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
+
             _awakeCompleted = true;
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -1231,35 +1375,9 @@ namespace Csound.Unity
 
             if (needsSpatializerClip && !processClipAudio)
             {
-                if (audioSource.clip == null)
-                {
-                    // The carrier has to read 1 in every channel of the buffer this filter gets, so it must
-                    // be as wide as Unity's output. Csound's nchnls is the wrong number here: a mono csd
-                    // already reaches every output channel through the outputSampleChannel mapping in
-                    // ProcessBlock.
-                    //
-                    // It used to be created mono, and Unity spreads a mono source over a stereo output at
-                    // 1/sqrt(2) per channel (constant-power pan law). That is where this path's missing 3 dB
-                    // came from: it had been playing quieter than the other two all along.
-                    //
-                    // TODO stereo is as wide as we go. Unity handles clips with more channels differently and
-                    //      may not spatialize them at all, which would break what the carrier is for. Surround
-                    //      outputs keep the old behaviour until someone can test one.
-                    // TODO never tried with a spatializer plugin (Oculus, Steam Audio...). Those expect mono
-                    //      sources, and this clip exists to drive them, so that pairing needs a listen.
-                    // TODO the clip is built once, in Init. If the audio config changes while playing (device
-                    //      or speaker mode) nothing rebuilds it: we never subscribe to
-                    //      AudioSettings.OnAudioConfigurationChanged.
-
-                    var clipChannels = Mathf.Min(OutputChannelCount(), 2);
-                    var ac = AudioClip.Create(SpatializerClipName, 32, clipChannels,
-                                              AudioSettings.outputSampleRate, false);
-                    var data = new float[32 * clipChannels];
-                    for (var i = 0; i < data.Length; i++) data[i] = 1;
-                    ac.SetData(data, 0);
-
-                    audioSource.clip = ac;
-                }
+                // Only if the user left the slot empty. What the clip is, and why it is as wide as
+                // the output, is in CreateCarrierClip.
+                if (audioSource.clip == null) CreateCarrierClip();
 
                 audioSource.loop = true;
                 audioSource.Play();
@@ -5493,7 +5611,14 @@ namespace Csound.Unity
         /// guarded where they happen — see <see cref="IsShuttingDown"/>.
         /// </para>
         /// </summary>
-        void OnDestroy() => TeardownCsound();
+        void OnDestroy()
+        {
+            // Here and not in TeardownCsound: OnDisable reaches that one too, and a component merely
+            // disabled is meant to come back — unsubscribing there would leave it deaf to the next
+            // device change.
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
+            TeardownCsound();
+        }
 
         /// <summary>
         /// Clears the per-run state that must not survive from one run to the next, and is called from

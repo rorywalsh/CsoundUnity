@@ -296,20 +296,20 @@ namespace Csound.Unity
             // FIX SPATIALIZATION ISSUES: requires a dummy clip so FMOD creates an audio DSP node
             if (audioSource.clip == null)
             {
-                var ac = AudioClip.Create("DummyClip", 32, 1, AudioSettings.outputSampleRate, false);
-                var data = new float[32];
-                for (var i = 0; i < data.Length; i++)
-                    data[i] = 1;
-                ac.SetData(data, 0);
-
-                audioSource.clip = ac;
+                CreateCarrierClip();
                 audioSource.loop = true;
                 audioSource.Play();
 
                 // Ours, so ours to silence. A clip the user assigned is left alone — see
-                // SilenceIfDummy.
-                _usingDummyClip = true;
+                // SilenceIfCarrier.
+                _usingCarrierClip = true;
             }
+
+            // The carrier clip does not survive an audio reconfiguration, and without it FMOD builds no
+            // DSP node for this AudioSource, so nothing of this child is heard again. -= first so a
+            // second Awake on the same instance cannot subscribe twice.
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
+            AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
 
             RebuildNamedAudioChannelData();
 
@@ -352,7 +352,7 @@ namespace Csound.Unity
             {
                 // The parent is gone — destroyed, or never wired up. Nothing will write this block,
                 // so the carrier underneath it must not be passed through.
-                SilenceIfDummy(data);
+                SilenceIfCarrier(data);
                 return;
             }
 
@@ -375,12 +375,17 @@ namespace Csound.Unity
         {
             OnDisableGenerator();
         }
+#endif
 
         private void OnDestroy()
         {
+            // Outside the Unity 6 guard the other two messages sit in: the subscription is made on
+            // every version, so it has to be dropped on every version.
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
+#if UNITY_6000_0_OR_NEWER
             OnDestroyGenerator();
-        }
 #endif
+        }
 
         #endregion Unity Messages
 
@@ -433,13 +438,17 @@ namespace Csound.Unity
         /// <summary>Set to true by CsoundUnityChild.Generator.cs when IAudioGenerator path is active.</summary>
         private bool _childUsingIAudioGenerator;
 
-        /// <summary>Set to true in OnApplicationQuit so teardown skips FMOD DSP calls.</summary>
-        private bool _quitting;
-
         partial void OnStartGenerator();
         partial void OnDisableGenerator();
         partial void OnDestroyGenerator();
 #endif
+
+        /// <summary>
+        /// Set to true in OnApplicationQuit so teardown skips FMOD DSP calls. Declared outside the
+        /// Unity 6 guard, unlike its only writer: the dummy-clip rebuild reads it on every version, and
+        /// below Unity 6 — where there is no OnApplicationQuit here — it simply stays false.
+        /// </summary>
+        private bool _quitting;
 
         /// <summary>
         /// Copies the blocks this component is about to play into
@@ -529,13 +538,76 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// True when the all-ones <c>DummyClip</c> playing on this AudioSource is the one this
+        /// Name of the carrier clip we create ourselves (see <c>Awake</c>), the counterpart of
+        /// CsoundUnity's. Its own name, not the parent's: the two are told apart by name when deciding
+        /// whose clip an AudioSource is playing, so sharing one string would let either stop the
+        /// other's.
+        /// </summary>
+        private const string SpatializerClipName = "CsoundUnityChildSpatializerClip";
+
+        /// <summary>
+        /// True when the all-ones carrier clip playing on this AudioSource is the one this
         /// component created in <c>Awake</c>, rather than one the user assigned.
         /// <para>
         /// Written on the main thread in <c>Awake</c>, read on the audio thread, hence volatile.
         /// </para>
         /// </summary>
-        private volatile bool _usingDummyClip;
+        private volatile bool _usingCarrierClip;
+
+        /// <summary>
+        /// Builds the carrier clip and hands it to the AudioSource. All ones, one channel, 32 frames: it
+        /// carries no audio, it only exists so FMOD gives this AudioSource a DSP node — without one
+        /// <c>OnAudioFilterRead</c> is never called here and the child is silent.
+        /// </summary>
+        private void CreateCarrierClip()
+        {
+            var ac = AudioClip.Create(SpatializerClipName, 32, 1, AudioSettings.outputSampleRate, false);
+            var data = new float[32];
+            for (var i = 0; i < data.Length; i++)
+                data[i] = 1;
+            ac.SetData(data, 0);
+
+            audioSource.clip = ac;
+        }
+
+        /// <summary>
+        /// Rebuilds the dummy clip after an audio reconfiguration, for the reason spelled out on
+        /// CsoundUnity's own handler: a reset invalidates clips built with
+        /// <c>AudioClip.Create</c>, and re-playing one is refused for good — it has to be built again,
+        /// a frame later, once the audio system has finished reconfiguring.
+        /// </summary>
+        private void OnAudioConfigurationChanged(bool deviceWasChanged)
+        {
+            // Not gated on the dummy clip: the block length changed whether or not the clip is ours.
+            if (_quitting || !isActiveAndEnabled) return;
+            StartCoroutine(ReconfigureAudio());
+        }
+
+        /// <summary>
+        /// The reconfiguration work, a frame later on the main thread: the new block length, the
+        /// buffers sized from the old one, then the carrier clip.
+        /// </summary>
+        private System.Collections.IEnumerator ReconfigureAudio()
+        {
+            yield return null;
+
+            if (_quitting) yield break;
+
+            AudioSettings.GetDSPBufferSize(out bufferSize, out numBuffers);
+            _outputSampleRate = AudioSettings.outputSampleRate;
+
+            // In place, entry by entry — not RebuildNamedAudioChannelData, which clears the list the
+            // audio thread is indexing. Only the references change, the count never does.
+            for (var ch = 0; ch < namedAudioChannelData.Count; ch++)
+                if (namedAudioChannelData[ch] == null || namedAudioChannelData[ch].Length != bufferSize)
+                    namedAudioChannelData[ch] = new MYFLT[bufferSize];
+
+            if (!_usingCarrierClip || audioSource == null) yield break;
+
+            CreateCarrierClip();
+            audioSource.loop = true;
+            audioSource.Play();
+        }
 
         /// <summary>
         /// Zeroes the block when the clip underneath it is our own carrier.
@@ -550,26 +622,26 @@ namespace Csound.Unity
         /// <para>
         /// DC is the worst shape for this to take: it is inaudible at a low level while it holds the
         /// speaker cone off centre and eats the headroom every other source then clips against. The
-        /// parent has <c>SilenceIfCarrier</c> for the same reason; this is its counterpart.
+        /// parent does the same for its own carrier, for the same reason.
         /// </para>
         /// </summary>
-        private void SilenceIfDummy(float[] data)
+        private void SilenceIfCarrier(float[] data)
         {
-            if (_usingDummyClip) System.Array.Clear(data, 0, data.Length);
+            if (_usingCarrierClip) System.Array.Clear(data, 0, data.Length);
         }
 
         void ProcessBlock(float[] samples, int numChannels)
         {
             if (availableAudioChannels == null || availableAudioChannels.Count < 1 || !csoundUnity.IsInitialized)
             {
-                SilenceIfDummy(samples);
+                SilenceIfCarrier(samples);
                 return;
             }
 
             // 0dbfs not yet known — wait for OnParentCsoundInitialized.
             if (zerodbfs <= 0)
             {
-                SilenceIfDummy(samples);
+                SilenceIfCarrier(samples);
                 return;
             }
 
