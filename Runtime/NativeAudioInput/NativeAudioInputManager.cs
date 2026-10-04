@@ -109,6 +109,19 @@ namespace Csound.Unity.NativeAudioInput
         [Tooltip("Only read when Force Device Sample Rate is ON. 0 = Csound's own rate, which is what " +
                  "you want unless the device refuses it: then name a rate it does support.")]
         [SerializeField] private int _forcedSampleRate = 0;
+
+        [Tooltip("Frames of input kept in reserve before Csound is allowed to read, which is how much " +
+                 "of a late delivery the capture can absorb without a gap. It is also input latency, " +
+                 "one for one, so it is the knob to turn when the input feels late.\n" +
+                 "0 = automatic: twice the Unity DSP block, which is safe everywhere and generous on a " +
+                 "device whose hardware delivers in much smaller pieces.\n" +
+                "The fill level swings by one whole DSP block between deliveries, so two blocks is the " +
+                 "size that always has a block of margin left at the bottom of the swing. One block is " +
+                 "often enough on hardware that captures in small pieces, and that is the first value " +
+                 "worth trying. Lower it and watch Starved Blocks in play mode: as long as it stops " +
+                 "climbing after the first moments, the reserve is still large enough. It can be " +
+                 "changed while playing.")]
+        [SerializeField] private int _cushionFrames = 0;
 #pragma warning restore CS0414
 
         #endregion
@@ -186,6 +199,70 @@ namespace Csound.Unity.NativeAudioInput
                 : 0f;
 
         /// <summary>
+        /// Turns a requested cushion into the size actually used, and says so when the request could
+        /// not be honoured. Both the inspector field, read at <see cref="Open"/>, and the runtime
+        /// property come through here: the clamp used to live in each of them separately, so a value
+        /// typed before pressing play was raised in silence and looked exactly like a value that had
+        /// been tried and worked.
+        /// </summary>
+        private int ResolveCushion(int requested, int ksmpsFloor, int bandUnit)
+        {
+            if (requested <= 0) return bandUnit * 2;          // automatic
+            if (requested >= ksmpsFloor) return requested;
+
+            // Every read takes a whole ksmps, so a reserve smaller than one cannot hold anything back.
+            Debug.LogWarning($"[NativeAudioInputManager] cushion {requested} raised to {ksmpsFloor}: " +
+                             $"a reserve cannot be smaller than one ksmps, which is what each read " +
+                             $"takes.", this);
+            return ksmpsFloor;
+        }
+
+        /// <summary>
+        /// Frames held in reserve before Csound reads, and input latency in equal measure. Settable
+        /// while running, which is the only practical way to find the right value on a given device:
+        /// lower it until <see cref="StarvedBlocks"/> starts climbing, then go back up one step.
+        /// <para>
+        /// The fill level swings by one whole DSP block between deliveries, so the automatic size is
+        /// two blocks: enough that the bottom of the swing still has a block of margin. Hardware that
+        /// captures in small pieces often does fine on one block, which is the first value worth
+        /// trying. No single number is both safe and minimal everywhere, which is why this is a knob
+        /// and why the automatic size is the cautious one.
+        /// </para>
+        /// <para>
+        /// Lowering it takes effect within a block, as the trim brings the level down. Raising it
+        /// re-primes, so the input goes quiet for the few milliseconds the reserve takes to refill —
+        /// there is no way to conjure audio that has not been captured yet. Zero restores the
+        /// automatic size.
+        /// </para>
+        /// </summary>
+        public int CushionFrames
+        {
+            get => _primeFrames;
+            set
+            {
+                if (_bandUnit <= 0) { _cushionFrames = Mathf.Max(0, value); return; }   // not open yet
+
+                var ksmpsFloor = (int)(_csound != null && _csound.IsInitialized ? _csound.GetKsmps() : 128);
+                var wanted     = ResolveCushion(value, ksmpsFloor, _bandUnit);
+                if (wanted == _primeFrames) return;
+
+                var growing     = wanted > _primeFrames;
+                _cushionFrames  = value;
+                _primeFrames    = wanted;
+                _trimCeiling    = wanted + _bandUnit * 2;
+                if (growing) _primed = false;   // refill before reading again
+            }
+        }
+
+#if UNITY_EDITOR
+        /// <summary>Applies a cushion edited in the inspector during play, so it can be tuned by ear.</summary>
+        private void OnValidate()
+        {
+            if (Application.isPlaying && State == NativeInputState.Running) CushionFrames = _cushionFrames;
+        }
+#endif
+
+        /// <summary>
         /// Blocks where the ring had less than one ksmps ready and silence went to Csound instead.
         /// A handful at startup is the priming cushion filling; a number that keeps climbing means the
         /// capture cannot keep up with Csound, so raise Buffer Frames.
@@ -254,6 +331,13 @@ namespace Csound.Unity.NativeAudioInput
         /// <summary>True while bringing an overfull ring back down to the cushion, across as many
         /// callbacks as that takes.</summary>
         private bool          _trimming;
+
+        /// <summary>Fill level above which the ring is considered to have overrun. See Open.</summary>
+        private volatile int  _trimCeiling;
+
+        /// <summary>What Open sized the band from, kept so the cushion can be retuned while running.</summary>
+        private int           _bandUnit;
+        private int           _openedDspBufferSize;
         private int           _primeFrames;
 
         /// <summary>Times the audio thread asked us to fill spin. Csound drives this once per ksmps,
@@ -299,6 +383,7 @@ namespace Csound.Unity.NativeAudioInput
 
             _csound.OnCsoundInitialized += OnCsoundInitialized;
             _csound.OnCsoundStopped     += OnCsoundStopped;
+            AudioSettings.OnAudioConfigurationChanged += OnAudioConfigurationChanged;
 
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX || UNITY_IOS || UNITY_VISIONOS
             // Request microphone permission before opening native audio input.
@@ -336,6 +421,7 @@ namespace Csound.Unity.NativeAudioInput
 
         private void OnDestroy()
         {
+            AudioSettings.OnAudioConfigurationChanged -= OnAudioConfigurationChanged;
             Close();
             if (_csound)
             {
@@ -477,7 +563,16 @@ namespace Csound.Unity.NativeAudioInput
                 // consumer regularly arrives just before a delivery. One block of slack only moves the
                 // problem; two absorbs it. The native ring is eight buffers deep, so this fits with
                 // room to spare. Costs its own length in latency, once, at open.
-                _primeFrames    = Mathf.Max(bufferFramesForNative, dspBufferSize) * 2;
+                // The ceiling sits a fixed distance above the cushion, not a multiple of it. The fill
+                // level breathes by a whole Unity block between deliveries, so a band narrower than
+                // that gets hit on both sides: the trim fires on the way up, the starve on the way
+                // down, for ever. Measured with a 256-frame cushion against a 512 ceiling: 4600 frames
+                // a second thrown away and 35 gaps a second, audible as noise, while the capture
+                // itself was healthy. The trim is for stalls, which arrive in thousands of frames.
+                _openedDspBufferSize = dspBufferSize;
+                _bandUnit       = Mathf.Max(bufferFramesForNative, dspBufferSize);
+                _primeFrames    = ResolveCushion(_cushionFrames, ksmps > 0 ? ksmps : 128, _bandUnit);
+                _trimCeiling    = _primeFrames + _bandUnit * 2;
                 InputLatencyFrames = NativeAudioInputBridge.cni_get_input_latency_frames();
                 State = NativeInputState.Running;
                 // Register as the spin buffer provider — audio thread will call FillSpinBuffer.
@@ -634,7 +729,7 @@ namespace Csound.Unity.NativeAudioInput
             // step took it back under the ceiling the trim stopped there — halfway, between cushion
             // and ceiling. Measured: a replug settled at 767 and stayed, while an unplug happened to
             // land under the cushion on its last step and settled right. Same code, different luck.
-            if (available > _primeFrames * 2) _trimming = true;
+            if (available > _trimCeiling) _trimming = true;
 
             for (var drops = 0; _trimming && available > _primeFrames && drops < 8; drops++)
             {
@@ -755,6 +850,44 @@ namespace Csound.Unity.NativeAudioInput
             Debug.LogWarning("[NativeAudioInputManager] Native input is Running but FramesCaptured=0 after 2 s. " +
                              "Check device permissions and device selection.");
 #endif
+        }
+
+        /// <summary>
+        /// Reopens the device when Unity's audio configuration changes. Fires on a device change,
+        /// a DSP buffer change and a speaker mode change.
+        /// </summary>
+        /// <remarks>
+        /// Everything that sizes the capture is decided once, inside <see cref="Open"/>: the native
+        /// buffer, the ring depth that follows from it, the cushion and the trim ceiling. All of it is
+        /// derived from the DSP block, so none of it survives the block changing underneath. Recomputing
+        /// the band alone would not be enough either, because the native ring is eight buffers deep: a
+        /// device opened for a 256-frame block holds 2048 frames, while a 1024-frame block wants a 2048
+        /// cushion and a 4096 ceiling, which do not fit in it. Measured by growing the block on a running
+        /// scene: the fill level hit the starve floor and the trim ceiling on every cycle, 2400 gaps and
+        /// 43000 discarded frames a second, while the capture itself stayed healthy.
+        /// Unity raises this from inside AudioSettings.Reset, so the work waits a frame: reopening a
+        /// device from inside the call that is reconfiguring the audio system is not safe.
+        /// </remarks>
+        private void OnAudioConfigurationChanged(bool deviceWasChanged)
+        {
+            if (State != NativeInputState.Running) return;
+            StartCoroutine(ReopenAfterConfigurationChange());
+        }
+
+        private IEnumerator ReopenAfterConfigurationChange()
+        {
+            yield return null;
+            if (State != NativeInputState.Running || !_isInitialized) yield break;
+
+            AudioSettings.GetDSPBufferSize(out var dspBufferSize, out _);
+            var rate = AudioSettings.outputSampleRate;
+            if (dspBufferSize == _openedDspBufferSize && Mathf.Approximately(rate, _sampleRate))
+                yield break;
+
+            Debug.Log($"[NativeAudioInputManager] Audio configuration changed " +
+                      $"(DSP block {_openedDspBufferSize} -> {dspBufferSize}, " +
+                      $"rate {_sampleRate:F0} -> {rate}). Reopening the input device.");
+            Open(_deviceIndex, _channelCount, _requestedBufferFrames);
         }
 
         private void OnCsoundInitialized()
