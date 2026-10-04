@@ -388,11 +388,9 @@ namespace Csound.Unity
             // calling it while paused, which is what makes the pause liftable.
             if (csound == null) return;
 
-            // A disabled component counts as paused. That is what the other two paths already do —
-            // there Unity simply stops driving them — and this is the only way to say it here, since
-            // RootOutput's node is tied to neither the GameObject nor the AudioSource. The callback
-            // keeps firing while disabled, so re-enabling lifts it.
-            var paused = pauseProcessing || !_activeAndEnabled;
+            // The callback keeps firing while disabled, so re-enabling lifts the pause. See IsPaused
+            // for why a disabled component counts as paused on these two paths.
+            var paused = IsPaused;
 
             csound.Muted  = mute;
             csound.Paused = paused;

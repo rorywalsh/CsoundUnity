@@ -496,7 +496,26 @@ namespace Csound.Unity
         /// site: the bug this replaces was exactly one of those sites being forgotten.
         /// </para>
         /// </summary>
-        private bool IsSilenced => mute || pauseProcessing || performanceFinished;
+        private bool IsSilenced => mute || IsPaused || performanceFinished;
+
+        /// <summary>
+        /// True when this instance must not be performed because it was asked to stop, either
+        /// through <see cref="pauseProcessing"/> or by disabling the component.
+        /// <para>
+        /// A disabled component counts as paused. On the OnAudioFilterRead path Unity enforces that
+        /// by itself, since it stops sending the callback, but the IAudioGenerator and RootOutput
+        /// nodes are tied to neither the GameObject nor the AudioSource and keep being driven. There
+        /// the ksmps callback skips PerformKsmps and spout freezes, so an instance that did not also
+        /// count as silenced went on publishing that frozen block to its routed destinations as if it
+        /// were fresh audio: a hum at the buffer rate instead of silence, which no stall detector can
+        /// catch because the version stamp keeps advancing.
+        /// </para>
+        /// <para>
+        /// Named, like <see cref="IsSilenced"/>, because it was spelled out at one site and forgotten
+        /// at the other two.
+        /// </para>
+        /// </summary>
+        private bool IsPaused => pauseProcessing || !_activeAndEnabled;
 
         /// <summary>
         /// True when Csound should still be performed. Distinct from <see cref="IsSilenced"/>:
@@ -508,7 +527,7 @@ namespace Csound.Unity
         /// is not running the index grows past the end of the ksmps-sized buffers.
         /// </para>
         /// </summary>
-        private bool ShouldPerform => !pauseProcessing && !performanceFinished;
+        private bool ShouldPerform => !IsPaused && !performanceFinished;
 
         /// <summary>
         /// If true Csound uses as an input the AudioClip attached to this AudioSource.
