@@ -318,10 +318,15 @@ namespace Csound.Unity
 
         /// <summary>
         /// Re-arms the start fade, so a component switched back on ramps in the way a fresh start
-        /// does. The IAudioGenerator path gets this for free: its counter lives in the realtime
-        /// struct, which is rebuilt with the generator.
+        /// does, and resumes the carrier the matching OnDisable paused. The IAudioGenerator path gets
+        /// the fade for free: its counter lives in the realtime struct, which is rebuilt with the
+        /// generator.
         /// </summary>
-        private void OnEnable() => _startupFadeIndex = 0;
+        private void OnEnable()
+        {
+            _startupFadeIndex = 0;
+            SetCarrierPaused(false);
+        }
 
         void Start()
         {
@@ -371,11 +376,24 @@ namespace Csound.Unity
             _quitting = true;
         }
 
+#endif
+
+        /// <summary>
+        /// Pauses the carrier, and on Unity 6 clears the generator.
+        /// <para>
+        /// Outside the Unity 6 guard the generator teardown needs, the way <c>OnDestroy</c> already is:
+        /// the carrier is created on every version, so it has to be paused on every version. Before
+        /// this, disabling a child left its all-ones clip looping on the output — see
+        /// <see cref="SetCarrierPaused"/>.
+        /// </para>
+        /// </summary>
         private void OnDisable()
         {
+            SetCarrierPaused(true);
+#if UNITY_6000_0_OR_NEWER
             OnDisableGenerator();
-        }
 #endif
+        }
 
         private void OnDestroy()
         {
@@ -628,6 +646,65 @@ namespace Csound.Unity
         private void SilenceIfCarrier(float[] data)
         {
             if (_usingCarrierClip) System.Array.Clear(data, 0, data.Length);
+        }
+
+        /// <summary>
+        /// Pauses or resumes the carrier along with the component, for the reason
+        /// <see cref="SilenceIfCarrier"/> gives: the clip is all 1.0 and <c>ProcessBlock</c> multiplies
+        /// into it, so a block nobody writes leaves as full-scale DC. Disabling the component stops
+        /// Unity calling the filter, which is the one route the early returns inside it cannot cover.
+        /// <para>
+        /// Gated on <see cref="_usingCarrierClip"/>, like the silencing is: a clip the user assigned is
+        /// theirs. <c>CsoundUnity.ApplicationIsQuitting</c> rather than this component's own
+        /// <c>_quitting</c>, which is written on Unity 6 only, only when <c>OnApplicationQuit</c>
+        /// reaches this GameObject, and never cleared again.
+        /// </para>
+        /// </summary>
+        private void SetCarrierPaused(bool paused)
+        {
+            if (!audioSource || !_usingCarrierClip || CsoundUnity.ApplicationIsQuitting) return;
+
+            if (paused)
+            {
+                // Zero first, then pause; on the way back, unpause first, then refill. Both orderings
+                // are picked so that whatever slips out in between is silence rather than DC.
+                FillCarrier(0f);
+                audioSource.Pause();
+            }
+            else
+            {
+                audioSource.UnPause();
+                FillCarrier(1f);
+            }
+        }
+
+        /// <summary>
+        /// Writes <paramref name="value"/> into every sample of the carrier: 1 to make it the
+        /// multiplicand <c>ProcessBlock</c> needs, 0 to make it silence.
+        /// <para>
+        /// Zeroing it is what makes the invariant hold by construction rather than by covering every
+        /// route. Pausing controls one of them, and anything that calls <c>Play</c> on the source takes
+        /// it back — <c>playOnAwake</c> after the AudioSource component is toggled, a pooling system
+        /// recycling the object, a test harness. Measured: with the component disabled and the carrier
+        /// re-played by hand, the output went to <c>|dc|/rms</c> 1.00. A carrier of zeros has nothing
+        /// to hand out, whoever plays it.
+        /// </para>
+        /// <para>
+        /// The clip is 32 frames, so the loop turns over in well under a millisecond and the change is
+        /// heard at once. The audio thread may read these samples while this writes them, which is
+        /// benign: the worst it can see is one block part ones and part zeros, at a boundary that is
+        /// already a step.
+        /// </para>
+        /// </summary>
+        private void FillCarrier(float value)
+        {
+            var clip = audioSource.clip;
+            if (clip == null) return;
+
+            var data = new float[clip.samples * clip.channels];
+            if (value != 0f)
+                for (var i = 0; i < data.Length; i++) data[i] = value;
+            clip.SetData(data, 0);
         }
 
         void ProcessBlock(float[] samples, int numChannels)

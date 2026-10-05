@@ -5172,6 +5172,16 @@ namespace Csound.Unity
                 if (updateOutputBuffer && _csoundOutBuffer != null)
                     UpdateOutputBuffer(_csoundOutBuffer, nchnls);
             }
+            else
+            {
+                // Nothing above ran, so the block still holds the carrier, and handing it back is
+                // full-scale DC and not silence. The caller's guards cannot catch this one: a
+                // component with no CSD is `initialized` with `compiledOk` false (see Init), so the
+                // bridge exists, the filter is called, and this is the last place left to zero it.
+                // `_quitting` reaches it too, in the blocks between the flag and Unity stopping the
+                // filter.
+                SilenceIfCarrier(samples);
+            }
         }
 
         /// <summary>
@@ -5530,6 +5540,13 @@ namespace Csound.Unity
         /// </summary>
         private bool IsShuttingDown => _quitting || s_applicationQuitting;
 
+        /// <summary>
+        /// The static half of <see cref="IsShuttingDown"/>, for the other components in the package:
+        /// they make the same main-thread AudioSource calls and need them kept away from FMOD teardown,
+        /// and this is the part that holds whether or not <c>OnApplicationQuit</c> reached them.
+        /// </summary>
+        internal static bool ApplicationIsQuitting => s_applicationQuitting;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void HookApplicationQuitting()
         {
@@ -5592,10 +5609,89 @@ namespace Csound.Unity
         private volatile bool _activeAndEnabled = true;
 
         /// <summary>
-        /// Only refreshes <see cref="_activeAndEnabled"/>. CsoundUnity had no OnEnable at all, which is
-        /// why a disable had no way to be undone on the RootOutput path.
+        /// Refreshes <see cref="_activeAndEnabled"/> and brings the carrier back. CsoundUnity had no
+        /// OnEnable at all, which is why a disable had no way to be undone on the RootOutput path.
         /// </summary>
-        void OnEnable() => _activeAndEnabled = true;
+        void OnEnable()
+        {
+            _activeAndEnabled = true;
+            SetCarrierPaused(false);
+        }
+
+        /// <summary>
+        /// Pauses or resumes the carrier clip along with the component.
+        /// <para>
+        /// Disabling this component stops Unity calling <c>OnAudioFilterRead</c>, but it does not stop
+        /// the AudioSource: the carrier keeps looping with nothing left to multiply it. It is 32 frames
+        /// of 1.0, so what reaches the output is constant full-scale DC — the shape
+        /// <see cref="SilenceIfCarrier"/> exists to keep off the output, arriving by the one route the
+        /// filter's own early returns cannot cover, because the filter does not run at all.
+        /// </para>
+        /// <para>
+        /// Nothing in the inspector shows it, and that is not chance. The two bars and the ms readout
+        /// at the top are Unity's AudioFilterGUI, which measures the <i>filter</i>, so they freeze when
+        /// it stops; our own monitors are fed from <c>ProcessBlock</c>, equally stopped. The DC leaves
+        /// downstream of the bypassed filter, so it is visible on a mixer group's meter or audible in
+        /// the headphones, and nowhere else.
+        /// </para>
+        /// <para>
+        /// Gated on <see cref="_usingCarrierClip"/>, the same ownership test the audio thread uses:
+        /// with <c>processClipAudio</c> ON the clip is the user's, we never called Play on it, and it
+        /// is not ours to stop. Pause and not Stop because the source has to come back on the next
+        /// OnEnable, and because this clip is also what makes FMOD build a DSP node for it.
+        /// </para>
+        /// </summary>
+        private void SetCarrierPaused(bool paused)
+        {
+            // `audioSource &&` uses Unity's implicit bool on purpose: on a teardown route the
+            // AudioSource on this same GameObject may already be destroyed, which a plain null check
+            // would miss. !IsShuttingDown for the reason DestroyCsoundInstance gives for
+            // AudioSource.Stop — it keeps the call away from FMOD teardown, and costs nothing, since
+            // at quit the carrier stops being heard either way.
+            if (!audioSource || !_usingCarrierClip || IsShuttingDown) return;
+
+            if (paused)
+            {
+                // Zero first, then pause; on the way back, unpause first, then refill. Both orderings
+                // are picked so that whatever slips out in between is silence rather than DC.
+                FillCarrier(0f);
+                audioSource.Pause();
+            }
+            else
+            {
+                audioSource.UnPause();
+                FillCarrier(1f);
+            }
+        }
+
+        /// <summary>
+        /// Writes <paramref name="value"/> into every sample of the carrier: 1 to make it the
+        /// multiplicand <c>ProcessBlock</c> needs, 0 to make it silence.
+        /// <para>
+        /// Zeroing it is what makes the invariant hold by construction rather than by covering every
+        /// route. Pausing controls one of them, and anything that calls <c>Play</c> on the source takes
+        /// it back — <c>playOnAwake</c> after the AudioSource component is toggled, a pooling system
+        /// recycling the object, a test harness. Measured: with the component disabled and the carrier
+        /// re-played by hand, the output went to <c>|dc|/rms</c> 1.00. A carrier of zeros has nothing
+        /// to hand out, whoever plays it.
+        /// </para>
+        /// <para>
+        /// The clip is 32 frames, so the loop turns over in well under a millisecond and the change is
+        /// heard at once. The audio thread may read these samples while this writes them, which is
+        /// benign: the worst it can see is one block part ones and part zeros, at a boundary that is
+        /// already a step.
+        /// </para>
+        /// </summary>
+        private void FillCarrier(float value)
+        {
+            var clip = audioSource.clip;
+            if (clip == null) return;
+
+            var data = new float[clip.samples * clip.channels];
+            if (value != 0f)
+                for (var i = 0; i < data.Length; i++) data[i] = value;
+            clip.SetData(data, 0);
+        }
 
         /// <summary>
         /// Destroys the native Csound instance on quit, through <see cref="TeardownCsound"/>.
@@ -5609,7 +5705,13 @@ namespace Csound.Unity
         void OnDisable()
         {
             _activeAndEnabled = false;   // before the early return: it applies whether or not we quit
-            if (!_quitting) return;  // only destroy on quit, not on normal disable
+            if (!_quitting)
+            {
+                // A normal disable, and from here Unity stops calling the filter: pause the carrier,
+                // or it goes on playing with nothing multiplying it. See SetCarrierPaused.
+                SetCarrierPaused(true);
+                return;  // only destroy on quit, not on normal disable
+            }
             TeardownCsound();
         }
 
