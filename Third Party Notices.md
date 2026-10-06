@@ -26,10 +26,36 @@ are listed here for that reason.
 | visionOS | `Runtime/visionOS/libcsound.a` | **static** |
 | WebGL | Csound WASM, fetched at runtime from `@csound/browser` | — |
 
-## Libraries linked inside the Csound binaries
+## Libraries linked inside the binaries
 
-Present in the Windows and macOS builds; the Android build carries only libsndfile, and the visionOS
-build only PortMidi.
+Where each one actually ends up depends on the platform, and on which binary it was linked into.
+Checked against the binaries in this repository by **defined symbols** rather than by strings, since
+a string only proves a library was mentioned, not that its code is there:
+
+| | Windows `csound64.dll` | macOS `CsoundLib64` | Android `libsndfile.so` | iOS `libsndfile` | visionOS `libsndfile.a` |
+|---|---|---|---|---|---|
+| libFLAC | yes | yes | yes | — | yes |
+| libogg | yes | yes | yes | a few symbols | yes |
+| libvorbis | yes | yes | yes | — | yes |
+| libopus | yes | yes | — | — | — |
+| LAME | yes | yes | — | — | — |
+| mpg123 | yes | yes | — | — | — |
+| libsamplerate | yes | yes | — | — | — |
+| libsndfile | yes | yes | (is this file) | (is this file) | (is this file) |
+
+On Apple platforms and Android, Csound itself bundles **none** of these: `libcsoundandroid.so`,
+`libCsoundLib` and `libcsound.a` only *reference* libsndfile, which ships as its own file. On Windows
+and macOS everything is welded into the one Csound binary — the Windows DLL imports nothing but
+`KERNEL32`, `SHLWAPI` and `WS2_32`, and the macOS bundle nothing but system libraries.
+
+> **PortMidi**: listed below because the Csound build options include it, but no `Pm_` symbol was
+> found in any binary here. It appears only as a name string on Windows and macOS. Worth confirming
+> against the build configuration before the release, and dropping from this file if it is not
+> actually shipped.
+
+*How to re-check*: `nm -g <file>` for the Mach-O and static archives, `nm -D <file>` for the Android
+`.so`, then count symbols by prefix (`FLAC__`, `ogg`, `vorbis`, `opus_`, `lame_`, `mpg123_`, `Pm_`,
+`sf_`, `src_`), keeping defined and undefined apart.
 
 | Library | Licence | Copyright / project |
 |---|---|---|
@@ -49,10 +75,17 @@ build only PortMidi.
 - `Runtime/Android/{arch}/libsndfile.so` (dynamic), `Runtime/iOS/libSndfileiOS.xcframework`
   (**static**), `Runtime/visionOS/libsndfile.a` (**static**)
 
+On Android and visionOS this file **also carries libFLAC, libogg and libvorbis inside it** — see the
+table above. They are BSD, so they ask only to be credited, which the table does; but it does mean
+the LGPL obligation on these platforms rests on this file, not on the Csound binary.
+
 ## CsoundUnity native plugins
 
-`CsoundNativeInput` (`.dll`, `.bundle`, `libcsnativeinput.so`) and `CsoundUnityMidi.aar` are part of
-CsoundUnity, MIT licensed like the rest. Source in the `CsoundUnityNativeTools` repository.
+`CsoundNativeInput` (`Win64/CsoundNativeInput.dll`, `macOS/CsoundNativeInput.bundle`,
+`Android/{arch}/libcsnativeinput.so`, `iOS/libCsoundNativeInput.a`) and
+`Plugins/Android/CsoundUnityMidi.aar` are part of CsoundUnity, MIT licensed like the rest.
+
+- **Source:** https://github.com/giovannibedetti/CsoundUnityNativeTools
 
 ---
 
