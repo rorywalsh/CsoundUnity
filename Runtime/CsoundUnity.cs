@@ -1820,7 +1820,11 @@ namespace Csound.Unity
             }
 
             this._csoundString = File.ReadAllText(csoundFilePath);
-            this._channels = ParseCsdFile(fileName);
+
+            var parsedChannels = ParseCsdFile(csoundFilePath);
+            if (parsedChannels != null) this._channels = parsedChannels;
+            else Debug.LogWarning($"[CsoundUnity] '{name}': could not read '{_csoundFileName}' while " +
+                                  $"parsing its control channels — keeping the ones already stored.");
 
             // Default the preset load/save folders to <csd>/Presets on first assignment.
             // Only when empty, so a folder the user picked manually survives a file-watcher
@@ -1834,13 +1838,18 @@ namespace Csound.Unity
             // LoadCsdFromString does at runtime — this method is the editor-side path to the
             // same thing, and both have to leave the dictionary consistent.
             InvalidateChannelsIndex();
-            this._availableAudioChannels = ParseCsdFileForAudioChannels(fileName);
+
+            var parsedAudioChannels = ParseCsdFileForAudioChannels(csoundFilePath);
+            if (parsedAudioChannels != null) this._availableAudioChannels = parsedAudioChannels;
+            else Debug.LogWarning($"[CsoundUnity] '{name}': could not read '{_csoundFileName}' while " +
+                                  $"parsing its audio channels — keeping the ones already stored.");
+
             SetUnsupportedWidgets(this._csoundString, fileName);
-            this._nchnls           = ParseCsdFileForNchnls(fileName);
+            this._nchnls           = ParseCsdFileForNchnls(csoundFilePath);
 
             // Parse ksmps from the CSD and store it as the intended value.
             // The editor's SnapKrToSr will derive controlRate = audioRate / ksmps on next repaint.
-            int parsedKsmps = ParseCsdFileForKsmps(fileName);
+            int parsedKsmps = ParseCsdFileForKsmps(csoundFilePath);
             if (parsedKsmps > 0)
                 this.ksmps = parsedKsmps;
 

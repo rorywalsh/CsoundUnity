@@ -143,8 +143,9 @@ namespace Csound.Unity
 
         private static string LoadCsdTemplate()
         {
-            if (File.Exists(CsdTemplatePath))
-                return File.ReadAllText(CsdTemplatePath);
+            var templatePath = Path.GetFullPath(CsdTemplatePath);
+            if (File.Exists(templatePath))
+                return File.ReadAllText(templatePath);
             Debug.LogWarning($"[CsoundUnity] CSD template not found at {CsdTemplatePath}. Using built-in fallback.");
             return "<CsoundSynthesizer>\n<CsOptions>\n-n -d\n</CsOptions>\n<CsInstruments>\nksmps = 32\nnchnls = 2\n0dbfs = 1\n\ninstr 1\nendin\n</CsInstruments>\n<CsScore>\nf0 z\n</CsScore>\n</CsoundSynthesizer>";
         }
