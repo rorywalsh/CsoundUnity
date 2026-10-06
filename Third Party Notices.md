@@ -1,7 +1,8 @@
 # Third Party Notices
 
 CsoundUnity's own code is MIT licensed (see `LICENSE`). The native libraries redistributed with the
-package are not, and this file accounts for them.
+package are not, and neither is some of the material in the samples. This file accounts for both —
+libraries first, samples at the end.
 
 Some of these are not separate files: the Csound binaries have other libraries **linked inside
 them**, so they travel with the package even though you never see them in the folder listing. They
@@ -119,3 +120,52 @@ provide object files on request, or open their source, or move to a dynamic buil
 
 Nothing here is legal advice. If you are shipping commercially on iOS, the static linking question
 is worth ten minutes of someone qualified.
+
+---
+
+# Third-party material in the samples
+
+The scenes under `Samples~` carry other people's work: instrument definitions, and recorded sound.
+CsoundUnity's own code is MIT, these are not. Importing a sample copies these files into your
+project, so what they ask applies to you.
+
+## Read this one first: six files are non-commercial
+
+| | |
+|---|---|
+| **Author** | Iain McCurdy |
+| **Licence** | CC BY-NC-SA 4.0 — https://creativecommons.org/licenses/by-nc-sa/4.0/ |
+
+- `FMSynthesis/Theremin/Theremin.csd`
+- `WebGL/TestWebGL/BinauralTest.csd`
+- `Miscellaneous/Csound Haiku/Resources/All_Haikus.csd`
+- `Timelines/Step/StepTimeline.csd`
+- `Presets/Voice Changer/VoiceChanger.csd`
+- `Samplers/Dr B. Samplers/Resources/CAB-RCB-pvsBlur.csd`
+
+**NonCommercial** means these six `.csd` files cannot go into something you sell, and **ShareAlike**
+means a modified version has to carry the same licence. That is a stricter rule than anything else in
+this package, and it is easy to miss, because the samples are meant to be copied and edited. They are
+there to be learned from. If you want one of these instruments in a commercial game, ask Iain McCurdy
+or write your own. The licence terms are stated in full at the top of each file.
+
+## Declared, permissive
+
+| File | Author | Licence | What it asks |
+|---|---|---|---|
+| `UI/XYPad/XYPad.csd`, `Miscellaneous/XY Pad Test/XY Pad Test.csd` | Rory Walsh, 2021, ported by Giovanni Bedetti | CC0 1.0 | nothing |
+| `Sequencers/Simple Sequencer/Resources/Samples/*.wav` — nine xylophone recordings | DANMITCH3LL, via Freesound (sounds 232001–232009) | CC BY 4.0 | credit the author |
+| `Miscellaneous/Trapped in Convert/Resources/trapped.csd` — *Trapped in Convert*, 1979 | Richard Boulanger | LGPL 2.1+ | ships inside Csound's own `examples/`, so it stands on the same footing as Csound |
+| `Environment/Load Plugins/Resources/scanu2.csd` | John ffitch | GFDL 1.2+ | from the Csound Manual, **not** the LGPL that covers Csound; licence text in that sample's folder |
+
+## Attributed, but no licence stated upstream
+
+These name their authors and we have kept that, but no licence was declared with the originals. They
+are being clarified with the people involved. Until then, treat them as all rights reserved by their
+authors and ask before using them in something you ship.
+
+| File | Credited to |
+|---|---|
+| `Samplers/Dr B. Samplers/Resources/CAB-RCB-flooper.csd`, `CAB-RCB-mincer.csd`, and the 20 recordings in `Resources/sounds/` | “Sound design and presets by Dr. Richard Boulanger and his students at Berklee”, ported by Giovanni Bedetti, 2023 |
+| `Engines/drive_engines.csd` and the `m_scene_*.udo` files | Jeanette C., from a CSD by Oeyvind Brandtsegg; one UDO follows a model described by Andy Farnell in *Designing Sound* |
+| `GranularSynthesis/Partikkel/partikkel-2.csd` | “Example by Joachim Heintz and Oeyvind Brandtsegg 2008” |
