@@ -20,6 +20,12 @@ button bounds(110, 110, 80, 40) channel("trigger") text("Trigger")
 ; May 2021
 ; New in Csound version 6.16
 ; ported to CsoundUnity by gb, May 2023
+;
+; This example comes from the Canonical Csound Manual, which is licensed under
+; the GNU Free Documentation License version 1.2 or any later version, with no
+; Invariant Sections, no Front-Cover Texts and no Back-Cover Texts. That licence
+; is not the LGPL that covers Csound itself. A copy of it is in
+; LICENSE-GFDL-1.2.txt, in this sample's folder.
 
 sr = 48000
 ksmps = 32
