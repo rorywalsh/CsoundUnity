@@ -149,14 +149,16 @@ this package, and it is easy to miss, because the samples are meant to be copied
 there to be learned from. If you want one of these instruments in a commercial game, ask Iain McCurdy
 or write your own. The licence terms are stated in full at the top of each file.
 
-## Declared, permissive
+## Author and licence known
 
 | File | Author | Licence | What it asks |
 |---|---|---|---|
 | `UI/XYPad/XYPad.csd`, `Miscellaneous/XY Pad Test/XY Pad Test.csd` | Rory Walsh, 2021, ported by Giovanni Bedetti | CC0 1.0 | nothing |
-| `Sequencers/Simple Sequencer/Resources/Samples/*.wav` — nine xylophone recordings | DANMITCH3LL, via Freesound (sounds 232001–232009) | CC BY 4.0 | credit the author |
+| `Sequencers/Simple Sequencer/Resources/Samples/*.wav` — nine xylophone recordings — and `Samplers/AudioClip Reader/Resources/Samples/`, which reuses one of them plus a reversed copy | DANMITCH3LL, via Freesound (sounds 232001–232009) | CC BY 4.0 | credit the author; the reversed copy is a derivative, which the licence allows |
 | `Miscellaneous/Trapped in Convert/Resources/trapped.csd` — *Trapped in Convert*, 1979 | Richard Boulanger | LGPL 2.1+ | ships inside Csound's own `examples/`, so it stands on the same footing as Csound |
 | `Environment/Load Plugins/Resources/scanu2.csd` | John ffitch | GFDL 1.2+ | from the Csound Manual, **not** the LGPL that covers Csound; licence text in that sample's folder |
+| `Samplers/Process Audio Clip/Resources/Guitar3.wav` | Cabbage — https://github.com/rorywalsh/cabbage | GPL 3.0 | from Cabbage's `Examples/Widgets/`; licence text in that sample's folder |
+| `fox.wav` — in `Presets/Voice Changer`, `WebGL/TestWebGL`, `GranularSynthesis/Partikkel/Resources` and `Samplers/Process Audio Clip/Resources` | the Csound project | LGPL 2.1+ | from Csound's own `tests/commandline/`, and in CsoundQt's `SourceMaterials`; licence text in the package root |
 
 ## Attributed, but no licence stated upstream
 
@@ -169,3 +171,4 @@ authors and ask before using them in something you ship.
 | `Samplers/Dr B. Samplers/Resources/CAB-RCB-flooper.csd`, `CAB-RCB-mincer.csd`, and the 20 recordings in `Resources/sounds/` | “Sound design and presets by Dr. Richard Boulanger and his students at Berklee”, ported by Giovanni Bedetti, 2023 |
 | `Engines/drive_engines.csd` and the `m_scene_*.udo` files | Jeanette C., from a CSD by Oeyvind Brandtsegg; one UDO follows a model described by Andy Farnell in *Designing Sound* |
 | `GranularSynthesis/Partikkel/partikkel-2.csd` | “Example by Joachim Heintz and Oeyvind Brandtsegg 2008” |
+
