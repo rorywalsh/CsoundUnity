@@ -48,13 +48,16 @@ On Apple platforms and Android, Csound itself bundles **none** of these: `libcso
 and macOS everything is welded into the one Csound binary — the Windows DLL imports nothing but
 `KERNEL32`, `SHLWAPI` and `WS2_32`, and the macOS bundle nothing but system libraries.
 
-> **PortMidi**: listed below because the Csound build options include it, but no `Pm_` symbol was
-> found in any binary here. It appears only as a name string on Windows and macOS. Worth confirming
-> against the build configuration before the release, and dropping from this file if it is not
-> actually shipped.
+> **PortMidi is not redistributed**, although Csound can use it. In Csound's build it is a separate
+> plugin module — `make_plugin(pmidi pmidi.c)` in `InOut/CMakeLists.txt`, built only when PortMIDI is
+> found — so it is never inside the Csound library, and we ship no plugin modules at all: no `pmidi`,
+> no `ipmidi`, no `rtpa`, no opcode plugin folder. The name appears as a string in the Windows and
+> macOS binaries because the core knows the names of the I/O modules it can load, not because the
+> library is there. CsoundUnity's MIDI is its own code (`CsoundUnityMidiInput`, CoreMIDI on Apple
+> platforms, `android.media.midi` on Android, WinMM on Windows).
 
 *How to re-check*: `nm -g <file>` for the Mach-O and static archives, `nm -D <file>` for the Android
-`.so`, then count symbols by prefix (`FLAC__`, `ogg`, `vorbis`, `opus_`, `lame_`, `mpg123_`, `Pm_`,
+`.so`, then count symbols by prefix (`FLAC__`, `ogg`, `vorbis`, `opus_`, `lame_`, `mpg123_`,
 `sf_`, `src_`), keeping defined and undefined apart.
 
 | Library | Licence | Copyright / project |
@@ -67,7 +70,6 @@ and macOS everything is welded into the one Csound binary — the Windows DLL im
 | libsamplerate 0.2.2 | BSD 2-Clause | Erik de Castro Lopo — https://github.com/libsndfile/libsamplerate |
 | LAME | LGPL 2.1 | The LAME project — https://lame.sourceforge.io/ |
 | mpg123 | LGPL 2.1 | The mpg123 project — https://www.mpg123.de/ |
-| PortMidi | MIT | Roger B. Dannenberg — https://github.com/PortMidi/portmidi |
 
 ## libsndfile, shipped separately as well
 
