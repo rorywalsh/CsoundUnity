@@ -38,7 +38,7 @@ ksmps = 32
 nchnls = 2
 0dbfs = 1
 
-; Sound Design and presets by Dr. Richard Boulanger and his students at Berkelee
+; Sound Design and presets by Dr. Richard Boulanger and his students at Berklee
 ; ported to CsoundUnity by gb, June 2023
 
 ; set this var to 0 when testing on Cabbage (or comment the line), to 1 when using this csd on Unity, 

@@ -942,7 +942,7 @@ MonoBehaviour:
     \"test\"), mode(\"remove preset\") channel(\"filebutton33\")\r\n\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
     -d\r\n</CsOptions>\r\n<CsInstruments>\r\n\r\nksmps = 32\r\nnchnls = 2\r\n0dbfs
     = 1\r\n\r\n; Sound Design and presets by Dr. Richard Boulanger and his students
-    at Berkelee\r\n; ported to CsoundUnity by gb, June 2023\r\n\r\n; set this var
+    at Berklee\r\n; ported to CsoundUnity by gb, June 2023\r\n\r\n; set this var
     to 0 when testing on Cabbage, to 1 when using this csd on Unity, \r\n; Unity
     comboboxes start index is 0, instead on Cabbage they start from 1 (0 is the unset
     value)\r\n; we need to do this because we created the Unity presets from the
