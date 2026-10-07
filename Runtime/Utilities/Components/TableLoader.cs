@@ -196,10 +196,13 @@ namespace Csound.Unity.Utilities.MonoBehaviours
                 }
                 else
                 {
+                    // Slot 0 holds the channel count, so sample k belongs at k + 1. Reading
+                    // channelSamples[i + start] instead dropped the sample at `start` and reached one
+                    // index past the end of the clip on the last pass.
                     selectedSamples = new MYFLT[end - start + 1];
-                    for (var i = 1; i < (end - start + 1); i++)
+                    for (var i = 1; i < selectedSamples.Length; i++)
                     {
-                        selectedSamples[i] = channelSamples[i + start];
+                        selectedSamples[i] = channelSamples[start + i - 1];
                     }
                     selectedSamples[0] = 1;
                 }
@@ -207,22 +210,35 @@ namespace Csound.Unity.Utilities.MonoBehaviours
             else
             {
                 var interleavedSamples = ASU.GetSamples(audioClip);
-                // AudioSampleUtils.GetSamples returns an interleaved table where the first index is the number of channels,
-                // that's why we have to add 1 here
-                start = Mathf.CeilToInt(startPoint * audioClip.frequency * audioClip.channels + 1);
-                end = Mathf.CeilToInt(endPoint * audioClip.frequency * audioClip.channels + 1);
-                if (start < 0) start = 1;
-                if (end <= 1 || end >= audioClip.samples) end = audioClip.samples + 1;
-                if (start > end || start >= audioClip.samples)
+
+                // GetSamples puts the channel count at index 0 and then samples * channels
+                // interleaved values, so the audio lives in 1..dataLength and every bound below is
+                // in that space.
+                var channelCount = audioClip.channels;
+                var dataLength   = audioClip.samples * channelCount;
+
+                // The frame index first, scaled by the channel count after: scaling the seconds
+                // directly could land on an odd index halfway through a frame, and from there every
+                // value in the table came out on the wrong channel.
+                start = Mathf.CeilToInt(startPoint * audioClip.frequency) * channelCount + 1;
+                end   = Mathf.CeilToInt(endPoint * audioClip.frequency) * channelCount + 1;
+
+                if (start < 1) start = 1;
+                // Against dataLength and not audioClip.samples, which counts frames rather than
+                // interleaved values: a stereo clip used to be cut in half, and a mono one read one
+                // index past the end.
+                if (end <= 1 || end > dataLength + 1) end = dataLength + 1;
+                if (start >= end)
                 {
                     Debug.LogWarning($"Csound.Unity.Utilities.LoadFiles.TableLoader: start point is higher than end point, it will be set to the beginning of the file");
-                    start = 0;
+                    start = 1;   // 1 and not 0: index 0 is the channel count, not audio
                 }
-                // keep in mind the first sample is the number of channels
+
+                // Same shift as the mono branch: value k of the selection belongs at k + 1.
                 selectedSamples = new MYFLT[end - start + 1];
-                for (int i = 1; i < (end - start + 1); i++)
+                for (var i = 1; i < selectedSamples.Length; i++)
                 {
-                    selectedSamples[i] = interleavedSamples[start + i];
+                    selectedSamples[i] = interleavedSamples[start + i - 1];
                 }
                 selectedSamples[0] = interleavedSamples[0];
             }
