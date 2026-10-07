@@ -1958,18 +1958,30 @@ namespace Csound.Unity
             _pendingAllChannels   = null;
             if (audioChannels == null) return;
 
+            // The scan runs a single ksmps, and chnset creates its channel only when the instrument
+            // runs — so a csd that starts later scans empty. More ksmps would not help either: an
+            // instrument waiting on MIDI never runs during a scan.
+            var declared = CsoundUnity.ParseCsdStringForAudioChannels(csoundUnity.csoundString);
+
+            // Text first: it is the csd's own order, and it does not change between two scans.
+            var merged = new List<string>(declared ?? new List<string>());
+            foreach (var name in audioChannels)
+                if (!merged.Contains(name)) merged.Add(name);
+
             serializedObject.Update();
             m_availableAudioChannels.ClearArray();
-            for (int i = 0; i < audioChannels.Count; i++)
+            for (int i = 0; i < merged.Count; i++)
             {
                 m_availableAudioChannels.InsertArrayElementAtIndex(i);
-                m_availableAudioChannels.GetArrayElementAtIndex(i).stringValue = audioChannels[i];
+                m_availableAudioChannels.GetArrayElementAtIndex(i).stringValue = merged[i];
             }
             serializedObject.ApplyModifiedProperties();
             EditorUtility.SetDirty(csoundUnity.gameObject);
             Repaint();
 
-            Debug.Log($"[CsoundUnityEditor] Available audio channels updated from scan: [{string.Join(", ", audioChannels)}]");
+            Debug.Log($"[CsoundUnityEditor] Available audio channels: [{string.Join(", ", merged)}] " +
+                      $"({audioChannels.Count} from the Csound scan, {merged.Count - audioChannels.Count} " +
+                      $"more declared with chnset in the csd)");
 
             // Cross-check: compare channels parsed from the Cabbage block with the real
             // channel list returned by Csound.  Any mismatch is a sign that the static
