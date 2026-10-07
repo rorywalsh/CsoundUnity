@@ -645,9 +645,29 @@ namespace Csound.Unity
 
                 if (GUILayout.Button("Save CSD on disk"))
                 {
-                    var path = AssetDatabase.GUIDToAssetPath(m_csoundFileGUID.stringValue);
-                    Debug.Log($"saving csd at path {path}");
-                    File.WriteAllText(path, m_csoundString.stringValue);
+                    var assetPath = AssetDatabase.GUIDToAssetPath(m_csoundFileGUID.stringValue);
+                    if (string.IsNullOrEmpty(assetPath))
+                    {
+                        Debug.LogError("[CsoundUnity] Cannot save: this component has no csd asset " +
+                                       "assigned, so there is no file to write to. Assign one, or use " +
+                                       "the CREATE button to make a new csd.");
+                    }
+                    else
+                    {
+                        // GetFullPath, the same resolution SetCsd uses to read it back: an asset
+                        // path inside a package is virtual and cannot be written to directly.
+                        var fullPath = Path.GetFullPath(assetPath);
+                        try
+                        {
+                            File.WriteAllText(fullPath, m_csoundString.stringValue);
+                            AssetDatabase.ImportAsset(assetPath);
+                            Debug.Log($"[CsoundUnity] csd saved: {assetPath}");
+                        }
+                        catch (System.Exception e)
+                        {
+                            Debug.LogError($"[CsoundUnity] Could not save the csd to {fullPath}: {e.Message}");
+                        }
+                    }
                 }
             }
         }
@@ -1968,6 +1988,9 @@ namespace Csound.Unity
             foreach (var name in audioChannels)
                 if (!merged.Contains(name)) merged.Add(name);
 
+            // Apply before Update: this runs from EditorApplication.update, so it can land while the
+            // user is typing in the csd text area, and Update alone would discard that edit.
+            serializedObject.ApplyModifiedProperties();
             serializedObject.Update();
             m_availableAudioChannels.ClearArray();
             for (int i = 0; i < merged.Count; i++)
