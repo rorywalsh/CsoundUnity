@@ -53,6 +53,7 @@
 - [Fix] Cabbage parser: caption/text truncation with multiple quoted attributes on same line; whitespace before '(' not recognised
 - [Fix] _channelsIndexDict wrong index when form widget is at position 0; stale entries after Domain Reload
 - [Fix] Hang on exit: send end-score event before csoundDestroy to stop indefinitely-running instruments cleanly
+- [Fix] Table API: `GetTableArgs` freed memory owned by Csound, and threw instead of returning -1 for a table that does not exist; `TableCopyIn` read past the end of its buffer when the array was shorter than the table
 - [Fix] BasicMicrophoneAnalyzer sample: now waits for `Microphone.GetPosition > 0` before `AudioSource.Play()`, uses `AudioSettings.outputSampleRate` for the capture rate; corrects an issue where the mic clip produced zeros for the lifetime of the scene
 - [Fix] Partikkel sample: the parameter cubes logged a MissingReferenceException every frame once the scene was left
 - [Fix] The native Csound instance was freed in one place only — application quit — and only for components that actually received `OnApplicationQuit`, which Unity does not deliver to a component on an inactive GameObject. Everything else leaked it: every instance destroyed by a scene change, every `Destroy()` on a GameObject, every instance deactivated before quitting. In the Editor a leaked instance stays alive until the Editor is closed. All teardown routes now free exactly once — `Stop`, `OnDisable`, `OnDestroy`, scene change and quit alike

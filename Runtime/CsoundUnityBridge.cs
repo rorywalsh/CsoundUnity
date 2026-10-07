@@ -967,7 +967,7 @@ namespace Csound.Unity
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             var len = CsoundLib.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
-            if (len < 0 || index >= len || tablePtr == IntPtr.Zero) return;
+            if (len < 0 || index < 0 || index >= len || tablePtr == IntPtr.Zero) return;
             var elemSize = Marshal.SizeOf(typeof(MYFLT));
             var arr = new MYFLT[] { value };
             Marshal.Copy(arr, 0, tablePtr + index * elemSize, 1);
@@ -1009,12 +1009,36 @@ namespace Csound.Unity
         public void TableCopyIn(int table, MYFLT[] source)
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
+            if (source == null) return;
+
             var len = CsoundLib.NativeMethods.csoundTableLength(csound, table);
             if (len < 1 || len < source.Length) return;
-            var src = Marshal.AllocHGlobal(sizeof(MYFLT) * source.Length);
-            Marshal.Copy(source, 0, src, source.Length);
-            CsoundLib.NativeMethods.csoundTableCopyIn(csound, table, src, 0);
-            Marshal.FreeHGlobal(src);
+
+            // The buffer is the table's length, not the source's: csoundTableCopyIn always reads a
+            // whole table from it. Sized to the source, a shorter source had it read past the end.
+            var src = Marshal.AllocHGlobal(sizeof(MYFLT) * len);
+            try
+            {
+                // Current contents first, so a partial write leaves the rest of the table alone
+                // instead of zeroing everything past the source.
+                if (source.Length < len)
+                {
+                    var current = CsoundLib.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, table);
+                    if (current >= len && tablePtr != IntPtr.Zero)
+                    {
+                        var keep = new MYFLT[len];
+                        Marshal.Copy(tablePtr, keep, 0, len);
+                        Marshal.Copy(keep, 0, src, len);
+                    }
+                }
+
+                Marshal.Copy(source, 0, src, source.Length);
+                CsoundLib.NativeMethods.csoundTableCopyIn(csound, table, src, 0);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(src);
+            }
 #endif            
         }
 
@@ -1035,12 +1059,19 @@ namespace Csound.Unity
                 return -1;
             }
 
-            tableValues = new MYFLT[len];
             var res = CsoundLib.NativeMethods.csoundGetTable(csound, out IntPtr tablePtr, numTable);
-            if (res != -1)
-                Marshal.Copy(tablePtr, tableValues, 0, len);
-            else tableValues = null;
-            return res;
+            if (res < 0 || tablePtr == IntPtr.Zero)
+            {
+                tableValues = null;
+                return -1;
+            }
+
+            // The shorter of the two lengths: csoundTableLength and csoundGetTable should agree, and
+            // copying `len` on the word of the other call is an over-read whenever they do not.
+            var count = Math.Min(len, res);
+            tableValues = new MYFLT[count];
+            if (count > 0) Marshal.Copy(tablePtr, tableValues, 0, count);
+            return count;
 #else
         tableValues = new MYFLT[0]; // TODO
         return 0;
@@ -1059,11 +1090,20 @@ namespace Csound.Unity
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             var len = CsoundLib.NativeMethods.csoundGetTableArgs(csound, out IntPtr addr, index);
+
+            // Checked before allocating: with len == -1 the old order reached `new MYFLT[-1]` and
+            // threw, so the -1 this method documents could never be returned.
+            if (len < 0 || addr == IntPtr.Zero)
+            {
+                args = null;
+                return -1;
+            }
+
             args = new MYFLT[len];
-            if (len != -1)
-                Marshal.Copy(addr, args, 0, len);
-            else args = null;
-            Marshal.FreeHGlobal(addr);
+            if (len > 0) Marshal.Copy(addr, args, 0, len);
+
+            // addr is NOT freed: csoundGetTableArgs hands back a pointer into Csound's own argument
+            // array, which Csound owns and reuses. FreeHGlobal on it corrupted the heap.
             return len;
 #else
         args = new MYFLT[0]; // TODO
