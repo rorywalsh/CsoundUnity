@@ -3303,7 +3303,14 @@ namespace Csound.Unity
         /// </summary>
         private void InitSpoutChannels()
         {
-            int nch = (int)GetNchnls();
+            // From the bridge and not from the component's GetNchnls(), which returns 0 while
+            // IsInitialized is false — and this runs two lines before `initialized = true`. So nch
+            // fell back to 2 every single time. The drawer offers main_out_0..nchnls-1 whatever this
+            // does — it builds that list from the serialised _nchnls — so an audio input route let
+            // you pick main_out_5 on an 8 channel csd and then found nothing published under that
+            // name. You chose a channel and got silence. (A CsoundUnityChild cannot reach these at
+            // all: its dropdown is built from availableAudioChannels, which never holds them.)
+            int nch = csound != null ? (int)csound.GetNchnls() : 0;
             if (nch <= 0) nch = 2;
 
             _spoutChannelNames = new string[nch];
