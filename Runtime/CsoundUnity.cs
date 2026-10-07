@@ -3151,18 +3151,29 @@ namespace Csound.Unity
         /// <param name="channelController">The channel controller whose name and value will be applied.</param>
         public void SetChannel(CsoundChannelController channelController)
         {
+            if (channelController == null) return;
+
             if (ChannelsIndex.TryGetValue(channelController.channel, out var idx))
             {
                 var existingChannel = channels[idx];
-                // A preset may carry combobox options that no longer match the CSD
-                // (e.g. the CSD was edited after the preset was saved). Keep the
-                // CSD-defined option set and apply only the preset's selected value.
-                if (existingChannel.type.Contains("combobox") && existingChannel.text != channelController.text)
+
+                // A clone, and the caller's object is never written to. Stored by reference, this
+                // list ended up sharing the controllers of whatever was applied — usually a preset,
+                // and usually a ScriptableObject — so every later channel write edited that asset in
+                // memory for the rest of the play session. The combobox reconciliation below was
+                // worse: it wrote the CSD's options back into the preset's own controller.
+                var incoming = channelController.Clone();
+
+                // The options belong to the csd; a preset carries the selected value. Unconditional
+                // because a combobox keeps its options in `options` and leaves `text` empty, so the
+                // old `text != text` guard was never true and a preset's options — stale, or empty —
+                // always won.
+                if (existingChannel.type.Contains("combobox"))
                 {
-                    channelController.text = existingChannel.text;
-                    channelController.options = existingChannel.options;
+                    incoming.text = existingChannel.text;
+                    incoming.options = existingChannel.options;
                 }
-                channels[idx] = channelController;
+                channels[idx] = incoming;
             }
             if (!IsInitialized || csound == null) return;
             // Cabbage comboboxes are 1-based (0 means "no selection"), while the value
@@ -4017,11 +4028,10 @@ namespace Csound.Unity
         /// <param name="overwriteIfExisting">When false, a counter suffix is appended to avoid overwriting existing files.</param>
         public static void SavePresetAsJSON(List<CsoundChannelController> channels, string csoundFileName, string presetName, string path = null, bool overwriteIfExisting = false)
         {
-            var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-            preset.channels = channels;
-            presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
-            preset.presetName = presetName;
-            preset.csoundFileName = csoundFileName;
+            // Through CreatePreset, which clones every controller. Assigning the list straight in
+            // handed the preset the caller's live controllers, so anything still holding that preset
+            // kept editing it with every later channel write.
+            var preset = CreatePreset(presetName, csoundFileName, channels);
             SavePresetAsJSON(preset, path, overwriteIfExisting);
         }
 
@@ -4034,11 +4044,7 @@ namespace Csound.Unity
         /// <param name="overwriteIfExisting">When false, a counter suffix is appended to avoid overwriting existing files.</param>
         public void SavePresetAsJSON(string presetName, string path = null, bool overwriteIfExisting = false)
         {
-            var preset = ScriptableObject.CreateInstance<CsoundUnityPreset>();
-            preset.channels = this.channels;
-            presetName = string.IsNullOrWhiteSpace(presetName) ? "CsoundUnityPreset" : presetName;
-            preset.presetName = presetName;
-            preset.csoundFileName = this.csoundFileName;
+            var preset = CreatePreset(presetName, this.csoundFileName, this.channels);
             SavePresetAsJSON(preset, path, overwriteIfExisting);
         }
 
