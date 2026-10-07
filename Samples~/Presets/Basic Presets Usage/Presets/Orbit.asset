@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7cc83b726b41f0c4ba68dac38255a4dd, type: 3}
-  m_Name: Glowing
+  m_Name: Orbit
   m_EditorClassIdentifier: 
-  presetName: Glowing
+  presetName: Orbit
   csoundFileName: BasicPresetsUsage.csd
   channels:
   - type: form
@@ -25,6 +25,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: gain
     text: Gain
@@ -35,66 +43,122 @@ MonoBehaviour:
     skew: 1
     increment: 0.01
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Carrier Frequency
     caption: 
     min: 10
     max: 2200
-    value: 91
+    value: 10
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: modFreq
     text: Mod Frequency
     caption: 
     min: 0
     max: 200
-    value: 137.3
+    value: 7.7
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm1
     text: Base Frequency Amp
     caption: 
     min: 0
     max: 1
-    value: 0.19
+    value: 0.121
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm2
     text: First Harmonic Amp
     caption: 
     min: 0
     max: 1
-    value: 0.14
+    value: 0.062
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm3
     text: Second Harmonic Amp
     caption: 
     min: 0
     max: 1
-    value: 0.239
+    value: 0.086
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm4
     text: Third Harmonic Amp
     caption: 
     min: 0
     max: 1
-    value: 0.881
+    value: 0.041
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: combobox
     channel: carWaveform
     text: sine, saw, square, triangle,impulse,noise
@@ -111,6 +175,14 @@ MonoBehaviour:
     - triangle
     - impulse
     - noise
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: combobox
     channel: modWaveform
     text: sine, saw, square, triangle,impulse,noise
@@ -127,16 +199,32 @@ MonoBehaviour:
     - triangle
     - impulse
     - noise
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: modIndex
     text: Mod Index
     caption: 
     min: 0
     max: 15
-    value: 4.8
+    value: 14.67
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: groupbox
     channel: filterGroupBox
     text: FILTER
@@ -147,6 +235,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: checkbox
     channel: filtOn
     text: Filter ON
@@ -157,36 +253,68 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtFreq
     text: F Freq
     caption: 
     min: 0
     max: 16000
-    value: 1762
+    value: 8633
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtRandFreq
     text: F Rand Freq
     caption: 
     min: 0
     max: 16000
-    value: 136
+    value: 1170
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtRes
     text: F Res
     caption: 
     min: 0
     max: 1.99
-    value: 0.486
+    value: 0.979
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtRandRes
     text: F Rand Res
@@ -197,6 +325,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: checkbox
     channel: filtLFOOn
     text: Filter LFO ON
@@ -207,42 +343,74 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: combobox
     channel: filtLFOShape
     text: sine, triangles, square bi, square uni, saw, saw down
     caption: 
     min: 1
     max: 6
-    value: 0
+    value: 1
     skew: 1
     increment: 0.01
     options:
     - sine
     - triangles
-    - squarebi
-    - squareuni
+    - square bi
+    - square uni
     - saw
-    - sawdown
+    - saw down
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFOAmp
     text: LFO Amp
     caption: 
     min: 0
     max: 0.99
-    value: 0.177
+    value: 0.99
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFOFreq
     text: LFO Freq
     caption: 
     min: 0
     max: 30
-    value: 0.07
+    value: 0.0125
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFORandAmp
     text: LFO Rand Amp
@@ -253,6 +421,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFORandFreq
     text: LFO Rand Freq
@@ -263,4 +439,12 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
-  _drawChannels: 0
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  _drawChannels: 1

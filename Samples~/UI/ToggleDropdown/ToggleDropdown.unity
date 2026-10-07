@@ -1203,10 +1203,10 @@ MonoBehaviour:
     options:
     - sine
     - triangles
-    - squarebi
-    - squareuni
+    - square bi
+    - square uni
     - saw
-    - sawdown
+    - saw down
     channelY: 
     minY: 0
     maxY: 0

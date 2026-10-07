@@ -25,6 +25,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: gain
     text: Gain
@@ -35,6 +43,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.01
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: freq
     text: Carrier Frequency
@@ -45,6 +61,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: hslider
     channel: modFreq
     text: Mod Frequency
@@ -55,6 +79,14 @@ MonoBehaviour:
     skew: 1
     increment: 1
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm1
     text: Base Frequency Amp
@@ -65,6 +97,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm2
     text: First Harmonic Amp
@@ -75,6 +115,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm3
     text: Second Harmonic Amp
@@ -85,6 +133,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: hrm4
     text: Third Harmonic Amp
@@ -95,6 +151,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: combobox
     channel: carWaveform
     text: sine, saw, square, triangle,impulse,noise
@@ -111,6 +175,14 @@ MonoBehaviour:
     - triangle
     - impulse
     - noise
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: combobox
     channel: modWaveform
     text: sine, saw, square, triangle,impulse,noise
@@ -127,6 +199,14 @@ MonoBehaviour:
     - triangle
     - impulse
     - noise
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: modIndex
     text: Mod Index
@@ -137,6 +217,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: groupbox
     channel: filterGroupBox
     text: FILTER
@@ -147,6 +235,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: checkbox
     channel: filtOn
     text: Filter ON
@@ -157,6 +253,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtFreq
     text: F Freq
@@ -167,6 +271,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtRandFreq
     text: F Rand Freq
@@ -177,6 +289,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtRes
     text: F Res
@@ -187,6 +307,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtRandRes
     text: F Rand Res
@@ -197,6 +325,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: checkbox
     channel: filtLFOOn
     text: Filter LFO ON
@@ -207,6 +343,14 @@ MonoBehaviour:
     skew: 0
     increment: 0
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: combobox
     channel: filtLFOShape
     text: sine, triangles, square bi, square uni, saw, saw down
@@ -219,10 +363,18 @@ MonoBehaviour:
     options:
     - sine
     - triangles
-    - squarebi
-    - squareuni
+    - square bi
+    - square uni
     - saw
-    - sawdown
+    - saw down
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFOAmp
     text: LFO Amp
@@ -233,6 +385,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFOFreq
     text: LFO Freq
@@ -243,6 +403,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFORandAmp
     text: LFO Rand Amp
@@ -253,6 +421,14 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
   - type: rslider
     channel: filtLFORandFreq
     text: LFO Rand Freq
@@ -263,4 +439,12 @@ MonoBehaviour:
     skew: 1
     increment: 0.001
     options: []
-  _drawChannels: 0
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  _drawChannels: 1

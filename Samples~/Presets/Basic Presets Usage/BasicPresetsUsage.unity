@@ -698,14 +698,16 @@ MonoBehaviour:
   logCsoundOutput: 0
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 48000
-  controlRate: 1500
+  audioRate: 44100
+  controlRate: 1378
   ksmps: 32
   updateOutputBuffer: 0
+  fadeInSeconds: 0
   audioInputRoutes: []
   muteAudioInputRoutes: 0
   _measureDspLoad: 0
@@ -802,7 +804,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 1
+    value: 0.4
     skew: 1
     increment: 0.01
     options: []
@@ -820,7 +822,7 @@ MonoBehaviour:
     caption: 
     min: 10
     max: 2200
-    value: 91
+    value: 440
     skew: 1
     increment: 0.001
     options: []
@@ -838,7 +840,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 200
-    value: 137.3
+    value: 10
     skew: 1
     increment: 0.001
     options: []
@@ -856,7 +858,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.19
+    value: 1
     skew: 1
     increment: 0.001
     options: []
@@ -874,7 +876,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.14
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -892,7 +894,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.239
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -910,7 +912,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1
-    value: 0.881
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -927,12 +929,17 @@ MonoBehaviour:
     text: 
     caption: 
     min: 1
-    max: 1
+    max: 6
     value: 0
     skew: 1
     increment: 0.001
     options:
     - sine
+    - saw
+    - square
+    - triangle
+    - impulse
+    - noise
     channelY: 
     minY: 0
     maxY: 0
@@ -946,12 +953,17 @@ MonoBehaviour:
     text: 
     caption: 
     min: 1
-    max: 1
-    value: 1
+    max: 6
+    value: 0
     skew: 1
     increment: 0.001
     options:
     - sine
+    - saw
+    - square
+    - triangle
+    - impulse
+    - noise
     channelY: 
     minY: 0
     maxY: 0
@@ -966,7 +978,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 15
-    value: 4.8
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1002,7 +1014,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0
-    value: 1
+    value: 0
     skew: 0
     increment: 0
     options: []
@@ -1020,7 +1032,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 16000
-    value: 1762
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1038,7 +1050,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 16000
-    value: 136
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1056,7 +1068,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 0.486
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1074,7 +1086,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 0.04
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1092,7 +1104,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0
-    value: 1
+    value: 0
     skew: 0
     increment: 0
     options: []
@@ -1109,12 +1121,17 @@ MonoBehaviour:
     text: 
     caption: 
     min: 1
-    max: 1
+    max: 6
     value: 0
     skew: 1
     increment: 0.001
     options:
     - sine
+    - triangles
+    - square bi
+    - square uni
+    - saw
+    - saw down
     channelY: 
     minY: 0
     maxY: 0
@@ -1129,7 +1146,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.99
-    value: 0.177
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1147,7 +1164,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 0.07
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1183,7 +1200,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 0.1
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1196,6 +1213,7 @@ MonoBehaviour:
     width: 60
     height: 60
   _availableAudioChannels: []
+  _unsupportedWidgets: []
   _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
@@ -1345,14 +1363,14 @@ MonoBehaviour:
   testPresets:
   - {fileID: 11400000, guid: d44b45dd5793fc54ab8f74c8a702d377, type: 2}
   - {fileID: 11400000, guid: 5a34657a2d7256747ab20515a16f7108, type: 2}
+  - {fileID: 11400000, guid: a9b4e36378e7cb742b8577f3245dbeea, type: 2}
+  - {fileID: 11400000, guid: 07c43f797312b474d9c88470ecea7f8b, type: 2}
+  - {fileID: 11400000, guid: 9656a18938102cd4e99f7ec8b9df3d9f, type: 2}
+  - {fileID: 11400000, guid: 5f886f63fa50ce64e8e1b531f6c057df, type: 2}
   - {fileID: 11400000, guid: 796356226b472c049886973e8e5a3d31, type: 2}
   - {fileID: 11400000, guid: 647888dce5917084b9864c154750d1bc, type: 2}
-  - {fileID: 11400000, guid: 8c294ece8197a72479b8599d56b9c627, type: 2}
-  - {fileID: 11400000, guid: 07c43f797312b474d9c88470ecea7f8b, type: 2}
-  - {fileID: 11400000, guid: a9b4e36378e7cb742b8577f3245dbeea, type: 2}
-  - {fileID: 11400000, guid: 5f886f63fa50ce64e8e1b531f6c057df, type: 2}
   - {fileID: 11400000, guid: 8d3866ff441b08c40896603f9c343f34, type: 2}
-  - {fileID: 11400000, guid: 9656a18938102cd4e99f7ec8b9df3d9f, type: 2}
+  - {fileID: 11400000, guid: 8c294ece8197a72479b8599d56b9c627, type: 2}
   presetText: {fileID: 46174689}
 --- !u!1 &1951274432
 GameObject:
