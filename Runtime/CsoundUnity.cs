@@ -2568,7 +2568,7 @@ namespace Csound.Unity
                 if (trimmd.StartsWith(";"))
                     continue;
                 // Normalise optional spaces before "(" so that e.g. "caption (" == "caption("
-                trimmd = System.Text.RegularExpressions.Regex.Replace(trimmd, @"\s+\(", "(");
+                trimmd = NormaliseAttributeSpacing(trimmd);
                 var control = trimmd.Substring(0, trimmd.IndexOf(" ") > -1 ? trimmd.IndexOf(" ") : 0);
                 if (control == "xypad")
                 {
@@ -2919,6 +2919,45 @@ namespace Csound.Unity
                 }
             }
             return locaChannelControllers;
+        }
+
+        /// <summary>
+        /// Drops the whitespace before an opening parenthesis, so <c>caption ("x")</c> reads the same
+        /// as <c>caption("x")</c> — but only outside quotes.
+        /// <para>
+        /// A plain <c>Regex.Replace(line, @"\s+\(", "(")</c> knows nothing about quotes, so it edited
+        /// the user's own text too: a label written <c>text("Filter range (Hz)")</c> came out as
+        /// "Filter range(Hz)", with the space silently removed.
+        /// </para>
+        /// </summary>
+        private static string NormaliseAttributeSpacing(string line)
+        {
+            if (string.IsNullOrEmpty(line) || line.IndexOf('(') < 0) return line;
+
+            var sb = new System.Text.StringBuilder(line.Length);
+            var inQuotes = false;
+
+            for (var i = 0; i < line.Length; i++)
+            {
+                var c = line[i];
+                if (c == '"') inQuotes = !inQuotes;
+
+                if (!inQuotes && char.IsWhiteSpace(c))
+                {
+                    // Past the whole run of whitespace: it goes only when a '(' follows it.
+                    var j = i;
+                    while (j < line.Length && char.IsWhiteSpace(line[j])) j++;
+                    if (j < line.Length && line[j] == '(')
+                    {
+                        i = j - 1;   // the loop's own i++ lands on the '('
+                        continue;
+                    }
+                }
+
+                sb.Append(c);
+            }
+
+            return sb.ToString();
         }
 
         /// <summary>
