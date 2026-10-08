@@ -1688,7 +1688,7 @@ namespace Csound.Unity
         /// </summary>
         public void Stop()
         {
-            if (!initialized && !_initializing) return;
+            if (!initialized && !_initializing && csound == null) return;
             if (LoggingCoroutine != null)
             {
                 StopCoroutine(LoggingCoroutine);
