@@ -1391,7 +1391,15 @@ namespace Csound.Unity.Timelines
             //
             // localTime ≈ 0  → genuine fresh start (play / loop)  → fire trigger
             // localTime > 0  → mid-clip graph rebuild              → resume scheduling
-            var isGenuineStart = localTime < 0.02;
+            //
+            // The window covers a frame, not a fixed 20 ms: a clip is evaluated for the first time
+            // only after the playhead has moved past its start, so a genuine start arrives anywhere
+            // between 0 and one frame — measured at 20 fps, half the starts came in around 50 ms and
+            // the old threshold read them as rebuilds, leaving those clips silent. A rebuild landing
+            // inside the window re-triggers instead, which is the rarer and the lesser harm.
+            double frameStep = info.deltaTime;
+            if (info.effectiveSpeed > 0) frameStep *= info.effectiveSpeed;
+            var isGenuineStart = localTime < Math.Max(0.02, frameStep * 1.5);
             if (verboseLog) Debug.Log($"[CsoundScore] OnBehaviourPlay  mode={scoreInfo.mode} instr={scoreInfo.instrN} t={localTime:F3} isGenuineStart={isGenuineStart} effectivePlay={info.effectivePlayState}");
 
             // Snapshot always — gives correct _eff* values whether fresh start or resume
