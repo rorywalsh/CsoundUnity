@@ -57,6 +57,7 @@ namespace Csound.Unity
 
         SerializedProperty m_csoundFileName;
         SerializedProperty m_currentPreset;
+        SerializedProperty m_currentPresetName;
         SerializedProperty m_csoundAsset;
         SerializedProperty m_csoundFileGUID;
         SerializedProperty m_csoundString;
@@ -164,6 +165,7 @@ namespace Csound.Unity
 
             m_csoundFileName = this.serializedObject.FindProperty("_csoundFileName");
             m_currentPreset = this.serializedObject.FindProperty("_currentPreset");
+            m_currentPresetName = this.serializedObject.FindProperty("_currentPresetName");
             m_csoundAsset = this.serializedObject.FindProperty("_csoundAsset");
             m_csoundFileGUID = this.serializedObject.FindProperty("_csoundFileGUID");
             m_csoundString = this.serializedObject.FindProperty("_csoundString");
@@ -1342,7 +1344,9 @@ namespace Csound.Unity
             {
                 if (!_presetsInitialized)
                     UpdateAssignablePresets();
-                EditorGUILayout.HelpBox($"CURRENT PRESET: {m_currentPreset.stringValue}", MessageType.None);
+                EditorGUILayout.HelpBox($"CURRENT PRESET: {m_currentPresetName.stringValue}", MessageType.None);
+                EditorGUILayout.PropertyField(m_currentPreset,
+                    new GUIContent("Preset on start", "Applied when Csound starts. Set by picking a preset below."));
                 EditorGUILayout.Space();
 
                 EditorGUI.indentLevel++;
@@ -1853,8 +1857,8 @@ namespace Csound.Unity
             }
 
 
-            m_currentPreset.stringValue = preset.presetName;
-
+            m_currentPreset.objectReferenceValue = preset;
+            m_currentPresetName.stringValue = preset.presetName;
         }
 
         private void SetChannelPropertyValue(SerializedProperty property, CsoundChannelController channel)
@@ -2063,7 +2067,8 @@ namespace Csound.Unity
         {
             EditorApplication.update -= UpdatePresets;
             UpdateAssignablePresets();
-            m_currentPreset.stringValue = "";
+            m_currentPreset.objectReferenceValue = null;
+            m_currentPresetName.stringValue = "";
         }
 
         private void UpdateAssignablePresets()

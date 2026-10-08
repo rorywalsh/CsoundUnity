@@ -116,7 +116,7 @@ namespace Csound.Unity.Samples.BasicPresetUsage
             #endregion
 #endif
 
-            presetText.text = $"Current Preset: {csound.CurrentPreset}";
+            presetText.text = $"Current Preset: {csound.CurrentPresetName}";
         }
         #endregion
 

@@ -764,9 +764,28 @@ namespace Csound.Unity
         public List<EnvironmentSettings> environmentSettings = new List<EnvironmentSettings>();
 
         /// <summary>
-        /// The current preset name. If empty, no preset has been set.
+        /// The preset currently applied to this instance, or <c>null</c> if none is.
+        /// <para>
+        /// Set it in the inspector to have it applied when Csound starts. A preset built at runtime
+        /// from JSON lives here too, but only until the next reload: Unity serialises a reference to
+        /// an asset, and one of those has no asset behind it.
+        /// </para>
+        /// <para>
+        /// In 3.x this returned the preset's <b>name</b>. That is now <see cref="CurrentPresetName"/>.
+        /// </para>
         /// </summary>
-        public string CurrentPreset => _currentPreset;
+        public CsoundUnityPreset CurrentPreset => _currentPreset;
+
+        /// <summary>
+        /// The name of the current preset, or empty if none is set. This is what <c>CurrentPreset</c>
+        /// returned in 3.x.
+        /// <para>
+        /// Kept apart from <see cref="CurrentPreset"/> because the two can disagree: a global preset
+        /// is a snapshot of the whole component rather than a <see cref="CsoundUnityPreset"/>, so it
+        /// can only leave a name behind.
+        /// </para>
+        /// </summary>
+        public string CurrentPresetName => _currentPresetName;
 
         /// <summary>
         /// The most recently completed DSP output buffer. Contains interleaved samples for all
@@ -909,7 +928,8 @@ namespace Csound.Unity
         /// For mobile platforms the path will always be the same.
         /// </summary>
         [HideInInspector][SerializeField] private bool _showRuntimeEnvironmentPath = false;
-        [HideInInspector][SerializeField] private string _currentPreset;
+        [HideInInspector][SerializeField] private CsoundUnityPreset _currentPreset;
+        [HideInInspector][SerializeField] private string _currentPresetName;
         [HideInInspector][SerializeField] private string _currentPresetSaveFolder;
         [HideInInspector][SerializeField] private string _currentPresetLoadFolder;
         private Coroutine _morphCoroutine;
@@ -1503,6 +1523,11 @@ namespace Csound.Unity
 #if UNITY_6000_0_OR_NEWER
                     OnInitializedGenerator();
 #endif
+                    // Now that Csound is up and the channels exist. The field used to record only
+                    // what had been applied last and nothing ever read it back, so a scene came up
+                    // with the csd's defaults and stayed there until someone clicked a preset.
+                    if (_currentPreset != null) SetPreset(_currentPreset);
+
                     OnCsoundInitialized?.Invoke();
                 }
             }
@@ -4149,7 +4174,8 @@ namespace Csound.Unity
                 return;
             }
 
-            _currentPreset = preset.presetName;
+            _currentPreset = preset;
+            _currentPresetName = preset.presetName;
             SetChannels(preset.channels, true);
         }
 
@@ -4169,8 +4195,12 @@ namespace Csound.Unity
             JsonUtility.FromJsonOverwrite(presetData, this);
             // update the serialized channels 
             SetChannels(this.channels, true);
-            var current = string.IsNullOrWhiteSpace(presetName) ? this._currentPreset : presetName;
-            _currentPreset = $"{current} {GLOBAL_TAG}";
+            // Only the name: a global preset is a snapshot of the whole component, not a
+            // CsoundUnityPreset, so there is no asset to point at. The reference is cleared rather
+            // than left behind, where it would claim a preset that is not what is loaded.
+            var current = string.IsNullOrWhiteSpace(presetName) ? this._currentPresetName : presetName;
+            _currentPreset = null;
+            _currentPresetName = $"{current} {GLOBAL_TAG}";
             return this;
         }
 
