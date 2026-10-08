@@ -469,6 +469,14 @@ namespace Csound.Unity
         private bool _quitting;
 
         /// <summary>
+        /// True while the application is shutting down, whether or not <c>OnApplicationQuit</c>
+        /// reached this component — Unity does not send it to a component on an inactive GameObject,
+        /// and on those <c>_quitting</c> alone stays false right through FMOD's teardown. Mirrors
+        /// <c>CsoundUnity.IsShuttingDown</c>, and the static half comes from there.
+        /// </summary>
+        private bool IsShuttingDown => _quitting || CsoundUnity.ApplicationIsQuitting;
+
+        /// <summary>
         /// Copies the blocks this component is about to play into
         /// <see cref="namedAudioChannelData"/>, which is public API and keeps holding the parent's
         /// channel data as it always has — Csound units, before this component normalises it.
@@ -662,7 +670,7 @@ namespace Csound.Unity
         /// </summary>
         private void SetCarrierPaused(bool paused)
         {
-            if (!audioSource || !_usingCarrierClip || CsoundUnity.ApplicationIsQuitting) return;
+            if (!audioSource || !_usingCarrierClip || IsShuttingDown) return;
 
             if (paused)
             {

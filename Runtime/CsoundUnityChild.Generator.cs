@@ -201,7 +201,7 @@ namespace Csound.Unity
             // connections triggers a null-pointer crash inside
             // FMOD::SystemI::flushDSPConnectionRequests.  Unity/FMOD will clean
             // up the generator naturally as part of their own shutdown sequence.
-            if (audioSource != null && !_quitting)
+            if (audioSource != null && !IsShuttingDown)
                 audioSource.generator = null;
         }
 
