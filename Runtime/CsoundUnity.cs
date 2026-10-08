@@ -1379,6 +1379,12 @@ namespace Csound.Unity
         /// </summary>
         private void Init()
         {
+            // Before anything else, because `csound = new CsoundUnityBridge(...)` below overwrites
+            // the field unconditionally: without this, a second Init — a retry after a failed one,
+            // or a Restart — strands the previous native instance, unreachable and never freed.
+            // Idempotent, and a no-op on the normal first Init where there is nothing to free.
+            DestroyCsoundInstance();
+
             // Clear audio-channel dictionaries so that stale entries from editor-time
             // SetCsd() calls (which run when the audio system is not active and therefore
             // allocate zero-length MYFLT[] buffers) can never survive into play mode.
@@ -1587,6 +1593,13 @@ namespace Csound.Unity
                     Debug.LogError("CsoundUnity: failed to create Csound object.");
                 }
             }
+
+            // On every path, not only the successful ones. The failure branch above used to leave
+            // this true, and from then on Initialize() refused for the rest of the session with
+            // "already initialized or initializing" — which described the wrong state: a typo in a
+            // csd made the instance unusable until the scene was reloaded.
+            _initializing = false;
+
             Debug.Log($"CsoundUnity done init, compiledOk? {compiledOk}");
         }
 #endif
@@ -5866,6 +5879,12 @@ namespace Csound.Unity
             ksmpsIndex           = 0;
             _startupFadeIndex    = 0;
             _ksmpsBlockSizeWarned = false;
+
+            // Nothing used to clear this, so HasCompiled kept reporting the last compilation on an
+            // instance whose csound is already null — and with Domain Reload off, the compilation of
+            // the previous Play session. Here because both ends of a run reach it: Awake before Init,
+            // Stop after the teardown.
+            compiledOk = false;
         }
 
         /// <summary>
