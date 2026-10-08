@@ -123,8 +123,13 @@ namespace Csound.Unity.MIDI.Internal
         private MIDIReadProc   _readProc;   // field keeps delegate alive (prevents GC)
         private MIDINotifyProc _notifyProc; // field keeps delegate alive (prevents GC)
 
-        /// <summary>Static ref so the static callback can reach the active instance.</summary>
-        private static CoreMidiReceiver _current;
+        /// <summary>
+        /// Handed to CoreMIDI as the port's refCon and given back to the static callback, which is
+        /// how it finds the receiver the packets belong to. A static field pointing at "the active
+        /// instance" before: with two receivers the last one constructed took every port's packets
+        /// and the other got none, so one CsoundUnity heard each note twice and the other never.
+        /// </summary>
+        private GCHandle _self;
 
         private readonly Action<byte[]> _onMessage;
         private readonly string[]       _includeOnly;
@@ -163,7 +168,7 @@ namespace Csound.Unity.MIDI.Internal
         /// </summary>
         public void Start()
         {
-            _current    = this;
+            _self       = GCHandle.Alloc(this);
             _notifyProc = OnMidiNotifyStatic;
             _readProc   = OnMidiReadStatic;
 
@@ -183,7 +188,7 @@ namespace Csound.Unity.MIDI.Internal
             }
 
             var portName = CFStringCreateWithCString(IntPtr.Zero, "CsoundUnity Input", 0x08000100);
-            err = MIDIInputPortCreate(_midiClient, portName, _readProc, IntPtr.Zero, out _inputPort);
+            err = MIDIInputPortCreate(_midiClient, portName, _readProc, GCHandle.ToIntPtr(_self), out _inputPort);
             CFRelease(portName);
 
             if (err != 0)
@@ -238,7 +243,7 @@ namespace Csound.Unity.MIDI.Internal
                 _midiClient = IntPtr.Zero;
             }
 
-            if (_current == this) _current = null;
+            if (_self.IsAllocated) _self.Free();
         }
 
         #endregion
@@ -293,7 +298,9 @@ namespace Csound.Unity.MIDI.Internal
         [AOT.MonoPInvokeCallback(typeof(MIDIReadProc))]
         private static void OnMidiReadStatic(IntPtr pktList, IntPtr readProcRefCon, IntPtr srcConnRefCon)
         {
-            _current?.ParsePacketList(pktList);
+            if (readProcRefCon == IntPtr.Zero) return;
+            if (GCHandle.FromIntPtr(readProcRefCon).Target is CoreMidiReceiver receiver)
+                receiver.ParsePacketList(pktList);
         }
 
         /// <summary>No-op notification callback — see MIDINotifyProc doc above.</summary>
