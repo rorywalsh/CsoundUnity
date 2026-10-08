@@ -777,6 +777,7 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
@@ -785,6 +786,7 @@ MonoBehaviour:
   controlRate: 1500
   ksmps: 32
   updateOutputBuffer: 0
+  fadeInSeconds: 0
   audioInputRoutes: []
   muteAudioInputRoutes: 0
   _measureDspLoad: 0
@@ -838,9 +840,10 @@ MonoBehaviour:
     * chnget:k(\"modFreq\"), chnget:k(\"modFreq\"), chnget:k(\"modWaveform\")\r\n\r\n   
     kShapeChanged changed chnget:k(\"filtLFOShape\")\r\n    if kShapeChanged == 1
     then\r\n        reinit lfoShapeInit\r\n    endif\r\n\r\n    lfoShapeInit:\r\n   
-    afiltLFO lfo chnget:k(\"filtLFOAmp\") + kLFORandAmp, chnget:k(\"filtLFOFreq\")
-    + kLFORandFreq, chnget:i(\"filtLFOShape\")\r\n    rireturn\r\n\r\n    a1  oscilikt
-    kEnv*chnget:k(\"hrm1\"), chnget:k(\"freq\")   + aModOsc, chnget:k(\"carWaveform\")\r\n   
+    ; lfo's itype is 0-based; the combobox channel is 1-based, as in Cabbage\r\n   
+    iLFOShape = chnget:i(\"filtLFOShape\") - 1\r\n    afiltLFO lfo chnget:k(\"filtLFOAmp\")
+    + kLFORandAmp, chnget:k(\"filtLFOFreq\") + kLFORandFreq, iLFOShape\r\n    rireturn\r\n\r\n   
+    a1  oscilikt kEnv*chnget:k(\"hrm1\"), chnget:k(\"freq\")   + aModOsc, chnget:k(\"carWaveform\")\r\n   
     a2  oscilikt kEnv*chnget:k(\"hrm2\"), chnget:k(\"freq\")*2 + aModOsc, chnget:k(\"carWaveform\")\r\n   
     a3  oscilikt kEnv*chnget:k(\"hrm3\"), chnget:k(\"freq\")*3 + aModOsc, chnget:k(\"carWaveform\")\r\n   
     a4  oscilikt kEnv*chnget:k(\"hrm4\"), chnget:k(\"freq\")*4 + aModOsc, chnget:k(\"carWaveform\")\r\n   
@@ -871,8 +874,8 @@ MonoBehaviour:
     value2: 0
     x: 0
     y: 0
-    width: 0
-    height: 0
+    width: 400
+    height: 350
   - type: rslider
     channel: gain
     text: Gain
@@ -887,10 +890,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 288
+    y: 192
+    width: 100
+    height: 100
   - type: hslider
     channel: freq
     text: Carrier Frequency
@@ -905,10 +908,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 10
+    y: 70
+    width: 270
+    height: 20
   - type: hslider
     channel: modFreq
     text: Mod Frequency
@@ -917,16 +920,16 @@ MonoBehaviour:
     max: 200
     value: 10
     skew: 1
-    increment: 1
+    increment: 0.001
     options: []
     channelY: 
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 10
+    y: 90
+    width: 270
+    height: 20
   - type: rslider
     channel: hrm1
     text: Base Frequency Amp
@@ -941,17 +944,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 10
+    y: 10
+    width: 60
+    height: 60
   - type: rslider
     channel: hrm2
     text: First Harmonic Amp
     caption: 
     min: 0
     max: 1
-    value: 0.323
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -959,17 +962,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 80
+    y: 10
+    width: 60
+    height: 60
   - type: rslider
     channel: hrm3
     text: Second Harmonic Amp
     caption: 
     min: 0
     max: 1
-    value: 0.244
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -977,17 +980,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 150
+    y: 10
+    width: 60
+    height: 60
   - type: rslider
     channel: hrm4
     text: Third Harmonic Amp
     caption: 
     min: 0
     max: 1
-    value: 0.372
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -995,10 +998,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 220
+    y: 10
+    width: 60
+    height: 60
   - type: combobox
     channel: carWaveform
     text: 
@@ -1007,7 +1010,7 @@ MonoBehaviour:
     max: 6
     value: 0
     skew: 1
-    increment: 0.01
+    increment: 0.001
     options:
     - sine
     - saw
@@ -1019,10 +1022,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 290
+    y: 14
+    width: 100
+    height: 30
   - type: combobox
     channel: modWaveform
     text: 
@@ -1031,7 +1034,7 @@ MonoBehaviour:
     max: 6
     value: 0
     skew: 1
-    increment: 0.01
+    increment: 0.001
     options:
     - sine
     - saw
@@ -1043,17 +1046,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 290
+    y: 54
+    width: 100
+    height: 30
   - type: rslider
     channel: modIndex
     text: Mod Index
     caption: 
     min: 0
     max: 15
-    value: 3.29
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1061,10 +1064,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 310
+    y: 90
+    width: 60
+    height: 60
   - type: groupbox
     channel: filterGroupBox
     text: FILTER
@@ -1079,10 +1082,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 10
+    y: 114
+    width: 270
+    height: 220
   - type: checkbox
     channel: filtOn
     text: Filter ON
@@ -1097,17 +1100,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 20
+    y: 140
+    width: 125
+    height: 30
   - type: rslider
     channel: filtFreq
     text: F Freq
     caption: 
     min: 0
     max: 16000
-    value: 3024
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1115,17 +1118,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 14
+    y: 180
+    width: 65
+    height: 65
   - type: rslider
     channel: filtRandFreq
     text: F Rand Freq
     caption: 
     min: 0
     max: 16000
-    value: 585
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1133,17 +1136,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 14
+    y: 256
+    width: 65
+    height: 65
   - type: rslider
     channel: filtRes
     text: F Res
     caption: 
     min: 0
     max: 1.99
-    value: 0.21
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1151,10 +1154,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 80
+    y: 180
+    width: 65
+    height: 65
   - type: rslider
     channel: filtRandRes
     text: F Rand Res
@@ -1169,10 +1172,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 80
+    y: 256
+    width: 65
+    height: 65
   - type: checkbox
     channel: filtLFOOn
     text: Filter LFO ON
@@ -1187,10 +1190,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 150
+    y: 140
+    width: 120
+    height: 30
   - type: combobox
     channel: filtLFOShape
     text: 
@@ -1199,7 +1202,7 @@ MonoBehaviour:
     max: 6
     value: 0
     skew: 1
-    increment: 0.01
+    increment: 0.001
     options:
     - sine
     - triangles
@@ -1211,17 +1214,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 150
+    y: 176
+    width: 119
+    height: 30
   - type: rslider
     channel: filtLFOAmp
     text: LFO Amp
     caption: 
     min: 0
     max: 0.99
-    value: 0.133
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1229,17 +1232,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 150
+    y: 270
+    width: 60
+    height: 60
   - type: rslider
     channel: filtLFOFreq
     text: LFO Freq
     caption: 
     min: 0
     max: 30
-    value: 2.8
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1247,17 +1250,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 150
+    y: 210
+    width: 60
+    height: 60
   - type: rslider
     channel: filtLFORandAmp
     text: LFO Rand Amp
     caption: 
     min: 0
     max: 1
-    value: 0.067
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1265,17 +1268,17 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 210
+    y: 270
+    width: 60
+    height: 60
   - type: rslider
     channel: filtLFORandFreq
     text: LFO Rand Freq
     caption: 
     min: 0
     max: 30
-    value: 0.7
+    value: 0
     skew: 1
     increment: 0.001
     options: []
@@ -1283,12 +1286,13 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 210
+    y: 210
+    width: 60
+    height: 60
   _availableAudioChannels: []
-  _nchnls: 0
+  _unsupportedWidgets: []
+  _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
   _drawCsoundString: 0
@@ -1302,9 +1306,10 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: 
-  _currentPresetSaveFolder: 
-  _currentPresetLoadFolder: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/UI/ToggleDropdown/Presets
+  _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets/Samples/CsoundUnity/4.0.0/UI/ToggleDropdown/Presets
   _audioRoutingBufferSize: 512
   webGLAssetsList: []
   _audioPath: 0
