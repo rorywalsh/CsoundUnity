@@ -67,14 +67,9 @@ nchnls = 2
 ; Sound Design and presets by Dr. Richard Boulanger and his students at Berklee
 ; ported to CsoundUnity by gb, June 2023
 
-; set this var to 0 when testing on Cabbage, to 1 when using this csd on Unity, 
-; Unity comboboxes start index is 0, instead on Cabbage they start from 1 (0 is the unset value)
-; we need to do this because we created the Unity presets from the Cabbage Snaps
-; using the import Snaps feature (where the index read from the Cabbage Snap 
-; is decreased by one - that is to show the correct combobox value in the channel inspector)
-; so to obtain the same preset result and load the correct sample we need to compensate for this
-; see line 154 below
-giUnityCombobox init 1
+; A combobox channel arrives 1-based, as in Cabbage: option 1 of "sound" is gSfile1.
+; Until 4.0 the preset path sent it 0-based, which is what the old giUnityCombobox
+; compensated for. CsoundUnity now sends the Cabbage value on every path.
 
 gSfile1   = "./sounds/am_pinsM.wav"
 gSfile2   = "./sounds/am_dogM.aif"
@@ -150,13 +145,12 @@ kLoopEnd   = chnget:k("loopEnd")
 iMode      = chnget:i("loopDir")
 kInput     = chnget:k("sound")
 
-
 flooperInit:
 
-input     = i(kInput)           ;chnget:i("sound")
-
-; this is to be overcome the difference in ComboBoxes behaviour on Unity, as explained above
-input += giUnityCombobox
+; Read the channel here, not i(kInput): a k-variable holds nothing yet on the i-pass — 0 on a
+; fresh allocation, the previous note's value on a reused one — so flooper2 was initialised on the
+; wrong sample for one k-cycle before the reinit below corrected it. Audible as a click.
+input     = chnget:i("sound")
 
 iLen init 0
 iSmp init 0
@@ -207,7 +201,9 @@ aFloop         flooper2 kGain, kPitch, .001+(kLoopStrt * iLen), .001+(kLoopEnd *
 
 rireturn
 
-kInputChanged changed kInput    ;chnget:k("sound")
+; changed2, not changed: changed also fires on the note's first k-cycle, which reinit'd the
+; instrument once for nothing. changed2 still fires when the dropdown moves mid-note.
+kInputChanged changed2 kInput   ;chnget:k("sound")
 if (kInputChanged == 1) then
     reinit flooperInit
 endif

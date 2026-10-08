@@ -121,6 +121,33 @@ namespace Csound.Unity
             increment = uIncrement;
         }
 
+        /// <summary>True when this controller describes a Cabbage combobox.</summary>
+        public bool IsCombobox => type != null && type.Contains("combobox");
+
+        /// <summary>
+        /// The value in Csound's terms. Cabbage comboboxes are 1-based, 0 meaning "no selection",
+        /// while <see cref="value"/> holds the 0-based index Unity's dropdowns use — so a combobox
+        /// reads back one higher. Every path that writes a channel to Csound goes through here, so
+        /// the convention lives in one place instead of being restated at each call site.
+        /// </summary>
+        public MYFLT CsoundValue => ToCsoundValue(value);
+
+        /// <summary>
+        /// Converts an arbitrary 0-based value to Csound's terms using this controller's type.
+        /// For a value that is not <see cref="value"/> — one that was blended or morphed.
+        /// </summary>
+        /// <param name="rawValue">A value in the same terms as <see cref="value"/>.</param>
+        public MYFLT ToCsoundValue(float rawValue) => IsCombobox ? rawValue + 1 : rawValue;
+
+        /// <summary>
+        /// Stores a value that came from Csound, undoing <see cref="CsoundValue"/>.
+        /// </summary>
+        /// <param name="csoundValue">The value as Csound holds it.</param>
+        public void SetFromCsoundValue(MYFLT csoundValue)
+        {
+            value = (float)(IsCombobox ? csoundValue - 1 : csoundValue);
+        }
+
         /// <summary>
         /// Returns a shallow copy of this <see cref="CsoundChannelController"/>.
         /// </summary>
@@ -1460,10 +1487,7 @@ namespace Csound.Unity
                     for (var i = 0; i < channels.Count; i++)
                     {
                         if (channels[i] == null || string.IsNullOrWhiteSpace(channels[i].channel)) continue;
-                        if (channels[i].type.Contains("combobox"))
-                        { csound.SetChannel(channels[i].channel, channels[i].value + 1); }
-                        else
-                        { csound.SetChannel(channels[i].channel, channels[i].value); }
+                        csound.SetChannel(channels[i].channel, channels[i].CsoundValue);
                         // xypad / hrange / vrange have a second channel
                         if ((channels[i].type == "xypad" || channels[i].type == "hrange" || channels[i].type == "vrange")
                             && !string.IsNullOrEmpty(channels[i].channelY))
@@ -1606,10 +1630,7 @@ namespace Csound.Unity
             // initialise channels if found in xml descriptor..
             for (var i = 0; i < channels.Count; i++)
             {
-                if (channels[i].type.Contains("combobox"))
-                    csound.SetChannel(channels[i].channel, channels[i].value + 1);
-                else
-                    csound.SetChannel(channels[i].channel, channels[i].value);
+                csound.SetChannel(channels[i].channel, channels[i].CsoundValue);
                 // xypad / hrange / vrange have a second channel
                 if ((channels[i].type == "xypad" || channels[i].type == "hrange" || channels[i].type == "vrange")
                     && !string.IsNullOrEmpty(channels[i].channelY))
@@ -2933,12 +2954,9 @@ namespace Csound.Unity
                         var value = trimmd.Substring(trimmd.IndexOf("value(") + 6);
                         value = value.Substring(0, value.IndexOf(")"));
                         value = value.Replace("\"", "");
-                        controller.value = value.Length > 0 ? float.Parse(value, CultureInfo.InvariantCulture) : 0;
-                        if (control.Contains("combobox"))
-                        {
-                            //Cabbage combobox index starts from 1
-                            controller.value = controller.value - 1;
-                        }
+                        // Cabbage's value() is already in Csound's terms, 1-based for a combobox
+                        controller.SetFromCsoundValue(
+                            value.Length > 0 ? float.Parse(value, CultureInfo.InvariantCulture) : 0);
                     }
                     locaChannelControllers.Add(controller);
                 }
@@ -3148,26 +3166,19 @@ namespace Csound.Unity
         #region CONTROL_CHANNELS
         /// <summary>
         /// Sets a Csound channel. Used in connection with a chnget opcode in your Csound instrument.
+        /// <para><paramref name="val"/> is the value as Csound holds it, so a combobox takes the
+        /// 1-based Cabbage index. The serialized channel is updated through
+        /// <see cref="CsoundChannelController.SetFromCsoundValue"/>.</para>
         /// </summary>
         /// <param name="channel">Name of the Csound channel.</param>
-        /// <param name="val">Value to assign to the channel.</param>
+        /// <param name="val">Value to assign to the channel, in Csound's terms.</param>
         public void SetChannel(string channel, MYFLT val)
         {
             if (!IsInitialized || csound == null) return;
             csound.SetChannel(channel, val);
 
-            // The dictionary below is used to update the serialized channels on the editor
-            // Please note that on Cabbage comboboxes values go from 1-n, since 0 refers to no current selection,
-            // instead on the Unity Editor their values start from 0
-            // so the value on the serialized channel will be decreased by one 
             if (ChannelsIndex.TryGetValue(channel, out var idx))
-            {
-                if (channels[idx].type.Contains("combobox"))
-                {
-                    val--;
-                }
-                channels[idx].value = (float)val;
-            }
+                channels[idx].SetFromCsoundValue(val);
         }
 
         /// <summary>
@@ -3193,7 +3204,7 @@ namespace Csound.Unity
                 // because a combobox keeps its options in `options` and leaves `text` empty, so the
                 // old `text != text` guard was never true and a preset's options — stale, or empty —
                 // always won.
-                if (existingChannel.type.Contains("combobox"))
+                if (existingChannel.IsCombobox)
                 {
                     incoming.text = existingChannel.text;
                     incoming.options = existingChannel.options;
@@ -3201,10 +3212,7 @@ namespace Csound.Unity
                 channels[idx] = incoming;
             }
             if (!IsInitialized || csound == null) return;
-            // Cabbage comboboxes are 1-based (0 means "no selection"), while the value
-            // stored on the serialized channel is 0-based — send value + 1 to Csound.
-            var value = channelController.type.Contains("combobox") ? channelController.value + 1 : channelController.value;
-            csound.SetChannel(channelController.channel, value);
+            csound.SetChannel(channelController.channel, channelController.CsoundValue);
             // xypad / hrange / vrange carry a second channel in channelY / value2
             if ((channelController.type == "xypad" || channelController.type == "hrange" || channelController.type == "vrange")
                 && !string.IsNullOrEmpty(channelController.channelY))
@@ -4388,11 +4396,9 @@ namespace Csound.Unity
                         chanToFix.text      = chan.text;
                         chanToFix.type      = chan.type;
 
-                        // also fix the combobox index?
-                        if (chanToFix.type.Equals("combobox"))
-                        {
-                            chanToFix.value -= 1;
-                        }
+                        // A Cabbage snap stores the channel as Csound holds it, so a combobox
+                        // comes in 1-based and has to be brought back to the serialized index.
+                        chanToFix.SetFromCsoundValue(chanToFix.value);
                     }
                 }
             }
@@ -4581,8 +4587,8 @@ namespace Csound.Unity
         {
             foreach (var ch in preset.channels)
             {
-                if (ch.type != "button" && ch.type != "checkbox" && !ch.type.Contains("combobox")) continue;
-                SetChannel(ch.channel, ch.type.Contains("combobox") ? ch.value + 1 : ch.value);
+                if (ch.type != "button" && ch.type != "checkbox" && !ch.IsCombobox) continue;
+                SetChannel(ch.channel, ch.CsoundValue);
             }
         }
 
@@ -4617,7 +4623,7 @@ namespace Csound.Unity
             {
                 var channelName     = chA.channel;
                 var isSlider   = chA.type.Contains("slider") || chA.type == "nslider";
-                var isDiscrete = chA.type == "button" || chA.type == "checkbox" || chA.type.Contains("combobox");
+                var isDiscrete = chA.type == "button" || chA.type == "checkbox" || chA.IsCombobox;
 
                 if (isDiscrete && discreteMode == DiscreteBlendMode.NearestCorner)
                 {
@@ -4627,7 +4633,7 @@ namespace Csound.Unity
                     for (var i = 1; i < 4; i++)
                         if (weights[i] > weights[maxIdx]) maxIdx = i;
                     var val = GetPresetChannelValue(presets[maxIdx], channelName, chA.value);
-                    SetChannel(channelName, chA.type.Contains("combobox") ? val + 1 : val);
+                    SetChannel(channelName, chA.ToCsoundValue(val));
                 }
                 else if (isSlider)
                 {

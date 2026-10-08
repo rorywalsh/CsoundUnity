@@ -140,8 +140,8 @@ namespace Csound.Unity.Utilities.Components.UI
                 Debug.LogWarning($"CsoundUnityDropdown {name}: no options found for channel '{_channel}'");
             _dropdown.AddOptions(options);
 
-            // Cabbage combobox is 1-based; Unity Dropdown is 0-based
-            _dropdown.value = Mathf.Clamp(Mathf.RoundToInt(_channelController.value) - 1, 0, options.Count - 1);
+            // The serialized value is already the 0-based index Unity's Dropdown wants
+            _dropdown.value = Mathf.Clamp(Mathf.RoundToInt(_channelController.value), 0, options.Count - 1);
 
             _dropdown.onValueChanged.RemoveListener(OnDropdownChanged);
             _dropdown.onValueChanged.AddListener(OnDropdownChanged);
@@ -151,8 +151,7 @@ namespace Csound.Unity.Utilities.Components.UI
         private void OnDropdownChanged(int index)
         {
             if (!_isInitialized) return;
-            // Cabbage combobox expects 1-based index
-            _csound.SetChannel(_channel, index + 1f);
+            _csound.SetChannel(_channel, _channelController.ToCsoundValue(index));
         }
 
         #endregion Private helpers

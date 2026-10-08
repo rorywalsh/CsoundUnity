@@ -686,14 +686,16 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 44100
-  controlRate: 44100
+  controlRate: 1378
   ksmps: 32
   updateOutputBuffer: 0
+  fadeInSeconds: 0
   audioInputRoutes: []
   muteAudioInputRoutes: 0
   _measureDspLoad: 0
@@ -724,88 +726,79 @@ MonoBehaviour:
     foldout: 1
     AssetsToLoadList: []
   _csoundFileGUID: c5fccff40afafc0489c50f7570518dbb
-  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\r\n\r\nform caption(\"Sample Mincer
-    by Dr.B\") size(600, 200), guiMode(\"queue\") pluginId(\"def1\")\r\n\r\nbutton
-    bounds(26, 74, 80, 40) channel(\"trigger\") text(\"Trigger\")\r\n\r\nlabel  bounds(136,
-    124, 80, 20), text(\"Sound\"), fontColour(255, 255, 255, 255)\r\ncombobox bounds(130,
+  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\n\nform caption(\"Sample Mincer by
+    Dr.B\") size(600, 200), guiMode(\"queue\") pluginId(\"def1\")\n\nbutton bounds(26,
+    74, 80, 40) channel(\"trigger\") text(\"Trigger\")\n\nlabel  bounds(136, 124,
+    80, 20), text(\"Sound\"), fontColour(255, 255, 255, 255)\ncombobox bounds(130,
     146, 95, 28), channel(\"sound\"), fontColour(220, 220, 255, 255), text(\"Whisper\",
     \"Dog\", \"Traffic\", \"Bird\", \"QBfox\", \"DrB-hello\", \"Perotin\", \"Sheila\",
-    \"Drum\")\r\n\r\ngroupbox bounds(118, 14, 190, 105) text(\"Time\") colour(0,
-    0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255) fontColour(255,
+    \"Drum\")\n\ngroupbox bounds(118, 14, 190, 105) text(\"Time\") colour(0, 0, 0,
+    0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255) fontColour(255,
     255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0,
     0, 0, 50) textColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255,
-    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)\r\nrslider
+    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)\nrslider
     bounds(174, 40, 79, 66), channel(\"time\"), range(0, 10, 2, 1, 0.01), text(\"Time\"),
     trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0,
-    0, 0, 255)\r\n\r\ngroupbox bounds(312, 14, 190, 105) text(\"Pitch\") colour(0,
-    0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255) fontColour(255,
+    0, 0, 255)\n\ngroupbox bounds(312, 14, 190, 105) text(\"Pitch\") colour(0, 0,
+    0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255) fontColour(255,
     255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0,
     0, 0, 50) textColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255,
-    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)\r\nrslider
+    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)\nrslider
     bounds(366, 38, 79, 66), channel(\"pitch\"), range(-2, 2, .8, 1, 0.01), text(\"Pitch\"),
     trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0,
-    0, 0, 255)\r\n\r\nrslider bounds(514, 96, 65, 51), channel(\"verbLvl\"), range(0,
+    0, 0, 255)\n\nrslider bounds(514, 96, 65, 51), channel(\"verbLvl\"), range(0,
     1, 0.75, 1, 0.01), text(\"Verb\"), trackerColour(255, 255, 255, 255), outlineColour(0,
-    0, 0, 50), textColour(0, 0, 0, 255)\r\nrslider bounds(34, 122, 65, 53), channel(\"masterLvl\"),
+    0, 0, 50), textColour(0, 0, 0, 255)\nrslider bounds(34, 122, 65, 53), channel(\"masterLvl\"),
     range(0, 1, 0.818, 1, 0.01), text(\"Gain\"), trackerColour(255, 255, 255, 255),
-    outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\r\n\r\nrslider bounds(512,
-    34, 65, 53), channel(\"mix\"), range(0, 1, 0.25, 1, 0.01), text(\"Mix\"), trackerColour(255,
-    255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\r\n\r\nrslider
+    outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\n\nrslider bounds(512, 34,
+    65, 53), channel(\"mix\"), range(0, 1, 0.25, 1, 0.01), text(\"Mix\"), trackerColour(255,
+    255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\n\nrslider
     bounds(36, 14, 65, 53), channel(\"dur\"), range(.2, 30, 10, 1, 0.01), text(\"Duration\"),
     trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0,
-    0, 0, 255)\r\n\r\nlabel bounds(234, 122, 53, 18), text(\"Loop\"), fontColour(255,
-    255, 255, 255)  channel(\"label66\")\r\ncheckbox bounds(244, 144, 33, 28), channel(\"loop\"),
-    value(1), fontColour:0(255, 255, 255, 255) colour:1(255, 255, 255, 255)\r\n\r\ncombobox
+    0, 0, 255)\n\nlabel bounds(234, 122, 53, 18), text(\"Loop\"), fontColour(255,
+    255, 255, 255)  channel(\"label66\")\ncheckbox bounds(244, 144, 33, 28), channel(\"loop\"),
+    value(1), fontColour:0(255, 255, 255, 255) colour:1(255, 255, 255, 255)\n\ncombobox
     bounds(392, 122, 100, 25), populate(\"*.snaps\"), channelType(\"string\") automatable(0)
     channel(\"Snaps\")  value(\"1\") text(\"DronyBlur\", \"explosive\", \"swishy\",
-    \"groovy\", \"dreamy\", \"sleepy\")\r\nfilebutton bounds(330, 122, 60, 25), text(\"Save\",
-    \"Save\"), populate(\"*.snaps\", \"test\"), mode(\"named preset\") channel(\"filebutton32\")\r\nfilebutton
+    \"groovy\", \"dreamy\", \"sleepy\")\nfilebutton bounds(330, 122, 60, 25), text(\"Save\",
+    \"Save\"), populate(\"*.snaps\", \"test\"), mode(\"named preset\") channel(\"filebutton32\")\nfilebutton
     bounds(330, 152, 60, 25), text(\"Remove\", \"Remove\"), populate(\"*.snaps\",
-    \"test\"), mode(\"remove preset\") channel(\"filebutton33\")\r\n\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
-    -d\r\n</CsOptions>\r\n<CsInstruments>\r\nsr = 48000\r\nksmps = 32\r\nnchnls =
-    2\r\n0dbfs = 1\r\n\r\n; Sound Design and presets by Dr. Richard Boulanger and
-    his students at Berklee\r\n; ported to CsoundUnity by gb, June 2023\r\n\r\n;
-    set this var to 0 when testing on Cabbage (or comment the line), to 1 when using
-    this csd on Unity, \r\n; Unity comboboxes start index is 0, instead on Cabbage
-    they start from 1 (0 is the unset value)\r\n; we need to do this because we created
-    the Unity presets from the Cabbage Snaps\r\n; using the import Snaps feature
-    (where the index read from the Cabbage Snap \r\n; is decreased by one - that
-    is to show the correct combobox value in the channel inspector)\r\n; so to obtain
-    the same preset result and load the correct sample we need to compensate for
-    this\r\n; see line 79 below\r\ngiUnityCombobox init 1\r\n\r\ngSfile1 = \"./sounds/am_whisperM.aif\"\r\ngSfile2
-    = \"./sounds/am_dogM.aif\"\r\ngSfile3 = \"./sounds/am_trafficM.aif\"\r\ngSfile4
-    = \"./sounds/am_blackbirdM.aif\"\r\ngSfile5 = \"./sounds/sp_foxM.wav\"\r\ngSfile6
-    = \"./sounds/sp_hellorcbBerkleeM.aif\"\r\ngSfile7 = \"./sounds/mu_PerotinM.wav\"\r\ngSfile8
-    = \"./sounds/mu_SheilaM.wav\"\r\ngSfile9 = \"./sounds/dl_breakM.aif\"\r\n\r\ngiSmp1 
-    ftgen 1, 0, 0, 1, gSfile1, 0, 0, 0\r\ngiSmp2  ftgen 2, 0, 0, 1, gSfile2, 0, 0,
-    0\r\ngiSmp3  ftgen 3, 0, 0, 1, gSfile3, 0, 0, 0\r\ngiSmp4  ftgen 4, 0, 0, 1,
-    gSfile4, 0, 0, 0\r\ngiSmp5  ftgen 5, 0, 0, 1, gSfile5, 0, 0, 0\r\ngiSmp6  ftgen
-    6, 0, 0, 1, gSfile6, 0, 0, 0\r\ngiSmp7  ftgen 7, 0, 0, 1, gSfile7, 0, 0, 0\r\ngiSmp8 
-    ftgen 8, 0, 0, 1, gSfile8, 0, 0, 0\r\ngiSmp9  ftgen 9, 0, 0, 1, gSfile9, 0, 0,
-    0\r\n\r\ngaRvb init 0\r\n\r\ninstr 1 \r\n  \r\n  kTrig = chnget:k(\"trigger\")\r\n 
-    kDur = chnget:k(\"dur\")\r\n  kInput = chnget:k(\"sound\")\r\n\r\n; this is to
-    overcome the difference in ComboBoxes behaviour on Unity, as explained above\r\n 
-    kInput += giUnityCombobox\r\n  \r\n  if changed(kTrig) == 1 then\r\n    event
-    \"i\", \"Mincer\", 0, kDur, kInput\r\n  endif\r\n    \r\nendin\r\n\r\n\r\ninstr
-    Mincer\r\n\r\niTime      = chnget:i(\"time\") \r\nkPitch     = chnget:k(\"pitch\")\r\n\r\nkinput     
-    = p4\r\n\r\nSfile   = \"\"\r\nilen    init 0\r\n\r\niDur = p3\r\niInput = p4\r\n\r\n;prints
-    \"iDur: %f, iInput: %f\\n\", iDur, iInput\r\n\r\nif iInput = 0 then\r\n    Sfile
-    = gSfile1\r\nelseif iInput = 1 then\r\n    Sfile = gSfile1\r\nelseif iInput =
-    2 then\r\n    Sfile = gSfile2\r\nelseif iInput = 3 then\r\n    Sfile = gSfile3\r\nelseif
-    iInput = 4 then\r\n    Sfile = gSfile4\r\nelseif iInput = 5 then\r\n    Sfile
-    = gSfile5\r\nelseif iInput = 6 then\r\n    Sfile = gSfile6\r\nelseif iInput =
-    7 then\r\n    Sfile = gSfile7\r\nelseif iInput = 8 then\r\n    Sfile = gSfile8\r\nelse\r\n   
-    Sfile = gSfile9\r\nendif\r\n\r\niLen    filelen Sfile \r\n\r\nprints \"LOADING:
-    %s, iLen: %d\\n\", Sfile, iLen\r\n\r\naSig    diskin2 Sfile, chnget:k(\"pitch\"),
-    0, chnget:i(\"loop\")\r\naTime   line   0,iLen,iLen*iTime\r\n;asig mincer atimpt,
-    kamp, kpitch, ktab, klock[,ifftsize,idecim]\r\naMinc   mincer aTime, 1, kPitch,
-    iInput, 0 ;ilock\r\n\r\naOut    ntrpol       aSig, aMinc, chnget:k(\"mix\") \r\n          
-    \r\naOut = aOut * chnget:k(\"masterLvl\"); * kEnv\r\n            outs        
-    aOut, aOut\r\n\r\n    vincr gaRvb, aOut \r\n\r\nendin\r\n\r\n\r\ninstr Reverb                     
-    \r\n            denorm gaRvb\r\n    aL, aR  reverbsc gaRvb, gaRvb, .8, 10000\r\n           
-    outs  aL*chnget:k(\"masterLvl\")*chnget:k(\"verbLvl\"), aR*chnget:k(\"masterLvl\")*chnget:k(\"verbLvl\")\r\n           
-    clear\tgaRvb\r\n            \r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf0
-    z\r\ni1 0 [60*60*24*7] \r\ni \"Reverb\" 0 [60*60*24*7]  \r\n</CsScore>\r\n</CsoundSynthesizer>"
+    \"test\"), mode(\"remove preset\") channel(\"filebutton33\")\n\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\nsr = 48000\nksmps = 32\nnchnls = 2\n0dbfs
+    = 1\n\n; Sound Design and presets by Dr. Richard Boulanger and his students at
+    Berklee\n; ported to CsoundUnity by gb, June 2023\n\n; A combobox channel arrives
+    1-based, as in Cabbage: option 1 of \"sound\" is gSfile1.\n; Until 4.0 the preset
+    path sent it 0-based, which is what the old giUnityCombobox\n; compensated for.
+    CsoundUnity now sends the Cabbage value on every path.\n\ngSfile1 = \"./sounds/am_whisperM.aif\"\ngSfile2
+    = \"./sounds/am_dogM.aif\"\ngSfile3 = \"./sounds/am_trafficM.aif\"\ngSfile4 =
+    \"./sounds/am_blackbirdM.aif\"\ngSfile5 = \"./sounds/sp_foxM.wav\"\ngSfile6 =
+    \"./sounds/sp_hellorcbBerkleeM.aif\"\ngSfile7 = \"./sounds/mu_PerotinM.wav\"\ngSfile8
+    = \"./sounds/mu_SheilaM.wav\"\ngSfile9 = \"./sounds/dl_breakM.aif\"\n\ngiSmp1 
+    ftgen 1, 0, 0, 1, gSfile1, 0, 0, 0\ngiSmp2  ftgen 2, 0, 0, 1, gSfile2, 0, 0,
+    0\ngiSmp3  ftgen 3, 0, 0, 1, gSfile3, 0, 0, 0\ngiSmp4  ftgen 4, 0, 0, 1, gSfile4,
+    0, 0, 0\ngiSmp5  ftgen 5, 0, 0, 1, gSfile5, 0, 0, 0\ngiSmp6  ftgen 6, 0, 0, 1,
+    gSfile6, 0, 0, 0\ngiSmp7  ftgen 7, 0, 0, 1, gSfile7, 0, 0, 0\ngiSmp8  ftgen 8,
+    0, 0, 1, gSfile8, 0, 0, 0\ngiSmp9  ftgen 9, 0, 0, 1, gSfile9, 0, 0, 0\n\ngaRvb
+    init 0\n\ninstr 1 \n  \n  kTrig = chnget:k(\"trigger\")\n  kDur = chnget:k(\"dur\")\n 
+    kInput = chnget:k(\"sound\")\n\n  if changed(kTrig) == 1 then\n    event \"i\",
+    \"Mincer\", 0, kDur, kInput\n  endif\n    \nendin\n\n\ninstr Mincer\n\niTime     
+    = chnget:i(\"time\") \nkPitch     = chnget:k(\"pitch\")\n\nkinput      = p4\n\nSfile  
+    = \"\"\nilen    init 0\n\niDur = p3\niInput = p4\n\n;prints \"iDur: %f, iInput:
+    %f\\n\", iDur, iInput\n\nif iInput = 0 then\n    Sfile = gSfile1\nelseif iInput
+    = 1 then\n    Sfile = gSfile1\nelseif iInput = 2 then\n    Sfile = gSfile2\nelseif
+    iInput = 3 then\n    Sfile = gSfile3\nelseif iInput = 4 then\n    Sfile = gSfile4\nelseif
+    iInput = 5 then\n    Sfile = gSfile5\nelseif iInput = 6 then\n    Sfile = gSfile6\nelseif
+    iInput = 7 then\n    Sfile = gSfile7\nelseif iInput = 8 then\n    Sfile = gSfile8\nelse\n   
+    Sfile = gSfile9\nendif\n\niLen    filelen Sfile \n\nprints \"LOADING: %s, iLen:
+    %d\\n\", Sfile, iLen\n\naSig    diskin2 Sfile, chnget:k(\"pitch\"), 0, chnget:i(\"loop\")\naTime  
+    line   0,iLen,iLen*iTime\n;asig mincer atimpt, kamp, kpitch, ktab, klock[,ifftsize,idecim]\naMinc  
+    mincer aTime, 1, kPitch, iInput, 0 ;ilock\n\naOut    ntrpol       aSig, aMinc,
+    chnget:k(\"mix\") \n           \naOut = aOut * chnget:k(\"masterLvl\"); * kEnv\n           
+    outs         aOut, aOut\n\n    vincr gaRvb, aOut \n\nendin\n\n\ninstr Reverb                     
+    \n            denorm gaRvb\n    aL, aR  reverbsc gaRvb, gaRvb, .8, 10000\n           
+    outs  aL*chnget:k(\"masterLvl\")*chnget:k(\"verbLvl\"), aR*chnget:k(\"masterLvl\")*chnget:k(\"verbLvl\")\n           
+    clear\tgaRvb\n            \nendin\n\n</CsInstruments>\n<CsScore>\nf0 z\ni1 0
+    [60*60*24*7] \ni \"Reverb\" 0 [60*60*24*7]  \n</CsScore>\n</CsoundSynthesizer>"
   _csoundFileName: CAB-RCB-mincer.csd
   _csoundAsset: {fileID: 102900000, guid: c5fccff40afafc0489c50f7570518dbb, type: 3}
   _channels:
@@ -825,8 +818,8 @@ MonoBehaviour:
     value2: 0
     x: 0
     y: 0
-    width: 0
-    height: 0
+    width: 600
+    height: 200
   - type: button
     channel: trigger
     text: Trigger
@@ -841,19 +834,37 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 26
+    y: 74
+    width: 80
+    height: 40
+  - type: label
+    channel: 
+    text: Sound
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 136
+    y: 124
+    width: 80
+    height: 20
   - type: combobox
     channel: sound
-    text: Whisper, Dog, Traffic, Bird, QBfox, DrB-hello, Perotin, Sheila, Drum
+    text: 
     caption: 
     min: 1
     max: 9
     value: 0
     skew: 1
-    increment: 0.01
+    increment: 0.001
     options:
     - Whisper
     - Dog
@@ -868,10 +879,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 130
+    y: 146
+    width: 95
+    height: 28
   - type: groupbox
     channel: 
     text: Time
@@ -886,10 +897,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 118
+    y: 14
+    width: 190
+    height: 105
   - type: rslider
     channel: time
     text: Time
@@ -904,10 +915,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 174
+    y: 40
+    width: 79
+    height: 66
   - type: groupbox
     channel: 
     text: Pitch
@@ -922,10 +933,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 312
+    y: 14
+    width: 190
+    height: 105
   - type: rslider
     channel: pitch
     text: Pitch
@@ -940,10 +951,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 366
+    y: 38
+    width: 79
+    height: 66
   - type: rslider
     channel: verbLvl
     text: Verb
@@ -958,10 +969,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 514
+    y: 96
+    width: 65
+    height: 51
   - type: rslider
     channel: masterLvl
     text: Gain
@@ -976,10 +987,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 34
+    y: 122
+    width: 65
+    height: 53
   - type: rslider
     channel: mix
     text: Mix
@@ -994,10 +1005,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 512
+    y: 34
+    width: 65
+    height: 53
   - type: rslider
     channel: dur
     text: Duration
@@ -1012,10 +1023,28 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 36
+    y: 14
+    width: 65
+    height: 53
+  - type: label
+    channel: label66
+    text: Loop
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 234
+    y: 122
+    width: 53
+    height: 18
   - type: checkbox
     channel: loop
     text: 
@@ -1030,19 +1059,19 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 244
+    y: 144
+    width: 33
+    height: 28
   - type: combobox
     channel: Snaps
-    text: DronyBlur, explosive, swishy, groovy, dreamy, sleepy
+    text: 
     caption: 
     min: 1
     max: 6
     value: 0
     skew: 1
-    increment: 0.01
+    increment: 0.001
     options:
     - DronyBlur
     - explosive
@@ -1054,13 +1083,13 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 392
+    y: 122
+    width: 100
+    height: 25
   - type: filebutton
     channel: filebutton32
-    text: Save, Save
+    text: Save
     caption: 
     min: 0
     max: 0
@@ -1072,13 +1101,13 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 330
+    y: 122
+    width: 60
+    height: 25
   - type: filebutton
     channel: filebutton33
-    text: Remove, Remove
+    text: Remove
     caption: 
     min: 0
     max: 0
@@ -1090,12 +1119,13 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 330
+    y: 152
+    width: 60
+    height: 25
   _availableAudioChannels: []
-  _nchnls: 0
+  _unsupportedWidgets: []
+  _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
   _drawCsoundString: 0
@@ -1109,8 +1139,9 @@ MonoBehaviour:
   _drawPresetsSave: 0
   _drawPresetsImport: 1
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: QuickerBrownFox
-  _currentPresetSaveFolder: 
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets
   _currentPresetLoadFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets
   _audioRoutingBufferSize: 512
   webGLAssetsList: []

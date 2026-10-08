@@ -1874,7 +1874,7 @@ namespace Csound.Unity
 
             if (Application.isPlaying && csoundUnity != null)
             {
-                var value = channel.type.Contains("combobox") ? chanValue.floatValue + 1 : chanValue.floatValue;
+                var value = channel.ToCsoundValue(chanValue.floatValue);
                 csoundUnity.SetChannel(channel.channel, value);
             }
         }

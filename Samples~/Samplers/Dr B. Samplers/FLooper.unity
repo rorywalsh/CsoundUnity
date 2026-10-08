@@ -686,14 +686,16 @@ MonoBehaviour:
   logCsoundOutput: 1
   initializeOnAwake: 1
   mute: 0
+  pauseProcessing: 0
   processClipAudio: 0
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
   audioRate: 44100
-  controlRate: 44100
+  controlRate: 1378
   ksmps: 32
   updateOutputBuffer: 0
+  fadeInSeconds: 0
   audioInputRoutes: []
   muteAudioInputRoutes: 0
   _measureDspLoad: 0
@@ -724,78 +726,76 @@ MonoBehaviour:
     foldout: 1
     AssetsToLoadList: []
   _csoundFileGUID: c799c011321a43d4e96ca6b34ecc6e59
-  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\r\n\r\nform caption(\"Sample Flooper\")
-    size(650, 480), guiMode(\"queue\") pluginId(\"def1\")\r\n\r\nbutton bounds(56,
-    172, 80, 40) channel(\"trigger\") text(\"Trigger\")\r\nbutton bounds(56, 270,
-    80, 40) channel(\"stop\") text(\"Stop\")\r\n\r\nrslider bounds(58, 214, 76, 53),
-    channel(\"dur\"), range(0.2, 120, 10, 1, 0.01), text(\"Duration\"), trackerColour(255,
-    255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\r\n\r\nlabel 
-    bounds(252, 164, 80, 20), text(\"Sample\"), fontColour(255, 255, 255, 255) channel(\"label44\")\r\ncombobox
-    bounds(246, 190, 95, 28), channel(\"sound\"),fontColour(\"White\"),text(\"Pins\",\"Dog\",\"Traffic\",\"Bird\",\"Fire\",\"Hello\",\"Perotin\",\"Brahms\",\"Tomek1\",\"Tomek2\")\r\n\r\ngroupbox
+  _csoundString: "<Cabbage> bounds(0, 0, 0, 0)\n\nform caption(\"Sample Flooper\")
+    size(650, 480), guiMode(\"queue\") pluginId(\"def1\")\n\nbutton bounds(56, 172,
+    80, 40) channel(\"trigger\") text(\"Trigger\")\nbutton bounds(56, 270, 80, 40)
+    channel(\"stop\") text(\"Stop\")\n\nrslider bounds(58, 214, 76, 53), channel(\"dur\"),
+    range(0.2, 120, 10, 1, 0.01), text(\"Duration\"), trackerColour(255, 255, 255,
+    255), outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\n\nlabel  bounds(252,
+    164, 80, 20), text(\"Sample\"), fontColour(255, 255, 255, 255) channel(\"label44\")\ncombobox
+    bounds(246, 190, 95, 28), channel(\"sound\"),fontColour(\"White\"),text(\"Pins\",\"Dog\",\"Traffic\",\"Bird\",\"Fire\",\"Hello\",\"Perotin\",\"Brahms\",\"Tomek1\",\"Tomek2\")\n\ngroupbox
     bounds(188, 12, 104, 105) channel(\"groupbox2\") text(\"Pitch\") colour(0, 0,
     0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255) fontColour(255,
     255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0,
     0, 0, 50) textColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255,
-    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)\r\nrslider
+    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)\nrslider
     bounds(202, 34, 79, 66), channel(\"pitch\"), range(0.1, 4, 1, 1, 0.01), text(\"Pitch\"),
     trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0,
-    0, 0, 255)\r\n\r\ngroupbox bounds(306, 10, 106, 105) channel(\"groupbox1\") text(\"LoopStart\")
+    0, 0, 255)\n\ngroupbox bounds(306, 10, 106, 105) channel(\"groupbox1\") text(\"LoopStart\")
     colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255)
     fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255, 255)
     outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0, 0, 0, 0)
     fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255,
-    255, 255)\r\nrslider bounds(320, 36, 79, 66), channel(\"loopStrt\"), range(0,
-    1, 0, 1, 0.01), text(\"LoopStart\"), trackerColour(255, 255, 255, 255), outlineColour(0,
-    0, 0, 50), textColour(0, 0, 0, 255)\r\n\r\ngroupbox bounds(418, 10, 106, 105)
-    channel(\"groupbox3\") text(\"LoopEnd\") colour(0, 0, 0, 0) outlineColour(0,
-    0, 0, 50), textColour(255, 255, 255, 255) fontColour(255, 255, 255, 255) colour(0,
+    255, 255)\nrslider bounds(320, 36, 79, 66), channel(\"loopStrt\"), range(0, 1,
+    0, 1, 0.01), text(\"LoopStart\"), trackerColour(255, 255, 255, 255), outlineColour(0,
+    0, 0, 50), textColour(0, 0, 0, 255)\n\ngroupbox bounds(418, 10, 106, 105) channel(\"groupbox3\")
+    text(\"LoopEnd\") colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255,
+    255, 255, 255) fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255,
+    255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0,
     0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255,
-    255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0,
-    0, 0, 50) textColour(255, 255, 255, 255)\r\nrslider bounds(434, 38, 79, 66),
-    channel(\"loopEnd\"), range(0, 1, 1, 1, 0.01), text(\"LoopEnd\"), trackerColour(255,
-    255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\r\n\r\ngroupbox
-    bounds(530, 10, 106, 105) channel(\"groupbox4\") text(\"LoopDirection\") colour(0,
-    0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255, 255, 255, 255) fontColour(255,
-    255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0,
-    0, 0, 50) textColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255, 255,
-    255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255)\r\nrslider
-    bounds(546, 38, 79, 66), channel(\"loopDir\"), range(0, 2, 0, 1, 0.01), text(\"F-B-FB\"),
-    trackerColour(255, 255, 255, 255), outlineColour(0, 0, 0, 50), textColour(0,
-    0, 0, 255)\r\n\r\nhslider bounds(208, 358, 181, 50) channel(\"pan\"), range(0,
-    1, 0.5, 1, 0.001), text(\"Pan\") textColour(0, 0, 0, 255),  trackerColour(255,
-    255, 255, 255)\r\n\r\nrslider bounds(214, 248, 181, 74) channel(\"sampLvl\"),
-    range(0, 1, 0.75, 1, 0.001), text(\"Sampler\") textColour(0, 0, 0, 255), trackerColour(255,
-    255, 255, 255)\r\n\r\nlabel  bounds(476, 120, 104, 20), text(\"Global FX\"),
-    fontColour(255, 255, 255, 255) channel(\"label74\")\r\n\r\nrslider bounds(456,
-    142, 72, 51) channel(\"chorLvl\"), range(0, 1, 0.76, 1, 0.001), text(\"Chorus\")
-    textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\r\nrslider
-    bounds(536, 142, 71, 51) channel(\"chorMod\"), range(0.01, 0.5, 0.25, 1, 0.001),
-    text(\"ChorusMod\") textColour(255, 255, 255, 255), trackerColour(255, 255, 255,
-    255)\r\n\r\nrslider bounds(458, 198, 68, 51), channel(\"echoLvl\"), range(0,
-    1, 0.75, 1, 0.01), text(\"Echo\"), textColour(255, 255, 255, 255), trackerColour(255,
-    255, 255, 255)\r\nrslider bounds(536, 198, 72, 51), channel(\"echoMod\"), range(0.01,
-    2, 1, 1, 0.01), text(\"EchoMod\"), textColour(255, 255, 255, 255), trackerColour(255,
-    255, 255, 255)\r\n\r\nrslider bounds(458, 252, 68, 51), channel(\"flangLvl\"),
-    range(0, 1, 0.75, 1, 0.01), text(\"Flanger\"), textColour(255, 255, 255, 255),
-    trackerColour(255, 255, 255, 255)\r\nrslider bounds(536, 252, 73, 51), channel(\"flangMod\"),
-    range(0.1, 1, 0.5, 1, 0.01), text(\"FlangerMod\"), textColour(255, 255, 255,
-    255), trackerColour(255, 255, 255, 255)\r\n\r\nrslider bounds(460, 310, 68, 51),
-    channel(\"stresLvl\"), range(0, 1, 0.75, 1, 0.01), text(\"StringReson\"), textColour(255,
-    255, 255, 255), trackerColour(255, 255, 255, 255)\r\nrslider bounds(534, 310,
-    73, 51), channel(\"stresMod\"), range(0.25, 4, 1, 1, 0.01), text(\"StresonMod\"),
-    textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\r\n\r\nrslider
-    bounds(462, 362, 65, 51), channel(\"verbLvl\"), range(0, 1, 0.75, 1, 0.01), text(\"Verb\"),
-    textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\r\nrslider
-    bounds(530, 362, 74, 51), channel(\"verbMod\"), range(0.1, 0.98, 0.8, 1, 0.01),
-    text(\"VerbMod\"), textColour(255, 255, 255, 255), trackerColour(255, 255, 255,
-    255)\r\n\r\nrslider bounds(460, 418, 68, 51), channel(\"panLvl\"), range(0, 1,
-    0.5, 1, 0.01), text(\"FX Pan\"), textColour(255, 255, 255, 255), trackerColour(255,
-    255, 255, 255)\r\nrslider bounds(530, 418, 75, 51), channel(\"panMod\"), range(0,
+    255, 255, 255)\nrslider bounds(434, 38, 79, 66), channel(\"loopEnd\"), range(0,
+    1, 1, 1, 0.01), text(\"LoopEnd\"), trackerColour(255, 255, 255, 255), outlineColour(0,
+    0, 0, 50), textColour(0, 0, 0, 255)\n\ngroupbox bounds(530, 10, 106, 105) channel(\"groupbox4\")
+    text(\"LoopDirection\") colour(0, 0, 0, 0) outlineColour(0, 0, 0, 50), textColour(255,
+    255, 255, 255) fontColour(255, 255, 255, 255) colour(0, 0, 0, 0) fontColour(255,
+    255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255, 255, 255, 255) colour(0,
+    0, 0, 0) fontColour(255, 255, 255, 255) outlineColour(0, 0, 0, 50) textColour(255,
+    255, 255, 255)\nrslider bounds(546, 38, 79, 66), channel(\"loopDir\"), range(0,
+    2, 0, 1, 0.01), text(\"F-B-FB\"), trackerColour(255, 255, 255, 255), outlineColour(0,
+    0, 0, 50), textColour(0, 0, 0, 255)\n\nhslider bounds(208, 358, 181, 50) channel(\"pan\"),
+    range(0, 1, 0.5, 1, 0.001), text(\"Pan\") textColour(0, 0, 0, 255),  trackerColour(255,
+    255, 255, 255)\n\nrslider bounds(214, 248, 181, 74) channel(\"sampLvl\"), range(0,
+    1, 0.75, 1, 0.001), text(\"Sampler\") textColour(0, 0, 0, 255), trackerColour(255,
+    255, 255, 255)\n\nlabel  bounds(476, 120, 104, 20), text(\"Global FX\"), fontColour(255,
+    255, 255, 255) channel(\"label74\")\n\nrslider bounds(456, 142, 72, 51) channel(\"chorLvl\"),
+    range(0, 1, 0.76, 1, 0.001), text(\"Chorus\") textColour(255, 255, 255, 255),
+    trackerColour(255, 255, 255, 255)\nrslider bounds(536, 142, 71, 51) channel(\"chorMod\"),
+    range(0.01, 0.5, 0.25, 1, 0.001), text(\"ChorusMod\") textColour(255, 255, 255,
+    255), trackerColour(255, 255, 255, 255)\n\nrslider bounds(458, 198, 68, 51),
+    channel(\"echoLvl\"), range(0, 1, 0.75, 1, 0.01), text(\"Echo\"), textColour(255,
+    255, 255, 255), trackerColour(255, 255, 255, 255)\nrslider bounds(536, 198, 72,
+    51), channel(\"echoMod\"), range(0.01, 2, 1, 1, 0.01), text(\"EchoMod\"), textColour(255,
+    255, 255, 255), trackerColour(255, 255, 255, 255)\n\nrslider bounds(458, 252,
+    68, 51), channel(\"flangLvl\"), range(0, 1, 0.75, 1, 0.01), text(\"Flanger\"),
+    textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\nrslider bounds(536,
+    252, 73, 51), channel(\"flangMod\"), range(0.1, 1, 0.5, 1, 0.01), text(\"FlangerMod\"),
+    textColour(255, 255, 255, 255), trackerColour(255, 255, 255, 255)\n\nrslider
+    bounds(460, 310, 68, 51), channel(\"stresLvl\"), range(0, 1, 0.75, 1, 0.01),
+    text(\"StringReson\"), textColour(255, 255, 255, 255), trackerColour(255, 255,
+    255, 255)\nrslider bounds(534, 310, 73, 51), channel(\"stresMod\"), range(0.25,
+    4, 1, 1, 0.01), text(\"StresonMod\"), textColour(255, 255, 255, 255), trackerColour(255,
+    255, 255, 255)\n\nrslider bounds(462, 362, 65, 51), channel(\"verbLvl\"), range(0,
+    1, 0.75, 1, 0.01), text(\"Verb\"), textColour(255, 255, 255, 255), trackerColour(255,
+    255, 255, 255)\nrslider bounds(530, 362, 74, 51), channel(\"verbMod\"), range(0.1,
+    0.98, 0.8, 1, 0.01), text(\"VerbMod\"), textColour(255, 255, 255, 255), trackerColour(255,
+    255, 255, 255)\n\nrslider bounds(460, 418, 68, 51), channel(\"panLvl\"), range(0,
+    1, 0.5, 1, 0.01), text(\"FX Pan\"), textColour(255, 255, 255, 255), trackerColour(255,
+    255, 255, 255)\nrslider bounds(530, 418, 75, 51), channel(\"panMod\"), range(0,
     3, 0.1, 1, 0.01), text(\"FXpanMod\"), textColour(255, 255, 255, 255), trackerColour(255,
-    255, 255, 255)\r\n\r\nrslider bounds(40, 330, 119, 108), channel(\"masterLvl\"),
+    255, 255, 255)\n\nrslider bounds(40, 330, 119, 108), channel(\"masterLvl\"),
     range(0, 1, 0.818, 1, 0.01), text(\"Master\"), trackerColour(255, 255, 255, 255),
-    outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\r\n\r\nlabel  bounds(42,
-    36, 80, 23), text(\"Presets\"), fontColour(255, 255, 255, 255) channel(\"label37\")\r\ncombobox
+    outlineColour(0, 0, 0, 50), textColour(0, 0, 0, 255)\n\nlabel  bounds(42, 36,
+    80, 23), text(\"Presets\"), fontColour(255, 255, 255, 255) channel(\"label37\")\ncombobox
     bounds(76, 68, 100, 25), populate(\"*.snaps\"), channelType(\"string\") automatable(0)
     channel(\"combo31\")  value(\"1\") text(\"init\", \"pins - long+low\", \"dog
     - squeeky\", \"dog - groove\", \"traffic - rumble\", \"traffic - harmony\", \"bird
@@ -803,168 +803,161 @@ MonoBehaviour:
     \"fire - dry loop\", \"Boulanger - JeanLuc ;-)\", \"hello - grove\", \"hello
     - groove2\", \"Perotin - back+forth\", \"Perotin - Druids\", \"Brahms - Frozen
     Chord\", \"Brahms - wave of chords\", \"Tomek2 - with echo + rev\", \"Tomek -
-    Tenet\", \"Tomek2 - StrangeAmbience\", \"Tomek2 - groove\", \"Tomek2 - Loop3\")\r\nfilebutton
+    Tenet\", \"Tomek2 - StrangeAmbience\", \"Tomek2 - groove\", \"Tomek2 - Loop3\")\nfilebutton
     bounds(14, 68, 60, 25), text(\"Save\", \"Save\"), populate(\"*.snaps\", \"test\"),
-    mode(\"named preset\") channel(\"filebutton32\")\r\nfilebutton bounds(14, 98,
-    60, 25), text(\"Remove\", \"Remove\"), populate(\"*.snaps\", \"test\"), mode(\"remove
-    preset\") channel(\"filebutton33\")\r\n\r\n</Cabbage>\r\n<CsoundSynthesizer>\r\n<CsOptions>\r\n-n
-    -d\r\n</CsOptions>\r\n<CsInstruments>\r\nsr = 48000\r\nksmps = 32\r\nnchnls =
-    2\r\n0dbfs = 1\r\n\r\n; Sound Design and presets by Dr. Richard Boulanger and
-    his students at Berklee\r\n; ported to CsoundUnity by gb, June 2023\r\n\r\n;
-    set this var to 0 when testing on Cabbage, to 1 when using this csd on Unity,
-    \r\n; Unity comboboxes start index is 0, instead on Cabbage they start from 1
-    (0 is the unset value)\r\n; we need to do this because we created the Unity presets
-    from the Cabbage Snaps\r\n; using the import Snaps feature (where the index read
-    from the Cabbage Snap \r\n; is decreased by one - that is to show the correct
-    combobox value in the channel inspector)\r\n; so to obtain the same preset result
-    and load the correct sample we need to compensate for this\r\n; see line 154
-    below\r\ngiUnityCombobox init 1\r\n\r\ngSfile1   = \"./sounds/am_pinsM.wav\"\r\ngSfile2  
-    = \"./sounds/am_dogM.aif\"\r\ngSfile3   = \"./sounds/am_trafficM.aif\"\r\ngSfile4  
-    = \"./sounds/am_blackbirdM.aif\"\r\ngSfile5   = \"./sounds/am_fireM.wav\"\r\ngSfile6  
-    = \"./sounds/sp_hellorcbBerkleeM.aif\"\r\ngSfile7   = \"./sounds/mu_PerotinM.wav\"\r\ngSfile8  
-    = \"./sounds/mu_brahmsM.aif\"\r\ngSfile9   = \"./sounds/dl_TomekPansM.wav\"\r\ngSfile10 
-    = \"./sounds/dl_TomekBowlsM.aif\"\r\n\r\ngiSmp1   ftgen  1, 0, 0, 1,  gSfile1,
-    0, 0, 0\r\ngiSmp2   ftgen  2, 0, 0, 1,  gSfile2, 0, 0, 0\r\ngiSmp3   ftgen  3,
-    0, 0, 1,  gSfile3, 0, 0, 0\r\ngiSmp4   ftgen  4, 0, 0, 1,  gSfile4, 0, 0, 0\r\ngiSmp5  
-    ftgen  5, 0, 0, 1,  gSfile5, 0, 0, 0\r\ngiSmp6   ftgen  6, 0, 0, 1,  gSfile6,
-    0, 0, 0\r\ngiSmp7   ftgen  7, 0, 0, 1,  gSfile7, 0, 0, 0\r\ngiSmp8   ftgen  8,
-    0, 0, 1,  gSfile8, 0, 0, 0\r\ngiSmp9   ftgen  9, 0, 0, 1,  gSfile9, 0, 0, 0\r\ngiSmp10 
-    ftgen 10, 0, 0, 1,  gSfile10, 0, 0, 0\r\n\r\ngaChorL init 0\r\ngaChorR init 0\r\n\r\ngaEchoL
-    init 0\r\ngaEchoR init 0\r\n\r\ngaFlangL init 0\r\ngaFlangR init 0\r\n\r\ngaStresL
-    init 0\r\ngaStresR init 0\r\n\r\ngaMtapL init 0\r\ngaMtapR init 0\r\n\r\ngaRevL
-    init 0\r\ngaRevR init 0\r\n\r\ngaFxPan init 0\r\n\r\ngiFun21 ftgen 21, 0, 4097,
-    -7, 1, 4096, 0  ; Ramp down\r\ngiFun22 ftgen 22, 0, 4097, -7, 0, 4096, 1  ; Ramp
-    up\r\ngiFun23 ftgen 23, 0, 4097, 19, .5, 1, 0, 0 ; Half Sine\r\n\r\n\r\ninstr
-    1\r\n  kDur = chnget:k(\"dur\")\r\n  kTrig = chnget:k(\"trigger\")\r\n  \r\n   
-    if changed(kTrig) == 1 then\r\n        event \"i\", \"Flooper\", 0, kDur\r\n       
-    kTrig = 0\r\n    endif\r\n    \r\n    kStop = chnget:k(\"stop\")\r\n    if changed(kStop)
-    == 1 then\r\n       turnoff2 \"Flooper\", 0, 1\r\n       kStop = 0\r\n    endif\r\nendin\r\n\r\n\r\ninstr
-    Flooper\r\n\r\niDur       = chnget:i(\"dur\")\t\r\nkGain      = chnget:k(\"masterLvl\")\r\nkPitch    
-    = chnget:k(\"pitch\")\r\nkLoopStrt  = chnget:k(\"loopStrt\") \r\nkLoopEnd   =
-    chnget:k(\"loopEnd\") \r\niMode      = chnget:i(\"loopDir\")\r\nkInput     =
-    chnget:k(\"sound\")\r\n\r\n\r\nflooperInit:\r\n\r\ninput     = i(kInput)          
-    ;chnget:i(\"sound\")\r\n\r\n; this is to be overcome the difference in ComboBoxes
-    behaviour on Unity, as explained above\r\ninput += giUnityCombobox\r\n\r\niLen
-    init 0\r\niSmp init 0\r\n\r\nif input == 1 then\r\niLen filelen gSfile1\r\niSmp
-    = 1\r\nelseif input == 2 then\r\niLen filelen gSfile2\r\niSmp = 2\r\nelseif input
-    == 3 then\r\niLen filelen gSfile3\r\niSmp = 3\r\nelseif input == 4 then\r\niLen
-    filelen gSfile4\r\niSmp = 4\r\nelseif input == 5 then\r\niLen filelen gSfile5\r\niSmp
-    = 5\r\nelseif input == 6 then\r\niLen filelen gSfile6\r\niSmp = 6\r\nelseif input
-    == 7 then\r\niLen filelen gSfile7\r\niSmp = 7\r\nelseif input == 8 then\r\niLen
-    filelen gSfile8\r\niSmp = 8\r\nelseif input == 9 then\r\niLen filelen gSfile9\r\niSmp
-    = 9\r\nelse \r\niLen filelen gSfile10\r\niSmp = 10\r\nendif\r\n\r\nprints \"LOADING
-    SAMPLE: %d Len: %d\\n\", iSmp, iLen\r\n\r\nif kLoopStrt > kLoopEnd then\r\nkLoopStrt
-    = kLoopEnd-.1\r\nendif\r\nif kLoopEnd < kLoopStrt then\r\nkLoopEnd = kLoopStrt+.1\r\nendif\r\n\r\n;asig1[,asig2]
-    flooper2 kamp,  kpitch, kloopstart, kloopend, kcrossfade, ifn [, istart, imode,
-    ifenv, iskip] \r\naFloop         flooper2 kGain, kPitch, .001+(kLoopStrt * iLen),
-    .001+(kLoopEnd * iLen), 0.05, iSmp, i(kLoopStrt) * iLen, int(iMode)\r\n\r\nrireturn\r\n\r\nkInputChanged
-    changed kInput    ;chnget:k(\"sound\")\r\nif (kInputChanged == 1) then\r\n   
-    reinit flooperInit\r\nendif\r\n\r\nkEnv    transeg 0,iDur*.01,0,1,iDur*.8,0,1,iDur*.19,-1,0         
-    \r\naDry    =       aFloop * kEnv * chnget:k(\"sampLvl\")\r\naL,aR   pan2   
-    aDry, chnget:k(\"pan\")\r\n        outs    aL * chnget:k(\"masterLvl\"), aR *
-    chnget:k(\"masterLvl\")\r\n        \r\n        vincr   gaChorL, aL*chnget:k(\"chorLvl\")\r\n       
-    vincr   gaChorR, aR*chnget:k(\"chorLvl\") \r\n        vincr   gaEchoL, aL*chnget:k(\"echoLvl\")\r\n       
-    vincr   gaEchoR, aR*chnget:k(\"echoLvl\") \r\n        vincr   gaFlangL, aL*chnget:k(\"flangLvl\")\r\n       
-    vincr   gaFlangR, aR*chnget:k(\"flangLvl\") \r\n        vincr   gaStresL, aL*chnget:k(\"stresLvl\")\r\n       
-    vincr   gaStresR, aR*chnget:k(\"stresLvl\") \r\n        vincr   gaRevL,  aL*chnget:k(\"verbLvl\")\r\n       
-    vincr   gaRevR,  aR*chnget:k(\"verbLvl\")\r\n\r\nendin\r\n\r\n; -----------------------------------\r\n\r\ninstr  
-    Chorus  ; from Lazzarini\r\n     denorm gaChorL, gaChorR\r\n amod1  =   randi:a(3,.75)+oscili(2,.35)+31\r\n
-    amod2  =   randi:a(2,.65)+oscili(3,.55)+29\r\n amodX  randi chnget:k(\"chorMod\"),
-    10\r\n ;amodX  portk amodX,.1\r\n aL     =   vdelay(gaChorL,amod1*amodX,35)\r\n
-    aR     =   vdelay(gaChorR,amod2*(1-amodX),35)\r\n \r\n vincr gaFxPan, (aL+aR)*.5\r\n 
-    \r\n            outs  aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\")\r\n  
-    clear gaChorL, gaChorR\r\nendin\r\n\r\n; -----------------------------\r\n\r\ninstr   
-    Echo ; MN3011 BBD Reverb from Steven Cook\r\n         denorm gaEchoL, gaEchoR\r\n        
-    \r\n ifdbkL    init .31\r\n iEchoL    init .34\r\n afdbkL    init 0\r\n idelayL  
-    init 4.35\r\n \r\n kEchoMOD  randi .1*chnget:k(\"echoMod\"), 2*chnget:k(\"echoMod\")\r\n
-    kEchoMOD portk kEchoMOD, .4\r\n\r\n gaEchoL      = gaEchoL + afdbkL*ifdbkL\r\n
-    \r\n abufL     delayr  2\r\n atap1L    deltapi .0396*idelayL*kEchoMOD\r\n atap2L   
-    deltapi .0662*idelayL\r\n atap3L    deltapi .1194*idelayL*kEchoMOD\r\n atap4L   
-    deltapi .1726*idelayL\r\n atap5L    deltapi .2790*idelayL*kEchoMOD\r\n atap6L   
-    deltapi .3328*idelayL\r\n           delayw  gaEchoL\r\n \r\n afdbkL    butterlp 
-    atap6L, 7000\r\n abbdL     sum  atap1L, atap2L, atap3L, atap4L, atap5L, atap6L\r\n
-    abbdL     butterlp  abbdL, 7000\r\n \r\n aL = gaEchoL + (abbdL*iEchoL)\r\n \r\n
-    ifdbkR    init .45\r\n iEchoR    init .35\r\n afdbkR    init 0\r\n idelayR  
-    init 4.6\r\n \r\n gaEchoR      = gaEchoR + afdbkR*ifdbkR\r\n \r\n abufR     delayr 
-    1\r\n atap1R    deltapi .0396*idelayR\r\n atap2R    deltapi .0662*idelayR*kEchoMOD\r\n
-    atap3R    deltapi .1194*idelayR\r\n atap4R    deltapi .1726*idelayR*kEchoMOD\r\n
-    atap5R    deltapi .2790*idelayR\r\n atap6R    deltapi .3328*idelayR*kEchoMOD\r\n          
-    delayw  gaEchoL\r\n \r\n afdbkR    butterlp  atap6R, 7000\r\n abbdR     sum 
-    atap1R, atap2R, atap3R, atap4R, atap5R, atap6R\r\n \r\n abbdR     butterlp  abbdR,
-    7000\r\n \r\n aR = gaEchoR + (abbdR*iEchoR)\r\n \r\nvincr gaFxPan, (aL+aR)*.5\r\n\r\n           
-    outs  aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\")\r\n        clear
-    gaEchoL, gaEchoR\r\n endin\r\n\r\n;---------------------------------------\r\n\r\n
-    instr    Flanger ; Barberpole flanger from Steven Cook\r\n \r\n idepth   init
-    2/1000                        ; Depth in ms\r\n irate    init 1.618                        
-    ; Rate\r\n ifeed    init .8532                         ; Feedback\r\n; Mode:
-    based on ftable 21 and ftable 22 = 21 is down, 22 is up\r\n \r\n kFlangMod =
-    chnget:k(\"flangMod\")\r\n kFLangMod portk kFlangMod, .1\r\n \r\n denorm gaFlangL,
-    gaFlangR      \r\n \r\n asaw1L    oscili  idepth, irate+kFlangMod, giFun21      
-    ; Saw 0 degrees\r\n asaw2L    oscili  idepth, irate+kFlangMod, giFun21, .25 
-    ; Saw 90 degrees\r\n asaw3L    oscili  idepth, irate+kFlangMod, giFun21, .5  
-    ; Saw 180 degrees\r\n asaw4L    oscili  idepth, irate+kFlangMod, giFun21, .75 
-    ; Saw 270 degrees\r\n \r\n asin1L    oscili  1, irate+kFlangMod, giFun23               
-    ; 1/2 Sine 0 degrees\r\n asin2L    oscili  1, irate+kFlangMod, giFun23, .25          
-    ; 1/2 Sine 90 degrees\r\n asin3L    oscili  1, irate+kFlangMod, giFun23, .5           
-    ; 1/2 Sine 180 degrees\r\n asin4L    oscili  1, irate+kFlangMod, giFun23, .75          
-    ; 1/2 Sine 270 degrees\r\n \r\n adel1L    flanger   gaFlangL, asaw1L*kFlangMod,
-    ifeed*kFlangMod, rnd(idepth) ; Flanger 1\r\n adel2L    flanger  gaFlangL, asaw2L*kFlangMod,
-    ifeed*kFlangMod, rnd(idepth) ; Flanger 2\r\n adel3L    flanger  gaFlangL, asaw3L*kFlangMod,
-    ifeed*kFlangMod, rnd(idepth) ; Flanger 3\r\n adel4L    flanger  gaFlangL, asaw4L*kFlangMod,
-    ifeed*kFlangMod, rnd(idepth) ; Flanger 4\r\n \r\n aflangeL  = adel1L*asin1L +
-    adel2L*asin2L + adel3L*asin3L + adel4L*asin4L\r\n aflangeL  dcblock  aflangeL\r\n
-    adirectL  = gaFlangL*(asin1L + asin2L + asin3L + asin4L)\r\n\r\n asaw1R    oscili 
-    idepth, irate+rnd(kFlangMod), giFun22       ; Saw 0 degrees\r\n asaw2R    oscili 
-    idepth, irate+rnd(kFlangMod), giFun22, .25  ; Saw 90 degrees\r\n asaw3R    oscili 
-    idepth, irate+rnd(kFlangMod), giFun22, .5   ; Saw 180 degrees\r\n asaw4R    oscili 
-    idepth, irate+rnd(kFlangMod), giFun22, .75  ; Saw 270 degrees\r\n \r\n asin1R   
-    oscili  1, irate+kFlangMod, giFun23                ; 1/2 Sine 0 degrees\r\n asin2R   
-    oscili  1, irate+kFlangMod, giFun23, .25           ; 1/2 Sine 90 degrees\r\n
-    asin3R    oscili  1, irate+kFlangMod, giFun23, .5            ; 1/2 Sine 180 degrees\r\n
-    asin4R    oscili  1, irate+kFlangMod, giFun23, .75           ; 1/2 Sine 270 degrees\r\n
-    \r\n adel1R    flanger  gaFlangR, asaw1R*kFlangMod, rnd(ifeed), idepth ; Flanger
-    1\r\n adel2R    flanger  gaFlangR, asaw2R*kFlangMod, rnd(ifeed), idepth ; Flanger
-    2\r\n adel3R    flanger  gaFlangR, asaw3R*kFlangMod, rnd(ifeed), idepth ; Flanger
-    3\r\n adel4R    flanger  gaFlangR, asaw4R*kFlangMod, rnd(ifeed), idepth ; Flanger
-    4\r\n \r\n aflangeR  = adel1R*asin1R + adel2R*asin2R + adel3R*asin3R + adel4R*asin4R\r\n
-    aflangeR  dcblock  aflangeR\r\n adirectR  = gaFlangR*(asin1R + asin2R + asin3R
-    + asin4R)\r\n\r\naL =    aflangeL + adirectL      \r\naR =    aflangeR + adirectR\r\n\r\nvincr
-    gaFxPan, (aL+aR) * .5 \r\n\r\n           outs  aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\")\r\n\r\n
-    clear gaFlangL, gaFlangR \r\n endin\r\n\r\n;----------------------------\r\n\r\ninstr 
-    Streson             ; 'Streson' resonator bank after Steven Cook\r\ndenorm gaStresL,
-    gaStresR\r\n\r\n kMod =  chnget:k(\"stresMod\")\r\n kMod portk kMod, .1\r\n  
-    \r\n ifdbk     = .99\r\n   \r\n ipitch1L   = cpsmidinn(36)+int(rnd(6))   ; Filter
-    1 freq\r\n ipitch2L   = cpsmidinn(50)+int(rnd(5))   ; Filter 2 freq\r\n ipitch3L  
-    = cpsmidinn(52)+int(rnd(4))   ; Filter 3 freq\r\n ipitch4L   = cpsmidinn(53)+int(rnd(3))  
-    ; Filter 4 freq\r\n ipitch5L   = cpsmidinn(55)+int(rnd(5))  ; Filter 5 freq\r\n
-    ipitch6L   = cpsmidinn(59)+int(rnd(8))  ; Filter 6 freq\r\n             \r\n
-    ares1L     streson  gaStresL, ipitch1L*kMod, ifdbk\r\n ares2L     streson  gaStresL,
-    ipitch2L*kMod, ifdbk\r\n ares3L     streson  gaStresL, ipitch3L*kMod, ifdbk\r\n
-    ares4L     streson  gaStresL, ipitch4L*kMod, ifdbk\r\n ares5L     streson  gaStresL,
-    ipitch5L*kMod, ifdbk\r\n ares6L     streson  gaStresL, ipitch6L*kMod, ifdbk\r\n
-    \r\n aL      = (ares1L + ares2L + ares3L + ares4L + ares5L + ares6L) * .5\r\n
-    \r\n ipitch1R   = cpsmidinn(25)+rnd(3)   ; Filter 1 freq\r\n ipitch2R   = cpsmidinn(33)+rnd(3)  
-    ; Filter 2 freq\r\n ipitch3R   = cpsmidinn(41)+rnd(3)   ; Filter 3 freq\r\n ipitch4R  
-    = cpsmidinn(59)+rnd(3)   ; Filter 4 freq\r\n ipitch5R   = cpsmidinn(64)+rnd(3)  
-    ; Filter 5 freq\r\n ipitch6R   = cpsmidinn(77)+rnd(3)   ; Filter 6 freq\r\n            
-    \r\n ares1R     streson  gaStresR, ipitch1R*kMod, ifdbk\r\n ares2R     streson 
-    gaStresR, ipitch2R*kMod, ifdbk\r\n ares3R     streson  gaStresR, ipitch3R*kMod,
-    ifdbk\r\n ares4R     streson  gaStresR, ipitch4R*kMod, ifdbk\r\n ares5R     streson 
-    gaStresR, ipitch5R*kMod, ifdbk\r\n ares6R     streson  gaStresR, ipitch6R*kMod,
-    ifdbk\r\n \r\n aR      = (ares1R + ares2R + ares3R + ares4R + ares5R + ares6R)
-    * .5\r\n \r\n  vincr gaFxPan, (aL+aR)*.5\r\n              \r\n outs  aL*chnget:k(\"masterLvl\"),
-    aR*chnget:k(\"masterLvl\") \r\n clear gaStresL, gaStresR \r\n endin\r\n  \r\n
-    ;---------------------------\r\n \r\ninstr   Reverb\r\n        denorm gaRevL,
-    gaRevR\r\nkverbMod = chnget:k(\"verbMod\")\r\nkverbMod portk kverbMod, .2\r\naL,
-    aR  reverbsc gaRevL, gaRevR, kverbMod, 12000, sr, 0.5, 1\r\n\r\n   vincr gaFxPan,
-    aL+aR\r\n\r\n   outs  aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\")\r\n
-    clear gaRevL, gaRevR\r\nendin  \r\n\r\n; ----------------------------\r\n\r\ninstr   
-    FXpan\r\n denorm gaFxPan\r\n kMod oscil .5, chnget:k(\"panMod\")\r\n kMod = kMod
-    + .5\r\n aL, aR pan2 gaFxPan, chnget:k(\"panLvl\") * kMod\r\nouts  aL*chnget:k(\"masterLvl\"),
-    aR*chnget:k(\"masterLvl\") \r\n clear gaFxPan \r\nendin\r\n\r\n</CsInstruments>\r\n<CsScore>\r\nf0
-    z\r\ni1 0 [60*60*24*7] \r\ni \"Chorus\" 0 [60*60*24*7]  \r\ni \"Echo\" 0 [60*60*24*7]\r\ni
-    \"Flanger\" 0 [60*60*24*7]\r\ni \"Streson\" 0 [60*60*24*7]\r\ni \"Reverb\" 0
-    [60*60*24*7] \r\ni \"FXpan\" 0 [60*60*24*7]\r\n</CsScore>\r\n</CsoundSynthesizer>\r\n"
+    mode(\"named preset\") channel(\"filebutton32\")\nfilebutton bounds(14, 98, 60,
+    25), text(\"Remove\", \"Remove\"), populate(\"*.snaps\", \"test\"), mode(\"remove
+    preset\") channel(\"filebutton33\")\n\n</Cabbage>\n<CsoundSynthesizer>\n<CsOptions>\n-n
+    -d\n</CsOptions>\n<CsInstruments>\nsr = 48000\nksmps = 32\nnchnls = 2\n0dbfs
+    = 1\n\n; Sound Design and presets by Dr. Richard Boulanger and his students at
+    Berklee\n; ported to CsoundUnity by gb, June 2023\n\n; A combobox channel arrives
+    1-based, as in Cabbage: option 1 of \"sound\" is gSfile1.\n; Until 4.0 the preset
+    path sent it 0-based, which is what the old giUnityCombobox\n; compensated for.
+    CsoundUnity now sends the Cabbage value on every path.\n\ngSfile1   = \"./sounds/am_pinsM.wav\"\ngSfile2  
+    = \"./sounds/am_dogM.aif\"\ngSfile3   = \"./sounds/am_trafficM.aif\"\ngSfile4  
+    = \"./sounds/am_blackbirdM.aif\"\ngSfile5   = \"./sounds/am_fireM.wav\"\ngSfile6  
+    = \"./sounds/sp_hellorcbBerkleeM.aif\"\ngSfile7   = \"./sounds/mu_PerotinM.wav\"\ngSfile8  
+    = \"./sounds/mu_brahmsM.aif\"\ngSfile9   = \"./sounds/dl_TomekPansM.wav\"\ngSfile10 
+    = \"./sounds/dl_TomekBowlsM.aif\"\n\ngiSmp1   ftgen  1, 0, 0, 1,  gSfile1, 0,
+    0, 0\ngiSmp2   ftgen  2, 0, 0, 1,  gSfile2, 0, 0, 0\ngiSmp3   ftgen  3, 0, 0,
+    1,  gSfile3, 0, 0, 0\ngiSmp4   ftgen  4, 0, 0, 1,  gSfile4, 0, 0, 0\ngiSmp5  
+    ftgen  5, 0, 0, 1,  gSfile5, 0, 0, 0\ngiSmp6   ftgen  6, 0, 0, 1,  gSfile6, 0,
+    0, 0\ngiSmp7   ftgen  7, 0, 0, 1,  gSfile7, 0, 0, 0\ngiSmp8   ftgen  8, 0, 0,
+    1,  gSfile8, 0, 0, 0\ngiSmp9   ftgen  9, 0, 0, 1,  gSfile9, 0, 0, 0\ngiSmp10 
+    ftgen 10, 0, 0, 1,  gSfile10, 0, 0, 0\n\ngaChorL init 0\ngaChorR init 0\n\ngaEchoL
+    init 0\ngaEchoR init 0\n\ngaFlangL init 0\ngaFlangR init 0\n\ngaStresL init 0\ngaStresR
+    init 0\n\ngaMtapL init 0\ngaMtapR init 0\n\ngaRevL init 0\ngaRevR init 0\n\ngaFxPan
+    init 0\n\ngiFun21 ftgen 21, 0, 4097, -7, 1, 4096, 0  ; Ramp down\ngiFun22 ftgen
+    22, 0, 4097, -7, 0, 4096, 1  ; Ramp up\ngiFun23 ftgen 23, 0, 4097, 19, .5, 1,
+    0, 0 ; Half Sine\n\n\ninstr 1\n  kDur = chnget:k(\"dur\")\n  kTrig = chnget:k(\"trigger\")\n 
+    \n    if changed(kTrig) == 1 then\n        event \"i\", \"Flooper\", 0, kDur\n       
+    kTrig = 0\n    endif\n    \n    kStop = chnget:k(\"stop\")\n    if changed(kStop)
+    == 1 then\n       turnoff2 \"Flooper\", 0, 1\n       kStop = 0\n    endif\nendin\n\n\ninstr
+    Flooper\n\niDur       = chnget:i(\"dur\")\t\nkGain      = chnget:k(\"masterLvl\")\nkPitch    
+    = chnget:k(\"pitch\")\nkLoopStrt  = chnget:k(\"loopStrt\") \nkLoopEnd   = chnget:k(\"loopEnd\")
+    \niMode      = chnget:i(\"loopDir\")\nkInput     = chnget:k(\"sound\")\n\nflooperInit:\n\n;
+    Read the channel here, not i(kInput): a k-variable holds nothing yet on the i-pass
+    \u2014 0 on a\n; fresh allocation, the previous note's value on a reused one
+    \u2014 so flooper2 was initialised on the\n; wrong sample for one k-cycle before
+    the reinit below corrected it. Audible as a click.\ninput     = chnget:i(\"sound\")\n\niLen
+    init 0\niSmp init 0\n\nif input == 1 then\niLen filelen gSfile1\niSmp = 1\nelseif
+    input == 2 then\niLen filelen gSfile2\niSmp = 2\nelseif input == 3 then\niLen
+    filelen gSfile3\niSmp = 3\nelseif input == 4 then\niLen filelen gSfile4\niSmp
+    = 4\nelseif input == 5 then\niLen filelen gSfile5\niSmp = 5\nelseif input ==
+    6 then\niLen filelen gSfile6\niSmp = 6\nelseif input == 7 then\niLen filelen
+    gSfile7\niSmp = 7\nelseif input == 8 then\niLen filelen gSfile8\niSmp = 8\nelseif
+    input == 9 then\niLen filelen gSfile9\niSmp = 9\nelse \niLen filelen gSfile10\niSmp
+    = 10\nendif\n\nprints \"LOADING SAMPLE: %d Len: %d\\n\", iSmp, iLen\n\nif kLoopStrt
+    > kLoopEnd then\nkLoopStrt = kLoopEnd-.1\nendif\nif kLoopEnd < kLoopStrt then\nkLoopEnd
+    = kLoopStrt+.1\nendif\n\n;asig1[,asig2] flooper2 kamp,  kpitch, kloopstart, kloopend,
+    kcrossfade, ifn [, istart, imode, ifenv, iskip] \naFloop         flooper2 kGain,
+    kPitch, .001+(kLoopStrt * iLen), .001+(kLoopEnd * iLen), 0.05, iSmp, i(kLoopStrt)
+    * iLen, int(iMode)\n\nrireturn\n\n; changed2, not changed: changed also fires
+    on the note's first k-cycle, which reinit'd the\n; instrument once for nothing.
+    changed2 still fires when the dropdown moves mid-note.\nkInputChanged changed2
+    kInput   ;chnget:k(\"sound\")\nif (kInputChanged == 1) then\n    reinit flooperInit\nendif\n\nkEnv   
+    transeg 0,iDur*.01,0,1,iDur*.8,0,1,iDur*.19,-1,0          \naDry    =       aFloop
+    * kEnv * chnget:k(\"sampLvl\")\naL,aR   pan2    aDry, chnget:k(\"pan\")\n       
+    outs    aL * chnget:k(\"masterLvl\"), aR * chnget:k(\"masterLvl\")\n        \n       
+    vincr   gaChorL, aL*chnget:k(\"chorLvl\")\n        vincr   gaChorR, aR*chnget:k(\"chorLvl\")
+    \n        vincr   gaEchoL, aL*chnget:k(\"echoLvl\")\n        vincr   gaEchoR,
+    aR*chnget:k(\"echoLvl\") \n        vincr   gaFlangL, aL*chnget:k(\"flangLvl\")\n       
+    vincr   gaFlangR, aR*chnget:k(\"flangLvl\") \n        vincr   gaStresL, aL*chnget:k(\"stresLvl\")\n       
+    vincr   gaStresR, aR*chnget:k(\"stresLvl\") \n        vincr   gaRevL,  aL*chnget:k(\"verbLvl\")\n       
+    vincr   gaRevR,  aR*chnget:k(\"verbLvl\")\n\nendin\n\n; -----------------------------------\n\ninstr  
+    Chorus  ; from Lazzarini\n     denorm gaChorL, gaChorR\n amod1  =   randi:a(3,.75)+oscili(2,.35)+31\n
+    amod2  =   randi:a(2,.65)+oscili(3,.55)+29\n amodX  randi chnget:k(\"chorMod\"),
+    10\n ;amodX  portk amodX,.1\n aL     =   vdelay(gaChorL,amod1*amodX,35)\n aR    
+    =   vdelay(gaChorR,amod2*(1-amodX),35)\n \n vincr gaFxPan, (aL+aR)*.5\n  \n           
+    outs  aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\")\n   clear gaChorL,
+    gaChorR\nendin\n\n; -----------------------------\n\ninstr    Echo ; MN3011 BBD
+    Reverb from Steven Cook\n         denorm gaEchoL, gaEchoR\n         \n ifdbkL   
+    init .31\n iEchoL    init .34\n afdbkL    init 0\n idelayL   init 4.35\n \n kEchoMOD 
+    randi .1*chnget:k(\"echoMod\"), 2*chnget:k(\"echoMod\")\n kEchoMOD portk kEchoMOD,
+    .4\n\n gaEchoL      = gaEchoL + afdbkL*ifdbkL\n \n abufL     delayr  2\n atap1L   
+    deltapi .0396*idelayL*kEchoMOD\n atap2L    deltapi .0662*idelayL\n atap3L   
+    deltapi .1194*idelayL*kEchoMOD\n atap4L    deltapi .1726*idelayL\n atap5L   
+    deltapi .2790*idelayL*kEchoMOD\n atap6L    deltapi .3328*idelayL\n          
+    delayw  gaEchoL\n \n afdbkL    butterlp  atap6L, 7000\n abbdL     sum  atap1L,
+    atap2L, atap3L, atap4L, atap5L, atap6L\n abbdL     butterlp  abbdL, 7000\n \n
+    aL = gaEchoL + (abbdL*iEchoL)\n \n ifdbkR    init .45\n iEchoR    init .35\n
+    afdbkR    init 0\n idelayR   init 4.6\n \n gaEchoR      = gaEchoR + afdbkR*ifdbkR\n
+    \n abufR     delayr  1\n atap1R    deltapi .0396*idelayR\n atap2R    deltapi
+    .0662*idelayR*kEchoMOD\n atap3R    deltapi .1194*idelayR\n atap4R    deltapi
+    .1726*idelayR*kEchoMOD\n atap5R    deltapi .2790*idelayR\n atap6R    deltapi
+    .3328*idelayR*kEchoMOD\n           delayw  gaEchoL\n \n afdbkR    butterlp  atap6R,
+    7000\n abbdR     sum  atap1R, atap2R, atap3R, atap4R, atap5R, atap6R\n \n abbdR    
+    butterlp  abbdR, 7000\n \n aR = gaEchoR + (abbdR*iEchoR)\n \nvincr gaFxPan, (aL+aR)*.5\n\n           
+    outs  aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\")\n        clear gaEchoL,
+    gaEchoR\n endin\n\n;---------------------------------------\n\n instr    Flanger
+    ; Barberpole flanger from Steven Cook\n \n idepth   init 2/1000                       
+    ; Depth in ms\n irate    init 1.618                         ; Rate\n ifeed   
+    init .8532                         ; Feedback\n; Mode: based on ftable 21 and
+    ftable 22 = 21 is down, 22 is up\n \n kFlangMod = chnget:k(\"flangMod\")\n kFLangMod
+    portk kFlangMod, .1\n \n denorm gaFlangL, gaFlangR      \n \n asaw1L    oscili 
+    idepth, irate+kFlangMod, giFun21       ; Saw 0 degrees\n asaw2L    oscili  idepth,
+    irate+kFlangMod, giFun21, .25  ; Saw 90 degrees\n asaw3L    oscili  idepth, irate+kFlangMod,
+    giFun21, .5   ; Saw 180 degrees\n asaw4L    oscili  idepth, irate+kFlangMod,
+    giFun21, .75  ; Saw 270 degrees\n \n asin1L    oscili  1, irate+kFlangMod, giFun23               
+    ; 1/2 Sine 0 degrees\n asin2L    oscili  1, irate+kFlangMod, giFun23, .25          
+    ; 1/2 Sine 90 degrees\n asin3L    oscili  1, irate+kFlangMod, giFun23, .5           
+    ; 1/2 Sine 180 degrees\n asin4L    oscili  1, irate+kFlangMod, giFun23, .75          
+    ; 1/2 Sine 270 degrees\n \n adel1L    flanger   gaFlangL, asaw1L*kFlangMod, ifeed*kFlangMod,
+    rnd(idepth) ; Flanger 1\n adel2L    flanger  gaFlangL, asaw2L*kFlangMod, ifeed*kFlangMod,
+    rnd(idepth) ; Flanger 2\n adel3L    flanger  gaFlangL, asaw3L*kFlangMod, ifeed*kFlangMod,
+    rnd(idepth) ; Flanger 3\n adel4L    flanger  gaFlangL, asaw4L*kFlangMod, ifeed*kFlangMod,
+    rnd(idepth) ; Flanger 4\n \n aflangeL  = adel1L*asin1L + adel2L*asin2L + adel3L*asin3L
+    + adel4L*asin4L\n aflangeL  dcblock  aflangeL\n adirectL  = gaFlangL*(asin1L
+    + asin2L + asin3L + asin4L)\n\n asaw1R    oscili  idepth, irate+rnd(kFlangMod),
+    giFun22       ; Saw 0 degrees\n asaw2R    oscili  idepth, irate+rnd(kFlangMod),
+    giFun22, .25  ; Saw 90 degrees\n asaw3R    oscili  idepth, irate+rnd(kFlangMod),
+    giFun22, .5   ; Saw 180 degrees\n asaw4R    oscili  idepth, irate+rnd(kFlangMod),
+    giFun22, .75  ; Saw 270 degrees\n \n asin1R    oscili  1, irate+kFlangMod, giFun23               
+    ; 1/2 Sine 0 degrees\n asin2R    oscili  1, irate+kFlangMod, giFun23, .25          
+    ; 1/2 Sine 90 degrees\n asin3R    oscili  1, irate+kFlangMod, giFun23, .5           
+    ; 1/2 Sine 180 degrees\n asin4R    oscili  1, irate+kFlangMod, giFun23, .75          
+    ; 1/2 Sine 270 degrees\n \n adel1R    flanger  gaFlangR, asaw1R*kFlangMod, rnd(ifeed),
+    idepth ; Flanger 1\n adel2R    flanger  gaFlangR, asaw2R*kFlangMod, rnd(ifeed),
+    idepth ; Flanger 2\n adel3R    flanger  gaFlangR, asaw3R*kFlangMod, rnd(ifeed),
+    idepth ; Flanger 3\n adel4R    flanger  gaFlangR, asaw4R*kFlangMod, rnd(ifeed),
+    idepth ; Flanger 4\n \n aflangeR  = adel1R*asin1R + adel2R*asin2R + adel3R*asin3R
+    + adel4R*asin4R\n aflangeR  dcblock  aflangeR\n adirectR  = gaFlangR*(asin1R
+    + asin2R + asin3R + asin4R)\n\naL =    aflangeL + adirectL      \naR =    aflangeR
+    + adirectR\n\nvincr gaFxPan, (aL+aR) * .5 \n\n           outs  aL*chnget:k(\"masterLvl\"),
+    aR*chnget:k(\"masterLvl\")\n\n clear gaFlangL, gaFlangR \n endin\n\n;----------------------------\n\ninstr 
+    Streson             ; 'Streson' resonator bank after Steven Cook\ndenorm gaStresL,
+    gaStresR\n\n kMod =  chnget:k(\"stresMod\")\n kMod portk kMod, .1\n   \n ifdbk    
+    = .99\n   \n ipitch1L   = cpsmidinn(36)+int(rnd(6))   ; Filter 1 freq\n ipitch2L  
+    = cpsmidinn(50)+int(rnd(5))   ; Filter 2 freq\n ipitch3L   = cpsmidinn(52)+int(rnd(4))  
+    ; Filter 3 freq\n ipitch4L   = cpsmidinn(53)+int(rnd(3))   ; Filter 4 freq\n
+    ipitch5L   = cpsmidinn(55)+int(rnd(5))  ; Filter 5 freq\n ipitch6L   = cpsmidinn(59)+int(rnd(8)) 
+    ; Filter 6 freq\n             \n ares1L     streson  gaStresL, ipitch1L*kMod,
+    ifdbk\n ares2L     streson  gaStresL, ipitch2L*kMod, ifdbk\n ares3L     streson 
+    gaStresL, ipitch3L*kMod, ifdbk\n ares4L     streson  gaStresL, ipitch4L*kMod,
+    ifdbk\n ares5L     streson  gaStresL, ipitch5L*kMod, ifdbk\n ares6L     streson 
+    gaStresL, ipitch6L*kMod, ifdbk\n \n aL      = (ares1L + ares2L + ares3L + ares4L
+    + ares5L + ares6L) * .5\n \n ipitch1R   = cpsmidinn(25)+rnd(3)   ; Filter 1 freq\n
+    ipitch2R   = cpsmidinn(33)+rnd(3)   ; Filter 2 freq\n ipitch3R   = cpsmidinn(41)+rnd(3)  
+    ; Filter 3 freq\n ipitch4R   = cpsmidinn(59)+rnd(3)   ; Filter 4 freq\n ipitch5R  
+    = cpsmidinn(64)+rnd(3)   ; Filter 5 freq\n ipitch6R   = cpsmidinn(77)+rnd(3)  
+    ; Filter 6 freq\n             \n ares1R     streson  gaStresR, ipitch1R*kMod,
+    ifdbk\n ares2R     streson  gaStresR, ipitch2R*kMod, ifdbk\n ares3R     streson 
+    gaStresR, ipitch3R*kMod, ifdbk\n ares4R     streson  gaStresR, ipitch4R*kMod,
+    ifdbk\n ares5R     streson  gaStresR, ipitch5R*kMod, ifdbk\n ares6R     streson 
+    gaStresR, ipitch6R*kMod, ifdbk\n \n aR      = (ares1R + ares2R + ares3R + ares4R
+    + ares5R + ares6R) * .5\n \n  vincr gaFxPan, (aL+aR)*.5\n              \n outs 
+    aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\") \n clear gaStresL, gaStresR
+    \n endin\n  \n ;---------------------------\n \ninstr   Reverb\n        denorm
+    gaRevL, gaRevR\nkverbMod = chnget:k(\"verbMod\")\nkverbMod portk kverbMod, .2\naL,
+    aR  reverbsc gaRevL, gaRevR, kverbMod, 12000, sr, 0.5, 1\n\n   vincr gaFxPan,
+    aL+aR\n\n   outs  aL*chnget:k(\"masterLvl\"), aR*chnget:k(\"masterLvl\")\n clear
+    gaRevL, gaRevR\nendin  \n\n; ----------------------------\n\ninstr    FXpan\n
+    denorm gaFxPan\n kMod oscil .5, chnget:k(\"panMod\")\n kMod = kMod + .5\n aL,
+    aR pan2 gaFxPan, chnget:k(\"panLvl\") * kMod\nouts  aL*chnget:k(\"masterLvl\"),
+    aR*chnget:k(\"masterLvl\") \n clear gaFxPan \nendin\n\n</CsInstruments>\n<CsScore>\nf0
+    z\ni1 0 [60*60*24*7] \ni \"Chorus\" 0 [60*60*24*7]  \ni \"Echo\" 0 [60*60*24*7]\ni
+    \"Flanger\" 0 [60*60*24*7]\ni \"Streson\" 0 [60*60*24*7]\ni \"Reverb\" 0 [60*60*24*7]
+    \ni \"FXpan\" 0 [60*60*24*7]\n</CsScore>\n</CsoundSynthesizer>\n"
   _csoundFileName: CAB-RCB-flooper.csd
   _csoundAsset: {fileID: 102900000, guid: c799c011321a43d4e96ca6b34ecc6e59, type: 3}
   _channels:
@@ -984,8 +977,8 @@ MonoBehaviour:
     value2: 0
     x: 0
     y: 0
-    width: 0
-    height: 0
+    width: 650
+    height: 480
   - type: button
     channel: trigger
     text: Trigger
@@ -1000,10 +993,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 56
+    y: 172
+    width: 80
+    height: 40
   - type: button
     channel: stop
     text: Stop
@@ -1018,10 +1011,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 56
+    y: 270
+    width: 80
+    height: 40
   - type: rslider
     channel: dur
     text: Duration
@@ -1036,19 +1029,37 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 58
+    y: 214
+    width: 76
+    height: 53
+  - type: label
+    channel: label44
+    text: Sample
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 252
+    y: 164
+    width: 80
+    height: 20
   - type: combobox
     channel: sound
-    text: Pins,Dog,Traffic,Bird,Fire,Hello,Perotin,Brahms,Tomek1,Tomek2
+    text: 
     caption: 
     min: 1
     max: 10
     value: 0
     skew: 1
-    increment: 0.01
+    increment: 0.001
     options:
     - Pins
     - Dog
@@ -1064,10 +1075,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 246
+    y: 190
+    width: 95
+    height: 28
   - type: groupbox
     channel: groupbox2
     text: Pitch
@@ -1082,10 +1093,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 188
+    y: 12
+    width: 104
+    height: 105
   - type: rslider
     channel: pitch
     text: Pitch
@@ -1100,10 +1111,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 202
+    y: 34
+    width: 79
+    height: 66
   - type: groupbox
     channel: groupbox1
     text: LoopStart
@@ -1118,10 +1129,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 306
+    y: 10
+    width: 106
+    height: 105
   - type: rslider
     channel: loopStrt
     text: LoopStart
@@ -1136,10 +1147,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 320
+    y: 36
+    width: 79
+    height: 66
   - type: groupbox
     channel: groupbox3
     text: LoopEnd
@@ -1154,10 +1165,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 418
+    y: 10
+    width: 106
+    height: 105
   - type: rslider
     channel: loopEnd
     text: LoopEnd
@@ -1172,10 +1183,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 434
+    y: 38
+    width: 79
+    height: 66
   - type: groupbox
     channel: groupbox4
     text: LoopDirection
@@ -1190,10 +1201,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 530
+    y: 10
+    width: 106
+    height: 105
   - type: rslider
     channel: loopDir
     text: F-B-FB
@@ -1208,10 +1219,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 546
+    y: 38
+    width: 79
+    height: 66
   - type: hslider
     channel: pan
     text: Pan
@@ -1226,10 +1237,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 208
+    y: 358
+    width: 181
+    height: 50
   - type: rslider
     channel: sampLvl
     text: Sampler
@@ -1244,10 +1255,28 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 214
+    y: 248
+    width: 181
+    height: 74
+  - type: label
+    channel: label74
+    text: Global FX
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 476
+    y: 120
+    width: 104
+    height: 20
   - type: rslider
     channel: chorLvl
     text: Chorus
@@ -1262,10 +1291,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 456
+    y: 142
+    width: 72
+    height: 51
   - type: rslider
     channel: chorMod
     text: ChorusMod
@@ -1280,10 +1309,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 536
+    y: 142
+    width: 71
+    height: 51
   - type: rslider
     channel: echoLvl
     text: Echo
@@ -1298,10 +1327,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 458
+    y: 198
+    width: 68
+    height: 51
   - type: rslider
     channel: echoMod
     text: EchoMod
@@ -1316,10 +1345,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 536
+    y: 198
+    width: 72
+    height: 51
   - type: rslider
     channel: flangLvl
     text: Flanger
@@ -1334,10 +1363,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 458
+    y: 252
+    width: 68
+    height: 51
   - type: rslider
     channel: flangMod
     text: FlangerMod
@@ -1352,10 +1381,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 536
+    y: 252
+    width: 73
+    height: 51
   - type: rslider
     channel: stresLvl
     text: StringReson
@@ -1370,10 +1399,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 460
+    y: 310
+    width: 68
+    height: 51
   - type: rslider
     channel: stresMod
     text: StresonMod
@@ -1388,10 +1417,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 534
+    y: 310
+    width: 73
+    height: 51
   - type: rslider
     channel: verbLvl
     text: Verb
@@ -1406,10 +1435,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 462
+    y: 362
+    width: 65
+    height: 51
   - type: rslider
     channel: verbMod
     text: VerbMod
@@ -1424,10 +1453,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 530
+    y: 362
+    width: 74
+    height: 51
   - type: rslider
     channel: panLvl
     text: FX Pan
@@ -1442,10 +1471,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 460
+    y: 418
+    width: 68
+    height: 51
   - type: rslider
     channel: panMod
     text: FXpanMod
@@ -1460,10 +1489,10 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 530
+    y: 418
+    width: 75
+    height: 51
   - type: rslider
     channel: masterLvl
     text: Master
@@ -1478,45 +1507,72 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 40
+    y: 330
+    width: 119
+    height: 108
+  - type: label
+    channel: label37
+    text: Presets
+    caption: 
+    min: 0
+    max: 0
+    value: 0
+    skew: 0
+    increment: 0
+    options: []
+    channelY: 
+    minY: 0
+    maxY: 0
+    value2: 0
+    x: 42
+    y: 36
+    width: 80
+    height: 23
   - type: combobox
     channel: combo31
-    text: init, pins - long+low, dog - squeeky, dog - groove, traffic - rumble, traffic
-      - harmony, bird - loop, bird - loop2, fire - low & rhythmic, fire - back&forth,
-      fire - dry loop, Boulanger - JeanLuc ;
+    text: 
     caption: 
     min: 1
-    max: 12
+    max: 23
     value: 0
     skew: 1
-    increment: 0.01
+    increment: 0.001
     options:
     - init
-    - pins-long+low
-    - dog-squeeky
-    - dog-groove
-    - traffic-rumble
-    - traffic-harmony
-    - bird-loop
-    - bird-loop2
-    - fire-low&rhythmic
-    - fire-back&forth
-    - fire-dryloop
-    - Boulanger-JeanLuc;
+    - pins - long+low
+    - dog - squeeky
+    - dog - groove
+    - traffic - rumble
+    - traffic - harmony
+    - bird - loop
+    - bird - loop2
+    - fire - low & rhythmic
+    - fire - back&forth
+    - fire - dry loop
+    - Boulanger - JeanLuc ;-)
+    - hello - grove
+    - hello - groove2
+    - Perotin - back+forth
+    - Perotin - Druids
+    - Brahms - Frozen Chord
+    - Brahms - wave of chords
+    - Tomek2 - with echo + rev
+    - Tomek - Tenet
+    - Tomek2 - StrangeAmbience
+    - Tomek2 - groove
+    - Tomek2 - Loop3
     channelY: 
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 76
+    y: 68
+    width: 100
+    height: 25
   - type: filebutton
     channel: filebutton32
-    text: Save, Save
+    text: Save
     caption: 
     min: 0
     max: 0
@@ -1528,13 +1584,13 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 14
+    y: 68
+    width: 60
+    height: 25
   - type: filebutton
     channel: filebutton33
-    text: Remove, Remove
+    text: Remove
     caption: 
     min: 0
     max: 0
@@ -1546,28 +1602,30 @@ MonoBehaviour:
     minY: 0
     maxY: 0
     value2: 0
-    x: 0
-    y: 0
-    width: 0
-    height: 0
+    x: 14
+    y: 98
+    width: 60
+    height: 25
   _availableAudioChannels: []
-  _nchnls: 0
+  _unsupportedWidgets: []
+  _nchnls: 2
   _audioChannelsToAdd: []
   _audioChannelsToRemove: []
-  _drawCsoundString: 1
+  _drawCsoundString: 0
   _drawTestScore: 0
   _drawSettings: 1
-  _drawAudioInputRoutes: 1
+  _drawAudioInputRoutes: 0
   _drawChannels: 1
   _drawAudioChannels: 0
-  _drawPresets: 0
+  _drawPresets: 1
   _drawPresetsLoad: 1
   _drawPresetsSave: 0
-  _drawPresetsImport: 1
+  _drawPresetsImport: 0
   _showRuntimeEnvironmentPath: 0
-  _currentPreset: QuickerBrownFox
-  _currentPresetSaveFolder: 
-  _currentPresetLoadFolder: C:/Users/gb/Documents/Unity/CsoundUnity/Projects/CsoundUnity_DevelopmentProject/Assets
+  _currentPreset: {fileID: 0}
+  _currentPresetName: 
+  _currentPresetSaveFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets
+  _currentPresetLoadFolder: /Users/gb/Documents/Work/CsoundUnity/CsoundUnity_Development/Assets
   _audioRoutingBufferSize: 512
   webGLAssetsList: []
   _audioPath: 0

@@ -41,14 +41,9 @@ nchnls = 2
 ; Sound Design and presets by Dr. Richard Boulanger and his students at Berklee
 ; ported to CsoundUnity by gb, June 2023
 
-; set this var to 0 when testing on Cabbage (or comment the line), to 1 when using this csd on Unity, 
-; Unity comboboxes start index is 0, instead on Cabbage they start from 1 (0 is the unset value)
-; we need to do this because we created the Unity presets from the Cabbage Snaps
-; using the import Snaps feature (where the index read from the Cabbage Snap 
-; is decreased by one - that is to show the correct combobox value in the channel inspector)
-; so to obtain the same preset result and load the correct sample we need to compensate for this
-; see line 79 below
-giUnityCombobox init 1
+; A combobox channel arrives 1-based, as in Cabbage: option 1 of "sound" is gSfile1.
+; Until 4.0 the preset path sent it 0-based, which is what the old giUnityCombobox
+; compensated for. CsoundUnity now sends the Cabbage value on every path.
 
 gSfile1 = "./sounds/am_whisperM.aif"
 gSfile2 = "./sounds/am_dogM.aif"
@@ -78,9 +73,6 @@ instr 1
   kDur = chnget:k("dur")
   kInput = chnget:k("sound")
 
-; this is to overcome the difference in ComboBoxes behaviour on Unity, as explained above
-  kInput += giUnityCombobox
-  
   if changed(kTrig) == 1 then
     event "i", "Mincer", 0, kDur, kInput
   endif
