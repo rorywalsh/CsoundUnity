@@ -32,7 +32,13 @@ namespace Csound.Unity
     /// macOS / iOS / visionOS — CoreMIDI (USB, BLE, Network MIDI);
     /// Android — android.media.midi (USB + BLE, API 23+);
     /// Windows — WinMM (short MIDI messages; SysEx not supported);
-    /// WebGL — not yet implemented.
+    /// WebGL — Web MIDI API (Chrome/Edge, HTTPS).
+    /// </para>
+    /// <para>
+    /// On Android and WebGL the backend delivers messages with <c>UnitySendMessage</c>, which
+    /// addresses a GameObject <b>by name</b>: with two of them named the same, every message goes to
+    /// the first one Unity finds and the other receives nothing. Give each GameObject carrying this
+    /// component a distinct name. CoreMIDI and WinMM address the receiver directly.
     /// </para>
     /// <para>
     /// In addition to forwarding messages to Csound, this component fires C# events
