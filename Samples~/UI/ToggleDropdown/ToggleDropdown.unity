@@ -782,8 +782,8 @@ MonoBehaviour:
   loudVolumeWarning: 1
   loudWarningThreshold: 10
   overrideSamplingRate: 0
-  audioRate: 48000
-  controlRate: 1500
+  audioRate: 44100
+  controlRate: 1378
   ksmps: 32
   updateOutputBuffer: 0
   fadeInSeconds: 0
@@ -918,7 +918,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 200
-    value: 10
+    value: 6.5000005
     skew: 1
     increment: 0.001
     options: []
@@ -1032,7 +1032,7 @@ MonoBehaviour:
     caption: Modulator Waveform
     min: 1
     max: 6
-    value: 0
+    value: 3
     skew: 1
     increment: 0.001
     options:
@@ -1056,7 +1056,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 15
-    value: 0
+    value: 3.21
     skew: 1
     increment: 0.001
     options: []
@@ -1092,7 +1092,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0
-    value: 0
+    value: 1
     skew: 0
     increment: 0
     options: []
@@ -1110,7 +1110,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 16000
-    value: 0
+    value: 908.00006
     skew: 1
     increment: 0.001
     options: []
@@ -1146,7 +1146,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 1.99
-    value: 0
+    value: 0.296
     skew: 1
     increment: 0.001
     options: []
@@ -1182,7 +1182,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0
-    value: 0
+    value: 1
     skew: 0
     increment: 0
     options: []
@@ -1224,7 +1224,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 0.99
-    value: 0
+    value: 0.86500007
     skew: 1
     increment: 0.001
     options: []
@@ -1242,7 +1242,7 @@ MonoBehaviour:
     caption: 
     min: 0
     max: 30
-    value: 0
+    value: 3.7000003
     skew: 1
     increment: 0.001
     options: []
