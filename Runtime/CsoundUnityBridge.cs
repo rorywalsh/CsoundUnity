@@ -114,10 +114,14 @@ namespace Csound.Unity
         private readonly ConcurrentQueue<byte[]> _midiQueue = new ConcurrentQueue<byte[]>();
 
         /// <summary>
-        /// Static reference used by the IL2CPP-compatible static callbacks below.
-        /// Only one CsoundUnityBridge instance can receive MIDI at a time (sufficient for all current use cases).
+        /// Queue per Csound instance, keyed by the instance handle, for the IL2CPP-compatible static
+        /// callbacks below. One shared static before, which every bridge repointed at its own queue:
+        /// with two instances both read callbacks drained that same queue, so a note-on and its
+        /// note-off could land on different ones and the note hung. A ConcurrentDictionary because
+        /// the lookup is on the audio thread, where its reads are lock-free and allocate nothing.
         /// </summary>
-        private static ConcurrentQueue<byte[]> _staticMidiQueue;
+        private static readonly ConcurrentDictionary<IntPtr, ConcurrentQueue<byte[]>> s_midiQueues
+            = new ConcurrentDictionary<IntPtr, ConcurrentQueue<byte[]>>();
 
         /// <summary>Kept alive as fields to prevent GC collection of the unmanaged callback delegates.</summary>
         private CsoundLib.NativeMethods.MidiInOpenCallbackProxy  _midiInOpenCallback;
@@ -290,9 +294,9 @@ namespace Csound.Unity
             try { CsoundLib.NativeMethods.csoundSetHostMIDIIO(csound); }
             catch (EntryPointNotFoundException) { }
 
-            // Point the static reference to this instance's queue so the
-            // IL2CPP-compatible static callbacks below can drain it.
-            _staticMidiQueue = _midiQueue;
+            // Registered under this instance's handle, so the static callbacks below drain the right
+            // queue when more than one instance is alive.
+            s_midiQueues[csound] = _midiQueue;
 
             _midiInOpenCallback  = MidiInOpenCallback;
             _midiReadCallback    = MidiReadCallback;
@@ -319,7 +323,7 @@ namespace Csound.Unity
         private static int MidiReadCallback(IntPtr csound, IntPtr userData, IntPtr buf, int nBytes)
         {
             var written = 0;
-            var queue = _staticMidiQueue;
+            if (!s_midiQueues.TryGetValue(csound, out var queue)) return 0;
             while (written + 3 <= nBytes && queue != null && queue.TryDequeue(out byte[] msg))
             {
                 for (int i = 0; i < msg.Length && written < nBytes; i++, written++)
@@ -624,6 +628,11 @@ namespace Csound.Unity
             // For the caller that got in against expectation: it reads a null pointer and produces
             // silence rather than freed memory. MemoryBarrier keeps the compiler and the CPU from
             // moving these stores after the calls below.
+            // Before the handle is cleared, because the handle is the key: left in, the entry would
+            // keep this instance's queue alive for a Csound that no longer exists, and a later
+            // instance handed the same address by the allocator would inherit it.
+            s_midiQueues.TryRemove(handle, out _);
+
             csound    = IntPtr.Zero;
             _spoutPtr = IntPtr.Zero;
             _spinPtr  = IntPtr.Zero;
