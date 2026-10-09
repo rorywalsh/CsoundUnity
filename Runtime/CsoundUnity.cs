@@ -909,8 +909,43 @@ namespace Csound.Unity
             }
         }
 
-        /// <summary>Drops the index. Call after replacing or reordering <see cref="_channels"/>.</summary>
-        private void InvalidateChannelsIndex() => _channelsIndexDict = null;
+        /// <summary>
+        /// Second-channel name to index into <see cref="_channels"/>, for the widgets that drive two
+        /// channels from one controller: xypad, hrange, vrange.
+        /// <para>
+        /// Kept apart from <see cref="ChannelsIndex"/> on purpose. Putting both names in one map
+        /// would make a write to the Y channel land on <c>value</c>, which belongs to X. And
+        /// <see cref="GetChannelController"/> deliberately still returns null for a Y name: its
+        /// caller would read <c>min</c>/<c>max</c>, which describe the X axis.
+        /// </para>
+        /// </summary>
+        private Dictionary<string, int> ChannelsYIndex
+        {
+            get
+            {
+                if (_channelsYIndexDict != null) return _channelsYIndexDict;
+
+                _channelsYIndexDict = new Dictionary<string, int>();
+                if (_channels == null) return _channelsYIndexDict;
+
+                for (var i = 0; i < _channels.Count; i++)
+                {
+                    var chan = _channels[i];
+                    if (chan == null || string.IsNullOrWhiteSpace(chan.channelY)) continue;
+                    _channelsYIndexDict[chan.channelY] = i;
+                }
+                return _channelsYIndexDict;
+            }
+        }
+
+        private Dictionary<string, int> _channelsYIndexDict;
+
+        /// <summary>Drops the indexes. Call after replacing or reordering <see cref="_channels"/>.</summary>
+        private void InvalidateChannelsIndex()
+        {
+            _channelsIndexDict  = null;
+            _channelsYIndexDict = null;
+        }
         [HideInInspector][SerializeField] private List<string> _availableAudioChannels = new List<string>();
         [HideInInspector][SerializeField] private List<string> _unsupportedWidgets = new List<string>();
 
@@ -3189,6 +3224,11 @@ namespace Csound.Unity
 
             if (ChannelsIndex.TryGetValue(channel, out var idx))
                 channels[idx].SetFromCsoundValue(val);
+            // The second channel of an xypad / hrange / vrange, which lives in value2 on the same
+            // controller. Without this it was write-only: set at init and never updated again, so a
+            // preset saved after moving an xypad kept the Y value the csd started with.
+            else if (ChannelsYIndex.TryGetValue(channel, out var yIdx))
+                channels[yIdx].value2 = (float)val;
         }
 
         /// <summary>

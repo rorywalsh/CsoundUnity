@@ -121,8 +121,7 @@ namespace Csound.Unity
         private bool _presetsInitialized = false;
         private string _currentPresetImportFolder;
         private string _currentPresetImportFolderSave;
-        // Transient Y-axis state for xypad widgets (not serialized, lives only in this editor session)
-        private readonly Dictionary<string, float> _xypadYValues = new Dictionary<string, float>();
+        /// <summary>Channels whose pad is being dragged right now, keyed by the Y channel name.</summary>
         private readonly HashSet<string> _xypadDragging = new HashSet<string>();
         private static MethodInfo _powerSliderMethod;
         private readonly AudioMonitorGUI _audioMonitor = new AudioMonitorGUI();
@@ -1099,18 +1098,10 @@ namespace Csound.Unity
                             var xMax     = cc.FindPropertyRelative("max").floatValue;
                             var yMin     = cc.FindPropertyRelative("minY").floatValue;
                             var yMax     = cc.FindPropertyRelative("maxY").floatValue;
-                            var yInitial = cc.FindPropertyRelative("value2").floatValue;
-
-                            if (!_xypadYValues.ContainsKey(ychan))
-                            {
-                                _xypadYValues[ychan] = yInitial;
-                                // push initial values to Csound as soon as the pad is first drawn in play mode
-                                if (Application.isPlaying && csoundUnity != null)
-                                {
-                                    csoundUnity.SetChannel(xchan, chanValue.floatValue);
-                                    csoundUnity.SetChannel(ychan, yInitial);
-                                }
-                            }
+                            // value2 on the serialized controller, not an editor-side copy. The copy
+                            // was seeded once and never re-read, so anything that wrote value2 —
+                            // applying a preset, most visibly — moved the data and left the dot behind.
+                            var yValue = cc.FindPropertyRelative("value2");
 
                             EditorGUILayout.LabelField(label.Length > 0 ? label : xchan, EditorStyles.boldLabel);
 
@@ -1136,12 +1127,12 @@ namespace Csound.Unity
                                 float nx = Mathf.Clamp01((e.mousePosition.x - rect.x) / rect.width);
                                 float ny = Mathf.Clamp01(1f - (e.mousePosition.y - rect.y) / rect.height);
                                 chanValue.floatValue = Mathf.Lerp(xMin, xMax, nx);
-                                _xypadYValues[ychan] = Mathf.Lerp(yMin, yMax, ny);
+                                yValue.floatValue    = Mathf.Lerp(yMin, yMax, ny);
                                 e.Use();
                                 if (Application.isPlaying && csoundUnity != null)
                                 {
                                     csoundUnity.SetChannel(xchan, chanValue.floatValue);
-                                    csoundUnity.SetChannel(ychan, _xypadYValues[ychan]);
+                                    csoundUnity.SetChannel(ychan, yValue.floatValue);
                                 }
                             }
                             EditorGUIUtility.AddCursorRect(rect, MouseCursor.MoveArrow);
@@ -1156,7 +1147,7 @@ namespace Csound.Unity
                                 && !_xypadDragging.Contains(ychan))
                             {
                                 chanValue.floatValue = (float)csoundUnity.GetChannel(xchan);
-                                _xypadYValues[ychan] = (float)csoundUnity.GetChannel(ychan);
+                                yValue.floatValue    = (float)csoundUnity.GetChannel(ychan);
                             }
 
                             EditorGUI.DrawRect(rect, new Color(0.13f, 0.13f, 0.13f));
@@ -1172,7 +1163,7 @@ namespace Csound.Unity
                             GUI.Label(new Rect(rect.x + 2, rect.y + 2, 30, 14), ychan, axisStyle);
 
                             float nx2 = xMax > xMin ? (chanValue.floatValue - xMin) / (xMax - xMin) : 0;
-                            float ny2 = yMax > yMin ? (_xypadYValues[ychan] - yMin) / (yMax - yMin) : 0;
+                            float ny2 = yMax > yMin ? (yValue.floatValue - yMin) / (yMax - yMin) : 0;
                             float dx  = rect.x + Mathf.Clamp01(nx2) * rect.width;
                             float dy  = rect.y + (1f - Mathf.Clamp01(ny2)) * rect.height;
 
@@ -1183,7 +1174,7 @@ namespace Csound.Unity
                             EditorGUILayout.BeginHorizontal();
                             EditorGUI.BeginDisabledGroup(true);
                             EditorGUILayout.FloatField(xchan, chanValue.floatValue);
-                            EditorGUILayout.FloatField(ychan, _xypadYValues.ContainsKey(ychan) ? _xypadYValues[ychan] : yMin);
+                            EditorGUILayout.FloatField(ychan, yValue.floatValue);
                             EditorGUI.EndDisabledGroup();
                             EditorGUILayout.EndHorizontal();
                         }
@@ -1890,6 +1881,15 @@ namespace Csound.Unity
                 var value = channel.ToCsoundValue(chanValue.floatValue);
                 csoundUnity.SetChannel(channel.channel, value);
             }
+
+            // xypad / hrange / vrange carry a second value in value2, on the same controller.
+            // Copying only `value` left the Y axis, or the range maximum, at whatever the instance
+            // already had: the preset looked applied and was not.
+            if (string.IsNullOrEmpty(channel.channelY)) return;
+
+            property.FindPropertyRelative("value2").floatValue = channel.value2;
+            if (Application.isPlaying && csoundUnity != null)
+                csoundUnity.SetChannel(channel.channelY, channel.value2);
         }
 
         private void SetCsd(string guid)
