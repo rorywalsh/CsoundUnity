@@ -1146,6 +1146,19 @@ namespace Csound.Unity
                             }
                             EditorGUIUtility.AddCursorRect(rect, MouseCursor.MoveArrow);
 
+                            // While playing, follow Csound rather than our own copies, so the pad
+                            // tracks a CsoundUnityXYPad in the scene. The Y side could not: its
+                            // channel name is the controller's channelY, which ChannelsIndex does
+                            // not key on, so nothing ever wrote a serialized value for it and the
+                            // dot stayed at value2. Skipped mid-drag, where this editor is the one
+                            // driving.
+                            if (Application.isPlaying && csoundUnity != null && csoundUnity.IsInitialized
+                                && !_xypadDragging.Contains(ychan))
+                            {
+                                chanValue.floatValue = (float)csoundUnity.GetChannel(xchan);
+                                _xypadYValues[ychan] = (float)csoundUnity.GetChannel(ychan);
+                            }
+
                             EditorGUI.DrawRect(rect, new Color(0.13f, 0.13f, 0.13f));
                             EditorGUI.DrawRect(new Rect(rect.x,        rect.y,        rect.width, 1),         new Color(0.4f, 0.4f, 0.4f));
                             EditorGUI.DrawRect(new Rect(rect.x,        rect.yMax - 1, rect.width, 1),         new Color(0.4f, 0.4f, 0.4f));
