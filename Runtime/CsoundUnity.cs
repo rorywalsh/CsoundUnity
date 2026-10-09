@@ -2923,11 +2923,9 @@ namespace Csound.Unity
                     // size() is used instead of bounds() for the form widget.
                     var controller = new CsoundChannelController();
                     controller.type = control;
-                    // A form has no channel, but it needs a name that can be used as a dictionary
-                    // key: left unassigned it stays null, and a live controller then behaved
-                    // differently from the very same entry loaded back from a preset asset, where
-                    // an empty YAML field deserialises to "". Applying a preset captured from the
-                    // live channels threw where applying a saved one did not.
+                    // A form has no channel, but it needs a name usable as a dictionary key, and
+                    // one that matches what the same entry deserialises to from a preset asset,
+                    // where an empty YAML field reads back as "".
                     controller.channel = string.Empty;
 
                     if (trimmd.IndexOf("caption(") > -1)
@@ -3271,9 +3269,8 @@ namespace Csound.Unity
         public void SetChannel(string channel, MYFLT val)
         {
             if (!IsInitialized || csound == null) return;
-            // A channel with no name is not addressable, which is what the index already decides
-            // when it skips these while building. The lookups below used to disagree and throw
-            // ArgumentNullException on a null key instead.
+            // A channel with no name is not addressable: the index skips these while building,
+            // and the lookups below agree rather than raising on a null key.
             if (string.IsNullOrWhiteSpace(channel)) return;
 
             csound.SetChannel(channel, val);
@@ -3289,43 +3286,39 @@ namespace Csound.Unity
 
         /// <summary>
         /// Sets a Csound channel. Useful for setting presets at runtime. Used in connection with a chnget opcode in your Csound instrument.
+        /// <para>
+        /// Only the value is taken from <paramref name="channelController"/>. The widget definition
+        /// — type, range, skew, increment, options, bounds — belongs to the csd.
+        /// </para>
         /// </summary>
-        /// <param name="channelController">The channel controller whose name and value will be applied.</param>
+        /// <param name="channelController">The channel controller to take the value from.</param>
         public void SetChannel(CsoundChannelController channelController)
         {
             if (channelController == null) return;
-            // Same reason as the overload above: a form entry carries no channel name, and it
-            // travels inside every preset.
+            // A form entry carries no channel name, and it travels inside every preset.
             if (string.IsNullOrWhiteSpace(channelController.channel)) return;
 
-            if (ChannelsIndex.TryGetValue(channelController.channel, out var idx))
+            // Values are copied into the controller that is already there, which keeps its own
+            // definition and stays the component's: a preset is a ScriptableObject, and holding its
+            // controllers here would make every later channel write edit that asset.
+            var live = ChannelsIndex.TryGetValue(channelController.channel, out var idx) ? channels[idx] : null;
+            if (live != null)
             {
-                var existingChannel = channels[idx];
-
-                // A clone, and the caller's object is never written to. Stored by reference, this
-                // list ended up sharing the controllers of whatever was applied — usually a preset,
-                // and usually a ScriptableObject — so every later channel write edited that asset in
-                // memory for the rest of the play session. The combobox reconciliation below was
-                // worse: it wrote the CSD's options back into the preset's own controller.
-                var incoming = channelController.Clone();
-
-                // The options belong to the csd; a preset carries the selected value. Unconditional
-                // because a combobox keeps its options in `options` and leaves `text` empty, so the
-                // old `text != text` guard was never true and a preset's options — stale, or empty —
-                // always won.
-                if (existingChannel.IsCombobox)
-                {
-                    incoming.text = existingChannel.text;
-                    incoming.options = existingChannel.options;
-                }
-                channels[idx] = incoming;
+                live.value = channelController.value;
+                if (live.HasSecondValue) live.value2 = channelController.value2;
             }
+
             if (!IsInitialized || csound == null) return;
-            csound.SetChannel(channelController.channel, channelController.CsoundValue);
-            // xypad / hrange / vrange carry a second channel in channelY / value2
-            if ((channelController.type == "xypad" || channelController.type == "hrange" || channelController.type == "vrange")
-                && !string.IsNullOrEmpty(channelController.channelY))
-                csound.SetChannel(channelController.channelY, channelController.value2);
+
+            // The live channel knows what kind of widget this is, so it decides the combobox
+            // conversion and names the second channel; a preset saved against an older csd can
+            // disagree about both. With no live channel there is nothing better to ask.
+            var definition = live ?? channelController;
+
+            csound.SetChannel(channelController.channel, definition.ToCsoundValue(channelController.value));
+
+            if (definition.HasSecondValue)
+                csound.SetChannel(definition.channelY, channelController.value2);
         }
 
         /// <summary>
@@ -3337,8 +3330,10 @@ namespace Csound.Unity
         {
             for (var i = 0; i < channelControllers.Count; i++)
             {
-                if (excludeButtons && channelControllers[i].type.Contains("button")) continue;
-                SetChannel(channelControllers[i]);
+                var ch = channelControllers[i];
+                if (ch == null) continue;
+                if (excludeButtons && ch.type != null && ch.type.Contains("button")) continue;
+                SetChannel(ch);
             }
 
             // After the whole batch, not per channel: a UI component re-reads everything it needs
