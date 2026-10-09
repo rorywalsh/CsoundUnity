@@ -2923,6 +2923,12 @@ namespace Csound.Unity
                     // size() is used instead of bounds() for the form widget.
                     var controller = new CsoundChannelController();
                     controller.type = control;
+                    // A form has no channel, but it needs a name that can be used as a dictionary
+                    // key: left unassigned it stays null, and a live controller then behaved
+                    // differently from the very same entry loaded back from a preset asset, where
+                    // an empty YAML field deserialises to "". Applying a preset captured from the
+                    // live channels threw where applying a saved one did not.
+                    controller.channel = string.Empty;
 
                     if (trimmd.IndexOf("caption(") > -1)
                     {
@@ -3265,6 +3271,11 @@ namespace Csound.Unity
         public void SetChannel(string channel, MYFLT val)
         {
             if (!IsInitialized || csound == null) return;
+            // A channel with no name is not addressable, which is what the index already decides
+            // when it skips these while building. The lookups below used to disagree and throw
+            // ArgumentNullException on a null key instead.
+            if (string.IsNullOrWhiteSpace(channel)) return;
+
             csound.SetChannel(channel, val);
 
             if (ChannelsIndex.TryGetValue(channel, out var idx))
@@ -3283,6 +3294,9 @@ namespace Csound.Unity
         public void SetChannel(CsoundChannelController channelController)
         {
             if (channelController == null) return;
+            // Same reason as the overload above: a form entry carries no channel name, and it
+            // travels inside every preset.
+            if (string.IsNullOrWhiteSpace(channelController.channel)) return;
 
             if (ChannelsIndex.TryGetValue(channelController.channel, out var idx))
             {
@@ -3378,6 +3392,7 @@ namespace Csound.Unity
         /// <returns>The matching controller, or <c>null</c> if not found.</returns>
         public CsoundChannelController GetChannelController(string channel)
         {
+            if (string.IsNullOrWhiteSpace(channel)) return null;
             return ChannelsIndex.TryGetValue(channel, out var idx) ? _channels[idx] : null;
         }
 
