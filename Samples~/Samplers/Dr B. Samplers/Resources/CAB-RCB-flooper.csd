@@ -196,14 +196,19 @@ if kLoopEnd < kLoopStrt then
 kLoopEnd = kLoopStrt+.1
 endif
 
+; istart stays i(kLoopStrt), which is wrong on the i-pass — `changed` below reinitialises on the
+; note's first k-cycle and fixes it, which is what this csd has always relied on. Reading the
+; channel here instead would be better, but that attempt was abandoned while chasing an editor
+; crash that turned out to be unrelated; see the TODO before retrying it.
 ;asig1[,asig2] flooper2 kamp,  kpitch, kloopstart, kloopend, kcrossfade, ifn [, istart, imode, ifenv, iskip] 
 aFloop         flooper2 kGain, kPitch, .001+(kLoopStrt * iLen), .001+(kLoopEnd * iLen), 0.05, iSmp, i(kLoopStrt) * iLen, int(iMode)
 
 rireturn
 
-; changed2, not changed: changed also fires on the note's first k-cycle, which reinit'd the
-; instrument once for nothing. changed2 still fires when the dropdown moves mid-note.
-kInputChanged changed2 kInput   ;chnget:k("sound")
+; changed, not changed2: that first-cycle reinit is not spare work here — it is what fixes the
+; flooper2 start position, which the i-pass cannot know. Measured: with changed2 the note read from
+; the wrong position for its whole length.
+kInputChanged changed kInput    ;chnget:k("sound")
 if (kInputChanged == 1) then
     reinit flooperInit
 endif

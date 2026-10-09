@@ -849,19 +849,24 @@ MonoBehaviour:
     input == 9 then\niLen filelen gSfile9\niSmp = 9\nelse \niLen filelen gSfile10\niSmp
     = 10\nendif\n\nprints \"LOADING SAMPLE: %d Len: %d\\n\", iSmp, iLen\n\nif kLoopStrt
     > kLoopEnd then\nkLoopStrt = kLoopEnd-.1\nendif\nif kLoopEnd < kLoopStrt then\nkLoopEnd
-    = kLoopStrt+.1\nendif\n\n;asig1[,asig2] flooper2 kamp,  kpitch, kloopstart, kloopend,
+    = kLoopStrt+.1\nendif\n\n; istart stays i(kLoopStrt): reading the channel here
+    instead segfaults the editor's channel scan\n; while compiling the orchestra
+    \u2014 reproduced three times, inline and on its own line. The i-pass\n; value
+    is wrong, but `changed` below reinitialises on the note's first k-cycle and fixes
+    it, which\n; is what this csd always relied on. See the TODO on malformed csds
+    taking the editor down.\n;asig1[,asig2] flooper2 kamp,  kpitch, kloopstart, kloopend,
     kcrossfade, ifn [, istart, imode, ifenv, iskip] \naFloop         flooper2 kGain,
     kPitch, .001+(kLoopStrt * iLen), .001+(kLoopEnd * iLen), 0.05, iSmp, i(kLoopStrt)
-    * iLen, int(iMode)\n\nrireturn\n\n; changed2, not changed: changed also fires
-    on the note's first k-cycle, which reinit'd the\n; instrument once for nothing.
-    changed2 still fires when the dropdown moves mid-note.\nkInputChanged changed2
-    kInput   ;chnget:k(\"sound\")\nif (kInputChanged == 1) then\n    reinit flooperInit\nendif\n\nkEnv   
-    transeg 0,iDur*.01,0,1,iDur*.8,0,1,iDur*.19,-1,0          \naDry    =       aFloop
-    * kEnv * chnget:k(\"sampLvl\")\naL,aR   pan2    aDry, chnget:k(\"pan\")\n       
-    outs    aL * chnget:k(\"masterLvl\"), aR * chnget:k(\"masterLvl\")\n        \n       
-    vincr   gaChorL, aL*chnget:k(\"chorLvl\")\n        vincr   gaChorR, aR*chnget:k(\"chorLvl\")
-    \n        vincr   gaEchoL, aL*chnget:k(\"echoLvl\")\n        vincr   gaEchoR,
-    aR*chnget:k(\"echoLvl\") \n        vincr   gaFlangL, aL*chnget:k(\"flangLvl\")\n       
+    * iLen, int(iMode)\n\nrireturn\n\n; changed, not changed2: that first-cycle reinit
+    is not spare work here \u2014 it is what fixes the\n; flooper2 start position,
+    which the i-pass cannot know. Measured: with changed2 the note read from\n; the
+    wrong position for its whole length.\nkInputChanged changed kInput    ;chnget:k(\"sound\")\nif
+    (kInputChanged == 1) then\n    reinit flooperInit\nendif\n\nkEnv    transeg 0,iDur*.01,0,1,iDur*.8,0,1,iDur*.19,-1,0         
+    \naDry    =       aFloop * kEnv * chnget:k(\"sampLvl\")\naL,aR   pan2    aDry,
+    chnget:k(\"pan\")\n        outs    aL * chnget:k(\"masterLvl\"), aR * chnget:k(\"masterLvl\")\n       
+    \n        vincr   gaChorL, aL*chnget:k(\"chorLvl\")\n        vincr   gaChorR,
+    aR*chnget:k(\"chorLvl\") \n        vincr   gaEchoL, aL*chnget:k(\"echoLvl\")\n       
+    vincr   gaEchoR, aR*chnget:k(\"echoLvl\") \n        vincr   gaFlangL, aL*chnget:k(\"flangLvl\")\n       
     vincr   gaFlangR, aR*chnget:k(\"flangLvl\") \n        vincr   gaStresL, aL*chnget:k(\"stresLvl\")\n       
     vincr   gaStresR, aR*chnget:k(\"stresLvl\") \n        vincr   gaRevL,  aL*chnget:k(\"verbLvl\")\n       
     vincr   gaRevR,  aR*chnget:k(\"verbLvl\")\n\nendin\n\n; -----------------------------------\n\ninstr  
