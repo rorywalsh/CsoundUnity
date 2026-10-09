@@ -17,11 +17,6 @@ THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Threading;
-using System.Runtime.CompilerServices;
-
-// CsoundSharedBuffer is internal; expose it to the test assembly so its wait-free
-// guarantees can be exercised by unit tests (see Tests/Runtime/CsoundSharedBufferTest.cs).
-[assembly: InternalsVisibleTo("com.csound.unity.tests")]
 
 namespace Csound.Unity
 {
