@@ -691,7 +691,7 @@ namespace Csound.Unity
 #if !UNITY_WEBGL || UNITY_EDITOR
             return CsoundLib.NativeMethods.csoundCompileOrc(csound, orchStr, 0);
 #else
-        return 0;
+        return CsoundWebGL.NativeMethods.csoundCompileOrc(_assignedInstanceId, orchStr);
 #endif
         }
 
@@ -799,6 +799,8 @@ namespace Csound.Unity
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             CsoundLib.NativeMethods.csoundEventString(csound, scoreEvent, 0);
+#else
+        CsoundWebGL.NativeMethods.csoundInputMessage(_assignedInstanceId, scoreEvent);
 #endif
         }
 
@@ -851,6 +853,8 @@ namespace Csound.Unity
         {
 #if !UNITY_WEBGL || UNITY_EDITOR
             CsoundLib.NativeMethods.csoundSetStringChannel(csound, channel, value);
+#else
+        CsoundWebGL.NativeMethods.csoundSetStringChannel(_assignedInstanceId, channel, value);
 #endif
         }
 

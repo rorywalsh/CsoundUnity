@@ -198,7 +198,12 @@ namespace Csound.Unity
                     break;
             }
 
+            // Not on a WebGL player: csound.jslib already handed these same bytes to Csound with
+            // cs.midiMessage before forwarding them here, and this call made every note and every CC
+            // arrive twice. There the forward exists only to raise the C# events above.
+#if !UNITY_WEBGL || UNITY_EDITOR
             csoundUnity?.SendMidiMessage(msg);
+#endif
         }
 
 #if UNITY_WEBGL && !UNITY_EDITOR

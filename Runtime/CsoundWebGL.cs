@@ -54,6 +54,12 @@ namespace Csound.Unity
             [DllImport(DLLVersion)]
             internal static extern int csoundInputMessage(int instanceId, string scoreEvent);
 
+            [DllImport(DLLVersion)]
+            internal static extern int csoundCompileOrc(int instanceId, string orchestra);
+
+            [DllImport(DLLVersion)]
+            internal static extern void csoundSetStringChannel(int instanceId, string channel, string value);
+
             // ── MIDI ──────────────────────────────────────────────────────────
 
             /// <summary>

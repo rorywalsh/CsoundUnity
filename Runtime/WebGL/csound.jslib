@@ -29,7 +29,8 @@ var csoundModule = {
     $CsoundRef: {
         uniqueIdCounter: 0,
         instances: {},   // id -> CsoundObj
-        nodes: {},       // id -> AudioNode returned by cs.start()
+        nodes: {},       // id -> AudioNode returned by cs.start(), null in Worker mode
+        started: {},     // id -> true once cs.start() has resolved
         inputStreams: {} // id -> { stream: MediaStream, source: MediaStreamAudioSourceNode }
     },
 
@@ -77,6 +78,7 @@ var csoundModule = {
 
         CsoundRef.instances[CsoundRef.uniqueIdCounter] = cs;
         CsoundRef.nodes[CsoundRef.uniqueIdCounter] = csNode;
+        CsoundRef.started[CsoundRef.uniqueIdCounter] = true;
         const uniqueId = CsoundRef.uniqueIdCounter;
         CsoundRef.uniqueIdCounter++;
         console.log(`[CsoundUnity] created Csound with uniqueId: ${uniqueId}`);
@@ -113,11 +115,14 @@ var csoundModule = {
             delete CsoundRef.inputStreams[uniqueId];
         }
 
-        await cs.cleanup();
-        // Csound 7: destroy frees WASM memory; cleanup alone stops the performance
+        // Guarded like destroy below: @csound/browser does not ship cleanup, so an unguarded
+        // call throws and leaves destroy and the bookkeeping underneath it unreached.
+        cs.cleanup && (await cs.cleanup());
+        // Csound 7: destroy frees the WASM memory
         cs.destroy && (await cs.destroy());
         delete CsoundRef.instances[uniqueId];
         delete CsoundRef.nodes[uniqueId];
+        delete CsoundRef.started[uniqueId];
         Module['dynCall_vi'](callback, uniqueId);
     },
 
@@ -263,6 +268,31 @@ var csoundModule = {
         var event = UTF8ToString(scoreEvent);
         var res = await CsoundRef.instances[uniqueId].inputMessage(event);
         return res;
+    },
+
+    csoundCompileOrc: async function(uniqueId, orchestra) {
+        var orc = UTF8ToString(orchestra);
+        var res = await CsoundRef.instances[uniqueId].compileOrc(orc);
+        return res;
+    },
+
+    csoundSetStringChannel: async function(uniqueId, channel, value) {
+        var name = UTF8ToString(channel);
+        var val  = UTF8ToString(value);
+        await CsoundRef.instances[uniqueId].setStringChannel(name, val);
+    },
+
+    /// Whether this instance's audio is actually running. In the Worker mode of
+    /// @csound/browser v7 cs.start() can resolve to null, so the presence of a node proves
+    /// nothing: the flag set when start() resolved does, and the AudioContext state refines
+    /// it whenever a context is reachable. A page that has had no user gesture keeps the
+    /// context suspended, which is the usual reason a started Csound makes no sound.
+    csoundIsAudioContextRunning: function(uniqueId) {
+        if (!CsoundRef.started[uniqueId]) return 0;
+        var node = CsoundRef.nodes[uniqueId];
+        var ctx  = node && node.context;
+        if (!ctx) return 1;
+        return ctx.state === "running" ? 1 : 0;
     }
 }
 
