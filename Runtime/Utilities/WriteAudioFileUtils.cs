@@ -218,21 +218,29 @@ namespace Csound.Unity.Utilities
             }
         }
 
+        /// <summary>
+        /// Writes one sample for AIFF: signed, big-endian, and exactly as many bytes as the header
+        /// declares. Every depth is signed here, unlike WAV, whose 8-bit is unsigned.
+        /// </summary>
         private static void WriteSample(BinaryWriter writer, float sample, int bitsPerSample)
         {
+            var s = Clamp(sample);
             switch (bitsPerSample)
             {
                 case 8:
-                    writer.Write((byte)(sample * byte.MaxValue));
+                    writer.Write((byte)(sbyte)(s * sbyte.MaxValue));
                     break;
                 case 16:
-                    writer.Write(SwapEndian((short)(sample * short.MaxValue)));
+                    writer.Write(SwapEndian((short)(s * short.MaxValue)));
                     break;
                 case 24:
-                    writer.Write(SwapEndian((int)(sample * int.MaxValue)));
+                    writer.Write(SwapEndian24((int)(s * 8388607f)));   // 2^23 - 1, three bytes
                     break;
                 case 32:
-                    writer.Write(SwapEndian(sample));
+                    // The multiply is done in double: int.MaxValue is not representable in a
+                    // float, so a full-scale sample rounds up past it and the cast overflows to
+                    // int.MinValue, flipping the polarity of every peak.
+                    writer.Write(SwapEndian((int)((double)s * int.MaxValue)));
                     break;
                 default:
                     throw new NotSupportedException("Only 8, 16, 24 and 32 bits per sample are supported.");
@@ -247,6 +255,12 @@ namespace Csound.Unity.Utilities
         private static byte[] SwapEndian(int value)
         {
             return new byte[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)(value & 0xFF) };
+        }
+
+        /// <summary>Three bytes, most significant first, for 24-bit AIFF.</summary>
+        private static byte[] SwapEndian24(int value)
+        {
+            return new byte[] { (byte)(value >> 16), (byte)(value >> 8), (byte)(value & 0xFF) };
         }
 
         private static byte[] SwapEndian(float value)
