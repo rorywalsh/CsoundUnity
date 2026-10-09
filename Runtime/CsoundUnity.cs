@@ -125,6 +125,24 @@ namespace Csound.Unity
         public bool IsCombobox => type != null && type.Contains("combobox");
 
         /// <summary>
+        /// True when this controller carries a second value on <see cref="channelY"/>: xypad,
+        /// hrange and vrange. The name is the test, not the type — the parser fills
+        /// <see cref="channelY"/> exactly for the widgets that have one.
+        /// </summary>
+        public bool HasSecondValue => !string.IsNullOrEmpty(channelY);
+
+        /// <summary>
+        /// True when this channel holds a number to slide through rather than a state to switch,
+        /// so interpolating it means something: the sliders and the two-value widgets.
+        /// <para>
+        /// A button, a checkbox or a combobox has no meaningful halfway point, which is why those
+        /// are snapped instead — see <see cref="DiscreteChannelMode"/>.
+        /// </para>
+        /// </summary>
+        public bool IsContinuous => type != null &&
+            (type.Contains("slider") || type == "xypad" || type == "hrange" || type == "vrange");
+
+        /// <summary>
         /// The value in Csound's terms. Cabbage comboboxes are 1-based, 0 meaning "no selection",
         /// while <see cref="value"/> holds the 0-based index Unity's dropdowns use — so a combobox
         /// reads back one higher. Every path that writes a channel to Csound goes through here, so
@@ -4561,7 +4579,9 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Smoothly interpolates all slider channels from their current values to the target preset's values over the given duration.
+        /// Smoothly interpolates all continuous channels — the sliders, plus both axes of an xypad,
+        /// hrange or vrange — from their current values to the target preset's values over the
+        /// given duration.
         /// An optional <see cref="AnimationCurve"/> controls easing; pass null for linear interpolation.
         /// The returned <see cref="Coroutine"/> can be passed to <see cref="StopMorph"/> to cancel mid-way.
         /// If duration is zero or negative, the preset is applied immediately.
@@ -4603,7 +4623,13 @@ namespace Csound.Unity
         {
             var startValues = new Dictionary<string, float>();
             foreach (var ch in channels)
-                if (ch.type.Contains("slider") || ch.type == "nslider") startValues[ch.channel] = ch.value;
+            {
+                if (!ch.IsContinuous || string.IsNullOrWhiteSpace(ch.channel)) continue;
+                startValues[ch.channel] = ch.value;
+                // One dictionary for both axes: X and Y are separate Csound channels with
+                // distinct names, so they cannot collide.
+                if (ch.HasSecondValue) startValues[ch.channelY] = ch.value2;
+            }
 
             if (discreteMode == DiscreteChannelMode.SnapAtStart)
                 ApplyDiscreteChannels(preset);
@@ -4618,33 +4644,14 @@ namespace Csound.Unity
 
                 foreach (var target in preset.channels)
                 {
-                    if (!target.type.Contains("slider") && target.type != "nslider") continue;
+                    if (!target.IsContinuous) continue;
 
-                    // No live channel by that name means no value to start from, so the morph
-                    // has nothing to interpolate and the channel jumps straight to its target.
-                    // That is the only sensible thing to do, but it is audible, and it used to
-                    // happen without a word — easy to hear as a broken interpolation.
-                    var hasStart = startValues.TryGetValue(target.channel, out float s);
-                    if (!hasStart && _warnedMissingPresetChannels.Add($"!live/{target.channel}"))
-                        Debug.LogWarning($"[CsoundUnity] Preset \"{preset?.presetName}\" morphs " +
-                                         $"channel \"{target.channel}\", which this csd does not " +
-                                         $"declare. With no starting value it jumps to the target " +
-                                         $"instead of sliding to it. Reported once per channel.");
+                    MorphOneAxis(target, false, t,
+                        MorphStartValue(startValues, preset, target.channel, target.value));
 
-                    var start = hasStart ? s : target.value;
-
-                    if (UsesSkewedRange(target, out var min, out var max, out var skew))
-                    {
-                        // Sweep where the control is linear, so the morph moves at the rate the
-                        // skew describes instead of racing through one end of the range.
-                        var n = Mathf.Lerp(RU.RemapTo0to1(start, min, max, skew),
-                                           RU.RemapTo0to1(target.value, min, max, skew), t);
-                        SetChannel(target.channel, RU.RemapFrom0to1(n, min, max, skew));
-                    }
-                    else
-                    {
-                        SetChannel(target.channel, Mathf.Lerp(start, target.value, t));
-                    }
+                    if (target.HasSecondValue)
+                        MorphOneAxis(target, true, t,
+                            MorphStartValue(startValues, preset, target.channelY, target.value2));
                 }
 
                 if (discreteMode == DiscreteChannelMode.SnapAtMidpoint && !midpointSnapped && rawT >= 0.5f)
@@ -4660,6 +4667,62 @@ namespace Csound.Unity
             onComplete?.Invoke();
         }
 
+        /// <summary>
+        /// Where the morph starts for one channel: its live value, or the target itself when this
+        /// csd does not declare it.
+        /// <para>
+        /// No live channel by that name means no value to start from, so the morph has nothing to
+        /// interpolate and the channel jumps straight to its target. That is the only sensible
+        /// thing to do, but it is audible, and it used to happen without a word — easy to hear as
+        /// a broken interpolation.
+        /// </para>
+        /// </summary>
+        private float MorphStartValue(Dictionary<string, float> startValues, CsoundUnityPreset preset,
+            string channelName, float targetValue)
+        {
+            if (string.IsNullOrWhiteSpace(channelName)) return targetValue;
+            if (startValues.TryGetValue(channelName, out var start)) return start;
+
+            if (_warnedMissingPresetChannels.Add($"!live/{channelName}"))
+                Debug.LogWarning($"[CsoundUnity] Preset \"{preset?.presetName}\" morphs " +
+                                 $"channel \"{channelName}\", which this csd does not " +
+                                 $"declare. With no starting value it jumps to the target " +
+                                 $"instead of sliding to it. Reported once per channel.");
+
+            return targetValue;
+        }
+
+        /// <summary>
+        /// Moves one axis of a morphing channel to where it should be at <paramref name="t"/>.
+        /// <para>
+        /// Two-value widgets go through this twice, once per axis, because the ranges differ: see
+        /// <see cref="UsesSkewedRangeY"/>.
+        /// </para>
+        /// </summary>
+        private void MorphOneAxis(CsoundChannelController target, bool yAxis, float t, float start)
+        {
+            var channelName = yAxis ? target.channelY : target.channel;
+            var end         = yAxis ? target.value2   : target.value;
+
+            float min, max, skew;
+            var skewed = yAxis
+                ? UsesSkewedRangeY(target, out min, out max, out skew)
+                : UsesSkewedRange(target, out min, out max, out skew);
+
+            if (skewed)
+            {
+                // Sweep where the control is linear, so the morph moves at the rate the skew
+                // describes instead of racing through one end of the range.
+                var n = Mathf.Lerp(RU.RemapTo0to1(start, min, max, skew),
+                                   RU.RemapTo0to1(end,   min, max, skew), t);
+                SetChannel(channelName, RU.RemapFrom0to1(n, min, max, skew));
+            }
+            else
+            {
+                SetChannel(channelName, Mathf.Lerp(start, end, t));
+            }
+        }
+
         private void ApplyDiscreteChannels(CsoundUnityPreset preset)
         {
             foreach (var ch in preset.channels)
@@ -4673,8 +4736,9 @@ namespace Csound.Unity
         /// Bilinear blend of four presets placed at the corners of a unit square.
         /// <para>Corner mapping: <paramref name="a"/> = (0,0), <paramref name="b"/> = (1,0),
         /// <paramref name="c"/> = (0,1), <paramref name="d"/> = (1,1).</para>
-        /// <para>Slider channels are interpolated bilinearly. Discrete channels (button, checkbox, combobox)
-        /// follow <paramref name="discreteMode"/>.</para>
+        /// <para>Continuous channels are interpolated bilinearly — the sliders, plus both axes of an
+        /// xypad, hrange or vrange. Discrete channels (button, checkbox, combobox) follow
+        /// <paramref name="discreteMode"/>.</para>
         /// Call this every frame (e.g. from <see cref="CsoundUnityVectorMorph"/>) to drive real-time vector synthesis.
         /// </summary>
         /// <param name="a">Preset at corner (0,0).</param>
@@ -4698,8 +4762,6 @@ namespace Csound.Unity
 
             foreach (var chA in a.channels)
             {
-                var channelName     = chA.channel;
-                var isSlider   = chA.type.Contains("slider") || chA.type == "nslider";
                 var isDiscrete = chA.type == "button" || chA.type == "checkbox" || chA.IsCombobox;
 
                 if (isDiscrete && discreteMode == DiscreteBlendMode.NearestCorner)
@@ -4709,29 +4771,14 @@ namespace Csound.Unity
                     var maxIdx = 0;
                     for (var i = 1; i < 4; i++)
                         if (weights[i] > weights[maxIdx]) maxIdx = i;
-                    var val = GetPresetChannelValue(presets[maxIdx], channelName, chA.value);
-                    SetChannel(channelName, chA.ToCsoundValue(val));
+                    var val = GetPresetChannelValue(presets[maxIdx], chA.channel, chA.value);
+                    SetChannel(chA.channel, chA.ToCsoundValue(val));
                 }
-                else if (isSlider)
+                else if (chA.IsContinuous)
                 {
-                    var vA = chA.value;
-                    var vB = GetPresetChannelValue(b, channelName, vA);
-                    var vC = GetPresetChannelValue(c, channelName, vA);
-                    var vD = GetPresetChannelValue(d, channelName, vA);
-
-                    if (UsesSkewedRange(chA, out var min, out var max, out var skew))
-                    {
-                        // Blend where the control is linear, then map back into channel units.
-                        var n = RU.RemapTo0to1(vA, min, max, skew) * wA
-                              + RU.RemapTo0to1(vB, min, max, skew) * wB
-                              + RU.RemapTo0to1(vC, min, max, skew) * wC
-                              + RU.RemapTo0to1(vD, min, max, skew) * wD;
-                        SetChannel(channelName, RU.RemapFrom0to1(n, min, max, skew));
-                    }
-                    else
-                    {
-                        SetChannel(channelName, vA * wA + vB * wB + vC * wC + vD * wD);
-                    }
+                    BlendOneAxis(chA, false, b, c, d, wA, wB, wC, wD);
+                    if (chA.HasSecondValue)
+                        BlendOneAxis(chA, true, b, c, d, wA, wB, wC, wD);
                 }
             }
         }
@@ -4762,6 +4809,67 @@ namespace Csound.Unity
             max  = channel?.max  ?? 0f;
             skew = channel?.skew ?? 1f;
             return channel != null && max > min && skew > 0f && skew != 1f;
+        }
+
+        /// <summary>
+        /// The same question as <see cref="UsesSkewedRange"/>, asked of a two-value widget's
+        /// second axis.
+        /// <para>
+        /// An xypad declares its own Y range, <c>minY</c>..<c>maxY</c>, and declares no skew for
+        /// it, so the Y axis is linear. An hrange or vrange puts both handles on one axis, so its
+        /// second value shares the first one's range — and its skew, which is why this defers
+        /// rather than assuming linear.
+        /// </para>
+        /// </summary>
+        private bool UsesSkewedRangeY(CsoundChannelController presetChannel, out float min, out float max, out float skew)
+        {
+            var channel = (presetChannel != null ? GetChannelController(presetChannel.channel) : null) ?? presetChannel;
+
+            if (channel == null || channel.type != "xypad")
+                return UsesSkewedRange(presetChannel, out min, out max, out skew);
+
+            min  = channel.minY;
+            max  = channel.maxY;
+            skew = 1f;
+            return false;
+        }
+
+        /// <summary>
+        /// Blends one axis of a channel across the four corners and writes it.
+        /// <para>
+        /// Two-value widgets go through this twice, once per axis. The corner lookups use the
+        /// widget's own channel name both times, because a preset keeps both values on the one
+        /// controller.
+        /// </para>
+        /// </summary>
+        private void BlendOneAxis(CsoundChannelController chA, bool yAxis,
+            CsoundUnityPreset b, CsoundUnityPreset c, CsoundUnityPreset d,
+            float wA, float wB, float wC, float wD)
+        {
+            var channelName = yAxis ? chA.channelY : chA.channel;
+            var vA = yAxis ? chA.value2 : chA.value;
+            var vB = GetPresetChannelValue(b, chA.channel, vA, yAxis);
+            var vC = GetPresetChannelValue(c, chA.channel, vA, yAxis);
+            var vD = GetPresetChannelValue(d, chA.channel, vA, yAxis);
+
+            float min, max, skew;
+            var skewed = yAxis
+                ? UsesSkewedRangeY(chA, out min, out max, out skew)
+                : UsesSkewedRange(chA, out min, out max, out skew);
+
+            if (skewed)
+            {
+                // Blend where the control is linear, then map back into channel units.
+                var n = RU.RemapTo0to1(vA, min, max, skew) * wA
+                      + RU.RemapTo0to1(vB, min, max, skew) * wB
+                      + RU.RemapTo0to1(vC, min, max, skew) * wC
+                      + RU.RemapTo0to1(vD, min, max, skew) * wD;
+                SetChannel(channelName, RU.RemapFrom0to1(n, min, max, skew));
+            }
+            else
+            {
+                SetChannel(channelName, vA * wA + vB * wB + vC * wC + vD * wD);
+            }
         }
 
 
@@ -4829,11 +4937,16 @@ namespace Csound.Unity
         /// version of the csd. That used to be silent, and it does not look like a bug: the blend
         /// still runs, that corner of it is just anchored to the wrong value.
         /// </summary>
-        private float GetPresetChannelValue(CsoundUnityPreset preset, string channel, float fallback)
+        /// <param name="preset">The corner preset to read from.</param>
+        /// <param name="channel">The channel name, which is the widget's own name on both axes.</param>
+        /// <param name="fallback">Returned when the preset has no channel by that name.</param>
+        /// <param name="secondValue">Read the Y value of a two-value widget instead of the X one.</param>
+        private float GetPresetChannelValue(CsoundUnityPreset preset, string channel, float fallback,
+            bool secondValue = false)
         {
             if (preset?.channels != null)
                 foreach (var ch in preset.channels)
-                    if (ch.channel == channel) return ch.value;
+                    if (ch.channel == channel) return secondValue ? ch.value2 : ch.value;
 
             if (_warnedMissingPresetChannels.Add($"{preset?.presetName}/{channel}"))
                 Debug.LogWarning($"[CsoundUnity] Preset \"{preset?.presetName}\" has no channel " +

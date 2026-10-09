@@ -26,7 +26,7 @@
 - [Add] CsoundUnityAudioInputRouter: component that enables NativeAudioInputManager in Editor/standalone and WebGLAudioInput in WebGL builds automatically; use it to share one scene across all targets
 - [Add] Cabbage parser: encoder widget (channel, increment, value, text/popupPrefix); form widget (size → canvas dimensions)
 - [Add] SampleInputSystemFixer: editor script that automatically patches imported sample scenes for Unity's new Input System
-- [Add] xypad Cabbage widget support in parser and inspector
+- [Add] Two-value Cabbage widgets — xypad, hrange and vrange — in the parser, the inspector, the preset editor, and in preset morphing and blending
 - [Add] CSD refresh button and CREATE from template button in inspector
 - [Add] Many new samples across new and existing categories: Timelines, UI, Samplers, Collisions, Miscellaneous, Presets, Engines
 - [Add] Context menu shortcuts to quickly create CsoundUnity GameObjects
