@@ -25,7 +25,8 @@
 - [Add] WebGLMidiReceiver / CsoundUnityMidiInput on WebGL: MIDI input via Web MIDI API (`navigator.requestMIDIAccess`); requires HTTPS, Chrome/Edge only
 - [Add] CsoundUnityAudioInputRouter: component that enables NativeAudioInputManager in Editor/standalone and WebGLAudioInput in WebGL builds automatically; use it to share one scene across all targets
 - [Fix] WebGL: implemented `CompileOrc`, `SendScoreEvent` and `SetStringChannel`
-- [Add] WebGL docs: the user gesture Csound needs before it starts, and the `-odac` a csd must carry
+- [Fix] WebGL: `-odac` is set by default when the csd declares no output
+- [Add] WebGL docs: the user gesture Csound needs before it starts
 - [Add] Cabbage parser: encoder widget (channel, increment, value, text/popupPrefix); form widget (size → canvas dimensions)
 - [Add] SampleInputSystemFixer: editor script that automatically patches imported sample scenes for Unity's new Input System
 - [Add] Two-value Cabbage widgets — xypad, hrange and vrange — in the parser, the inspector, the preset editor, and in preset morphing and blending

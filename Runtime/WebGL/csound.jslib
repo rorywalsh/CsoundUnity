@@ -73,6 +73,19 @@ var csoundModule = {
         }
 
         console.log(`[CsoundUnity] Csound version: ${cs.name}`);
+
+        // A csd that names no output renders to Csound's dummy interface and a virtual test.wav
+        // that nobody can hear, so -odac is the default here. Only a default: an option set
+        // before compileCSD takes precedence over <CsOptions>, so a csd that deliberately writes
+        // to a file keeps doing it. Comments are stripped first, or a commented-out -o would
+        // count as a declaration.
+        const optionsBlock = /<CsOptions>([\s\S]*?)<\/CsOptions>/i.exec(csdText);
+        const csOptions = optionsBlock ? optionsBlock[1].replace(/;[^\n]*/g, "") : "";
+        if (!/(^|\s)(-o\S*|--output\b)/.test(csOptions)) {
+            console.log("[CsoundUnity] the csd declares no output, defaulting to -odac");
+            await cs.setOption("-odac");
+        }
+
         await cs.compileCSD(csdText);
         const csNode = await cs.start();
 

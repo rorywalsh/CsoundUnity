@@ -6,10 +6,10 @@ There are some differences in the CsoundUnity API given the async context, and a
 > **Csound version:** WebGL now uses **Csound 7** (`@csound/browser 7.0.0-beta38`). The bundle is built from the upstream `develop` branch and embedded in `csound.jspre`.
 
 
-### Two things to get right, or nothing will sound
+### Silence with no error: the two causes
 
-Both of these produce silence with no error pointing at the cause, so they are worth reading before
-anything else.
+Neither of these prints anything that points at the cause, so they are worth reading before
+anything else. The second one the package now handles for you.
 
 #### Csound must be created after a user gesture
 
@@ -53,27 +53,28 @@ endin
 i 100 0 z
 ```
 
-#### The csd needs `-odac`
+#### Output: `-odac` is the default
 
 On every other platform CsoundUnity sets `-n` itself and takes Csound's output from the spout, so
-whatever the csd's `<CsOptions>` says about output is irrelevant. **On WebGL CsoundUnity sets no
-options at all**: the csd's `<CsOptions>` are the whole story, and without an output flag Csound
-opens its dummy interface and renders to a virtual `test.wav` that nobody will ever hear. The
-console says so, quietly:
+whatever the csd's `<CsOptions>` says about output is irrelevant. On WebGL CsoundUnity sets no
+options of its own, so a csd that declares no output would open Csound's dummy interface and render
+to a virtual `test.wav` that nobody can hear:
 
 ```
 setting dummy interface
 writing 1024-byte blks of shorts to test.wav (WAV)
 ```
 
-With `-odac` it reads instead:
+**A csd that names no output now gets `-odac`**, and says so:
 
 ```
+[CsoundUnity] the csd declares no output, defaulting to -odac
 writing 512 sample blks of 64-bit floats to dac
 ```
 
-`-odac` is harmless on the other platforms, so a csd meant to run everywhere can simply carry it.
-
+It is a default, not an override. An option set before the csd is compiled takes precedence over
+`<CsOptions>`, so a csd that deliberately renders to a file — `-o render.wav` — keeps doing it, and
+nothing is added. A commented-out `-o` does not count as a declaration.
 
 ### Spatialization
 
