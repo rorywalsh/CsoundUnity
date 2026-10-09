@@ -738,6 +738,33 @@ namespace Csound.Unity
         public event CsoundInitialized OnCsoundInitialized;
 
         /// <summary>
+        /// The delegate of the event <see cref="OnChannelsUpdated"/>
+        /// </summary>
+        public delegate void ChannelsUpdated();
+        /// <summary>
+        /// Raised after a batch of channels has been written from outside the UI — applying a
+        /// preset, most of the time.
+        /// <para>
+        /// The UI components drive their channels but do not watch them, so without this a preset
+        /// applied while the scene runs changed the sound and left every control where it was.
+        /// They subscribe here and re-read, the same way they already do for
+        /// <see cref="OnCsoundInitialized"/>.
+        /// </para>
+        /// </summary>
+        public event ChannelsUpdated OnChannelsUpdated;
+
+        /// <summary>
+        /// Raises <see cref="OnChannelsUpdated"/>. Call it after writing several channels yourself
+        /// with <see cref="SetChannel(string, MYFLT)"/>, so the UI components re-read them.
+        /// <para>
+        /// Applying a preset or pasting channels does this already. It is a separate call rather
+        /// than something <c>SetChannel</c> does on its own because a single write happens on every
+        /// frame a slider moves, and firing there would have every widget re-read on every frame.
+        /// </para>
+        /// </summary>
+        public void NotifyChannelsUpdated() => OnChannelsUpdated?.Invoke();
+
+        /// <summary>
         /// The delegate of the event OnCsoundStopped
         /// </summary>
         public delegate void CsoundStopped();
@@ -3281,6 +3308,10 @@ namespace Csound.Unity
                 if (excludeButtons && channelControllers[i].type.Contains("button")) continue;
                 SetChannel(channelControllers[i]);
             }
+
+            // After the whole batch, not per channel: a UI component re-reads everything it needs
+            // in one go, and a preset would otherwise fire this once per channel.
+            OnChannelsUpdated?.Invoke();
         }
 
         /// <summary>
@@ -4916,6 +4947,11 @@ namespace Csound.Unity
                 Debug.LogWarning($"[CsoundUnity] Pasted {applied} channel(s){from}.{skipped}");
             else
                 Debug.Log($"[CsoundUnity] Pasted {applied} channel(s){from}.");
+
+            // Same case as applying a preset: channels written from outside the UI, so the
+            // components have to re-read. This has its own loop and does not go through
+            // SetChannels, hence the second call site.
+            if (applied > 0) OnChannelsUpdated?.Invoke();
 
             return applied > 0;
         }

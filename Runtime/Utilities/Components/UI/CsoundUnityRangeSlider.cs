@@ -205,6 +205,7 @@ namespace Csound.Unity.Utilities.Components.UI
             }
 
             _csound.OnCsoundInitialized += OnCsoundInitialized;
+            _csound.OnChannelsUpdated += OnChannelsUpdated;
             _csound.OnCsoundStopped     += OnCsoundStopped;
 
             yield return new WaitUntil(() => _csound.IsInitialized);
@@ -216,6 +217,7 @@ namespace Csound.Unity.Utilities.Components.UI
         {
             if (_csound == null) return;
             _csound.OnCsoundInitialized -= OnCsoundInitialized;
+            _csound.OnChannelsUpdated -= OnChannelsUpdated;
             _csound.OnCsoundStopped     -= OnCsoundStopped;
         }
 
@@ -270,10 +272,18 @@ namespace Csound.Unity.Utilities.Components.UI
 
         private void OnCsoundInitialized() => InitRangeSlider();
 
+        /// <summary>A preset, or a paste, wrote the channels: re-read them.</summary>
+        private void OnChannelsUpdated() => InitRangeSlider();
+
         private void OnCsoundStopped() => _isInitialized = false;
 
         private void InitRangeSlider()
         {
+            // Cleared first: the listeners below stay attached across a re-init, so setting the
+            // control from code would call the handler and push the value straight back to Csound.
+            // Every handler returns early while this is false.
+            _isInitialized = false;
+
             if (_mode == RangeSliderMode.Widget)
             {
                 _controller = _csound.GetChannelController(_channel);

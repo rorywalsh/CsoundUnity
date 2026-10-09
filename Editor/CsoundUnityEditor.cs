@@ -1863,6 +1863,12 @@ namespace Csound.Unity
 
             m_currentPreset.objectReferenceValue = preset;
             m_currentPresetName.stringValue = preset.presetName;
+
+            // This path writes the serialized properties itself and never reaches SetChannels, so
+            // the event has to be raised by hand or the UI components in the scene keep showing
+            // the values the preset just replaced.
+            if (Application.isPlaying && csoundUnity != null)
+                csoundUnity.NotifyChannelsUpdated();
         }
 
         private void SetChannelPropertyValue(SerializedProperty property, CsoundChannelController channel)
