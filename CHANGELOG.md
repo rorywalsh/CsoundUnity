@@ -33,7 +33,7 @@
 - [Add] Many new samples across new and existing categories: Timelines, UI, Samplers, Collisions, Miscellaneous, Presets, Engines
 - [Add] Context menu shortcuts to quickly create CsoundUnity GameObjects
 - [Add] OnCsoundStopped and OnCsoundPerformanceFinished events
-- [Update] **Csound 7.0** on every platform: native libraries for macOS, Windows, iOS, visionOS and Android, and `@csound/browser 7.0.0-beta38` on WebGL
+- [Update] **Csound 7.0** on every platform: macOS, Windows, iOS, visionOS, Android and WebGL
 - [Update] CsoundCsharp.cs and CsoundUnityBridge.cs updated for the Csound 7 API (breaking changes: csoundCreate, csoundCompileOrc, csoundCompileCSD, csoundEventString, csoundGetChannels and others)
 - [Update] Inspector: sr/kr/ksmps redesign with single override toggle
 - [Update] CsoundUnitySlider now applies skew (logarithmic/exponential mapping) and increment (stepped values) from ChannelController

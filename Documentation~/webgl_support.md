@@ -3,7 +3,76 @@
 From version 3.5.0 experimental WebGL platform support was added.
 There are some differences in the CsoundUnity API given the async context, and also some limitations.
 
-> **Csound version:** WebGL now uses **Csound 7** (`@csound/browser 7.0.0-beta31`). The bundle is built from the upstream `develop` branch and embedded in `csound.jspre`.
+> **Csound version:** WebGL now uses **Csound 7** (`@csound/browser 7.0.0-beta38`). The bundle is built from the upstream `develop` branch and embedded in `csound.jspre`.
+
+
+### Two things to get right, or nothing will sound
+
+Both of these produce silence with no error pointing at the cause, so they are worth reading before
+anything else.
+
+#### Csound must be created after a user gesture
+
+A browser keeps its AudioContext suspended until the page has been clicked. A `CsoundUnity` created
+before that — in a scene that simply starts with the component enabled — waits on a context that
+will not run, and the console shows:
+
+```
+start promise timed out
+```
+
+Csound compiles, reports its version and its orchestra warnings, and then **never performs**: no
+sound, and score events sent to it are queued and never heard.
+
+**Keep the GameObject holding `CsoundUnity` inactive, and switch it on from a click.** Put the
+script that does it on a *different* GameObject, so that it is still running while Csound's is not:
+
+```csharp
+public class StartOnClick : MonoBehaviour
+{
+    [SerializeField] private GameObject _csoundObject;
+
+    public void OnClicked() => _csoundObject.SetActive(true);
+}
+```
+
+The `WebGL/TestWebGL` sample does this with its `UnlockAudioContext` script, which waits for a click
+before enabling the Csound objects it finds in the scene.
+
+A quick way to tell whether Csound is performing at all, without relying on hearing anything: give
+the csd an instrument that prints on a timer, and start it from the score. `printks` only prints
+while a performance is running.
+
+```csound
+instr 100
+    printks "ALIVE t=%.1f\n", 1, times()
+endin
+```
+
+```csound
+i 100 0 z
+```
+
+#### The csd needs `-odac`
+
+On every other platform CsoundUnity sets `-n` itself and takes Csound's output from the spout, so
+whatever the csd's `<CsOptions>` says about output is irrelevant. **On WebGL CsoundUnity sets no
+options at all**: the csd's `<CsOptions>` are the whole story, and without an output flag Csound
+opens its dummy interface and renders to a virtual `test.wav` that nobody will ever hear. The
+console says so, quietly:
+
+```
+setting dummy interface
+writing 1024-byte blks of shorts to test.wav (WAV)
+```
+
+With `-odac` it reads instead:
+
+```
+writing 512 sample blks of 64-bit floats to dac
+```
+
+`-odac` is harmless on the other platforms, so a csd meant to run everywhere can simply carry it.
 
 
 ### Spatialization
