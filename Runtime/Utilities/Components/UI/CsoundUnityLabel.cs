@@ -44,6 +44,19 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #endregion
 
+        #region Properties
+
+        /// <summary>Whether the component has finished initialisation and is ready to use.</summary>
+        public bool IsInitialized => _isInitialized;
+
+        #endregion
+
+        #region Fields
+
+        private bool _isInitialized;
+
+        #endregion
+
         #region Unity messages
 
         IEnumerator Start()
@@ -76,8 +89,15 @@ namespace Csound.Unity.Utilities.Components.UI
 
         private void Init()
         {
+            _isInitialized = false;
+
+            // A label with no channel is static text, and there is nothing to resolve: ready as soon
+            // as it gets here.
             if (string.IsNullOrWhiteSpace(_channel))
+            {
+                _isInitialized = true;
                 return;
+            }
 
             var controller = _csound.GetChannelController(_channel);
             if (controller == null)
@@ -88,6 +108,8 @@ namespace Csound.Unity.Utilities.Components.UI
 
             if (_labelText != null && !string.IsNullOrWhiteSpace(controller.text))
                 _labelText.text = controller.text;
+
+            _isInitialized = true;
         }
 
         private void OnCsoundInitialized() => Init();

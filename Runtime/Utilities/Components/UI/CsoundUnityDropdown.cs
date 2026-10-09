@@ -74,7 +74,7 @@ namespace Csound.Unity.Utilities.Components.UI
             }
             if (_csound == null)
             {
-                _csound = GetComponent<CsoundUnity>();
+                _csound = GetComponentInParent<CsoundUnity>();
                 if (_csound == null)
                 {
                     Debug.LogError($"CsoundUnityDropdown {name} cannot work without CsoundUnity! Please assign it in the inspector");
@@ -101,16 +101,10 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Private helpers
 
-        private void OnCsoundInitialized()
-        {
-            StartCoroutine(ReinitDropdown());
-        }
-
-        private IEnumerator ReinitDropdown()
-        {
-            yield return new WaitUntil(() => _csound.IsInitialized);
-            InitDropdown();
-        }
+        // Called straight, with no coroutine: the event fires after CsoundUnity has set
+        // initialized = true, so the WaitUntil the coroutine did was already satisfied and only
+        // cost a frame.
+        private void OnCsoundInitialized() => InitDropdown();
 
         private void OnCsoundStopped()
         {

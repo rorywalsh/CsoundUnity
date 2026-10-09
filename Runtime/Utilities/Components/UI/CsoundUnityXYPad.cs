@@ -74,6 +74,9 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Properties
 
+        /// <summary>Whether the component has finished initialisation and is ready to use.</summary>
+        public bool IsInitialized => _isInitialized;
+
         /// <summary>Current normalised position (0-1, 0-1) of the dot.</summary>
         public Vector2 NormalizedPosition => _normalizedPos;
 
@@ -159,16 +162,10 @@ namespace Csound.Unity.Utilities.Components.UI
 
         #region Private helpers
 
-        private void OnCsoundInitialized()
-        {
-            StartCoroutine(ReinitXYPad());
-        }
-
-        private IEnumerator ReinitXYPad()
-        {
-            yield return new WaitUntil(() => _csound.IsInitialized);
-            InitXYPad();
-        }
+        // Called straight, with no coroutine: the event fires after CsoundUnity has set
+        // initialized = true, so the WaitUntil the coroutine did was already satisfied and only
+        // cost a frame.
+        private void OnCsoundInitialized() => InitXYPad();
 
         private void OnCsoundStopped()
         {
