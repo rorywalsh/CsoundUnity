@@ -1125,9 +1125,8 @@ namespace Csound.Unity
             // already reaches every output channel through the outputSampleChannel mapping in
             // ProcessBlock.
             //
-            // It used to be created mono, and Unity spreads a mono source over a stereo output at
-            // 1/sqrt(2) per channel (constant-power pan law). That is where this path's missing 3 dB
-            // came from: it had been playing quieter than the other two all along.
+            // Stereo, because Unity spreads a mono source over a stereo output at 1/sqrt(2) per
+            // channel (constant-power pan law), which would cost this path 3 dB against the other two.
             //
             // TODO stereo is as wide as we go. Unity handles clips with more channels differently and
             //      may not spatialize them at all, which would break what the carrier is for. Surround
@@ -1504,14 +1503,13 @@ namespace Csound.Unity
             //   ON  - the clip IS audio. It goes into Csound as input (spin), and Csound's output replaces
             //         the buffer instead of multiplying it. The clip is the user's.
             //
-            // So a clip assigned with processClipAudio OFF cannot work. We used to multiply Csound's output
-            // by that audio, which is a ring modulator, and said nothing. Now we warn and drop it.
+            // So a clip assigned with processClipAudio OFF cannot work: multiplying Csound's output by
+            // that audio is a ring modulator, not what anyone asked for. Warn, and drop the clip.
 
             // Outside the per-path branch on purpose: with processClipAudio OFF the clip is ignored
             // whatever path is running. OnAudioFilterRead swaps in the carrier, IAudioGenerator hands
-            // the AudioSource to the generator, RootOutput uses no AudioSource at all. This used to
-            // sit inside the OnAudioFilterRead branch, so a scene left on the default path dropped
-            // the clip without a word.
+            // the AudioSource to the generator, RootOutput uses no AudioSource at all — so the warning
+            // has to reach every path and not only the default one.
             if (!processClipAudio && audioSource != null && audioSource.clip != null
                 && audioSource.clip.name != SpatializerClipName)
             {
@@ -1630,9 +1628,8 @@ namespace Csound.Unity
 #if UNITY_6000_0_OR_NEWER
                     OnInitializedGenerator();
 #endif
-                    // Now that Csound is up and the channels exist. The field used to record only
-                    // what had been applied last and nothing ever read it back, so a scene came up
-                    // with the csd's defaults and stayed there until someone clicked a preset.
+                    // Now that Csound is up and the channels exist. Without this a scene comes up on
+                    // the csd's defaults and ignores the preset picked in the inspector.
                     if (_currentPreset != null) SetPreset(_currentPreset);
 
                     OnCsoundInitialized?.Invoke();
@@ -1671,10 +1668,10 @@ namespace Csound.Unity
                 }
             }
 
-            // On every path, not only the successful ones. The failure branch above used to leave
-            // this true, and from then on Initialize() refused for the rest of the session with
-            // "already initialized or initializing" — which described the wrong state: a typo in a
-            // csd made the instance unusable until the scene was reloaded.
+            // On every path, not only the successful ones: left true by the failure branch above,
+            // Initialize() would refuse for the rest of the session with "already initialized or
+            // initializing", describing the wrong state, and a typo in a csd would make the instance
+            // unusable until the scene was reloaded.
             _initializing = false;
 
             Debug.Log($"CsoundUnity done init, compiledOk? {compiledOk}");
@@ -4683,8 +4680,8 @@ namespace Csound.Unity
         /// <para>
         /// No live channel by that name means no value to start from, so the morph has nothing to
         /// interpolate and the channel jumps straight to its target. That is the only sensible
-        /// thing to do, but it is audible, and it used to happen without a word — easy to hear as
-        /// a broken interpolation.
+        /// thing to do, but it is audible, so it is reported rather than left to sound like a
+        /// broken interpolation.
         /// </para>
         /// </summary>
         private float MorphStartValue(Dictionary<string, float> startValues, CsoundUnityPreset preset,
@@ -4944,8 +4941,8 @@ namespace Csound.Unity
         /// <summary>
         /// The preset's value for the channel, or <paramref name="fallback"/> when the preset does
         /// not have that channel — which happens when the presets were saved against a different
-        /// version of the csd. That used to be silent, and it does not look like a bug: the blend
-        /// still runs, that corner of it is just anchored to the wrong value.
+        /// version of the csd. Reported, because it does not look like a bug: the blend still runs,
+        /// that corner of it is just anchored to the wrong value.
         /// </summary>
         /// <param name="preset">The corner preset to read from.</param>
         /// <param name="channel">The channel name, which is the widget's own name on both axes.</param>
@@ -6072,10 +6069,9 @@ namespace Csound.Unity
             _startupFadeIndex    = 0;
             _ksmpsBlockSizeWarned = false;
 
-            // Nothing used to clear this, so HasCompiled kept reporting the last compilation on an
-            // instance whose csound is already null — and with Domain Reload off, the compilation of
-            // the previous Play session. Here because both ends of a run reach it: Awake before Init,
-            // Stop after the teardown.
+            // Here because both ends of a run reach it — Awake before Init, Stop after the teardown —
+            // so HasCompiled never reports the last compilation of an instance whose csound is already
+            // null, nor, with Domain Reload off, the one from the previous Play session.
             compiledOk = false;
         }
 

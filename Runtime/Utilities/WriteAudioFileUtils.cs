@@ -345,10 +345,9 @@ namespace Csound.Unity.Utilities
 
         private static byte[] ConvertTo24Bit(float sample)
         {
-            // Two things used to be wrong here: the sample was scaled to the 32-bit range and then
-            // only its low three bytes were kept, so anything past 1/256 of full scale wrapped
-            // around; and the bytes went out MSB first, while WAV is little-endian. The result was
-            // noise that happened to have the right length.
+            // Scaled to the 24-bit range, and written little-endian, which is what WAV wants.
+            // Scaling to 32 bits and keeping the low three bytes wraps anything past 1/256 of full
+            // scale; MSB first gives noise of exactly the right length.
             var value = (int)(Clamp(sample) * 8388607f);   // 2^23 - 1
             return new[]
             {

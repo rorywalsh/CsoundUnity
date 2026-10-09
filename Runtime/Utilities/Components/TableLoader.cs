@@ -225,8 +225,8 @@ namespace Csound.Unity.Utilities.MonoBehaviours
 
                 if (start < 1) start = 1;
                 // Against dataLength and not audioClip.samples, which counts frames rather than
-                // interleaved values: a stereo clip used to be cut in half, and a mono one read one
-                // index past the end.
+                // interleaved values: frames would cut a stereo clip in half and read a mono one
+                // one index past the end.
                 if (end <= 1 || end > dataLength + 1) end = dataLength + 1;
                 if (start >= end)
                 {

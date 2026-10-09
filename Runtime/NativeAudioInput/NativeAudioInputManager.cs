@@ -201,9 +201,8 @@ namespace Csound.Unity.NativeAudioInput
         /// <summary>
         /// Turns a requested cushion into the size actually used, and says so when the request could
         /// not be honoured. Both the inspector field, read at <see cref="Open"/>, and the runtime
-        /// property come through here: the clamp used to live in each of them separately, so a value
-        /// typed before pressing play was raised in silence and looked exactly like a value that had
-        /// been tried and worked.
+        /// property come through here, so one clamp reports once: a value raised in silence looks
+        /// exactly like a value that was tried and worked.
         /// </summary>
         private int ResolveCushion(int requested, int ksmpsFloor, int bandUnit)
         {
@@ -698,10 +697,10 @@ namespace Csound.Unity.NativeAudioInput
             var available = (long)NativeAudioInputBridge.cni_get_frames_captured() - _framesConsumed;
             if (available > _peakInRing) _peakInRing = (int)available;
 
-            // Start with a cushion instead of on the first block. The AudioUnit begins filling the ring
-            // the moment it starts, and we used to begin taking from it on the very next ksmps: with a
-            // 128-frame hardware buffer feeding 128-frame reads there is no slack at all, so most reads
-            // came up short. A couple of buffers of head start costs a few milliseconds once.
+            // Start with a cushion rather than on the first block. The AudioUnit begins filling the ring
+            // the moment it starts, and taking from it on the very next ksmps leaves no slack at all —
+            // a 128-frame hardware buffer feeding 128-frame reads comes up short most of the time.
+            // A couple of buffers of head start costs a few milliseconds once.
             if (!_primed)
             {
                 if (available < _primeFrames) { _starvedBlocks++; return; }
@@ -827,10 +826,10 @@ namespace Csound.Unity.NativeAudioInput
             int renderErr = NativeAudioInputBridge.cni_get_last_render_error();
             if (renderErr != 0)
             {
-                // -10863 used to be reported as a permission problem. It is not: a denied microphone
-                // is reported by cni_open itself, as -40. kAudioUnitErr_NoConnection means the unit
-                // rendered nothing at all, and the cause we have actually measured is a device running
-                // at a rate the unit was not configured for.
+                // -10863 is not a permission problem: a denied microphone is reported by cni_open
+                // itself, as -40. kAudioUnitErr_NoConnection means the unit rendered nothing at all,
+                // and the cause we have actually measured is a device running at a rate the unit was
+                // not configured for.
                 string hint = renderErr == -10863
                     ? $"kAudioUnitErr_NoConnection: the AudioUnit rendered nothing. Not a permission " +
                       $"problem — that is reported as -40 when the device is opened. The device is at " +

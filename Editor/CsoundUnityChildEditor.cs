@@ -167,10 +167,9 @@ namespace Csound.Unity
         /// Draws the monitor from <see cref="CsoundUnityChild.OutputBuffer"/>, which hands back a
         /// complete block already interleaved.
         /// <para>
-        /// It used to build the interleaved buffer here from <c>namedAudioChannelData</c>. That
-        /// meant reading, on the main thread, arrays the audio thread rewrites in place — so the
-        /// view could show a block half new and half old — and it drew nothing at all on the
-        /// IAudioGenerator path, which never fills that list.
+        /// Not built here from <c>namedAudioChannelData</c>: that means reading, on the main thread,
+        /// arrays the audio thread rewrites in place — a view half new and half old — and it draws
+        /// nothing at all on the IAudioGenerator path, which never fills that list.
         /// </para>
         /// </summary>
         private void DrawAudioMonitor()

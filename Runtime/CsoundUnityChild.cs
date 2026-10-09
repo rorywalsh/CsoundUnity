@@ -222,10 +222,10 @@ namespace Csound.Unity
         /// Sets up the AudioSource the way a Child usually wants it, once, when the component
         /// is first added. Unity calls this in the editor only.
         /// <para>
-        /// These used to be forced in <c>Awake</c> on every play, which meant the inspector was
-        /// lying: whoever set the source to 2D watched it turn back to 3D with no explanation.
-        /// A Child exposes a named channel as a Unity output — spatialising it is one thing you
-        /// may want to do with it, not what it is.
+        /// Once, and not in <c>Awake</c> on every play: forcing them each time makes the inspector
+        /// lie, turning a source set to 2D back into 3D with no explanation. A Child exposes a named
+        /// channel as a Unity output — spatialising it is one thing you may want to do with it, not
+        /// what it is.
         /// </para>
         /// </summary>
         private void Reset() => ApplyDefaultAudioSourceSettings();
