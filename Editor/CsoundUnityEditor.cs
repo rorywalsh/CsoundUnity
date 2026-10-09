@@ -1410,15 +1410,6 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Opens a folder picker for one of the preset folder properties, starting from wherever
-        /// that property currently points, or from the CSD's own folder when it is unset.
-        /// <para>
-        /// Cancelling leaves the property untouched: <c>OpenFolderPanel</c> returns an empty
-        /// string then, and assigning it straight through would silently wipe the folder the user
-        /// already had.
-        /// </para>
-        /// </summary>
-        /// <summary>
         /// Folder picker for the plain-string import folders, which are editor-only and not
         /// serialized. Same contract as the <see cref="SerializedProperty"/> overload: cancelling
         /// leaves the value alone, and the dialog opens somewhere predictable.
@@ -1458,6 +1449,15 @@ namespace Csound.Unity
             return new GUIContent("Next to Csd", tip);
         }
 
+        /// <summary>
+        /// Opens a folder picker for one of the preset folder properties, starting from wherever
+        /// that property currently points, or from the CSD's own folder when it is unset.
+        /// <para>
+        /// Cancelling leaves the property untouched: <c>OpenFolderPanel</c> returns an empty
+        /// string then, and assigning it straight through would silently wipe the folder the user
+        /// already had.
+        /// </para>
+        /// </summary>
         private void BrowseForPresetFolder(SerializedProperty folder, string title)
         {
             // Start where the property already points; failing that next to the CSD, and failing

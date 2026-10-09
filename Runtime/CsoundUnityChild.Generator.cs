@@ -33,19 +33,23 @@ namespace Csound.Unity
     ///   <item>Bypasses the classic dummy-clip × named-channel multiplication in
     ///     <c>OnAudioFilterRead</c>.</item>
     ///   <item>Drives the <c>AudioSource</c> via a <see cref="CsoundChildRealtime"/> /
-    ///     <see cref="CsoundChildControl"/> pair that reads from the parent's
-    ///     <c>namedAudioChannelDataDict</c>.</item>
+    ///     <see cref="CsoundChildControl"/> pair that pulls completed blocks from the
+    ///     parent's publishers.</item>
     ///   <item>Registers a <see cref="CsoundChildEntry"/> in
-    ///     <see cref="CsoundChildRegistry"/> pointing at the parent's live
-    ///     channel-data dictionary, so the unmanaged struct can look it up by
-    ///     integer index on the audio thread.</item>
+    ///     <see cref="CsoundChildRegistry"/> holding the parent <b>instance</b>, so the
+    ///     unmanaged struct can reach it by integer index on the audio thread.</item>
     /// </list>
     /// </para>
     ///
     /// <para>
-    /// The parent <see cref="CsoundUnity"/> must be in <see cref="AudioPath.IAudioGenerator"/>
-    /// mode (or at least running) so that <c>namedAudioChannelDataDict</c> is populated
-    /// via the ksmps callback registered in <see cref="CsoundBridgeRegistry"/>.
+    /// The entry deliberately does not hold the parent's <c>namedAudioChannelDataDict</c>: those
+    /// are live working arrays written on the parent's own audio callback, which Unity does not
+    /// order against this child's. See the remarks on <see cref="CsoundChildEntry.Parent"/>.
+    /// </para>
+    ///
+    /// <para>
+    /// The parent <see cref="CsoundUnity"/> must be running, so that it publishes a snapshot of
+    /// each named channel at the end of every DSP period.
     /// </para>
     /// </summary>
     public partial class CsoundUnityChild : IAudioGenerator

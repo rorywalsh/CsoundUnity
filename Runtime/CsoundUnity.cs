@@ -876,9 +876,6 @@ namespace Csound.Unity
 #endif
         [HideInInspector][SerializeField] private List<CsoundChannelController> _channels = new List<CsoundChannelController>();
         /// <summary>
-        /// An utility dictionary to store the index of every channel in the _channels list
-        /// </summary>
-        /// <summary>
         /// Backing store for <see cref="ChannelsIndex"/>. Deliberately without an initialiser: it is
         /// not serialized, so a domain reload has to leave it <c>null</c> and not an empty dictionary
         /// that looks usable and answers "not found" to everything.
@@ -2490,26 +2487,6 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Parses a CSD string (already in memory) for named audio channels written with <c>chnset</c>.
-        /// Runtime equivalent of <see cref="ParseCsdFileForAudioChannels"/> used when only the CSD
-        /// content is available (no file path), e.g. during <see cref="Init"/> on first play after a
-        /// fresh package import where the inspector was never opened to trigger <c>SetCsd</c>.
-        /// </summary>
-        /// <param name="csdContent">The full CSD text.</param>
-        /// <returns>A list of unique audio channel names found, never null.</returns>
-        /// <summary>
-        /// Cabbage widget names that appear in a csd but that the parser does not build a channel
-        /// for, so the inspector and the UI generator can say so instead of silently showing less
-        /// than the csd declares.
-        /// <para>
-        /// A line counts as a widget when it carries a <c>bounds(</c> attribute. <c>keyboard</c> is
-        /// deliberately not reported: <see cref="Csound.Unity.CsoundUnityKeyboard"/> exists, it is
-        /// simply built in the scene rather than read from the csd.
-        /// </para>
-        /// </summary>
-        /// <param name="csdContent">The full CSD text.</param>
-        /// <returns>The distinct unsupported widget names, in the order they appear.</returns>
-        /// <summary>
         /// Stores the unsupported widgets found in <paramref name="csdContent"/> and warns once,
         /// here rather than inside the parser: the parser also runs on selection changes and on
         /// every file-watcher reload, and a warning repeated on every repaint is noise nobody
@@ -2527,6 +2504,18 @@ namespace Csound.Unity
                              $"The csd still runs: only the control is missing. Source: {source}");
         }
 
+        /// <summary>
+        /// Cabbage widget names that appear in a csd but that the parser does not build a channel
+        /// for, so the inspector and the UI generator can say so instead of silently showing less
+        /// than the csd declares.
+        /// <para>
+        /// A line counts as a widget when it carries a <c>bounds(</c> attribute. <c>keyboard</c> is
+        /// deliberately not reported: <see cref="Csound.Unity.CsoundUnityKeyboard"/> exists, it is
+        /// simply built in the scene rather than read from the csd.
+        /// </para>
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>The distinct unsupported widget names, in the order they appear.</returns>
         public static List<string> ParseCsdStringForUnsupportedWidgets(string csdContent)
         {
             var result = new List<string>();
@@ -2557,6 +2546,14 @@ namespace Csound.Unity
             return result;
         }
 
+        /// <summary>
+        /// Parses a CSD string (already in memory) for named audio channels written with <c>chnset</c>.
+        /// Runtime equivalent of <see cref="ParseCsdFileForAudioChannels"/> used when only the CSD
+        /// content is available (no file path), e.g. during <see cref="Init"/> on first play after a
+        /// fresh package import where the inspector was never opened to trigger <c>SetCsd</c>.
+        /// </summary>
+        /// <param name="csdContent">The full CSD text.</param>
+        /// <returns>A list of unique audio channel names found, never null.</returns>
         public static List<string> ParseCsdStringForAudioChannels(string csdContent)
         {
             var result = new List<string>();
@@ -3349,10 +3346,6 @@ namespace Csound.Unity
             csound.GetAudioChannel(channel, dest);
         }
 
-        /// <summary>
-        /// This method updates the available audio channels that will be used in ProcessBlock
-        /// It is called in <see cref="ProcessBlock(float[], int)"/> before further processing is executed
-        /// </summary>
         /// <summary>
         /// Creates <c>namedAudioChannelDataDict</c> entries and pre-computes the name
         /// strings for the auto-generated spout channels (<c>main_out_0</c>, <c>main_out_1</c>, …).

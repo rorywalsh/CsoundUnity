@@ -427,16 +427,6 @@ namespace Csound.Unity
         }
 
         /// <summary>
-        /// Called on the audio thread by <see cref="CsoundRealtime.Process"/> (via
-        /// <see cref="CsoundBridgeRegistry"/>) after every <c>PerformKsmps</c>.
-        /// Mirrors exactly what <c>ProcessBlock</c> does on a per-ksmps basis so that
-        /// <c>namedAudioChannelDataDict</c> stays populated for <c>CsoundUnityChild</c>
-        /// and waveform/spectrum analysers — even when audio is delivered via IAudioGenerator.
-        /// </summary>
-        /// <param name="bufferFrameOffset">
-        /// Index of the first frame (within the current DSP buffer) produced by this ksmps block.
-        /// </param>
-        /// <summary>
         /// Copies this ksmps block of Csound output into <c>_csoundOutBuffer</c>, the interleaved
         /// all-channel buffer that <see cref="UpdateOutputBuffer"/> publishes as
         /// <see cref="OutputBuffer"/>.
@@ -464,6 +454,16 @@ namespace Csound.Unity
             }
         }
 
+        /// <summary>
+        /// Called on the audio thread by <see cref="CsoundRealtime.Process"/> (via
+        /// <see cref="CsoundBridgeRegistry"/>) after every <c>PerformKsmps</c>.
+        /// Mirrors exactly what <c>ProcessBlock</c> does on a per-ksmps basis, so that
+        /// <c>namedAudioChannelDataDict</c> is filled and published, and the waveform and
+        /// spectrum analysers keep working — even when audio is delivered via IAudioGenerator.
+        /// </summary>
+        /// <param name="bufferFrameOffset">
+        /// Index of the first frame (within the current DSP buffer) produced by this ksmps block.
+        /// </param>
         private void OnKsmpsCallback(int bufferFrameOffset)
         {
             // PerformKsmps just ran — stop timing and accumulate.
