@@ -24,8 +24,8 @@ namespace Csound.Unity.Samples.Collisions
             if (_csound == null)
                 _csound = GetComponent<CsoundUnity>();
 
-            this.transform.position = new Vector3(0, _startingBallHeight, 0);
             _rigidBody = GetComponent<Rigidbody>();
+            ResetBall();
         }
 
         void Update()
@@ -33,14 +33,17 @@ namespace Csound.Unity.Samples.Collisions
 #if ENABLE_LEGACY_INPUT_MANAGER || !ENABLE_INPUT_SYSTEM
             if (!Input.GetMouseButtonDown(0)) return;
 
-            this.transform.position = new Vector3(0, _startingBallHeight, 0);
             var normPos = RU.Remap(Input.mousePosition.x, 0, Screen.width, -1f, 1f);
-            // first reset the current velocity to avoid summing up when fast clicking
-            _rigidBody.velocity = Vector3.zero;
-            _rigidBody.angularVelocity = Vector3.zero;
-
+            ResetBall();
             _rigidBody.AddForce(_horizontalForce * normPos, 0, 0, ForceMode.Force);
 #endif
+        }
+
+        private void ResetBall()
+        {
+            _rigidBody.position = new Vector3(0, _startingBallHeight, 0);
+            _rigidBody.velocity = Vector3.zero;
+            _rigidBody.angularVelocity = Vector3.zero;
         }
 
         private void OnCollisionEnter(Collision other)
