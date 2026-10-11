@@ -104,7 +104,7 @@ namespace Csound.Unity.Utilities.Components.UI
         /// White keys: A S D F G H J → C D E F G A B
         /// Black keys: W E   T Y U   → C# D#   F# G# A#
         /// </summary>
-        private static readonly Dictionary<KeyCode, int> KeyToSemitone = new()
+        private static readonly Dictionary<KeyCode, int> KeyToSemitone = new Dictionary<KeyCode, int>()
         {
             { KeyCode.A,  0 },  // C
             { KeyCode.W,  1 },  // C#

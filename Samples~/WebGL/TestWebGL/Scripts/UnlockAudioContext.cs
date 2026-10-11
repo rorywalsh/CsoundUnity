@@ -21,7 +21,11 @@ namespace Csound.Unity.Samples.WebGL.TestWebGL
         private void Awake()
         {
             if (_csounds != null && _csounds.Length > 0) return;
+#if UNITY_2022_2_OR_NEWER
             _csounds = FindObjectsByType<CsoundUnity>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+#else
+            _csounds = FindObjectsOfType<CsoundUnity>();
+#endif
         }
 
         private void Start()

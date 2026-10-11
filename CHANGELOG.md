@@ -36,7 +36,7 @@
 - [Add] OnCsoundStopped and OnCsoundPerformanceFinished events
 - [Add] pauseProcessing: silences the output and stops Csound performing, at no DSP cost. The score freezes, so clearing the flag resumes from where it stopped, and nothing is torn down
 - [Add] `fadeInSeconds` on CsoundUnity and CsoundUnityChild ramps the output up from silence on start, masking the transient of chained sources. Honoured by every audio path, and 0 by default
-- [Change] Minimum Unity version is 2019.1
+- [Change] Minimum Unity version is 2020.2
 - [Change] **mute means silence, not freeze.** The output is silenced while Csound keeps performing, so the score stays in time and unmuting drops back in on the beat; audio input routes, native audio input and clip audio keep flowing in. Use pauseProcessing to freeze instead
 - [Change] **OnAudioFilterRead plays at full level.** The carrier clip matches the output width, so this path measures the same as the csd rendered outside Unity and the same as the other two paths. A project mixed against the old level plays 3 dB louder: turn the AudioSource volume down by 3 dB
 - [Change] **The audio path of a component that has never been configured is OnAudioFilterRead**, on CsoundUnity and CsoundUnityChild alike, which covers 3.x scenes and components created at runtime with AddComponent. Both Unity 6 paths are one dropdown away

@@ -229,7 +229,7 @@ namespace Csound.Unity.Timelines
         }
 
         [SerializeField]
-        public ScoreInfo scoreInfo = new()
+        public ScoreInfo scoreInfo = new ScoreInfo()
         {
             mode               = ScoreMode.Score,
             instrN             = "1",
@@ -255,10 +255,10 @@ namespace Csound.Unity.Timelines
             patternLookahead = 0.1f,
             patternLanes    = new List<PatternLane>
             {
-                new() { label="BD",  instrN="101", enabled=true,  velocityMode=PatternVelocityMode.Fixed,   velocity=0.9f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
-                new() { label="SD",  instrN="102", enabled=true,  velocityMode=PatternVelocityMode.Fixed,   velocity=0.8f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
-                new() { label="HH",  instrN="103", enabled=true,  velocityMode=PatternVelocityMode.Offbeat, velocity=0.5f, accentVelocity=0.8f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
-                new() { label="OH",  instrN="104", enabled=false, velocityMode=PatternVelocityMode.Fixed,   velocity=0.7f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
+                new PatternLane { label="BD",  instrN="101", enabled=true,  velocityMode=PatternVelocityMode.Fixed,   velocity=0.9f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
+                new PatternLane { label="SD",  instrN="102", enabled=true,  velocityMode=PatternVelocityMode.Fixed,   velocity=0.8f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
+                new PatternLane { label="HH",  instrN="103", enabled=true,  velocityMode=PatternVelocityMode.Offbeat, velocity=0.5f, accentVelocity=0.8f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
+                new PatternLane { label="OH",  instrN="104", enabled=false, velocityMode=PatternVelocityMode.Fixed,   velocity=0.7f, accentVelocity=1.0f, pan=0f,  pattern=new bool[16], stepVelocities=new float[16], stepDurations=new float[16] },
             },
             stepCount     = 16,
             stepDivision  = RhythmicDivision.Sixteenth,

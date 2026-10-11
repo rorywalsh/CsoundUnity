@@ -74,7 +74,11 @@ public class StepUIBuilderEditor : UnityEditor.Editor
             director = builder.controller.director;
 
         if (director == null)
+#if UNITY_2022_2_OR_NEWER
             director = FindFirstObjectByType<PlayableDirector>();
+#else
+            director = FindObjectOfType<PlayableDirector>();
+#endif
 
         if (director == null || !(director.playableAsset is TimelineAsset timeline))
             return (null, 120f);

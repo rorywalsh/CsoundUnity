@@ -3701,7 +3701,11 @@ namespace Csound.Unity
             // A self-loop is always a cycle.
             if (newSource == this) return true;
 
+#if UNITY_2022_2_OR_NEWER
             var allInstances = FindObjectsByType<CsoundUnity>(FindObjectsSortMode.None);
+#else
+            var allInstances = FindObjectsOfType<CsoundUnity>();
+#endif
             var visited = new System.Collections.Generic.HashSet<CsoundUnity>();
             var queue   = new System.Collections.Generic.Queue<CsoundUnity>();
             queue.Enqueue(this);
@@ -6184,7 +6188,11 @@ namespace Csound.Unity
         {
             if (_activeAudioListener
                 && _activeAudioListener.isActiveAndEnabled) return _activeAudioListener;
+#if UNITY_2022_2_OR_NEWER
             var audioListeners = FindObjectsByType<AudioListener>(FindObjectsSortMode.None);
+#else
+            var audioListeners = FindObjectsOfType<AudioListener>();
+#endif
             _activeAudioListener = Array.Find(audioListeners, audioListener => audioListener.enabled);
 
             return _activeAudioListener;

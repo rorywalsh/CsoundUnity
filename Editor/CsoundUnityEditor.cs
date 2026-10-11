@@ -2315,7 +2315,7 @@ namespace Csound.Unity
             }
 
             int ksmps;
-            if (ksmpsProp is { intValue: > 0 })
+            if (ksmpsProp != null && ksmpsProp.intValue > 0)
             {
                 // Use stored ksmps so sr changes keep ksmps stable.
                 ksmps = ksmpsProp.intValue;
@@ -2494,8 +2494,8 @@ namespace Csound.Unity
             if (channels == null || channels.Count == 0) return;
 
             var form = channels.Find(c => c.type == "form");
-            var formW = form is { width: > 0 } ? form.width  : 400;
-            var formH = form is { height: > 0 } ? form.height : 300;
+            var formW = form != null && form.width  > 0 ? form.width  : 400;
+            var formH = form != null && form.height > 0 ? form.height : 300;
 
             var canvas = csoundUnity.GetComponentInChildren<Canvas>();
             if (!canvas)

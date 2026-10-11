@@ -59,9 +59,17 @@ namespace Csound.Unity.Timelines
         private void Start()
         {
             if (director == null)
+#if UNITY_2022_2_OR_NEWER
                 director = FindFirstObjectByType<PlayableDirector>();
+#else
+                director = FindObjectOfType<PlayableDirector>();
+#endif
             if (csound == null)
+#if UNITY_2022_2_OR_NEWER
                 csound = FindFirstObjectByType<CsoundUnity>();
+#else
+                csound = FindObjectOfType<CsoundUnity>();
+#endif
 
             if (csound == null || director == null)
             {

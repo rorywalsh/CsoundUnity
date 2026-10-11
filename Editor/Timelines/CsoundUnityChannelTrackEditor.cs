@@ -57,7 +57,11 @@ namespace Csound.Unity.Timelines.Editor
         {
             serializedObject.Update();
 
+#if UNITY_2022_2_OR_NEWER
             var csound = Object.FindFirstObjectByType<CsoundUnity>();
+#else
+            var csound = Object.FindObjectOfType<CsoundUnity>();
+#endif
 
             if (csound != null && csound.channels != null && csound.channels.Count > 0)
             {

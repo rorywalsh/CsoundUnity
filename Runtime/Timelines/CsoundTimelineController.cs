@@ -62,7 +62,7 @@ namespace Csound.Unity.Timelines
 
         #region State
 
-        private readonly List<CsoundUnityScorePlayableBehaviour> _scoreBehaviours = new();
+        private readonly List<CsoundUnityScorePlayableBehaviour> _scoreBehaviours = new List<CsoundUnityScorePlayableBehaviour>();
         private bool _collecting = false;
 
         #endregion State
@@ -72,7 +72,11 @@ namespace Csound.Unity.Timelines
         private void Start()
         {
             if (director == null)
+#if UNITY_2022_2_OR_NEWER
                 director = FindFirstObjectByType<PlayableDirector>();
+#else
+                director = FindObjectOfType<PlayableDirector>();
+#endif
 
             if (director == null)
             {

@@ -60,7 +60,7 @@ namespace Csound.Unity
         #region State
 
         // Node positions (keyed by GetInstanceID)
-        private readonly Dictionary<int, Vector2> _pos = new();
+        private readonly Dictionary<int, Vector2> _pos = new Dictionary<int, Vector2>();
 
         // Node drag
         private int     _draggingId = -1;
